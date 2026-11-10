@@ -33,7 +33,7 @@ export const SHOTS = [
   { id: 's008', f: [286, 313], env: 'town', line: 3, house: ILL({ legsOut: 1, lift: 1, shake: [1, 0] }), fx: { dust: [{ at: [0, 4, 0], t0: 0.0 }] }, cam: orb('house', 0.15, 92, 4, { look: [0, -4, 0], fov: 52 }) },
   { id: 's009', f: [314, 329], env: 'town', line: 3, house: ILL({ at: [0, 0], to: [0, 14], legsOut: 1, lift: 1 }), cam: orb([0, 18, 10], 0.05, 110, 2, { fov: 52 }) },
   { id: 's010', f: [330, 385], env: 'bedroom', line: 3, light: 'bedNight',
-    cast: { dad: R(-12.2, 3.0, -6.6, { lie: true, anim: 'lie' }), mom: R(-10, 3.0, -6.6, { lie: true, anim: 'lie' }), hero: R(-7.9, 3.0, -6.6, { lie: true, anim: 'lie', s: 0.9 }) },
+    cast: { dad: R(-12.2, 3.6, -6.6, { lie: true, anim: 'lie' }), mom: R(-10, 3.6, -6.6, { lie: true, anim: 'lie' }), hero: R(-7.9, 3.6, -6.6, { lie: true, anim: 'lie', s: 0.9 }) },
     cam: { p: [-10, 17, -1], l: [-10, 3, -9], p2: [-10, 16, -1.6], fov: 50 } },
 
   // ===== 03 · Các điểm đến và lời hứa trở về =====
@@ -76,8 +76,8 @@ export const SHOTS = [
   { id: 's035', f: [1200, 1219], env: 'town', line: 13, house: FAM({ legsOut: 0, lift: 0 }), cam: orb('house', 0, 72, -1, { look: [0, 3, 0], fov: 52 }) },
   { id: 's036', f: [1220, 1270], env: 'town', line: 13, house: FAM({ legsOut: [0, 1], lift: 0, win: [0.2, 0.9] }), fx: { dust: [{ at: [24, 0, 14], t0: 1.3 }, { at: [-24, 0, 14], t0: 1.35 }] },
     cam: orb('house', 0.55, 76, 2, { look: [0, 0, 0], yaw2: 0.62, fov: 52 }) },
-  { id: 's037', f: [1271, 1309], env: 'bedroom', line: 14, room: { roll: [0, 0.18], tilt: [0, 0.05] }, cast: { hero: R(-10, 3.0, -6.6, { lie: true, anim: 'lie', face: 'surprised', rz: 0 }) },
-    props: {}, cam: { p: [6, 9, 6], l: [-8, 4, -8], fov: 44, roll: [0, -0.12], shake: 0.3 } },
+  { id: 's037', f: [1271, 1309], env: 'bedroom', line: 14, room: { roll: [0, 0.18], tilt: [0, 0.05] }, cast: { hero: R(-10, 3.6, -6.6, { lie: true, anim: 'lie', face: 'surprised', rz: 0 }) },
+    props: {}, cam: { p: [4, 11, 0], l: [-10, 4, -10], fov: 46, roll: [0, -0.12], shake: 0.3 } },
   { id: 's038', f: [1310, 1341], env: 'bedroom', line: 15, room: { roll: 0.12 }, cast: { hero: R(16.5, 2.6, -6, { anim: 'idle', ry: PI / 2, face: 'surprised', s: 0.92 }) },
     props: {}, cam: { p: [8, 9.5, -1], l: [17, 8, -6], fov: 46 } },
   { id: 's039', f: [1342, 1362], env: 'town', line: 15, house: FAM({ legsOut: 1, lift: 1 }), cam: { p: [-48, 28, 32], l: [-14, 24, 4], fov: 44 } },

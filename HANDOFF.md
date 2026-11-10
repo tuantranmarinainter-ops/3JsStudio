@@ -16,6 +16,15 @@
 | Sân khấu | `engine/stage.js` | Renderer 1080×1920, camera (`setCamera`, `orbit`), mặt trời đổ bóng theo điểm nhìn, `onFrame(t)` + `hf-seek`. |
 | Mốc kiểm chứng | `episodes/_test_walk/index.html` | `npm run test:walk` → `output/test_walk.mp4` 1080×1920, 30 fps, 150 frame, ~35 s render. |
 
+| ep001 "Ngôi nhà biết đi" | `episodes/ep001/` (README), `engine/house.js`, `envs.js`, `props.js`, `postcards.js`, `fx.js`, `shots.js`, `timeline.js` | Dựng theo tài liệu bàn giao của người dùng: 145 shot, 5132 frame, giọng CapCut từ SRT, phụ đề cụm chữ. `npm run render:ep001`. Sai lệch ghi trong README tập. |
+| Skill hỗ trợ | `.claude/skills/{r6-anim,ref-model,scene-env,vfx3d}`, gói gốc `skills/fwjelaa/` | Phương pháp fwjelaa (Roblox/Blender) chuyển sang three.js. |
+
+### Lưu ý kỹ thuật mới
+- Composition render qua `-c episodes/<ep>/index.html` được phục vụ như ở gốc repo → **import trong index.html dùng
+  đường dẫn tuyệt đối** (`/engine/...`, `/episodes/ep001/...`), không dùng `./`.
+- Xem nhanh không qua HyperFrames: `tools/peek.mjs` (Playwright, `NODE_PATH=/opt/node-tools/node_modules`);
+  so với gốc: `tools/sheet_ep.sh`.
+
 ### Chưa làm (theo thứ tự ưu tiên)
 3. **`engine/town.js`**: thị trấn từ Kenney City Kit (Roads/Commercial/Suburban, CC0) theo seed; ghi `assets/manifest.json`.
 4. **`engine/timeline.js` + `engine/shots.js`**: đọc `episode.js`, `shots.js`, `narration.json` (start/end từng câu);
