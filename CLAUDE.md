@@ -177,6 +177,10 @@ Render 140 shot:
   - **CapCut**: cần SDK ở `tools/voice_studio/vendor/capcut-tts-api/` (gói `capcut_tts_api` + `PROVENANCE.json`)
     và secret `TTS_CAPCUT_DEVICE_CONFIG` (nếu tool cần). Giọng CapCut: chỉ tốc độ -50..100%, không cao độ/âm lượng.
     Danh sách ID giọng: `tools/voice_studio/voices-capcut.txt` (workflow tự cập nhật).
+    SDK được commit sẵn trong repo; chạy được trên GitHub Actions không cần cấu hình thiết bị (đã kiểm chứng).
+    Giọng gợi ý: người dẫn (đứa trẻ) `BV074_streaming_dsp` "Giọng Bé"; mẹ `multi_female_yangguangnv_uranus_bigtts`
+    "Ban Mai"; nam trầm `multi_male_felipe_uranus_bigtts`. CapCut chậm hơn Edge (~1 phút/câu, 2 câu song song)
+    → tập 140 câu mất khoảng 1 giờ lần đầu; các lần sau chỉ tạo lại câu bị sửa (cache).
   - `--dry`: không gọi dịch vụ, ước lượng ~14 ký tự/giây → dựng shot trước khi có giọng thật.
 - `narration.txt`:
   - `@source capcut|edge` (nguồn mặc định cả tập), `@narrator <giọng> [tốc độ] [cao độ]`,
