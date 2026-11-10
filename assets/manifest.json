@@ -10602,5 +10602,215 @@
   "nodes": [
    "tower-watch"
   ]
+ },
+ {
+  "id": "polyfork/penguin-base",
+  "src": "assets/polyfork/penguin-base.glb",
+  "source": "polyfork.dev/asset/penguin-base",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Penguin by Polyfork (https://polyfork.dev/asset/penguin-base), CC BY 4.0",
+  "title": "Penguin",
+  "size_m": {
+   "x": 0.54,
+   "y": 0.72,
+   "z": 0.55
+  },
+  "scale": 1.0
+ },
+ {
+  "id": "polyfork/old-lighthouse-48ca6c",
+  "src": "assets/polyfork/old-lighthouse-48ca6c.glb",
+  "source": "polyfork.dev/asset/old-lighthouse-48ca6c",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Old Lighthouse by Polyfork (https://polyfork.dev/asset/old-lighthouse-48ca6c), CC BY 4.0",
+  "title": "Old Lighthouse",
+  "size_m": {
+   "x": 8.85,
+   "y": 13.88,
+   "z": 10.66
+  },
+  "scale": 1.0
+ },
+ {
+  "id": "polyfork/curbside-mailbox-0e0736",
+  "src": "assets/polyfork/curbside-mailbox-0e0736.glb",
+  "source": "polyfork.dev/asset/curbside-mailbox-0e0736",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Curbside Mailbox by Polyfork (https://polyfork.dev/asset/curbside-mailbox-0e0736), CC BY 4.0",
+  "title": "Curbside Mailbox",
+  "size_m": {
+   "x": 0.31,
+   "y": 1.26,
+   "z": 0.63
+  },
+  "scale": 1.0
+ },
+ {
+  "id": "polyfork/herring-gull-55c3da",
+  "src": "assets/polyfork/herring-gull-55c3da.glb",
+  "source": "polyfork.dev/asset/herring-gull-55c3da",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Herring Gull by Polyfork (https://polyfork.dev/asset/herring-gull-55c3da), CC BY 4.0",
+  "title": "Herring Gull",
+  "size_m": {
+   "x": 0.23,
+   "y": 0.5,
+   "z": 0.55
+  },
+  "scale": 1.0
+ },
+ {
+  "id": "polyfork/driftwood-log-89a68f",
+  "src": "assets/polyfork/driftwood-log-89a68f.glb",
+  "source": "polyfork.dev/asset/driftwood-log-89a68f",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Driftwood Log by Polyfork (https://polyfork.dev/asset/driftwood-log-89a68f), CC BY 4.0",
+  "title": "Driftwood Log",
+  "size_m": {
+   "x": 1.31,
+   "y": 0.82,
+   "z": 2.64
+  },
+  "scale": 1.0
+ },
+ {
+  "id": "polyfork/marram-grass-tuft-8c7a99",
+  "src": "assets/polyfork/marram-grass-tuft-8c7a99.glb",
+  "source": "polyfork.dev/asset/marram-grass-tuft-8c7a99",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Marram Grass Tuft by Polyfork (https://polyfork.dev/asset/marram-grass-tuft-8c7a99), CC BY 4.0",
+  "title": "Marram Grass Tuft",
+  "size_m": {
+   "x": 1.16,
+   "y": 0.93,
+   "z": 1.08
+  },
+  "scale": 1.0
+ },
+ {
+  "id": "polyfork/shell-scatter-6d36b7",
+  "src": "assets/polyfork/shell-scatter-6d36b7.glb",
+  "source": "polyfork.dev/asset/shell-scatter-6d36b7",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Shell Scatter by Polyfork (https://polyfork.dev/asset/shell-scatter-6d36b7), CC BY 4.0",
+  "title": "Shell Scatter",
+  "size_m": {
+   "x": 1.08,
+   "y": 0.08,
+   "z": 1.09
+  },
+  "scale": 1.0
+ },
+ {
+  "id": "polyfork/tamarisk-bush-ba4337",
+  "src": "assets/polyfork/tamarisk-bush-ba4337.glb",
+  "source": "polyfork.dev/asset/tamarisk-bush-ba4337",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Tamarisk Bush by Polyfork (https://polyfork.dev/asset/tamarisk-bush-ba4337), CC BY 4.0",
+  "title": "Tamarisk Bush",
+  "size_m": {
+   "x": 1.81,
+   "y": 1.81,
+   "z": 1.84
+  },
+  "scale": 1.0
+ },
+ {
+  "id": "polyfork/rowing-dinghy-022673",
+  "src": "assets/polyfork/rowing-dinghy-022673.glb",
+  "source": "polyfork.dev/asset/rowing-dinghy-022673",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Rowing Dinghy by Polyfork (https://polyfork.dev/asset/rowing-dinghy-022673), CC BY 4.0",
+  "title": "Rowing Dinghy",
+  "size_m": {
+   "x": 1.45,
+   "y": 0.89,
+   "z": 3.58
+  },
+  "scale": 1.0
+ },
+ {
+  "id": "polyfork/snow-laden-spruce-36716e",
+  "src": "assets/polyfork/snow-laden-spruce-36716e.glb",
+  "source": "polyfork.dev/asset/snow-laden-spruce-36716e",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Snow-Laden Spruce by Polyfork (https://polyfork.dev/asset/snow-laden-spruce-36716e), CC BY 4.0",
+  "title": "Snow-Laden Spruce",
+  "size_m": {
+   "x": 3,
+   "y": 6.06,
+   "z": 3
+  },
+  "scale": 1.0
+ },
+ {
+  "id": "polyfork/windblown-larch-abb99c",
+  "src": "assets/polyfork/windblown-larch-abb99c.glb",
+  "source": "polyfork.dev/asset/windblown-larch-abb99c",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Windblown Larch by Polyfork (https://polyfork.dev/asset/windblown-larch-abb99c), CC BY 4.0",
+  "title": "Windblown Larch",
+  "size_m": {
+   "x": 7.95,
+   "y": 7,
+   "z": 3.58
+  },
+  "scale": 1.0
+ },
+ {
+  "id": "polyfork/boulder-field-cluster-08e364",
+  "src": "assets/polyfork/boulder-field-cluster-08e364.glb",
+  "source": "polyfork.dev/asset/boulder-field-cluster-08e364",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Boulder Field Cluster by Polyfork (https://polyfork.dev/asset/boulder-field-cluster-08e364), CC BY 4.0",
+  "title": "Boulder Field Cluster",
+  "size_m": {
+   "x": 2.5,
+   "y": 1.45,
+   "z": 2
+  },
+  "scale": 1.0
+ },
+ {
+  "id": "polyfork/rock-outcrop-158ac3",
+  "src": "assets/polyfork/rock-outcrop-158ac3.glb",
+  "source": "polyfork.dev/asset/rock-outcrop-158ac3",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Rock Outcrop by Polyfork (https://polyfork.dev/asset/rock-outcrop-158ac3), CC BY 4.0",
+  "title": "Rock Outcrop",
+  "size_m": {
+   "x": 2.5,
+   "y": 2.05,
+   "z": 2.5
+  },
+  "scale": 1.0
+ },
+ {
+  "id": "polyfork/dwarf-pine-mat-faee77",
+  "src": "assets/polyfork/dwarf-pine-mat-faee77.glb",
+  "source": "polyfork.dev/asset/dwarf-pine-mat-faee77",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Dwarf Pine Mat by Polyfork (https://polyfork.dev/asset/dwarf-pine-mat-faee77), CC BY 4.0",
+  "title": "Dwarf Pine Mat",
+  "size_m": {
+   "x": 2.5,
+   "y": 1.29,
+   "z": 2.5
+  },
+  "scale": 1.0
+ },
+ {
+  "id": "polyfork/bare-mountain-rowan-10e72e",
+  "src": "assets/polyfork/bare-mountain-rowan-10e72e.glb",
+  "source": "polyfork.dev/asset/bare-mountain-rowan-10e72e",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Bare Mountain Rowan by Polyfork (https://polyfork.dev/asset/bare-mountain-rowan-10e72e), CC BY 4.0",
+  "title": "Bare Mountain Rowan",
+  "size_m": {
+   "x": 4.37,
+   "y": 5.03,
+   "z": 4.3
+  },
+  "scale": 1.0
  }
 ]
