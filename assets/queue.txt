@@ -7,4 +7,20 @@ city-kit-roads
 nature-kit
 pirate-kit
 furniture-kit
-# chạy lại 3
+
+# Polyfork (mesh GLB miễn phí, CC BY 4.0 — ghi công trong assets/polyfork/CREDITS.md). Cú pháp: polyfork:<id>
+polyfork:penguin-base
+polyfork:old-lighthouse-48ca6c
+polyfork:curbside-mailbox-0e0736
+polyfork:herring-gull-55c3da
+polyfork:driftwood-log-89a68f
+polyfork:marram-grass-tuft-8c7a99
+polyfork:shell-scatter-6d36b7
+polyfork:tamarisk-bush-ba4337
+polyfork:rowing-dinghy-022673
+polyfork:snow-laden-spruce-36716e
+polyfork:windblown-larch-abb99c
+polyfork:boulder-field-cluster-08e364
+polyfork:rock-outcrop-158ac3
+polyfork:dwarf-pine-mat-faee77
+polyfork:bare-mountain-rowan-10e72e

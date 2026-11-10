@@ -1,6 +1,7 @@
 node_modules/
 output/
-assets/polyfork/
+assets/polyfork/*.mjs
+assets/polyfork/*-hd*
 refs/**/*.mp4
 refs/**/*.webm
 refs/**/*.part

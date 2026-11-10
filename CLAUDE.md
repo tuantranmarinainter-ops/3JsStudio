@@ -123,7 +123,9 @@ Render 140 shot:
 1. **Kenney** (kenney.nl, CC0, scale 1.0) — bộ gốc: City Kit Roads/Commercial/Suburban.
 2. **Polyfork** (polyfork.dev) — chỉ khi Kenney thiếu. MCP `https://polyfork.dev/mcp` (search_assets,
    get_asset, get_variant, list_kits, get_kit). Đọc `https://polyfork.dev/prompt.txt` lần đầu.
-   Tải về `assets/polyfork/` trước khi render. Dùng thương mại OK, không phân phối lại `.mjs`/HD.
+   Mesh GLB miễn phí là **CC BY 4.0** → được commit vào `assets/polyfork/` kèm ghi công (`assets/polyfork/CREDITS.md`);
+   KHÔNG commit/phân phối `.mjs` hay bản HD. Tải qua GitHub Actions: thêm dòng `polyfork:<id>` vào `assets/queue.txt` → push
+   (cloud của Claude bị chặn polyfork.dev). Danh mục công khai: github.com/lucas-martinic/polyfork-catalog (catalog.json).
 3. **GLB riêng** (`assets/special/`) — chỉ cho twist. Nguồn gợi ý: Quaternius (quái vật; kiểm tra giấy phép QAL).
 - Mỗi asset nhập vào phải có dòng trong `assets/manifest.json`. Chuẩn hoá scale về chuẩn Kenney.
 - Không dùng Blender trừ khi không còn cách khác.
