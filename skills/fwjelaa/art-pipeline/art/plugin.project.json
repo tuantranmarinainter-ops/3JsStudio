@@ -1,0 +1,12 @@
+{
+  "name": "MHGArtUploader",
+  "tree": {
+    "$className": "Folder",
+    "Main": {
+      "$path": "plugin/Main.server.luau"
+    },
+    "Meshes": {
+      "$path": "out/meshes"
+    }
+  }
+}

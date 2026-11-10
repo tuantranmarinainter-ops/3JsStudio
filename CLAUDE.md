@@ -190,3 +190,10 @@ Render 140 shot:
 - Edge: tốc độ -80..100%, cao độ -50..50Hz, âm lượng -100..100%. Song song: Edge tối đa 3, CapCut tối đa 2.
 - Cache từng câu ở `.cache/tts/` → sửa 1 câu chỉ tạo lại câu đó. Đổi file engine → workflow tạo lại mọi tập.
 - Giọng Edge tham khảo: `tools/voice_studio/voices-edge-vi.txt`.
+
+## Skill hỗ trợ (`.claude/skills/` + `skills/`)
+- `r6-anim` (animation R6), `ref-model` (model từ ảnh), `scene-env` (môi trường), `vfx3d` (hiệu ứng tất định):
+  phương pháp của **fwjelaa (FWJ STUDIOS)** chuyển sang three.js. Gói gốc (Roblox Studio/Blender) ở `skills/fwjelaa/`
+  — đọc khi cần chi tiết; cloud không có Blender/Studio nên chỉ dùng phương pháp. Ghi công fwjelaa khi chia sẻ.
+- `skills/forgegui/MASTER_PROMPT_game_ui.md`: prompt dựng UI game Roblox bằng ForgeGUI + Roblox Studio MCP
+  (dự án khác; cần Studio MCP trên máy người dùng).

@@ -1,0 +1,1283 @@
+{
+  "materials": {
+    "backrooms_carpet": {
+      "base": "Fabric",
+      "files": {
+        "color": "cache/textures/backrooms_carpet/color.png",
+        "normal": "cache/textures/backrooms_carpet/normal.png",
+        "roughness": "cache/textures/backrooms_carpet/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "pattern": "Organic",
+      "source": "ambientcg:Carpet012",
+      "studsPerTile": 6.0,
+      "tint": "#B8A27A",
+      "url": "https://ambientcg.com/view?id=Carpet012"
+    },
+    "backrooms_ceiling": {
+      "base": "SmoothPlastic",
+      "files": {
+        "color": "cache/textures/backrooms_ceiling/color.png",
+        "metalness": "cache/textures/backrooms_ceiling/metalness.png",
+        "normal": "cache/textures/backrooms_ceiling/normal.png",
+        "roughness": "cache/textures/backrooms_ceiling/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Regular",
+      "source": "ambientcg:OfficeCeiling001",
+      "studsPerTile": 13.0,
+      "tint": null,
+      "url": "https://ambientcg.com/view?id=OfficeCeiling001"
+    },
+    "backrooms_wallpaper": {
+      "base": "Fabric",
+      "files": {
+        "color": "cache/textures/backrooms_wallpaper/color.png",
+        "normal": "cache/textures/backrooms_wallpaper/normal.png",
+        "roughness": "cache/textures/backrooms_wallpaper/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": "chevron:128:0.10",
+      "pattern": "Regular",
+      "source": "ambientcg:Wallpaper002A",
+      "studsPerTile": 6.0,
+      "tint": "#D8C46A",
+      "url": "https://ambientcg.com/view?id=Wallpaper002A"
+    },
+    "farm_boards": {
+      "base": "WoodPlanks",
+      "files": {
+        "color": "cache/textures/farm_boards/color.png",
+        "normal": "cache/textures/farm_boards/normal.png",
+        "roughness": "cache/textures/farm_boards/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Regular",
+      "source": "polyhaven:old_planks_02",
+      "studsPerTile": 7.1,
+      "tint": null,
+      "url": "https://polyhaven.com/a/old_planks_02"
+    },
+    "farm_floor": {
+      "base": "WoodPlanks",
+      "files": {
+        "color": "cache/textures/farm_floor/color.png",
+        "normal": "cache/textures/farm_floor/normal.png",
+        "roughness": "cache/textures/farm_floor/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Regular",
+      "source": "polyhaven:old_wood_floor",
+      "studsPerTile": 10.7,
+      "tint": null,
+      "url": "https://polyhaven.com/a/old_wood_floor"
+    },
+    "farm_grass": {
+      "base": "Grass",
+      "files": {
+        "color": "cache/textures/farm_grass/color.png",
+        "normal": "cache/textures/farm_grass/normal.png",
+        "roughness": "cache/textures/farm_grass/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Organic",
+      "source": "polyhaven:withered_grass",
+      "studsPerTile": 7.1,
+      "tint": null,
+      "url": "https://polyhaven.com/a/withered_grass"
+    },
+    "farm_leaves": {
+      "base": "LeafyGrass",
+      "files": {
+        "color": "cache/textures/farm_leaves/color.png",
+        "normal": "cache/textures/farm_leaves/normal.png",
+        "roughness": "cache/textures/farm_leaves/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Organic",
+      "source": "polyhaven:dry_decay_leaves",
+      "studsPerTile": 7.1,
+      "tint": null,
+      "url": "https://polyhaven.com/a/dry_decay_leaves"
+    },
+    "farm_mud": {
+      "base": "Mud",
+      "files": {
+        "color": "cache/textures/farm_mud/color.png",
+        "normal": "cache/textures/farm_mud/normal.png",
+        "roughness": "cache/textures/farm_mud/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Organic",
+      "source": "polyhaven:muddy_tracks",
+      "studsPerTile": 8.0,
+      "tint": null,
+      "url": "https://polyhaven.com/a/muddy_tracks"
+    },
+    "farm_plaster": {
+      "base": "Plaster",
+      "files": {
+        "color": "cache/textures/farm_plaster/color.png",
+        "normal": "cache/textures/farm_plaster/normal.png",
+        "roughness": "cache/textures/farm_plaster/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Organic",
+      "source": "polyhaven:worn_cracked_plaster",
+      "studsPerTile": 6.4,
+      "tint": null,
+      "url": "https://polyhaven.com/a/worn_cracked_plaster"
+    },
+    "farm_porch": {
+      "base": "WoodPlanks",
+      "files": {
+        "color": "cache/textures/farm_porch/color.png",
+        "normal": "cache/textures/farm_porch/normal.png",
+        "roughness": "cache/textures/farm_porch/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Regular",
+      "source": "polyhaven:weathered_planks",
+      "studsPerTile": 7.1,
+      "tint": null,
+      "url": "https://polyhaven.com/a/weathered_planks"
+    },
+    "farm_roof": {
+      "base": "Slate",
+      "files": {
+        "color": "cache/textures/farm_roof/color.png",
+        "normal": "cache/textures/farm_roof/normal.png",
+        "roughness": "cache/textures/farm_roof/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Regular",
+      "source": "polyhaven:roof_slates_02",
+      "studsPerTile": 10.7,
+      "tint": null,
+      "url": "https://polyhaven.com/a/roof_slates_02"
+    },
+    "farm_rust": {
+      "base": "CorrodedMetal",
+      "files": {
+        "color": "cache/textures/farm_rust/color.png",
+        "normal": "cache/textures/farm_rust/normal.png",
+        "roughness": "cache/textures/farm_rust/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Organic",
+      "source": "polyhaven:rusty_metal",
+      "studsPerTile": 5.4,
+      "tint": null,
+      "url": "https://polyhaven.com/a/rusty_metal"
+    },
+    "farm_siding": {
+      "base": "Wood",
+      "files": {
+        "color": "cache/textures/farm_siding/color.png",
+        "normal": "cache/textures/farm_siding/normal.png",
+        "roughness": "cache/textures/farm_siding/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Regular",
+      "source": "polyhaven:weathered_plank_siding",
+      "studsPerTile": 5.6,
+      "tint": null,
+      "url": "https://polyhaven.com/a/weathered_plank_siding"
+    },
+    "farm_stone": {
+      "base": "Cobblestone",
+      "files": {
+        "color": "cache/textures/farm_stone/color.png",
+        "normal": "cache/textures/farm_stone/normal.png",
+        "roughness": "cache/textures/farm_stone/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Regular",
+      "source": "polyhaven:rustic_stone_wall",
+      "studsPerTile": 5.4,
+      "tint": null,
+      "url": "https://polyhaven.com/a/rustic_stone_wall"
+    },
+    "farm_tiles": {
+      "base": "CeramicTiles",
+      "files": {
+        "color": "cache/textures/farm_tiles/color.png",
+        "normal": "cache/textures/farm_tiles/normal.png",
+        "roughness": "cache/textures/farm_tiles/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Regular",
+      "source": "polyhaven:dirty_tiles",
+      "studsPerTile": 8.1,
+      "tint": null,
+      "url": "https://polyhaven.com/a/dirty_tiles"
+    },
+    "farm_wallpaper": {
+      "base": "Plaster",
+      "files": {
+        "color": "cache/textures/farm_wallpaper/color.png",
+        "normal": "cache/textures/farm_wallpaper/normal.png",
+        "roughness": "cache/textures/farm_wallpaper/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Regular",
+      "source": "polyhaven:decrepit_wallpaper",
+      "studsPerTile": 8.9,
+      "tint": null,
+      "url": "https://polyhaven.com/a/decrepit_wallpaper"
+    },
+    "lake_forest_floor": {
+      "base": "LeafyGrass",
+      "files": {
+        "color": "cache/textures/lake_forest_floor/color.png",
+        "normal": "cache/textures/lake_forest_floor/normal.png",
+        "roughness": "cache/textures/lake_forest_floor/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Organic",
+      "source": "polyhaven:forest_leaves_02",
+      "studsPerTile": 10.7,
+      "tint": null,
+      "url": "https://polyhaven.com/a/forest_leaves_02"
+    },
+    "lake_grass": {
+      "base": "Grass",
+      "files": {
+        "color": "cache/textures/lake_grass/color.png",
+        "normal": "cache/textures/lake_grass/normal.png",
+        "roughness": "cache/textures/lake_grass/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Organic",
+      "source": "polyhaven:leafy_grass",
+      "studsPerTile": 7.1,
+      "tint": null,
+      "url": "https://polyhaven.com/a/leafy_grass"
+    },
+    "lake_mossy_rock": {
+      "base": "Rock",
+      "files": {
+        "color": "cache/textures/lake_mossy_rock/color.png",
+        "normal": "cache/textures/lake_mossy_rock/normal.png",
+        "roughness": "cache/textures/lake_mossy_rock/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Organic",
+      "source": "polyhaven:mossy_rock",
+      "studsPerTile": 10.7,
+      "tint": null,
+      "url": "https://polyhaven.com/a/mossy_rock"
+    },
+    "lake_path": {
+      "base": "Ground",
+      "files": {
+        "color": "cache/textures/lake_path/color.png",
+        "normal": "cache/textures/lake_path/normal.png",
+        "roughness": "cache/textures/lake_path/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Organic",
+      "source": "polyhaven:forest_ground_04",
+      "studsPerTile": 11.2,
+      "tint": null,
+      "url": "https://polyhaven.com/a/forest_ground_04"
+    },
+    "lake_pebbles": {
+      "base": "Sand",
+      "files": {
+        "color": "cache/textures/lake_pebbles/color.png",
+        "normal": "cache/textures/lake_pebbles/normal.png",
+        "roughness": "cache/textures/lake_pebbles/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Organic",
+      "source": "polyhaven:river_small_rocks",
+      "studsPerTile": 10.4,
+      "tint": null,
+      "url": "https://polyhaven.com/a/river_small_rocks"
+    },
+    "lake_shore_mud": {
+      "base": "Mud",
+      "files": {
+        "color": "cache/textures/lake_shore_mud/color.png",
+        "normal": "cache/textures/lake_shore_mud/normal.png",
+        "roughness": "cache/textures/lake_shore_mud/roughness.png"
+      },
+      "license": "CC0 1.0",
+      "motif": null,
+      "pattern": "Organic",
+      "source": "polyhaven:brown_mud_rocks_01",
+      "studsPerTile": 4.6,
+      "tint": null,
+      "url": "https://polyhaven.com/a/brown_mud_rocks_01"
+    }
+  },
+  "models": {
+    "farm_armchair": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_armchair.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 5626,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_armchair --from polyhaven:ArmChair_01 --tris 18000 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        3.03,
+        3.804,
+        2.735
+      ],
+      "source": "polyhaven:ArmChair_01",
+      "tris": 5626,
+      "url": "https://polyhaven.com/a/ArmChair_01"
+    },
+    "farm_barrel": {
+      "collision": "Hull",
+      "file": "cache/models/glb/farm_barrel.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 2682,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_barrel --from polyhaven:Barrel_01 --tris 18000 --res 1k --collision Hull",
+      "res": "1k",
+      "size": [
+        2.011,
+        3.143,
+        2.011
+      ],
+      "source": "polyhaven:Barrel_01",
+      "tris": 2682,
+      "url": "https://polyhaven.com/a/Barrel_01"
+    },
+    "farm_basket": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_basket.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 7999,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_basket --from polyhaven:wicker_basket_01 --tris 8000 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        1.374,
+        0.424,
+        1.047
+      ],
+      "source": "polyhaven:wicker_basket_01",
+      "tris": 7999,
+      "url": "https://polyhaven.com/a/wicker_basket_01"
+    },
+    "farm_bed": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_bed.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 18000,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_bed --from polyhaven:old_bed_frame --tris 18000 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        3.231,
+        4.296,
+        7.149
+      ],
+      "source": "polyhaven:old_bed_frame",
+      "tris": 18000,
+      "url": "https://polyhaven.com/a/old_bed_frame"
+    },
+    "farm_bench": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_bench.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 630,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_bench --from polyhaven:painted_wooden_bench --tris 18000 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        4.161,
+        3.176,
+        1.773
+      ],
+      "source": "polyhaven:painted_wooden_bench",
+      "tris": 630,
+      "url": "https://polyhaven.com/a/painted_wooden_bench"
+    },
+    "farm_books": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_books.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 302,
+      "objects": 20,
+      "remake": "python kit/tools/run.py model farm_books --from polyhaven:book_encyclopedia_set_01 --tris 6000 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        1.969,
+        0.848,
+        0.584
+      ],
+      "source": "polyhaven:book_encyclopedia_set_01",
+      "tris": 5983,
+      "url": "https://polyhaven.com/a/book_encyclopedia_set_01"
+    },
+    "farm_bookshelf": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_bookshelf.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 10106,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_bookshelf --from polyhaven:wooden_bookshelf_worn --tris 12000 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        4.907,
+        7.369,
+        2.076
+      ],
+      "source": "polyhaven:wooden_bookshelf_worn",
+      "tris": 10106,
+      "url": "https://polyhaven.com/a/wooden_bookshelf_worn"
+    },
+    "farm_box": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_box.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 4999,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_box --from polyhaven:cardboard_box_01 --tris 5000 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        1.382,
+        1.22,
+        1.842
+      ],
+      "source": "polyhaven:cardboard_box_01",
+      "tris": 4999,
+      "url": "https://polyhaven.com/a/cardboard_box_01"
+    },
+    "farm_branches": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_branches.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 4237,
+      "objects": 3,
+      "remake": "python kit/tools/run.py model farm_branches --from polyhaven:dry_branches_medium_01 --tris 12000 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        3.784,
+        1.218,
+        4.639
+      ],
+      "source": "polyhaven:dry_branches_medium_01",
+      "tris": 11999,
+      "url": "https://polyhaven.com/a/dry_branches_medium_01"
+    },
+    "farm_bucket": {
+      "collision": "Hull",
+      "file": "cache/models/glb/farm_bucket.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 4484,
+      "objects": 2,
+      "remake": "python kit/tools/run.py model farm_bucket --from polyhaven:wooden_bucket_01 --tris 5200 --res 1k --collision Hull",
+      "res": "1k",
+      "size": [
+        1.311,
+        1.964,
+        1.222
+      ],
+      "source": "polyhaven:wooden_bucket_01",
+      "tris": 5116,
+      "url": "https://polyhaven.com/a/wooden_bucket_01"
+    },
+    "farm_bulb": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_bulb.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 2282,
+      "objects": 2,
+      "remake": "python kit/tools/run.py model farm_bulb --from polyhaven:pull_chain_light_socket --tris 4000 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        0.393,
+        0.591,
+        0.394
+      ],
+      "source": "polyhaven:pull_chain_light_socket",
+      "tris": 3998,
+      "url": "https://polyhaven.com/a/pull_chain_light_socket"
+    },
+    "farm_cabinet": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_cabinet.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 1093,
+      "objects": 5,
+      "remake": "python kit/tools/run.py model farm_cabinet --from polyhaven:painted_wooden_cabinet --tris 18000 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        4.267,
+        4.221,
+        2.202
+      ],
+      "source": "polyhaven:painted_wooden_cabinet",
+      "tris": 2227,
+      "url": "https://polyhaven.com/a/painted_wooden_cabinet"
+    },
+    "farm_candle": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_candle.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 3399,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_candle --from polyhaven:wooden_candlestick --tris 3400 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        0.348,
+        0.784,
+        0.352
+      ],
+      "source": "polyhaven:wooden_candlestick",
+      "tris": 3399,
+      "url": "https://polyhaven.com/a/wooden_candlestick"
+    },
+    "farm_chair": {
+      "collision": "Hull",
+      "file": "cache/models/glb/farm_chair.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 724,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_chair --from polyhaven:painted_wooden_chair_01 --tris 18000 --res 1k --collision Hull",
+      "res": "1k",
+      "size": [
+        1.542,
+        3.416,
+        1.928
+      ],
+      "source": "polyhaven:painted_wooden_chair_01",
+      "tris": 724,
+      "url": "https://polyhaven.com/a/painted_wooden_chair_01"
+    },
+    "farm_clock": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_clock.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 8382,
+      "objects": 3,
+      "remake": "python kit/tools/run.py model farm_clock --from polyhaven:vintage_grandfather_clock_01 --tris 14000 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        2.234,
+        7.824,
+        1.524
+      ],
+      "source": "polyhaven:vintage_grandfather_clock_01",
+      "tris": 8582,
+      "url": "https://polyhaven.com/a/vintage_grandfather_clock_01"
+    },
+    "farm_crate": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_crate.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 5508,
+      "objects": 3,
+      "remake": "python kit/tools/run.py model farm_crate --from polyhaven:wooden_crate_01 --tris 6600 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        2.947,
+        1.249,
+        1.461
+      ],
+      "source": "polyhaven:wooden_crate_01",
+      "tris": 6576,
+      "url": "https://polyhaven.com/a/wooden_crate_01"
+    },
+    "farm_dead_tree": {
+      "bark": "polyhaven:jolcham_oak_bark_01",
+      "collision": "Hull",
+      "file": "cache/models/glb/farm_dead_tree.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 7094,
+      "objects": 1,
+      "remake": "python kit/tools/run.py tree farm_dead_tree --seed 7 --height 46 --bark polyhaven:jolcham_oak_bark_01 --tris 16000 --tile 7",
+      "size": [
+        36.386,
+        46.0,
+        29.561
+      ],
+      "source": "generated:tree seed=7 height=46.0",
+      "tris": 7094
+    },
+    "farm_drawer": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_drawer.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 2064,
+      "objects": 7,
+      "remake": "python kit/tools/run.py model farm_drawer --from polyhaven:vintage_wooden_drawer_01 --tris 18000 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        6.125,
+        3.896,
+        3.596
+      ],
+      "source": "polyhaven:vintage_wooden_drawer_01",
+      "tris": 5184,
+      "url": "https://polyhaven.com/a/vintage_wooden_drawer_01"
+    },
+    "farm_frame_a": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_frame_a.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 2586,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_frame_a --from polyhaven:hanging_picture_frame_01 --tris 3000 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        2.121,
+        3.004,
+        0.056
+      ],
+      "source": "polyhaven:hanging_picture_frame_01",
+      "tris": 2586,
+      "url": "https://polyhaven.com/a/hanging_picture_frame_01"
+    },
+    "farm_frame_b": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_frame_b.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 3678,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_frame_b --from polyhaven:hanging_picture_frame_02 --tris 4000 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        2.685,
+        1.786,
+        0.118
+      ],
+      "source": "polyhaven:hanging_picture_frame_02",
+      "tris": 3678,
+      "url": "https://polyhaven.com/a/hanging_picture_frame_02"
+    },
+    "farm_jug": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_jug.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 5770,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_jug --from polyhaven:jug_01 --tris 5800 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        0.983,
+        0.755,
+        0.598
+      ],
+      "source": "polyhaven:jug_01",
+      "tris": 5770,
+      "url": "https://polyhaven.com/a/jug_01"
+    },
+    "farm_lantern_wood": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_lantern_wood.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 5619,
+      "objects": 3,
+      "remake": "python kit/tools/run.py model farm_lantern_wood --from polyhaven:wooden_lantern_01 --tris 8400 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        0.789,
+        1.893,
+        0.838
+      ],
+      "source": "polyhaven:wooden_lantern_01",
+      "tris": 8321,
+      "url": "https://polyhaven.com/a/wooden_lantern_01"
+    },
+    "farm_log": {
+      "collision": "Hull",
+      "file": "cache/models/glb/farm_log.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 16000,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_log --from polyhaven:dead_tree_trunk_02 --tris 16000 --res 1k --collision Hull",
+      "res": "1k",
+      "size": [
+        14.482,
+        3.765,
+        3.773
+      ],
+      "source": "polyhaven:dead_tree_trunk_02",
+      "tris": 16000,
+      "url": "https://polyhaven.com/a/dead_tree_trunk_02"
+    },
+    "farm_log_thin": {
+      "collision": "Hull",
+      "file": "cache/models/glb/farm_log_thin.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 9999,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_log_thin --from polyhaven:dead_tree_trunk --tris 10000 --res 1k --collision Hull",
+      "res": "1k",
+      "size": [
+        10.894,
+        1.033,
+        0.989
+      ],
+      "source": "polyhaven:dead_tree_trunk",
+      "tris": 9999,
+      "url": "https://polyhaven.com/a/dead_tree_trunk"
+    },
+    "farm_mirror": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_mirror.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 8000,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_mirror --from polyhaven:ornate_mirror_01 --tris 8000 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        1.737,
+        2.658,
+        0.093
+      ],
+      "source": "polyhaven:ornate_mirror_01",
+      "tris": 8000,
+      "url": "https://polyhaven.com/a/ornate_mirror_01"
+    },
+    "farm_nightstand": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_nightstand.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 2002,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_nightstand --from polyhaven:ClassicNightstand_01 --tris 18000 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        2.028,
+        2.5,
+        1.515
+      ],
+      "source": "polyhaven:ClassicNightstand_01",
+      "tris": 2002,
+      "url": "https://polyhaven.com/a/ClassicNightstand_01"
+    },
+    "farm_oil_lamp": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_oil_lamp.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 5856,
+      "objects": 3,
+      "remake": "python kit/tools/run.py model farm_oil_lamp --from polyhaven:vintage_oil_lamp --tris 7300 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        0.786,
+        2.863,
+        0.786
+      ],
+      "source": "polyhaven:vintage_oil_lamp",
+      "tris": 7208,
+      "url": "https://polyhaven.com/a/vintage_oil_lamp"
+    },
+    "farm_pot": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_pot.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 3542,
+      "objects": 2,
+      "remake": "python kit/tools/run.py model farm_pot --from polyhaven:pot_enamel_01 --tris 5000 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        0.939,
+        0.636,
+        0.645
+      ],
+      "source": "polyhaven:pot_enamel_01",
+      "tris": 4998,
+      "url": "https://polyhaven.com/a/pot_enamel_01"
+    },
+    "farm_rocking_chair": {
+      "collision": "Hull",
+      "file": "cache/models/glb/farm_rocking_chair.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 11866,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_rocking_chair --from polyhaven:Rockingchair_01 --tris 18000 --res 1k --collision Hull",
+      "res": "1k",
+      "size": [
+        2.529,
+        3.553,
+        2.977
+      ],
+      "source": "polyhaven:Rockingchair_01",
+      "tris": 11866,
+      "url": "https://polyhaven.com/a/Rockingchair_01"
+    },
+    "farm_shrub": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_shrub.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 2385,
+      "objects": 4,
+      "remake": "python kit/tools/run.py model farm_shrub --from polyhaven:shrub_03 --tris 17000 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        4.882,
+        1.439,
+        0.54
+      ],
+      "source": "polyhaven:shrub_03",
+      "tris": 8287,
+      "url": "https://polyhaven.com/a/shrub_03"
+    },
+    "farm_shrub_big": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_shrub_big.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 18000,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_shrub_big --from polyhaven:shrub_01 --tris 18000 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        9.237,
+        1.413,
+        0.781
+      ],
+      "source": "polyhaven:shrub_01",
+      "tris": 18000,
+      "url": "https://polyhaven.com/a/shrub_01"
+    },
+    "farm_sofa": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_sofa.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 5826,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_sofa --from polyhaven:painted_wooden_sofa --tris 18000 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        8.756,
+        4.575,
+        2.812
+      ],
+      "source": "polyhaven:painted_wooden_sofa",
+      "tris": 5826,
+      "url": "https://polyhaven.com/a/painted_wooden_sofa"
+    },
+    "farm_spade": {
+      "collision": "none",
+      "file": "cache/models/glb/farm_spade.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 5000,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_spade --from polyhaven:rusted_spade_01 --tris 5000 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        0.6,
+        3.932,
+        0.163
+      ],
+      "source": "polyhaven:rusted_spade_01",
+      "tris": 5000,
+      "url": "https://polyhaven.com/a/rusted_spade_01"
+    },
+    "farm_stool": {
+      "collision": "Hull",
+      "file": "cache/models/glb/farm_stool.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 5999,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_stool --from polyhaven:wooden_stool_01 --tris 6000 --res 1k --collision Hull",
+      "res": "1k",
+      "size": [
+        1.518,
+        1.562,
+        1.579
+      ],
+      "source": "polyhaven:wooden_stool_01",
+      "tris": 5999,
+      "url": "https://polyhaven.com/a/wooden_stool_01"
+    },
+    "farm_stove": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_stove.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 9350,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_stove --from polyhaven:scandinavian_masonry_heater --tris 12000 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        4.17,
+        8.43,
+        4.769
+      ],
+      "source": "polyhaven:scandinavian_masonry_heater",
+      "tris": 9350,
+      "url": "https://polyhaven.com/a/scandinavian_masonry_heater"
+    },
+    "farm_stump": {
+      "collision": "Hull",
+      "file": "cache/models/glb/farm_stump.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 15000,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_stump --from polyhaven:tree_stump_01 --tris 15000 --res 1k --collision Hull",
+      "res": "1k",
+      "size": [
+        5.091,
+        2.044,
+        5.679
+      ],
+      "source": "polyhaven:tree_stump_01",
+      "tris": 15000,
+      "url": "https://polyhaven.com/a/tree_stump_01"
+    },
+    "farm_suitcase": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_suitcase.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 2009,
+      "objects": 8,
+      "remake": "python kit/tools/run.py model farm_suitcase --from polyhaven:vintage_suitcase --tris 9000 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        5.744,
+        2.029,
+        0.854
+      ],
+      "source": "polyhaven:vintage_suitcase",
+      "tris": 8994,
+      "url": "https://polyhaven.com/a/vintage_suitcase"
+    },
+    "farm_table": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_table.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 600,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model farm_table --from polyhaven:painted_wooden_table --tris 18000 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        8.591,
+        3.424,
+        4.061
+      ],
+      "source": "polyhaven:painted_wooden_table",
+      "tris": 600,
+      "url": "https://polyhaven.com/a/painted_wooden_table"
+    },
+    "farm_wardrobe": {
+      "collision": "Box",
+      "file": "cache/models/glb/farm_wardrobe.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 8750,
+      "objects": 8,
+      "remake": "python kit/tools/run.py model farm_wardrobe --from polyhaven:vintage_cabinet_01 --tris 18000 --res 1k --collision Box",
+      "res": "1k",
+      "size": [
+        7.221,
+        7.981,
+        2.392
+      ],
+      "source": "polyhaven:vintage_cabinet_01",
+      "tris": 17996,
+      "url": "https://polyhaven.com/a/vintage_cabinet_01"
+    },
+    "lake_birch_a": {
+      "bark": "polyhaven:bark_platanus",
+      "collision": "Hull",
+      "file": "cache/models/glb/lake_birch_a.glb",
+      "leaves": "ambientcg:LeafSet009",
+      "license": "CC0 1.0",
+      "maxMeshTris": 3090,
+      "objects": 2,
+      "remake": "python kit/tools/run.py tree lake_birch_a --kind broadleaf --seed 31 --height 38 --bark polyhaven:bark_platanus --tris 16000 --tile 7 --leaves ambientcg:LeafSet009",
+      "size": [
+        30.426,
+        38.0,
+        30.583
+      ],
+      "source": "generated:broadleaf tree seed=31 height=38.0",
+      "tris": 4130
+    },
+    "lake_boulder": {
+      "collision": "Hull",
+      "file": "cache/models/glb/lake_boulder.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 5000,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model lake_boulder --from polyhaven:boulder_01 --tris 5000 --res 1k --collision Hull",
+      "res": "1k",
+      "size": [
+        4.584,
+        3.569,
+        6.533
+      ],
+      "source": "polyhaven:boulder_01",
+      "tris": 5000,
+      "url": "https://polyhaven.com/a/boulder_01"
+    },
+    "lake_fern": {
+      "collision": "none",
+      "file": "cache/models/glb/lake_fern.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 917,
+      "objects": 4,
+      "remake": "python kit/tools/run.py model lake_fern --from polyhaven:fern_02 --tris 2400 --res 1k --collision none",
+      "res": "1k",
+      "size": [
+        7.048,
+        1.522,
+        6.158
+      ],
+      "source": "polyhaven:fern_02",
+      "tris": 2396,
+      "url": "https://polyhaven.com/a/fern_02"
+    },
+    "lake_fire_pit": {
+      "collision": "Hull",
+      "file": "cache/models/glb/lake_fire_pit.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 3887,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model lake_fire_pit --from polyhaven:stone_fire_pit --tris 3900 --res 1k --collision Hull",
+      "res": "1k",
+      "size": [
+        5.173,
+        1.387,
+        5.119
+      ],
+      "source": "polyhaven:stone_fire_pit",
+      "tris": 3887,
+      "url": "https://polyhaven.com/a/stone_fire_pit"
+    },
+    "lake_grass_patch": {
+      "collision": "none",
+      "file": "cache/models/glb/lake_grass_patch.glb",
+      "leaves": "ambientcg:Foliage001",
+      "license": "CC0 1.0",
+      "maxMeshTris": 240,
+      "objects": 1,
+      "remake": "python kit/tools/run.py clump lake_grass_patch --leaves ambientcg:Foliage001 --seed 3 --count 40 --radius 6 --height 2.6",
+      "size": [
+        13.654,
+        3.074,
+        13.615
+      ],
+      "source": "generated:clump seed=3",
+      "tris": 240
+    },
+    "lake_log": {
+      "collision": "Hull",
+      "file": "cache/models/glb/lake_log.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 3000,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model lake_log --from polyhaven:dead_tree_trunk --tris 3000 --res 1k --collision Hull",
+      "res": "1k",
+      "size": [
+        10.882,
+        1.035,
+        0.987
+      ],
+      "source": "polyhaven:dead_tree_trunk",
+      "tris": 3000,
+      "url": "https://polyhaven.com/a/dead_tree_trunk"
+    },
+    "lake_maple_a": {
+      "bark": "polyhaven:bark_brown_02",
+      "collision": "Hull",
+      "file": "cache/models/glb/lake_maple_a.glb",
+      "leaves": "ambientcg:LeafSet010",
+      "license": "CC0 1.0",
+      "maxMeshTris": 3090,
+      "objects": 2,
+      "remake": "python kit/tools/run.py tree lake_maple_a --kind broadleaf --seed 11 --height 42 --bark polyhaven:bark_brown_02 --tris 16000 --tile 7 --leaves ambientcg:LeafSet010",
+      "size": [
+        34.091,
+        42.0,
+        36.152
+      ],
+      "source": "generated:broadleaf tree seed=11 height=42.0",
+      "tris": 4130
+    },
+    "lake_maple_b": {
+      "bark": "polyhaven:bark_brown_02",
+      "collision": "Hull",
+      "file": "cache/models/glb/lake_maple_b.glb",
+      "leaves": "ambientcg:LeafSet010",
+      "license": "CC0 1.0",
+      "maxMeshTris": 3090,
+      "objects": 2,
+      "remake": "python kit/tools/run.py tree lake_maple_b --kind broadleaf --seed 23 --height 36 --bark polyhaven:bark_brown_02 --tris 16000 --tile 7 --leaves ambientcg:LeafSet010",
+      "size": [
+        31.171,
+        36.0,
+        34.791
+      ],
+      "source": "generated:broadleaf tree seed=23 height=36.0",
+      "tris": 4114
+    },
+    "lake_mossy_rocks": {
+      "collision": "Hull",
+      "file": "cache/models/glb/lake_mossy_rocks.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 2358,
+      "objects": 6,
+      "remake": "python kit/tools/run.py model lake_mossy_rocks --from polyhaven:rock_moss_set_01 --tris 9000 --res 1k --collision Hull",
+      "res": "1k",
+      "size": [
+        28.6,
+        6.334,
+        24.798
+      ],
+      "source": "polyhaven:rock_moss_set_01",
+      "tris": 8995,
+      "url": "https://polyhaven.com/a/rock_moss_set_01"
+    },
+    "lake_pier": {
+      "collision": "Default",
+      "file": "cache/models/glb/lake_pier.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 4942,
+      "objects": 7,
+      "remake": "python kit/tools/run.py model lake_pier --from polyhaven:modular_wooden_pier --tris 18000 --res 1k --collision Default",
+      "res": "1k",
+      "size": [
+        11.08,
+        26.848,
+        67.962
+      ],
+      "source": "polyhaven:modular_wooden_pier",
+      "tris": 17995,
+      "url": "https://polyhaven.com/a/modular_wooden_pier"
+    },
+    "lake_pine_a": {
+      "bark": "polyhaven:pine_bark",
+      "collision": "Hull",
+      "file": "cache/models/glb/lake_pine_a.glb",
+      "leaves": "needles",
+      "license": "CC0 1.0",
+      "maxMeshTris": 2008,
+      "objects": 2,
+      "remake": "python kit/tools/run.py tree lake_pine_a --kind pine --seed 5 --height 48 --bark polyhaven:pine_bark --tris 16000 --tile 7 --leaves needles",
+      "size": [
+        38.591,
+        48.0,
+        37.317
+      ],
+      "source": "generated:pine tree seed=5 height=48.0",
+      "tris": 3662
+    },
+    "lake_pine_b": {
+      "bark": "polyhaven:pine_bark",
+      "collision": "Hull",
+      "file": "cache/models/glb/lake_pine_b.glb",
+      "leaves": "needles",
+      "license": "CC0 1.0",
+      "maxMeshTris": 1944,
+      "objects": 2,
+      "remake": "python kit/tools/run.py tree lake_pine_b --kind pine --seed 9 --height 40 --bark polyhaven:pine_bark --tris 16000 --tile 7 --leaves needles",
+      "size": [
+        31.601,
+        40.0,
+        30.832
+      ],
+      "source": "generated:pine tree seed=9 height=40.0",
+      "tris": 3534
+    },
+    "lake_reeds": {
+      "collision": "none",
+      "file": "cache/models/glb/lake_reeds.glb",
+      "leaves": "ambientcg:Foliage005",
+      "license": "CC0 1.0",
+      "maxMeshTris": 156,
+      "objects": 1,
+      "remake": "python kit/tools/run.py clump lake_reeds --leaves ambientcg:Foliage005 --seed 4 --count 26 --radius 3 --height 5",
+      "size": [
+        10.555,
+        5.9,
+        10.077
+      ],
+      "source": "generated:clump seed=4",
+      "tris": 156
+    },
+    "lake_rock_face": {
+      "collision": "Hull",
+      "file": "cache/models/glb/lake_rock_face.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 14000,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model lake_rock_face --from polyhaven:rock_face_02 --tris 14000 --res 1k --collision Hull",
+      "res": "1k",
+      "size": [
+        9.68,
+        8.833,
+        7.592
+      ],
+      "source": "polyhaven:rock_face_02",
+      "tris": 14000,
+      "url": "https://polyhaven.com/a/rock_face_02"
+    },
+    "lake_stump": {
+      "collision": "Hull",
+      "file": "cache/models/glb/lake_stump.glb",
+      "license": "CC0 1.0",
+      "maxMeshTris": 3999,
+      "objects": 1,
+      "remake": "python kit/tools/run.py model lake_stump --from polyhaven:tree_stump_01 --tris 4000 --res 1k --collision Hull",
+      "res": "1k",
+      "size": [
+        5.085,
+        2.043,
+        5.683
+      ],
+      "source": "polyhaven:tree_stump_01",
+      "tris": 3999,
+      "url": "https://polyhaven.com/a/tree_stump_01"
+    }
+  },
+  "skies": {
+    "lake_sky": {
+      "license": "CC0 1.0",
+      "remake": "python kit/tools/run.py sky lake_sky --from polyhaven:hilly_terrain_01_puresky --azimuth -40",
+      "source": "polyhaven:hilly_terrain_01_puresky",
+      "sun": [
+        -0.6239,
+        0.2407,
+        -0.7435
+      ],
+      "url": "https://polyhaven.com/a/hilly_terrain_01_puresky",
+      "yaw": -76.35
+    }
+  },
+  "sounds": {
+    "backrooms_hum": {
+      "license": "CC0 1.0",
+      "source": "generated by kit/tools/audio.py"
+    },
+    "farm_wind": {
+      "license": "CC0 1.0",
+      "source": "generated by kit/tools/audio.py"
+    },
+    "lake_water": {
+      "license": "CC0 1.0",
+      "source": "generated by kit/tools/audio.py"
+    },
+    "lake_wind": {
+      "license": "CC0 1.0",
+      "source": "generated by kit/tools/audio.py"
+    }
+  }
+}
