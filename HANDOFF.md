@@ -12,11 +12,11 @@
 | Giọng đọc CapCut | `tools/voice_studio/` (engine Voice Studio của người dùng + SDK `vendor/capcut-tts-api`) | Chạy thật trên Actions, không cần secret. ~4–5 phút / 5 câu. Tập mẫu `episodes/_template/narration.*` đang dùng CapCut. |
 | Tool phân tích video tham khảo | `tools/ref.py`, `tools/ref_remote.sh`, workflow `ref-analyze` | Đường ống chạy được, nhưng **YouTube chặn bot** → xem "Chờ người dùng". |
 
+| HyperFrames | `package.json` (ghim `hyperframes@0.9.30`), `hyperframes.json`, `vendor/three` (r187), `vendor/gsap` (3.15.0) | Workspace gốc là project HyperFrames. npm chạy được ngay trong cloud (có Chrome + FFmpeg). |
+| Sân khấu | `engine/stage.js` | Renderer 1080×1920, camera (`setCamera`, `orbit`), mặt trời đổ bóng theo điểm nhìn, `onFrame(t)` + `hf-seek`. |
+| Mốc kiểm chứng | `episodes/_test_walk/index.html` | `npm run test:walk` → `output/test_walk.mp4` 1080×1920, 30 fps, 150 frame, ~35 s render. |
+
 ### Chưa làm (theo thứ tự ưu tiên)
-1. **Khởi tạo HyperFrames**: `npx hyperframes init` + `package.json` ghim phiên bản; thử ngay khung dọc 1080×1920
-   (`data-width="1080" data-height="1920" data-fps="30"`).
-2. **`engine/stage.js`**: renderer + camera + ánh sáng; `window.THREE = THREE`; nghe `hf-seek` → `render(t)`.
-   Mốc kiểm chứng: render 5 giây R6 đi bộ ra MP4 dọc.
 3. **`engine/town.js`**: thị trấn từ Kenney City Kit (Roads/Commercial/Suburban, CC0) theo seed; ghi `assets/manifest.json`.
 4. **`engine/timeline.js` + `engine/shots.js`**: đọc `episode.js`, `shots.js`, `narration.json` (start/end từng câu);
    ~11 loại shot (xem CLAUDE.md).

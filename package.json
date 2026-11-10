@@ -1,0 +1,15 @@
+{
+  "name": "3jsstudio",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "npx --yes hyperframes@0.9.30 preview",
+    "check": "npx --yes hyperframes@0.9.30 check",
+    "snapshot": "npx --yes hyperframes@0.9.30 snapshot",
+    "render": "npx --yes hyperframes@0.9.30 render",
+    "test:walk": "npx --yes hyperframes@0.9.30 render . -c episodes/_test_walk/index.html -o output/test_walk.mp4"
+  },
+  "hyperframes": "0.9.30",
+  "vendored": { "three": "0.187.0", "gsap": "3.15.0" }
+}

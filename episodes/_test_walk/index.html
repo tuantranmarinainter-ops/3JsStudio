@@ -1,0 +1,100 @@
+<!doctype html>
+<!-- Mốc kiểm chứng: 5 giây, khung dọc 1080×1920, nhân vật R6 đi bộ + camera bám theo.
+     Render: npx hyperframes render . -c episodes/_test_walk/index.html -o output/test_walk.mp4 -->
+<html lang="vi" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>test-walk</title>
+    <script src="../../vendor/gsap/gsap.min.js"></script>
+    <script type="importmap">
+      { "imports": { "three": "../../vendor/three/three.module.js" } }
+    </script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #9fd3ff; }
+      #root { position: relative; width: 1080px; height: 1920px; }
+      #stage { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+      #title {
+        position: absolute; left: 0; right: 0; top: 260px; text-align: center;
+        font: 900 96px/1.1 system-ui, sans-serif; color: #fff;
+        -webkit-text-stroke: 10px #1b1b1b; paint-order: stroke fill;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="5"
+         data-width="1080" data-height="1920" data-fps="30">
+      <canvas id="stage" width="1080" height="1920"></canvas>
+      <h1 id="title" class="clip" data-start="0" data-duration="5" data-track-index="1">Ở thị trấn này…</h1>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo('#title', { opacity: 0, y: 40, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: 'back.out(2)' }, 0.2);
+      tl.to('#title', { opacity: 0, duration: 0.3 }, 2.4);
+      window.__timelines = window.__timelines || {};
+      window.__timelines['main'] = tl;
+    </script>
+
+    <script type="module">
+      import * as THREE from 'three';
+      import { createStage, lerp, span, rng } from '../../engine/stage.js';
+      import { createR6, randomLook } from '../../engine/r6.js';
+
+      const stage = createStage(THREE, { canvas: document.getElementById('stage') });
+      const { scene } = stage;
+
+      // --- Đạo cụ tạm (sẽ thay bằng town.js + Kenney): đường, vạch kẻ, nhà khối ---
+      const road = new THREE.Mesh(new THREE.PlaneGeometry(200, 10), new THREE.MeshStandardMaterial({ color: '#4a4a52', roughness: 1 }));
+      road.name = 'road'; road.rotation.x = -Math.PI / 2; road.position.y = 0.01; road.receiveShadow = true; scene.add(road);
+      const stripeMat = new THREE.MeshStandardMaterial({ color: '#f4f1e1' });
+      for (let i = -40; i < 40; i++) {
+        const s = new THREE.Mesh(new THREE.PlaneGeometry(2.5, 0.35), stripeMat);
+        s.name = `stripe_${i}`; s.rotation.x = -Math.PI / 2; s.position.set(i * 5, 0.02, 0); scene.add(s);
+      }
+      const r = rng(7);
+      const houseColors = ['#f6c667', '#e98074', '#8fb8de', '#c3a6e0', '#f2f2f2', '#9ad3a8'];
+      for (let i = -12; i < 12; i++) {
+        const w = 6 + r() * 4, h = 6 + r() * 10, d = 6 + r() * 3;
+        const house = new THREE.Mesh(new THREE.BoxGeometry(w, h, d),
+          new THREE.MeshStandardMaterial({ color: houseColors[Math.floor(r() * houseColors.length)], roughness: 0.8 }));
+        house.name = `house_${i}`; house.position.set(i * 11 + r() * 2, h / 2, -14 - d / 2);
+        house.castShadow = house.receiveShadow = true; scene.add(house);
+        const roof = new THREE.Mesh(new THREE.BoxGeometry(w + 0.6, 0.8, d + 0.6), new THREE.MeshStandardMaterial({ color: '#5b4636' }));
+        roof.name = `roof_${i}`; roof.position.set(house.position.x, h + 0.4, house.position.z); roof.castShadow = true; scene.add(roof);
+      }
+
+      // --- Diễn viên ---
+      const hero = createR6(THREE, { name: 'hero', shirt: '#e74c3c', pants: '#2c3e50', face: 'smile', hat: 'cap', hatColor: '#2d6cdf' });
+      hero.root.rotation.y = Math.PI / 2;  // mặt nhìn +X (hướng đi)
+      scene.add(hero.root);
+
+      const crowd = [];
+      for (let i = 0; i < 6; i++) {
+        const c = createR6(THREE, { name: `crowd_${i}`, ...randomLook(100 + i) });
+        c.root.position.set(-6 + i * 7, 0, -8 + (i % 2) * 1.5);
+        c.root.rotation.y = (i % 2 ? 0.4 : -0.4);
+        scene.add(c.root);
+        crowd.push(c);
+      }
+
+      // --- Chuyển động: hàm thuần của t ---
+      const SPEED = 5.5;   // stud/giây
+      const X0 = -8;
+      stage.onFrame((t) => {
+        const x = X0 + SPEED * t;
+        hero.root.position.set(x, 0, 2);
+        hero.animate('walk', t);
+        crowd.forEach((c, i) => c.animate(i % 3 === 0 ? 'wave' : 'idle', t + i * 0.37));
+
+        // camera: 0–2.5s góc 3/4 phía trước bám theo, 2.5–5s lùi ra rộng dần
+        const k = span(t, 2.5, 5);
+        const yaw = lerp(0.9, 0.35, k);
+        const dist = lerp(18, 26, k);
+        stage.orbit([x + 1.5, 0, 2], { yaw, height: lerp(3.5, 8, k), dist, lookUp: lerp(4.5, 5, k) });
+      });
+      stage.start();
+    </script>
+  </body>
+</html>
