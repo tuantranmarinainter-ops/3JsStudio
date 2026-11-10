@@ -1,0 +1,73 @@
+# Tải + phân tích video tham khảo trên GitHub Actions (máy có Internet).
+# Kích hoạt: ghi URL / "ytsearchN:từ khoá" vào refs/queue.txt (mỗi dòng 1 mục) rồi push.
+# Kết quả (report.md, sheets, frames, transcript) được commit lại vào refs/ — KHÔNG commit video.
+name: ref-analyze
+
+on:
+  push:
+    paths: ["refs/queue.txt"]
+  workflow_dispatch:
+
+concurrency:
+  group: ref-analyze
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Đọc hàng đợi
+        id: q
+        run: |
+          touch refs/queue.txt
+          grep -vE '^\s*(#|$)' refs/queue.txt > /tmp/targets.txt || true
+          echo "count=$(wc -l < /tmp/targets.txt)" >> "$GITHUB_OUTPUT"
+          cat /tmp/targets.txt
+
+      - uses: actions/setup-python@v5
+        if: steps.q.outputs.count != '0'
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: .github/workflows/ref.yml
+
+      - name: Cài yt-dlp, ffmpeg, whisper (CPU)
+        if: steps.q.outputs.count != '0'
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q -U yt-dlp
+          pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -q openai-whisper
+
+      - name: Cookies YouTube (tuỳ chọn, từ secret YT_COOKIES)
+        if: steps.q.outputs.count != '0'
+        env:
+          YT_COOKIES: ${{ secrets.YT_COOKIES }}
+        run: |
+          if [ -n "$YT_COOKIES" ]; then printf '%s' "$YT_COOKIES" > /tmp/cookies.txt; echo "ARGS=--cookies /tmp/cookies.txt" >> "$GITHUB_ENV"; fi
+
+      - name: Phân tích
+        if: steps.q.outputs.count != '0'
+        run: |
+          rm -f refs/errors.md refs/summary.md
+          mapfile -t T < /tmp/targets.txt
+          python tools/ref.py "${T[@]}" --out refs --drop-video $ARGS || echo "FAILED=1" >> "$GITHUB_ENV"
+          find refs -type f \( -name '*.mp4' -o -name '*.webm' -o -name '*.part' -o -name '*.wav' \) -delete
+
+      - name: Ghi lại và commit kết quả
+        if: steps.q.outputs.count != '0'
+        run: |
+          stamp="$(date -u +%Y-%m-%dT%H:%MZ) run=${GITHUB_RUN_ID} ${FAILED:+FAILED}"
+          while IFS= read -r t; do echo "$stamp	$t" >> refs/done.txt; done < /tmp/targets.txt
+          printf '# Mỗi dòng: URL hoặc ytsearchN:từ khoá — push để chạy phân tích\n' > refs/queue.txt
+          git config user.name "ref-bot"
+          git config user.email "ref-bot@users.noreply.github.com"
+          git add refs
+          git commit -m "refs: phân tích ${GITHUB_RUN_ID}" || exit 0
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done

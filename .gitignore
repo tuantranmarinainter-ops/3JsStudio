@@ -1,0 +1,8 @@
+node_modules/
+output/
+assets/polyfork/
+refs/**/*.mp4
+refs/**/*.webm
+refs/**/*.part
+refs/**/*.wav
+__pycache__/
