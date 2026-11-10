@@ -1,0 +1,205 @@
+{
+ "size": [
+  1024,
+  1024
+ ],
+ "cell": [
+  256,
+  128
+ ],
+ "sprites": {
+  "eyes.open": [
+   0,
+   0,
+   256,
+   128
+  ],
+  "eyes.half": [
+   256,
+   0,
+   256,
+   128
+  ],
+  "eyes.closed": [
+   512,
+   0,
+   256,
+   128
+  ],
+  "eyes.happy": [
+   768,
+   0,
+   256,
+   128
+  ],
+  "eyes.wide": [
+   0,
+   128,
+   256,
+   128
+  ],
+  "eyes.squint": [
+   256,
+   128,
+   256,
+   128
+  ],
+  "eyes.sad": [
+   512,
+   128,
+   256,
+   128
+  ],
+  "eyes.look_up": [
+   768,
+   128,
+   256,
+   128
+  ],
+  "brows.neutral": [
+   0,
+   256,
+   256,
+   128
+  ],
+  "brows.raised": [
+   256,
+   256,
+   256,
+   128
+  ],
+  "brows.worried": [
+   512,
+   256,
+   256,
+   128
+  ],
+  "brows.angry": [
+   768,
+   256,
+   256,
+   128
+  ],
+  "mouth.smile": [
+   0,
+   384,
+   256,
+   128
+  ],
+  "mouth.grin": [
+   256,
+   384,
+   256,
+   128
+  ],
+  "mouth.open": [
+   512,
+   384,
+   256,
+   128
+  ],
+  "mouth.o": [
+   768,
+   384,
+   256,
+   128
+  ],
+  "mouth.frown": [
+   0,
+   512,
+   256,
+   128
+  ],
+  "mouth.flat": [
+   256,
+   512,
+   256,
+   128
+  ],
+  "mouth.wobble": [
+   512,
+   512,
+   256,
+   128
+  ],
+  "mouth.laugh": [
+   768,
+   512,
+   256,
+   128
+  ],
+  "mouth.smallsmile": [
+   0,
+   640,
+   256,
+   128
+  ],
+  "mouth.scream": [
+   256,
+   640,
+   256,
+   128
+  ],
+  "mouth.pout": [
+   512,
+   640,
+   256,
+   128
+  ],
+  "mouth.teeth_clench": [
+   768,
+   640,
+   256,
+   128
+  ],
+  "extra.blush": [
+   0,
+   768,
+   256,
+   128
+  ],
+  "extra.tears": [
+   256,
+   768,
+   256,
+   128
+  ],
+  "extra.sweat": [
+   512,
+   768,
+   256,
+   128
+  ],
+  "extra.shine": [
+   768,
+   768,
+   256,
+   128
+  ],
+  "extra.eyelashes": [
+   0,
+   896,
+   256,
+   128
+  ],
+  "extra.freckles": [
+   256,
+   896,
+   256,
+   128
+  ],
+  "extra.nose": [
+   512,
+   896,
+   256,
+   128
+  ],
+  "extra.cold_cheeks": [
+   768,
+   896,
+   256,
+   128
+  ]
+ },
+ "note": "M\u1ed7i \u00f4 256\u00d7128, n\u1ec1n TRONG SU\u1ed0T. M\u1eaft: c\u1ea3 c\u1eb7p trong 1 \u00f4, t\u00e2m gi\u1eefa 2 m\u1eaft \u1edf gi\u1eefa \u00f4. Mi\u1ec7ng: t\u00e2m \u1edf gi\u1eefa \u00f4. L\u00f4ng m\u00e0y: c\u1eb7p l\u00f4ng m\u00e0y n\u1eb1m n\u1eeda tr\u00ean \u00f4. Engine gh\u00e9p: brows (y=0.28) / eyes (y=0.42) / mouth (y=0.72) theo chi\u1ec1u cao m\u1eb7t."
+}
