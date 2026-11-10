@@ -146,6 +146,14 @@ Render 140 shot:
 
 ## Sử dụng agent
 - Claude ĐƯỢC PHÉP dùng agent nhỏ hơn (Haiku/Sonnet) để hỗ trợ, không cần hỏi lại.
+- **Huy động nhiều agent chạy song song** (gọi nhiều Agent trong cùng 1 lượt, chạy nền) mỗi khi việc chia được thành
+  phần độc lập: các chương shot, các asset/env, các đoạn contact sheet cần kiểm, các đoạn render.
+- **Chọn model theo độ khó** (luôn ghi rõ `model` khi gọi Agent):
+  - `haiku`: việc đơn giản, lặp lại — tra cứu, đổi tên, chép số liệu, kiểm tra định dạng, đọc log.
+  - `sonnet` (mặc định cho agent phụ): viết/sửa shot theo mẫu, dựng asset/env theo skill, xem contact sheet và báo lỗi.
+  - `opus`: CHỈ khi việc khó — kiến trúc engine, IK/rig, lỗi khó tìm, quyết định đạo diễn ảnh hưởng cả phim.
+- Mỗi agent chỉ sửa file/khối việc của mình (vd. `shots.js` đoạn s046–s090), không sửa engine dùng chung nếu không
+  được giao; agent chính gộp kết quả, chạy kiểm tra và commit.
 - 3 vai:
   - **kịch bản**: luật, twist, lời dẫn; bẻ câu thoại thành shot — mỗi agent nhận 1 phần (~35–55 shot) chạy song song.
   - **asset**: tìm/tải/manifest.
