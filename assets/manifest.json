@@ -10812,5 +10812,14 @@
    "z": 4.3
   },
   "scale": 1.0
+ },
+ {
+  "id": "characters/r15_body",
+  "src": "assets/characters/r15_body.glb",
+  "source": "sketchfab.com/3d-models/roblox-r15-model-4fb241582b0a4c50b55f890183866b4e",
+  "license": "CC BY 4.0",
+  "credit": "\"ROBLOX R15 Model\" by ShiroTheDream, CC BY 4.0",
+  "scale": 1.0,
+  "note": "Z-up, cao 5.1 (chân z=-3, đỉnh đầu z=2.1); 8 khối rời"
  }
 ]
