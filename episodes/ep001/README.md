@@ -13,7 +13,7 @@ Dựng lại bằng three.js + HyperFrames theo tài liệu bàn giao của ngư
 ## Chạy
 ```bash
 npm run dev                      # HyperFrames Studio: play/pause/seek/từng frame → mở episodes/ep001/index.html
-npm run render:ep001             # → output/ep001.mp4 (H.264 yuv420p + AAC), ~25 phút trên 4 CPU
+npm run render:ep001             # → output/ep001.mp4 (H.264 yuv420p + AAC), ~37 phút trên 4 CPU (hoặc workflow `render` trên Actions: 10 đoạn song song, ~5 phút/đoạn)
 npm run png:ep001                # PNG sequence theo frame (kiểm chứng)
 # render 1 đoạn (giây):   npx hyperframes render . -c episodes/ep001/index.html --start 40 --end 52 -o output/part.mp4
 # xem nhanh vài khung:   node tools/peek.mjs "episodes/ep001/index.html?peek=1" 12.5,30 out.png
@@ -33,7 +33,7 @@ Trích lại frame tham chiếu: `python tools/ref_frames.py refs/ngoinha <Phầ
   `engine/timeline.js`.
 
 ## Đã kiểm
-- Đủ 5.132 frame, 30 fps, 1080×1920; audio AAC đồng bộ từ 0 s.
+- `output/ep001.mp4`: ffprobe đếm đúng **5.132 frame**, 30/1 fps, 1080×1920, H.264 yuv420p, AAC, 171,067 s, 91 MB.
 - Seek trực tiếp tại F0, 190, 258, 996, 1271, 1671, 3267, 4479, 4750, 5055, 5131: **giống từng pixel** dù render
   xuôi hay ngược (mọi chuyển động là hàm thuần của t; hạt có seed).
 - Cut list: dò tự động (chênh lệch pixel + histogram), 145 shot; khớp đúng mọi mốc cắt tài liệu nêu
