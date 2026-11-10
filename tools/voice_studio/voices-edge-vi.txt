@@ -1,0 +1,2 @@
+vi-VN-HoaiMyNeural                       vi-VN    Female   
+vi-VN-NamMinhNeural                      vi-VN    Male     
