@@ -21,7 +21,54 @@ export const LIGHTS = {
 
 const hash = (i, s) => { let x = Math.imul(i ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(s + 1, 0xc2b2ae35); x ^= x >>> 13; x = Math.imul(x, 0x27d4eb2f); x ^= x >>> 16; return (x >>> 0) / 4294967296; };
 
-export function createEnvs(THREE, stage, K) {
+// Asset Kenney dùng trong env (index.html gọi A.load(ENV_ASSETS) trước khi createEnvs).
+export const ENV_ASSETS = [
+  ...'abcdefghijklmnopqrstu'.split('').map((c) => `city-kit-suburban/building-type-${c}`),
+  'city-kit-suburban/tree-large', 'city-kit-suburban/tree-small', 'city-kit-suburban/fence-1x4', 'city-kit-suburban/planter',
+  'city-kit-roads/light-square', 'city-kit-roads/light-curved',
+  ...['A', 'B', 'C', 'D'].map((c) => `nature-kit/tree_pineTall${c}_detailed`), ...['A', 'B', 'C', 'D', 'E', 'F'].map((c) => `nature-kit/tree_pineRound${c}`),
+  'nature-kit/tree_palmTall', 'nature-kit/tree_palmDetailedTall', 'nature-kit/tree_palmBend', 'nature-kit/tree_palmDetailedShort',
+  'nature-kit/tree_oak', 'nature-kit/tree_detailed', 'nature-kit/tree_fat', 'nature-kit/tree_default', 'nature-kit/tree_tall',
+  'nature-kit/plant_bushLarge', 'nature-kit/plant_bushDetailed', 'nature-kit/plant_bush', 'nature-kit/flower_redA', 'nature-kit/flower_yellowB', 'nature-kit/flower_purpleA',
+  ...['A', 'B', 'C', 'D', 'E', 'F'].map((c) => `nature-kit/rock_large${c}`), ...['A', 'B', 'C', 'D'].map((c) => `nature-kit/stone_large${c}`),
+  'nature-kit/rock_tallA', 'nature-kit/rock_tallC', 'nature-kit/cactus_tall', 'nature-kit/cactus_short', 'nature-kit/log', 'nature-kit/stump_round',
+  'pirate-kit/ship-large', 'pirate-kit/ship-wreck', 'pirate-kit/rocks-a', 'pirate-kit/rocks-b', 'pirate-kit/rocks-c', 'pirate-kit/rocks-sand-a', 'pirate-kit/rocks-sand-b',
+  'pirate-kit/palm-detailed-straight', 'pirate-kit/palm-detailed-bend', 'pirate-kit/barrel', 'pirate-kit/crate', 'pirate-kit/chest',
+  'furniture-kit/kitchenCabinet', 'furniture-kit/kitchenCabinetDrawer', 'furniture-kit/kitchenSink', 'furniture-kit/kitchenStove', 'furniture-kit/kitchenCabinetUpper',
+  'furniture-kit/pottedPlant', 'furniture-kit/plantSmall1', 'furniture-kit/bookcaseOpen', 'furniture-kit/sideTable', 'furniture-kit/lampRoundTable', 'furniture-kit/rugRound', 'furniture-kit/coatRack',
+];
+
+export function createEnvs(THREE, stage, K0, A = null) {
+  // Bọc bộ dựng-bằng-code: có model Kenney thì dùng, không thì về bản code (phim vẫn render khi thiếu asset).
+  const _box = new THREE.Box3(), _sz = new THREE.Vector3();
+  const fit = (id, size, { axis = 'y', seed = 0 } = {}) => {
+    if (!A || !A.has(id)) return null;
+    const o = A.instance(id); _box.setFromObject(o); _box.getSize(_sz);
+    const cur = axis === 'xz' ? Math.max(_sz.x, _sz.z) : _sz[axis];
+    const k = size / Math.max(1e-4, cur); o.scale.multiplyScalar(k);
+    _box.setFromObject(o); const holder = new THREE.Group(); holder.name = 'kn_' + id.split('/')[1];
+    o.position.y -= _box.min.y; o.position.x -= (_box.min.x + _box.max.x) / 2; o.position.z -= (_box.min.z + _box.max.z) / 2;
+    holder.add(o); return holder;
+  };
+  const pick = (ids, i) => { const ok = ids.filter((id) => A && A.has(id)); return ok.length ? ok[Math.abs(i) % ok.length] : null; };
+  const pickFit = (ids, i, size, opt) => { const id = pick(ids, i); return id ? fit(id, size, opt) : null; };
+  const PINES = ['A', 'B', 'C', 'D'].map((c) => `nature-kit/tree_pineTall${c}_detailed`).concat(['A', 'B', 'C', 'D', 'E', 'F'].map((c) => `nature-kit/tree_pineRound${c}`));
+  const PALMS = ['nature-kit/tree_palmTall', 'nature-kit/tree_palmDetailedTall', 'nature-kit/tree_palmBend', 'pirate-kit/palm-detailed-straight', 'pirate-kit/palm-detailed-bend'];
+  const LEAFY = ['nature-kit/tree_oak', 'nature-kit/tree_detailed', 'nature-kit/tree_fat', 'nature-kit/tree_default', 'nature-kit/tree_tall', 'city-kit-suburban/tree-large'];
+  const ROCKS = ['A', 'B', 'C', 'D', 'E', 'F'].map((c) => `nature-kit/rock_large${c}`).concat(['pirate-kit/rocks-a', 'pirate-kit/rocks-b', 'pirate-kit/rocks-c']);
+  const BUSH = ['nature-kit/plant_bushLarge', 'nature-kit/plant_bushDetailed', 'nature-kit/plant_bush'];
+  let ci = 0;
+  const K = Object.create(K0);
+  K.pine = (h = 12, snow = false) => (snow ? null : pickFit(PINES, ci++, h)) || K0.pine(h, snow);
+  K.palm = (h = 14, lean) => pickFit(PALMS, ci++, h) || K0.palm(h, lean);
+  K.roundTree = (h = 10, color) => pickFit(LEAFY, ci++, h * 1.2) || K0.roundTree(h, color);
+  K.jungleTree = (h = 16) => pickFit(LEAFY, ci++, h) || K0.jungleTree(h);
+  K.bush = (r = 2, color) => pickFit(BUSH, ci++, r * 1.4) || K0.bush(r, color);
+  K.rock = (r = 2, color, sd = 1) => pickFit(ROCKS, sd * 7 + ci++, r * 2.2, { axis: 'xz' }) || K0.rock(r, color, sd);
+  K.streetLamp = () => pickFit(['city-kit-roads/light-square', 'city-kit-roads/light-curved'], 0, 10) || K0.streetLamp();
+  K.fence = (len = 10) => { const f = fit('city-kit-suburban/fence-1x4', len, { axis: 'xz' }); return f || K0.fence(len); };
+  K.ship = (o = {}) => fit(o.sails === false ? 'pirate-kit/ship-wreck' : 'pirate-kit/ship-large', 30, { axis: 'xz' }) || K0.ship(o);
+  const kenneyHouse = (seed) => pickFit('abcdefghijklmnopqrstu'.split('').map((c) => `city-kit-suburban/building-type-${c}`), seed, 30, { axis: 'xz' });
   const { scene } = stage;
   const envs = {};
   const C = (c) => new THREE.Color(c);
@@ -79,11 +126,12 @@ export function createEnvs(THREE, stage, K) {
     const hole = plane(26, 20, mat('#2e2219'), 0.07, 'lot_hole'); hole.visible = false; g.add(hole);
     const cols = [['#e3d5b8', '#5b6f8f'], ['#9fc5e8', '#3b4a6b'], ['#f2c6a0', '#7a3b2e'], ['#c8e0b0', '#4a5a3a'], ['#f4f1ea', '#2f6f6a'], ['#e8b4b8', '#5b3b4b']];
     let k = 0;
-    for (const x of [-120, -62, 62, 120, 178, -178, 236, -236]) { const [c, r] = cols[k++ % cols.length]; const h = place(g, nbHouse(c, r, k), x, 0, 0, 0, 1.1); nbWins.push(h.userData.win); }
-    for (const x of [-150, -90, -30, 30, 90, 150, 210, -210]) { const [c, r] = cols[k++ % cols.length]; const h = place(g, nbHouse(c, r, k), x, 0, 125, Math.PI, 1.1); nbWins.push(h.userData.win); }
+    for (const x of [-120, -62, 62, 120, 178, -178, 236, -236]) { const [c, r] = cols[k++ % cols.length]; const kh = kenneyHouse(k * 3); if (kh) place(g, kh, x, 0, 0, 0); else { const h = place(g, nbHouse(c, r, k), x, 0, 0, 0, 1.1); nbWins.push(h.userData.win); } }
+    for (const x of [-150, -90, -30, 30, 90, 150, 210, -210]) { const [c, r] = cols[k++ % cols.length]; const kh = kenneyHouse(k * 3 + 1); if (kh) place(g, kh, x, 0, 125, Math.PI); else { const h = place(g, nbHouse(c, r, k), x, 0, 125, Math.PI, 1.1); nbWins.push(h.userData.win); } }
     for (let i = -10; i <= 10; i++) { place(g, K.streetLamp(), i * 40 + 12, 0, 27.5, Math.PI / 2); place(g, K.roundTree(10 + hash(i, 7) * 4, ['#3f8f3f', '#4caf50', '#2e7d32'][(i + 30) % 3]), i * 40 - 6, 0, 22 - hash(i, 3) * 6); }
     for (const x of [-26, 26]) place(g, K.fence(16), x, 0, 22);
     place(g, K.bush(2.5), -18, 0, 16); place(g, K.bush(2.2), 19, 0, 17);
+    for (let i = 0; i < 24; i++) { const f = pickFit(['nature-kit/flower_redA', 'nature-kit/flower_yellowB', 'nature-kit/flower_purpleA'], i, 1.2); if (f) place(g, f, -24 + (i % 12) * 4.2 + hash(i, 2), 0, 18 + Math.floor(i / 12) * 2.5, hash(i, 3) * 6); }
     const moon = place(g, K.moon(34), -170, 170, -420); moon.name = 'moon_town';
     return { setNight(n) { nbWins.forEach((w) => { w.emissiveIntensity = n * 1.4; }); moon.visible = n > 0.5; }, dirt, hole };
   });
@@ -118,6 +166,7 @@ export function createEnvs(THREE, stage, K) {
   def('sahara', 'desert', (g) => {
     g.add(bumpy(900, 900, 80, '#e7b86a', 10, 1.7, 'dunes', 0.025));
     for (let i = 0; i < 4; i++) place(g, K.rock(1.5, '#c08a52', i + 20), -30 + i * 20, 0, 30 + i * 4);
+    for (let i = 0; i < 9; i++) { const c = pickFit(['nature-kit/cactus_tall', 'nature-kit/cactus_short'], i, 6 + hash(i, 1) * 5); if (c) place(g, c, (hash(i, 2) - 0.5) * 220, 0, -40 - hash(i, 3) * 120 + (i % 2) * 90, hash(i, 4) * 6); }
   });
 
   // ---------- NAM CỰC ----------

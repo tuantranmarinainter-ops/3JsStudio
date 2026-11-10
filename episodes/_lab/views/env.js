@@ -1,9 +1,11 @@
-import { createEnvs } from '../../../engine/envs.js';
+import { createEnvs, ENV_ASSETS } from '../../../engine/envs.js';
+import { createAssetLib } from '../../../engine/assets.js';
 import { propKit } from '../../../engine/props.js';
 import { createHouse } from '../../../engine/house.js';
-export default (THREE, stage, q) => {
+export default async (THREE, stage, q) => {
   const K = propKit(THREE);
-  const envs = createEnvs(THREE, stage, K);
+  const A = createAssetLib(THREE); await A.load(ENV_ASSETS);
+  const envs = createEnvs(THREE, stage, K, A);
   const house = createHouse(THREE, { style: 'family' }); stage.scene.add(house.root);
   const list = (q.get('envs') || 'town').split(',');
   return (t) => {

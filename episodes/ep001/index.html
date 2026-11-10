@@ -43,7 +43,8 @@
       import * as THREE from 'three';
       import { createStage } from '/engine/stage.js';
       import { propKit } from '/engine/props.js';
-      import { createEnvs } from '/engine/envs.js';
+      import { createEnvs, ENV_ASSETS } from '/engine/envs.js';
+      import { createAssetLib } from '/engine/assets.js';
       import { buildTimeline } from '/engine/timeline.js';
       import { createDirector } from '/engine/shots.js';
       import { buildCast, buildHouses, buildProps, buildFx } from '/episodes/ep001/episode.js';
@@ -54,7 +55,9 @@
       if (q.get('peek')) document.body.classList.add('peek');
       const stage = createStage(THREE, { canvas: document.getElementById('stage'), ground: null, fov: 40 });
       const K = propKit(THREE);
-      const envs = createEnvs(THREE, stage, K);
+      const A = createAssetLib(THREE);
+      await A.load(ENV_ASSETS);
+      const envs = createEnvs(THREE, stage, K, A);
       const actors = buildCast(THREE), houses = buildHouses(THREE), props = buildProps(THREE, K), fx = buildFx(THREE);
       for (const a of Object.values(actors)) stage.scene.add(a.root);
       for (const h of Object.values(houses)) stage.scene.add(h.root);

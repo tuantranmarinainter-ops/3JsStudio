@@ -64,8 +64,9 @@ export const FACE_LAYOUT = (() => {
   return { size: 1024, cell: [256, 128], sprites };
 })();
 // Vị trí tâm ô trên mặt (tỉ lệ chiều cao mặt, từ trên xuống). brows/eyes/mouth theo ghi chú face_layout.json.
-const FACE_ROW = { brows: 0.28, eyes: 0.42, mouth: 0.72, blush: 0.585, tears: 0.56, sweat: 0.25, shine: 0.42, eyelashes: 0.42,
-  freckles: 0.585, nose: 0.575, cold_cheeks: 0.585 };
+// (engine đặt thấp hơn ghi chú JSON một chút để chừa vành mũ len; tỉ lệ giữa các lớp giữ nguyên)
+const FACE_ROW = { brows: 0.3, eyes: 0.45, mouth: 0.74, blush: 0.61, tears: 0.59, sweat: 0.27, shine: 0.45, eyelashes: 0.45,
+  freckles: 0.61, nose: 0.6, cold_cheeks: 0.61 };
 const FACE_PX = 512;       // canvas mặt
 const CELL_SCALE = 1.7;    // 1 ô sprite (256×128) → 435×218 px trên canvas mặt
 
@@ -174,7 +175,7 @@ function headProfile(THREE) {
   return pts;
 }
 // Mảng mặt trước bám theo biên dạng đầu; UV = (cung ngang, chiều cao) → canvas mặt không méo
-const FACE_Y = [0.05, 1.0];
+const FACE_Y = [0.02, 0.97];
 function facePatchGeometry(THREE) {
   const span = (FACE_Y[1] - FACE_Y[0]) / HEAD.R, NU = 28, NV = 28;
   const pos = [], uv = [], idx = [];
@@ -458,21 +459,21 @@ const EYE_KIND = {
 };
 function drawEyesCell(g, kind, q, P) {
   for (const side of [-1, 1]) {
-    const cx = 128 + side * 48, cy = 64;
+    const cx = 128 + side * 52, cy = 64;
     if (kind === 'closed' || kind === 'happy') {
       const up = kind === 'happy' ? -1 : 1;
       g.strokeStyle = INK; g.lineWidth = 7; g.lineCap = 'round';
-      g.beginPath(); g.moveTo(cx - 21, cy + 2 - up * 4); g.quadraticCurveTo(cx, cy + up * 18, cx + 21, cy + 2 - up * 4); g.stroke();
-      if (P.lashes) { g.lineWidth = 4; const ox = cx + side * 21, oy = cy + 2 - up * 4; g.beginPath(); g.moveTo(ox, oy); g.lineTo(ox + side * 7, oy - (kind === 'happy' ? 9 : -2)); g.stroke(); }
+      g.beginPath(); g.moveTo(cx - 24, cy + 2 - up * 4); g.quadraticCurveTo(cx, cy + up * 20, cx + 24, cy + 2 - up * 4); g.stroke();
+      if (P.lashes) { g.lineWidth = 4; const ox = cx + side * 24, oy = cy + 2 - up * 4; g.beginPath(); g.moveTo(ox, oy); g.lineTo(ox + side * 7, oy - (kind === 'happy' ? 9 : -2)); g.stroke(); }
       continue;
     }
     if (kind === 'squint') {
       g.strokeStyle = INK; g.lineWidth = 7; g.lineCap = 'round'; g.lineJoin = 'round';
-      g.beginPath(); g.moveTo(cx + side * 16, cy - 15); g.lineTo(cx - side * 12, cy); g.lineTo(cx + side * 16, cy + 15); g.stroke();
+      g.beginPath(); g.moveTo(cx + side * 18, cy - 17); g.lineTo(cx - side * 14, cy); g.lineTo(cx + side * 18, cy + 17); g.stroke();
       continue;
     }
     const K = { ...EYE_KIND[kind] || EYE_KIND.open, ...q };
-    const rx = 24 * K.es, ry = 31 * K.es;
+    const rx = 27.5 * K.es, ry = 34.5 * K.es;
     const gz = K.gaze || [0, 0];
     const lidI = K.lid[0], lidO = K.lid[1];
     const yI = cy - ry + 2 * ry * lidI, yO = cy - ry + 2 * ry * lidO;
@@ -530,12 +531,12 @@ function drawEyesCell(g, kind, q, P) {
     }
   }
 }
-const BROWS = { neutral: [40, 41, -5], raised: [23, 27, -10], worried: [26, 44, 2], angry: [52, 31, 3], low: [47, 47, -3] };
+const BROWS = { neutral: [38, 39, -5], raised: [22, 26, -10], worried: [25, 43, 2], angry: [52, 30, 3], low: [45, 45, -3] };
 function drawBrowsCell(g, kind, P) {
-  const s = BROWS[kind] || BROWS.neutral, T = 8 * (P.browThickness || 1);
+  const s = BROWS[kind] || BROWS.neutral, T = 9 * (P.browThickness || 1);
   g.strokeStyle = P.browColor || INK; g.lineCap = 'round'; g.lineWidth = T;
   for (const side of [-1, 1]) {
-    const cx = 128 + side * 48, xi = cx - side * 19, xo = cx + side * 21;
+    const cx = 128 + side * 52, xi = cx - side * 21, xo = cx + side * 23;
     g.beginPath(); g.moveTo(xi, s[0]); g.quadraticCurveTo((xi + xo) / 2, (s[0] + s[1]) / 2 + s[2], xo, s[1]); g.stroke();
   }
 }
@@ -583,7 +584,7 @@ function drawExtraCell(g, kind, P) {
     case 'nose': g.strokeStyle = rgba(INK, 0.55); g.lineWidth = 4; g.lineCap = 'round'; g.beginPath(); g.arc(128, 60, 7, PI * 0.15, PI * 0.85); g.stroke(); break;
     case 'tears':
       for (const sx of [-1, 1]) {
-        const x = 128 + sx * 52;
+        const x = 128 + sx * 56;
         g.fillStyle = 'rgba(120,195,255,0.85)'; g.beginPath(); g.moveTo(x - 6, 30); g.quadraticCurveTo(x - 8, 80, x - 1, 104); g.quadraticCurveTo(x + 9, 108, x + 7, 96); g.quadraticCurveTo(x + 5, 60, x + 6, 30); g.closePath(); g.fill();
         g.strokeStyle = 'rgba(255,255,255,0.85)'; g.lineWidth = 2.5; g.lineCap = 'round'; g.beginPath(); g.moveTo(x - 2, 40); g.lineTo(x - 3, 80); g.stroke();
       }
@@ -594,7 +595,7 @@ function drawExtraCell(g, kind, P) {
       g.fillStyle = '#9fdcff'; g.fill(); g.strokeStyle = '#3f8fd6'; g.lineWidth = 3.5; g.stroke();
       g.fillStyle = '#ffffff'; g.beginPath(); g.ellipse(x - 5, y + 6, 3, 6, 0.3, 0, PI * 2); g.fill(); break;
     }
-    case 'shine': g.fillStyle = '#ffffff'; for (const sx of [-1, 1]) { const x = 128 + sx * 48 + 10, y = 46; g.beginPath(); g.moveTo(x, y - 9); g.lineTo(x + 2.5, y - 2.5); g.lineTo(x + 9, y); g.lineTo(x + 2.5, y + 2.5); g.lineTo(x, y + 9); g.lineTo(x - 2.5, y + 2.5); g.lineTo(x - 9, y); g.lineTo(x - 2.5, y - 2.5); g.closePath(); g.fill(); } break;
+    case 'shine': g.fillStyle = '#ffffff'; for (const sx of [-1, 1]) { const x = 128 + sx * 52 + 12, y = 44; g.beginPath(); g.moveTo(x, y - 9); g.lineTo(x + 2.5, y - 2.5); g.lineTo(x + 9, y); g.lineTo(x + 2.5, y + 2.5); g.lineTo(x, y + 9); g.lineTo(x - 2.5, y + 2.5); g.lineTo(x - 9, y); g.lineTo(x - 2.5, y - 2.5); g.closePath(); g.fill(); } break;
     default: break;
   }
 }
@@ -725,7 +726,7 @@ export function createR15(THREE, opts = {}) {
     layer('brows', 1, st.browDy); if (!sprite('brows.' + st.brows)) drawBrowsCell(fg, st.brows, FP);
     layer('eyes'); if (!faceImg || !sprite('eyes.' + st.eyes)) drawEyesCell(fg, st.eyes, st.eyesQ, FP);
     else if (FP.lashes && st.eyes !== 'closed') { layer('eyelashes'); sprite('extra.eyelashes'); }
-    layer('mouth', st.ms); if (!sprite('mouth.' + st.mouth)) drawMouthCell(fg, st.mouth);
+    layer('mouth', st.ms * 1.12); if (!sprite('mouth.' + st.mouth)) drawMouthCell(fg, st.mouth);
     for (const e of extras) if (!under.includes(e)) { layer(e); if (!sprite('extra.' + e)) drawExtraCell(fg, e, FP); }
     fg.setTransform(1, 0, 0, 1, 0, 0);
     faceTex.needsUpdate = true;
@@ -804,7 +805,7 @@ function buildHat(THREE, group, type, color, o) {
     const dome = new THREE.Mesh(lathe(THREE, domeProfile(0.672, 0.92, 0.94, 0.6, 2.6, 18).map(([r, y]) => [r, y - 0.95]), 48), m);
     dome.name = 'beanie_dome'; group.add(dome);
     // vành gập dày (2 mặt + mép bo)
-    const prof = [[0.69, 0.86], [0.715, 0.87], [0.725, 0.94], [0.725, 1.06], [0.712, 1.11], [0.68, 1.12]].map(([r, y]) => [r, y - 0.95]);
+    const prof = [[0.69, 0.9], [0.712, 0.91], [0.722, 0.97], [0.722, 1.08], [0.71, 1.13], [0.68, 1.14]].map(([r, y]) => [r, y - 0.95]);
     const cuff = new THREE.Mesh(lathe(THREE, prof, 48), mc); cuff.name = 'beanie_cuff'; group.add(cuff);
     // nút len nhỏ trên đỉnh
     const nub = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 12), m); nub.position.y = 1.54 - 0.95; nub.scale.y = 0.7; nub.name = 'beanie_nub'; group.add(nub);
@@ -838,24 +839,28 @@ function buildAccessories(THREE, { o, head, torso, hips, parts, addMesh, mat, se
     // tóc sau gáy + hai bên (chừa mặt)
     const back = [[0.665, 0.95], [0.672, 0.6], [0.69, 0.25], [0.66, 0.16]];
     addMesh(head, lathe(THREE, back, 36, 0.95, PI * 2 - 1.9), hmS, 'hair_back');
-    // mái lệch
-    const fr = addMesh(head, RB(0.72, 0.2, 0.2, 0.09), hm, 'hair_fringe'); fr.position.set(0.12, 1.02, 0.55); fr.rotation.set(-0.35, 0, -0.22);
+    // mái: dải cong ôm trán, lệch nhẹ một bên (rẽ ngôi)
+    const fringe = addMesh(head, lathe(THREE, [[0.672, 0.84], [0.69, 0.86], [0.695, 0.95], [0.68, 1.0]], 30, -1.15, 2.3), hm, 'hair_fringe');
+    fringe.rotation.z = -0.09; fringe.position.y = 0.02;
     if (o.hair === 'braids') {
       const tieM = mat('#d6322b', 0.6);
+      const ball = new THREE.SphereGeometry(1, 18, 14);
       const braids = [];
       for (const sx of [-1, 1]) {
-        const rootP = new THREE.Group(); rootP.name = 'braid_root'; rootP.position.set(sx * 0.6, 0.42, 0.3); head.add(rootP);
+        const rootP = new THREE.Group(); rootP.name = 'braid_root'; rootP.position.set(sx * 0.6, 0.4, 0.3); head.add(rootP);
         let parent = rootP; const segs = [];
-        for (let i = 0; i < 5; i++) {
-          const p = new THREE.Group(); p.name = `braid_${sx < 0 ? 'R' : 'L'}${i}`; if (i) p.position.y = -0.3; parent.add(p);
-          const lump = addMesh(p, RB(0.3 - i * 0.012, 0.36, 0.3 - i * 0.012, 0.13), hm, 'braid'); lump.position.y = -0.16; lump.rotation.y = (i % 2) * 0.55 + 0.2;
+        for (let i = 0; i < 6; i++) {
+          const p = new THREE.Group(); p.name = `braid_${sx < 0 ? 'R' : 'L'}${i}`; if (i) p.position.y = -0.235; parent.add(p);
+          const k = 1 - i * 0.045;
+          const lump = addMesh(p, ball, hm, 'braid'); lump.position.set(((i % 2) ? 0.03 : -0.03) * sx, -0.13, 0); lump.scale.set(0.15 * k, 0.17, 0.14 * k);
+          lump.rotation.z = (i % 2 ? 0.45 : -0.45);
           segs.push(p); parent = p;
         }
-        const tie = addMesh(parent, RB(0.24, 0.1, 0.24, 0.04), tieM, 'braid_tie'); tie.position.y = -0.36;
-        const tuft = addMesh(parent, RB(0.2, 0.2, 0.2, 0.09), hm, 'braid_tuft'); tuft.position.y = -0.48;
+        const tie = addMesh(parent, new THREE.CylinderGeometry(0.085, 0.085, 0.08, 16), tieM, 'braid_tie'); tie.position.y = -0.29;
+        const tuft = addMesh(parent, new THREE.ConeGeometry(0.12, 0.26, 14), hm, 'braid_tuft'); tuft.position.y = -0.44; tuft.rotation.x = PI;
         braids.push({ sx, segs });
       }
-      const REST = [-0.95, -0.5, -0.2, -0.05, 0.02];
+      const REST = [-0.95, -0.55, -0.25, -0.1, 0.0, 0.03];
       dyn.push((p0, p1, p2, sig) => {
         for (const { sx, segs } of braids) {
           let prev = 0, prevZ = 0;
@@ -865,7 +870,7 @@ function buildAccessories(THREE, { o, head, torso, hips, parts, addMesh, mat, se
             let th = REST[i] - g * sig.P + (0.5 + 0.25 * i) * lag + (0.25 + 0.1 * i) * sig.dY * 3 - sig.drag * (0.1 + 0.05 * i);
             th = Math.min(th, REST[i] + 0.12 - sig.headRel);     // không lật vào ngực
             th = Math.max(th, -1.5);
-            let tz = -g * sig.R * 0.9 + (0.4 + 0.2 * i) * (i < 2 ? sig.dR1 : sig.dR2) + sig.yawLag * 0.35 * sx * 0 - sig.yawLag * 0.25;
+            let tz = -g * sig.R * 0.9 + (0.4 + 0.2 * i) * (i < 2 ? sig.dR1 : sig.dR2) - sig.yawLag * 0.25;
             tz = clamp(tz, -0.6, 0.6);
             if (sx < 0) tz = Math.max(tz, -0.25 - 0.05 * i); else tz = Math.min(tz, 0.25 + 0.05 * i); // không chui vào cổ
             segs[i].rotation.set(th - prev, 0, tz - prevZ);
@@ -879,17 +884,22 @@ function buildAccessories(THREE, { o, head, torso, hips, parts, addMesh, mat, se
   if (o.beard) {
     const bm = new THREE.MeshStandardMaterial({ map: repTex(THREE, strandCanvas(o.beard, { tip: true, seed: 9 }), 2, 1), roughness: 0.85, color: '#ffffff' });
     materials.beard = bm;
+    const ball = new THREE.SphereGeometry(1, 20, 16);
+    const blob = (parent, name, [x, y, z], [sx, sy, sz], rz = 0) => { const m = addMesh(parent, ball, bm, name); m.position.set(x, y, z); m.scale.set(sx, sy, sz); m.rotation.z = rz; return m; };
+    // tóc mai + má: vỏ cong ôm hai bên đầu (chừa mắt & miệng)
     for (const sx of [-1, 1]) {
-      const sb = addMesh(head, RB(0.16, 0.52, 0.38, 0.07), bm, 'beard_side'); sb.position.set(sx * 0.6, 0.5, 0.2);
-      const mu = addMesh(head, RB(0.3, 0.1, 0.14, 0.05), bm, 'beard_mustache'); mu.position.set(sx * 0.13, 0.44, 0.63); mu.rotation.z = sx * 0.28;
+      const shell = addMesh(head, lathe(THREE, [[0.56, 0.03], [0.65, 0.1], [0.666, 0.28], [0.652, 0.45], [0.635, 0.52]], 14, sx < 0 ? -1.5 : 0.58, 0.92), bm, 'beard_side');
+      shell.material = bm;
+      blob(head, 'beard_mustache', [sx * 0.13, 0.375, 0.635], [0.15, 0.05, 0.07], sx * 0.3);
     }
-    const jaw = addMesh(head, RB(1.12, 0.34, 0.5, 0.15), bm, 'beard_jaw'); jaw.position.set(0, 0.12, 0.38);
-    const b0 = new THREE.Group(); b0.name = 'beard_pivot'; b0.position.set(0, 0.2, 0.6); head.add(b0);
-    const sizes = [[0.92, 0.46, 0.34], [0.72, 0.44, 0.3], [0.44, 0.38, 0.24]];
+    blob(head, 'beard_chin', [0, 0.07, 0.5], [0.46, 0.11, 0.2]);
+    const b0 = new THREE.Group(); b0.name = 'beard_pivot'; b0.position.set(0, 0.11, 0.6); head.add(b0);
+    const sizes = [[0.42, 0.3, 0.19], [0.34, 0.3, 0.16], [0.2, 0.28, 0.12]];
     const segs = []; let parent = b0;
     sizes.forEach(([w, h, d], i) => {
-      const p = new THREE.Group(); p.name = 'beard_seg' + i; if (i) p.position.set(0, -0.38, 0.0); parent.add(p);
-      const m = addMesh(p, RB(w, h, d, Math.min(0.14, d / 2 - 0.01)), bm, 'beard'); m.position.set(0, -h / 2 + 0.04, 0.05);
+      const p = new THREE.Group(); p.name = 'beard_seg' + i; if (i) p.position.set(0, -0.3, 0.0); parent.add(p);
+      blob(p, 'beard', [0, -h * 0.5, 0.04], [w, h, d]);
+      if (i < 2) for (const sx of [-1, 1]) blob(p, 'beard', [sx * w * 0.55, -h * 0.75, 0.0], [w * 0.45, h * 0.8, d * 0.85], sx * 0.2);
       segs.push(p); parent = p;
     });
     dyn.push((p0, p1, p2, sig) => {
@@ -905,10 +915,10 @@ function buildAccessories(THREE, { o, head, torso, hips, parts, addMesh, mat, se
 
   if (o.scarf) {
     const sm = mat(o.scarf, 0.75); materials.scarf = sm;
-    const ring = addMesh(torso, new THREE.TorusGeometry(0.56, 0.15, 12, 32), sm, 'scarf'); ring.rotation.x = PI / 2; ring.position.set(0, 1.6, 0.02); ring.scale.set(1.05, 0.88, 1);
-    const knot = addMesh(torso, RB(0.24, 0.2, 0.16, 0.07), sm, 'scarf_knot'); knot.position.set(0, 1.52, 0.6);
+    const ring = addMesh(torso, new THREE.TorusGeometry(0.5, 0.1, 10, 32), sm, 'scarf'); ring.rotation.x = PI / 2; ring.position.set(0, 1.62, 0.02); ring.scale.set(1.05, 0.9, 1);
+    const knot = addMesh(torso, RB(0.2, 0.17, 0.14, 0.06), sm, 'scarf_knot'); knot.position.set(0, 1.5, 0.56);
     for (const sx of [-1, 1]) {
-      const loop = addMesh(torso, RB(0.32, 0.22, 0.1, 0.09), sm, 'scarf_bow'); loop.position.set(sx * 0.24, 1.54, 0.6); loop.rotation.z = sx * 0.35;
+      const loop = addMesh(torso, new THREE.TorusGeometry(0.1, 0.045, 8, 16), sm, 'scarf_bow'); loop.position.set(sx * 0.19, 1.52, 0.56); loop.scale.set(1.35, 0.95, 1); loop.rotation.z = sx * 0.3;
     }
     const tails = [];
     for (const sx of [-1, 1]) {
@@ -924,8 +934,10 @@ function buildAccessories(THREE, { o, head, torso, hips, parts, addMesh, mat, se
   if (o.hoodie) {
     const hoodM = mat(o.shirt, 0.85), strM = mat(o.hoodie, 0.7), tipM = mat('#e9e2d0', 0.5);
     materials.hood = hoodM;
-    const hood = addMesh(torso, new THREE.TorusGeometry(0.84, 0.21, 12, 28, PI * 1.2), hoodM, 'hood');
-    hood.rotation.set(PI / 2, 0, PI * 0.9); hood.position.set(0, 1.66, 0.04); hood.scale.set(1.12, 0.95, 0.8);
+    // cổ mũ trùm (vòng sau gáy) + túi mũ nằm trên lưng
+    const hood = addMesh(torso, new THREE.TorusGeometry(0.74, 0.15, 12, 28, PI * 1.08), hoodM, 'hood');
+    hood.rotation.set(PI / 2, 0, PI * 0.96); hood.position.set(0, 1.62, 0.0); hood.scale.set(1.05, 0.9, 0.85);
+    const pouch = addMesh(torso, RB(1.15, 0.62, 0.26, 0.12), hoodM, 'hood_pouch'); pouch.position.set(0, 1.3, -0.6); pouch.rotation.x = 0.22;
     const strings = [];
     for (const sx of [-1, 1]) {
       const p = new THREE.Group(); p.name = 'hoodie_string'; p.position.set(sx * 0.22, 1.42, 0.53); torso.add(p);
