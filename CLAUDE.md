@@ -168,17 +168,21 @@ Render 140 shot:
 - Video bị xoá trên Actions, chỉ commit báo cáo + ảnh nhỏ. Repo nên để **private**.
 - YouTube đòi "xác minh không phải bot" → người dùng thêm secret `YT_COOKIES` (nội dung cookies.txt) cho repo.
 
-## Giọng đọc (`tools/tts.py` — dựa trên API của Voice Studio, tool TTS của người dùng)
+## Giọng đọc (`tools/tts.py` + engine Voice Studio trong `tools/voice_studio/`)
+- Engine là tool TTS của người dùng (Voice Studio): `edge_jobs.render_job` (Edge hoặc CapCut), `capcut_engine`,
+  `tts_engine`. KHÔNG sửa logic engine; nếu cần khác thì bọc ngoài trong `tools/tts.py`.
 - Tạo **từng câu một** rồi ghép thành 1 track → biết chính xác `start/end` mỗi câu (không cần nhận dạng giọng).
 - Nguồn:
-  - **Edge** (mặc định, thư viện `edge-tts`): có giọng Việt `vi-VN-HoaiMyNeural` (nữ), `vi-VN-NamMinhNeural` (nam).
-    Chạy được trên GitHub Actions → Claude tự tạo giọng, không cần người dùng.
-  - **CapCut / Edge qua Voice Studio**: `--tool-dir <thư mục Voice Studio> --source capcut|edge` — gọi thẳng
-    `edge_jobs.render_job` và `capcut_engine.list_voices`. Chỉ chạy trên máy người dùng (cần cấu hình CapCut của tool).
+  - **Edge**: giọng Việt `vi-VN-HoaiMyNeural` (nữ), `vi-VN-NamMinhNeural` (nam). Chạy được trên GitHub Actions.
+  - **CapCut**: cần SDK ở `tools/voice_studio/vendor/capcut-tts-api/` (gói `capcut_tts_api` + `PROVENANCE.json`)
+    và secret `TTS_CAPCUT_DEVICE_CONFIG` (nếu tool cần). Giọng CapCut: chỉ tốc độ -50..100%, không cao độ/âm lượng.
+    Danh sách ID giọng: `tools/voice_studio/voices-capcut.txt` (workflow tự cập nhật).
   - `--dry`: không gọi dịch vụ, ước lượng ~14 ký tự/giây → dựng shot trước khi có giọng thật.
-- `narration.txt`: `@narrator <giọng> [tốc độ] [cao độ]`, `@voice <vai> <giọng> [tốc độ] [cao độ]`, câu của vai: `[vai] …`,
-  dòng trống = ngắt đoạn (lặng 0.6s), giữa 2 câu lặng 0.25s; `#` = ghi chú.
-- Giới hạn như Voice Studio: Edge tốc độ -80..100%, cao độ -50..50Hz, âm lượng -100..100%;
-  CapCut tốc độ -50..100%, không cao độ/âm lượng. Song song: Edge 1–3, CapCut 1–2.
-- Cache từng câu ở `.cache/tts/` (khoá = nguồn + giọng + thông số + câu) → sửa 1 câu chỉ tạo lại câu đó.
-- Xem giọng: `python tools/tts.py --list-voices vi` (thêm `--tool-dir … --source capcut` cho giọng CapCut).
+- `narration.txt`:
+  - `@source capcut|edge` (nguồn mặc định cả tập), `@narrator <giọng> [tốc độ] [cao độ]`,
+    `@voice <vai> <giọng> [tốc độ] [cao độ]`, câu của vai: `[vai] …`.
+  - Giọng ghi kèm nguồn để trộn 2 nguồn: `capcut:<ID>` / `edge:<ID>`.
+  - Dòng trống = ngắt đoạn (lặng 0.6s), giữa 2 câu lặng 0.25s; `#` = ghi chú.
+- Edge: tốc độ -80..100%, cao độ -50..50Hz, âm lượng -100..100%. Song song: Edge tối đa 3, CapCut tối đa 2.
+- Cache từng câu ở `.cache/tts/` → sửa 1 câu chỉ tạo lại câu đó. Đổi file engine → workflow tạo lại mọi tập.
+- Giọng Edge tham khảo: `tools/voice_studio/voices-edge-vi.txt`.

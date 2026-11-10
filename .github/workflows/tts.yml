@@ -1,11 +1,11 @@
-# Tạo giọng đọc (Microsoft Edge TTS) cho tập phim mỗi khi narration.txt thay đổi.
+# Tạo giọng đọc (engine Voice Studio: Microsoft Edge / CapCut) cho tập phim mỗi khi narration.txt thay đổi.
 # Kết quả narration.mp3 / .json / .srt được commit lại cạnh narration.txt.
 # Cache từng câu (.cache/tts) giữa các lần chạy → sửa 1 câu chỉ tạo lại câu đó.
 name: tts-narration
 
 on:
   push:
-    paths: ["episodes/**/narration.txt"]
+    paths: ["episodes/**/narration.txt", "tools/voice_studio/**"]
   workflow_dispatch:
 
 concurrency:
@@ -30,7 +30,12 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             find episodes -name narration.txt > /tmp/files.txt
           else
-            git diff --name-only HEAD~1 HEAD -- 'episodes/**/narration.txt' > /tmp/files.txt || true
+            git diff --name-only HEAD~1 HEAD > /tmp/changed.txt || true
+            if grep -q '^tools/voice_studio/.*\.py$' /tmp/changed.txt; then
+              find episodes -name narration.txt > /tmp/files.txt      # engine đổi → tạo lại mọi tập
+            else
+              grep 'narration\.txt$' /tmp/changed.txt > /tmp/files.txt || true
+            fi
           fi
           cat /tmp/files.txt
           echo "count=$(grep -c . /tmp/files.txt || true)" >> "$GITHUB_OUTPUT"
@@ -44,7 +49,8 @@ jobs:
         if: steps.f.outputs.count != '0'
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-          pip install -q -U edge-tts
+          pip install -q -U edge-tts aiohttp miniaudio requests
+          [ -f tools/voice_studio/vendor/capcut-tts-api/requirements.txt ] && pip install -q -r tools/voice_studio/vendor/capcut-tts-api/requirements.txt || true
 
       - uses: actions/cache@v4
         if: steps.f.outputs.count != '0'
@@ -55,7 +61,14 @@ jobs:
 
       - name: Tạo giọng đọc
         if: steps.f.outputs.count != '0'
+        env:
+          TTS_CAPCUT_DEVICE_CONFIG: ${{ secrets.TTS_CAPCUT_DEVICE_CONFIG }}
         run: |
+          # Danh sách giọng để Claude tra ID (cloud của Claude không gọi được dịch vụ)
+          python tools/tts.py --list-voices vi > tools/voice_studio/voices-edge-vi.txt || true
+          if [ -d tools/voice_studio/vendor/capcut-tts-api ]; then
+            python tools/tts.py --list-voices "" --source capcut > tools/voice_studio/voices-capcut.txt || true
+          fi
           while IFS= read -r f; do
             [ -f "$f" ] || continue
             echo "== $f"
@@ -67,6 +80,6 @@ jobs:
         run: |
           git config user.name "tts-bot"
           git config user.email "tts-bot@users.noreply.github.com"
-          git add episodes
+          git add episodes tools/voice_studio/voices-*.txt
           git commit -m "tts: giọng đọc ${GITHUB_RUN_ID}" || exit 0
           for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
