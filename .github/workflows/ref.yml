@@ -37,13 +37,11 @@ jobs:
           cache: pip
           cache-dependency-path: .github/workflows/ref.yml
 
-      - name: Cài yt-dlp, ffmpeg, whisper (CPU)
+      - name: Cài yt-dlp, ffmpeg
         if: steps.q.outputs.count != '0'
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           pip install -q -U yt-dlp
-          pip install -q torch --index-url https://download.pytorch.org/whl/cpu
-          pip install -q openai-whisper
 
       - name: Cookies YouTube (tuỳ chọn, từ secret YT_COOKIES)
         if: steps.q.outputs.count != '0'
@@ -58,7 +56,7 @@ jobs:
           rm -f refs/errors.md refs/summary.md
           mapfile -t T < /tmp/targets.txt
           python tools/ref.py "${T[@]}" --out refs --drop-video $ARGS || echo "FAILED=1" >> "$GITHUB_ENV"
-          find refs -type f \( -name '*.mp4' -o -name '*.webm' -o -name '*.part' -o -name '*.wav' \) -delete
+          find refs -type f \( -name '*.mp4' -o -name '*.webm' -o -name '*.part' \) -delete
 
       - name: Ghi lại và commit kết quả
         if: steps.q.outputs.count != '0'

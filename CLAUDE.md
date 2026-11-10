@@ -145,7 +145,7 @@ Render 140 shot:
 - Agent chính giữ `episode.js`, dàn ý và tính liên tục; ghép kết quả và quyết định cuối. Việc nhỏ thì tự làm.
 
 ## Nghiên cứu video tham khảo (`tools/ref.py`)
-- Cần `yt-dlp` + `ffmpeg` (whisper tuỳ chọn). Chạy: `python tools/ref.py "ytsearch5:In This Town roblox story"`
+- Cần `yt-dlp` + `ffmpeg`. Lời thoại chỉ lấy từ phụ đề có sẵn (vi/en, kể cả tự động), không nhận dạng giọng. Chạy: `python tools/ref.py "ytsearch5:In This Town roblox story"`
   hoặc dán URL/file. Kết quả ở `refs/<id>/` (chỉ báo cáo + ảnh được commit; video nằm trong `.gitignore`).
 - Claude đọc `report.md` (thống kê shot, nhịp 4 phần, lời thoại theo shot) + `sheets/*.jpg` (mỗi ô 1 shot).
 - Nhiều video → `refs/summary.md` so sánh độ dài, số shot, shot/phút.

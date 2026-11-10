@@ -2,7 +2,6 @@
 """ref.py — Tải video tham khảo và mổ xẻ để Claude tự đọc.
 
 Cần: yt-dlp, ffmpeg, ffprobe trong PATH. Python 3.9+ (chỉ thư viện chuẩn).
-Tuỳ chọn: whisper (openai-whisper) — chỉ dùng khi video không có phụ đề.
 
 Dùng:
   python tools/ref.py "https://www.youtube.com/shorts/XXXX"
@@ -21,7 +20,7 @@ Kết quả mỗi video: refs/<id>/
   shots.csv       id, start, end, dur
   sheets/*.jpg    contact sheet (mỗi ô = khung giữa của 1 shot, đọc trái→phải, trên→dưới)
   frames/*.jpg    ảnh từng shot (s001.jpg…)
-  transcript.txt  lời thoại/phụ đề có mốc thời gian (nếu có)
+  transcript.txt  phụ đề tải từ nền tảng (vi/en, gồm phụ đề tự động), có mốc thời gian
 
 Chỉ dùng để nghiên cứu nhịp/cấu trúc. Không đăng lại nội dung của người khác.
 """
@@ -177,14 +176,6 @@ def transcript(d, video):
     lines, src = [], None
     if subs:
         lines, src = parse_vtt(subs[0]), subs[0].name
-    elif shutil.which("whisper"):
-        wav = d / "audio.wav"
-        run(["ffmpeg", "-v", "error", "-y", "-i", str(video), "-ac", "1", "-ar", "16000", str(wav)])
-        run(["whisper", str(wav), "--model", "small", "--output_format", "vtt", "--output_dir", str(d)])
-        v = d / "audio.vtt"
-        if v.exists():
-            lines, src = parse_vtt(v), "whisper (small)"
-        wav.unlink(missing_ok=True)
     if lines:
         (d / "transcript.txt").write_text("\n".join(f"[{fmt(t)}] {x}" for t, x in lines), encoding="utf-8")
     return lines, src
@@ -219,7 +210,7 @@ def report(d, info, shots, total, sheets, lines, src):
     for s in shots:
         said = " / ".join(x for t, x in lines if s["start"] <= t < s["end"])[:80]
         L.append(f"| {s['id']} | {fmt(s['start'])} | {s['dur']:.2f}s | {said} |")
-    L += ["", f"## Lời thoại ({src or 'không có phụ đề — cài whisper để tự nhận dạng'})", ""]
+    L += ["", f"## Lời thoại ({src or 'video không có phụ đề'})", ""]
     L += [f"[{fmt(t)}] {x}" for t, x in lines] or ["(trống)"]
     (d / "report.md").write_text("\n".join(L), encoding="utf-8")
 
