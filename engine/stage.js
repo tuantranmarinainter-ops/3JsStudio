@@ -108,6 +108,7 @@ export function createStage(THREE, opts = {}) {
     sun.target.updateMatrixWorld();
   }
   shadowFocus([0, 0, 0]);
+  function setSunDir(d) { sunDir.set(d[0], d[1], d[2]).normalize(); shadowFocus([_focus.x, _focus.y, _focus.z]); }
 
   // Camera: vị trí, điểm nhìn, fov (tuỳ chọn), roll (radian, tuỳ chọn). Mặc định bóng theo điểm nhìn.
   function setCamera(pos, target, { fov, roll = 0, focusShadow = true } = {}) {
@@ -155,7 +156,7 @@ export function createStage(THREE, opts = {}) {
 
   const api = {
     THREE, renderer, scene, camera, sun, hemi, ground, options: o,
-    setCamera, orbit, shadowFocus, onFrame, renderAt, start,
+    setCamera, orbit, shadowFocus, setSunDir, onFrame, renderAt, start,
     get time() { return lastT; },
   };
   return api;

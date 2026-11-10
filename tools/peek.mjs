@@ -1,7 +1,8 @@
 // Chụp nhanh trang lab/composition bằng Playwright (không qua HyperFrames).
 //   node tools/peek.mjs "<đường dẫn từ gốc repo>?query" t1,t2,... out.png [cols]
 // Ghép các khung thành 1 ảnh lưới (mỗi ô 270×480).
-import { chromium } from 'playwright';
+import { createRequire } from 'module';
+const { chromium } = createRequire(import.meta.url)('playwright');
 import { createServer } from 'http';
 import { readFile } from 'fs/promises';
 import { extname, join } from 'path';
@@ -21,7 +22,7 @@ page.on('pageerror', (e) => console.log('pageerror:', e.message));
 await page.goto(`http://localhost:${port}/${url}`);
 await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 });
 const ts = times.split(',').map(Number), shots = [];
-for (const t of ts) { await page.evaluate((t) => window.renderAt(t), t); shots.push(await page.locator('canvas').first().screenshot()); }
+for (const t of ts) { await page.evaluate((t) => window.renderAt(t), t); const sel = (await page.locator('#root').count()) ? '#root' : 'canvas'; shots.push(await page.locator(sel).first().screenshot()); }
 // ghép lưới bằng canvas trong trang
 const c = Math.min(+cols, ts.length), r = Math.ceil(ts.length / c);
 const grid = await page.evaluate(async ({ imgs, c, r }) => {

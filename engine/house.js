@@ -26,7 +26,7 @@ export const HOUSE_STYLES = {
 };
 
 const W = 28, D = 20, WALL = 11, BASE = 3, PORCH = 6;
-const L1 = 15, L2 = 17;                         // đùi, ống chân
+const L1 = 17, L2 = 19;                         // đùi, ống chân
 const STAND = 19;                               // cao độ sàn khi đứng
 const STRIDE = 7;                               // nửa chu kỳ bước
 const HIPS = [                                  // [x, z] cục bộ thân; thứ tự FL, FR, BL, BR (trái = +X)
@@ -218,7 +218,7 @@ export function createHouse(THREE, opts = {}) {
       L.g.visible = legsOut > 0.001;
       H.set(L.hx, -BASE + 0.8, L.hz).applyMatrix4(body.matrix);
       // chỗ đặt chân trên đất (dang ra ngoài + ra trước/sau)
-      const spread = 7 + 3 * kneel;
+      const spread = 10 + 3 * kneel;
       let fx = L.hx + L.side * spread, fz = L.hz + L.front * 3.5, fy = 0;
       if (walking && lift > 0.5) {
         const ph = ((cyc + PHASE[L.i]) % 1 + 1) % 1;

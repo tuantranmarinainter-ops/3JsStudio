@@ -1,0 +1,93 @@
+<!doctype html>
+<!-- ep001 "Ngôi nhà biết đi" — composition HyperFrames tổng. 1080×1920, 30 fps, 5132 frame.
+     Xem:   npx hyperframes preview  (rồi mở episodes/ep001/index.html)
+     Render: npx hyperframes render . -c episodes/ep001/index.html --start a --end b -o output/part_NN.mp4
+     Thử nhanh 1 khung: node tools/peek.mjs "episodes/ep001/index.html?peek=1" 12.5,30 out.png -->
+<html lang="vi" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>ep001-ngoi-nha-biet-di</title>
+    <script src="../../vendor/gsap/gsap.min.js"></script>
+    <script type="importmap">{ "imports": { "three": "../../vendor/three/three.module.js" } }</script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+      #stage { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+      #cap {
+        position: absolute; left: 40px; right: 40px; top: 1250px; text-align: center;
+        font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 92px; line-height: 1.05; color: #fff;
+        -webkit-text-stroke: 14px #15121c; paint-order: stroke fill; letter-spacing: 0.5px;
+        text-shadow: 0 6px 0 rgba(0,0,0,0.35); transform-origin: 50% 60%;
+      }
+      body.peek #stage { width: 540px; height: 960px; }
+      body.peek #root { width: 540px; height: 960px; }
+      body.peek #cap { transform: scale(0.5); left: -250px; right: -250px; top: 600px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="171.0666" data-width="1080" data-height="1920" data-fps="30">
+      <canvas id="stage" width="1080" height="1920"></canvas>
+      <div id="cap" class="clip" data-start="0" data-duration="171.0666" data-track-index="1"></div>
+      <audio id="narration" class="clip" src="narration.mp3" data-start="0" data-track-index="2" data-volume="1"></audio>
+    </div>
+
+    <script>
+      // timeline GSAP rỗng (phụ đề + 3D do hf-seek điều khiển)
+      window.__timelines = window.__timelines || {};
+      window.__timelines['main'] = gsap.timeline({ paused: true });
+    </script>
+
+    <script type="module">
+      import * as THREE from 'three';
+      import { createStage } from '../../engine/stage.js';
+      import { propKit } from '../../engine/props.js';
+      import { createEnvs } from '../../engine/envs.js';
+      import { buildTimeline } from '../../engine/timeline.js';
+      import { createDirector } from '../../engine/shots.js';
+      import { buildCast, buildHouses, buildProps, buildFx } from './episode.js';
+      import { SHOTS } from './shots.js';
+      import { CAPTIONS } from './captions.js';
+
+      const q = new URLSearchParams(location.search);
+      if (q.get('peek')) document.body.classList.add('peek');
+      const stage = createStage(THREE, { canvas: document.getElementById('stage'), ground: null, fov: 40 });
+      const K = propKit(THREE);
+      const envs = createEnvs(THREE, stage, K);
+      const actors = buildCast(THREE), houses = buildHouses(THREE), props = buildProps(THREE, K), fx = buildFx(THREE);
+      for (const a of Object.values(actors)) stage.scene.add(a.root);
+      for (const h of Object.values(houses)) stage.scene.add(h.root);
+      for (const p of Object.values(props)) stage.scene.add(p);
+      for (const f of Object.values(fx)) stage.scene.add(f.obj);
+      const tl = buildTimeline(SHOTS, 30);
+      const director = createDirector({ THREE, stage, envs, K, actors, houses, props, fx });
+
+      // phụ đề cụm chữ: bật nảy 0.12 s khi đổi cụm
+      const cap = document.getElementById('cap');
+      let lastCap = -1;
+      function caption(t) {
+        let i = -1; for (let j = 0; j < CAPTIONS.length; j++) { if (CAPTIONS[j][0] <= t + 1e-4 && t < CAPTIONS[j][1]) { i = j; break; } }
+        if (i !== lastCap) { cap.textContent = i >= 0 ? CAPTIONS[i][2] : ''; lastCap = i; }
+        const k = i >= 0 ? Math.min(1, (t - CAPTIONS[i][0]) / 0.12) : 1;
+        cap.style.transform = (document.body.classList.contains('peek') ? 'scale(0.5) ' : '') + `scale(${0.82 + 0.18 * (1 - Math.pow(1 - k, 3))})`;
+      }
+
+      stage.onFrame((t) => {
+        const T = Math.min(t, tl.total - 1e-4);
+        const { shot, local, k } = tl.at(T);
+        director.render(shot, local, k, T);
+        caption(T);
+      });
+      // biên dịch shader của mọi env trước khi seek
+      for (const e of Object.values(envs.envs)) e.group.visible = true;
+      for (const h of Object.values(houses)) h.root.visible = true;
+      stage.renderer.compile(stage.scene, stage.camera);
+      for (const e of Object.values(envs.envs)) e.group.visible = false;
+      stage.start();
+      window.renderAt = (t) => stage.renderAt(t);
+      window.__shots = tl;
+      window.__ready = true;
+    </script>
+  </body>
+</html>
