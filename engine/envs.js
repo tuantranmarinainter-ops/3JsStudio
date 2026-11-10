@@ -3,6 +3,7 @@
 //   envs.use('townNight', t, ctx);              // bật env, đặt bầu trời/ánh sáng, cập nhật sóng/hạt theo t
 // Nhà gia đình đứng ở gốc, mặt trước +Z. Phố chạy theo trục X ở z = +34.
 import { fxSnow, fxRain, lightning, fxBolt } from './fx.js';
+import { createWater } from './water.js';
 
 export const LIGHTS = {
   day:      { top: '#3f9fe6', bottom: '#cdeeff', fog: '#cfeaff', fogR: [160, 700], hemi: ['#ffffff', '#7a9a66', 1.15], sun: ['#fff3dc', 2.6], dir: [0.5, 1, 0.6], exposure: 1.0, night: 0 },
@@ -40,15 +41,11 @@ export function createEnvs(THREE, stage, K) {
   const place = (g, obj, x, y, z, ry = 0, s = 1) => { obj.position.set(x, y, z); obj.rotation.y = ry; obj.scale.setScalar(s); g.add(obj); return obj; };
   const def = (name, light, build) => { const g = new THREE.Group(); g.name = `env_${name}`; g.visible = false; scene.add(g); const e = { name, light, group: g, update: null }; Object.assign(e, build(g, e) || {}); envs[name] = e; return e; };
 
-  // sóng biển: mặt phẳng nhiều đỉnh, dời y theo t
-  const makeSea = (g, { size = 700, seg = 90, color = '#1f9fc4', y = 0, amp = 0.5, opacity = 0.92, name = 'sea' } = {}) => {
-    const m = plane(size, size, new THREE.MeshStandardMaterial({ color, roughness: 0.25, metalness: 0.1, transparent: opacity < 1, opacity, flatShading: true }), y, name, seg);
-    g.add(m); const pos = m.geometry.attributes.position; const base = Float32Array.from(pos.array);
-    return (t, a = amp) => {
-      for (let i = 0; i < pos.count; i++) { const x = base[i * 3], z = base[i * 3 + 1];
-        pos.array[i * 3 + 2] = a * (Math.sin(x * 0.08 + t * 1.3) + Math.sin(z * 0.11 - t * 1.1) * 0.7 + Math.sin((x + z) * 0.05 + t * 0.7) * 0.5); }
-      pos.needsUpdate = true; m.geometry.computeVertexNormals();
-    };
+  // biển: shader nước (engine/water.js). Trả về hàm (t, amp) chỉ ghi thời gian; ánh sáng/bầu trời được nạp mỗi khung trong use().
+  const makeSea = (g, { preset = 'tropical', size = 1400, seg = 150, y = 0, amp, name = 'sea', ...rest } = {}) => {
+    const w = createWater(THREE, { preset, size, segments: seg, y, amp, name, ...rest });
+    g.add(w.mesh); (g.userData.waters ||= []).push(w);
+    return (t, a) => { w.t = t; w.ampNow = a; return w; };
   };
   const bumpy = (w, d, seg, color, h, seed, name, freq = 0.04) => {
     const m = plane(w, d, mat(color, { flatShading: true }), 0, name, seg); const p = m.geometry.attributes.position;
@@ -101,7 +98,7 @@ export function createEnvs(THREE, stage, K) {
   // ---------- HAWAII (bãi biển) ----------
   def('hawaii', 'beach', (g, e) => {
     const sand = plane(900, 260, mat('#f1d79a'), 0, 'sand'); sand.position.z = -60; g.add(sand);
-    e.sea = makeSea(g, { color: '#29c3d1', y: 0.4, amp: 0.35 }); g.children[g.children.length - 1].position.z = 380;
+    e.sea = makeSea(g, { preset: 'tropical', y: 0.4, amp: 0.6, size: 1400, center: [0, -380], shore: { line: [0, 1, 62, 5] } }); g.children[g.children.length - 1].position.z = 380;
     for (let i = 0; i < 14; i++) place(g, K.palm(14 + hash(i, 5) * 8, 0.2 + hash(i, 6) * 0.2), -120 + i * 18 + hash(i, 1) * 8, 0, -30 - hash(i, 2) * 50, hash(i, 3) * 6);
     for (let i = 0; i < 6; i++) place(g, K.rock(2 + hash(i, 9) * 2, '#9a8a7a', i), -60 + i * 25, 0, 40 + hash(i, 4) * 10);
     place(g, K.cloud(2.2), -80, 90, -260); place(g, K.cloud(1.8), 90, 110, -300);
@@ -135,7 +132,7 @@ export function createEnvs(THREE, stage, K) {
 
   // ---------- ĐẠI DƯƠNG (nhà ngập nước) ----------
   def('ocean', 'ocean', (g, e) => {
-    e.sea = makeSea(g, { color: '#1fa6c9', y: 11, amp: 0.6, opacity: 0.88, size: 900, seg: 100 });
+    e.sea = makeSea(g, { preset: 'deep', y: 11, amp: 0.6, size: 1600 });
     g.add(plane(900, 900, mat('#0e5f86'), -10, 'seabed'));
     e.whales = [0, 1, 2].map(() => place(g, K.whale(), 0, 0, 0, 0, 1));
     place(g, K.cloud(2.5), -120, 120, -300); place(g, K.cloud(2), 150, 100, -350);
@@ -164,16 +161,17 @@ export function createEnvs(THREE, stage, K) {
 
   // ---------- BIỂN BĂNG (đêm) ----------
   def('iceSea', 'snowNight', (g, e) => {
-    g.add(plane(900, 900, mat('#1b2a55', { roughness: 0.3 }), -0.3, 'dark_water'));
+    e.sea = makeSea(g, { preset: 'night', y: -0.3, amp: 0.2, size: 1400, name: 'dark_water' });
     for (let i = 0; i < 160; i++) { const x = (hash(i, 1) - 0.5) * 500, z = (hash(i, 2) - 0.5) * 500; const r = 6 + hash(i, 3) * 12;
       const fl = new THREE.Mesh(new THREE.CylinderGeometry(r, r * 1.05, 0.8, 6), mat(i % 3 ? '#e8eef8' : '#cfdaee', { flatShading: true })); fl.position.set(x, 0, z); fl.rotation.y = hash(i, 4) * 3; fl.receiveShadow = true; fl.name = 'ice_floe'; g.add(fl); }
     const sheet = plane(70, 70, mat('#eef3fb'), 0.35, 'ice_sheet'); g.add(sheet);
     e.moon = place(g, K.moon(30), 140, 170, -520);
+    return { update(t) { e.sea(t); } };
   });
 
   // ---------- BÃO (biển đêm, mưa, chớp) ----------
   def('storm', 'storm', (g, e) => {
-    e.sea = makeSea(g, { color: '#15304f', y: 2, amp: 2.4, size: 900, seg: 100, opacity: 1 });
+    e.sea = makeSea(g, { preset: 'storm', y: 2, amp: 2.4, size: 1600 });
     e.rain = fxRain(THREE, { count: 2200 }); g.add(e.rain.obj);
     e.bolt = fxBolt(THREE); e.bolt.position.set(-40, 20, -140); e.bolt.scale.setScalar(2); g.add(e.bolt);
     return { update(t, ctx) { e.sea(t * 1.6, 2.4); e.rain.update(t, ctx.focus || [0, 0, 0]); const f = lightning(t); e.bolt.visible = f > 0.5; ctx.flash = f; } };
@@ -181,7 +179,7 @@ export function createEnvs(THREE, stage, K) {
 
   // ---------- BOONG TÀU TRONG BÃO (hồi tưởng) ----------
   def('shipStorm', 'storm', (g, e) => {
-    e.sea = makeSea(g, { color: '#15304f', y: -1, amp: 2.2, size: 700, seg: 90, opacity: 1 });
+    e.sea = makeSea(g, { preset: 'storm', y: -1, amp: 2.2, size: 1600 });
     e.ship = place(g, K.ship(), 0, 0, 0, 0, 1);
     e.rain = fxRain(THREE, { count: 1600, area: [70, 50, 70] }); g.add(e.rain.obj);
     e.bolt = fxBolt(THREE, { seed: 9 }); e.bolt.position.set(30, 25, -120); e.bolt.scale.setScalar(1.8); g.add(e.bolt);
@@ -190,7 +188,7 @@ export function createEnvs(THREE, stage, K) {
 
   // ---------- ĐẢO HẢI ĐĂNG ----------
   def('island', 'beach', (g, e) => {
-    e.sea = makeSea(g, { color: '#2cc7d4', y: -0.6, amp: 0.4, size: 900, seg: 90 });
+    e.sea = makeSea(g, { preset: 'tropical', y: -0.6, amp: 0.4, size: 1600, shore: { circle: [0, 0, 70.6, 5] } });
     const isl = new THREE.Mesh(new THREE.CylinderGeometry(70, 82, 6, 28), mat('#f2d89a')); isl.position.y = -3; isl.receiveShadow = true; isl.name = 'island_sand'; g.add(isl);
     const grass = new THREE.Mesh(new THREE.CylinderGeometry(30, 34, 1.2, 20), mat('#6cbf58')); grass.position.set(-30, 0.1, -30); grass.receiveShadow = true; g.add(grass);
     // mỏm đá + hải đăng
@@ -209,7 +207,8 @@ export function createEnvs(THREE, stage, K) {
 
   // ---------- BÃI ĐÁ NGẦM + XÁC TÀU ----------
   def('reef', 'beach', (g, e) => {
-    e.sea = makeSea(g, { color: '#2cc7d4', y: 0, amp: 0.5, size: 700, seg: 80 });
+    const reefSpots = Array.from({ length: 12 }, (_, i) => [(hash(i, 2) - 0.5) * 70, (hash(i, 3) - 0.5) * 40, (5 + hash(i, 1) * 7) * 0.7]);
+    e.sea = makeSea(g, { preset: 'shallow', y: 0, amp: 0.5, size: 1400, spots: reefSpots });
     for (let i = 0; i < 18; i++) place(g, K.rock(5 + hash(i, 1) * 7, i % 2 ? '#5b5752' : '#6e6862', i + 100), (hash(i, 2) - 0.5) * 70, -2, (hash(i, 3) - 0.5) * 40);
     e.ship = place(g, K.ship({ sails: false }), 5, 0, 0, 0.5, 1); e.ship.rotation.z = 0.35; e.ship.rotation.x = -0.15; e.ship.position.y = -1.5;
     return { update(t) { e.sea(t); } };
@@ -273,6 +272,7 @@ export function createEnvs(THREE, stage, K) {
 
   // ---------- áp dụng ----------
   let current = null;
+  const wl = { sunDir: new THREE.Vector3(), sunColor: new THREE.Color(), skyTop: new THREE.Color(), skyBottom: new THREE.Color(), amb: new THREE.Color(), flash: 0 };
   function applyLight(L, flash = 0) {
     skyMat.uniforms.top.value.set(L.top); skyMat.uniforms.bottom.value.set(L.bottom); skyMat.uniforms.flash.value = flash;
     scene.background = C(L.bottom);
@@ -293,6 +293,13 @@ export function createEnvs(THREE, stage, K) {
     e.update?.(t, ctx);
     const L = { ...LIGHTS[ctx.light || e.light], ...(ctx.lightOverride || {}) };
     applyLight(L, ctx.flash || 0);
+    if (e.group.userData.waters) {
+      wl.sunDir.copy(stage.sun.position).sub(stage.sun.target.position).normalize();
+      wl.sunColor.copy(stage.sun.color).multiplyScalar(stage.sun.intensity);
+      wl.skyTop.copy(skyMat.uniforms.top.value); wl.skyBottom.copy(skyMat.uniforms.bottom.value);
+      wl.amb.copy(stage.hemi.color).multiplyScalar(stage.hemi.intensity); wl.flash = ctx.flash || 0;
+      for (const w of e.group.userData.waters) w.update(w.t || 0, stage.camera, wl, w.ampNow);
+    }
     skyDome.visible = !(name === 'kitchen' || name === 'bedroom');
     skyDome.position.copy(stage.camera.position);
     return { env: e, light: L };
