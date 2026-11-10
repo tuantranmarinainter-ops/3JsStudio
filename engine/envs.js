@@ -35,6 +35,7 @@ export const ENV_ASSETS = [
   'pirate-kit/ship-large', 'pirate-kit/ship-wreck', 'pirate-kit/rocks-a', 'pirate-kit/rocks-b', 'pirate-kit/rocks-c', 'pirate-kit/rocks-sand-a', 'pirate-kit/rocks-sand-b',
   'pirate-kit/palm-detailed-straight', 'pirate-kit/palm-detailed-bend', 'pirate-kit/barrel', 'pirate-kit/crate', 'pirate-kit/chest',
   'furniture-kit/kitchenCabinet', 'furniture-kit/kitchenCabinetDrawer', 'furniture-kit/kitchenSink', 'furniture-kit/kitchenStove', 'furniture-kit/kitchenCabinetUpper',
+  'polyfork/penguin-base', 'polyfork/old-lighthouse-48ca6c', 'polyfork/curbside-mailbox-0e0736', 'polyfork/herring-gull-55c3da', 'polyfork/driftwood-log-89a68f', 'polyfork/marram-grass-tuft-8c7a99', 'polyfork/shell-scatter-6d36b7', 'polyfork/tamarisk-bush-ba4337', 'polyfork/rowing-dinghy-022673', 'polyfork/snow-laden-spruce-36716e', 'polyfork/windblown-larch-abb99c', 'polyfork/boulder-field-cluster-08e364', 'polyfork/rock-outcrop-158ac3', 'polyfork/dwarf-pine-mat-faee77', 'polyfork/bare-mountain-rowan-10e72e',
   'furniture-kit/pottedPlant', 'furniture-kit/plantSmall1', 'furniture-kit/bookcaseOpen', 'furniture-kit/sideTable', 'furniture-kit/lampRoundTable', 'furniture-kit/rugRound', 'furniture-kit/coatRack',
 ];
 
@@ -68,6 +69,20 @@ export function createEnvs(THREE, stage, K0, A = null) {
   K.streetLamp = () => pickFit(['city-kit-roads/light-square', 'city-kit-roads/light-curved'], 0, 10) || K0.streetLamp();
   K.fence = (len = 10) => { const f = fit('city-kit-suburban/fence-1x4', len, { axis: 'xz' }); return f || K0.fence(len); };
   K.ship = (o = {}) => fit(o.sails === false ? 'pirate-kit/ship-wreck' : 'pirate-kit/ship-large', 30, { axis: 'xz' }) || K0.ship(o);
+  // Polyfork: kích thước thật (mét) → 1 m ≈ 2.9 stud (người R6 5.2 stud ≈ 1.8 m)
+  const M2S = 2.9;
+  const pf = (id, mult = 1, recolor = null) => {
+    const full = 'polyfork/' + id; if (!A || !A.has(full)) return null;
+    const ent = A.manifest()?.byId.get(full); const hm = ent?.size_m?.y;
+    const o = hm ? fit(full, hm * M2S * mult) : A.instance(full, { scale: M2S * mult }); o.userData.pf = true;
+    if (recolor) o.traverse((m) => {   // Polyfork tô màu theo đỉnh (COLOR_0) → đổi màu từng đỉnh trên bản sao geometry
+      if (!m.isMesh || !m.geometry.attributes.color) return;
+      m.geometry = m.geometry.clone(); const ca = m.geometry.attributes.color, c = new THREE.Color(), hsl = {};
+      for (let i = 0; i < ca.count; i++) { c.setRGB(ca.getX(i), ca.getY(i), ca.getZ(i), THREE.LinearSRGBColorSpace); c.getHSL(hsl); const nc = recolor(hsl, c); if (nc) { c.set(nc); ca.setXYZ(i, c.r, c.g, c.b); } }
+      ca.needsUpdate = true;
+    });
+    return o;
+  };
   const kenneyHouse = (seed) => pickFit('abcdefghijklmnopqrstu'.split('').map((c) => `city-kit-suburban/building-type-${c}`), seed, 30, { axis: 'xz' });
   const { scene } = stage;
   const envs = {};
@@ -173,10 +188,11 @@ export function createEnvs(THREE, stage, K0, A = null) {
   def('antarctica', 'snow', (g, e) => {
     g.add(bumpy(900, 900, 70, '#f3f8fb', 6, 0.4, 'snowfield', 0.03));
     for (let i = 0; i < 10; i++) place(g, K.iceberg(40 + hash(i, 1) * 50, i % 2 ? '#e8f3f9' : '#d8eaf3'), -300 + i * 70, 0, -200 - hash(i, 2) * 120, hash(i, 3) * 6);
-    e.mailbox = place(g, K.mailbox(), 11, 0, 31, 0);
-    e.penguins = [0, 1, 2, 3].map((i) => place(g, K.penguin(), 0, 0, 0, 0, 1));
+    e.mailbox = place(g, pf('curbside-mailbox-0e0736', 1.6) || K.mailbox(), 11, 0, 31, 0);
+    e.penguins = [0, 1, 2, 3].map((i) => place(g, pf('penguin-base', 1.7) || K.penguin(), 0, 0, 0, 0, 1));
+    for (let i = 0; i < 14; i++) { const o = pf(['boulder-field-cluster-08e364', 'rock-outcrop-158ac3', 'dwarf-pine-mat-faee77'][i % 3], 1.4 + hash(i, 9)); if (o) place(g, o, (hash(i, 1) - 0.5) * 220, 0, -30 - hash(i, 2) * 120 + (i % 3 === 0 ? 100 : 0), hash(i, 3) * 6); }
     e.snow = fxSnow(THREE, { count: 900, area: [120, 60, 120], speed: 3, size: 0.45, wind: [3, 0] }); g.add(e.snow.obj);
-    return { update(t, ctx) { e.snow.update(t, ctx.focus || [0, 0, 0]); e.penguins.forEach((p, i) => { const x = -22 + ((t * 2.2 + i * 5) % 60); p.position.set(x, 0, 38 + (i % 2) * 3); p.rotation.y = Math.PI / 2; K.waddle(p, t + i * 0.3); }); } };
+    return { update(t, ctx) { e.snow.update(t, ctx.focus || [0, 0, 0]); e.penguins.forEach((p, i) => { const x = -22 + ((t * 2.2 + i * 5) % 60); p.position.set(x, 0, 38 + (i % 2) * 3); p.rotation.y = Math.PI / 2; if (p.userData.pf) { p.rotation.z = Math.sin((t + i * 0.3) * 7) * 0.12; p.position.y = Math.abs(Math.sin((t + i * 0.3) * 7)) * 0.15; } else K.waddle(p, t + i * 0.3); }); } };
   });
 
   // ---------- ĐẠI DƯƠNG (nhà ngập nước) ----------
@@ -202,7 +218,7 @@ export function createEnvs(THREE, stage, K0, A = null) {
   def('snowNight', 'snowNight', (g, e) => {
     g.add(bumpy(900, 900, 70, '#dfe8f5', 8, 2.2, 'snow_night', 0.03));
     for (let i = 0; i < 8; i++) place(g, K.iceberg(60 + hash(i, 1) * 60, '#c9d6ec'), -300 + i * 80, 0, -220 - hash(i, 2) * 100);
-    for (let i = 0; i < 30; i++) place(g, K.pine(12 + hash(i, 4) * 10, true), (hash(i, 5) - 0.5) * 300, 0, -60 - hash(i, 6) * 120);
+    for (let i = 0; i < 30; i++) place(g, pf(['snow-laden-spruce-36716e', 'snow-laden-spruce-36716e', 'windblown-larch-abb99c', 'bare-mountain-rowan-10e72e'][i % 4], 1.1 + hash(i, 4) * 0.8) || K.pine(12 + hash(i, 4) * 10, true), (hash(i, 5) - 0.5) * 300, 0, -60 - hash(i, 6) * 120, hash(i, 7) * 6);
     e.moon = place(g, K.moon(26), -120, 160, -500);
     e.snow = fxSnow(THREE, { count: 700, area: [120, 60, 120], speed: 2.5, size: 0.4 }); g.add(e.snow.obj);
     return { update(t, ctx) { e.snow.update(t, ctx.focus || [0, 0, 0]); } };
@@ -244,14 +260,22 @@ export function createEnvs(THREE, stage, K0, A = null) {
     e.cliff = new THREE.Group(); e.cliff.name = 'cliff'; e.cliff.position.set(60, 0, -50); g.add(e.cliff);
     for (let i = 0; i < 9; i++) { const r = K.rock(6 + hash(i, 1) * 5, i % 2 ? '#6b5444' : '#7d6452', i + 60); r.position.set((hash(i, 2) - 0.5) * 18, hash(i, 3) * 4, (hash(i, 4) - 0.5) * 18); e.cliff.add(r); }
     const plinth = new THREE.Mesh(new THREE.CylinderGeometry(9, 12, 8, 10), mat('#6b5444', { flatShading: true })); plinth.position.y = 4; plinth.castShadow = plinth.receiveShadow = true; e.cliff.add(plinth);
-    e.lighthouse = K.lighthouse(); e.lighthouse.position.y = 8; e.cliff.add(e.lighthouse);
+    const pfl = pf('old-lighthouse-48ca6c', 1.15, (h) => (h.s > 0.35 && (h.h < 0.06 || h.h > 0.94) ? '#2f8f6b' : (h.l > 0.75 && h.s > 0.2 ? '#f4f4ef' : null)));
+    if (pfl) { plinth.scale.set(1.3, 0.6, 1.3); plinth.position.y = 2.4; }
+    e.lighthouse = pfl || K.lighthouse(); e.lighthouse.position.y = pfl ? 4.6 : 8; e.cliff.add(e.lighthouse);
     e.seat = new THREE.Vector3(44, 2.4, -28);   // chỗ cha ngồi (mỏm đá dưới chân hải đăng)
     place(g, K.rock(2.6, '#7d6452', 77), 44, -0.9, -28.6);
     for (let i = 0; i < 26; i++) { const a = hash(i, 5) * Math.PI * 2, r = 30 + hash(i, 6) * 32, px = Math.cos(a) * r - 10, pz = Math.sin(a) * r - 20;
       if (Math.hypot(px + 10, pz) < 36 || Math.hypot(px - 40, pz + 22) < 22 || Math.hypot(px - 60, pz + 50) < 16 || (px > -10 && pz > -30 && px < 50)) continue; place(g, K.palm(13 + hash(i, 7) * 8, 0.2 + hash(i, 8) * 0.25), px, 0, pz, hash(i, 9) * 6); }
     for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; place(g, K.rock(2 + hash(i, 10) * 2, '#8a7a6a', i + 80), Math.cos(a) * 76, -1, Math.sin(a) * 76); }
     place(g, K.cloud(2.4), -100, 110, -320); place(g, K.cloud(2), 120, 130, -380);
-    return { update(t) { e.sea(t); } };
+    // chi tiết bãi biển Polyfork: gỗ trôi, cỏ biển, vỏ sò, bụi, thuyền chèo, mòng biển
+    for (let i = 0; i < 40; i++) { const a = hash(i, 21) * Math.PI * 2, r = 20 + hash(i, 22) * 52, x = Math.cos(a) * r - 10, z = Math.sin(a) * r - 20;
+      if (Math.hypot(x + 10, z) < 30 || Math.hypot(x - 42, z + 26) < 9) continue;
+      const o = pf(['marram-grass-tuft-8c7a99', 'marram-grass-tuft-8c7a99', 'shell-scatter-6d36b7', 'tamarisk-bush-ba4337', 'driftwood-log-89a68f'][i % 5], 1 + hash(i, 23) * 0.5); if (o) place(g, o, x, 0, z, hash(i, 24) * 6); }
+    const dinghy = pf('rowing-dinghy-022673', 1.1); if (dinghy) place(g, dinghy, -40, 0, 62, 0.8);
+    e.gulls = [0, 1, 2].map((i) => { const o = pf('herring-gull-55c3da', 1.3); return o ? place(g, o, 0, 0, 0) : null; }).filter(Boolean);
+    return { update(t) { e.sea(t); e.gulls.forEach((gl, i) => { const a = t * 0.35 + i * 2.1; gl.position.set(30 + Math.cos(a) * (18 + i * 6), 26 + i * 4 + Math.sin(t * 1.3 + i) * 1.2, -20 + Math.sin(a) * (14 + i * 5)); gl.rotation.y = -a; }); } };
   });
 
   // ---------- BÃI ĐÁ NGẦM + XÁC TÀU ----------
