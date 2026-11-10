@@ -12,7 +12,7 @@
 | Giọng đọc CapCut | `tools/voice_studio/` (engine Voice Studio của người dùng + SDK `vendor/capcut-tts-api`) | Chạy thật trên Actions, không cần secret. ~4–5 phút / 5 câu. Tập mẫu `episodes/_template/narration.*` đang dùng CapCut. |
 | Hiệu ứng mùa đông | `engine/winter.js`, `engine/winter-demo.html` | Trời Sky.js + IBL, mây khối, tuyết rơi (particle có seed), tuyết phủ (shader theo normal, dùng được cho mọi material), núi low-poly theo seed, hồ Water.js (normal map sinh bằng code). Demo 9s, 3 shot; đã kiểm chứng tất định (tua lui/tới ra cùng frame). Chi tiết: mục **Hiệu ứng môi trường** bên dưới. |
 | Chụp frame không cần HyperFrames | `tools/snap.js` | Playwright + swiftshader; phục vụ three từ node_modules vì cloud chặn jsdelivr. Đã chạy được. |
-| Sinh vật biển (8 GLB) | `assets/special/sea/`, `assets/manifest.json`, `assets/CREDITS.md`, `engine/asset-preview.html`, `tools/fbx2glb.js` | Quaternius Fish Pack (CC0, FBX→GLB): humpback_whale, dolphin, shark, manta_ray, fish1–3; Sketchfab (CC-BY-4.0, **phải ghi credit**): killer_whale (1 clip). Cá nhà táng (sperm whale) đã bị người dùng loại bỏ — không thêm lại. Manifest có `scale_to_m`, `forward: +z`. Animation: `mixer.setTime(t)`. Xem: `node tools/snap.js engine/asset-preview.html <out> 0 0.4 --three …` (`?prefix=sea/&clip=Swim`). |
+| Sinh vật biển (8 GLB) + nước văng | `assets/special/sea/`, `assets/manifest.json`, `assets/CREDITS.md`, `engine/asset-preview.html`, `tools/fbx2glb.js` | Quaternius Fish Pack (CC0, FBX→GLB): dolphin, shark, manta_ray, fish1–3; Sketchfab (CC-BY-4.0, **phải ghi credit**): killer_whale (1 clip), sperm_whale (13 clip: SWIM, FASTER, IDLE, TURNLEFT, SWIMRIGHT, BREATHE, JUMP, JUMPSPLASH, EAT, ATTACK, HURT, DEATH; mặt nước gốc `water_y_native` = 4.283). Người dùng đã BỎ cá voi lưng gù (humpback) — không thêm lại. Nước văng khi nhảy: `engine/splash.js`. Manifest có `scale_to_m`, `forward: +z`. Animation: `mixer.setTime(t)`. Xem: `node tools/snap.js engine/asset-preview.html <out> 0 0.4 --three …` (`?prefix=sea/&clip=Swim`). |
 | Tool phân tích video tham khảo | `tools/ref.py`, `tools/ref_remote.sh`, workflow `ref-analyze` | Đường ống chạy được, nhưng **YouTube chặn bot** → xem "Chờ người dùng". |
 
 ### Chưa làm (theo thứ tự ưu tiên)
@@ -51,6 +51,12 @@ Hiệu năng (cloud không GPU, swiftshader): ~0.6–1 s/frame 1080×1920. Tốn
 và ~9600 hạt tuyết. Shot không thấy hồ → `water.object.visible = false`.
 
 Chưa làm: ghép vào `stage.js`/HyperFrames (demo hiện tự có renderer); Kenney + tuyết phủ; dấu chân trên tuyết; hơi thở/khói ống khói.
+
+### Nước văng (`engine/splash.js`, demo `engine/splash-demo.html`)
+- `findSurfaceCrossings(THREE, root, mixer, clip, waterY)` lấy mẫu clip, tìm lúc tâm khung xương cắt mặt nước → `[{time, x, y, z, dir:'up'|'down', speed}]`. Gọi 1 lần sau khi tải (không trong lúc seek).
+- `createSplash(THREE, {seed, scale})` (scale ≈ chiều dài con vật, m) → `setEvents(events)`, `update(tClip, loopDuration, pxScale)`: giọt nước (đạn đạo + cản), sương, vòng bọt + bọt loang. Tối đa 6 lần cắt / clip. Hàm thuần của t.
+- Cá nhà táng: đặt `root.position.y = -water_y_native * scale_to_m` → mặt nước tại y = 0. JUMP: lên 0.27 s / xuống 0.93 s; JUMPSPLASH: 0.27 s / 1.47 s. Demo chạy chậm `?speed=0.55` cho giống cá voi thật.
+- Trang xem trên điện thoại (artifact riêng tư của người dùng): https://claude.ai/artifact/7qsQGfmu9hpi2phj2jhHud — GLB đóng gói thành `.js` base64 vì artifact không phục vụ `.glb`.
 
 ## Xem/kiểm tra cảnh 3D trong cloud
 - Cloud chặn cả `sketchfab.com`, `api.sketchfab.com`, `*.itch.io` → asset ngoài: người dùng tải tay rồi gửi file (uploads), Claude chuyển đổi + ghi manifest.

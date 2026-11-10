@@ -33,7 +33,7 @@ const types = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'applic
     const f = path.join(root, decodeURIComponent(new URL(r.request().url()).pathname));
     r.fulfill({ path: f, contentType: types[path.extname(f)] || 'application/octet-stream' });
   });
-  await p.goto(`http://repo/${page}?capture=1`);
+  await p.goto(`http://repo/${page}${page.includes("?") ? "&" : "?"}capture=1`);
   await p.waitForFunction(() => window.__ready, null, { timeout: 180000 });
   const files = [];
   for (const t of times) {
