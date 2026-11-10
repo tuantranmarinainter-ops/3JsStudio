@@ -30,7 +30,7 @@ jobs:
       - id: p
         run: |
           EP="${{ github.event.inputs.episode }}"; N="${{ github.event.inputs.parts }}"
-          if [ -z "$EP" ] && [ -f render/request.txt ]; then read EP N < render/request.txt; fi
+          if [ -z "$EP" ] && [ -f render/request.txt ]; then read EP N < <(grep -v "^#" render/request.txt | head -1); fi
           EP=${EP:-ep001}; N=${N:-10}
           # tổng frame = data-duration × fps của root composition
           python3 - "$EP" "$N" >> "$GITHUB_OUTPUT" <<'PY'

@@ -260,7 +260,7 @@ export function createEnvs(THREE, stage, K0, A = null) {
     e.cliff = new THREE.Group(); e.cliff.name = 'cliff'; e.cliff.position.set(60, 0, -50); g.add(e.cliff);
     for (let i = 0; i < 9; i++) { const r = K.rock(6 + hash(i, 1) * 5, i % 2 ? '#6b5444' : '#7d6452', i + 60); r.position.set((hash(i, 2) - 0.5) * 18, hash(i, 3) * 4, (hash(i, 4) - 0.5) * 18); e.cliff.add(r); }
     const plinth = new THREE.Mesh(new THREE.CylinderGeometry(9, 12, 8, 10), mat('#6b5444', { flatShading: true })); plinth.position.y = 4; plinth.castShadow = plinth.receiveShadow = true; e.cliff.add(plinth);
-    const pfl = pf('old-lighthouse-48ca6c', 1.15, (h) => (h.s > 0.35 && (h.h < 0.06 || h.h > 0.94) ? '#2f8f6b' : (h.l > 0.75 && h.s > 0.2 ? '#f4f4ef' : null)));
+    const pfl = pf('old-lighthouse-48ca6c', 0.8, (h) => (h.s > 0.35 && (h.h < 0.06 || h.h > 0.94) ? '#2f8f6b' : (h.l > 0.75 && h.s > 0.2 ? '#f4f4ef' : null)));
     if (pfl) { plinth.scale.set(1.3, 0.6, 1.3); plinth.position.y = 2.4; }
     e.lighthouse = pfl || K.lighthouse(); e.lighthouse.position.y = pfl ? 4.6 : 8; e.cliff.add(e.lighthouse);
     e.seat = new THREE.Vector3(44, 2.4, -28);   // chỗ cha ngồi (mỏm đá dưới chân hải đăng)
@@ -314,7 +314,7 @@ export function createEnvs(THREE, stage, K0, A = null) {
     e.fridge = K.fridge(); e.fridge.position.set(-8, 0, -17.6); R.add(e.fridge);
     e.fridgeDense = K.fridge({ dense: true }); e.fridgeDense.position.set(-8, 0, -17.6); e.fridgeDense.visible = false; R.add(e.fridgeDense);
     e.table = place(R, K.table(), 6, 0, 2); place(R, K.chair(), 0, 0, 2, Math.PI / 2); place(R, K.chair(), 12, 0, 2, -Math.PI / 2); place(R, K.chair(), 6, 0, -3.5, 0);
-    place(R, K.fruitBowl(), 6, 3.65, 2);
+    place(R, K.fruitBowl(), 6, 2.82, 2);
     e.window = K.window({ w: 7, h: 8, view: viewTex('day') }); e.window.position.set(10, 11, -19.8); R.add(e.window);
     e.window2 = K.window({ w: 6, h: 7, view: viewTex('day') }); e.window2.position.set(23.8, 11, 4); e.window2.rotation.y = -Math.PI / 2; R.add(e.window2);
     K.box(14, 4, 4, '#f4f1ea', 14, 2, -18, 'counter', R); K.box(14.4, 0.4, 4.4, '#8a5a36', 14, 4.2, -18, 'counter_top', R);

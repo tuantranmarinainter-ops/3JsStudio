@@ -70,14 +70,14 @@ export function propKit(THREE) {
 
     table() {
       const g = group('table'); const wood = M('#8a5a36');
-      box(9, 0.5, 5, wood, 0, 3.4, 0, 'table_top', g);
-      for (const [x, z] of [[-4, -2], [4, -2], [-4, 2], [4, 2]]) box(0.5, 3.2, 0.5, '#6e4428', x, 1.6, z, 'table_leg', g);
+      box(9, 0.4, 5, wood, 0, 2.6, 0, 'table_top', g);
+      for (const [x, z] of [[-4, -2], [4, -2], [-4, 2], [4, 2]]) box(0.5, 2.4, 0.5, '#6e4428', x, 1.2, z, 'table_leg', g);
       return g;
     },
     chair() {
       const g = group('chair'); const wood = M('#7a4a2c');
-      box(2.4, 0.35, 2.4, wood, 0, 2.2, 0, 'seat', g); box(2.4, 3, 0.3, wood, 0, 3.8, -1.05, 'back', g);
-      for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(0.3, 2.2, 0.3, wood, x, 1.1, z, 'chair_leg', g);
+      box(2.4, 0.3, 2.4, wood, 0, 1.6, 0, 'seat', g); box(2.4, 2.6, 0.3, wood, 0, 3.0, -1.05, 'back', g);
+      for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(0.3, 1.6, 0.3, wood, x, 0.8, z, 'chair_leg', g);
       return g;
     },
     window({ w = 6, h = 7, curtains = '#5fae7a', view = null } = {}) {

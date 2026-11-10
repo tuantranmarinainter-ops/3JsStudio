@@ -51,7 +51,7 @@ export const SHOTS = [
   // ===== 04 · Gia đình và người cha mất tích =====
   { id: 's020', f: [755, 789], env: 'town', light: 'day', line: 6, house: FAM({ legsOut: 0, lift: 0 }), cam: orb('house', 0, 70, -1, { look: [0, 4, 0], dist2: 64, fov: 52 }) },
   { id: 's021', f: [790, 841], env: 'kitchen', line: 7, cast: { hero: R(3.5, 0, -1.5, { anim: 'idle', ry: 0.1, s: 0.92 }), mom: R(8.5, 0, -1.8, { anim: 'idle', ry: -0.2, face: 'smile' }) },
-    props: {}, cam: { p: [5.5, 8, 15], l: [5.5, 5, 0], p2: [5.5, 7.8, 13.5], fov: 42 } },
+    props: {}, cam: { p: [5.5, 8.5, 14], l: [5.5, 4.6, -1], p2: [5.5, 8.3, 12.8], fov: 42 } },
   { id: 's022', f: [842, 886], env: 'antarctica', line: 8, cast: { dad: { at: [0, 0, 30], ry: 0.3, anim: 'idle', face: 'happy', pose: { rightArm: { x: -2.6, z: -0.3 } } } },
     cam: orb('dad', 0.35, 13, 0.5, { look: [0, -1.4, 0], fov: 40, dist2: 12 }) },
   { id: 's023', f: [887, 905], env: 'shipStorm', light: 'ocean', line: 9, cast: { dad: { at: [8, 3.6, 0.5], ry: PI / 2, anim: 'wave' } }, cam: orb('dad', PI / 2 + 0.5, 12, 0, { look: [0, 1, 0], fov: 44 }) },
@@ -141,10 +141,10 @@ export const SHOTS = [
   { id: 's085', f: [3125, 3172], env: 'kitchen', line: 44, cast: { mom: R(-4, 0, -10, { anim: 'hold', face: 'worried', ry: 0, pose: { rightArm: { x: -0.75 }, leftArm: { x: -0.75 } }, holdR: { name: 'cardIsland', at: [2.9, -2.1, 0.9], rot: [0.95, 0, 0], s: 0.72 } }) },
     cam: orb('mom', 0, 7.5, 0.4, { look: [0, -1.4, 0], fov: 42 }) },
   { id: 's086', f: [3173, 3211], env: 'shipStorm', line: 45, cast: { dad: { at: [4, 3.6, 1], ry: 0.4, anim: 'scared' } }, cam: orb('dad', 0.6, 8, -1.5, { look: [0, 0, 0], fov: 46, shake: 0.6 }) },
-  { id: 's087', f: [3212, 3233], env: 'kitchen', line: 46, props: { cardIsland: { parent: 'room', at: [6, 4.6, 4.2], rx: -0.5 } }, cam: { p: [6, 7.2, 7.4], l: [6, 4.6, 4.2], fov: 40 } },
+  { id: 's087', f: [3212, 3233], env: 'kitchen', line: 46, props: { cardIsland: { parent: 'room', at: [6, 3.8, 4.2], rx: -0.5 } }, cam: { p: [6, 6.4, 7.4], l: [6, 3.8, 4.2], fov: 40 } },
   { id: 's088', f: [3234, 3266], env: 'island', line: 46, cam: { p: [86, 12, 26], l: [60, 18, -50], p2: [82, 12, 20], fov: 40 } },
-  { id: 's089', f: [3267, 3270], env: 'kitchen', line: 46, props: { cardIsland: { parent: 'room', at: [6, 4.6, 4.2], rx: -0.5 } }, cam: { p: [6, 7.0, 7.2], l: [6, 4.6, 4.2], fov: 40 } },
-  { id: 's090', f: [3271, 3347], env: 'kitchen', line: 47, props: { cardIsland: { parent: 'room', at: [6, 4.6, 4.2], rx: -0.5, ry: [0, PI], win: [0, 0.18] } }, cam: { p: [6, 7.8, 7.6], l: [6, 4.6, 4.2], p2: [6, 7.6, 7.2], fov: 40 } },
+  { id: 's089', f: [3267, 3270], env: 'kitchen', line: 46, props: { cardIsland: { parent: 'room', at: [6, 3.8, 4.2], rx: -0.5 } }, cam: { p: [6, 6.2, 7.2], l: [6, 3.8, 4.2], fov: 40 } },
+  { id: 's090', f: [3271, 3347], env: 'kitchen', line: 47, props: { cardIsland: { parent: 'room', at: [6, 3.8, 4.2], rx: -0.5, ry: [0, PI], win: [0, 0.18] } }, cam: { p: [6, 7.0, 7.6], l: [6, 3.8, 4.2], p2: [6, 6.8, 7.2], fov: 40 } },
   { id: 's091', f: [3348, 3380], env: 'kitchen', line: 49, cast: { mom: R(-4, 0, -10, { anim: 'hold', face: 'moved', ry: 0, pose: { rightArm: { x: -0.75 }, leftArm: { x: -0.75 } }, holdR: { name: 'cardIsland', at: [2.9, -2.1, 0.9], rot: [0.95, PI, 0], s: 0.72 } }) },
     cam: orb('mom', 0, 6.5, 0.3, { look: [0, -1.2, 0], fov: 42 }) },
   { id: 's092', f: [3381, 3435], env: 'snowNight', line: 50, house: FAM({ legsOut: 1, lift: [0.3, 1], win: [0.1, 0.8] }), cam: orb('house', 0.45, 96, 0, { look: [0, -4, 0], fov: 52 }) },
@@ -201,7 +201,7 @@ export const SHOTS = [
   { id: 's129', f: [4479, 4493], env: 'island', line: 63, cast: { mom: { at: [36, 0, -20], ry: 0.6, anim: 'sit', face: 'happy' }, dadIsland: { at: [39, 0, -21], ry: 0.1, anim: 'sit', face: 'happy' }, hero: { at: [41.5, 0, -19.6], ry: -0.4, anim: 'sit', face: 'happy', s: 0.92 } },
     cam: { p: [38, 5, -9], l: [38.8, 2.6, -20.4], fov: 42 } },
   { id: 's130', f: [4494, 4527], env: 'island', line: 64, house: FAM({ ...ISL, lift: 0.85 }), cast: { mom: { at: [26, 0, -16], ry: -2.4, anim: 'sit' }, dadIsland: { at: [28.5, 0, -17.5], ry: -2.4, anim: 'sit' }, hero: { at: [31, 0, -18.8], ry: -2.4, anim: 'sit', s: 0.92 } },
-    cam: { p: [36, 7, -24], l: [-8, 18, 0], fov: 42 } },
+    cam: { p: [34, 8, -12], l: [-8, 18, 0], fov: 46 } },
 
   // ===== 14 · Nhà đưa gia đình về =====
   { id: 's131', f: [4528, 4568], env: 'island', line: 64, house: FAM({ ...ISL, lift: 0.85, kneel: [0, 0.3] }), cam: { p: [porchW(0, 90)[0], 10, porchW(0, 90)[2]], l: [-10, 16, 0], fov: 40 } },
