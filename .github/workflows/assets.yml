@@ -97,7 +97,11 @@ jobs:
               page = get(base).decode("utf-8", "replace")
               zurl = find_zip_url(page, slug, base)
               if not zurl:
-                  print("  KHÔNG tìm thấy link zip"); return False
+                  print("  KHÔNG tìm thấy link zip — chẩn đoán: %d byte, title=%r" % (len(page), (re.search(r"<title>(.*?)</title>", page, re.S) or [None, ""])[1][:80]))
+                  for m in re.findall(r'[^\n]{0,160}(?:download|\.zip|/media/pages)[^\n]{0,160}', page, re.I)[:20]:
+                      print("    | " + m.strip()[:320])
+                  os.makedirs("/tmp/work/debug", exist_ok=True); open("/tmp/work/debug/%s.html" % slug, "w").write(page)
+                  return False
               print("  zip: " + zurl)
               data = get(zurl)
               tmp = tempfile.mkdtemp(prefix="kn_")
@@ -140,6 +144,9 @@ jobs:
           python3 /tmp/work/fetch.py
           echo "slugs=$(cat /tmp/work/slugs.txt)" >> "$GITHUB_OUTPUT"
 
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: kenney-debug, path: /tmp/work/debug, if-no-files-found: ignore }
       - name: Cập nhật assets/manifest.json (bbox + tên node)
         if: steps.dl.outputs.slugs != ''
         run: |
