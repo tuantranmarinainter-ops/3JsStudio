@@ -24,6 +24,20 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: Giải nén SDK CapCut (tools/voice_studio/vendor.rar, nếu có)
+        run: |
+          rar=tools/voice_studio/vendor.rar
+          [ -f "$rar" ] || exit 0
+          rm -rf /tmp/vendor_x && mkdir -p /tmp/vendor_x
+          7z x -y -o/tmp/vendor_x "$rar" > /dev/null
+          prov=$(find /tmp/vendor_x -name PROVENANCE.json | head -1)
+          [ -n "$prov" ] || { echo "Không thấy PROVENANCE.json trong vendor.rar"; find /tmp/vendor_x | head -50; exit 1; }
+          sdk=$(dirname "$prov")
+          rm -rf tools/voice_studio/vendor/capcut-tts-api && mkdir -p tools/voice_studio/vendor
+          cp -r "$sdk" tools/voice_studio/vendor/capcut-tts-api
+          git rm -q --cached "$rar" 2>/dev/null; rm -f "$rar"
+          find tools/voice_studio/vendor -maxdepth 3 | head -40
+
       - name: Tìm narration.txt cần tạo
         id: f
         run: |
@@ -31,7 +45,7 @@ jobs:
             find episodes -name narration.txt > /tmp/files.txt
           else
             git diff --name-only HEAD~1 HEAD > /tmp/changed.txt || true
-            if grep -q '^tools/voice_studio/.*\.py$' /tmp/changed.txt; then
+            if grep -qE '^tools/voice_studio/.*\.(py|rar)$' /tmp/changed.txt; then
               find episodes -name narration.txt > /tmp/files.txt      # engine đổi → tạo lại mọi tập
             else
               grep 'narration\.txt$' /tmp/changed.txt > /tmp/files.txt || true
@@ -67,7 +81,7 @@ jobs:
           # Danh sách giọng để Claude tra ID (cloud của Claude không gọi được dịch vụ)
           python tools/tts.py --list-voices vi > tools/voice_studio/voices-edge-vi.txt || true
           if [ -d tools/voice_studio/vendor/capcut-tts-api ]; then
-            python tools/tts.py --list-voices "" --source capcut > tools/voice_studio/voices-capcut.txt || true
+            python tools/tts.py --list-voices "" --source capcut > tools/voice_studio/voices-capcut.txt 2>&1 || true
           fi
           while IFS= read -r f; do
             [ -f "$f" ] || continue
@@ -80,6 +94,6 @@ jobs:
         run: |
           git config user.name "tts-bot"
           git config user.email "tts-bot@users.noreply.github.com"
-          git add episodes tools/voice_studio/voices-*.txt
+          git add -A episodes tools/voice_studio
           git commit -m "tts: giọng đọc ${GITHUB_RUN_ID}" || exit 0
           for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
