@@ -10,6 +10,7 @@
 | Nhân vật R6 | `engine/r6.js`, `engine/r6-preview.html` | 15 animation, 8 biểu cảm, `randomLook(seed)`. Preview đã xem được trên điện thoại. `r6-preview.html` = trang mẫu + r6.js nhúng sẵn (tạo lại nếu sửa r6.js). |
 | Giọng đọc Edge | `tools/tts.py` + workflow `tts-narration` | Chạy thật trên GitHub Actions (~40s / 5 câu). |
 | Giọng đọc CapCut | `tools/voice_studio/` (engine Voice Studio của người dùng + SDK `vendor/capcut-tts-api`) | Chạy thật trên Actions, không cần secret. ~4–5 phút / 5 câu. Tập mẫu `episodes/_template/narration.*` đang dùng CapCut. |
+| Hiệu ứng mùa đông | `engine/winter.js`, `engine/winter-demo.html` | Trời Sky.js + IBL, mây khối, tuyết rơi (particle có seed), tuyết phủ (shader theo normal, dùng được cho mọi material), núi low-poly theo seed, hồ Water.js (normal map sinh bằng code). Demo 9s, 3 shot; đã kiểm chứng tất định (tua lui/tới ra cùng frame). |
 | Tool phân tích video tham khảo | `tools/ref.py`, `tools/ref_remote.sh`, workflow `ref-analyze` | Đường ống chạy được, nhưng **YouTube chặn bot** → xem "Chờ người dùng". |
 
 ### Chưa làm (theo thứ tự ưu tiên)

@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Winter Demo</title>
+<style>
+  :root { --bg:#0e1118; --panel:#1b2030dd; --ink:#e8ecf4; --accent:#5b8cff; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:14px system-ui,sans-serif; overflow:hidden; }
+  #c { display:block; margin:0 auto; height:100vh; width:auto; aspect-ratio:9/16; max-width:100vw; object-fit:contain; }
+  .ui { position:fixed; left:0; right:0; bottom:0; padding:10px 16px 14px; background:var(--panel); display:flex; gap:10px; align-items:center; }
+  .ui button { border:0; border-radius:999px; padding:8px 14px; background:var(--accent); color:#fff; font:inherit; }
+  .ui input { flex:1; }
+  .ui span { min-width:3.5em; text-align:right; font-variant-numeric:tabular-nums; }
+  body.capture .ui { display:none; }
+  body.capture #c { height:auto; width:100vw; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<div class="ui"><button id="play">▶</button><input id="seek" type="range" min="0" max="9" step="0.0333" value="0"><span id="tl">0.00s</span></div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+// Demo "thị trấn mùa đông": trời Sky.js + mây khối + tuyết rơi + tuyết phủ + núi tuyết + hồ nước.
+// Toàn bộ là hàm thuần của t: renderAt(t) / sự kiện hf-seek. Nút ▶ chỉ để xem thử trên điện thoại.
+import * as THREE from 'three';
+import { Sky } from 'three/addons/objects/Sky.js';
+import { Water } from 'three/addons/objects/Water.js';
+import { createR6, randomLook } from './r6.js';
+import * as W from './winter.js';
+
+window.THREE = THREE;
+const DURATION = 9;
+const params = new URLSearchParams(location.search);
+if (params.has('capture')) document.body.classList.add('capture');
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.setSize(1080, 1920, false);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.6;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+const FOG = new THREE.Color('#b9c7da');
+scene.fog = new THREE.FogExp2(FOG, 0.0011);
+const cam = new THREE.PerspectiveCamera(50, 1080 / 1920, 0.1, 30000);
+
+// --- Trời + ánh sáng ---
+const sky = W.createSky(THREE, Sky, { elevation: 9, azimuth: 205, turbidity: 5, rayleigh: 1.8 });
+scene.add(sky.object);
+scene.environment = sky.bakeEnvironment(renderer);
+const sun = new THREE.DirectionalLight('#ffe2c0', 2.2);
+sun.name = 'sun';
+sun.position.copy(sky.sunDir).multiplyScalar(120);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -45, right: 45, top: 45, bottom: -45, near: 1, far: 400 });
+sun.shadow.bias = -0.0005;
+sun.shadow.normalBias = 0.04;
+scene.add(sun, sun.target);
+scene.add(new THREE.HemisphereLight('#cfe0ff', '#e9eef7', 0.6));
+
+// --- Núi + mặt đất tuyết ---
+const mountains = W.createMountains(THREE, { seed: 5 });
+scene.add(mountains.object);
+const clouds = W.createClouds(THREE, { seed: 3 });
+scene.add(clouds.object);
+
+// --- Hồ nước + viền băng ---
+const POND = new THREE.Vector3(-4, 0, -10);
+const water = W.createWater(THREE, Water, { radius: 9, sunDir: sky.sunDir, color: '#1c4b66' });
+water.object.position.set(POND.x, 0.06, POND.z);
+scene.add(water.object);
+const ice = new THREE.Mesh(new THREE.RingGeometry(8.6, 10.2, 64), new THREE.MeshStandardMaterial({ color: '#d7ecf7', roughness: 0.15, metalness: 0.1 }));
+ice.name = 'iceRim';
+ice.rotation.x = -Math.PI / 2;
+ice.position.set(POND.x, 0.07, POND.z);
+ice.receiveShadow = true;
+scene.add(ice);
+
+// --- Nhà + cây thông, phủ tuyết bằng shader ---
+const snowMats = [];
+const houses = [[-20, -24, 0.3], [-9, -28, 0], [3, -27, -0.1], [15, -22, -0.4], [22, -9, -1.1], [14, 2, -1.6]];
+houses.forEach(([x, z, ry], i) => {
+  const h = W.createHouse(THREE, { seed: 100 + i * 17 });
+  h.object.name = `house_${i}`;
+  h.object.position.set(x, 0, z);
+  h.object.rotation.y = ry;
+  scene.add(h.object);
+  snowMats.push(...h.materials);
+});
+const tr = W.rng(42);
+for (let i = 0; i < 40; i++) {
+  const a = tr() * Math.PI * 2, d = 28 + tr() * 35;
+  const p = W.createPine(THREE, { seed: i + 1, height: 6 + tr() * 6 });
+  p.object.name = `pine_${i}`;
+  p.object.position.set(Math.cos(a) * d, 0, Math.sin(a) * d - 10);
+  if (p.object.position.z > 14) continue;
+  scene.add(p.object);
+  snowMats.push(...p.materials);
+}
+[[-16, -6], [6, -16], [-14, 4], [9, -6]].forEach(([x, z], i) => {
+  const p = W.createPine(THREE, { seed: 90 + i, height: 7 + i });
+  p.object.position.set(x, 0, z);
+  scene.add(p.object);
+  snowMats.push(...p.materials);
+});
+const snowCover = [...new Set(snowMats)].map((m) => W.applySnowCover(THREE, m, { amount: 1 }));
+
+// --- Nhân vật ---
+const hero = createR6(THREE, { name: 'hero', shirt: '#e74c3c', pants: '#2c3e50', face: 'happy', hat: 'cap', hatColor: '#2d6cdf' });
+scene.add(hero.root);
+const npcs = [0, 1, 2].map((i) => {
+  const c = createR6(THREE, { ...randomLook(i * 7919 + 5), name: `npc_${i}` });
+  c.root.position.set([-12, 10, 4][i], 0, [-2, -12, -20][i]);
+  c.root.rotation.y = [0.8, -2.2, 0.3][i];
+  scene.add(c.root);
+  return c;
+});
+
+// --- Tuyết rơi: lớp chính + lớp gần to, nhòe ---
+const snowFar = W.createSnowfall(THREE, { seed: 11, count: 9000, area: [110, 45, 110], center: [0, 0, -15], size: 0.28 });
+const snowNear = W.createSnowfall(THREE, { seed: 12, count: 600, area: [30, 20, 30], center: [0, 0, 0], size: 0.4, opacity: 0.55, sway: 1 });
+scene.add(snowFar.object, snowNear.object);
+
+// --- Camera: 3 shot, cắt cứng ---
+const lerp = (a, b, k) => a + (b - a) * k;
+const ease = (k) => k * k * (3 - 2 * k);
+const v = (x, y, z) => new THREE.Vector3(x, y, z);
+function heroAt(t) { return v(-9 + t * 1.6, 0, 3); }
+function cameraAt(t) {
+  const h = heroAt(t);
+  if (t < 3) { // establish: hạ dần từ trên cao, thấy hồ, làng, núi, trời
+    const k = ease(t / 3);
+    return { pos: v(lerp(6, 2, k), lerp(22, 12, k), lerp(42, 32, k)), look: v(-2, 8, -40) };
+  }
+  if (t < 6) { // follow: bám theo nhân vật
+    return { pos: h.clone().add(v(5, 4.2, 14)), look: h.clone().add(v(-1, 3, 0)) };
+  }
+  // low angle: nhìn ngược lên trời, mây, tuyết rơi, đỉnh núi
+  const k = ease((t - 6) / 3);
+  return { pos: v(-2, 1.0, 13), look: v(lerp(-4, -8, k), lerp(10, 20, k), -60) };
+}
+
+// --- Render theo t ---
+function renderAt(t) {
+  t = Math.max(0, Math.min(DURATION, t));
+  const h = heroAt(t);
+  hero.root.position.copy(h);
+  hero.root.rotation.y = Math.PI / 2;
+  hero.animate('walk', t);
+  npcs[0].animate('wave', t);
+  npcs[1].animate('lookAround', t + 1);
+  npcs[2].animate('idle', t + 2);
+  clouds.update(t);
+  water.update(t);
+  snowFar.update(t);
+  snowNear.update(t);
+  const c = cameraAt(t);
+  cam.position.copy(c.pos);
+  cam.lookAt(c.look);
+  snowNear.material.uniforms.uCenter.value.copy(c.pos).add(v(0, -8, -12));
+  renderer.render(scene, cam);
+}
+window.renderAt = renderAt;
+window.DURATION = DURATION;
+
+// HyperFrames: thời gian chỉ lấy từ hf-seek
+const onSeek = (e) => renderAt(e.detail?.time ?? 0);
+window.addEventListener('hf-seek', onSeek);
+document.addEventListener('hf-seek', onSeek);
+
+// Xem thử (điện thoại): thanh tua + nút ▶ (chỉ đổi t, chuyển động vẫn là hàm của t)
+const seek = document.getElementById('seek'), tl = document.getElementById('tl'), play = document.getElementById('play');
+const show = (t) => { renderAt(t); seek.value = t; tl.textContent = t.toFixed(2) + 's'; };
+seek.oninput = () => { playing = false; play.textContent = '▶'; show(+seek.value); };
+let playing = false, t0 = 0, tStart = 0;
+play.onclick = () => {
+  playing = !playing; play.textContent = playing ? '⏸' : '▶';
+  if (playing) { tStart = +seek.value >= DURATION ? 0 : +seek.value; t0 = performance.now(); tick(); }
+};
+function tick() {
+  if (!playing) return;
+  const t = tStart + (performance.now() - t0) / 1000;
+  show(t % DURATION);
+  requestAnimationFrame(tick);
+}
+show(+(params.get('t') ?? 0));
+window.__ready = true;
+</script>
+</body>
+</html>
