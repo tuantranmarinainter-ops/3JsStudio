@@ -133,6 +133,9 @@ jobs:
               dest = os.path.join("assets", "kenney", slug)
               shutil.rmtree(dest, ignore_errors=True); os.makedirs(dest)
               for name, p in glbs.items(): shutil.copy(p, os.path.join(dest, name))
+              # GLB của Kenney (Pirate/City kits) trỏ tới Textures/colormap.png bên ngoài → chép kèm thư mục Textures
+              for tdir in {os.path.join(os.path.dirname(p), "Textures") for p in glbs.values()}:
+                  if os.path.isdir(tdir): shutil.copytree(tdir, os.path.join(dest, "Textures"), dirs_exist_ok=True)
               for dp, _, fs in os.walk(ex):
                   for f in fs:
                       if f.lower() in ("license.txt", "license.md", "licence.txt"):
