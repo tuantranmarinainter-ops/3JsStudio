@@ -1,0 +1,19 @@
+{
+  "source": "S:/ChatGPT/BBS MINECRAFT/BBS_FS_MCP_MERGED_024/voice/capcut-tts-api",
+  "repository": "https://github.com/akkhanh/capcut-tts-api",
+  "commit": "e06da1f4e0c0010354f4e7702f02c18cbdd419a2",
+  "copied_on": "2026-10-09",
+  "files": {
+    "pyproject.toml": "bdd5094694cd38192a159fa8e36d9ba4eb1e6143d9b2a3447e35f0d487bcc151",
+    "README.md": "1d1c5f78eb8a200afd4d0b16d02824bd06dc52bfaeeb806baac193f58f3a6734",
+    "Voice.json": "5feb006754ee4ea9f96087b98481c6fb5c6a36bfae42d829854aafab23704d8d",
+    "capcut_tts_api/cli.py": "94537c242f8cba0044ae946c42785642e67a9e1a7d2848dc6faec5b66fd320e1",
+    "capcut_tts_api/client.py": "a35973c24accb092218f6c79e2421205c9ea6dc7f4699c6e4932ba2be10eeb96",
+    "capcut_tts_api/config.py": "825d5828353a315754fe1fe4d2ec10c8e5445409c3f203724e414d85787ceaf2",
+    "capcut_tts_api/exceptions.py": "80692c5468ffda09fd814277c2a5593dee46fa1aefe1bfbc78b5644bff9575c4",
+    "capcut_tts_api/models.py": "a4320c644e28d3d33e05ed9fc5873621ab621d00c46488d92c6f79160b13f0d8",
+    "capcut_tts_api/signer.py": "e7ce6a15935c23a0db254ff585ebde0d5358373d85b047bfd752863cafc460cb",
+    "capcut_tts_api/uploader.py": "4e2070f1243fc975fa9a62e52ef9665c231ac04185a8ab5318d90e3131310729",
+    "capcut_tts_api/__init__.py": "b121c0462427412b53d19dcd29a4e42fef9f3acfa84b28728edbdd26f6be4c1c"
+  }
+}

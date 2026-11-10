@@ -1,0 +1,60 @@
+BV421_vivn_streaming                     vi-VN    Unknown  Nhỏ Ngọt Ngào
+vi_female_huong                          vi-VN    Unknown  Giọng Nữ Phổ Thông
+BV074_streaming_dsp                      vi-VN    Unknown  Giọng Bé
+BV074_streaming                          vi-VN    Unknown  Cô Gái Hoạt Ngôn
+BV075_streaming_vibrato_dsp              vi-VN    Unknown  Việt Méo
+BV562_streaming                          vi-VN    Unknown  Mai
+multi_female_yangguangnv_uranus_bigtts   vi-VN    Unknown  Ban Mai
+multi_female_richgirl_uranus_bigtts      vi-VN    Unknown  Review Phim new
+multi_female_quanweinv_uranus_bigtts     vi-VN    Unknown  Bản Tin 1
+multi_female_stokie_uranus_bigtts        vi-VN    Unknown  Review Phim 4
+multi_female_sisi_uranus_bigtts          vi-VN    Unknown  Bản Tin nữ
+multi_female_daqi_uranus_bigtts          vi-VN    Unknown  Review Phim 3
+multi_female_xyf04auto_uranus_bigtts     vi-VN    Unknown  Review Phim 2
+multi_female_kiwi_uranus_bigtts          vi-VN    Unknown  Sunny Idol
+BV075_streaming_demon_dsp                vi-VN    Unknown  Kenny Đại Đế
+en_us_006                                en-US    Unknown  EN US 2
+en_us_002                                en-US    Unknown  EN US
+en_female_janeamber_mars_bigtts          en-US    Unknown  Janeamber
+en_female_emotional_moon_bigtts          en-US    Unknown  Emotional
+BV510_streaming                          en-US    Unknown  English
+en_female_sherry                         en-US    Unknown  Sherry
+en_us_010                                en-US    Unknown  Chrming Male
+en_male_deadpool                         en-US    Unknown  Deadpool
+en_male_m03_classical                    en-US    Unknown  Classical Music
+en_male_dramaqueen_zachk                 en-US    Unknown  Dramaaa
+BV503_streaming                          en-US    Unknown  Energetic Famale
+en_female_nail_artist                    en-US    Unknown  Artist
+ICL_en_female_little_cute_dsp            en-US    Unknown  Cute Girl
+en_male_trickster_stream                 en-US    Unknown  Trickster
+en_male_artistic_layne                   en-US    Unknown  Mentor
+en_male_death_rock                       en-US    Unknown  Grim Rock
+ICL_en_male_philosopher_dsp              en-US    Unknown  Narrator
+en_us_007                                en-US    Unknown  Male Profess
+ICL_en_female_ditie_dsp                  en-US    Unknown  Creepy female
+en_female_soothing_mars_bigtts           en-US    Unknown  Female Teacher
+BV072_streaming                          en-US    Unknown  Suaraaa
+BV075_streaming_robot_dsp                vi-VN    Unknown  Robot VN
+multi_male_felipe_uranus_bigtts          vi-VN    Unknown  Giọng Nam Trầm
+multi_female_peiqi_uranus_bigtts         vi-VN    Unknown  Giọng Gái Mới Lớn
+multi_female_xinwenjieshuo_uranus_bigtts vi-VN    Unknown  Nam bản tin
+multi_female_tianmeijieshuo_uranus_bigtts vi-VN    Unknown  Quên Tên Tự Test
+BV075_streaming                          vi-VN    Unknown  Thanh Niên Tự Tin
+DiT_en_female_jessie                     en-US    Unknown  Jessie
+BV540_streaming                          en-US    Unknown  Desti
+en_female_loba_apex                      en-US    Unknown  Robaa
+DiT_en_male_trickster                    en-US    Unknown  Trickster
+en_female_caroline_clone2                en-US    Unknown  Excited
+ICL_en_male_305M_JamieTr                 en-US    Unknown  Tinn
+ICL_en_male_kevin2                       en-US    Unknown  Mischief
+en_us_002_dsp                            en-US    Unknown  Dolly famle
+BV507_streaming                          en-US    Unknown  Cute Boy
+BV029_streaming                          en-US    Unknown  American Female
+ICL_en_female_cc_bluetooth               en-US    Unknown  Bluetooth
+ICL_en_female_lisa                       en-US    Unknown  Lisa
+ICL_en_male_317M_BrianJW                 en-US    Unknown  BrianJW
+ICL_en_male_310M_CoreyK                  en-US    Unknown  Kai
+ICL_en_male_captain                      en-US    Unknown  Captain
+multi_female_wenjingmaomao_moon_bigtts_cc en-US    Unknown  Daiana
+ICL_en_male_oogie2                       en-US    Unknown  Oogie
+BV560_streaming                          vi-VN    Unknown  Alex Đại Đế
