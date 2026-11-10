@@ -98,27 +98,47 @@ function hand(g, lines, x, y, size, color = '#4a3b2a', lh = 1.25) {
   lines.forEach((l, i) => g.fillText(l, x, y + i * size * lh));
 }
 
+// Tranh "ảnh chụp" từ chính cảnh 3D của phim (engine/snap.js) — ghi đè tranh vẽ tay ART[kind] khi có.
+const ARTIMG = {};
+const listeners = new Set();
+export function onPostcardArt(cb) { listeners.add(cb); }
+export function setPostcardArt(kind, img) {
+  ARTIMG[kind] = img;
+  for (const tex of cache.values()) if (tex.userData.kind === kind && tex.userData.redraw) { tex.userData.redraw(); tex.needsUpdate = true; }
+  for (const cb of listeners) cb(kind);
+}
+const RES = 2;   // canvas 1024×720 (vẽ theo toạ độ 512×360 rồi nhân 2) → sắc nét ở cảnh cận
 export function postcardTexture(THREE, kind, opts = {}) {
   const key = `front:${kind}:${opts.variant || 0}:${opts.text === false}`;
   if (cache.has(key)) return cache.get(key);
-  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
-  frame(g);
-  const text = opts.text === false ? null : (opts.lines || CARD_TEXT[kind]);
-  const ah = text ? H * 0.6 : H - 56;
-  g.save(); g.beginPath(); g.rect(28, 28, W - 56, ah); g.clip();
-  (ART[kind] || ART.beach)(g, 28, 28, W - 56, ah);
-  g.restore();
-  g.strokeStyle = '#fff'; g.lineWidth = 6; g.strokeRect(28, 28, W - 56, ah);
-  stamp(g, W - 100, 40, kind === 'island' ? '#d9413a' : ['#d9413a', '#2f8f6b', '#e09a2a'][(opts.variant || 0) % 3]);
-  if (text) hand(g, text, W / 2, 28 + ah + 34, text.length > 2 ? 26 : 30);
-  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+  const cv = document.createElement('canvas'); cv.width = W * RES; cv.height = H * RES; const g = cv.getContext('2d');
+  const draw = () => {
+    g.setTransform(RES, 0, 0, RES, 0, 0); g.clearRect(0, 0, W, H);
+    frame(g);
+    const text = opts.text === false ? null : (opts.lines || CARD_TEXT[kind]);
+    const ah = text ? H * 0.6 : H - 56;
+    g.save(); g.beginPath(); g.rect(28, 28, W - 56, ah); g.clip();
+    const img = ARTIMG[kind];
+    if (img) {   // ảnh chụp: phủ kín khung (cover) + chút ấm/tương phản như ảnh in
+      const iw = img.width, ih = img.height, sc = Math.max((W - 56) / iw, ah / ih);
+      g.drawImage(img, 28 + (W - 56 - iw * sc) / 2, 28 + (ah - ih * sc) / 2, iw * sc, ih * sc);
+      g.fillStyle = 'rgba(255,236,200,0.08)'; g.fillRect(28, 28, W - 56, ah);
+    } else (ART[kind] || ART.beach)(g, 28, 28, W - 56, ah);
+    g.restore();
+    g.strokeStyle = '#fff'; g.lineWidth = 6; g.strokeRect(28, 28, W - 56, ah);
+    stamp(g, W - 100, 40, kind === 'island' ? '#d9413a' : ['#d9413a', '#2f8f6b', '#e09a2a'][(opts.variant || 0) % 3]);
+    if (text) hand(g, text, W / 2, 28 + ah + 34, text.length > 2 ? 26 : 30);
+  };
+  draw();
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  tex.userData.kind = kind; tex.userData.redraw = draw;
   cache.set(key, tex); return tex;
 }
 
 export function postcardBack(THREE, lines) {
   const key = 'back:' + lines.join('|');
   if (cache.has(key)) return cache.get(key);
-  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+  const cv = document.createElement('canvas'); cv.width = W * RES; cv.height = H * RES; const g = cv.getContext('2d'); g.setTransform(RES, 0, 0, RES, 0, 0);
   frame(g);
   g.strokeStyle = '#cdbb98'; g.lineWidth = 2; g.beginPath(); g.moveTo(W * 0.62, 40); g.lineTo(W * 0.62, H - 40); g.stroke();
   for (let i = 0; i < 4; i++) { g.beginPath(); g.moveTo(W * 0.66, 170 + i * 36); g.lineTo(W - 40, 170 + i * 36); g.stroke(); }

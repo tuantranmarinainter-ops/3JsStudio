@@ -47,6 +47,7 @@
       import { createAssetLib } from '/engine/assets.js';
       import { buildTimeline } from '/engine/timeline.js';
       import { createDirector } from '/engine/shots.js';
+      import { snapPostcards } from '/engine/snap.js';
       import { buildCast, buildHouses, buildProps, buildFx } from '/episodes/ep001/episode.js';
       import { SHOTS } from '/episodes/ep001/shots.js';
       import { CAPTIONS } from '/episodes/ep001/captions.js';
@@ -87,6 +88,8 @@
       for (const h of Object.values(houses)) h.root.visible = true;
       stage.renderer.compile(stage.scene, stage.camera);
       for (const e of Object.values(envs.envs)) e.group.visible = false;
+      // tranh bưu thiếp = ảnh chụp từ chính các cảnh 3D (Nam Cực, đại dương, đỉnh núi, đảo)
+      snapPostcards(THREE, stage, envs, { hide: [...Object.values(actors).map((a) => a.root), ...Object.values(houses).map((h) => h.root)], props });
       stage.start();
       window.renderAt = (t) => stage.renderAt(t);
       window.__shots = tl;

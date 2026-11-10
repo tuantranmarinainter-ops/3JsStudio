@@ -1,5 +1,5 @@
 // props.js — Đạo cụ dựng bằng code (phong cách khối). Mỗi hàm trả Group có tên rõ; mặt trước nhìn +Z; đơn vị stud.
-import { postcardTexture, makePostcard, postcardBack, seededKinds, POSTCARD_ASPECT } from './postcards.js';
+import { postcardTexture, makePostcard, postcardBack, seededKinds, POSTCARD_ASPECT, onPostcardArt } from './postcards.js';
 
 export function propKit(THREE) {
   const mats = new Map();
@@ -34,12 +34,16 @@ export function propKit(THREE) {
       if (dense) {
         // collage dày thiếp đảo (1 texture lớn) + vài thiếp nổi
         const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 2048; const c = cv.getContext('2d');
-        const src = postcardTexture(THREE, 'island').image; rs(5);
-        c.fillStyle = '#9fe0c9'; c.fillRect(0, 0, 1024, 2048);
-        for (let y = -60; y < 2100; y += 120) for (let x = -80; x < 1100; x += 165) {
-          c.save(); c.translate(x + rnd() * 30, y + rnd() * 30); c.rotate((rnd() - 0.5) * 0.3); c.drawImage(src, 0, 0, 180, 126); c.restore();
-        }
+        const src = postcardTexture(THREE, 'island').image;
+        const drawCollage = () => {
+          rs(5); c.fillStyle = '#9fe0c9'; c.fillRect(0, 0, 1024, 2048);
+          for (let y = -60; y < 2100; y += 120) for (let x = -80; x < 1100; x += 165) {
+            c.save(); c.translate(x + rnd() * 30, y + rnd() * 30); c.rotate((rnd() - 0.5) * 0.3); c.drawImage(src, 0, 0, 180, 126); c.restore();
+          }
+        };
+        drawCollage();
         const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+        onPostcardArt((k) => { if (k === 'island') { drawCollage(); tex.needsUpdate = true; } });
         mesh(new THREE.PlaneGeometry(5.3, 10.8), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.9 }), 0, 5.5, 0.01, 'card_collage', front);
         rs(9);
         for (let i = 0; i < 14; i++) {
@@ -51,14 +55,14 @@ export function propKit(THREE) {
         for (let i = 0; i < extra; i++) {
           const c2 = makePostcard(THREE, kinds[i], { w: 1.3, text: false, variant: i }); c2.position.set(-2.1 + (i % 4) * 1.4 + rnd() * 0.2, 1.2 + Math.floor(i / 4) * 1.45 + rnd() * 0.2, 0.03 + i * 0.002);
           c2.rotation.z = (rnd() - 0.5) * 0.35; front.add(c2);
-          const mg = sph(0.07, ['#d9413a', '#f2c14e', '#2f8fd6'][i % 3], c2.position.x, c2.position.y + 0.42, 0.12, 'magnet', front, 8);
+          const mg = sph(0.07, ['#d9413a', '#f2c14e', '#2f8fd6'][i % 3], c2.position.x, c2.position.y + 0.42, 0.1, 'magnet', front, 10); mg.scale.z = 0.35;
         }
         const spots = { penguin: [-1.2, 8.6], whale: [1.1, 8.0], mountain: [-1.0, 5.9], island: [1.2, 5.0] };
         cards.forEach((k, i) => {
           const c2 = makePostcard(THREE, k, { w: 2.0, back: k === 'island' ? postcardBack(THREE, ['Đã tìm thấy một thứ', 'tuyệt vời.', 'Sẽ sớm về nhà thôi.', 'Yêu cả hai mẹ con.']) : undefined });
           const [x, y] = spots[k] || [0, 3 + i]; c2.position.set(x, y, 0.12 + i * 0.01); c2.rotation.z = [0.06, -0.05, 0.04, -0.07][i % 4];
           c2.name = `card_${k}`; front.add(c2);
-          sph(0.09, '#d9413a', x, y + POSTCARD_ASPECT * 0.92, 0.16, `magnet_${k}`, front, 8);
+          sph(0.09, '#d9413a', x, y + POSTCARD_ASPECT * 0.92, 0.14, `magnet_${k}`, front, 12).scale.z = 0.35;
         });
       }
       return g;
