@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Asset Preview</title>
+<style>
+  html,body { margin:0; height:100%; background:#0e1118; color:#e8ecf4; font:14px system-ui,sans-serif; overflow:hidden; }
+  #c { display:block; margin:0 auto; height:100vh; width:auto; aspect-ratio:9/16; max-width:100vw; }
+  body.capture #c { height:auto; width:100vw; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+// Xem các GLB trong assets/manifest.json theo KÍCH THƯỚC THẬT (mét), cạnh nhân vật R6 cao 1.3 m để so.
+//   ?prefix=sea/        lọc theo id
+//   ?clip=SWIM          ưu tiên clip có tên chứa chuỗi này
+//   renderAt(t)         animation = mixer.setTime(t) → tất định
+// Console in ra kích thước gốc + scale_to_m + trục dài nhất để ghi vào manifest.
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { createR6 } from './r6.js';
+
+window.THREE = THREE;
+const params = new URLSearchParams(location.search);
+if (params.has('capture')) document.body.classList.add('capture');
+const prefix = params.get('prefix') ?? '';
+const clipPref = params.get('clip') ?? 'SWIM';
+
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(1080, 1920, false);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.9;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#1d3d55');
+scene.add(new THREE.HemisphereLight('#dff1ff', '#24404f', 2.2));
+const sun = new THREE.DirectionalLight('#ffffff', 2);
+sun.position.set(5, 10, 8);
+scene.add(sun);
+const cam = new THREE.PerspectiveCamera(35, 1080 / 1920, 0.1, 1000);
+
+const manifest = await (await fetch('../assets/manifest.json')).json();
+const list = manifest.assets.filter((a) => a.id.startsWith(prefix) && a.file.endsWith('.glb'));
+const loader = new GLTFLoader();
+const items = [];
+for (const a of list) {
+  const gltf = await loader.loadAsync('../assets/' + a.file);
+  const root = gltf.scene;
+  root.name = a.id;
+  root.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(root);
+  const size = box.getSize(new THREE.Vector3());
+  const longest = size.x >= size.y && size.x >= size.z ? 'x' : size.z >= size.y ? 'z' : 'y';
+  const scale = a.length_m / Math.max(size.x, size.y, size.z);
+  const holder = new THREE.Group();
+  holder.add(root);
+  root.scale.setScalar(scale);
+  // nhìn ngang: cạnh dài nằm theo X
+  if (longest === 'z') holder.rotation.y = Math.PI / 2;
+  const mixer = new THREE.AnimationMixer(root);
+  const P = clipPref.toUpperCase(), N = (c) => c.name.toUpperCase();
+  const clip = gltf.animations.find((c) => N(c).startsWith(P + '-') || N(c) === P) || gltf.animations.find((c) => N(c).includes(P)) || gltf.animations[0];
+  if (clip) mixer.clipAction(clip).play();
+  scene.add(holder);
+  items.push({ a, holder, mixer, scale, size, longest, clip });
+  console.log(`ASSET ${a.id} native=${size.toArray().map((v) => +v.toFixed(2))} longest=${longest} scale_to_m=${scale.toPrecision(4)} clip=${clip?.name} clips=${gltf.animations.map((c) => c.name + ':' + c.duration.toFixed(2)).join(',')}`);
+}
+
+// Xếp chồng theo chiều dọc (khung 9:16): to nhất dưới cùng, nhỏ lên trên
+items.sort((p, q) => q.a.length_m - p.a.length_m);
+let y = 0;
+const label = (text, h) => {
+  const cv = document.createElement('canvas');
+  cv.width = 1024; cv.height = 128;
+  const g = cv.getContext('2d');
+  g.fillStyle = '#ffffff'; g.font = 'bold 64px system-ui'; g.textBaseline = 'middle';
+  g.fillText(text, 8, 64);
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(cv), transparent: true }));
+  sp.scale.set(h * 8, h, 1);
+  return sp;
+};
+for (const it of items) {
+  const box = new THREE.Box3().setFromObject(it.holder);
+  const h = box.max.y - box.min.y;
+  const c = box.getCenter(new THREE.Vector3());
+  it.holder.position.set(-c.x, y - box.min.y, -c.z);
+  const lh = Math.max(0.5, Math.min(1.6, h * 0.25));
+  const lb = label(`${it.a.title} · ${it.a.length_m} m · ${it.a.license}`, lh);
+  lb.position.set(-it.a.length_m / 2 + lh * 4, y + h + lh * 0.7, 0);
+  scene.add(lb);
+  y += h + lh * 1.8 + 0.6;
+}
+// R6 cao 1.3 m đứng cạnh cá voi lớn nhất để so tỷ lệ
+const kid = createR6(THREE, { name: 'kid_ref', shirt: '#e74c3c', face: 'surprised' });
+kid.root.scale.setScalar(1.3 / 5.2);
+kid.root.position.set(items[0] ? items[0].a.length_m / 2 + 1.2 : 0, 0, 0);
+kid.root.rotation.y = -0.5;
+scene.add(kid.root);
+
+const H = y, W = (items[0]?.a.length_m ?? 10) + 4;
+const dist = Math.max(H / 2 / Math.tan(THREE.MathUtils.degToRad(17.5)), (W / 2) / Math.tan(THREE.MathUtils.degToRad(17.5)) / (1080 / 1920)) * 1.05;
+cam.position.set(0, H / 2, dist);
+cam.lookAt(0, H / 2, 0);
+
+function renderAt(t) {
+  for (const it of items) it.mixer.setTime(t);
+  kid.animate('scared', t);
+  renderer.render(scene, cam);
+}
+window.renderAt = renderAt;
+addEventListener('hf-seek', (e) => renderAt(e.detail?.time ?? 0));
+renderAt(+(params.get('t') ?? 0));
+window.__ready = true;
+</script>
+</body>
+</html>

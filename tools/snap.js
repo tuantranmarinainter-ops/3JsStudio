@@ -24,7 +24,7 @@ const types = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'applic
   const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
   const p = await b.newPage({ viewport: { width: 540, height: 960 } });
   p.on('pageerror', (e) => console.log('pageerror:', e.message));
-  p.on('console', (m) => m.type() === 'error' && console.log('console:', m.text()));
+  p.on('console', (m) => (m.type() === 'error' || m.type() === 'log') && console.log('console:', m.text()));
   await p.route(/cdn\.jsdelivr\.net\/npm\/three@[^/]+\//, (r) => {
     const rel = r.request().url().replace(/^.*three@[^/]+\//, '');
     r.fulfill({ path: path.join(threeDir, rel), contentType: 'text/javascript' });
