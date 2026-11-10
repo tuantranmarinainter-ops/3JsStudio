@@ -1,0 +1,199 @@
+# Tải asset Kenney (CC0) về repo mỗi khi assets/queue.txt thay đổi (cloud của Claude không vào được kenney.nl).
+# Mỗi dòng queue.txt = slug trang asset (vd city-kit-suburban). Kết quả: assets/kenney/<slug>/*.glb + License.txt
+# và assets/manifest.json (id, nguồn, giấy phép, bbox, tên node), được commit lại.
+name: assets
+
+on:
+  push:
+    paths: ["assets/queue.txt"]
+  workflow_dispatch:
+
+concurrency:
+  group: assets
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  kenney:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Tải + giải nén GLB từ Kenney
+        id: dl
+        run: |
+          mkdir -p /tmp/work
+          cat > /tmp/work/fetch.py <<'PY'
+          import html, os, re, shutil, subprocess, sys, tempfile, time, urllib.request, zipfile
+          from urllib.parse import urljoin, unquote
+
+          UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"}
+          MAX_BYTES = 40 * 1024 * 1024
+
+          def find_zip_url(page_html, slug, base):
+              """Tìm link zip tải về trong HTML trang asset của Kenney."""
+              hrefs = re.findall(r'(?:href|src|data-url|data-href)\s*=\s*["\']([^"\']+?\.zip[^"\']*)["\']', page_html, re.I)
+              hrefs += re.findall(r'["\'](https?:[^"\'\s<>]+?\.zip)["\']', page_html, re.I)
+              hrefs += re.findall(r'["\'](https?:\\?/\\?/[^"\'\s<>]+?\.zip)["\']', page_html, re.I)  # JSON-escaped
+              cands = []
+              for h in hrefs:
+                  h = html.unescape(h).replace("\\/", "/")
+                  cands.append(urljoin(base, h))
+              seen, uniq = set(), []
+              for c in cands:
+                  if c not in seen:
+                      seen.add(c); uniq.append(c)
+              def score(u):
+                  s = 0
+                  if "/media/pages/assets/%s/" % slug in u: s += 4
+                  if "/kenney_" in u: s += 2
+                  if "/media/" in u: s += 1
+                  return -s
+              uniq.sort(key=score)
+              return uniq[0] if uniq else None
+
+          def get(url, retries=3):
+              last = None
+              for i in range(retries):
+                  try:
+                      req = urllib.request.Request(url, headers=UA)
+                      with urllib.request.urlopen(req, timeout=120) as r:
+                          return r.read()
+                  except Exception as e:
+                      last = e; print("  thử lại %d/%d: %s" % (i + 1, retries, e), flush=True); time.sleep(3 * (i + 1))
+              raise RuntimeError("tải thất bại %s: %s" % (url, last))
+
+          def collect_glbs(root, slug):
+              """Trả về list (đường dẫn glb, tên file). Ưu tiên 'GLB format', rồi glb bất kỳ, rồi gltf -> glb."""
+              glbs, gltfs = [], []
+              for dp, _, fs in os.walk(root):
+                  for f in fs:
+                      p = os.path.join(dp, f)
+                      if f.lower().endswith(".glb"): glbs.append(p)
+                      elif f.lower().endswith(".gltf"): gltfs.append(p)
+              pref = [p for p in glbs if "glb format" in p.lower()]
+              if pref: glbs = pref
+              out = {os.path.basename(p): p for p in glbs}
+              if not out and gltfs:
+                  conv = os.path.join(root, "_converted"); os.makedirs(conv, exist_ok=True)
+                  for g in gltfs:
+                      name = os.path.splitext(os.path.basename(g))[0] + ".glb"
+                      dst = os.path.join(conv, name)
+                      r = subprocess.run(["npx", "--yes", "@gltf-transform/cli", "copy", g, dst])
+                      if r.returncode == 0 and os.path.exists(dst): out[name] = dst
+                      else: print("  chuyển gltf lỗi: " + g)
+              return out
+
+          def process(slug):
+              base = "https://kenney.nl/assets/" + slug
+              print("== " + slug, flush=True)
+              page = get(base).decode("utf-8", "replace")
+              zurl = find_zip_url(page, slug, base)
+              if not zurl:
+                  print("  KHÔNG tìm thấy link zip"); return False
+              print("  zip: " + zurl)
+              data = get(zurl)
+              tmp = tempfile.mkdtemp(prefix="kn_")
+              zp = os.path.join(tmp, "a.zip"); open(zp, "wb").write(data)
+              ex = os.path.join(tmp, "x")
+              with zipfile.ZipFile(zp) as z: z.extractall(ex)
+              glbs = collect_glbs(ex, slug)
+              total = sum(os.path.getsize(p) for p in glbs.values())
+              print("  %d glb, %.1f MB" % (len(glbs), total / 1048576))
+              if not glbs:
+                  print("  không có GLB, bỏ qua"); return False
+              if total > MAX_BYTES:
+                  print("  BỎ QUA: GLB vượt 40 MB"); return False
+              dest = os.path.join("assets", "kenney", slug)
+              shutil.rmtree(dest, ignore_errors=True); os.makedirs(dest)
+              for name, p in glbs.items(): shutil.copy(p, os.path.join(dest, name))
+              for dp, _, fs in os.walk(ex):
+                  for f in fs:
+                      if f.lower() in ("license.txt", "license.md", "licence.txt"):
+                          shutil.copy(os.path.join(dp, f), os.path.join(dest, "License.txt")); break
+                  else: continue
+                  break
+              shutil.rmtree(tmp, ignore_errors=True)
+              return True
+
+          if __name__ == "__main__":
+              slugs = []
+              for line in open("assets/queue.txt", encoding="utf-8"):
+                  s = line.strip()
+                  if s and not s.startswith("#"): slugs.append(s.split()[0])
+              ok = []
+              for s in slugs:
+                  try:
+                      if process(s): ok.append(s)
+                  except Exception as e:
+                      print("  LỖI %s: %s" % (s, e))
+              open("/tmp/work/slugs.txt", "w").write(" ".join(ok))
+              print("OK:", ok)
+          PY
+          python3 /tmp/work/fetch.py
+          echo "slugs=$(cat /tmp/work/slugs.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Cập nhật assets/manifest.json (bbox + tên node)
+        if: steps.dl.outputs.slugs != ''
+        run: |
+          mkdir -p /tmp/work/node && cd /tmp/work/node
+          npm init -y > /dev/null
+          npm install --silent @gltf-transform/core @gltf-transform/functions
+          cd "$GITHUB_WORKSPACE"
+          cat > /tmp/work/manifest.mjs <<'JS'
+          import { NodeIO } from '@gltf-transform/core';
+          import { getBounds } from '@gltf-transform/functions';
+          import { readdirSync, readFileSync, writeFileSync, existsSync, statSync } from 'fs';
+          import { join } from 'path';
+          const root = 'assets/kenney';
+          const mpath = 'assets/manifest.json';
+          let old = [];
+          if (existsSync(mpath)) {
+            const j = JSON.parse(readFileSync(mpath, 'utf8'));
+            old = Array.isArray(j) ? j : (j.assets || []);
+          }
+          const keep = old.filter((e) => !String(e.src || '').startsWith('assets/kenney/'));
+          const prev = new Map(old.map((e) => [e.id, e]));
+          const io = new NodeIO();
+          const r2 = (n) => Math.round(n * 1000) / 1000;
+          const entries = [];
+          for (const slug of readdirSync(root).sort()) {
+            const dir = join(root, slug);
+            if (!statSync(dir).isDirectory()) continue;
+            for (const f of readdirSync(dir).sort()) {
+              if (!f.toLowerCase().endsWith('.glb')) continue;
+              const id = slug + '/' + f.replace(/\.glb$/i, '');
+              const e = { id, src: `assets/kenney/${slug}/${f}`, source: `kenney.nl/assets/${slug}`, license: 'CC0', scale: prev.get(id)?.scale ?? 1.0 };
+              try {
+                const doc = await io.read(join(dir, f));
+                const sc = doc.getRoot().getDefaultScene() || doc.getRoot().listScenes()[0];
+                const b = getBounds(sc);
+                e.bbox = [0, 1, 2].map((i) => r2(b.max[i] - b.min[i]));
+                e.nodes = doc.getRoot().listNodes().map((n) => n.getName()).filter(Boolean).slice(0, 60);
+              } catch (err) { console.log('bbox lỗi', id, err.message); }
+              entries.push(e);
+            }
+          }
+          const out = [...keep, ...entries];
+          writeFileSync(mpath, JSON.stringify(out, null, 1) + '\n');
+          console.log(`manifest: ${keep.length} giữ lại + ${entries.length} kenney`);
+          JS
+          # ESM tìm module theo vị trí script (/tmp/work/node/node_modules), đường dẫn tương đối theo cwd = repo
+          cp /tmp/work/manifest.mjs /tmp/work/node/manifest.mjs
+          node /tmp/work/node/manifest.mjs
+
+      - name: Commit kết quả
+        if: steps.dl.outputs.slugs != ''
+        run: |
+          git config user.name "assets-bot"
+          git config user.email "assets-bot@users.noreply.github.com"
+          git add -A assets/kenney assets/manifest.json
+          git commit -m "assets: kenney ${{ steps.dl.outputs.slugs }} ${GITHUB_RUN_ID}" || exit 0
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done

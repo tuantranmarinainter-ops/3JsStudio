@@ -1,0 +1,9 @@
+# Hàng đợi tải asset Kenney (CC0). Mỗi dòng = slug trang https://kenney.nl/assets/<slug>.
+# Sửa file này rồi push -> workflow "assets" (GitHub Actions) tải GLB về assets/kenney/<slug>/
+# và cập nhật assets/manifest.json -> sau đó `git pull`. Dòng bắt đầu bằng # bị bỏ qua.
+# Slug gợi ý: city-kit-commercial, nature-kit, holiday-kit, survival-kit, food-kit, watercraft-kit
+city-kit-suburban
+city-kit-roads
+nature-kit
+pirate-kit
+furniture-kit
