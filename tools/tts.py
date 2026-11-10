@@ -89,11 +89,16 @@ def parse(path, args):
         if m:
             voices[m.group(1)] = spec(*m.groups()[1:], narrator)
             continue
+        at = None
+        m = re.match(r"@at\s+(\d+(?:\.\d+)?)\s+(.+)", s)      # @at <giây> câu… → câu bắt đầu đúng mốc
+        if m:
+            at, s = float(m.group(1)), m.group(2)
         m = re.match(r"\[([^\]]+)\]\s*(.+)", s)
         who, text = (m.group(1), m.group(2)) if m else ("", s)
         if who not in voices:
             sys.exit(f"Câu dùng vai [{who}] nhưng chưa khai báo: @voice {who} <giọng>")
-        lines.append({"line": len(lines) + 1, "who": who or "narrator", "text": text, "para": para, **voices[who]})
+        lines.append({"line": len(lines) + 1, "who": who or "narrator", "text": text, "para": para, "at": at,
+                      **voices[who]})
     if not lines:
         sys.exit("narration.txt không có câu nào.")
     for it in lines:
@@ -212,13 +217,28 @@ async def build(args):
             parts.append(p)
             t += dur
 
-        if args.lead > 0:
+        if args.lead > 0 and items[0]["at"] is None:
             add(*silence(args.lead))
         for i, it in enumerate(items):
-            if i:
+            if it["at"] is not None:
+                if it["at"] - t > 0.001:
+                    add(*silence(round(it["at"] - t, 3)))
+                elif t - it["at"] > 0.05:
+                    print(f"  ! câu {it['line']} trễ {t - it['at']:.2f}s so với @at {it['at']}")
+            elif i:
                 add(*silence(args.para_gap if it["para"] != items[i - 1]["para"] else args.gap))
             w = d / f"l{it['line']:04d}.wav"
             dur = to_wav(it["mp3"], w)
+            nxt = next((x["at"] for x in items[i + 1:] if x["at"] is not None), None)
+            if it["at"] is not None and nxt is not None:
+                slot = nxt - max(t, it["at"]) - 0.08          # khe tới câu kế (chừa 80 ms)
+                if dur > slot > 0:                           # câu dài hơn khe → tăng tốc tối đa 1,4×
+                    k = min(1.4, dur / slot)
+                    w2 = d / f"l{it['line']:04d}_fast.wav"
+                    run(["ffmpeg", "-v", "error", "-y", "-i", str(w), "-filter:a", f"atempo={k:.4f}",
+                         "-ac", "1", "-ar", str(SR), "-c:a", "pcm_s16le", str(w2)])
+                    w, dur = w2, (w2.stat().st_size - 44) / 2 / SR
+                    print(f"  ~ câu {it['line']} tăng tốc ×{k:.2f}")
             it["start"], it["end"], it["dur"] = round(t, 3), round(t + dur, 3), round(dur, 3)
             add(w, dur)
         add(*silence(args.tail))
@@ -229,7 +249,7 @@ async def build(args):
         run(["ffmpeg", "-v", "error", "-y", "-i", str(full), "-c:a", "libmp3lame", "-b:a", "128k",
              str(out.with_suffix(".mp3"))])
 
-    keep = ("line", "who", "text", "source", "voice", "start", "end", "dur")
+    keep = ("line", "who", "text", "source", "voice", "at", "start", "end", "dur")
     meta = {"dry": args.dry, "total": round(t, 3), "lines": [{k: it[k] for k in keep} for it in items]}
     out.with_suffix(".json").write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
     out.with_suffix(".srt").write_text("\n".join(

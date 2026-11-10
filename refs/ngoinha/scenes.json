@@ -1,0 +1,130 @@
+[
+ [
+  0,
+  4.833,
+  "Quy luật kỳ lạ",
+  "Thị trấn đêm xanh tím, trăng lớn, đường kẻ trắng, nhà sáng đèn. Sau đó bờ biển xanh ngọc, cát vàng và trời sáng.",
+  "Toàn nhà ngang tầm đường → góc cao thấy nền đất trống → toàn nhà bên biển → góc cao mặt nước. Các mốc cắt F51, F94, F117.",
+  "Nhà rời vị trí. Chân đỡ thân nhà trên bờ biển. Giữ tương phản ngày đêm."
+ ],
+ [
+  4.833,
+  12.867,
+  "Chân gỗ thức giấc",
+  "Nhà minh họa sáng màu, mái xanh, hiên trắng; bãi cỏ và đường phố dưới trăng. Phòng ngủ có nhiều người cùng nằm dưới chăn.",
+  "Chính diện dưới trăng → góc sát cỏ nhìn chéo hông tại F190 → toàn nhà tại F258 → phòng ngủ tại F330.",
+  "Khớp chân lộ F204–207; mở và vươn F210–219; bàn chân hạ F222–228; bụi đất F231–237. Nâng thân rồi đi. Gia đình ngủ yên."
+ ],
+ [
+  12.867,
+  25.167,
+  "Các điểm đến và lời hứa trở về",
+  "Hawaii có biển, cát; Brazil có cây rậm; Sahara có cồn cát. Thị trấn đêm xuất hiện lại.",
+  "Toàn cảnh từng môi trường; góc cao sa mạc; trung cảnh bậc hiên; toàn cảnh bước về; góc cao khu dân cư.",
+  "Nhà hạ xuống điểm đến, người bước ra khám phá; chân đưa nhà trở về đêm. Nhà minh họa cần tách asset với nhà đỏ của gia đình."
+ ],
+ [
+  25.167,
+  40,
+  "Gia đình và người cha mất tích",
+  "Nhà đỏ mái xanh; bếp sàn ô sáng tối, bàn gỗ, tủ lạnh xanh nhiều thiếp. Cha ở tuyết, trên tàu và bên hộp thư.",
+  "Ngoại cảnh nhà → hai mẹ con ở bàn → montage cha → cận thiếp → tủ lạnh F996 → tàu giữa bão → mẹ trong bếp.",
+  "Cha gửi thiếp. Mẹ và con giữ thiếp trên tủ. Tàu gặp bão. Mẹ đi qua tủ lạnh với vẻ buồn."
+ ],
+ [
+  40,
+  52.5,
+  "Nhà mình bắt đầu đi",
+  "Nhà đỏ trong thị trấn đêm; phòng ngủ xanh tím, giường đỏ và cửa sổ; đường dẫn vào rừng.",
+  "Toàn nhà → phòng nghiêng F1271 → cửa sổ → toàn chân → góc thấp nhịp bước → góc rộng rời phố.",
+  "Cậu bé thức dậy, chạy ra cửa sổ. Nhà nâng lên, bước xuống phố, đi qua rừng. Parent nội thất theo thân nhà; giữ rung nghiêng có kiểm soát."
+ ],
+ [
+  52.5,
+  58.733,
+  "Nam Cực",
+  "Cửa vòm nâu, viền trắng; tuyết phủ, núi băng, hai chim cánh cụt và hộp thư sát hiên.",
+  "Cửa đóng → cận mặt khi mở → toàn nhà trong tuyết F1671 → góc thấp chim → hai mẹ con trên hiên.",
+  "Gió tuyết tạt vào, mắt cậu bé nhắm lại. Chim đi lạch bạch. Hai mẹ con quan sát."
+ ],
+ [
+  58.733,
+  73.567,
+  "Biển rồi núi trên mây",
+  "Biển xanh ngập chân nhà, cá voi sát thân. Sau đó đỉnh núi đá tuyết, biển mây dưới hiên. Bếp dùng lại asset.",
+  "Nhà đi ban đêm → cửa buổi sáng → góc rộng trên nước → góc cao cá voi → sát chân ngập → cửa → toàn núi → hiên → mẹ.",
+  "Nhà tiếp tục đi mỗi đêm. Mẹ hoảng hốt, dang tay và đổi nét mặt; con hướng về bếp."
+ ],
+ [
+  73.567,
+  100.067,
+  "Bưu thiếp là bản đồ",
+  "Tủ lạnh xanh với thiếp chim cánh cụt, cá voi, đỉnh núi, đảo hải đăng; bàn bếp và cửa sổ nhìn núi.",
+  "Trung cảnh con cầm nước → cận mặt → tủ lạnh → cận từng thiếp theo thứ tự → hai mẹ con → cửa sổ → nhà đi tuyết.",
+  "Con khựng lại, nhận ra nơi đến trùng thiếp. Gọi mẹ, chỉ vào tủ rồi ra ngoài. Mẹ bước tới. Nhấn đúng thứ tự Nam Cực, cá voi, núi."
+ ],
+ [
+  100.067,
+  114.533,
+  "Tấm thiếp cuối",
+  "Mẹ đứng trước tủ; thiếp cuối có đảo nhỏ và hải đăng. Hồi tưởng cha trên tàu bão.",
+  "Trung mẹ → tay lấy thiếp → mặt trước → đảo minh họa → mặt sau chữ → mặt mẹ.",
+  "Mẹ gỡ thiếp, cầm và lật. Lời nhắn phải lấy nguyên văn SRT và kiểm chữ trong frame. Mắt mẹ chuyển từ lo lắng sang xúc động."
+ ],
+ [
+  114.533,
+  125.633,
+  "Hành trình đến đảo",
+  "Núi tuyết đêm, băng trên biển, bão mưa, rồi bãi cát nắng với cọ và hải đăng sọc xanh trắng.",
+  "Toàn nhà bước → góc thấp chân trên băng → nhà giữa bão → cửa sáng → cát → cọ → sóng → hải đăng → toàn đảo.",
+  "Nhà đi nhiều giờ. Đổi môi trường bằng cắt dựng. Dừng trên bãi cát. Các cảnh chi tiết lần lượt hé lộ điểm đến."
+ ],
+ [
+  125.633,
+  135.2,
+  "Người cha dưới hải đăng",
+  "Đảo nhỏ, vách đá chân tháp, người cha râu dài, áo rách, xấp thiếp buộc đỏ.",
+  "Thiếp đặt trước hải đăng thật → từ tháp xuống cha → cận mặt → áo và xấp thiếp → mặt ngước lên → nhà trên cát.",
+  "Cha ngồi ôm thiếp, nhìn lên, nhận ra nhà, đánh rơi thiếp. Giữ mũ đỏ làm dấu hiệu nhận diện."
+ ],
+ [
+  135.2,
+  143.033,
+  "Đoàn tụ",
+  "Bãi cát giữa hiên nhà và chân hải đăng, thiếp rơi.",
+  "Cận con ở cửa → toàn con chạy → mẹ chạy → sau lưng hai mẹ con → trung ôm → góc cao ngã xuống cát.",
+  "Con chạy trước, mẹ theo sau. Ôm cha rồi cả ba mất thăng bằng ngã. Thiếp rơi tỏa quanh, kết bằng nét mặt vui."
+ ],
+ [
+  143.033,
+  150.933,
+  "Giải thích ba năm",
+  "Tàu mắc bãi đá ngầm, đảo biệt lập, chỗ cha ngồi viết thiếp.",
+  "Toàn tàu → toàn đảo → trung/cận cha viết.",
+  "Hồi tưởng cha sống trên đảo và viết mỗi ngày. Đối chiếu SRT vì phần lời giải thích kéo sang cảnh kế tiếp."
+ ],
+ [
+  150.933,
+  158.333,
+  "Nhà đưa gia đình về",
+  "Nhà đỏ hạ chân trên cát; hiên trắng và cửa vòm. Sau đó đêm trên đường về.",
+  "Các frame trong đoạn này cần đối chiếu trình frame cùng các cảnh trước 150 giây để xác định biên thực. Góc toàn chân gập, góc hiên cha bước, ba người ở cửa sổ.",
+  "Hành động hạ hiên bắt đầu trước đoạn này. Dùng chuỗi frame 4358–4750 để chỉnh đúng thời điểm gập chân, cha lên hiên và chuyển đêm."
+ ],
+ [
+  158.333,
+  168.5,
+  "Tủ lạnh đầy thư nhớ nhà",
+  "Tủ lạnh xanh phủ dày thiếp từ đảo, hình biển xanh và hải đăng lặp lại; giấy ghi lời nhớ mẹ con.",
+  "Cận nhiều thiếp → rộng cả tủ → cận lời nhắn và các biến thể hình đảo.",
+  "Camera dẫn mắt qua các thiếp. Giữ bề mặt giấy rõ, không nhấp nháy và không đổi texture giữa shot."
+ ],
+ [
+  168.5,
+  171.066667,
+  "Cả nhà bên nhau",
+  "Bếp với tủ lạnh đầy thiếp. Con áo vàng ở trước, mẹ và cha đứng sau.",
+  "Trung cảnh ba người F5055; biến thể cuối F5095; kết F5131.",
+  "Ba người mỉm cười, cậu bé nâng tay. Chốt đoàn tụ. Canh audio MP4 vì cue cuối SRT kéo dài hơn clip."
+ ]
+]
