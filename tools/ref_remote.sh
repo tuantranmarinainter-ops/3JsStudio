@@ -5,7 +5,8 @@
 set -euo pipefail
 [ $# -ge 1 ] || { echo "Dùng: $0 <url|ytsearchN:từ khoá> ..."; exit 1; }
 
-git pull --rebase -q
+git pull --rebase -q origin main
+touch refs/done.txt
 before=$(wc -l < refs/done.txt 2>/dev/null || echo 0)
 for t in "$@"; do echo "$t" >> refs/queue.txt; done
 git add refs/queue.txt
@@ -15,7 +16,7 @@ echo "Đã đẩy hàng đợi ($# mục). Đang chờ GitHub Actions…"
 
 for i in $(seq 1 80); do          # 80 × 30s = 40 phút
   sleep 30
-  git pull --rebase -q || true
+  git pull --rebase -q origin main 2>/dev/null || true
   after=$(wc -l < refs/done.txt 2>/dev/null || echo 0)
   if [ "$after" -gt "$before" ]; then
     echo "Xong sau ~$((i / 2)) phút."

@@ -77,6 +77,7 @@ def download(url, d):
         return
     r = run([
         "yt-dlp", *COOKIES, "--no-playlist", "--no-warnings",
+        "--ignore-errors", "--sleep-subtitles", "2",   # lỗi tải phụ đề (429) không làm hỏng cả video
         "-f", "bv*[height<=720]+ba/b[height<=720]/b",
         "--merge-output-format", "mp4",
         "--write-info-json", "--write-subs", "--write-auto-subs",
