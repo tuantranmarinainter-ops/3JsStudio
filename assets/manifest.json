@@ -1,0 +1,8890 @@
+[
+ {
+  "id": "city-kit-roads/bridge-pillar-wide",
+  "src": "assets/kenney/city-kit-roads/bridge-pillar-wide.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/bridge-pillar",
+  "src": "assets/kenney/city-kit-roads/bridge-pillar.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/construction-barrier",
+  "src": "assets/kenney/city-kit-roads/construction-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/construction-cone",
+  "src": "assets/kenney/city-kit-roads/construction-cone.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/construction-fence",
+  "src": "assets/kenney/city-kit-roads/construction-fence.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/construction-light",
+  "src": "assets/kenney/city-kit-roads/construction-light.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/dumpster",
+  "src": "assets/kenney/city-kit-roads/dumpster.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/electricity-pole-single",
+  "src": "assets/kenney/city-kit-roads/electricity-pole-single.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/electricity-pole-wide",
+  "src": "assets/kenney/city-kit-roads/electricity-pole-wide.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/electricity-pole",
+  "src": "assets/kenney/city-kit-roads/electricity-pole.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/electricity-side-single",
+  "src": "assets/kenney/city-kit-roads/electricity-side-single.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/electricity-side-wide",
+  "src": "assets/kenney/city-kit-roads/electricity-side-wide.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/electricity-side",
+  "src": "assets/kenney/city-kit-roads/electricity-side.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/electricity-wires-wide",
+  "src": "assets/kenney/city-kit-roads/electricity-wires-wide.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/electricity-wires",
+  "src": "assets/kenney/city-kit-roads/electricity-wires.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/light-curved-cross",
+  "src": "assets/kenney/city-kit-roads/light-curved-cross.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/light-curved-double",
+  "src": "assets/kenney/city-kit-roads/light-curved-double.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/light-curved",
+  "src": "assets/kenney/city-kit-roads/light-curved.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/light-square-cross",
+  "src": "assets/kenney/city-kit-roads/light-square-cross.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/light-square-double",
+  "src": "assets/kenney/city-kit-roads/light-square-double.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/light-square",
+  "src": "assets/kenney/city-kit-roads/light-square.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-bend-barrier",
+  "src": "assets/kenney/city-kit-roads/road-bend-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-bend-sidewalk",
+  "src": "assets/kenney/city-kit-roads/road-bend-sidewalk.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-bend-square-barrier",
+  "src": "assets/kenney/city-kit-roads/road-bend-square-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-bend-square",
+  "src": "assets/kenney/city-kit-roads/road-bend-square.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-bend",
+  "src": "assets/kenney/city-kit-roads/road-bend.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-bridge",
+  "src": "assets/kenney/city-kit-roads/road-bridge.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-crossing",
+  "src": "assets/kenney/city-kit-roads/road-crossing.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-crossroad-barrier",
+  "src": "assets/kenney/city-kit-roads/road-crossroad-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-crossroad-line",
+  "src": "assets/kenney/city-kit-roads/road-crossroad-line.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-crossroad-path",
+  "src": "assets/kenney/city-kit-roads/road-crossroad-path.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-crossroad",
+  "src": "assets/kenney/city-kit-roads/road-crossroad.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-curve-barrier",
+  "src": "assets/kenney/city-kit-roads/road-curve-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-curve-intersection-barrier",
+  "src": "assets/kenney/city-kit-roads/road-curve-intersection-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-curve-intersection",
+  "src": "assets/kenney/city-kit-roads/road-curve-intersection.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-curve-pavement",
+  "src": "assets/kenney/city-kit-roads/road-curve-pavement.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-curve",
+  "src": "assets/kenney/city-kit-roads/road-curve.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-driveway-double-barrier",
+  "src": "assets/kenney/city-kit-roads/road-driveway-double-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-driveway-double",
+  "src": "assets/kenney/city-kit-roads/road-driveway-double.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-driveway-single-barrier",
+  "src": "assets/kenney/city-kit-roads/road-driveway-single-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-driveway-single",
+  "src": "assets/kenney/city-kit-roads/road-driveway-single.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-end-barrier",
+  "src": "assets/kenney/city-kit-roads/road-end-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-end-round-barrier",
+  "src": "assets/kenney/city-kit-roads/road-end-round-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-end-round",
+  "src": "assets/kenney/city-kit-roads/road-end-round.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-end",
+  "src": "assets/kenney/city-kit-roads/road-end.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-intersection-barrier",
+  "src": "assets/kenney/city-kit-roads/road-intersection-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-intersection-line",
+  "src": "assets/kenney/city-kit-roads/road-intersection-line.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-intersection-path",
+  "src": "assets/kenney/city-kit-roads/road-intersection-path.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-intersection",
+  "src": "assets/kenney/city-kit-roads/road-intersection.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-roundabout-barrier",
+  "src": "assets/kenney/city-kit-roads/road-roundabout-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-roundabout",
+  "src": "assets/kenney/city-kit-roads/road-roundabout.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-side-barrier",
+  "src": "assets/kenney/city-kit-roads/road-side-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-side-entry-barrier",
+  "src": "assets/kenney/city-kit-roads/road-side-entry-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-side-entry",
+  "src": "assets/kenney/city-kit-roads/road-side-entry.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-side-exit-barrier",
+  "src": "assets/kenney/city-kit-roads/road-side-exit-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-side-exit",
+  "src": "assets/kenney/city-kit-roads/road-side-exit.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-side",
+  "src": "assets/kenney/city-kit-roads/road-side.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-sign-empty-hanging",
+  "src": "assets/kenney/city-kit-roads/road-sign-empty-hanging.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-sign-empty",
+  "src": "assets/kenney/city-kit-roads/road-sign-empty.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-sign-object-stop",
+  "src": "assets/kenney/city-kit-roads/road-sign-object-stop.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-sign-object-street",
+  "src": "assets/kenney/city-kit-roads/road-sign-object-street.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-sign-object-warning",
+  "src": "assets/kenney/city-kit-roads/road-sign-object-warning.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-sign-stop",
+  "src": "assets/kenney/city-kit-roads/road-sign-stop.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-sign-street",
+  "src": "assets/kenney/city-kit-roads/road-sign-street.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-sign-warning",
+  "src": "assets/kenney/city-kit-roads/road-sign-warning.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-slant-barrier",
+  "src": "assets/kenney/city-kit-roads/road-slant-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-slant-curve-barrier",
+  "src": "assets/kenney/city-kit-roads/road-slant-curve-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-slant-curve",
+  "src": "assets/kenney/city-kit-roads/road-slant-curve.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-slant-flat-curve",
+  "src": "assets/kenney/city-kit-roads/road-slant-flat-curve.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-slant-flat-high",
+  "src": "assets/kenney/city-kit-roads/road-slant-flat-high.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-slant-flat",
+  "src": "assets/kenney/city-kit-roads/road-slant-flat.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-slant-high-barrier",
+  "src": "assets/kenney/city-kit-roads/road-slant-high-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-slant-high",
+  "src": "assets/kenney/city-kit-roads/road-slant-high.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-slant",
+  "src": "assets/kenney/city-kit-roads/road-slant.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-split-barrier",
+  "src": "assets/kenney/city-kit-roads/road-split-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-split",
+  "src": "assets/kenney/city-kit-roads/road-split.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-square-barrier",
+  "src": "assets/kenney/city-kit-roads/road-square-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-square",
+  "src": "assets/kenney/city-kit-roads/road-square.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-straight-barrier-end",
+  "src": "assets/kenney/city-kit-roads/road-straight-barrier-end.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-straight-barrier-half",
+  "src": "assets/kenney/city-kit-roads/road-straight-barrier-half.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-straight-barrier",
+  "src": "assets/kenney/city-kit-roads/road-straight-barrier.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-straight-half",
+  "src": "assets/kenney/city-kit-roads/road-straight-half.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/road-straight",
+  "src": "assets/kenney/city-kit-roads/road-straight.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/sign-highway-detailed",
+  "src": "assets/kenney/city-kit-roads/sign-highway-detailed.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/sign-highway-wide",
+  "src": "assets/kenney/city-kit-roads/sign-highway-wide.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/sign-highway",
+  "src": "assets/kenney/city-kit-roads/sign-highway.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/tile-high",
+  "src": "assets/kenney/city-kit-roads/tile-high.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/tile-low",
+  "src": "assets/kenney/city-kit-roads/tile-low.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/tile-slant",
+  "src": "assets/kenney/city-kit-roads/tile-slant.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/tile-slantHigh",
+  "src": "assets/kenney/city-kit-roads/tile-slantHigh.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/traffic-light-hanging",
+  "src": "assets/kenney/city-kit-roads/traffic-light-hanging.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/traffic-light-object-hanging",
+  "src": "assets/kenney/city-kit-roads/traffic-light-object-hanging.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/traffic-light-object-horizontal",
+  "src": "assets/kenney/city-kit-roads/traffic-light-object-horizontal.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/traffic-light-object-vertical",
+  "src": "assets/kenney/city-kit-roads/traffic-light-object-vertical.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-roads/traffic-light",
+  "src": "assets/kenney/city-kit-roads/traffic-light.glb",
+  "source": "kenney.nl/assets/city-kit-roads",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-a",
+  "src": "assets/kenney/city-kit-suburban/building-type-a.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-b",
+  "src": "assets/kenney/city-kit-suburban/building-type-b.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-c",
+  "src": "assets/kenney/city-kit-suburban/building-type-c.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-d",
+  "src": "assets/kenney/city-kit-suburban/building-type-d.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-e",
+  "src": "assets/kenney/city-kit-suburban/building-type-e.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-f",
+  "src": "assets/kenney/city-kit-suburban/building-type-f.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-g",
+  "src": "assets/kenney/city-kit-suburban/building-type-g.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-h",
+  "src": "assets/kenney/city-kit-suburban/building-type-h.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-i",
+  "src": "assets/kenney/city-kit-suburban/building-type-i.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-j",
+  "src": "assets/kenney/city-kit-suburban/building-type-j.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-k",
+  "src": "assets/kenney/city-kit-suburban/building-type-k.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-l",
+  "src": "assets/kenney/city-kit-suburban/building-type-l.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-m",
+  "src": "assets/kenney/city-kit-suburban/building-type-m.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-n",
+  "src": "assets/kenney/city-kit-suburban/building-type-n.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-o",
+  "src": "assets/kenney/city-kit-suburban/building-type-o.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-p",
+  "src": "assets/kenney/city-kit-suburban/building-type-p.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-q",
+  "src": "assets/kenney/city-kit-suburban/building-type-q.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-r",
+  "src": "assets/kenney/city-kit-suburban/building-type-r.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-s",
+  "src": "assets/kenney/city-kit-suburban/building-type-s.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-t",
+  "src": "assets/kenney/city-kit-suburban/building-type-t.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/building-type-u",
+  "src": "assets/kenney/city-kit-suburban/building-type-u.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/driveway-long",
+  "src": "assets/kenney/city-kit-suburban/driveway-long.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/driveway-short",
+  "src": "assets/kenney/city-kit-suburban/driveway-short.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/fence-1x2",
+  "src": "assets/kenney/city-kit-suburban/fence-1x2.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/fence-1x3",
+  "src": "assets/kenney/city-kit-suburban/fence-1x3.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/fence-1x4",
+  "src": "assets/kenney/city-kit-suburban/fence-1x4.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/fence-2x2",
+  "src": "assets/kenney/city-kit-suburban/fence-2x2.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/fence-2x3",
+  "src": "assets/kenney/city-kit-suburban/fence-2x3.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/fence-3x2",
+  "src": "assets/kenney/city-kit-suburban/fence-3x2.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/fence-3x3",
+  "src": "assets/kenney/city-kit-suburban/fence-3x3.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/fence-low",
+  "src": "assets/kenney/city-kit-suburban/fence-low.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/fence",
+  "src": "assets/kenney/city-kit-suburban/fence.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/path-long",
+  "src": "assets/kenney/city-kit-suburban/path-long.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/path-short",
+  "src": "assets/kenney/city-kit-suburban/path-short.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/path-stones-long",
+  "src": "assets/kenney/city-kit-suburban/path-stones-long.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/path-stones-messy",
+  "src": "assets/kenney/city-kit-suburban/path-stones-messy.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/path-stones-short",
+  "src": "assets/kenney/city-kit-suburban/path-stones-short.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/planter",
+  "src": "assets/kenney/city-kit-suburban/planter.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/tree-large",
+  "src": "assets/kenney/city-kit-suburban/tree-large.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "city-kit-suburban/tree-small",
+  "src": "assets/kenney/city-kit-suburban/tree-small.glb",
+  "source": "kenney.nl/assets/city-kit-suburban",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "furniture-kit/bathroomCabinet",
+  "src": "assets/kenney/furniture-kit/bathroomCabinet.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.23,
+   0.39,
+   0.13
+  ],
+  "nodes": [
+   "bathroomCabinet(Clone)",
+   "door"
+  ]
+ },
+ {
+  "id": "furniture-kit/bathroomCabinetDrawer",
+  "src": "assets/kenney/furniture-kit/bathroomCabinetDrawer.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.472,
+   0.32
+  ],
+  "nodes": [
+   "bathroomCabinetDrawer(Clone)",
+   "drawerBottom",
+   "drawerTop"
+  ]
+ },
+ {
+  "id": "furniture-kit/bathroomMirror",
+  "src": "assets/kenney/furniture-kit/bathroomMirror.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.301,
+   0.435,
+   0.144
+  ],
+  "nodes": [
+   "bathroomMirror(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/bathroomSink",
+  "src": "assets/kenney/furniture-kit/bathroomSink.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.34,
+   0.56,
+   0.29
+  ],
+  "nodes": [
+   "bathroomSink(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/bathroomSinkSquare",
+  "src": "assets/kenney/furniture-kit/bathroomSinkSquare.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.58,
+   0.3
+  ],
+  "nodes": [
+   "bathroomSinkSquare(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/bathtub",
+  "src": "assets/kenney/furniture-kit/bathtub.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.19,
+   0.42,
+   0.56
+  ],
+  "nodes": [
+   "bathtub(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/bear",
+  "src": "assets/kenney/furniture-kit/bear.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.39,
+   0.45,
+   0.248
+  ],
+  "nodes": [
+   "bear(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/bedBunk",
+  "src": "assets/kenney/furniture-kit/bedBunk.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.571,
+   0.85,
+   1.095
+  ],
+  "nodes": [
+   "bedBunk(Clone)",
+   "coverBottom",
+   "coverTop",
+   "pillowBottom",
+   "pillowTop"
+  ]
+ },
+ {
+  "id": "furniture-kit/bedDouble",
+  "src": "assets/kenney/furniture-kit/bedDouble.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.956,
+   0.375,
+   1.125
+  ],
+  "nodes": [
+   "bedDouble(Clone)",
+   "cover",
+   "pillowLeft",
+   "pillowRight"
+  ]
+ },
+ {
+  "id": "furniture-kit/bedSingle",
+  "src": "assets/kenney/furniture-kit/bedSingle.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.571,
+   0.375,
+   1.125
+  ],
+  "nodes": [
+   "bedSingle(Clone)",
+   "cover",
+   "pillow"
+  ]
+ },
+ {
+  "id": "furniture-kit/bench",
+  "src": "assets/kenney/furniture-kit/bench.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.4,
+   0.47,
+   0.2
+  ],
+  "nodes": [
+   "bench(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/benchCushion",
+  "src": "assets/kenney/furniture-kit/benchCushion.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.4,
+   0.46,
+   0.2
+  ],
+  "nodes": [
+   "benchCushion(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/benchCushionLow",
+  "src": "assets/kenney/furniture-kit/benchCushionLow.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.42,
+   0.2,
+   0.22
+  ],
+  "nodes": [
+   "benchCushionLow(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/bookcaseClosed",
+  "src": "assets/kenney/furniture-kit/bookcaseClosed.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.4,
+   0.85,
+   0.25
+  ],
+  "nodes": [
+   "bookcaseClosed(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/bookcaseClosedDoors",
+  "src": "assets/kenney/furniture-kit/bookcaseClosedDoors.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.4,
+   0.85,
+   0.25
+  ],
+  "nodes": [
+   "bookcaseClosedDoors(Clone)",
+   "doorLeft",
+   "doorRight"
+  ]
+ },
+ {
+  "id": "furniture-kit/bookcaseClosedWide",
+  "src": "assets/kenney/furniture-kit/bookcaseClosedWide.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.8,
+   0.79,
+   0.25
+  ],
+  "nodes": [
+   "bookcaseClosedWide(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/bookcaseOpen",
+  "src": "assets/kenney/furniture-kit/bookcaseOpen.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.4,
+   0.88,
+   0.25
+  ],
+  "nodes": [
+   "bookcaseOpen(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/bookcaseOpenLow",
+  "src": "assets/kenney/furniture-kit/bookcaseOpenLow.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.4,
+   0.4,
+   0.25
+  ],
+  "nodes": [
+   "bookcaseOpenLow(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/books",
+  "src": "assets/kenney/furniture-kit/books.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.15,
+   0.104,
+   0.094
+  ],
+  "nodes": [
+   "books(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/cabinetBed",
+  "src": "assets/kenney/furniture-kit/cabinetBed.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.266,
+   0.233,
+   0.215
+  ],
+  "nodes": [
+   "cabinetBed(Clone)",
+   "door"
+  ]
+ },
+ {
+  "id": "furniture-kit/cabinetBedDrawer",
+  "src": "assets/kenney/furniture-kit/cabinetBedDrawer.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.266,
+   0.263,
+   0.217
+  ],
+  "nodes": [
+   "cabinetBedDrawer(Clone)",
+   "door",
+   "drawer"
+  ]
+ },
+ {
+  "id": "furniture-kit/cabinetBedDrawerTable",
+  "src": "assets/kenney/furniture-kit/cabinetBedDrawerTable.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.266,
+   0.263,
+   0.217
+  ],
+  "nodes": [
+   "cabinetBedDrawerTable(Clone)",
+   "drawer"
+  ]
+ },
+ {
+  "id": "furniture-kit/cabinetTelevision",
+  "src": "assets/kenney/furniture-kit/cabinetTelevision.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.8,
+   0.31,
+   0.25
+  ],
+  "nodes": [
+   "cabinetTelevision(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/cabinetTelevisionDoors",
+  "src": "assets/kenney/furniture-kit/cabinetTelevisionDoors.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.8,
+   0.31,
+   0.26
+  ],
+  "nodes": [
+   "cabinetTelevisionDoors(Clone)",
+   "doorLeft",
+   "doorRight"
+  ]
+ },
+ {
+  "id": "furniture-kit/cardboardBoxClosed",
+  "src": "assets/kenney/furniture-kit/cardboardBoxClosed.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.212,
+   0.281,
+   0.212
+  ],
+  "nodes": [
+   "cardboardBoxClosed(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/cardboardBoxOpen",
+  "src": "assets/kenney/furniture-kit/cardboardBoxOpen.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.372,
+   0.281,
+   0.212
+  ],
+  "nodes": [
+   "cardboardBoxOpen(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/ceilingFan",
+  "src": "assets/kenney/furniture-kit/ceilingFan.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.455,
+   0.134,
+   0.525
+  ],
+  "nodes": [
+   "ceilingFan(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/chair",
+  "src": "assets/kenney/furniture-kit/chair.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.2,
+   0.47,
+   0.2
+  ],
+  "nodes": [
+   "chair(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/chairCushion",
+  "src": "assets/kenney/furniture-kit/chairCushion.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.2,
+   0.46,
+   0.2
+  ],
+  "nodes": [
+   "chairCushion(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/chairDesk",
+  "src": "assets/kenney/furniture-kit/chairDesk.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.335,
+   0.608,
+   0.314
+  ],
+  "nodes": [
+   "chairDesk(Clone)",
+   "chair"
+  ]
+ },
+ {
+  "id": "furniture-kit/chairModernCushion",
+  "src": "assets/kenney/furniture-kit/chairModernCushion.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.2,
+   0.46,
+   0.2
+  ],
+  "nodes": [
+   "chairModernCushion(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/chairModernFrameCushion",
+  "src": "assets/kenney/furniture-kit/chairModernFrameCushion.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.2,
+   0.46,
+   0.2
+  ],
+  "nodes": [
+   "chairModernFrameCushion(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/chairRounded",
+  "src": "assets/kenney/furniture-kit/chairRounded.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.2,
+   0.455,
+   0.2
+  ],
+  "nodes": [
+   "chairRounded(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/coatRack",
+  "src": "assets/kenney/furniture-kit/coatRack.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.448,
+   0.28,
+   0.134
+  ],
+  "nodes": [
+   "coatRack(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/coatRackStanding",
+  "src": "assets/kenney/furniture-kit/coatRackStanding.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.273,
+   0.77,
+   0.273
+  ],
+  "nodes": [
+   "coatRackStanding(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/computerKeyboard",
+  "src": "assets/kenney/furniture-kit/computerKeyboard.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.282,
+   0.028,
+   0.118
+  ],
+  "nodes": [
+   "computerKeyboard(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/computerMouse",
+  "src": "assets/kenney/furniture-kit/computerMouse.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.05,
+   0.024,
+   0.085
+  ],
+  "nodes": [
+   "computerMouse(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/computerScreen",
+  "src": "assets/kenney/furniture-kit/computerScreen.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.393,
+   0.294,
+   0.104
+  ],
+  "nodes": [
+   "computerScreen(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/desk",
+  "src": "assets/kenney/furniture-kit/desk.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.734,
+   0.384,
+   0.392
+  ],
+  "nodes": [
+   "desk(Clone)",
+   "drawer"
+  ]
+ },
+ {
+  "id": "furniture-kit/deskCorner",
+  "src": "assets/kenney/furniture-kit/deskCorner.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.974,
+   0.384,
+   0.974
+  ],
+  "nodes": [
+   "deskCorner(Clone)",
+   "drawer"
+  ]
+ },
+ {
+  "id": "furniture-kit/doorway",
+  "src": "assets/kenney/furniture-kit/doorway.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.486,
+   1.01,
+   0.113
+  ],
+  "nodes": [
+   "doorway(Clone)",
+   "door"
+  ]
+ },
+ {
+  "id": "furniture-kit/doorwayFront",
+  "src": "assets/kenney/furniture-kit/doorwayFront.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.486,
+   1.01,
+   0.113
+  ],
+  "nodes": [
+   "doorwayFront(Clone)",
+   "door"
+  ]
+ },
+ {
+  "id": "furniture-kit/doorwayOpen",
+  "src": "assets/kenney/furniture-kit/doorwayOpen.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.486,
+   1.01,
+   0.089
+  ],
+  "nodes": [
+   "doorwayOpen(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/dryer",
+  "src": "assets/kenney/furniture-kit/dryer.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.39,
+   0.47,
+   0.38
+  ],
+  "nodes": [
+   "dryer(Clone)",
+   "dryerDoor"
+  ]
+ },
+ {
+  "id": "furniture-kit/floorCorner",
+  "src": "assets/kenney/furniture-kit/floorCorner.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.55,
+   0.05,
+   0.55
+  ],
+  "nodes": [
+   "floorCorner(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/floorCornerRound",
+  "src": "assets/kenney/furniture-kit/floorCornerRound.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.55,
+   0.05,
+   0.55
+  ],
+  "nodes": [
+   "floorCornerRound(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/floorFull",
+  "src": "assets/kenney/furniture-kit/floorFull.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "floorFull(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/floorHalf",
+  "src": "assets/kenney/furniture-kit/floorHalf.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.5,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "floorHalf(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/hoodLarge",
+  "src": "assets/kenney/furniture-kit/hoodLarge.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.37,
+   0.285
+  ],
+  "nodes": [
+   "hoodLarge(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/hoodModern",
+  "src": "assets/kenney/furniture-kit/hoodModern.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.4,
+   0.285
+  ],
+  "nodes": [
+   "hoodModern(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenBar",
+  "src": "assets/kenney/furniture-kit/kitchenBar.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.42,
+   0.21
+  ],
+  "nodes": [
+   "kitchenBar(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenBarEnd",
+  "src": "assets/kenney/furniture-kit/kitchenBarEnd.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.102,
+   0.42,
+   0.21
+  ],
+  "nodes": [
+   "kitchenBarEnd(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenBlender",
+  "src": "assets/kenney/furniture-kit/kitchenBlender.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.136,
+   0.228,
+   0.109
+  ],
+  "nodes": [
+   "kitchenBlender(Clone)",
+   "blenderCup",
+   "blenderTop"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenCabinet",
+  "src": "assets/kenney/furniture-kit/kitchenCabinet.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.45,
+   0.45
+  ],
+  "nodes": [
+   "kitchenCabinet(Clone)",
+   "door"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenCabinetCornerInner",
+  "src": "assets/kenney/furniture-kit/kitchenCabinetCornerInner.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.46,
+   0.45,
+   0.46
+  ],
+  "nodes": [
+   "kitchenCabinetCornerInner(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenCabinetCornerRound",
+  "src": "assets/kenney/furniture-kit/kitchenCabinetCornerRound.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.45,
+   0.45,
+   0.45
+  ],
+  "nodes": [
+   "kitchenCabinetCornerRound(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenCabinetDrawer",
+  "src": "assets/kenney/furniture-kit/kitchenCabinetDrawer.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.45,
+   0.45
+  ],
+  "nodes": [
+   "kitchenCabinetDrawer(Clone)",
+   "door",
+   "drawer"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenCabinetUpper",
+  "src": "assets/kenney/furniture-kit/kitchenCabinetUpper.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.39,
+   0.22
+  ],
+  "nodes": [
+   "kitchenCabinetUpper(Clone)",
+   "door"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenCabinetUpperCorner",
+  "src": "assets/kenney/furniture-kit/kitchenCabinetUpperCorner.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.215,
+   0.39,
+   0.21
+  ],
+  "nodes": [
+   "kitchenCabinetUpperCorner(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenCabinetUpperDouble",
+  "src": "assets/kenney/furniture-kit/kitchenCabinetUpperDouble.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.39,
+   0.22
+  ],
+  "nodes": [
+   "kitchenCabinetUpperDouble(Clone)",
+   "doorLeft",
+   "doorRight"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenCabinetUpperLow",
+  "src": "assets/kenney/furniture-kit/kitchenCabinetUpperLow.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.195,
+   0.22
+  ],
+  "nodes": [
+   "kitchenCabinetUpperLow(Clone)",
+   "door"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenCoffeeMachine",
+  "src": "assets/kenney/furniture-kit/kitchenCoffeeMachine.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.19,
+   0.177,
+   0.24
+  ],
+  "nodes": [
+   "kitchenCoffeeMachine(Clone)",
+   "mug"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenFridge",
+  "src": "assets/kenney/furniture-kit/kitchenFridge.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.92,
+   0.292
+  ],
+  "nodes": [
+   "kitchenFridge(Clone)",
+   "doorFreezer",
+   "doorFridge"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenFridgeBuiltIn",
+  "src": "assets/kenney/furniture-kit/kitchenFridgeBuiltIn.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.869,
+   0.45
+  ],
+  "nodes": [
+   "kitchenFridgeBuiltIn(Clone)",
+   "doorFreezer",
+   "doorFridge"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenFridgeLarge",
+  "src": "assets/kenney/furniture-kit/kitchenFridgeLarge.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.52,
+   0.92,
+   0.406
+  ],
+  "nodes": [
+   "kitchenFridgeLarge(Clone)",
+   "doorLeft",
+   "doorRight"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenFridgeSmall",
+  "src": "assets/kenney/furniture-kit/kitchenFridgeSmall.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.6,
+   0.292
+  ],
+  "nodes": [
+   "kitchenFridgeSmall(Clone)",
+   "doorFridge"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenMicrowave",
+  "src": "assets/kenney/furniture-kit/kitchenMicrowave.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.29,
+   0.18,
+   0.23
+  ],
+  "nodes": [
+   "kitchenMicrowave(Clone)",
+   "Group"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenSink",
+  "src": "assets/kenney/furniture-kit/kitchenSink.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.49,
+   0.45
+  ],
+  "nodes": [
+   "kitchenSink(Clone)",
+   "door"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenStove",
+  "src": "assets/kenney/furniture-kit/kitchenStove.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.45,
+   0.45
+  ],
+  "nodes": [
+   "kitchenStove(Clone)",
+   "door"
+  ]
+ },
+ {
+  "id": "furniture-kit/kitchenStoveElectric",
+  "src": "assets/kenney/furniture-kit/kitchenStoveElectric.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.45,
+   0.45
+  ],
+  "nodes": [
+   "kitchenStoveElectric(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/lampRoundFloor",
+  "src": "assets/kenney/furniture-kit/lampRoundFloor.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.152,
+   0.86,
+   0.176
+  ],
+  "nodes": [
+   "lampRoundFloor(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/lampRoundTable",
+  "src": "assets/kenney/furniture-kit/lampRoundTable.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.152,
+   0.314,
+   0.176
+  ],
+  "nodes": [
+   "lampRoundTable(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/lampSquareCeiling",
+  "src": "assets/kenney/furniture-kit/lampSquareCeiling.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.12,
+   0.23,
+   0.12
+  ],
+  "nodes": [
+   "lampSquareCeiling(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/lampSquareFloor",
+  "src": "assets/kenney/furniture-kit/lampSquareFloor.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.12,
+   0.86,
+   0.12
+  ],
+  "nodes": [
+   "lampSquareFloor(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/lampSquareTable",
+  "src": "assets/kenney/furniture-kit/lampSquareTable.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.12,
+   0.29,
+   0.12
+  ],
+  "nodes": [
+   "lampSquareTable(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/lampWall",
+  "src": "assets/kenney/furniture-kit/lampWall.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.227,
+   0.093,
+   0.15
+  ],
+  "nodes": [
+   "lampWall(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/laptop",
+  "src": "assets/kenney/furniture-kit/laptop.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.264,
+   0.162,
+   0.24
+  ],
+  "nodes": [
+   "laptop(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/loungeChair",
+  "src": "assets/kenney/furniture-kit/loungeChair.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.49,
+   0.46,
+   0.41
+  ],
+  "nodes": [
+   "loungeChair(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/loungeChairRelax",
+  "src": "assets/kenney/furniture-kit/loungeChairRelax.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.49,
+   0.63,
+   0.675
+  ],
+  "nodes": [
+   "loungeChairRelax(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/loungeDesignChair",
+  "src": "assets/kenney/furniture-kit/loungeDesignChair.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.73,
+   0.4,
+   0.41
+  ],
+  "nodes": [
+   "loungeDesignChair(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/loungeDesignSofa",
+  "src": "assets/kenney/furniture-kit/loungeDesignSofa.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.12,
+   0.4,
+   0.41
+  ],
+  "nodes": [
+   "loungeDesignSofa(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/loungeDesignSofaCorner",
+  "src": "assets/kenney/furniture-kit/loungeDesignSofaCorner.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.35,
+   0.4,
+   1.35
+  ],
+  "nodes": [
+   "loungeDesignSofaCorner(Clone)",
+   "Group"
+  ]
+ },
+ {
+  "id": "furniture-kit/loungeSofa",
+  "src": "assets/kenney/furniture-kit/loungeSofa.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.98,
+   0.46,
+   0.41
+  ],
+  "nodes": [
+   "loungeSofa(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/loungeSofaCorner",
+  "src": "assets/kenney/furniture-kit/loungeSofaCorner.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.98,
+   0.46,
+   0.98
+  ],
+  "nodes": [
+   "loungeSofaCorner(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/loungeSofaLong",
+  "src": "assets/kenney/furniture-kit/loungeSofaLong.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.98,
+   0.46,
+   0.82
+  ],
+  "nodes": [
+   "loungeSofaLong(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/loungeSofaOttoman",
+  "src": "assets/kenney/furniture-kit/loungeSofaOttoman.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.44,
+   0.23,
+   0.45
+  ],
+  "nodes": [
+   "loungeSofaOttoman(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/paneling",
+  "src": "assets/kenney/furniture-kit/paneling.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.5,
+   0.595,
+   0.03
+  ],
+  "nodes": [
+   "paneling(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/pillow",
+  "src": "assets/kenney/furniture-kit/pillow.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.23,
+   0.222,
+   0.088
+  ],
+  "nodes": [
+   "pillow(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/pillowBlue",
+  "src": "assets/kenney/furniture-kit/pillowBlue.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.23,
+   0.129,
+   0.063
+  ],
+  "nodes": [
+   "pillowBlue(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/pillowBlueLong",
+  "src": "assets/kenney/furniture-kit/pillowBlueLong.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.517,
+   0.222,
+   0.088
+  ],
+  "nodes": [
+   "pillowBlueLong(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/pillowLong",
+  "src": "assets/kenney/furniture-kit/pillowLong.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.387,
+   0.222,
+   0.088
+  ],
+  "nodes": [
+   "pillowLong(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/plantSmall1",
+  "src": "assets/kenney/furniture-kit/plantSmall1.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.095,
+   0.14,
+   0.095
+  ],
+  "nodes": [
+   "plantSmall1(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/plantSmall2",
+  "src": "assets/kenney/furniture-kit/plantSmall2.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.095,
+   0.14,
+   0.095
+  ],
+  "nodes": [
+   "plantSmall2(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/plantSmall3",
+  "src": "assets/kenney/furniture-kit/plantSmall3.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.098,
+   0.145,
+   0.085
+  ],
+  "nodes": [
+   "plantSmall3(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/pottedPlant",
+  "src": "assets/kenney/furniture-kit/pottedPlant.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.212,
+   0.654,
+   0.241
+  ],
+  "nodes": [
+   "pottedPlant(Clone)",
+   "plant"
+  ]
+ },
+ {
+  "id": "furniture-kit/radio",
+  "src": "assets/kenney/furniture-kit/radio.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.315,
+   0.228,
+   0.098
+  ],
+  "nodes": [
+   "radio(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/rugDoormat",
+  "src": "assets/kenney/furniture-kit/rugDoormat.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.429,
+   0.01,
+   0.237
+  ],
+  "nodes": [
+   "rugDoormat(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/rugRectangle",
+  "src": "assets/kenney/furniture-kit/rugRectangle.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.57,
+   0.01,
+   0.92
+  ],
+  "nodes": [
+   "rugRectangle(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/rugRound",
+  "src": "assets/kenney/furniture-kit/rugRound.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.92,
+   0.01,
+   0.92
+  ],
+  "nodes": [
+   "rugRound(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/rugRounded",
+  "src": "assets/kenney/furniture-kit/rugRounded.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.57,
+   0.01,
+   0.92
+  ],
+  "nodes": [
+   "rugRounded(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/rugSquare",
+  "src": "assets/kenney/furniture-kit/rugSquare.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.904,
+   0.01,
+   0.92
+  ],
+  "nodes": [
+   "rugSquare(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/shower",
+  "src": "assets/kenney/furniture-kit/shower.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.562,
+   1.094,
+   0.582
+  ],
+  "nodes": [
+   "shower(Clone)",
+   "doorLeft",
+   "doorRight"
+  ]
+ },
+ {
+  "id": "furniture-kit/showerRound",
+  "src": "assets/kenney/furniture-kit/showerRound.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.562,
+   1.094,
+   0.562
+  ],
+  "nodes": [
+   "showerRound(Clone)",
+   "doorLeft",
+   "doorRight",
+   "faucet"
+  ]
+ },
+ {
+  "id": "furniture-kit/sideTable",
+  "src": "assets/kenney/furniture-kit/sideTable.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.534,
+   0.384,
+   0.22
+  ],
+  "nodes": [
+   "sideTable(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/sideTableDrawers",
+  "src": "assets/kenney/furniture-kit/sideTableDrawers.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.534,
+   0.384,
+   0.222
+  ],
+  "nodes": [
+   "sideTableDrawers(Clone)",
+   "drawerLeft",
+   "drawerRight"
+  ]
+ },
+ {
+  "id": "furniture-kit/speaker",
+  "src": "assets/kenney/furniture-kit/speaker.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.148,
+   0.636,
+   0.148
+  ],
+  "nodes": [
+   "speaker(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/speakerSmall",
+  "src": "assets/kenney/furniture-kit/speakerSmall.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.148,
+   0.298,
+   0.133
+  ],
+  "nodes": [
+   "speakerSmall(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/stairs",
+  "src": "assets/kenney/furniture-kit/stairs.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.823,
+   1.34,
+   0.79
+  ],
+  "nodes": [
+   "stairs(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/stairsCorner",
+  "src": "assets/kenney/furniture-kit/stairsCorner.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.774,
+   1.34,
+   1.426
+  ],
+  "nodes": [
+   "stairsCorner(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/stairsOpen",
+  "src": "assets/kenney/furniture-kit/stairsOpen.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.823,
+   1.34,
+   0.79
+  ],
+  "nodes": [
+   "stairsOpen(Clone)",
+   "Group",
+   "Group"
+  ]
+ },
+ {
+  "id": "furniture-kit/stairsOpenSingle",
+  "src": "assets/kenney/furniture-kit/stairsOpenSingle.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.823,
+   1.34,
+   0.79
+  ],
+  "nodes": [
+   "stairsOpenSingle(Clone)",
+   "Group"
+  ]
+ },
+ {
+  "id": "furniture-kit/stoolBar",
+  "src": "assets/kenney/furniture-kit/stoolBar.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.265,
+   0.435,
+   0.23
+  ],
+  "nodes": [
+   "stoolBar(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/stoolBarSquare",
+  "src": "assets/kenney/furniture-kit/stoolBarSquare.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.153,
+   0.405,
+   0.148
+  ],
+  "nodes": [
+   "stoolBarSquare(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/table",
+  "src": "assets/kenney/furniture-kit/table.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.841,
+   0.327,
+   0.447
+  ],
+  "nodes": [
+   "table(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/tableCloth",
+  "src": "assets/kenney/furniture-kit/tableCloth.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.841,
+   0.327,
+   0.447
+  ],
+  "nodes": [
+   "tableCloth(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/tableCoffee",
+  "src": "assets/kenney/furniture-kit/tableCoffee.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.661,
+   0.23,
+   0.4
+  ],
+  "nodes": [
+   "tableCoffee(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/tableCoffeeGlass",
+  "src": "assets/kenney/furniture-kit/tableCoffeeGlass.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.661,
+   0.23,
+   0.4
+  ],
+  "nodes": [
+   "tableCoffeeGlass(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/tableCoffeeGlassSquare",
+  "src": "assets/kenney/furniture-kit/tableCoffeeGlassSquare.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.4,
+   0.23,
+   0.4
+  ],
+  "nodes": [
+   "tableCoffeeGlassSquare(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/tableCoffeeSquare",
+  "src": "assets/kenney/furniture-kit/tableCoffeeSquare.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.4,
+   0.23,
+   0.4
+  ],
+  "nodes": [
+   "tableCoffeeSquare(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/tableCross",
+  "src": "assets/kenney/furniture-kit/tableCross.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.852,
+   0.347,
+   0.447
+  ],
+  "nodes": [
+   "tableCross(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/tableCrossCloth",
+  "src": "assets/kenney/furniture-kit/tableCrossCloth.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.852,
+   0.347,
+   0.447
+  ],
+  "nodes": [
+   "tableCrossCloth(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/tableGlass",
+  "src": "assets/kenney/furniture-kit/tableGlass.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.841,
+   0.327,
+   0.447
+  ],
+  "nodes": [
+   "tableGlass(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/tableRound",
+  "src": "assets/kenney/furniture-kit/tableRound.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.693,
+   0.367,
+   0.8
+  ],
+  "nodes": [
+   "tableRound(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/televisionAntenna",
+  "src": "assets/kenney/furniture-kit/televisionAntenna.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.265,
+   0.103,
+   0.08
+  ],
+  "nodes": [
+   "televisionAntenna(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/televisionModern",
+  "src": "assets/kenney/furniture-kit/televisionModern.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.685,
+   0.455,
+   0.128
+  ],
+  "nodes": [
+   "televisionModern(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/televisionVintage",
+  "src": "assets/kenney/furniture-kit/televisionVintage.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.41,
+   0.27,
+   0.27
+  ],
+  "nodes": [
+   "televisionVintage(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/toaster",
+  "src": "assets/kenney/furniture-kit/toaster.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.188,
+   0.13,
+   0.1
+  ],
+  "nodes": [
+   "toaster(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/toilet",
+  "src": "assets/kenney/furniture-kit/toilet.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.313,
+   0.451,
+   0.477
+  ],
+  "nodes": [
+   "toilet(Clone)",
+   "cover"
+  ]
+ },
+ {
+  "id": "furniture-kit/toiletSquare",
+  "src": "assets/kenney/furniture-kit/toiletSquare.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.304,
+   0.451,
+   0.387
+  ],
+  "nodes": [
+   "toiletSquare(Clone)",
+   "Group"
+  ]
+ },
+ {
+  "id": "furniture-kit/trashcan",
+  "src": "assets/kenney/furniture-kit/trashcan.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.208,
+   0.428,
+   0.234
+  ],
+  "nodes": [
+   "trashcan(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/wall",
+  "src": "assets/kenney/furniture-kit/wall.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1.29,
+   0.05
+  ],
+  "nodes": [
+   "wall(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/wallCorner",
+  "src": "assets/kenney/furniture-kit/wallCorner.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.55,
+   1.29,
+   0.55
+  ],
+  "nodes": [
+   "wallCorner(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/wallCornerRond",
+  "src": "assets/kenney/furniture-kit/wallCornerRond.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.55,
+   1.29,
+   0.55
+  ],
+  "nodes": [
+   "wallCornerRond(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/wallDoorway",
+  "src": "assets/kenney/furniture-kit/wallDoorway.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1.29,
+   0.089
+  ],
+  "nodes": [
+   "wallDoorway(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/wallDoorwayWide",
+  "src": "assets/kenney/furniture-kit/wallDoorwayWide.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1.29,
+   0.089
+  ],
+  "nodes": [
+   "wallDoorwayWide(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/wallHalf",
+  "src": "assets/kenney/furniture-kit/wallHalf.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.5,
+   1.29,
+   0.05
+  ],
+  "nodes": [
+   "wallHalf(Clone)"
+  ]
+ },
+ {
+  "id": "furniture-kit/wallWindow",
+  "src": "assets/kenney/furniture-kit/wallWindow.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1.29,
+   0.089
+  ],
+  "nodes": [
+   "wallWindow(Clone)",
+   "window"
+  ]
+ },
+ {
+  "id": "furniture-kit/wallWindowSlide",
+  "src": "assets/kenney/furniture-kit/wallWindowSlide.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1.29,
+   0.089
+  ],
+  "nodes": [
+   "wallWindowSlide(Clone)",
+   "windowBottom",
+   "windowTop"
+  ]
+ },
+ {
+  "id": "furniture-kit/washer",
+  "src": "assets/kenney/furniture-kit/washer.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.39,
+   0.47,
+   0.39
+  ],
+  "nodes": [
+   "washer(Clone)",
+   "washerDoor"
+  ]
+ },
+ {
+  "id": "furniture-kit/washerDryerStacked",
+  "src": "assets/kenney/furniture-kit/washerDryerStacked.glb",
+  "source": "kenney.nl/assets/furniture-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.39,
+   0.94,
+   0.39
+  ],
+  "nodes": [
+   "washerDryerStacked(Clone)",
+   "dryerDoor",
+   "washerDoor"
+  ]
+ },
+ {
+  "id": "nature-kit/bed",
+  "src": "assets/kenney/nature-kit/bed.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.335,
+   0.274,
+   0.747
+  ],
+  "nodes": [
+   "tmpParent",
+   "bed"
+  ]
+ },
+ {
+  "id": "nature-kit/bed_floor",
+  "src": "assets/kenney/nature-kit/bed_floor.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.32,
+   0.092,
+   0.747
+  ],
+  "nodes": [
+   "tmpParent",
+   "bed_floor"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_center_stone",
+  "src": "assets/kenney/nature-kit/bridge_center_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.3,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_center_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_center_stoneRound",
+  "src": "assets/kenney/nature-kit/bridge_center_stoneRound.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.2,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_center_stoneRound"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_center_wood",
+  "src": "assets/kenney/nature-kit/bridge_center_wood.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.3,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_center_wood"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_center_woodRound",
+  "src": "assets/kenney/nature-kit/bridge_center_woodRound.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.2,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_center_woodRound"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_side_stone",
+  "src": "assets/kenney/nature-kit/bridge_side_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.02,
+   0.4,
+   1.04
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_side_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_side_stoneRound",
+  "src": "assets/kenney/nature-kit/bridge_side_stoneRound.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.02,
+   0.45,
+   1.04
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_side_stoneRound"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_side_wood",
+  "src": "assets/kenney/nature-kit/bridge_side_wood.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.02,
+   0.4,
+   1.04
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_side_wood"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_side_woodRound",
+  "src": "assets/kenney/nature-kit/bridge_side_woodRound.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.02,
+   0.45,
+   1.04
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_side_woodRound"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_stone",
+  "src": "assets/kenney/nature-kit/bridge_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.04,
+   0.4,
+   1.04
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_stoneNarrow",
+  "src": "assets/kenney/nature-kit/bridge_stoneNarrow.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.04,
+   0.35,
+   0.84
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_stoneNarrow"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_stoneRound",
+  "src": "assets/kenney/nature-kit/bridge_stoneRound.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.04,
+   0.45,
+   1.04
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_stoneRound"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_stoneRoundNarrow",
+  "src": "assets/kenney/nature-kit/bridge_stoneRoundNarrow.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.04,
+   0.4,
+   0.84
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_stoneRoundNarrow"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_wood",
+  "src": "assets/kenney/nature-kit/bridge_wood.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.04,
+   0.4,
+   1.04
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_wood"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_woodNarrow",
+  "src": "assets/kenney/nature-kit/bridge_woodNarrow.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.04,
+   0.35,
+   0.84
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_woodNarrow"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_woodRound",
+  "src": "assets/kenney/nature-kit/bridge_woodRound.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.04,
+   0.45,
+   1.04
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_woodRound"
+  ]
+ },
+ {
+  "id": "nature-kit/bridge_woodRoundNarrow",
+  "src": "assets/kenney/nature-kit/bridge_woodRoundNarrow.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.04,
+   0.4,
+   0.84
+  ],
+  "nodes": [
+   "tmpParent",
+   "bridge_woodRoundNarrow"
+  ]
+ },
+ {
+  "id": "nature-kit/cactus_short",
+  "src": "assets/kenney/nature-kit/cactus_short.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.342,
+   0.533,
+   0.297
+  ],
+  "nodes": [
+   "tmpParent",
+   "cactus_short"
+  ]
+ },
+ {
+  "id": "nature-kit/cactus_tall",
+  "src": "assets/kenney/nature-kit/cactus_tall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.396,
+   0.75,
+   0.339
+  ],
+  "nodes": [
+   "tmpParent",
+   "cactus_tall"
+  ]
+ },
+ {
+  "id": "nature-kit/campfire_bricks",
+  "src": "assets/kenney/nature-kit/campfire_bricks.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.469,
+   0.068,
+   0.469
+  ],
+  "nodes": [
+   "tmpParent",
+   "campfire_bricks"
+  ]
+ },
+ {
+  "id": "nature-kit/campfire_logs",
+  "src": "assets/kenney/nature-kit/campfire_logs.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.292,
+   0.063,
+   0.292
+  ],
+  "nodes": [
+   "tmpParent",
+   "campfire_logs"
+  ]
+ },
+ {
+  "id": "nature-kit/campfire_planks",
+  "src": "assets/kenney/nature-kit/campfire_planks.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.35,
+   0.04,
+   0.35
+  ],
+  "nodes": [
+   "tmpParent",
+   "campfire_planks"
+  ]
+ },
+ {
+  "id": "nature-kit/campfire_stones",
+  "src": "assets/kenney/nature-kit/campfire_stones.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.541,
+   0.078,
+   0.516
+  ],
+  "nodes": [
+   "tmpParent",
+   "campfire_stones"
+  ]
+ },
+ {
+  "id": "nature-kit/canoe",
+  "src": "assets/kenney/nature-kit/canoe.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.3,
+   0.183,
+   1.15
+  ],
+  "nodes": [
+   "tmpParent",
+   "canoe"
+  ]
+ },
+ {
+  "id": "nature-kit/canoe_paddle",
+  "src": "assets/kenney/nature-kit/canoe_paddle.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.077,
+   0.036,
+   0.59
+  ],
+  "nodes": [
+   "tmpParent",
+   "canoe_paddle"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_blockCave_rock",
+  "src": "assets/kenney/nature-kit/cliff_blockCave_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_blockCave_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_blockCave_stone",
+  "src": "assets/kenney/nature-kit/cliff_blockCave_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_blockCave_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_blockDiagonal_rock",
+  "src": "assets/kenney/nature-kit/cliff_blockDiagonal_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_blockDiagonal_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_blockDiagonal_stone",
+  "src": "assets/kenney/nature-kit/cliff_blockDiagonal_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_blockDiagonal_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_blockHalf_rock",
+  "src": "assets/kenney/nature-kit/cliff_blockHalf_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.5,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_blockHalf_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_blockHalf_stone",
+  "src": "assets/kenney/nature-kit/cliff_blockHalf_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.5,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_blockHalf_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_blockQuarter_rock",
+  "src": "assets/kenney/nature-kit/cliff_blockQuarter_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.25,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_blockQuarter_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_blockQuarter_stone",
+  "src": "assets/kenney/nature-kit/cliff_blockQuarter_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.25,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_blockQuarter_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_blockSlopeHalfWalls_rock",
+  "src": "assets/kenney/nature-kit/cliff_blockSlopeHalfWalls_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.5,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_blockSlopeHalfWalls_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_blockSlopeHalfWalls_stone",
+  "src": "assets/kenney/nature-kit/cliff_blockSlopeHalfWalls_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.5,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_blockSlopeHalfWalls_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_blockSlopeWalls_rock",
+  "src": "assets/kenney/nature-kit/cliff_blockSlopeWalls_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_blockSlopeWalls_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_blockSlopeWalls_stone",
+  "src": "assets/kenney/nature-kit/cliff_blockSlopeWalls_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_blockSlopeWalls_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_blockSlope_rock",
+  "src": "assets/kenney/nature-kit/cliff_blockSlope_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.2,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_blockSlope_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_blockSlope_stone",
+  "src": "assets/kenney/nature-kit/cliff_blockSlope_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.2,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_blockSlope_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_block_rock",
+  "src": "assets/kenney/nature-kit/cliff_block_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_block_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_block_stone",
+  "src": "assets/kenney/nature-kit/cliff_block_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_block_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_cave_rock",
+  "src": "assets/kenney/nature-kit/cliff_cave_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   0.169
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_cave_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_cave_stone",
+  "src": "assets/kenney/nature-kit/cliff_cave_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   0.169
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_cave_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_cornerInnerLarge_rock",
+  "src": "assets/kenney/nature-kit/cliff_cornerInnerLarge_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_cornerInnerLarge_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_cornerInnerLarge_stone",
+  "src": "assets/kenney/nature-kit/cliff_cornerInnerLarge_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_cornerInnerLarge_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_cornerInnerTop_rock",
+  "src": "assets/kenney/nature-kit/cliff_cornerInnerTop_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_cornerInnerTop_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_cornerInnerTop_stone",
+  "src": "assets/kenney/nature-kit/cliff_cornerInnerTop_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_cornerInnerTop_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_cornerInner_rock",
+  "src": "assets/kenney/nature-kit/cliff_cornerInner_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_cornerInner_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_cornerInner_stone",
+  "src": "assets/kenney/nature-kit/cliff_cornerInner_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_cornerInner_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_cornerLarge_rock",
+  "src": "assets/kenney/nature-kit/cliff_cornerLarge_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.419,
+   1,
+   0.418
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_cornerLarge_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_cornerLarge_stone",
+  "src": "assets/kenney/nature-kit/cliff_cornerLarge_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.419,
+   1,
+   0.418
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_cornerLarge_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_cornerTop_rock",
+  "src": "assets/kenney/nature-kit/cliff_cornerTop_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.269,
+   1,
+   0.268
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_cornerTop_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_cornerTop_stone",
+  "src": "assets/kenney/nature-kit/cliff_cornerTop_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.269,
+   1,
+   0.268
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_cornerTop_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_corner_rock",
+  "src": "assets/kenney/nature-kit/cliff_corner_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.169,
+   1,
+   0.168
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_corner_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_corner_stone",
+  "src": "assets/kenney/nature-kit/cliff_corner_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.169,
+   1,
+   0.168
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_corner_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_diagonal_rock",
+  "src": "assets/kenney/nature-kit/cliff_diagonal_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.169,
+   1,
+   1.169
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_diagonal_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_diagonal_stone",
+  "src": "assets/kenney/nature-kit/cliff_diagonal_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.169,
+   1,
+   1.169
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_diagonal_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_halfCornerInner_rock",
+  "src": "assets/kenney/nature-kit/cliff_halfCornerInner_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.5,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_halfCornerInner_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_halfCornerInner_stone",
+  "src": "assets/kenney/nature-kit/cliff_halfCornerInner_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.5,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_halfCornerInner_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_halfCorner_rock",
+  "src": "assets/kenney/nature-kit/cliff_halfCorner_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.419,
+   0.5,
+   0.419
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_halfCorner_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_halfCorner_stone",
+  "src": "assets/kenney/nature-kit/cliff_halfCorner_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.419,
+   0.5,
+   0.419
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_halfCorner_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_half_rock",
+  "src": "assets/kenney/nature-kit/cliff_half_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.5,
+   0.419
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_half_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_half_stone",
+  "src": "assets/kenney/nature-kit/cliff_half_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.5,
+   0.419
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_half_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_large_rock",
+  "src": "assets/kenney/nature-kit/cliff_large_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   0.419
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_large_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_large_stone",
+  "src": "assets/kenney/nature-kit/cliff_large_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   0.419
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_large_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_rock",
+  "src": "assets/kenney/nature-kit/cliff_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   0.169
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_stepsCornerInner_rock",
+  "src": "assets/kenney/nature-kit/cliff_stepsCornerInner_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_stepsCornerInner_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_stepsCornerInner_stone",
+  "src": "assets/kenney/nature-kit/cliff_stepsCornerInner_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_stepsCornerInner_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_stepsCorner_rock",
+  "src": "assets/kenney/nature-kit/cliff_stepsCorner_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.05,
+   1,
+   1.05
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_stepsCorner_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_stepsCorner_stone",
+  "src": "assets/kenney/nature-kit/cliff_stepsCorner_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.05,
+   1,
+   1.05
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_stepsCorner_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_steps_rock",
+  "src": "assets/kenney/nature-kit/cliff_steps_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1.05
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_steps_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_steps_stone",
+  "src": "assets/kenney/nature-kit/cliff_steps_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   1.05
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_steps_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_stone",
+  "src": "assets/kenney/nature-kit/cliff_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   0.169
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_topDiagonal_rock",
+  "src": "assets/kenney/nature-kit/cliff_topDiagonal_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.268,
+   1,
+   1.268
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_topDiagonal_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_topDiagonal_stone",
+  "src": "assets/kenney/nature-kit/cliff_topDiagonal_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.268,
+   1,
+   1.268
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_topDiagonal_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_top_rock",
+  "src": "assets/kenney/nature-kit/cliff_top_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   0.269
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_top_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_top_stone",
+  "src": "assets/kenney/nature-kit/cliff_top_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   0.269
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_top_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_waterfallTop_rock",
+  "src": "assets/kenney/nature-kit/cliff_waterfallTop_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   0.269
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_waterfallTop_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_waterfallTop_stone",
+  "src": "assets/kenney/nature-kit/cliff_waterfallTop_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   0.269
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_waterfallTop_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_waterfall_rock",
+  "src": "assets/kenney/nature-kit/cliff_waterfall_rock.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   0.169
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_waterfall_rock"
+  ]
+ },
+ {
+  "id": "nature-kit/cliff_waterfall_stone",
+  "src": "assets/kenney/nature-kit/cliff_waterfall_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   1,
+   0.169
+  ],
+  "nodes": [
+   "tmpParent",
+   "cliff_waterfall_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/crop_carrot",
+  "src": "assets/kenney/nature-kit/crop_carrot.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.343,
+   0.619,
+   0.343
+  ],
+  "nodes": [
+   "tmpParent",
+   "crop_carrot"
+  ]
+ },
+ {
+  "id": "nature-kit/crop_melon",
+  "src": "assets/kenney/nature-kit/crop_melon.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.418,
+   0.348,
+   0.362
+  ],
+  "nodes": [
+   "tmpParent",
+   "crop_melon"
+  ]
+ },
+ {
+  "id": "nature-kit/crop_pumpkin",
+  "src": "assets/kenney/nature-kit/crop_pumpkin.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.441,
+   0.334,
+   0.452
+  ],
+  "nodes": [
+   "tmpParent",
+   "crop_pumpkin"
+  ]
+ },
+ {
+  "id": "nature-kit/crop_turnip",
+  "src": "assets/kenney/nature-kit/crop_turnip.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.343,
+   0.661,
+   0.343
+  ],
+  "nodes": [
+   "tmpParent",
+   "crop_turnip"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_bambooStageA",
+  "src": "assets/kenney/nature-kit/crops_bambooStageA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.34,
+   0.549,
+   0.308
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_bambooStageA"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_bambooStageB",
+  "src": "assets/kenney/nature-kit/crops_bambooStageB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.34,
+   0.89,
+   0.308
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_bambooStageB"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_cornStageA",
+  "src": "assets/kenney/nature-kit/crops_cornStageA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.304,
+   0.5,
+   0.304
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_cornStageA"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_cornStageB",
+  "src": "assets/kenney/nature-kit/crops_cornStageB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.304,
+   1,
+   0.304
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_cornStageB"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_cornStageC",
+  "src": "assets/kenney/nature-kit/crops_cornStageC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.304,
+   1.25,
+   0.304
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_cornStageC"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_cornStageD",
+  "src": "assets/kenney/nature-kit/crops_cornStageD.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.442,
+   1.25,
+   0.442
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_cornStageD",
+   "corn",
+   "corn",
+   "corn",
+   "corn"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_dirtDoubleRow",
+  "src": "assets/kenney/nature-kit/crops_dirtDoubleRow.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   0.938
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_dirtDoubleRow"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_dirtDoubleRowCorner",
+  "src": "assets/kenney/nature-kit/crops_dirtDoubleRowCorner.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.938,
+   0.05,
+   0.938
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_dirtDoubleRowCorner"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_dirtDoubleRowEnd",
+  "src": "assets/kenney/nature-kit/crops_dirtDoubleRowEnd.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.6,
+   0.05,
+   0.938
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_dirtDoubleRowEnd"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_dirtRow",
+  "src": "assets/kenney/nature-kit/crops_dirtRow.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   0.62
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_dirtRow"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_dirtRowCorner",
+  "src": "assets/kenney/nature-kit/crops_dirtRowCorner.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.779,
+   0.05,
+   0.779
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_dirtRowCorner"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_dirtRowEnd",
+  "src": "assets/kenney/nature-kit/crops_dirtRowEnd.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.6,
+   0.05,
+   0.62
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_dirtRowEnd"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_dirtSingle",
+  "src": "assets/kenney/nature-kit/crops_dirtSingle.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.4,
+   0.1,
+   0.346
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_dirtSingle"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_leafsStageA",
+  "src": "assets/kenney/nature-kit/crops_leafsStageA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.389,
+   0.427,
+   0.389
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_leafsStageA"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_leafsStageB",
+  "src": "assets/kenney/nature-kit/crops_leafsStageB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.389,
+   0.677,
+   0.389
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_leafsStageB"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_wheatStageA",
+  "src": "assets/kenney/nature-kit/crops_wheatStageA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.54,
+   0.335,
+   0.447
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_wheatStageA"
+  ]
+ },
+ {
+  "id": "nature-kit/crops_wheatStageB",
+  "src": "assets/kenney/nature-kit/crops_wheatStageB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.54,
+   0.535,
+   0.447
+  ],
+  "nodes": [
+   "tmpParent",
+   "crops_wheatStageB"
+  ]
+ },
+ {
+  "id": "nature-kit/fence_bend",
+  "src": "assets/kenney/nature-kit/fence_bend.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.345,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "fence_bend"
+  ]
+ },
+ {
+  "id": "nature-kit/fence_bendCenter",
+  "src": "assets/kenney/nature-kit/fence_bendCenter.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.345,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "fence_bendCenter"
+  ]
+ },
+ {
+  "id": "nature-kit/fence_corner",
+  "src": "assets/kenney/nature-kit/fence_corner.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.345,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "fence_corner"
+  ]
+ },
+ {
+  "id": "nature-kit/fence_gate",
+  "src": "assets/kenney/nature-kit/fence_gate.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.345,
+   0.07
+  ],
+  "nodes": [
+   "tmpParent",
+   "fence_gate",
+   "gate"
+  ]
+ },
+ {
+  "id": "nature-kit/fence_planks",
+  "src": "assets/kenney/nature-kit/fence_planks.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.345,
+   0.096
+  ],
+  "nodes": [
+   "tmpParent",
+   "fence_planks"
+  ]
+ },
+ {
+  "id": "nature-kit/fence_planksDouble",
+  "src": "assets/kenney/nature-kit/fence_planksDouble.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.345,
+   0.06
+  ],
+  "nodes": [
+   "tmpParent",
+   "fence_planksDouble"
+  ]
+ },
+ {
+  "id": "nature-kit/fence_simple",
+  "src": "assets/kenney/nature-kit/fence_simple.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.345,
+   0.07
+  ],
+  "nodes": [
+   "tmpParent",
+   "fence_simple"
+  ]
+ },
+ {
+  "id": "nature-kit/fence_simpleCenter",
+  "src": "assets/kenney/nature-kit/fence_simpleCenter.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.345,
+   0.07
+  ],
+  "nodes": [
+   "tmpParent",
+   "fence_simpleCenter"
+  ]
+ },
+ {
+  "id": "nature-kit/fence_simpleDiagonal",
+  "src": "assets/kenney/nature-kit/fence_simpleDiagonal.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.345,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "fence_simpleDiagonal"
+  ]
+ },
+ {
+  "id": "nature-kit/fence_simpleDiagonalCenter",
+  "src": "assets/kenney/nature-kit/fence_simpleDiagonalCenter.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.345,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "fence_simpleDiagonalCenter"
+  ]
+ },
+ {
+  "id": "nature-kit/fence_simpleHigh",
+  "src": "assets/kenney/nature-kit/fence_simpleHigh.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.041,
+   0.345,
+   0.111
+  ],
+  "nodes": [
+   "tmpParent",
+   "fence_simpleHigh"
+  ]
+ },
+ {
+  "id": "nature-kit/fence_simpleLow",
+  "src": "assets/kenney/nature-kit/fence_simpleLow.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.041,
+   0.195,
+   0.111
+  ],
+  "nodes": [
+   "tmpParent",
+   "fence_simpleLow"
+  ]
+ },
+ {
+  "id": "nature-kit/flower_purpleA",
+  "src": "assets/kenney/nature-kit/flower_purpleA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.159,
+   0.242,
+   0.181
+  ],
+  "nodes": [
+   "tmpParent",
+   "flower_purpleA"
+  ]
+ },
+ {
+  "id": "nature-kit/flower_purpleB",
+  "src": "assets/kenney/nature-kit/flower_purpleB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.207,
+   0.208,
+   0.239
+  ],
+  "nodes": [
+   "tmpParent",
+   "flower_purpleB"
+  ]
+ },
+ {
+  "id": "nature-kit/flower_purpleC",
+  "src": "assets/kenney/nature-kit/flower_purpleC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.181,
+   0.183,
+   0.181
+  ],
+  "nodes": [
+   "tmpParent",
+   "flower_purpleC"
+  ]
+ },
+ {
+  "id": "nature-kit/flower_redA",
+  "src": "assets/kenney/nature-kit/flower_redA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.159,
+   0.292,
+   0.181
+  ],
+  "nodes": [
+   "tmpParent",
+   "flower_redA"
+  ]
+ },
+ {
+  "id": "nature-kit/flower_redB",
+  "src": "assets/kenney/nature-kit/flower_redB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.207,
+   0.258,
+   0.239
+  ],
+  "nodes": [
+   "tmpParent",
+   "flower_redB"
+  ]
+ },
+ {
+  "id": "nature-kit/flower_redC",
+  "src": "assets/kenney/nature-kit/flower_redC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.181,
+   0.233,
+   0.181
+  ],
+  "nodes": [
+   "tmpParent",
+   "flower_redC"
+  ]
+ },
+ {
+  "id": "nature-kit/flower_yellowA",
+  "src": "assets/kenney/nature-kit/flower_yellowA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.159,
+   0.192,
+   0.181
+  ],
+  "nodes": [
+   "tmpParent",
+   "flower_yellowA"
+  ]
+ },
+ {
+  "id": "nature-kit/flower_yellowB",
+  "src": "assets/kenney/nature-kit/flower_yellowB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.207,
+   0.159,
+   0.239
+  ],
+  "nodes": [
+   "tmpParent",
+   "flower_yellowB"
+  ]
+ },
+ {
+  "id": "nature-kit/flower_yellowC",
+  "src": "assets/kenney/nature-kit/flower_yellowC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.181,
+   0.133,
+   0.181
+  ],
+  "nodes": [
+   "tmpParent",
+   "flower_yellowC"
+  ]
+ },
+ {
+  "id": "nature-kit/grass",
+  "src": "assets/kenney/nature-kit/grass.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.381,
+   0.254,
+   0.392
+  ],
+  "nodes": [
+   "tmpParent",
+   "grass"
+  ]
+ },
+ {
+  "id": "nature-kit/grass_large",
+  "src": "assets/kenney/nature-kit/grass_large.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.409,
+   0.254,
+   0.408
+  ],
+  "nodes": [
+   "tmpParent",
+   "grass_large"
+  ]
+ },
+ {
+  "id": "nature-kit/grass_leafs",
+  "src": "assets/kenney/nature-kit/grass_leafs.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.234,
+   0.142,
+   0.257
+  ],
+  "nodes": [
+   "tmpParent",
+   "grass_leafs"
+  ]
+ },
+ {
+  "id": "nature-kit/grass_leafsLarge",
+  "src": "assets/kenney/nature-kit/grass_leafsLarge.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.476,
+   0.142,
+   0.487
+  ],
+  "nodes": [
+   "tmpParent",
+   "grass_leafsLarge"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_grass",
+  "src": "assets/kenney/nature-kit/ground_grass.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_grass"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_pathBend",
+  "src": "assets/kenney/nature-kit/ground_pathBend.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_pathBend"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_pathBendBank",
+  "src": "assets/kenney/nature-kit/ground_pathBendBank.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_pathBendBank"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_pathCorner",
+  "src": "assets/kenney/nature-kit/ground_pathCorner.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_pathCorner"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_pathCornerSmall",
+  "src": "assets/kenney/nature-kit/ground_pathCornerSmall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_pathCornerSmall"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_pathCross",
+  "src": "assets/kenney/nature-kit/ground_pathCross.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_pathCross"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_pathEnd",
+  "src": "assets/kenney/nature-kit/ground_pathEnd.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_pathEnd"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_pathEndClosed",
+  "src": "assets/kenney/nature-kit/ground_pathEndClosed.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_pathEndClosed"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_pathOpen",
+  "src": "assets/kenney/nature-kit/ground_pathOpen.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_pathOpen"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_pathRocks",
+  "src": "assets/kenney/nature-kit/ground_pathRocks.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_pathRocks"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_pathSide",
+  "src": "assets/kenney/nature-kit/ground_pathSide.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_pathSide"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_pathSideOpen",
+  "src": "assets/kenney/nature-kit/ground_pathSideOpen.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_pathSideOpen"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_pathSplit",
+  "src": "assets/kenney/nature-kit/ground_pathSplit.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_pathSplit"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_pathStraight",
+  "src": "assets/kenney/nature-kit/ground_pathStraight.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_pathStraight"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_pathTile",
+  "src": "assets/kenney/nature-kit/ground_pathTile.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_pathTile"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_riverBend",
+  "src": "assets/kenney/nature-kit/ground_riverBend.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_riverBend"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_riverBendBank",
+  "src": "assets/kenney/nature-kit/ground_riverBendBank.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_riverBendBank"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_riverCorner",
+  "src": "assets/kenney/nature-kit/ground_riverCorner.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_riverCorner"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_riverCornerSmall",
+  "src": "assets/kenney/nature-kit/ground_riverCornerSmall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_riverCornerSmall"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_riverCross",
+  "src": "assets/kenney/nature-kit/ground_riverCross.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_riverCross"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_riverEnd",
+  "src": "assets/kenney/nature-kit/ground_riverEnd.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_riverEnd"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_riverEndClosed",
+  "src": "assets/kenney/nature-kit/ground_riverEndClosed.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_riverEndClosed"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_riverOpen",
+  "src": "assets/kenney/nature-kit/ground_riverOpen.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_riverOpen"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_riverRocks",
+  "src": "assets/kenney/nature-kit/ground_riverRocks.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_riverRocks"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_riverSide",
+  "src": "assets/kenney/nature-kit/ground_riverSide.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_riverSide"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_riverSideOpen",
+  "src": "assets/kenney/nature-kit/ground_riverSideOpen.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_riverSideOpen"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_riverSplit",
+  "src": "assets/kenney/nature-kit/ground_riverSplit.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_riverSplit"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_riverStraight",
+  "src": "assets/kenney/nature-kit/ground_riverStraight.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_riverStraight"
+  ]
+ },
+ {
+  "id": "nature-kit/ground_riverTile",
+  "src": "assets/kenney/nature-kit/ground_riverTile.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   1
+  ],
+  "nodes": [
+   "tmpParent",
+   "ground_riverTile"
+  ]
+ },
+ {
+  "id": "nature-kit/hanging_moss",
+  "src": "assets/kenney/nature-kit/hanging_moss.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.16,
+   0.478,
+   0.035
+  ],
+  "nodes": [
+   "tmpParent",
+   "hanging_moss"
+  ]
+ },
+ {
+  "id": "nature-kit/lily_large",
+  "src": "assets/kenney/nature-kit/lily_large.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.272,
+   0.098,
+   0.314
+  ],
+  "nodes": [
+   "tmpParent",
+   "lily_large"
+  ]
+ },
+ {
+  "id": "nature-kit/lily_small",
+  "src": "assets/kenney/nature-kit/lily_small.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.189,
+   0.04,
+   0.218
+  ],
+  "nodes": [
+   "tmpParent",
+   "lily_small"
+  ]
+ },
+ {
+  "id": "nature-kit/log",
+  "src": "assets/kenney/nature-kit/log.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.234,
+   0.173,
+   0.71
+  ],
+  "nodes": [
+   "tmpParent",
+   "log"
+  ]
+ },
+ {
+  "id": "nature-kit/log_large",
+  "src": "assets/kenney/nature-kit/log_large.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.417,
+   0.549
+  ],
+  "nodes": [
+   "tmpParent",
+   "log_large"
+  ]
+ },
+ {
+  "id": "nature-kit/log_stack",
+  "src": "assets/kenney/nature-kit/log_stack.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.425,
+   0.346,
+   0.71
+  ],
+  "nodes": [
+   "tmpParent",
+   "log_stack"
+  ]
+ },
+ {
+  "id": "nature-kit/log_stackLarge",
+  "src": "assets/kenney/nature-kit/log_stackLarge.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.634,
+   0.346,
+   0.71
+  ],
+  "nodes": [
+   "tmpParent",
+   "log_stackLarge"
+  ]
+ },
+ {
+  "id": "nature-kit/mushroom_red",
+  "src": "assets/kenney/nature-kit/mushroom_red.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.174,
+   0.203,
+   0.201
+  ],
+  "nodes": [
+   "tmpParent",
+   "mushroom_red"
+  ]
+ },
+ {
+  "id": "nature-kit/mushroom_redGroup",
+  "src": "assets/kenney/nature-kit/mushroom_redGroup.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.27,
+   0.25,
+   0.254
+  ],
+  "nodes": [
+   "tmpParent",
+   "mushroom_redGroup"
+  ]
+ },
+ {
+  "id": "nature-kit/mushroom_redTall",
+  "src": "assets/kenney/nature-kit/mushroom_redTall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.124,
+   0.25,
+   0.143
+  ],
+  "nodes": [
+   "tmpParent",
+   "mushroom_redTall"
+  ]
+ },
+ {
+  "id": "nature-kit/mushroom_tan",
+  "src": "assets/kenney/nature-kit/mushroom_tan.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.191,
+   0.154,
+   0.221
+  ],
+  "nodes": [
+   "tmpParent",
+   "mushroom_tan"
+  ]
+ },
+ {
+  "id": "nature-kit/mushroom_tanGroup",
+  "src": "assets/kenney/nature-kit/mushroom_tanGroup.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.27,
+   0.25,
+   0.254
+  ],
+  "nodes": [
+   "tmpParent",
+   "mushroom_tanGroup"
+  ]
+ },
+ {
+  "id": "nature-kit/mushroom_tanTall",
+  "src": "assets/kenney/nature-kit/mushroom_tanTall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.124,
+   0.25,
+   0.143
+  ],
+  "nodes": [
+   "tmpParent",
+   "mushroom_tanTall"
+  ]
+ },
+ {
+  "id": "nature-kit/path_stone",
+  "src": "assets/kenney/nature-kit/path_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   0.577
+  ],
+  "nodes": [
+   "tmpParent",
+   "path_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/path_stoneCircle",
+  "src": "assets/kenney/nature-kit/path_stoneCircle.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.932,
+   0.05,
+   0.877
+  ],
+  "nodes": [
+   "tmpParent",
+   "path_stoneCircle"
+  ]
+ },
+ {
+  "id": "nature-kit/path_stoneCorner",
+  "src": "assets/kenney/nature-kit/path_stoneCorner.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.738,
+   0.05,
+   0.778
+  ],
+  "nodes": [
+   "tmpParent",
+   "path_stoneCorner"
+  ]
+ },
+ {
+  "id": "nature-kit/path_stoneEnd",
+  "src": "assets/kenney/nature-kit/path_stoneEnd.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.618,
+   0.05,
+   0.571
+  ],
+  "nodes": [
+   "tmpParent",
+   "path_stoneEnd"
+  ]
+ },
+ {
+  "id": "nature-kit/path_wood",
+  "src": "assets/kenney/nature-kit/path_wood.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1,
+   0.05,
+   0.514
+  ],
+  "nodes": [
+   "tmpParent",
+   "path_wood"
+  ]
+ },
+ {
+  "id": "nature-kit/path_woodCorner",
+  "src": "assets/kenney/nature-kit/path_woodCorner.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.75,
+   0.05,
+   0.75
+  ],
+  "nodes": [
+   "tmpParent",
+   "path_woodCorner"
+  ]
+ },
+ {
+  "id": "nature-kit/path_woodEnd",
+  "src": "assets/kenney/nature-kit/path_woodEnd.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.615,
+   0.05,
+   0.514
+  ],
+  "nodes": [
+   "tmpParent",
+   "path_woodEnd"
+  ]
+ },
+ {
+  "id": "nature-kit/plant_bush",
+  "src": "assets/kenney/nature-kit/plant_bush.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.396,
+   0.244,
+   0.396
+  ],
+  "nodes": [
+   "tmpParent",
+   "plant_bush"
+  ]
+ },
+ {
+  "id": "nature-kit/plant_bushDetailed",
+  "src": "assets/kenney/nature-kit/plant_bushDetailed.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.603,
+   0.36,
+   0.603
+  ],
+  "nodes": [
+   "tmpParent",
+   "plant_bushDetailed"
+  ]
+ },
+ {
+  "id": "nature-kit/plant_bushLarge",
+  "src": "assets/kenney/nature-kit/plant_bushLarge.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.374,
+   0.243,
+   0.336
+  ],
+  "nodes": [
+   "tmpParent",
+   "plant_bushLarge"
+  ]
+ },
+ {
+  "id": "nature-kit/plant_bushLargeTriangle",
+  "src": "assets/kenney/nature-kit/plant_bushLargeTriangle.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.408,
+   0.169,
+   0.471
+  ],
+  "nodes": [
+   "tmpParent",
+   "plant_bushLargeTriangle"
+  ]
+ },
+ {
+  "id": "nature-kit/plant_bushSmall",
+  "src": "assets/kenney/nature-kit/plant_bushSmall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.383,
+   0.207,
+   0.336
+  ],
+  "nodes": [
+   "tmpParent",
+   "plant_bushSmall"
+  ]
+ },
+ {
+  "id": "nature-kit/plant_bushTriangle",
+  "src": "assets/kenney/nature-kit/plant_bushTriangle.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.364,
+   0.296,
+   0.414
+  ],
+  "nodes": [
+   "tmpParent",
+   "plant_bushTriangle"
+  ]
+ },
+ {
+  "id": "nature-kit/plant_flatShort",
+  "src": "assets/kenney/nature-kit/plant_flatShort.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.278,
+   0.235,
+   0.278
+  ],
+  "nodes": [
+   "tmpParent",
+   "plant_flatShort"
+  ]
+ },
+ {
+  "id": "nature-kit/plant_flatTall",
+  "src": "assets/kenney/nature-kit/plant_flatTall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.272,
+   0.284,
+   0.272
+  ],
+  "nodes": [
+   "tmpParent",
+   "plant_flatTall"
+  ]
+ },
+ {
+  "id": "nature-kit/platform_beach",
+  "src": "assets/kenney/nature-kit/platform_beach.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.893,
+   0.082,
+   0.724
+  ],
+  "nodes": [
+   "tmpParent",
+   "platform_beach"
+  ]
+ },
+ {
+  "id": "nature-kit/platform_grass",
+  "src": "assets/kenney/nature-kit/platform_grass.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.893,
+   0.082,
+   0.724
+  ],
+  "nodes": [
+   "tmpParent",
+   "platform_grass"
+  ]
+ },
+ {
+  "id": "nature-kit/platform_stone",
+  "src": "assets/kenney/nature-kit/platform_stone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.893,
+   0.082,
+   0.724
+  ],
+  "nodes": [
+   "tmpParent",
+   "platform_stone"
+  ]
+ },
+ {
+  "id": "nature-kit/pot_large",
+  "src": "assets/kenney/nature-kit/pot_large.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.564,
+   0.2,
+   0.488
+  ],
+  "nodes": [
+   "tmpParent",
+   "pot_large"
+  ]
+ },
+ {
+  "id": "nature-kit/pot_small",
+  "src": "assets/kenney/nature-kit/pot_small.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.323,
+   0.268,
+   0.28
+  ],
+  "nodes": [
+   "tmpParent",
+   "pot_small"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_largeA",
+  "src": "assets/kenney/nature-kit/rock_largeA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.785,
+   0.26,
+   1.015
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_largeA"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_largeB",
+  "src": "assets/kenney/nature-kit/rock_largeB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.767,
+   0.43,
+   1.015
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_largeB"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_largeC",
+  "src": "assets/kenney/nature-kit/rock_largeC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.064,
+   0.321,
+   1.016
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_largeC"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_largeD",
+  "src": "assets/kenney/nature-kit/rock_largeD.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.069,
+   0.568,
+   1.03
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_largeD"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_largeE",
+  "src": "assets/kenney/nature-kit/rock_largeE.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.095,
+   0.292,
+   0.92
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_largeE"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_largeF",
+  "src": "assets/kenney/nature-kit/rock_largeF.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.095,
+   0.479,
+   0.899
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_largeF"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_smallA",
+  "src": "assets/kenney/nature-kit/rock_smallA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.361,
+   0.191,
+   0.361
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_smallA"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_smallB",
+  "src": "assets/kenney/nature-kit/rock_smallB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.361,
+   0.177,
+   0.361
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_smallB"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_smallC",
+  "src": "assets/kenney/nature-kit/rock_smallC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.361,
+   0.123,
+   0.361
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_smallC"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_smallD",
+  "src": "assets/kenney/nature-kit/rock_smallD.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.426,
+   0.231,
+   0.369
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_smallD"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_smallE",
+  "src": "assets/kenney/nature-kit/rock_smallE.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.361,
+   0.256,
+   0.312
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_smallE"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_smallF",
+  "src": "assets/kenney/nature-kit/rock_smallF.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.354,
+   0.245,
+   0.306
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_smallF"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_smallFlatA",
+  "src": "assets/kenney/nature-kit/rock_smallFlatA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.496,
+   0.065,
+   0.43
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_smallFlatA"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_smallFlatB",
+  "src": "assets/kenney/nature-kit/rock_smallFlatB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.065,
+   0.402
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_smallFlatB"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_smallFlatC",
+  "src": "assets/kenney/nature-kit/rock_smallFlatC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.47,
+   0.065,
+   0.36
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_smallFlatC"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_smallG",
+  "src": "assets/kenney/nature-kit/rock_smallG.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.594,
+   0.245,
+   0.686
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_smallG"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_smallH",
+  "src": "assets/kenney/nature-kit/rock_smallH.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.462,
+   0.407,
+   0.462
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_smallH"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_smallI",
+  "src": "assets/kenney/nature-kit/rock_smallI.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.358,
+   0.278,
+   0.414
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_smallI"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_smallTopA",
+  "src": "assets/kenney/nature-kit/rock_smallTopA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.488,
+   0.22,
+   0.489
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_smallTopA"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_smallTopB",
+  "src": "assets/kenney/nature-kit/rock_smallTopB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.622,
+   0.28,
+   0.646
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_smallTopB"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_tallA",
+  "src": "assets/kenney/nature-kit/rock_tallA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.983,
+   0.996,
+   0.683
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_tallA"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_tallB",
+  "src": "assets/kenney/nature-kit/rock_tallB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.765,
+   0.884,
+   0.77
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_tallB"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_tallC",
+  "src": "assets/kenney/nature-kit/rock_tallC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.456,
+   0.783,
+   0.437
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_tallC"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_tallD",
+  "src": "assets/kenney/nature-kit/rock_tallD.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.443,
+   0.772,
+   0.461
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_tallD"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_tallE",
+  "src": "assets/kenney/nature-kit/rock_tallE.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.456,
+   0.444,
+   0.527
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_tallE"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_tallF",
+  "src": "assets/kenney/nature-kit/rock_tallF.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.444,
+   0.574,
+   0.512
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_tallF"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_tallG",
+  "src": "assets/kenney/nature-kit/rock_tallG.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.425,
+   0.783,
+   0.491
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_tallG"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_tallH",
+  "src": "assets/kenney/nature-kit/rock_tallH.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.575,
+   0.711,
+   0.664
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_tallH"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_tallI",
+  "src": "assets/kenney/nature-kit/rock_tallI.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.456,
+   0.812,
+   0.464
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_tallI"
+  ]
+ },
+ {
+  "id": "nature-kit/rock_tallJ",
+  "src": "assets/kenney/nature-kit/rock_tallJ.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.488,
+   0.62,
+   0.538
+  ],
+  "nodes": [
+   "tmpParent",
+   "rock_tallJ"
+  ]
+ },
+ {
+  "id": "nature-kit/sign",
+  "src": "assets/kenney/nature-kit/sign.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.3,
+   0.409,
+   0.07
+  ],
+  "nodes": [
+   "tmpParent",
+   "sign"
+  ]
+ },
+ {
+  "id": "nature-kit/statue_block",
+  "src": "assets/kenney/nature-kit/statue_block.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.4,
+   0.4,
+   0.4
+  ],
+  "nodes": [
+   "tmpParent",
+   "statue_block"
+  ]
+ },
+ {
+  "id": "nature-kit/statue_column",
+  "src": "assets/kenney/nature-kit/statue_column.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.3,
+   1,
+   0.3
+  ],
+  "nodes": [
+   "tmpParent",
+   "statue_column"
+  ]
+ },
+ {
+  "id": "nature-kit/statue_columnDamaged",
+  "src": "assets/kenney/nature-kit/statue_columnDamaged.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.3,
+   0.7,
+   0.3
+  ],
+  "nodes": [
+   "tmpParent",
+   "statue_columnDamaged"
+  ]
+ },
+ {
+  "id": "nature-kit/statue_head",
+  "src": "assets/kenney/nature-kit/statue_head.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.726,
+   1,
+   0.554
+  ],
+  "nodes": [
+   "tmpParent",
+   "statue_head"
+  ]
+ },
+ {
+  "id": "nature-kit/statue_obelisk",
+  "src": "assets/kenney/nature-kit/statue_obelisk.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.307,
+   0.875,
+   0.307
+  ],
+  "nodes": [
+   "tmpParent",
+   "statue_obelisk"
+  ]
+ },
+ {
+  "id": "nature-kit/statue_ring",
+  "src": "assets/kenney/nature-kit/statue_ring.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.6,
+   0.796,
+   0.4
+  ],
+  "nodes": [
+   "tmpParent",
+   "statue_ring"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_largeA",
+  "src": "assets/kenney/nature-kit/stone_largeA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.785,
+   0.26,
+   1.015
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_largeA"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_largeB",
+  "src": "assets/kenney/nature-kit/stone_largeB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.767,
+   0.43,
+   1.015
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_largeB"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_largeC",
+  "src": "assets/kenney/nature-kit/stone_largeC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.064,
+   0.321,
+   1.016
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_largeC"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_largeD",
+  "src": "assets/kenney/nature-kit/stone_largeD.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.069,
+   0.568,
+   1.03
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_largeD"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_largeE",
+  "src": "assets/kenney/nature-kit/stone_largeE.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.095,
+   0.292,
+   0.92
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_largeE"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_largeF",
+  "src": "assets/kenney/nature-kit/stone_largeF.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.095,
+   0.479,
+   0.899
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_largeF"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_smallA",
+  "src": "assets/kenney/nature-kit/stone_smallA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.361,
+   0.191,
+   0.361
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_smallA"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_smallB",
+  "src": "assets/kenney/nature-kit/stone_smallB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.361,
+   0.177,
+   0.361
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_smallB"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_smallC",
+  "src": "assets/kenney/nature-kit/stone_smallC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.361,
+   0.123,
+   0.361
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_smallC"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_smallD",
+  "src": "assets/kenney/nature-kit/stone_smallD.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.426,
+   0.231,
+   0.369
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_smallD"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_smallE",
+  "src": "assets/kenney/nature-kit/stone_smallE.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.361,
+   0.256,
+   0.312
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_smallE"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_smallF",
+  "src": "assets/kenney/nature-kit/stone_smallF.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.354,
+   0.245,
+   0.306
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_smallF"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_smallFlatA",
+  "src": "assets/kenney/nature-kit/stone_smallFlatA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.496,
+   0.065,
+   0.43
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_smallFlatA"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_smallFlatB",
+  "src": "assets/kenney/nature-kit/stone_smallFlatB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.43,
+   0.065,
+   0.402
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_smallFlatB"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_smallFlatC",
+  "src": "assets/kenney/nature-kit/stone_smallFlatC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.47,
+   0.065,
+   0.36
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_smallFlatC"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_smallG",
+  "src": "assets/kenney/nature-kit/stone_smallG.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.594,
+   0.245,
+   0.686
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_smallG"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_smallH",
+  "src": "assets/kenney/nature-kit/stone_smallH.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.462,
+   0.407,
+   0.462
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_smallH"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_smallI",
+  "src": "assets/kenney/nature-kit/stone_smallI.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.358,
+   0.278,
+   0.414
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_smallI"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_smallTopA",
+  "src": "assets/kenney/nature-kit/stone_smallTopA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.488,
+   0.22,
+   0.489
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_smallTopA"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_smallTopB",
+  "src": "assets/kenney/nature-kit/stone_smallTopB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.622,
+   0.28,
+   0.646
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_smallTopB"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_tallA",
+  "src": "assets/kenney/nature-kit/stone_tallA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.983,
+   0.996,
+   0.683
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_tallA"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_tallB",
+  "src": "assets/kenney/nature-kit/stone_tallB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.765,
+   0.884,
+   0.77
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_tallB"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_tallC",
+  "src": "assets/kenney/nature-kit/stone_tallC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.456,
+   0.783,
+   0.437
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_tallC"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_tallD",
+  "src": "assets/kenney/nature-kit/stone_tallD.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.443,
+   0.772,
+   0.461
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_tallD"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_tallE",
+  "src": "assets/kenney/nature-kit/stone_tallE.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.456,
+   0.444,
+   0.527
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_tallE"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_tallF",
+  "src": "assets/kenney/nature-kit/stone_tallF.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.444,
+   0.574,
+   0.512
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_tallF"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_tallG",
+  "src": "assets/kenney/nature-kit/stone_tallG.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.425,
+   0.783,
+   0.491
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_tallG"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_tallH",
+  "src": "assets/kenney/nature-kit/stone_tallH.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.575,
+   0.711,
+   0.664
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_tallH"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_tallI",
+  "src": "assets/kenney/nature-kit/stone_tallI.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.456,
+   0.812,
+   0.464
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_tallI"
+  ]
+ },
+ {
+  "id": "nature-kit/stone_tallJ",
+  "src": "assets/kenney/nature-kit/stone_tallJ.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.488,
+   0.62,
+   0.538
+  ],
+  "nodes": [
+   "tmpParent",
+   "stone_tallJ"
+  ]
+ },
+ {
+  "id": "nature-kit/stump_old",
+  "src": "assets/kenney/nature-kit/stump_old.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.357,
+   0.266,
+   0.371
+  ],
+  "nodes": [
+   "tmpParent",
+   "stump_old"
+  ]
+ },
+ {
+  "id": "nature-kit/stump_oldTall",
+  "src": "assets/kenney/nature-kit/stump_oldTall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.357,
+   0.666,
+   0.371
+  ],
+  "nodes": [
+   "tmpParent",
+   "stump_oldTall"
+  ]
+ },
+ {
+  "id": "nature-kit/stump_round",
+  "src": "assets/kenney/nature-kit/stump_round.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.321,
+   0.206,
+   0.371
+  ],
+  "nodes": [
+   "tmpParent",
+   "stump_round"
+  ]
+ },
+ {
+  "id": "nature-kit/stump_roundDetailed",
+  "src": "assets/kenney/nature-kit/stump_roundDetailed.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.357,
+   0.206,
+   0.371
+  ],
+  "nodes": [
+   "tmpParent",
+   "stump_roundDetailed"
+  ]
+ },
+ {
+  "id": "nature-kit/stump_square",
+  "src": "assets/kenney/nature-kit/stump_square.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.36,
+   0.3,
+   0.3
+  ],
+  "nodes": [
+   "tmpParent",
+   "stump_square"
+  ]
+ },
+ {
+  "id": "nature-kit/stump_squareDetailed",
+  "src": "assets/kenney/nature-kit/stump_squareDetailed.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.44,
+   0.2,
+   0.44
+  ],
+  "nodes": [
+   "tmpParent",
+   "stump_squareDetailed"
+  ]
+ },
+ {
+  "id": "nature-kit/stump_squareDetailedWide",
+  "src": "assets/kenney/nature-kit/stump_squareDetailedWide.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.64,
+   0.2,
+   0.64
+  ],
+  "nodes": [
+   "tmpParent",
+   "stump_squareDetailedWide"
+  ]
+ },
+ {
+  "id": "nature-kit/tent_detailedClosed",
+  "src": "assets/kenney/nature-kit/tent_detailedClosed.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.875,
+   0.561,
+   0.636
+  ],
+  "nodes": [
+   "tmpParent",
+   "tent_detailedClosed"
+  ]
+ },
+ {
+  "id": "nature-kit/tent_detailedOpen",
+  "src": "assets/kenney/nature-kit/tent_detailedOpen.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.875,
+   0.561,
+   0.666
+  ],
+  "nodes": [
+   "tmpParent",
+   "tent_detailedOpen"
+  ]
+ },
+ {
+  "id": "nature-kit/tent_smallClosed",
+  "src": "assets/kenney/nature-kit/tent_smallClosed.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.548,
+   0.561,
+   0.636
+  ],
+  "nodes": [
+   "tmpParent",
+   "tent_smallClosed"
+  ]
+ },
+ {
+  "id": "nature-kit/tent_smallOpen",
+  "src": "assets/kenney/nature-kit/tent_smallOpen.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.548,
+   0.561,
+   0.666
+  ],
+  "nodes": [
+   "tmpParent",
+   "tent_smallOpen"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_blocks",
+  "src": "assets/kenney/nature-kit/tree_blocks.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.6,
+   1.185,
+   0.6
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_blocks"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_blocks_dark",
+  "src": "assets/kenney/nature-kit/tree_blocks_dark.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.6,
+   1.185,
+   0.6
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_blocks_dark"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_blocks_fall",
+  "src": "assets/kenney/nature-kit/tree_blocks_fall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.6,
+   1.185,
+   0.6
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_blocks_fall"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_cone",
+  "src": "assets/kenney/nature-kit/tree_cone.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.53,
+   1.43,
+   0.53
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_cone"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_cone_dark",
+  "src": "assets/kenney/nature-kit/tree_cone_dark.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.53,
+   1.43,
+   0.53
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_cone_dark"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_cone_fall",
+  "src": "assets/kenney/nature-kit/tree_cone_fall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.53,
+   1.43,
+   0.53
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_cone_fall"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_default",
+  "src": "assets/kenney/nature-kit/tree_default.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.755,
+   1.708,
+   0.654
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_default"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_default_dark",
+  "src": "assets/kenney/nature-kit/tree_default_dark.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.755,
+   1.708,
+   0.654
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_default_dark"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_default_fall",
+  "src": "assets/kenney/nature-kit/tree_default_fall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.755,
+   1.708,
+   0.654
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_default_fall"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_detailed",
+  "src": "assets/kenney/nature-kit/tree_detailed.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.847,
+   1.332,
+   0.762
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_detailed"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_detailed_dark",
+  "src": "assets/kenney/nature-kit/tree_detailed_dark.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.847,
+   1.332,
+   0.762
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_detailed_dark"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_detailed_fall",
+  "src": "assets/kenney/nature-kit/tree_detailed_fall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.847,
+   1.332,
+   0.762
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_detailed_fall"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_fat",
+  "src": "assets/kenney/nature-kit/tree_fat.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.755,
+   1.15,
+   0.654
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_fat"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_fat_darkh",
+  "src": "assets/kenney/nature-kit/tree_fat_darkh.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.755,
+   1.15,
+   0.654
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_fat_darkh"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_fat_fall",
+  "src": "assets/kenney/nature-kit/tree_fat_fall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.755,
+   1.15,
+   0.654
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_fat_fall"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_oak",
+  "src": "assets/kenney/nature-kit/tree_oak.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.641,
+   1.226,
+   0.74
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_oak"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_oak_dark",
+  "src": "assets/kenney/nature-kit/tree_oak_dark.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.641,
+   1.226,
+   0.74
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_oak_dark"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_oak_fall",
+  "src": "assets/kenney/nature-kit/tree_oak_fall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.641,
+   1.226,
+   0.74
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_oak_fall"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_palm",
+  "src": "assets/kenney/nature-kit/tree_palm.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.935,
+   1.515,
+   1.013
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_palm"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_palmBend",
+  "src": "assets/kenney/nature-kit/tree_palmBend.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.935,
+   1.38,
+   1.013
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_palmBend"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_palmDetailedShort",
+  "src": "assets/kenney/nature-kit/tree_palmDetailedShort.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.034,
+   1.124,
+   1.034
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_palmDetailedShort",
+   "leafs",
+   "leafs"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_palmDetailedTall",
+  "src": "assets/kenney/nature-kit/tree_palmDetailedTall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.034,
+   1.423,
+   1.034
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_palmDetailedTall",
+   "leafs",
+   "leafs"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_palmShort",
+  "src": "assets/kenney/nature-kit/tree_palmShort.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.034,
+   1.056,
+   1.034
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_palmShort"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_palmTall",
+  "src": "assets/kenney/nature-kit/tree_palmTall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   1.034,
+   1.356,
+   1.034
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_palmTall"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineDefaultA",
+  "src": "assets/kenney/nature-kit/tree_pineDefaultA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.532,
+   1.546,
+   0.532
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineDefaultA"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineDefaultB",
+  "src": "assets/kenney/nature-kit/tree_pineDefaultB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.532,
+   1.546,
+   0.532
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineDefaultB"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineGroundA",
+  "src": "assets/kenney/nature-kit/tree_pineGroundA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.48,
+   0.914,
+   0.555
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineGroundA"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineGroundB",
+  "src": "assets/kenney/nature-kit/tree_pineGroundB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.48,
+   1.042,
+   0.555
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineGroundB"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineRoundA",
+  "src": "assets/kenney/nature-kit/tree_pineRoundA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.617,
+   1.366,
+   0.712
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineRoundA"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineRoundB",
+  "src": "assets/kenney/nature-kit/tree_pineRoundB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.532,
+   1.196,
+   0.613
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineRoundB"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineRoundC",
+  "src": "assets/kenney/nature-kit/tree_pineRoundC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.48,
+   1.253,
+   0.555
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineRoundC"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineRoundD",
+  "src": "assets/kenney/nature-kit/tree_pineRoundD.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.48,
+   1.082,
+   0.555
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineRoundD"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineRoundE",
+  "src": "assets/kenney/nature-kit/tree_pineRoundE.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.532,
+   1.255,
+   0.532
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineRoundE"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineRoundF",
+  "src": "assets/kenney/nature-kit/tree_pineRoundF.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.532,
+   1.255,
+   0.532
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineRoundF"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineSmallA",
+  "src": "assets/kenney/nature-kit/tree_pineSmallA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.5,
+   0.967,
+   0.5
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineSmallA"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineSmallB",
+  "src": "assets/kenney/nature-kit/tree_pineSmallB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.386,
+   1.009,
+   0.392
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineSmallB"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineSmallC",
+  "src": "assets/kenney/nature-kit/tree_pineSmallC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.386,
+   1.123,
+   0.392
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineSmallC"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineSmallD",
+  "src": "assets/kenney/nature-kit/tree_pineSmallD.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.357,
+   0.956,
+   0.357
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineSmallD"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineTallA",
+  "src": "assets/kenney/nature-kit/tree_pineTallA.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.386,
+   1.53,
+   0.392
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineTallA"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineTallA_detailed",
+  "src": "assets/kenney/nature-kit/tree_pineTallA_detailed.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.386,
+   1.53,
+   0.392
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineTallA_detailed"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineTallB",
+  "src": "assets/kenney/nature-kit/tree_pineTallB.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.386,
+   1.935,
+   0.392
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineTallB"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineTallB_detailed",
+  "src": "assets/kenney/nature-kit/tree_pineTallB_detailed.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.386,
+   1.935,
+   0.392
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineTallB_detailed"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineTallC",
+  "src": "assets/kenney/nature-kit/tree_pineTallC.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.48,
+   1.67,
+   0.555
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineTallC"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineTallC_detailed",
+  "src": "assets/kenney/nature-kit/tree_pineTallC_detailed.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.48,
+   1.67,
+   0.555
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineTallC_detailed"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineTallD",
+  "src": "assets/kenney/nature-kit/tree_pineTallD.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.48,
+   2.075,
+   0.555
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineTallD"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_pineTallD_detailed",
+  "src": "assets/kenney/nature-kit/tree_pineTallD_detailed.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.48,
+   2.075,
+   0.555
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_pineTallD_detailed"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_plateau",
+  "src": "assets/kenney/nature-kit/tree_plateau.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.612,
+   1.249,
+   0.655
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_plateau"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_plateau_dark",
+  "src": "assets/kenney/nature-kit/tree_plateau_dark.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.612,
+   1.249,
+   0.655
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_plateau_dark"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_plateau_fall",
+  "src": "assets/kenney/nature-kit/tree_plateau_fall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.612,
+   1.249,
+   0.655
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_plateau_fall"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_simple",
+  "src": "assets/kenney/nature-kit/tree_simple.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.355,
+   1.519,
+   0.409
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_simple"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_simple_dark",
+  "src": "assets/kenney/nature-kit/tree_simple_dark.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.355,
+   1.519,
+   0.409
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_simple_dark"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_simple_fall",
+  "src": "assets/kenney/nature-kit/tree_simple_fall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.355,
+   1.519,
+   0.409
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_simple_fall"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_small",
+  "src": "assets/kenney/nature-kit/tree_small.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.355,
+   1.11,
+   0.409
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_small"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_small_dark",
+  "src": "assets/kenney/nature-kit/tree_small_dark.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.355,
+   1.11,
+   0.409
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_small_dark"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_small_fall",
+  "src": "assets/kenney/nature-kit/tree_small_fall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.355,
+   1.11,
+   0.409
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_small_fall"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_tall",
+  "src": "assets/kenney/nature-kit/tree_tall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.4,
+   1.688,
+   0.461
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_tall"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_tall_dark",
+  "src": "assets/kenney/nature-kit/tree_tall_dark.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.4,
+   1.688,
+   0.461
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_tall_dark"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_tall_fall",
+  "src": "assets/kenney/nature-kit/tree_tall_fall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.4,
+   1.688,
+   0.461
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_tall_fall"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_thin",
+  "src": "assets/kenney/nature-kit/tree_thin.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.68,
+   1.49,
+   0.617
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_thin"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_thin_dark",
+  "src": "assets/kenney/nature-kit/tree_thin_dark.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.68,
+   1.49,
+   0.617
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_thin_dark"
+  ]
+ },
+ {
+  "id": "nature-kit/tree_thin_fall",
+  "src": "assets/kenney/nature-kit/tree_thin_fall.glb",
+  "source": "kenney.nl/assets/nature-kit",
+  "license": "CC0",
+  "scale": 1,
+  "bbox": [
+   0.68,
+   1.49,
+   0.617
+  ],
+  "nodes": [
+   "tmpParent",
+   "tree_thin_fall"
+  ]
+ },
+ {
+  "id": "pirate-kit/barrel",
+  "src": "assets/kenney/pirate-kit/barrel.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/boat-row-large",
+  "src": "assets/kenney/pirate-kit/boat-row-large.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/boat-row-small",
+  "src": "assets/kenney/pirate-kit/boat-row-small.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/bottle-large",
+  "src": "assets/kenney/pirate-kit/bottle-large.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/bottle",
+  "src": "assets/kenney/pirate-kit/bottle.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/cannon-ball",
+  "src": "assets/kenney/pirate-kit/cannon-ball.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/cannon-mobile",
+  "src": "assets/kenney/pirate-kit/cannon-mobile.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/cannon",
+  "src": "assets/kenney/pirate-kit/cannon.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/castle-door",
+  "src": "assets/kenney/pirate-kit/castle-door.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/castle-gate",
+  "src": "assets/kenney/pirate-kit/castle-gate.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/castle-wall",
+  "src": "assets/kenney/pirate-kit/castle-wall.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/castle-window",
+  "src": "assets/kenney/pirate-kit/castle-window.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/chest",
+  "src": "assets/kenney/pirate-kit/chest.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/crate-bottles",
+  "src": "assets/kenney/pirate-kit/crate-bottles.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/crate",
+  "src": "assets/kenney/pirate-kit/crate.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/flag-high-pennant",
+  "src": "assets/kenney/pirate-kit/flag-high-pennant.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/flag-high",
+  "src": "assets/kenney/pirate-kit/flag-high.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/flag-pennant",
+  "src": "assets/kenney/pirate-kit/flag-pennant.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/flag-pirate-high-pennant",
+  "src": "assets/kenney/pirate-kit/flag-pirate-high-pennant.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/flag-pirate-high",
+  "src": "assets/kenney/pirate-kit/flag-pirate-high.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/flag-pirate-pennant",
+  "src": "assets/kenney/pirate-kit/flag-pirate-pennant.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/flag-pirate",
+  "src": "assets/kenney/pirate-kit/flag-pirate.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/flag",
+  "src": "assets/kenney/pirate-kit/flag.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/grass-patch",
+  "src": "assets/kenney/pirate-kit/grass-patch.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/grass-plant",
+  "src": "assets/kenney/pirate-kit/grass-plant.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/grass",
+  "src": "assets/kenney/pirate-kit/grass.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/hole",
+  "src": "assets/kenney/pirate-kit/hole.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/mast-ropes",
+  "src": "assets/kenney/pirate-kit/mast-ropes.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/mast",
+  "src": "assets/kenney/pirate-kit/mast.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/palm-bend",
+  "src": "assets/kenney/pirate-kit/palm-bend.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/palm-detailed-bend",
+  "src": "assets/kenney/pirate-kit/palm-detailed-bend.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/palm-detailed-straight",
+  "src": "assets/kenney/pirate-kit/palm-detailed-straight.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/palm-straight",
+  "src": "assets/kenney/pirate-kit/palm-straight.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/patch-grass-foliage",
+  "src": "assets/kenney/pirate-kit/patch-grass-foliage.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/patch-grass",
+  "src": "assets/kenney/pirate-kit/patch-grass.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/patch-sand-foliage",
+  "src": "assets/kenney/pirate-kit/patch-sand-foliage.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/patch-sand",
+  "src": "assets/kenney/pirate-kit/patch-sand.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/platform-planks",
+  "src": "assets/kenney/pirate-kit/platform-planks.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/platform",
+  "src": "assets/kenney/pirate-kit/platform.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/rocks-a",
+  "src": "assets/kenney/pirate-kit/rocks-a.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/rocks-b",
+  "src": "assets/kenney/pirate-kit/rocks-b.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/rocks-c",
+  "src": "assets/kenney/pirate-kit/rocks-c.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/rocks-sand-a",
+  "src": "assets/kenney/pirate-kit/rocks-sand-a.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/rocks-sand-b",
+  "src": "assets/kenney/pirate-kit/rocks-sand-b.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/rocks-sand-c",
+  "src": "assets/kenney/pirate-kit/rocks-sand-c.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/ship-ghost",
+  "src": "assets/kenney/pirate-kit/ship-ghost.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/ship-large",
+  "src": "assets/kenney/pirate-kit/ship-large.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/ship-medium",
+  "src": "assets/kenney/pirate-kit/ship-medium.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/ship-pirate-large",
+  "src": "assets/kenney/pirate-kit/ship-pirate-large.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/ship-pirate-medium",
+  "src": "assets/kenney/pirate-kit/ship-pirate-medium.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/ship-pirate-small",
+  "src": "assets/kenney/pirate-kit/ship-pirate-small.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/ship-small",
+  "src": "assets/kenney/pirate-kit/ship-small.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/ship-wreck",
+  "src": "assets/kenney/pirate-kit/ship-wreck.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/structure-fence-sides",
+  "src": "assets/kenney/pirate-kit/structure-fence-sides.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/structure-fence",
+  "src": "assets/kenney/pirate-kit/structure-fence.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/structure-platform-dock-small",
+  "src": "assets/kenney/pirate-kit/structure-platform-dock-small.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/structure-platform-dock",
+  "src": "assets/kenney/pirate-kit/structure-platform-dock.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/structure-platform-small",
+  "src": "assets/kenney/pirate-kit/structure-platform-small.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/structure-platform",
+  "src": "assets/kenney/pirate-kit/structure-platform.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/structure-roof",
+  "src": "assets/kenney/pirate-kit/structure-roof.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/structure",
+  "src": "assets/kenney/pirate-kit/structure.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/tool-paddle",
+  "src": "assets/kenney/pirate-kit/tool-paddle.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/tool-shovel",
+  "src": "assets/kenney/pirate-kit/tool-shovel.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/tower-base-door",
+  "src": "assets/kenney/pirate-kit/tower-base-door.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/tower-base",
+  "src": "assets/kenney/pirate-kit/tower-base.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/tower-complete-large",
+  "src": "assets/kenney/pirate-kit/tower-complete-large.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/tower-complete-small",
+  "src": "assets/kenney/pirate-kit/tower-complete-small.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/tower-middle-windows",
+  "src": "assets/kenney/pirate-kit/tower-middle-windows.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/tower-middle",
+  "src": "assets/kenney/pirate-kit/tower-middle.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/tower-roof",
+  "src": "assets/kenney/pirate-kit/tower-roof.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/tower-top",
+  "src": "assets/kenney/pirate-kit/tower-top.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ },
+ {
+  "id": "pirate-kit/tower-watch",
+  "src": "assets/kenney/pirate-kit/tower-watch.glb",
+  "source": "kenney.nl/assets/pirate-kit",
+  "license": "CC0",
+  "scale": 1
+ }
+]
