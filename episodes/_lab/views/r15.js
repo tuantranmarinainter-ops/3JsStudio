@@ -2,7 +2,7 @@
 //   ?view=r15&who=hero|mom|dad|dadIsland|all&anim=walk&face=<tên>|cycle&yaw=0.5&dist=20
 //   face=cycle → mỗi giây t một biểu cảm (R15_FACES); cam=…&look=…&fov=… để cận mặt (index.html).
 //   blink=0 tắt chớp mắt; side=1 nhìn ngang.
-import { createR15, loadCharacterTextures, R15_FACES } from '../../../engine/r15.js';
+import { createR15, loadCharacterTextures, loadR15Body, R15_FACES } from '../../../engine/r15.js';
 
 const SKIN = '#f3d27a';
 // Bản sao option từ episodes/ep001/episode.js (buildCast) + vài option mới của R15 (zipper, boots, lashes…)
@@ -21,10 +21,11 @@ export default async (THREE, stage, q) => {
   const face = q.get('face');
   const blink = q.get('blink') !== '0';
   const actors = [];
+  const body = q.get('body') === '0' ? null : await loadR15Body(THREE);
   for (let i = 0; i < names.length; i++) {
     const n = names[i];
     const textures = await loadCharacterTextures(THREE, n);
-    const a = createR15(THREE, { name: n, ...CAST[n], textures, face: DEFAULT_FACE[n], blink, ...(n === 'hero' ? { scale: 0.92 } : {}) });
+    const a = createR15(THREE, { name: n, ...CAST[n], textures, body, face: DEFAULT_FACE[n], blink, ...(n === 'hero' ? { scale: 0.92 } : {}) });
     a._defaultFace = DEFAULT_FACE[n];
     const x = (i - (names.length - 1) / 2) * 3.8;
     a.root.position.x = x;

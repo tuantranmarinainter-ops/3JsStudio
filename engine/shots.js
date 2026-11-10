@@ -130,10 +130,12 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
   function holdProp(a, spec, side) {
     const name = typeof spec === 'string' ? spec : spec.name;
     const obj = props[name]; if (!obj) return;
-    const arm = side === 'holdL' ? a.parts.leftArm : a.parts.rightArm;
+    const hand = side === 'holdL' ? a.parts.leftHand : a.parts.rightHand;   // R15: gắn vào bàn tay
+    const arm = hand || (side === 'holdL' ? a.parts.leftArm : a.parts.rightArm);
     if (obj.parent !== arm) arm.add(obj);
     const o = typeof spec === 'object' ? spec : {};
-    obj.position.set(...(o.at || [side === 'holdL' ? -0.6 : 0.6, -1.9, 0.9]));
+    const def = hand ? [0, -0.45, 0.55] : [side === 'holdL' ? -0.6 : 0.6, -1.9, 0.9];
+    obj.position.set(...(hand && o.at ? [o.at[0] * 0.5, o.at[1] + 1.45, o.at[2] * 0.6] : o.at || def));
     obj.rotation.set(...(o.rot || [0, 0, 0]));
     obj.scale.setScalar(o.s || 1);
     obj.visible = true; held.set(name, true);

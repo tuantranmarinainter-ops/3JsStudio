@@ -20,6 +20,7 @@
 // Mọi chuyển động phụ (bím tóc, râu, dây áo, mũ len) tính GIẢI TÍCH từ pose(t) và pose(t−dt): không lưu trạng thái.
 
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // ---------- Kích thước & layout (PHẢI khớp tools/texture_templates.py + assets/textures/*/…_layout.json) ----------
 export const R15_DIMS = {
@@ -156,6 +157,95 @@ function partGeometry(w, h, d, r, rects, { atlas = 1024, inset = 1.5 } = {}) {
   }
   uv.needsUpdate = true;
   return geo;
+}
+
+// ---------- Thân từ mô hình tham chiếu (assets/characters/r15_body.glb, ShiroTheDream, CC BY 4.0) ----------
+// 1 mesh tĩnh Z-up (chân z=-3, đỉnh đầu z=2.1), 8 khối rời. Đổi trục: X=x, Y=z+3, Z=-y (khớp ma trận node gốc).
+// Tách theo khối rời rồi cắt theo mặt phẳng khớp của khung R15 bên dưới → 15 bộ phận, dời về tâm khớp, chiếu lại UV vào atlas.
+const PIVOTS = {
+  UpperTorso: [0, 2.4, 0], LowerTorso: [0, 2.0, 0], Head: [0, 4.0, 0],
+  RightUpperArm: [-1.5, 3.6, 0], RightLowerArm: [-1.5, 3.0, 0], RightHand: [-1.5, 2.4, 0],
+  LeftUpperArm: [1.5, 3.6, 0], LeftLowerArm: [1.5, 3.0, 0], LeftHand: [1.5, 2.4, 0],
+  RightUpperLeg: [-0.5, 2.0, 0], RightLowerLeg: [-0.5, 1.0, 0], RightFoot: [-0.5, 0.3, 0],
+  LeftUpperLeg: [0.5, 2.0, 0], LeftLowerLeg: [0.5, 1.0, 0], LeftFoot: [0.5, 0.3, 0],
+};
+let _bodyPromise = null;
+export function loadR15Body(THREE, url = '/assets/characters/r15_body.glb') {
+  if (_bodyPromise) return _bodyPromise;
+  _bodyPromise = new GLTFLoader(THREE.DefaultLoadingManager).loadAsync(url).then((gltf) => {
+    let src = null; gltf.scene.traverse((m) => { if (m.isMesh && !src) src = m.geometry; });
+    if (!src) return null;
+    const g = src.index ? src.toNonIndexed() : src;
+    const P = g.attributes.position, N = g.attributes.normal;
+    const nv = P.count, ntri = nv / 3;
+    const pos = new Float32Array(nv * 3), nor = new Float32Array(nv * 3);
+    for (let i = 0; i < nv; i++) {  // đổi trục Z-up → Y-up
+      pos[i * 3] = P.getX(i); pos[i * 3 + 1] = P.getZ(i) + 3; pos[i * 3 + 2] = -P.getY(i);
+      nor[i * 3] = N.getX(i); nor[i * 3 + 1] = N.getZ(i); nor[i * 3 + 2] = -N.getY(i);
+    }
+    // khối rời: union-find trên đỉnh trùng vị trí
+    const keyOf = (i) => `${Math.round(pos[i * 3] * 1e3)},${Math.round(pos[i * 3 + 1] * 1e3)},${Math.round(pos[i * 3 + 2] * 1e3)}`;
+    const id = new Map(), par = [];
+    const vid = (i) => { const k = keyOf(i); if (!id.has(k)) { id.set(k, par.length); par.push(par.length); } return id.get(k); };
+    const find = (x) => { while (par[x] !== x) { par[x] = par[par[x]]; x = par[x]; } return x; };
+    const tv = new Int32Array(nv); for (let i = 0; i < nv; i++) tv[i] = vid(i);
+    for (let t = 0; t < ntri; t++) { const a = find(tv[t * 3]); par[find(tv[t * 3 + 1])] = a; par[find(tv[t * 3 + 2])] = a; }
+    const comp = new Map();   // root → bbox
+    for (let i = 0; i < nv; i++) { const r = find(tv[i]); let b = comp.get(r); if (!b) comp.set(r, b = [1e9, 1e9, -1e9, -1e9]); b[0] = Math.min(b[0], pos[i * 3]); b[1] = Math.min(b[1], pos[i * 3 + 1]); b[2] = Math.max(b[2], pos[i * 3]); b[3] = Math.max(b[3], pos[i * 3 + 1]); }
+    const kind = (b) => {   // phân loại khối theo bbox (x0,y0,x1,y1)
+      const cx = (b[0] + b[2]) / 2, h = b[3] - b[1];
+      if (b[1] > 3.7) return 'head';
+      if (Math.abs(cx) > 1.1) return h < 0.5 ? 'hand' : 'arm';
+      if (b[3] < 0.45) return 'feet';
+      if (b[1] < 0.5) return 'legs';
+      return 'torso';
+    };
+    const buckets = {}; for (const k of Object.keys(PIVOTS)) buckets[k] = [];
+    for (let t = 0; t < ntri; t++) {
+      const kd = kind(comp.get(find(tv[t * 3])));
+      let cx = 0, cy = 0; for (let k = 0; k < 3; k++) { cx += pos[(t * 3 + k) * 3]; cy += pos[(t * 3 + k) * 3 + 1]; } cx /= 3; cy /= 3;
+      const side = cx < 0 ? 'Right' : 'Left';   // tay PHẢI của nhân vật ở −X
+      let part;
+      if (kd === 'head') part = 'Head';
+      else if (kd === 'torso') part = cy > 2.4 ? 'UpperTorso' : 'LowerTorso';
+      else if (kd === 'arm') part = side + (cy > 3.0 ? 'UpperArm' : 'LowerArm');
+      else if (kd === 'hand') part = side + 'Hand';
+      else if (kd === 'legs') part = side + (cy > 1.0 ? 'UpperLeg' : 'LowerLeg');
+      else part = side + 'Foot';
+      buckets[part].push(t);
+    }
+    const out = {};
+    for (const [part, tris] of Object.entries(buckets)) {
+      if (!tris.length) continue;
+      const pv = PIVOTS[part], ps = new Float32Array(tris.length * 9), ns = new Float32Array(tris.length * 9);
+      tris.forEach((t, j) => { for (let k = 0; k < 9; k++) { ps[j * 9 + k] = pos[t * 9 + k] - pv[k % 3]; ns[j * 9 + k] = nor[t * 9 + k]; } });
+      const bg = new THREE.BufferGeometry();
+      bg.setAttribute('position', new THREE.BufferAttribute(ps, 3)); bg.setAttribute('normal', new THREE.BufferAttribute(ns, 3));
+      bg.computeBoundingBox(); out[part] = bg;
+    }
+    return out;
+  }).catch((e) => { console.warn('[r15] không tải được thân tham chiếu:', e.message); return null; });
+  return _bodyPromise;
+}
+// Chiếu UV theo hướng pháp tuyến chính vào các ô của atlas (giống partGeometry), dùng bbox của bộ phận.
+function projectBodyUV(THREE, geo, rects, { atlas = 1024, inset = 1.5 } = {}) {
+  const g = geo.clone(); g.computeBoundingBox();
+  const { min, max } = g.boundingBox, w = max.x - min.x, h = max.y - min.y, d = max.z - min.z;
+  const P = g.attributes.position, N = g.attributes.normal, uv = new Float32Array(P.count * 2);
+  for (let i = 0; i < P.count; i++) {
+    const x = P.getX(i), y = P.getY(i), z = P.getZ(i), nx = N.getX(i), ny = N.getY(i), nz = N.getZ(i);
+    const ax = Math.abs(nx), ay = Math.abs(ny), az = Math.abs(nz);
+    let key, u, v;
+    const fx = (x - min.x) / w, fy = (max.y - y) / h, fz = (z - min.z) / d;
+    if (ay >= ax && ay >= az) { key = ny > 0 ? 'top' : 'bottom'; u = fx; v = ny > 0 ? fz : 1 - fz; }
+    else if (az >= ax) { key = nz > 0 ? 'front' : 'back'; u = nz > 0 ? fx : 1 - fx; v = fy; }
+    else { key = nx > 0 ? 'left' : 'right'; u = nx > 0 ? 1 - fz : fz; v = fy; }
+    let rc = rects[key];
+    if (!rc) { const fr = rects.front; rc = key === 'top' ? [fr[0], fr[1], fr[2], 3] : [fr[0], fr[1] + fr[3] - 3, fr[2], 3]; }
+    uv[i * 2] = (rc[0] + inset + clamp01(u) * (rc[2] - 2 * inset)) / atlas; uv[i * 2 + 1] = 1 - (rc[1] + inset + clamp01(v) * (rc[3] - 2 * inset)) / atlas;
+  }
+  g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+  return g;
 }
 
 // Biên dạng đầu trụ bo: bán kính theo chiều cao y (0..H)
@@ -673,6 +763,7 @@ export function createR15(THREE, opts = {}) {
     leg[side] = { th, kn, ft };
     const L = OUTFIT_LAYOUT.parts, D = R15_DIMS;
     const seg = (parent, key, dims, cy, { r = 0.1, wk = 1, ext = 0, z = 0, dk = 1 } = {}) => {
+      if (o.body && o.body[key]) return addMesh(parent, projectBodyUV(THREE, o.body[key], L[key]), outfitMat, key);
       const [w, h, d] = dims; const geo = partGeometry(w * wk, h + ext, d * wk * dk, r, L[key]);
       geo.translate(0, cy + ext / 2, z); return addMesh(parent, geo, outfitMat, key);
     };
@@ -685,12 +776,20 @@ export function createR15(THREE, opts = {}) {
   }
   {
     const L = OUTFIT_LAYOUT.parts, D = R15_DIMS;
-    const g1 = partGeometry(...D.LowerTorso, 0.12, L.LowerTorso); g1.translate(0, 0.2, 0); addMesh(hips, g1, outfitMat, 'LowerTorso_mesh');
-    const g2 = partGeometry(...D.UpperTorso, 0.16, L.UpperTorso); g2.translate(0, 0.8, 0); addMesh(torso, g2, outfitMat, 'UpperTorso_mesh');
+    const B = o.body;
+    let g1, g2;
+    if (B && B.LowerTorso) g1 = projectBodyUV(THREE, B.LowerTorso, L.LowerTorso); else { g1 = partGeometry(...D.LowerTorso, 0.12, L.LowerTorso); g1.translate(0, 0.2, 0); }
+    if (B && B.UpperTorso) g2 = projectBodyUV(THREE, B.UpperTorso, L.UpperTorso); else { g2 = partGeometry(...D.UpperTorso, 0.16, L.UpperTorso); g2.translate(0, 0.8, 0); }
+    addMesh(hips, g1, outfitMat, 'LowerTorso_mesh'); addMesh(torso, g2, outfitMat, 'UpperTorso_mesh');
   }
 
   // --- đầu trụ bo + mảng mặt ---
-  const headMesh = addMesh(head, new THREE.LatheGeometry(headProfile(THREE), 56), skinMat, 'head_mesh');
+  let headGeo;
+  if (o.body && o.body.Head) {   // đầu tham chiếu (R≈0.6, đáy y=-0.1) → khớp biên dạng R=0.63, đáy y=0 của mảng mặt
+    headGeo = o.body.Head.clone(); headGeo.computeBoundingBox(); const hb = headGeo.boundingBox;
+    const k = HEAD.R / Math.max(0.01, (hb.max.x - hb.min.x) / 2); headGeo.translate(0, -hb.min.y, 0); headGeo.scale(k, HEAD.H / (hb.max.y - hb.min.y), k);
+  } else headGeo = new THREE.LatheGeometry(headProfile(THREE), 56);
+  const headMesh = addMesh(head, headGeo, skinMat, 'head_mesh');
   const neck = addMesh(head, new THREE.CylinderGeometry(0.36, 0.4, 0.2, 24), skinMat, 'neck'); neck.position.y = 0.02;
   const faceCanvas = canvas(FACE_PX, FACE_PX), fg = faceCanvas.getContext('2d');
   const faceTex = new THREE.CanvasTexture(faceCanvas); faceTex.colorSpace = THREE.SRGBColorSpace; faceTex.anisotropy = 8;

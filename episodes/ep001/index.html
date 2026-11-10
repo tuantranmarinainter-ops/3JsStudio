@@ -58,7 +58,7 @@
       const A = createAssetLib(THREE);
       await A.load(ENV_ASSETS);
       const envs = createEnvs(THREE, stage, K, A);
-      const actors = buildCast(THREE), houses = buildHouses(THREE), props = buildProps(THREE, K), fx = buildFx(THREE);
+      const actors = await buildCast(THREE), houses = buildHouses(THREE), props = buildProps(THREE, K), fx = buildFx(THREE);
       for (const a of Object.values(actors)) stage.scene.add(a.root);
       for (const h of Object.values(houses)) stage.scene.add(h.root);
       for (const p of Object.values(props)) stage.scene.add(p);

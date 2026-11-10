@@ -1,6 +1,6 @@
 // ep001 — "Ngôi nhà biết đi". Cấu hình chung: diễn viên, nhà, đạo cụ, hiệu ứng.
 // Dựng lại theo tài liệu bàn giao của người dùng (refs/ngoinha/): 5132 frame @30fps, 145 shot.
-import { createR6 } from '../../engine/r6.js';
+import { createR15, loadR15Body, loadCharacterTextures } from '../../engine/r15.js';
 import { createHouse } from '../../engine/house.js';
 import { makePostcard, postcardBack } from '../../engine/postcards.js';
 import { fxCards, fxDust } from '../../engine/fx.js';
@@ -17,14 +17,24 @@ export const EPISODE = {
 };
 
 const SKIN = '#f3d27a';      // đầu vàng nhạt (phong cách khối)
-export function buildCast(THREE) {
-  const mk = (name, o, face = 'smile') => { const a = createR6(THREE, { name, faceStyle: 'cartoon', face, ...o }); a._defaultFace = face; return a; };
-  return {
-    hero: mk('hero', { skin: SKIN, shirt: '#f2c230', sleeves: '#f2c230', hoodie: '#6b4226', pants: '#3f6fb5', shoes: '#1b1b1b', hat: 'beanie', hatColor: '#d6322b' }),
-    mom: mk('mom', { skin: '#f0c89a', shirt: '#9fe0c0', sleeves: '#9fe0c0', shirtPattern: 'stripes', shirtPattern2: '#d9f5e8', pants: '#8a6a4a', skirt: '#8a6a4a', scarf: '#d6322b', hair: 'braids', hairColor: '#1b1b1b' }),
-    dad: mk('dad', { skin: '#f0c89a', shirt: '#283a66', sleeves: '#283a66', pants: '#d8cfb8', shoes: '#3b2a1e', hat: 'beanie', hatColor: '#d6322b' }),
-    dadIsland: mk('dadIsland', { skin: '#f0c89a', shirt: '#2f4a7a', sleeves: '#2f4a7a', shirtPattern: 'torn', shirtPattern2: '#f0c89a', pants: '#7a5a3a', pantsPattern: 'torn', hat: 'beanie', hatColor: '#c42e28', beard: '#cfcfd2' }, 'worried'),
+// Nhân vật R15 (engine/r15.js): thân theo mô hình tham chiếu assets/characters/r15_body.glb; texture Codex nếu có.
+export async function buildCast(THREE) {
+  const body = await loadR15Body(THREE);
+  const CAST = {
+    hero: { skin: SKIN, shirt: '#f2c230', sleeves: '#f2c230', hoodie: '#6b4226', pants: '#3f6fb5', shoes: '#1b1b1b', hat: 'beanie', hatColor: '#d6322b' },
+    mom: { skin: '#f0c89a', shirt: '#9fe0c0', sleeves: '#9fe0c0', shirtPattern: 'stripes', shirtPattern2: '#d9f5e8', pants: '#8a6a4a', skirt: '#8a6a4a', scarf: '#d6322b', hair: 'braids', hairColor: '#1b1b1b', lashes: true },
+    dad: { skin: '#f0c89a', shirt: '#283a66', sleeves: '#283a66', pants: '#d8cfb8', shoes: '#3b2a1e', hat: 'beanie', hatColor: '#d6322b', zipper: true, boots: true, browThickness: 1.4 },
+    dadIsland: { skin: '#f0c89a', shirt: '#2f4a7a', sleeves: '#2f4a7a', shirtPattern: 'torn', shirtPattern2: '#f0c89a', pants: '#7a5a3a', pantsPattern: 'torn', hat: 'beanie', hatColor: '#c42e28', beard: '#cfcfd2', browThickness: 1.4, tired: true },
   };
+  const FACE = { hero: 'smile', mom: 'smile', dad: 'smile', dadIsland: 'worried' };
+  const out = {};
+  for (const [name, o] of Object.entries(CAST)) {
+    const textures = await loadCharacterTextures(THREE, name);
+    const a = createR15(THREE, { name, ...o, body, textures, face: FACE[name] });
+    a._defaultFace = FACE[name];
+    out[name] = a;
+  }
+  return out;
 }
 
 export function buildHouses(THREE) {
