@@ -26,6 +26,8 @@ Cảnh 3D dựng bằng three.js, render ra MP4 bằng **HyperFrames**. Claude �
 Cài đặt: `npx hyperframes init` (workspace là một project HyperFrames, Node ≥ 22),
 `npx skills add heygen-com/hyperframes` (thêm /hyperframes, /hyperframes-cli, /gsap + skill three).
 Ghim phiên bản HyperFrames trong package.json (frame adapter còn là bản thử nghiệm v0).
+KHÔNG copy mã nguồn HyperFrames vào repo (monorepo ~400 MB) — dùng qua `npx`/npm + skill. Muốn đọc mã/tài liệu:
+clone tạm `https://github.com/heygen-com/hyperframes` ra ngoài repo (docs/packages/cli.mdx = tham chiếu CLI).
 
 ## Cấu trúc thư mục
 ```
@@ -89,13 +91,18 @@ Quy tắc shot:
 - Giọng đọc, nhạc: 1 track liền cho cả phim (không cắt theo shot). Hiệu ứng âm thanh gắn theo shot (`sfx`).
 
 Render 140 shot:
-- Preview: xem 1 frame giữa mỗi shot (contact sheet) để duyệt nhanh cả phim.
-- Render theo **đoạn** (~10–20 shot/đoạn) để chạy song song và chỉ render lại đoạn có shot bị sửa; ghép bằng FFmpeg.
-  (Kiểm tra HyperFrames CLI có render theo khoảng frame không; nếu không, mỗi đoạn là 1 composition riêng.)
+- Preview: `npx hyperframes snapshot . --at <giữa mỗi shot>` (có contact sheet) hoặc `--review` (khung mỗi cảnh + quanh mỗi cắt).
+  Kiểm tra lỗi bố cục: `npx hyperframes check . --range a,b`.
+- Render theo **đoạn**: `npx hyperframes render --start a --end b -o output/part_NN.mp4` (~10–20 shot/đoạn),
+  chỉ render lại đoạn có shot bị sửa; ghép bằng FFmpeg (concat). `--workers` để chạy song song trong 1 lần render.
+- Root composition: `data-width="1080" data-height="1920" data-fps="30"`.
 - Claude chủ yếu sửa `shots.js`/`episode.js`, hạn chế sửa `engine/`.
 
 ## Quy tắc kỹ thuật (bắt buộc)
 - Thời gian chỉ lấy từ HyperFrames: sự kiện `hf-seek` (`e.detail.time`) → đặt pose/camera → `renderer.render()` 1 lần.
+  Việc bất đồng bộ trong lúc seek → `e.detail.waitUntil(promise)`.
+- Gán `window.THREE = THREE` để adapter three của HyperFrames theo dõi `DefaultLoadingManager`
+  và chờ GLB/texture tải xong trước khi chụp frame.
 - CẤM dùng giờ thực, `requestAnimationFrame`/`setAnimationLoop` cho chuyển động, `Math.random()` không seed.
 - Tải xong mọi GLB/texture trước khi seek; không fetch trong lúc seek.
 - Mọi animation là hàm thuần của `t`, tua tới/lui/nhảy cóc đều ra cùng kết quả.
@@ -131,7 +138,9 @@ Render 140 shot:
 ## Quy trình làm một tập (giọng đọc dẫn nhịp)
 1. Chốt **luật, điểm yếu, twist, lời giải** — mỗi thứ 1 câu.
 2. Viết **lời dẫn** (ngôi thứ nhất, câu ngắn) theo 4 phần trên.
-3. Tạo **giọng đọc** → lấy thời điểm từng câu → thời lượng shot bám theo câu thoại (1 câu ≈ 1–4 shot).
+3. Tạo **giọng đọc** → lấy thời điểm từng câu (`npx hyperframes transcribe narration.wav`) → thời lượng shot bám theo
+   câu thoại (1 câu ≈ 1–4 shot). Lưu ý: `npx hyperframes tts` (Kokoro) KHÔNG có giọng tiếng Việt → giọng Việt cần
+   công cụ TTS khác (CHƯA CHỐT).
 4. Bẻ từng câu thành shot trong `shots.js` (mỗi shot ghi `line` = số câu thoại nó minh hoạ).
 5. Thiếu asset → Kenney trước, Polyfork sau; ghi manifest.
 6. Xem contact sheet cả phim → sửa shot lỗi → render từng đoạn → ghép MP4 1080×1920.
