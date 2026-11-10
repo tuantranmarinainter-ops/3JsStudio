@@ -4,945 +4,2027 @@
   "src": "assets/kenney/city-kit-roads/bridge-pillar-wide.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.14,
+   0.5,
+   0.14
+  ],
+  "nodes": [
+   "bridge-pillar-wide"
+  ]
  },
  {
   "id": "city-kit-roads/bridge-pillar",
   "src": "assets/kenney/city-kit-roads/bridge-pillar.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.1,
+   0.5,
+   0.1
+  ],
+  "nodes": [
+   "bridge-pillar"
+  ]
  },
  {
   "id": "city-kit-roads/construction-barrier",
   "src": "assets/kenney/city-kit-roads/construction-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.135,
+   0.13,
+   0.225
+  ],
+  "nodes": [
+   "construction-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/construction-cone",
   "src": "assets/kenney/city-kit-roads/construction-cone.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.075,
+   0.094,
+   0.075
+  ],
+  "nodes": [
+   "construction-cone"
+  ]
  },
  {
   "id": "city-kit-roads/construction-fence",
   "src": "assets/kenney/city-kit-roads/construction-fence.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.075,
+   0.179,
+   0.375
+  ],
+  "nodes": [
+   "construction-fence"
+  ]
  },
  {
   "id": "city-kit-roads/construction-light",
   "src": "assets/kenney/city-kit-roads/construction-light.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.075,
+   0.234,
+   0.075
+  ],
+  "nodes": [
+   "construction-light"
+  ]
  },
  {
   "id": "city-kit-roads/dumpster",
   "src": "assets/kenney/city-kit-roads/dumpster.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.275,
+   0.209,
+   0.37
+  ],
+  "nodes": [
+   "dumpster",
+   "lid-left",
+   "lid-right"
+  ]
  },
  {
   "id": "city-kit-roads/electricity-pole-single",
   "src": "assets/kenney/city-kit-roads/electricity-pole-single.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.079,
+   0.525,
+   0.214
+  ],
+  "nodes": [
+   "electricity-pole-single"
+  ]
  },
  {
   "id": "city-kit-roads/electricity-pole-wide",
   "src": "assets/kenney/city-kit-roads/electricity-pole-wide.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.079,
+   0.525,
+   0.214
+  ],
+  "nodes": [
+   "electricity-pole-wide"
+  ]
  },
  {
   "id": "city-kit-roads/electricity-pole",
   "src": "assets/kenney/city-kit-roads/electricity-pole.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.579,
+   0.525,
+   0.214
+  ],
+  "nodes": [
+   "electricity-pole"
+  ]
  },
  {
   "id": "city-kit-roads/electricity-side-single",
   "src": "assets/kenney/city-kit-roads/electricity-side-single.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.063,
+   0.525,
+   0.431
+  ],
+  "nodes": [
+   "electricity-side-single"
+  ]
  },
  {
   "id": "city-kit-roads/electricity-side-wide",
   "src": "assets/kenney/city-kit-roads/electricity-side-wide.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.063,
+   0.525,
+   0.431
+  ],
+  "nodes": [
+   "electricity-side-wide"
+  ]
  },
  {
   "id": "city-kit-roads/electricity-side",
   "src": "assets/kenney/city-kit-roads/electricity-side.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.563,
+   0.525,
+   0.431
+  ],
+  "nodes": [
+   "electricity-side"
+  ]
  },
  {
   "id": "city-kit-roads/electricity-wires-wide",
   "src": "assets/kenney/city-kit-roads/electricity-wires-wide.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.007,
+   0.104,
+   0.185
+  ],
+  "nodes": [
+   "electricity-wires-wide"
+  ]
  },
  {
   "id": "city-kit-roads/electricity-wires",
   "src": "assets/kenney/city-kit-roads/electricity-wires.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.506,
+   0.065,
+   0.185
+  ],
+  "nodes": [
+   "electricity-wires"
+  ]
  },
  {
   "id": "city-kit-roads/light-curved-cross",
   "src": "assets/kenney/city-kit-roads/light-curved-cross.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.4,
+   0.675,
+   0.4
+  ],
+  "nodes": [
+   "light-curved-cross"
+  ]
  },
  {
   "id": "city-kit-roads/light-curved-double",
   "src": "assets/kenney/city-kit-roads/light-curved-double.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.05,
+   0.675,
+   0.4
+  ],
+  "nodes": [
+   "light-curved-double"
+  ]
  },
  {
   "id": "city-kit-roads/light-curved",
   "src": "assets/kenney/city-kit-roads/light-curved.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.05,
+   0.675,
+   0.225
+  ],
+  "nodes": [
+   "light-curved"
+  ]
  },
  {
   "id": "city-kit-roads/light-square-cross",
   "src": "assets/kenney/city-kit-roads/light-square-cross.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.425,
+   0.6,
+   0.425
+  ],
+  "nodes": [
+   "light-square-cross"
+  ]
  },
  {
   "id": "city-kit-roads/light-square-double",
   "src": "assets/kenney/city-kit-roads/light-square-double.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.05,
+   0.6,
+   0.425
+  ],
+  "nodes": [
+   "light-square-double"
+  ]
  },
  {
   "id": "city-kit-roads/light-square",
   "src": "assets/kenney/city-kit-roads/light-square.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.05,
+   0.6,
+   0.238
+  ],
+  "nodes": [
+   "light-square"
+  ]
  },
  {
   "id": "city-kit-roads/road-bend-barrier",
   "src": "assets/kenney/city-kit-roads/road-bend-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.08,
+   1
+  ],
+  "nodes": [
+   "road-bend-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-bend-sidewalk",
   "src": "assets/kenney/city-kit-roads/road-bend-sidewalk.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-bend-sidewalk"
+  ]
  },
  {
   "id": "city-kit-roads/road-bend-square-barrier",
   "src": "assets/kenney/city-kit-roads/road-bend-square-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.08,
+   1
+  ],
+  "nodes": [
+   "road-bend-square-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-bend-square",
   "src": "assets/kenney/city-kit-roads/road-bend-square.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-bend-square"
+  ]
  },
  {
   "id": "city-kit-roads/road-bend",
   "src": "assets/kenney/city-kit-roads/road-bend.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-bend"
+  ]
  },
  {
   "id": "city-kit-roads/road-bridge",
   "src": "assets/kenney/city-kit-roads/road-bridge.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.52,
+   1
+  ],
+  "nodes": [
+   "road-bridge"
+  ]
  },
  {
   "id": "city-kit-roads/road-crossing",
   "src": "assets/kenney/city-kit-roads/road-crossing.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-crossing"
+  ]
  },
  {
   "id": "city-kit-roads/road-crossroad-barrier",
   "src": "assets/kenney/city-kit-roads/road-crossroad-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.08,
+   1
+  ],
+  "nodes": [
+   "road-crossroad-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-crossroad-line",
   "src": "assets/kenney/city-kit-roads/road-crossroad-line.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-crossroad-line"
+  ]
  },
  {
   "id": "city-kit-roads/road-crossroad-path",
   "src": "assets/kenney/city-kit-roads/road-crossroad-path.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-crossroad-path"
+  ]
  },
  {
   "id": "city-kit-roads/road-crossroad",
   "src": "assets/kenney/city-kit-roads/road-crossroad.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-crossroad"
+  ]
  },
  {
   "id": "city-kit-roads/road-curve-barrier",
   "src": "assets/kenney/city-kit-roads/road-curve-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2,
+   0.08,
+   2
+  ],
+  "nodes": [
+   "road-curve-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-curve-intersection-barrier",
   "src": "assets/kenney/city-kit-roads/road-curve-intersection-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2,
+   0.08,
+   2
+  ],
+  "nodes": [
+   "road-curve-intersection-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-curve-intersection",
   "src": "assets/kenney/city-kit-roads/road-curve-intersection.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2,
+   0.02,
+   2
+  ],
+  "nodes": [
+   "road-curve-intersection"
+  ]
  },
  {
   "id": "city-kit-roads/road-curve-pavement",
   "src": "assets/kenney/city-kit-roads/road-curve-pavement.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2,
+   0.02,
+   2
+  ],
+  "nodes": [
+   "road-curve-pavement"
+  ]
  },
  {
   "id": "city-kit-roads/road-curve",
   "src": "assets/kenney/city-kit-roads/road-curve.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2,
+   0.02,
+   2
+  ],
+  "nodes": [
+   "road-curve"
+  ]
  },
  {
   "id": "city-kit-roads/road-driveway-double-barrier",
   "src": "assets/kenney/city-kit-roads/road-driveway-double-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.08,
+   1
+  ],
+  "nodes": [
+   "road-driveway-double-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-driveway-double",
   "src": "assets/kenney/city-kit-roads/road-driveway-double.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-driveway-double"
+  ]
  },
  {
   "id": "city-kit-roads/road-driveway-single-barrier",
   "src": "assets/kenney/city-kit-roads/road-driveway-single-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.08,
+   1
+  ],
+  "nodes": [
+   "road-driveway-single-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-driveway-single",
   "src": "assets/kenney/city-kit-roads/road-driveway-single.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-driveway-single"
+  ]
  },
  {
   "id": "city-kit-roads/road-end-barrier",
   "src": "assets/kenney/city-kit-roads/road-end-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.08,
+   1
+  ],
+  "nodes": [
+   "road-end-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-end-round-barrier",
   "src": "assets/kenney/city-kit-roads/road-end-round-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.08,
+   1
+  ],
+  "nodes": [
+   "road-end-round-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-end-round",
   "src": "assets/kenney/city-kit-roads/road-end-round.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-end-round"
+  ]
  },
  {
   "id": "city-kit-roads/road-end",
   "src": "assets/kenney/city-kit-roads/road-end.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-end"
+  ]
  },
  {
   "id": "city-kit-roads/road-intersection-barrier",
   "src": "assets/kenney/city-kit-roads/road-intersection-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.08,
+   1
+  ],
+  "nodes": [
+   "road-intersection-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-intersection-line",
   "src": "assets/kenney/city-kit-roads/road-intersection-line.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-intersection-line"
+  ]
  },
  {
   "id": "city-kit-roads/road-intersection-path",
   "src": "assets/kenney/city-kit-roads/road-intersection-path.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-intersection-path"
+  ]
  },
  {
   "id": "city-kit-roads/road-intersection",
   "src": "assets/kenney/city-kit-roads/road-intersection.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-intersection"
+  ]
  },
  {
   "id": "city-kit-roads/road-roundabout-barrier",
   "src": "assets/kenney/city-kit-roads/road-roundabout-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   3,
+   0.08,
+   3
+  ],
+  "nodes": [
+   "road-roundabout-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-roundabout",
   "src": "assets/kenney/city-kit-roads/road-roundabout.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   3,
+   0.02,
+   3
+  ],
+  "nodes": [
+   "road-roundabout"
+  ]
  },
  {
   "id": "city-kit-roads/road-side-barrier",
   "src": "assets/kenney/city-kit-roads/road-side-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.31,
+   0.08,
+   1
+  ],
+  "nodes": [
+   "road-side-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-side-entry-barrier",
   "src": "assets/kenney/city-kit-roads/road-side-entry-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.31,
+   0.08,
+   1
+  ],
+  "nodes": [
+   "road-side-entry-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-side-entry",
   "src": "assets/kenney/city-kit-roads/road-side-entry.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1.31
+  ],
+  "nodes": [
+   "road-side-entry"
+  ]
  },
  {
   "id": "city-kit-roads/road-side-exit-barrier",
   "src": "assets/kenney/city-kit-roads/road-side-exit-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.31,
+   0.08,
+   1
+  ],
+  "nodes": [
+   "road-side-exit-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-side-exit",
   "src": "assets/kenney/city-kit-roads/road-side-exit.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1.31
+  ],
+  "nodes": [
+   "road-side-exit"
+  ]
  },
  {
   "id": "city-kit-roads/road-side",
   "src": "assets/kenney/city-kit-roads/road-side.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1.31
+  ],
+  "nodes": [
+   "road-side"
+  ]
  },
  {
   "id": "city-kit-roads/road-sign-empty-hanging",
   "src": "assets/kenney/city-kit-roads/road-sign-empty-hanging.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.09,
+   0.475,
+   0.295
+  ],
+  "nodes": [
+   "road-sign-empty-hanging"
+  ]
  },
  {
   "id": "city-kit-roads/road-sign-empty",
   "src": "assets/kenney/city-kit-roads/road-sign-empty.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.05,
+   0.475,
+   0.05
+  ],
+  "nodes": [
+   "road-sign-empty"
+  ]
  },
  {
   "id": "city-kit-roads/road-sign-object-stop",
   "src": "assets/kenney/city-kit-roads/road-sign-object-stop.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.077,
+   0.126,
+   0.126
+  ],
+  "nodes": [
+   "road-sign-object-stop"
+  ]
  },
  {
   "id": "city-kit-roads/road-sign-object-street",
   "src": "assets/kenney/city-kit-roads/road-sign-object-street.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.043,
+   0.06,
+   0.192
+  ],
+  "nodes": [
+   "road-sign-object-street"
+  ]
  },
  {
   "id": "city-kit-roads/road-sign-object-warning",
   "src": "assets/kenney/city-kit-roads/road-sign-object-warning.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.077,
+   0.134,
+   0.134
+  ],
+  "nodes": [
+   "road-sign-object-warning"
+  ]
  },
  {
   "id": "city-kit-roads/road-sign-stop",
   "src": "assets/kenney/city-kit-roads/road-sign-stop.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.078,
+   0.494,
+   0.138
+  ],
+  "nodes": [
+   "road-sign-stop"
+  ]
  },
  {
   "id": "city-kit-roads/road-sign-street",
   "src": "assets/kenney/city-kit-roads/road-sign-street.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.196,
+   0.475,
+   0.196
+  ],
+  "nodes": [
+   "road-sign-street"
+  ]
  },
  {
   "id": "city-kit-roads/road-sign-warning",
   "src": "assets/kenney/city-kit-roads/road-sign-warning.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.077,
+   0.499,
+   0.147
+  ],
+  "nodes": [
+   "road-sign-warning"
+  ]
  },
  {
   "id": "city-kit-roads/road-slant-barrier",
   "src": "assets/kenney/city-kit-roads/road-slant-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.33,
+   1
+  ],
+  "nodes": [
+   "road-slant-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-slant-curve-barrier",
   "src": "assets/kenney/city-kit-roads/road-slant-curve-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2,
+   0.58,
+   1
+  ],
+  "nodes": [
+   "road-slant-curve-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-slant-curve",
   "src": "assets/kenney/city-kit-roads/road-slant-curve.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2,
+   0.52,
+   1
+  ],
+  "nodes": [
+   "road-slant-curve"
+  ]
  },
  {
   "id": "city-kit-roads/road-slant-flat-curve",
   "src": "assets/kenney/city-kit-roads/road-slant-flat-curve.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2,
+   0.52,
+   1
+  ],
+  "nodes": [
+   "road-slant-flat-curve"
+  ]
  },
  {
   "id": "city-kit-roads/road-slant-flat-high",
   "src": "assets/kenney/city-kit-roads/road-slant-flat-high.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.52,
+   1
+  ],
+  "nodes": [
+   "road-slant-flat-high"
+  ]
  },
  {
   "id": "city-kit-roads/road-slant-flat",
   "src": "assets/kenney/city-kit-roads/road-slant-flat.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.27,
+   1
+  ],
+  "nodes": [
+   "road-slant-flat"
+  ]
  },
  {
   "id": "city-kit-roads/road-slant-high-barrier",
   "src": "assets/kenney/city-kit-roads/road-slant-high-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.58,
+   1
+  ],
+  "nodes": [
+   "road-slant-high-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-slant-high",
   "src": "assets/kenney/city-kit-roads/road-slant-high.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.52,
+   1
+  ],
+  "nodes": [
+   "road-slant-high"
+  ]
  },
  {
   "id": "city-kit-roads/road-slant",
   "src": "assets/kenney/city-kit-roads/road-slant.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.27,
+   1
+  ],
+  "nodes": [
+   "road-slant"
+  ]
  },
  {
   "id": "city-kit-roads/road-split-barrier",
   "src": "assets/kenney/city-kit-roads/road-split-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.08,
+   2
+  ],
+  "nodes": [
+   "road-split-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-split",
   "src": "assets/kenney/city-kit-roads/road-split.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   2
+  ],
+  "nodes": [
+   "road-split"
+  ]
  },
  {
   "id": "city-kit-roads/road-square-barrier",
   "src": "assets/kenney/city-kit-roads/road-square-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.08,
+   1
+  ],
+  "nodes": [
+   "road-square-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-square",
   "src": "assets/kenney/city-kit-roads/road-square.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-square"
+  ]
  },
  {
   "id": "city-kit-roads/road-straight-barrier-end",
   "src": "assets/kenney/city-kit-roads/road-straight-barrier-end.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.08,
+   1
+  ],
+  "nodes": [
+   "road-straight-barrier-end"
+  ]
  },
  {
   "id": "city-kit-roads/road-straight-barrier-half",
   "src": "assets/kenney/city-kit-roads/road-straight-barrier-half.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.08,
+   0.5
+  ],
+  "nodes": [
+   "road-straight-barrier-half"
+  ]
  },
  {
   "id": "city-kit-roads/road-straight-barrier",
   "src": "assets/kenney/city-kit-roads/road-straight-barrier.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.08,
+   1
+  ],
+  "nodes": [
+   "road-straight-barrier"
+  ]
  },
  {
   "id": "city-kit-roads/road-straight-half",
   "src": "assets/kenney/city-kit-roads/road-straight-half.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.5,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-straight-half"
+  ]
  },
  {
   "id": "city-kit-roads/road-straight",
   "src": "assets/kenney/city-kit-roads/road-straight.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "road-straight"
+  ]
  },
  {
   "id": "city-kit-roads/sign-highway-detailed",
   "src": "assets/kenney/city-kit-roads/sign-highway-detailed.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.132,
+   0.822,
+   1
+  ],
+  "nodes": [
+   "sign-highway-detailed"
+  ]
  },
  {
   "id": "city-kit-roads/sign-highway-wide",
   "src": "assets/kenney/city-kit-roads/sign-highway-wide.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.132,
+   0.707,
+   1
+  ],
+  "nodes": [
+   "sign-highway-wide"
+  ]
  },
  {
   "id": "city-kit-roads/sign-highway",
   "src": "assets/kenney/city-kit-roads/sign-highway.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.132,
+   0.707,
+   1
+  ],
+  "nodes": [
+   "sign-highway"
+  ]
  },
  {
   "id": "city-kit-roads/tile-high",
   "src": "assets/kenney/city-kit-roads/tile-high.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.25,
+   1
+  ],
+  "nodes": [
+   "tile-high"
+  ]
  },
  {
   "id": "city-kit-roads/tile-low",
   "src": "assets/kenney/city-kit-roads/tile-low.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.02,
+   1
+  ],
+  "nodes": [
+   "tile-low"
+  ]
  },
  {
   "id": "city-kit-roads/tile-slant",
   "src": "assets/kenney/city-kit-roads/tile-slant.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.27,
+   1
+  ],
+  "nodes": [
+   "tile-slant"
+  ]
  },
  {
   "id": "city-kit-roads/tile-slantHigh",
   "src": "assets/kenney/city-kit-roads/tile-slantHigh.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1,
+   0.52,
+   1
+  ],
+  "nodes": [
+   "tile-slantHigh"
+  ]
  },
  {
   "id": "city-kit-roads/traffic-light-hanging",
   "src": "assets/kenney/city-kit-roads/traffic-light-hanging.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.118,
+   0.509,
+   0.295
+  ],
+  "nodes": [
+   "traffic-light-hanging"
+  ]
  },
  {
   "id": "city-kit-roads/traffic-light-object-hanging",
   "src": "assets/kenney/city-kit-roads/traffic-light-object-hanging.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.098,
+   0.143,
+   0.061
+  ],
+  "nodes": [
+   "traffic-light-object-hanging"
+  ]
  },
  {
   "id": "city-kit-roads/traffic-light-object-horizontal",
   "src": "assets/kenney/city-kit-roads/traffic-light-object-horizontal.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.098,
+   0.061,
+   0.143
+  ],
+  "nodes": [
+   "traffic-light-object-horizontal"
+  ]
  },
  {
   "id": "city-kit-roads/traffic-light-object-vertical",
   "src": "assets/kenney/city-kit-roads/traffic-light-object-vertical.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.098,
+   0.143,
+   0.061
+  ],
+  "nodes": [
+   "traffic-light-object-vertical"
+  ]
  },
  {
   "id": "city-kit-roads/traffic-light",
   "src": "assets/kenney/city-kit-roads/traffic-light.glb",
   "source": "kenney.nl/assets/city-kit-roads",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.118,
+   0.515,
+   0.09
+  ],
+  "nodes": [
+   "traffic-light"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-a",
   "src": "assets/kenney/city-kit-suburban/building-type-a.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.3,
+   0.834,
+   1.028
+  ],
+  "nodes": [
+   "building-type-a"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-b",
   "src": "assets/kenney/city-kit-suburban/building-type-b.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.828,
+   1.138,
+   1.14
+  ],
+  "nodes": [
+   "building-type-b"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-c",
   "src": "assets/kenney/city-kit-suburban/building-type-c.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.286,
+   1.034,
+   1.028
+  ],
+  "nodes": [
+   "building-type-c"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-d",
   "src": "assets/kenney/city-kit-suburban/building-type-d.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.756,
+   1.238,
+   1.028
+  ],
+  "nodes": [
+   "building-type-d"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-e",
   "src": "assets/kenney/city-kit-suburban/building-type-e.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.3,
+   1.138,
+   1.028
+  ],
+  "nodes": [
+   "building-type-e"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-f",
   "src": "assets/kenney/city-kit-suburban/building-type-f.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.428,
+   1.138,
+   1.406
+  ],
+  "nodes": [
+   "building-type-f"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-g",
   "src": "assets/kenney/city-kit-suburban/building-type-g.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.45,
+   0.768,
+   1.178
+  ],
+  "nodes": [
+   "building-type-g"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-h",
   "src": "assets/kenney/city-kit-suburban/building-type-h.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.3,
+   0.737,
+   0.916
+  ],
+  "nodes": [
+   "building-type-h"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-i",
   "src": "assets/kenney/city-kit-suburban/building-type-i.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.286,
+   0.737,
+   1.028
+  ],
+  "nodes": [
+   "building-type-i"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-j",
   "src": "assets/kenney/city-kit-suburban/building-type-j.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.37,
+   1.038,
+   0.916
+  ],
+  "nodes": [
+   "building-type-j"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-k",
   "src": "assets/kenney/city-kit-suburban/building-type-k.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.921,
+   1.15,
+   1.02
+  ],
+  "nodes": [
+   "building-type-k"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-l",
   "src": "assets/kenney/city-kit-suburban/building-type-l.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.034,
+   1.049,
+   1.02
+  ],
+  "nodes": [
+   "building-type-l"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-m",
   "src": "assets/kenney/city-kit-suburban/building-type-m.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.428,
+   0.737,
+   1.428
+  ],
+  "nodes": [
+   "building-type-m"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-n",
   "src": "assets/kenney/city-kit-suburban/building-type-n.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.784,
+   1.138,
+   1.378
+  ],
+  "nodes": [
+   "building-type-n"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-o",
   "src": "assets/kenney/city-kit-suburban/building-type-o.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.27,
+   1.138,
+   1.028
+  ],
+  "nodes": [
+   "building-type-o"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-p",
   "src": "assets/kenney/city-kit-suburban/building-type-p.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.24,
+   0.918,
+   0.99
+  ],
+  "nodes": [
+   "building-type-p"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-q",
   "src": "assets/kenney/city-kit-suburban/building-type-q.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.24,
+   0.918,
+   0.886
+  ],
+  "nodes": [
+   "building-type-q"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-r",
   "src": "assets/kenney/city-kit-suburban/building-type-r.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.028,
+   1.141,
+   1.02
+  ],
+  "nodes": [
+   "building-type-r"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-s",
   "src": "assets/kenney/city-kit-suburban/building-type-s.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.406,
+   1.138,
+   1.086
+  ],
+  "nodes": [
+   "building-type-s"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-t",
   "src": "assets/kenney/city-kit-suburban/building-type-t.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.314,
+   1.156,
+   1.406
+  ],
+  "nodes": [
+   "building-type-t"
+  ]
  },
  {
   "id": "city-kit-suburban/building-type-u",
   "src": "assets/kenney/city-kit-suburban/building-type-u.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.428,
+   1.138,
+   1.087
+  ],
+  "nodes": [
+   "building-type-u"
+  ]
  },
  {
   "id": "city-kit-suburban/driveway-long",
   "src": "assets/kenney/city-kit-suburban/driveway-long.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.36,
+   0.01,
+   0.4
+  ],
+  "nodes": [
+   "driveway-long"
+  ]
  },
  {
   "id": "city-kit-suburban/driveway-short",
   "src": "assets/kenney/city-kit-suburban/driveway-short.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.36,
+   0.01,
+   0.2
+  ],
+  "nodes": [
+   "driveway-short"
+  ]
  },
  {
   "id": "city-kit-suburban/fence-1x2",
   "src": "assets/kenney/city-kit-suburban/fence-1x2.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.875,
+   0.27,
+   0.438
+  ],
+  "nodes": [
+   "fence-1x2"
+  ]
  },
  {
   "id": "city-kit-suburban/fence-1x3",
   "src": "assets/kenney/city-kit-suburban/fence-1x3.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.275,
+   0.27,
+   0.438
+  ],
+  "nodes": [
+   "fence-1x3"
+  ]
  },
  {
   "id": "city-kit-suburban/fence-1x4",
   "src": "assets/kenney/city-kit-suburban/fence-1x4.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.675,
+   0.27,
+   0.438
+  ],
+  "nodes": [
+   "fence-1x4"
+  ]
  },
  {
   "id": "city-kit-suburban/fence-2x2",
   "src": "assets/kenney/city-kit-suburban/fence-2x2.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.875,
+   0.27,
+   0.837
+  ],
+  "nodes": [
+   "fence-2x2"
+  ]
  },
  {
   "id": "city-kit-suburban/fence-2x3",
   "src": "assets/kenney/city-kit-suburban/fence-2x3.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.275,
+   0.27,
+   0.837
+  ],
+  "nodes": [
+   "fence-2x3"
+  ]
  },
  {
   "id": "city-kit-suburban/fence-3x2",
   "src": "assets/kenney/city-kit-suburban/fence-3x2.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.875,
+   0.27,
+   1.238
+  ],
+  "nodes": [
+   "fence-3x2"
+  ]
  },
  {
   "id": "city-kit-suburban/fence-3x3",
   "src": "assets/kenney/city-kit-suburban/fence-3x3.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.275,
+   0.27,
+   1.238
+  ],
+  "nodes": [
+   "fence-3x3"
+  ]
  },
  {
   "id": "city-kit-suburban/fence-low",
   "src": "assets/kenney/city-kit-suburban/fence-low.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.275,
+   0.17,
+   0.837
+  ],
+  "nodes": [
+   "fence-low"
+  ]
  },
  {
   "id": "city-kit-suburban/fence",
   "src": "assets/kenney/city-kit-suburban/fence.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.475,
+   0.27,
+   0.075
+  ],
+  "nodes": [
+   "fence"
+  ]
  },
  {
   "id": "city-kit-suburban/path-long",
   "src": "assets/kenney/city-kit-suburban/path-long.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.2,
+   0.01,
+   0.4
+  ],
+  "nodes": [
+   "path-long"
+  ]
  },
  {
   "id": "city-kit-suburban/path-short",
   "src": "assets/kenney/city-kit-suburban/path-short.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.2,
+   0.01,
+   0.2
+  ],
+  "nodes": [
+   "path-short"
+  ]
  },
  {
   "id": "city-kit-suburban/path-stones-long",
   "src": "assets/kenney/city-kit-suburban/path-stones-long.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.14,
+   0.01,
+   0.4
+  ],
+  "nodes": [
+   "path-stones-long"
+  ]
  },
  {
   "id": "city-kit-suburban/path-stones-messy",
   "src": "assets/kenney/city-kit-suburban/path-stones-messy.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.156,
+   0.01,
+   0.361
+  ],
+  "nodes": [
+   "path-stones-messy"
+  ]
  },
  {
   "id": "city-kit-suburban/path-stones-short",
   "src": "assets/kenney/city-kit-suburban/path-stones-short.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.14,
+   0.01,
+   0.2
+  ],
+  "nodes": [
+   "path-stones-short"
+  ]
  },
  {
   "id": "city-kit-suburban/planter",
   "src": "assets/kenney/city-kit-suburban/planter.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.4,
+   0.177,
+   0.3
+  ],
+  "nodes": [
+   "planter"
+  ]
  },
  {
   "id": "city-kit-suburban/tree-large",
   "src": "assets/kenney/city-kit-suburban/tree-large.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.21,
+   0.767,
+   0.243
+  ],
+  "nodes": [
+   "tree-large"
+  ]
  },
  {
   "id": "city-kit-suburban/tree-small",
   "src": "assets/kenney/city-kit-suburban/tree-small.glb",
   "source": "kenney.nl/assets/city-kit-suburban",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.21,
+   0.567,
+   0.243
+  ],
+  "nodes": [
+   "tree-small"
+  ]
  },
  {
   "id": "furniture-kit/bathroomCabinet",
@@ -8388,503 +9470,1137 @@
   "src": "assets/kenney/pirate-kit/barrel.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.336,
+   1.229,
+   1.336
+  ],
+  "nodes": [
+   "barrel"
+  ]
  },
  {
   "id": "pirate-kit/boat-row-large",
   "src": "assets/kenney/pirate-kit/boat-row-large.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2.749,
+   0.848,
+   2.852
+  ],
+  "nodes": [
+   "boat-row-large",
+   "paddles"
+  ]
  },
  {
   "id": "pirate-kit/boat-row-small",
   "src": "assets/kenney/pirate-kit/boat-row-small.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2.749,
+   0.848,
+   2.372
+  ],
+  "nodes": [
+   "boat-row-small",
+   "paddles"
+  ]
  },
  {
   "id": "pirate-kit/bottle-large",
   "src": "assets/kenney/pirate-kit/bottle-large.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.466,
+   0.89,
+   0.466
+  ],
+  "nodes": [
+   "bottle-large"
+  ]
  },
  {
   "id": "pirate-kit/bottle",
   "src": "assets/kenney/pirate-kit/bottle.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.364,
+   0.89,
+   0.364
+  ],
+  "nodes": [
+   "bottle"
+  ]
  },
  {
   "id": "pirate-kit/cannon-ball",
   "src": "assets/kenney/pirate-kit/cannon-ball.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.637,
+   0.67,
+   0.552
+  ],
+  "nodes": [
+   "cannon-ball"
+  ]
  },
  {
   "id": "pirate-kit/cannon-mobile",
   "src": "assets/kenney/pirate-kit/cannon-mobile.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.679,
+   1.38,
+   1.925
+  ],
+  "nodes": [
+   "cannon-mobile",
+   "Group",
+   "Group"
+  ]
  },
  {
   "id": "pirate-kit/cannon",
   "src": "assets/kenney/pirate-kit/cannon.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.402,
+   1.055,
+   1.925
+  ],
+  "nodes": [
+   "cannon",
+   "Group",
+   "Group"
+  ]
  },
  {
   "id": "pirate-kit/castle-door",
   "src": "assets/kenney/pirate-kit/castle-door.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2,
+   4.4,
+   3.2
+  ],
+  "nodes": [
+   "castle-door"
+  ]
  },
  {
   "id": "pirate-kit/castle-gate",
   "src": "assets/kenney/pirate-kit/castle-gate.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   4,
+   4.4,
+   3.6
+  ],
+  "nodes": [
+   "castle-gate"
+  ]
  },
  {
   "id": "pirate-kit/castle-wall",
   "src": "assets/kenney/pirate-kit/castle-wall.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2,
+   4.4,
+   2.8
+  ],
+  "nodes": [
+   "castle-wall"
+  ]
  },
  {
   "id": "pirate-kit/castle-window",
   "src": "assets/kenney/pirate-kit/castle-window.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2,
+   4.4,
+   2.8
+  ],
+  "nodes": [
+   "castle-window"
+  ]
  },
  {
   "id": "pirate-kit/chest",
   "src": "assets/kenney/pirate-kit/chest.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.275,
+   1.147,
+   1.275
+  ],
+  "nodes": [
+   "chest",
+   "lid"
+  ]
  },
  {
   "id": "pirate-kit/crate-bottles",
   "src": "assets/kenney/pirate-kit/crate-bottles.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.078,
+   1.057,
+   1.309
+  ],
+  "nodes": [
+   "crate-bottles"
+  ]
  },
  {
   "id": "pirate-kit/crate",
   "src": "assets/kenney/pirate-kit/crate.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.078,
+   0.77,
+   1.309
+  ],
+  "nodes": [
+   "crate"
+  ]
  },
  {
   "id": "pirate-kit/flag-high-pennant",
   "src": "assets/kenney/pirate-kit/flag-high-pennant.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.762,
+   3.597,
+   0.399
+  ],
+  "nodes": [
+   "flag-high-pennant"
+  ]
  },
  {
   "id": "pirate-kit/flag-high",
   "src": "assets/kenney/pirate-kit/flag-high.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.337,
+   3.597,
+   0.399
+  ],
+  "nodes": [
+   "flag-high"
+  ]
  },
  {
   "id": "pirate-kit/flag-pennant",
   "src": "assets/kenney/pirate-kit/flag-pennant.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.762,
+   2.097,
+   0.399
+  ],
+  "nodes": [
+   "flag-pennant"
+  ]
  },
  {
   "id": "pirate-kit/flag-pirate-high-pennant",
   "src": "assets/kenney/pirate-kit/flag-pirate-high-pennant.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.762,
+   3.597,
+   0.399
+  ],
+  "nodes": [
+   "flag-pirate-high-pennant"
+  ]
  },
  {
   "id": "pirate-kit/flag-pirate-high",
   "src": "assets/kenney/pirate-kit/flag-pirate-high.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.337,
+   3.597,
+   0.399
+  ],
+  "nodes": [
+   "flag-pirate-high"
+  ]
  },
  {
   "id": "pirate-kit/flag-pirate-pennant",
   "src": "assets/kenney/pirate-kit/flag-pirate-pennant.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.762,
+   2.097,
+   0.399
+  ],
+  "nodes": [
+   "flag-pirate-pennant"
+  ]
  },
  {
   "id": "pirate-kit/flag-pirate",
   "src": "assets/kenney/pirate-kit/flag-pirate.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.337,
+   2.097,
+   0.399
+  ],
+  "nodes": [
+   "flag-pirate"
+  ]
  },
  {
   "id": "pirate-kit/flag",
   "src": "assets/kenney/pirate-kit/flag.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.337,
+   2.097,
+   0.399
+  ],
+  "nodes": [
+   "flag"
+  ]
  },
  {
   "id": "pirate-kit/grass-patch",
   "src": "assets/kenney/pirate-kit/grass-patch.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.313,
+   0.471,
+   1.271
+  ],
+  "nodes": [
+   "grass-patch"
+  ]
  },
  {
   "id": "pirate-kit/grass-plant",
   "src": "assets/kenney/pirate-kit/grass-plant.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.114,
+   0.52,
+   1.237
+  ],
+  "nodes": [
+   "grass-plant"
+  ]
  },
  {
   "id": "pirate-kit/grass",
   "src": "assets/kenney/pirate-kit/grass.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.519,
+   0.314,
+   0.544
+  ],
+  "nodes": [
+   "grass"
+  ]
  },
  {
   "id": "pirate-kit/hole",
   "src": "assets/kenney/pirate-kit/hole.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2.861,
+   0.354,
+   2.704
+  ],
+  "nodes": [
+   "hole"
+  ]
  },
  {
   "id": "pirate-kit/mast-ropes",
   "src": "assets/kenney/pirate-kit/mast-ropes.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   4.386,
+   7.888,
+   2.349
+  ],
+  "nodes": [
+   "mast-ropes",
+   "sail-a",
+   "flag-c"
+  ]
  },
  {
   "id": "pirate-kit/mast",
   "src": "assets/kenney/pirate-kit/mast.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   4.386,
+   7.864,
+   1.74
+  ],
+  "nodes": [
+   "mast",
+   "sail-a",
+   "flag-c"
+  ]
  },
  {
   "id": "pirate-kit/palm-bend",
   "src": "assets/kenney/pirate-kit/palm-bend.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2.88,
+   4.251,
+   3.216
+  ],
+  "nodes": [
+   "palm-bend"
+  ]
  },
  {
   "id": "pirate-kit/palm-detailed-bend",
   "src": "assets/kenney/pirate-kit/palm-detailed-bend.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2.88,
+   4.251,
+   3.216
+  ],
+  "nodes": [
+   "palm-detailed-bend"
+  ]
  },
  {
   "id": "pirate-kit/palm-detailed-straight",
   "src": "assets/kenney/pirate-kit/palm-detailed-straight.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   3.216,
+   4.213,
+   3.216
+  ],
+  "nodes": [
+   "palm-detailed-straight"
+  ]
  },
  {
   "id": "pirate-kit/palm-straight",
   "src": "assets/kenney/pirate-kit/palm-straight.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2.489,
+   4.213,
+   2.489
+  ],
+  "nodes": [
+   "palm-straight"
+  ]
  },
  {
   "id": "pirate-kit/patch-grass-foliage",
   "src": "assets/kenney/pirate-kit/patch-grass-foliage.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   5.273,
+   0.564,
+   4.112
+  ],
+  "nodes": [
+   "patch-grass-foliage"
+  ]
  },
  {
   "id": "pirate-kit/patch-grass",
   "src": "assets/kenney/pirate-kit/patch-grass.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   5.273,
+   0.25,
+   4.112
+  ],
+  "nodes": [
+   "patch-grass"
+  ]
  },
  {
   "id": "pirate-kit/patch-sand-foliage",
   "src": "assets/kenney/pirate-kit/patch-sand-foliage.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   7.736,
+   0.564,
+   6.036
+  ],
+  "nodes": [
+   "patch-sand-foliage"
+  ]
  },
  {
   "id": "pirate-kit/patch-sand",
   "src": "assets/kenney/pirate-kit/patch-sand.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   7.736,
+   0.25,
+   6.036
+  ],
+  "nodes": [
+   "patch-sand"
+  ]
  },
  {
   "id": "pirate-kit/platform-planks",
   "src": "assets/kenney/pirate-kit/platform-planks.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.894,
+   0.428,
+   2.702
+  ],
+  "nodes": [
+   "platform-planks"
+  ]
  },
  {
   "id": "pirate-kit/platform",
   "src": "assets/kenney/pirate-kit/platform.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2.5,
+   0.228,
+   2.513
+  ],
+  "nodes": [
+   "platform"
+  ]
  },
  {
   "id": "pirate-kit/rocks-a",
   "src": "assets/kenney/pirate-kit/rocks-a.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   5.113,
+   2.898,
+   4.386
+  ],
+  "nodes": [
+   "rocks-a"
+  ]
  },
  {
   "id": "pirate-kit/rocks-b",
   "src": "assets/kenney/pirate-kit/rocks-b.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   4.437,
+   3.654,
+   4.705
+  ],
+  "nodes": [
+   "rocks-b"
+  ]
  },
  {
   "id": "pirate-kit/rocks-c",
   "src": "assets/kenney/pirate-kit/rocks-c.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   3.643,
+   2.3,
+   3.669
+  ],
+  "nodes": [
+   "rocks-c"
+  ]
  },
  {
   "id": "pirate-kit/rocks-sand-a",
   "src": "assets/kenney/pirate-kit/rocks-sand-a.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   5.113,
+   3.212,
+   4.386
+  ],
+  "nodes": [
+   "rocks-sand-a"
+  ]
  },
  {
   "id": "pirate-kit/rocks-sand-b",
   "src": "assets/kenney/pirate-kit/rocks-sand-b.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   4.379,
+   3.714,
+   4.71
+  ],
+  "nodes": [
+   "rocks-sand-b"
+  ]
  },
  {
   "id": "pirate-kit/rocks-sand-c",
   "src": "assets/kenney/pirate-kit/rocks-sand-c.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   3.71,
+   2.614,
+   3.722
+  ],
+  "nodes": [
+   "rocks-sand-c"
+  ]
  },
  {
   "id": "pirate-kit/ship-ghost",
   "src": "assets/kenney/pirate-kit/ship-ghost.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   4.8,
+   9.964,
+   10.6
+  ],
+  "nodes": [
+   "ship-ghost",
+   "flag-b",
+   "flag-c",
+   "sail-a",
+   "sail-b",
+   "flag-a"
+  ]
  },
  {
   "id": "pirate-kit/ship-large",
   "src": "assets/kenney/pirate-kit/ship-large.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   4.8,
+   9.964,
+   13.1
+  ],
+  "nodes": [
+   "ship-large",
+   "flag-a",
+   "sail-b",
+   "sail-a",
+   "flag-c",
+   "flag-b"
+  ]
  },
  {
   "id": "pirate-kit/ship-medium",
   "src": "assets/kenney/pirate-kit/ship-medium.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   4.8,
+   9.964,
+   10.6
+  ],
+  "nodes": [
+   "ship-medium",
+   "sail-b",
+   "sail-a",
+   "flag-c",
+   "flag-b",
+   "flag-a"
+  ]
  },
  {
   "id": "pirate-kit/ship-pirate-large",
   "src": "assets/kenney/pirate-kit/ship-pirate-large.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   4.8,
+   9.964,
+   13.1
+  ],
+  "nodes": [
+   "ship-pirate-large",
+   "sail-b",
+   "sail-a",
+   "flag-c",
+   "flag-c",
+   "flag-c"
+  ]
  },
  {
   "id": "pirate-kit/ship-pirate-medium",
   "src": "assets/kenney/pirate-kit/ship-pirate-medium.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   4.8,
+   9.964,
+   10.6
+  ],
+  "nodes": [
+   "ship-pirate-medium",
+   "flag-b",
+   "sail-b",
+   "sail-a",
+   "flag-c",
+   "flag-a"
+  ]
  },
  {
   "id": "pirate-kit/ship-pirate-small",
   "src": "assets/kenney/pirate-kit/ship-pirate-small.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   4.8,
+   9.964,
+   8.8
+  ],
+  "nodes": [
+   "ship-pirate-small",
+   "sail-a",
+   "flag-b",
+   "flag-a"
+  ]
  },
  {
   "id": "pirate-kit/ship-small",
   "src": "assets/kenney/pirate-kit/ship-small.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   4.8,
+   9.964,
+   8.8
+  ],
+  "nodes": [
+   "ship-small",
+   "flag-a",
+   "flag-b",
+   "sail-a"
+  ]
  },
  {
   "id": "pirate-kit/ship-wreck",
   "src": "assets/kenney/pirate-kit/ship-wreck.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   4.8,
+   9.964,
+   10.6
+  ],
+  "nodes": [
+   "ship-wreck",
+   "grass",
+   "grass",
+   "grass",
+   "grass",
+   "grass",
+   "grass",
+   "grass",
+   "grass",
+   "grass",
+   "Group",
+   "sail-a",
+   "Group",
+   "Group",
+   "Group",
+   "Group"
+  ]
  },
  {
   "id": "pirate-kit/structure-fence-sides",
   "src": "assets/kenney/pirate-kit/structure-fence-sides.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2.5,
+   2.2,
+   2.5
+  ],
+  "nodes": [
+   "structure-fence-sides",
+   "Group"
+  ]
  },
  {
   "id": "pirate-kit/structure-fence",
   "src": "assets/kenney/pirate-kit/structure-fence.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2.5,
+   2.2,
+   2.5
+  ],
+  "nodes": [
+   "structure-fence"
+  ]
  },
  {
   "id": "pirate-kit/structure-platform-dock-small",
   "src": "assets/kenney/pirate-kit/structure-platform-dock-small.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.9,
+   1.312,
+   2.512
+  ],
+  "nodes": [
+   "structure-platform-dock-small"
+  ]
  },
  {
   "id": "pirate-kit/structure-platform-dock",
   "src": "assets/kenney/pirate-kit/structure-platform-dock.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2.5,
+   1.312,
+   2.513
+  ],
+  "nodes": [
+   "structure-platform-dock"
+  ]
  },
  {
   "id": "pirate-kit/structure-platform-small",
   "src": "assets/kenney/pirate-kit/structure-platform-small.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   1.9,
+   0.9,
+   2.512
+  ],
+  "nodes": [
+   "structure-platform-small"
+  ]
  },
  {
   "id": "pirate-kit/structure-platform",
   "src": "assets/kenney/pirate-kit/structure-platform.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2.5,
+   0.928,
+   2.513
+  ],
+  "nodes": [
+   "structure-platform"
+  ]
  },
  {
   "id": "pirate-kit/structure-roof",
   "src": "assets/kenney/pirate-kit/structure-roof.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   3.085,
+   3.4,
+   3.234
+  ],
+  "nodes": [
+   "structure-roof"
+  ]
  },
  {
   "id": "pirate-kit/structure",
   "src": "assets/kenney/pirate-kit/structure.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2.5,
+   2.2,
+   2.5
+  ],
+  "nodes": [
+   "structure"
+  ]
  },
  {
   "id": "pirate-kit/tool-paddle",
   "src": "assets/kenney/pirate-kit/tool-paddle.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.658,
+   2.349,
+   0.208
+  ],
+  "nodes": [
+   "tool-paddle"
+  ]
  },
  {
   "id": "pirate-kit/tool-shovel",
   "src": "assets/kenney/pirate-kit/tool-shovel.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   0.658,
+   2.349,
+   0.283
+  ],
+  "nodes": [
+   "tool-shovel"
+  ]
  },
  {
   "id": "pirate-kit/tower-base-door",
   "src": "assets/kenney/pirate-kit/tower-base-door.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   3.16,
+   2,
+   3.56
+  ],
+  "nodes": [
+   "tower-base-door"
+  ]
  },
  {
   "id": "pirate-kit/tower-base",
   "src": "assets/kenney/pirate-kit/tower-base.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   3.16,
+   2,
+   3.16
+  ],
+  "nodes": [
+   "tower-base"
+  ]
  },
  {
   "id": "pirate-kit/tower-complete-large",
   "src": "assets/kenney/pirate-kit/tower-complete-large.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   3.628,
+   10.225,
+   3.628
+  ],
+  "nodes": [
+   "tower-complete-large"
+  ]
  },
  {
   "id": "pirate-kit/tower-complete-small",
   "src": "assets/kenney/pirate-kit/tower-complete-small.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   3.354,
+   6.785,
+   3.657
+  ],
+  "nodes": [
+   "tower-complete-small"
+  ]
  },
  {
   "id": "pirate-kit/tower-middle-windows",
   "src": "assets/kenney/pirate-kit/tower-middle-windows.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   2.834,
+   2,
+   3.072
+  ],
+  "nodes": [
+   "tower-middle-windows"
+  ]
  },
  {
   "id": "pirate-kit/tower-middle",
   "src": "assets/kenney/pirate-kit/tower-middle.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   3.053,
+   2,
+   3.053
+  ],
+  "nodes": [
+   "tower-middle"
+  ]
  },
  {
   "id": "pirate-kit/tower-roof",
   "src": "assets/kenney/pirate-kit/tower-roof.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   3.628,
+   3.44,
+   3.628
+  ],
+  "nodes": [
+   "tower-roof"
+  ]
  },
  {
   "id": "pirate-kit/tower-top",
   "src": "assets/kenney/pirate-kit/tower-top.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   3.354,
+   2.785,
+   3.354
+  ],
+  "nodes": [
+   "tower-top"
+  ]
  },
  {
   "id": "pirate-kit/tower-watch",
   "src": "assets/kenney/pirate-kit/tower-watch.glb",
   "source": "kenney.nl/assets/pirate-kit",
   "license": "CC0",
-  "scale": 1
+  "scale": 1,
+  "bbox": [
+   3.049,
+   2.785,
+   3.049
+  ],
+  "nodes": [
+   "tower-watch"
+  ]
  }
 ]
