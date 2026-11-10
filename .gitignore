@@ -6,3 +6,4 @@ refs/**/*.webm
 refs/**/*.part
 refs/**/*.wav
 __pycache__/
+.cache/

@@ -1,0 +1,10 @@
+# Mỗi dòng = 1 câu (số câu = trường `line` trong shots.js). Dòng trống = ngắt đoạn.
+@narrator vi-VN-HoaiMyNeural 5
+@voice me vi-VN-NamMinhNeural -5 -10
+
+Ở thị trấn này, ai cũng có một thanh pin trên đầu.
+Một trăm phần trăm là khoẻ mạnh, vui vẻ.
+Còn tôi thì chỉ có một phần trăm.
+
+[me] Con đừng chạy nhảy nhiều, sẽ hết pin đấy.
+Mẹ luôn nói vậy, và mẹ lúc nào cũng một trăm phần trăm.

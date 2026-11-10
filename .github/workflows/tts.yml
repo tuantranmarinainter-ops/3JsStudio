@@ -1,0 +1,72 @@
+# Tạo giọng đọc (Microsoft Edge TTS) cho tập phim mỗi khi narration.txt thay đổi.
+# Kết quả narration.mp3 / .json / .srt được commit lại cạnh narration.txt.
+# Cache từng câu (.cache/tts) giữa các lần chạy → sửa 1 câu chỉ tạo lại câu đó.
+name: tts-narration
+
+on:
+  push:
+    paths: ["episodes/**/narration.txt"]
+  workflow_dispatch:
+
+concurrency:
+  group: tts-narration
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  tts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Tìm narration.txt cần tạo
+        id: f
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            find episodes -name narration.txt > /tmp/files.txt
+          else
+            git diff --name-only HEAD~1 HEAD -- 'episodes/**/narration.txt' > /tmp/files.txt || true
+          fi
+          cat /tmp/files.txt
+          echo "count=$(grep -c . /tmp/files.txt || true)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-python@v5
+        if: steps.f.outputs.count != '0'
+        with:
+          python-version: "3.12"
+
+      - name: Cài ffmpeg + edge-tts
+        if: steps.f.outputs.count != '0'
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q -U edge-tts
+
+      - uses: actions/cache@v4
+        if: steps.f.outputs.count != '0'
+        with:
+          path: .cache/tts
+          key: tts-${{ hashFiles('episodes/**/narration.txt') }}
+          restore-keys: tts-
+
+      - name: Tạo giọng đọc
+        if: steps.f.outputs.count != '0'
+        run: |
+          while IFS= read -r f; do
+            [ -f "$f" ] || continue
+            echo "== $f"
+            python tools/tts.py "$f"
+          done < /tmp/files.txt
+
+      - name: Commit kết quả
+        if: steps.f.outputs.count != '0'
+        run: |
+          git config user.name "tts-bot"
+          git config user.email "tts-bot@users.noreply.github.com"
+          git add episodes
+          git commit -m "tts: giọng đọc ${GITHUB_RUN_ID}" || exit 0
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done

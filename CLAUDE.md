@@ -138,9 +138,8 @@ Render 140 shot:
 ## Quy trình làm một tập (giọng đọc dẫn nhịp)
 1. Chốt **luật, điểm yếu, twist, lời giải** — mỗi thứ 1 câu.
 2. Viết **lời dẫn** (ngôi thứ nhất, câu ngắn) theo 4 phần trên.
-3. Tạo **giọng đọc** → lấy thời điểm từng câu (`npx hyperframes transcribe narration.wav`) → thời lượng shot bám theo
-   câu thoại (1 câu ≈ 1–4 shot). Lưu ý: `npx hyperframes tts` (Kokoro) KHÔNG có giọng tiếng Việt → giọng Việt cần
-   công cụ TTS khác (CHƯA CHỐT).
+3. Viết `episodes/epNNN/narration.txt` (mỗi dòng 1 câu) → push → workflow `tts-narration` tự tạo giọng đọc
+   → `narration.mp3/.json/.srt`. Thời lượng shot bám theo `narration.json` (1 câu ≈ 1–4 shot).
 4. Bẻ từng câu thành shot trong `shots.js` (mỗi shot ghi `line` = số câu thoại nó minh hoạ).
 5. Thiếu asset → Kenney trước, Polyfork sau; ghi manifest.
 6. Xem contact sheet cả phim → sửa shot lỗi → render từng đoạn → ghép MP4 1080×1920.
@@ -168,3 +167,18 @@ Render 140 shot:
 - Sau đó Claude đọc `refs/summary.md`, `refs/<id>/report.md`, `refs/<id>/sheets/*.jpg`; lỗi xem `refs/errors.md`.
 - Video bị xoá trên Actions, chỉ commit báo cáo + ảnh nhỏ. Repo nên để **private**.
 - YouTube đòi "xác minh không phải bot" → người dùng thêm secret `YT_COOKIES` (nội dung cookies.txt) cho repo.
+
+## Giọng đọc (`tools/tts.py` — dựa trên API của Voice Studio, tool TTS của người dùng)
+- Tạo **từng câu một** rồi ghép thành 1 track → biết chính xác `start/end` mỗi câu (không cần nhận dạng giọng).
+- Nguồn:
+  - **Edge** (mặc định, thư viện `edge-tts`): có giọng Việt `vi-VN-HoaiMyNeural` (nữ), `vi-VN-NamMinhNeural` (nam).
+    Chạy được trên GitHub Actions → Claude tự tạo giọng, không cần người dùng.
+  - **CapCut / Edge qua Voice Studio**: `--tool-dir <thư mục Voice Studio> --source capcut|edge` — gọi thẳng
+    `edge_jobs.render_job` và `capcut_engine.list_voices`. Chỉ chạy trên máy người dùng (cần cấu hình CapCut của tool).
+  - `--dry`: không gọi dịch vụ, ước lượng ~14 ký tự/giây → dựng shot trước khi có giọng thật.
+- `narration.txt`: `@narrator <giọng> [tốc độ] [cao độ]`, `@voice <vai> <giọng> [tốc độ] [cao độ]`, câu của vai: `[vai] …`,
+  dòng trống = ngắt đoạn (lặng 0.6s), giữa 2 câu lặng 0.25s; `#` = ghi chú.
+- Giới hạn như Voice Studio: Edge tốc độ -80..100%, cao độ -50..50Hz, âm lượng -100..100%;
+  CapCut tốc độ -50..100%, không cao độ/âm lượng. Song song: Edge 1–3, CapCut 1–2.
+- Cache từng câu ở `.cache/tts/` (khoá = nguồn + giọng + thông số + câu) → sửa 1 câu chỉ tạo lại câu đó.
+- Xem giọng: `python tools/tts.py --list-voices vi` (thêm `--tool-dir … --source capcut` cho giọng CapCut).
