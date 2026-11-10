@@ -1,6 +1,8 @@
 # Mỗi dòng = 1 câu (số câu = trường `line` trong shots.js). Dòng trống = ngắt đoạn.
-@narrator vi-VN-HoaiMyNeural 5
-@voice me vi-VN-NamMinhNeural -5 -10
+@source capcut
+# Giọng Bé dẫn chuyện; mẹ dùng "Ban Mai". Danh sách giọng: tools/voice_studio/voices-capcut.txt
+@narrator BV074_streaming_dsp
+@voice me multi_female_yangguangnv_uranus_bigtts -5
 
 Ở thị trấn này, ai cũng có một thanh pin trên đầu.
 Một trăm phần trăm là khoẻ mạnh, vui vẻ.
