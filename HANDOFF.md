@@ -54,9 +54,18 @@ Chưa làm: ghép vào `stage.js`/HyperFrames (demo hiện tự có renderer); K
 
 ### Nước văng (`engine/splash.js`, demo `engine/splash-demo.html`)
 - `findSurfaceCrossings(THREE, root, mixer, clip, waterY)` lấy mẫu clip, tìm lúc tâm khung xương cắt mặt nước → `[{time, x, y, z, dir:'up'|'down', speed}]`. Gọi 1 lần sau khi tải (không trong lúc seek).
-- `createSplash(THREE, {seed, scale})` (scale ≈ chiều dài con vật, m) → `setEvents(events)`, `update(tClip, loopDuration, pxScale)`: giọt nước (đạn đạo + cản), sương, vòng bọt + bọt loang. Tối đa 6 lần cắt / clip. Hàm thuần của t.
+- `createSplash(THREE, {seed, scale})` (scale ≈ chiều dài con vật, m) → `setEvents(events)`, `update(tClip, loopDuration, pxScale)`: giọt nước (đạn đạo + cản), sương, vòng bọt + bọt loang, **gợn sóng tròn tính bằng công thức** (mesh `splash_ripples`, đặt chồng lên mọi mặt biển), **tia nước flipbook** 16 khung vẽ bằng canvas có seed (sprite `splash_sheet_i`, không cần file ảnh). Tối đa 6 lần cắt / clip. Hàm thuần của t.
 - Cá nhà táng: đặt `root.position.y = -water_y_native * scale_to_m` → mặt nước tại y = 0. JUMP: lên 0.27 s / xuống 0.93 s; JUMPSPLASH: 0.27 s / 1.47 s. Demo chạy chậm `?speed=0.55` cho giống cá voi thật.
 - Trang xem trên điện thoại (artifact riêng tư của người dùng): https://claude.ai/artifact/7qsQGfmu9hpi2phj2jhHud — GLB đóng gói thành `.js` base64 vì artifact không phục vụ `.glb`.
+
+### Đại dương: Three.js Water Pro (người dùng đã CHỐT dùng làm đại dương)
+- Sản phẩm TRẢ PHÍ, chỉ chạy **WebGPU** (V3: sóng GPU, bọt nhiều lớp, buoyancy, caustics). Chưa có trong repo — chờ người dùng mua và gửi file.
+  Cloud chặn 80.lv nên chưa đọc được trang sản phẩm/giấy phép; khi có file: đọc LICENSE (được dùng trong video thương mại? được commit vào repo private?).
+- Đã kiểm chứng: Chromium headless trong cloud CÓ WebGPU (`--enable-unsafe-webgpu`, adapter swiftshader, chậm). Cần kiểm tra HyperFrames truyền được cờ này cho trình duyệt render.
+- Khi tích hợp: (1) thời gian sóng phải lấy từ t của hf-seek (tìm uniform/tham số time, không để nó tự chạy theo đồng hồ);
+  (2) renderer WebGPU (`three/webgpu`) → kiểm tra adapter three của HyperFrames + `renderer.render` đồng bộ sau seek;
+  (3) `splash.js` dùng ShaderMaterial GLSL → với WebGPURenderer cần viết lại bằng TSL/NodeMaterial hoặc render lớp nước văng bằng WebGL chồng lên.
+- Đến lúc đó `winter.js#createWater` (Water.js) vẫn là mặt nước mặc định.
 
 ## Xem/kiểm tra cảnh 3D trong cloud
 - Cloud chặn cả `sketchfab.com`, `api.sketchfab.com`, `*.itch.io` → asset ngoài: người dùng tải tay rồi gửi file (uploads), Claude chuyển đổi + ghi manifest.

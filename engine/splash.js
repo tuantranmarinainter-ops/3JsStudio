@@ -175,6 +175,107 @@ export function createSplash(THREE, opts = {}) {
     return f;
   });
 
+  // --- Gợn sóng tròn tính bằng công thức (không mô phỏng): đặt chồng lên mọi mặt biển ---
+  const RIP_LIFE = o.life * 2.2;
+  const ripUni = {
+    uTime: common.uTime, uLoop: common.uLoop, uEvt: common.uEvt, uPow: common.uPow,
+    uSpeed: { value: Math.sqrt(o.scale) * 1.7 }, uLife: { value: RIP_LIFE }, uScale: common.uScale, uColor: common.uColor,
+  };
+  const ripples = new THREE.Mesh(
+    new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2),
+    new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, uniforms: ripUni,
+      vertexShader: /* glsl */`
+        varying vec3 vW;
+        void main() { vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
+      fragmentShader: /* glsl */`
+        #define N ${MAX_EVENTS}
+        uniform float uTime, uLoop, uSpeed, uLife, uScale; uniform vec4 uEvt[N]; uniform vec2 uPow[N]; uniform vec3 uColor;
+        varying vec3 vW;
+        void main() {
+          float a = 0.0;
+          for (int i = 0; i < N; i++) {
+            float tau = uTime - uEvt[i].w;
+            if (uLoop > 0.0 && tau < 0.0) tau += uLoop;
+            if (tau <= 0.0 || tau > uLife || uPow[i].x <= 0.0) continue;
+            float r = distance(vW.xz, uEvt[i].xz);
+            float R = uSpeed * tau + uScale * 0.25;      // mép sóng ngoài cùng
+            float d = R - r;                              // > 0: phía trong mép sóng
+            if (d < -0.5) continue;
+            float k = 6.2831 / (uScale * 0.09 + tau * 0.6); // bước sóng dãn ra theo thời gian
+            float wave = sin(d * k) * exp(-max(d, 0.0) / (uScale * 0.35)) * smoothstep(-0.5, 0.3, d);
+            a += max(wave, 0.0) * uPow[i].x * (1.0 - tau / uLife) * (uPow[i].y < 0.0 ? 1.0 : 0.6);
+          }
+          a = min(a, 1.0) * 0.85;
+          if (a < 0.01) discard;
+          gl_FragColor = vec4(uColor, a);
+        }`,
+    }),
+  );
+  ripples.name = 'splash_ripples';
+  ripples.frustumCulled = false;
+  ripples.visible = false;
+  group.add(ripples);
+
+  // --- Tia nước flipbook: 16 khung vẽ bằng code (có seed) → sprite luôn quay về camera ---
+  const FRAMES = 16, COLS = 4, CELL = 256, BASE = 32;
+  const atlas = (() => {
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = CELL * COLS;
+    const g = cv.getContext('2d');
+    const rr = rng(o.seed * 31 + 7);
+    const jets = Array.from({ length: 22 }, () => ({ ang: (rr() - 0.5) * 2.3, len: 0.45 + rr() * 0.55, w: 3 + rr() * 7, x: (rr() - 0.5) * 0.5, drops: 2 + Math.floor(rr() * 4), dseed: rr() }));
+    for (let f = 0; f < FRAMES; f++) {
+      const ox = (f % COLS) * CELL, oy = Math.floor(f / COLS) * CELL;
+      const k = f / (FRAMES - 1);
+      const rise = Math.sin(Math.min(k * 1.6, 1) * Math.PI / 2);   // tia vươn lên
+      const fall = Math.max(0, k - 0.45) / 0.55;                    // vỡ thành giọt rồi rơi
+      const fade = 1 - Math.pow(k, 1.6);
+      g.save();
+      g.beginPath(); g.rect(ox + 1, oy + 1, CELL - 2, CELL - 2); g.clip(); // không lấn sang khung bên cạnh
+      g.translate(ox + CELL / 2, oy + CELL - BASE);
+      g.lineCap = 'round';
+      for (const j of jets) {
+        const L = CELL * 0.78 * j.len * rise * (1 - fall * 0.6);
+        const bx = j.x * CELL * (0.6 + k * 0.6);
+        const tx = bx + Math.sin(j.ang) * L, ty = -Math.cos(j.ang) * L * (1 - fall * 0.5) + fall * fall * CELL * 0.35;
+        const grad = g.createLinearGradient(bx, 0, tx, ty);
+        grad.addColorStop(0, `rgba(255,255,255,${0.95 * fade})`);
+        grad.addColorStop(1, `rgba(235,248,255,${0.2 * fade})`);
+        g.strokeStyle = grad;
+        g.lineWidth = j.w * (1 - fall * 0.7);
+        if (fall < 0.9) { g.beginPath(); g.moveTo(bx, 0); g.quadraticCurveTo((bx + tx) / 2, ty * 0.75, tx, ty); g.stroke(); }
+        g.fillStyle = `rgba(255,255,255,${0.9 * fade})`;
+        for (let d = 0; d < j.drops; d++) {
+          const s = (d + 1) / (j.drops + 1);
+          const dx = tx + Math.sin(j.ang + d) * 6 * (1 + fall * 4) * (j.dseed + 0.5);
+          const dy = ty - s * 14 * rise + fall * fall * CELL * 0.4 * s;
+          g.beginPath(); g.arc(dx, dy, Math.max(0.8, j.w * 0.35 * (1 - s * 0.5)), 0, Math.PI * 2); g.fill();
+        }
+      }
+      // bọt chân tia
+      const fg = g.createRadialGradient(0, 0, 4, 0, 0, CELL * 0.45);
+      fg.addColorStop(0, `rgba(255,255,255,${0.9 * fade})`);
+      fg.addColorStop(1, 'rgba(255,255,255,0)');
+      g.fillStyle = fg;
+      g.beginPath(); g.ellipse(0, 0, CELL * 0.45 * (0.5 + k * 0.5), CELL * 0.08, 0, 0, Math.PI * 2); g.fill();
+      g.restore();
+    }
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  })();
+  const sheets = uEvt.map((_, i) => {
+    const map = atlas.clone();
+    map.repeat.set(1 / COLS, 1 / COLS);
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map, transparent: true, depthWrite: false, fog: true, toneMapped: false }));
+    sp.center.set(0.5, BASE / CELL);
+    sp.name = `splash_sheet_${i}`;
+    sp.visible = false;
+    group.add(sp);
+    return sp;
+  });
+
   let events = [];
   return {
     object: group,
@@ -194,9 +295,25 @@ export function createSplash(THREE, opts = {}) {
       common.uTime.value = t;
       common.uLoop.value = loop;
       if (px) common.uPx.value = px;
+      ripples.visible = events.length > 0;
+      if (ripples.visible) {
+        const cx = events.reduce((s, e) => s + e.x, 0) / events.length, cz = events.reduce((s, e) => s + e.z, 0) / events.length;
+        ripples.position.set(cx, events[0].y + 0.03, cz);
+        ripples.scale.setScalar(o.scale * 14);
+      }
       events.forEach((e, i) => {
         let tau = t - e.time;
         if (loop > 0 && tau < 0) tau += loop;
+        // flipbook: chọn khung theo tau
+        const sheet = sheets[i], sLife = o.life * 0.9;
+        sheet.visible = tau > 0 && tau < sLife;
+        if (sheet.visible) {
+          const f = Math.min(FRAMES - 1, Math.floor((tau / sLife) * FRAMES));
+          sheet.material.map.offset.set((f % COLS) / COLS, 1 - (Math.floor(f / COLS) + 1) / COLS);
+          const sz = o.scale * (e.dir === 'down' ? 1.15 : 0.8) * uPow[i].x;
+          sheet.scale.set(sz, sz, 1);
+          sheet.position.set(e.x, e.y, e.z);
+        }
         const life = o.life * 1.5;
         const on = tau > 0 && tau < life;
         const k = tau / life;
