@@ -59,12 +59,16 @@ jobs:
               uniq.sort(key=score)
               return uniq[0] if uniq else None
 
-          def get(url, retries=3):
+          import http.cookiejar, json as _json
+          JAR = http.cookiejar.CookieJar()
+          OPENER = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(JAR))
+
+          def get(url, retries=3, headers=None):
               last = None
               for i in range(retries):
                   try:
-                      req = urllib.request.Request(url, headers=UA)
-                      with urllib.request.urlopen(req, timeout=120) as r:
+                      req = urllib.request.Request(url, headers={**UA, **(headers or {})})
+                      with OPENER.open(req, timeout=120) as r:
                           return r.read()
                   except Exception as e:
                       last = e; print("  thử lại %d/%d: %s" % (i + 1, retries, e), flush=True); time.sleep(3 * (i + 1))
@@ -96,6 +100,17 @@ jobs:
               print("== " + slug, flush=True)
               page = get(base).decode("utf-8", "replace")
               zurl = find_zip_url(page, slug, base)
+              m = re.search(r"data-download-id=['\"]([0-9a-fA-F]+)['\"]", page)
+              if not zurl and m:
+                  # Kenney (2026): link tải ký mới qua /download-link/<id> (cần cookie của trang)
+                  resp = get("https://kenney.nl/download-link/" + m.group(1), headers={"Referer": base, "Accept": "application/json, text/plain, */*", "X-Requested-With": "XMLHttpRequest"}).decode("utf-8", "replace").strip()
+                  print("  download-link: " + resp[:200])
+                  try:
+                      j = _json.loads(resp)
+                      cand = [v for v in (j.values() if isinstance(j, dict) else [j]) if isinstance(v, str) and v.startswith("http")]
+                      zurl = cand[0] if cand else None
+                  except Exception:
+                      mm = re.search(r"https?://[^\s\"'<>]+", resp); zurl = mm.group(0) if mm else None
               if not zurl:
                   print("  KHÔNG tìm thấy link zip — chẩn đoán: %d byte, title=%r" % (len(page), (re.search(r"<title>(.*?)</title>", page, re.S) or [None, ""])[1][:80]))
                   for m in re.findall(r'[^\n]{0,160}(?:download|\.zip|/media/pages)[^\n]{0,160}', page, re.I)[:20]:
