@@ -63,6 +63,8 @@ jobs:
           S=$(python3 -c "print(${{ matrix.f0 }}/${{ matrix.fps }})")
           E=$(python3 -c "print(${{ matrix.f1 }}/${{ matrix.fps }})")
           mkdir -p out
+          # registry npm đôi khi chưa đồng bộ gói phụ thuộc → thử cài lại tối đa 5 lần
+          for i in 1 2 3 4 5; do npm i -g hyperframes@0.9.30 --no-audit --no-fund && break; echo "npm lỗi, thử lại sau $((i*20))s"; sleep $((i*20)); done
           npx --yes hyperframes@0.9.30 render . -c "episodes/${{ needs.plan.outputs.ep }}/index.html" \
             --start "$S" --end "$E" --workers auto --quiet -o "out/part_$(printf %02d ${{ matrix.i }}).mp4"
           ffprobe -v error -count_frames -select_streams v:0 -show_entries stream=nb_read_frames -of csv=p=0 out/part_*.mp4
