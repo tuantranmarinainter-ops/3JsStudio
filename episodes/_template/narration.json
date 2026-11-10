@@ -1,0 +1,51 @@
+{
+ "source": "edge",
+ "total": 19.786,
+ "lines": [
+  {
+   "line": 1,
+   "who": "narrator",
+   "text": "Ở thị trấn này, ai cũng có một thanh pin trên đầu.",
+   "voice": "vi-VN-HoaiMyNeural",
+   "start": 0.301,
+   "end": 3.997,
+   "dur": 3.697
+  },
+  {
+   "line": 2,
+   "who": "narrator",
+   "text": "Một trăm phần trăm là khoẻ mạnh, vui vẻ.",
+   "voice": "vi-VN-HoaiMyNeural",
+   "start": 4.248,
+   "end": 7.537,
+   "dur": 3.289
+  },
+  {
+   "line": 3,
+   "who": "narrator",
+   "text": "Còn tôi thì chỉ có một phần trăm.",
+   "voice": "vi-VN-HoaiMyNeural",
+   "start": 7.788,
+   "end": 10.572,
+   "dur": 2.785
+  },
+  {
+   "line": 4,
+   "who": "me",
+   "text": "Con đừng chạy nhảy nhiều, sẽ hết pin đấy.",
+   "voice": "vi-VN-NamMinhNeural",
+   "start": 11.173,
+   "end": 14.678,
+   "dur": 3.505
+  },
+  {
+   "line": 5,
+   "who": "narrator",
+   "text": "Mẹ luôn nói vậy, và mẹ lúc nào cũng một trăm phần trăm.",
+   "voice": "vi-VN-HoaiMyNeural",
+   "start": 14.928,
+   "end": 18.985,
+   "dur": 4.057
+  }
+ ]
+}
