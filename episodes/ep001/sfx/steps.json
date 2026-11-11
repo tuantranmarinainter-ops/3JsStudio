@@ -5,7 +5,7 @@
   "house": "house_illus",
   "leg": "leg_BL",
   "onScreen": true,
-  "dist": 123.1,
+  "dist": 132.6,
   "shot": "s009"
  },
  {
@@ -14,7 +14,7 @@
   "house": "house_illus",
   "leg": "leg_FR",
   "onScreen": true,
-  "dist": 103.9,
+  "dist": 112.2,
   "shot": "s009"
  },
  {
@@ -23,7 +23,7 @@
   "house": "house_illus",
   "leg": "leg_BR",
   "onScreen": true,
-  "dist": 118.7,
+  "dist": 128.7,
   "shot": "s017"
  },
  {
@@ -32,7 +32,7 @@
   "house": "house_illus",
   "leg": "leg_FL",
   "onScreen": true,
-  "dist": 72.3,
+  "dist": 79.6,
   "shot": "s017"
  },
  {
@@ -41,7 +41,7 @@
   "house": "house_illus",
   "leg": "leg_BL",
   "onScreen": true,
-  "dist": 83.8,
+  "dist": 96.4,
   "shot": "s017"
  },
  {
@@ -50,7 +50,7 @@
   "house": "house_illus",
   "leg": "leg_FR",
   "onScreen": true,
-  "dist": 103.5,
+  "dist": 117,
   "shot": "s017"
  },
  {
@@ -59,7 +59,7 @@
   "house": "house_family",
   "leg": "leg_BL",
   "onScreen": true,
-  "dist": 111.4,
+  "dist": 108,
   "shot": "s040"
  },
  {
@@ -68,7 +68,7 @@
   "house": "house_family",
   "leg": "leg_FR",
   "onScreen": true,
-  "dist": 99.8,
+  "dist": 96,
   "shot": "s040"
  },
  {
@@ -77,7 +77,7 @@
   "house": "house_family",
   "leg": "leg_BR",
   "onScreen": true,
-  "dist": 84.8,
+  "dist": 87.5,
   "shot": "s040"
  },
  {
@@ -86,7 +86,7 @@
   "house": "house_family",
   "leg": "leg_FL",
   "onScreen": true,
-  "dist": 129.4,
+  "dist": 134.7,
   "shot": "s040"
  },
  {
@@ -95,7 +95,7 @@
   "house": "house_family",
   "leg": "leg_BL",
   "onScreen": true,
-  "dist": 118.9,
+  "dist": 130.1,
   "shot": "s040"
  },
  {
@@ -104,7 +104,7 @@
   "house": "house_family",
   "leg": "leg_FR",
   "onScreen": false,
-  "dist": 105.9,
+  "dist": 116.1,
   "shot": "s040"
  },
  {
@@ -113,7 +113,7 @@
   "house": "house_family",
   "leg": "leg_BL",
   "onScreen": true,
-  "dist": 81.5,
+  "dist": 86,
   "shot": "s041"
  },
  {
@@ -122,7 +122,7 @@
   "house": "house_family",
   "leg": "leg_FR",
   "onScreen": true,
-  "dist": 33.7,
+  "dist": 35.7,
   "shot": "s041"
  },
  {
@@ -131,7 +131,7 @@
   "house": "house_family",
   "leg": "leg_BR",
   "onScreen": false,
-  "dist": 44.7,
+  "dist": 58.7,
   "shot": "s041"
  },
  {
@@ -140,7 +140,7 @@
   "house": "house_family",
   "leg": "leg_FL",
   "onScreen": false,
-  "dist": 71.1,
+  "dist": 85.3,
   "shot": "s041"
  },
  {
@@ -149,7 +149,7 @@
   "house": "house_family",
   "leg": "leg_BL",
   "onScreen": true,
-  "dist": 140.7,
+  "dist": 137.2,
   "shot": "s042"
  },
  {
@@ -158,7 +158,7 @@
   "house": "house_family",
   "leg": "leg_FR",
   "onScreen": true,
-  "dist": 130,
+  "dist": 126.2,
   "shot": "s042"
  },
  {
@@ -167,7 +167,7 @@
   "house": "house_family",
   "leg": "leg_BL",
   "onScreen": true,
-  "dist": 149.2,
+  "dist": 160,
   "shot": "s042"
  },
  {
@@ -176,7 +176,7 @@
   "house": "house_family",
   "leg": "leg_FR",
   "onScreen": true,
-  "dist": 141.4,
+  "dist": 151.8,
   "shot": "s042"
  },
  {
@@ -185,7 +185,7 @@
   "house": "house_family",
   "leg": "leg_BL",
   "onScreen": true,
-  "dist": 124,
+  "dist": 115.1,
   "shot": "s044"
  },
  {
@@ -194,7 +194,7 @@
   "house": "house_family",
   "leg": "leg_FR",
   "onScreen": true,
-  "dist": 94.3,
+  "dist": 84.3,
   "shot": "s044"
  },
  {
@@ -203,7 +203,7 @@
   "house": "house_family",
   "leg": "leg_BR",
   "onScreen": true,
-  "dist": 86.8,
+  "dist": 87.6,
   "shot": "s044"
  },
  {
@@ -212,7 +212,7 @@
   "house": "house_family",
   "leg": "leg_FL",
   "onScreen": true,
-  "dist": 134.1,
+  "dist": 137.5,
   "shot": "s044"
  },
  {
@@ -221,7 +221,7 @@
   "house": "house_family",
   "leg": "leg_BL",
   "onScreen": true,
-  "dist": 105,
+  "dist": 98.9,
   "shot": "s050"
  },
  {
@@ -230,7 +230,7 @@
   "house": "house_family",
   "leg": "leg_FR",
   "onScreen": true,
-  "dist": 106.4,
+  "dist": 100.1,
   "shot": "s050"
  },
  {
@@ -239,7 +239,7 @@
   "house": "house_family",
   "leg": "leg_BR",
   "onScreen": true,
-  "dist": 117.6,
+  "dist": 123.8,
   "shot": "s050"
  },
  {
@@ -248,7 +248,7 @@
   "house": "house_family",
   "leg": "leg_FL",
   "onScreen": true,
-  "dist": 78.6,
+  "dist": 82.4,
   "shot": "s050"
  },
  {
@@ -257,7 +257,7 @@
   "house": "house_family",
   "leg": "leg_BL",
   "onScreen": true,
-  "dist": 113.5,
+  "dist": 110.6,
   "shot": "s051"
  },
  {
@@ -266,7 +266,7 @@
   "house": "house_family",
   "leg": "leg_FR",
   "onScreen": true,
-  "dist": 75.3,
+  "dist": 70.7,
   "shot": "s051"
  },
  {
@@ -275,7 +275,7 @@
   "house": "house_family",
   "leg": "leg_BR",
   "onScreen": true,
-  "dist": 71.9,
+  "dist": 79.4,
   "shot": "s051"
  },
  {
@@ -284,7 +284,7 @@
   "house": "house_family",
   "leg": "leg_FL",
   "onScreen": true,
-  "dist": 117.1,
+  "dist": 127,
   "shot": "s051"
  },
  {
@@ -293,7 +293,7 @@
   "house": "house_family",
   "leg": "leg_BR",
   "onScreen": true,
-  "dist": 83,
+  "dist": 117.2,
   "shot": "s081"
  },
  {
@@ -301,8 +301,8 @@
   "f": 2999,
   "house": "house_family",
   "leg": "leg_FL",
-  "onScreen": false,
-  "dist": 92.4,
+  "onScreen": true,
+  "dist": 127.1,
   "shot": "s081"
  },
  {
@@ -310,89 +310,89 @@
   "f": 3459,
   "house": "house_family",
   "leg": "leg_BL",
-  "onScreen": true,
-  "dist": 115.4,
-  "shot": "s093"
- },
- {
-  "t": 115.3,
-  "f": 3459,
-  "house": "house_family",
-  "leg": "leg_FR",
-  "onScreen": true,
-  "dist": 71.3,
-  "shot": "s093"
- },
- {
-  "t": 116.4,
-  "f": 3492,
-  "house": "house_family",
-  "leg": "leg_BL",
-  "onScreen": true,
-  "dist": 119.5,
-  "shot": "s094"
- },
- {
-  "t": 116.4,
-  "f": 3492,
-  "house": "house_family",
-  "leg": "leg_FR",
-  "onScreen": true,
-  "dist": 77,
-  "shot": "s094"
- },
- {
-  "t": 157.1,
-  "f": 4713,
-  "house": "house_family",
-  "leg": "leg_BL",
-  "onScreen": true,
-  "dist": 75.8,
-  "shot": "s135"
- },
- {
-  "t": 157.1,
-  "f": 4713,
-  "house": "house_family",
-  "leg": "leg_FR",
-  "onScreen": true,
-  "dist": 123,
-  "shot": "s135"
- },
- {
-  "t": 158.833,
-  "f": 4765,
-  "house": "house_family",
-  "leg": "leg_BL",
-  "onScreen": true,
-  "dist": 103.9,
-  "shot": "s137"
- },
- {
-  "t": 158.833,
-  "f": 4765,
-  "house": "house_family",
-  "leg": "leg_FR",
-  "onScreen": true,
-  "dist": 79,
-  "shot": "s137"
- },
- {
-  "t": 159.333,
-  "f": 4780,
-  "house": "house_family",
-  "leg": "leg_BR",
-  "onScreen": true,
-  "dist": 69,
-  "shot": "s137"
- },
- {
-  "t": 159.333,
-  "f": 4780,
-  "house": "house_family",
-  "leg": "leg_FL",
   "onScreen": true,
   "dist": 116.5,
+  "shot": "s093"
+ },
+ {
+  "t": 115.3,
+  "f": 3459,
+  "house": "house_family",
+  "leg": "leg_FR",
+  "onScreen": true,
+  "dist": 70.2,
+  "shot": "s093"
+ },
+ {
+  "t": 116.4,
+  "f": 3492,
+  "house": "house_family",
+  "leg": "leg_BL",
+  "onScreen": true,
+  "dist": 125.6,
+  "shot": "s094"
+ },
+ {
+  "t": 116.4,
+  "f": 3492,
+  "house": "house_family",
+  "leg": "leg_FR",
+  "onScreen": true,
+  "dist": 80.9,
+  "shot": "s094"
+ },
+ {
+  "t": 157.1,
+  "f": 4713,
+  "house": "house_family",
+  "leg": "leg_BL",
+  "onScreen": true,
+  "dist": 74.5,
+  "shot": "s135"
+ },
+ {
+  "t": 157.1,
+  "f": 4713,
+  "house": "house_family",
+  "leg": "leg_FR",
+  "onScreen": true,
+  "dist": 124.3,
+  "shot": "s135"
+ },
+ {
+  "t": 158.833,
+  "f": 4765,
+  "house": "house_family",
+  "leg": "leg_BL",
+  "onScreen": true,
+  "dist": 104.7,
+  "shot": "s137"
+ },
+ {
+  "t": 158.833,
+  "f": 4765,
+  "house": "house_family",
+  "leg": "leg_FR",
+  "onScreen": true,
+  "dist": 78.7,
+  "shot": "s137"
+ },
+ {
+  "t": 159.333,
+  "f": 4780,
+  "house": "house_family",
+  "leg": "leg_BR",
+  "onScreen": true,
+  "dist": 67.8,
+  "shot": "s137"
+ },
+ {
+  "t": 159.333,
+  "f": 4780,
+  "house": "house_family",
+  "leg": "leg_FL",
+  "onScreen": true,
+  "dist": 117.8,
   "shot": "s137"
  },
  {
@@ -401,7 +401,7 @@
   "house": "house_family",
   "leg": "leg_BL",
   "onScreen": true,
-  "dist": 110.5,
+  "dist": 111.3,
   "shot": "s137"
  },
  {
@@ -410,7 +410,7 @@
   "house": "house_family",
   "leg": "leg_FR",
   "onScreen": false,
-  "dist": 85.6,
+  "dist": 85.3,
   "shot": "s137"
  },
  {
@@ -419,7 +419,7 @@
   "house": "house_family",
   "leg": "leg_BR",
   "onScreen": true,
-  "dist": 75.3,
+  "dist": 74.1,
   "shot": "s137"
  },
  {
@@ -428,7 +428,7 @@
   "house": "house_family",
   "leg": "leg_FL",
   "onScreen": true,
-  "dist": 122.8,
+  "dist": 124.1,
   "shot": "s137"
  }
 ]

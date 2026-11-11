@@ -47,17 +47,17 @@ export function propKit(THREE) {
         mesh(new THREE.PlaneGeometry(5.3, 10.8), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.9 }), 0, 5.5, 0.01, 'card_collage', front);
         rs(9);
         for (let i = 0; i < 14; i++) {
-          const c2 = makePostcard(THREE, 'island', { w: 1.5 }); c2.position.set(-2 + rnd() * 4, 1 + rnd() * 9.5, 0.05 + i * 0.004);
+          const c2 = makePostcard(THREE, 'island', { w: 1.5 }); c2.position.set(-1.0 + rnd() * 3.2, 1 + rnd() * 9.5, 0.05 + i * 0.004);
           c2.rotation.z = (rnd() - 0.5) * 0.5; c2.name = `card_island_${i}`; front.add(c2);
         }
       } else {
         rs(21); const kinds = seededKinds(extra, 4);
         for (let i = 0; i < extra; i++) {
-          const c2 = makePostcard(THREE, kinds[i], { w: 1.3, text: false, variant: i }); c2.position.set(-2.1 + (i % 4) * 1.4 + rnd() * 0.2, 1.2 + Math.floor(i / 4) * 1.45 + rnd() * 0.2, 0.03 + i * 0.002);
+          const c2 = makePostcard(THREE, kinds[i], { w: 1.3, text: false, variant: i }); c2.position.set(-1.15 + (i % 4) * 1.05 + rnd() * 0.1, 1.2 + Math.floor(i / 4) * 1.45 + rnd() * 0.2, 0.03 + i * 0.002);
           c2.rotation.z = (rnd() - 0.5) * 0.35; front.add(c2);
           const mg = sph(0.07, ['#d9413a', '#f2c14e', '#2f8fd6'][i % 3], c2.position.x, c2.position.y + 0.42, 0.1, 'magnet', front, 10); mg.scale.z = 0.35;
         }
-        const spots = { penguin: [-1.2, 8.6], whale: [1.1, 8.0], mountain: [-1.0, 5.9], island: [1.2, 5.0] };
+        const spots = { penguin: [-0.55, 8.6], whale: [1.3, 8.0], mountain: [-0.45, 5.9], island: [1.35, 5.0] };   // mép trái ≥ −1,6: không đè tay nắm tủ (x −2,2) — góp ý 2026-11-11 #9
         cards.forEach((k, i) => {
           const c2 = makePostcard(THREE, k, { w: 2.0, back: k === 'island' ? postcardBack(THREE, ['Đã tìm thấy một thứ', 'tuyệt vời.', 'Sẽ sớm về nhà thôi.', 'Yêu cả hai mẹ con.']) : undefined });
           const [x, y] = spots[k] || [0, 3 + i]; c2.position.set(x, y, 0.12 + i * 0.01); c2.rotation.z = [0.06, -0.05, 0.04, -0.07][i % 4];
@@ -78,6 +78,16 @@ export function propKit(THREE) {
       const g = group('chair'); const wood = M('#7a4a2c');
       box(2.4, 0.3, 2.4, wood, 0, 1.6, 0, 'seat', g); box(2.4, 2.6, 0.3, wood, 0, 3.0, -1.05, 'back', g);
       for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(0.3, 1.6, 0.3, wood, x, 0.8, z, 'chair_leg', g);
+      return g;
+    },
+    // ghế đẩu gỗ cao (bé đứng lên nhìn ra cửa sổ). Mặt ghế ở y = h.
+    stool({ h = 4 } = {}) {
+      const g = group('stool'); const wood = M('#8a5a36'), dark = M('#6e4428');
+      box(3.0, 0.4, 3.0, wood, 0, h - 0.2, 0, 'stool_seat', g);
+      box(2.6, 0.12, 2.6, dark, 0, h - 0.46, 0, 'stool_apron', g);
+      for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { const l = box(0.4, h - 0.4, 0.4, dark, x * 1.15, (h - 0.4) / 2, z * 1.15, 'stool_leg', g); l.rotation.set(z * 0.05, 0, -x * 0.05); }
+      for (const z of [-1, 1]) box(2.4, 0.25, 0.25, dark, 0, h * 0.35, z * 1.15, 'stool_rung', g);
+      for (const x of [-1, 1]) box(0.25, 0.25, 2.4, dark, x * 1.15, h * 0.5, 0, 'stool_rung', g);
       return g;
     },
     window({ w = 6, h = 7, curtains = '#5fae7a', view = null } = {}) {
@@ -103,8 +113,9 @@ export function propKit(THREE) {
       const g = group('bed');
       box(7, 1.6, 11, '#8a5a36', 0, 0.8, 0, 'bed_frame', g);
       box(6.8, 1.0, 10.6, '#f2ede4', 0, 2.1, 0, 'mattress', g);
-      box(7.2, 0.6, 7.5, '#c0392b', 0, 3.9, 1.6, 'blanket', g);
-      box(7.2, 1.4, 7.6, '#a93226', 0, 3.0, 1.6, 'blanket_fold', g);
+      // chăn dày trùm kín người nằm (tay/thân không lòi ra — góp ý 2026-11-11 #2): mặt chăn y≈4,7, tới sát cổ (z −2,1), đầu vẫn lộ
+      box(7.9, 2.2, 7.5, '#c0392b', 0, 3.6, 1.65, 'blanket', g);
+      box(8.0, 1.4, 7.6, '#a93226', 0, 3.0, 1.65, 'blanket_fold', g);
       box(5, 0.9, 2.4, '#ffffff', 0, 3.0, -4, 'pillow', g);
       box(7.2, 4, 0.6, '#8a5a36', 0, 2.8, -5.6, 'headboard', g);
       return g;
@@ -128,13 +139,50 @@ export function propKit(THREE) {
     },
 
     // ---------- Ngoài trời ----------
-    mailbox() {
+    // hộp thư rỗng ruột, cửa trước (+Z) mở sập xuống, bưu thiếp ló ra; cờ đỏ dựng lên. open = 0 (đóng) … 1 (mở)
+    mailbox({ open = 1, card = 'island' } = {}) {
       const g = group('mailbox');
-      box(0.5, 4, 0.5, '#3b2a1e', 0, 2, 0, 'post', g);
-      const m = M('#1f5a4a', { roughness: 0.5 });
-      box(2, 1.6, 3, m, 0, 4.6, 0, 'box', g);
-      const top = cyl(1, 1, 3, m, 0, 5.4, 0, 'box_top', g, 16); top.rotation.x = Math.PI / 2; top.scale.set(1, 1, 0.8);
-      box(0.15, 1.2, 0.15, '#d9413a', 1.1, 5.4, 0.8, 'flag', g);
+      const wood = M('#5a3b26'), woodD = M('#3b2a1e');
+      box(0.55, 4.2, 0.55, wood, 0, 2.1, -0.4, 'post', g);
+      box(1.4, 0.3, 1.4, woodD, 0, 0.15, -0.4, 'post_foot', g);
+      box(0.4, 0.4, 1.8, wood, 0, 3.6, -0.4, 'post_arm', g);
+      const brace = box(0.3, 1.5, 0.3, woodD, 0, 3.05, 0.2, 'post_brace', g); brace.rotation.x = -0.7;
+      const m = M('#ec8fb4', { roughness: 0.45, metalness: 0.15 }), inner = M('#5c2a3e', { roughness: 0.9, side: THREE.DoubleSide });   // hồng (góp ý 2026-11-11 #8)
+      const metal = M('#c9ccd1', { roughness: 0.35, metalness: 0.7 });
+      // thân: đáy + 2 vách + lưng + vòm nửa trụ (rỗng)
+      box(2, 0.12, 3, m, 0, 3.86, 0, 'box_floor', g);
+      box(1.84, 0.02, 2.9, inner, 0, 3.93, 0, 'box_liner', g);
+      for (const s of [-1, 1]) box(0.1, 1.6, 3, m, s * 0.95, 4.6, 0, 'box_side', g);
+      box(2, 1.6, 0.1, m, 0, 4.6, -1.45, 'box_back', g);
+      const arcG = (r) => new THREE.CylinderGeometry(r, r, 3, 18, 1, true, Math.PI / 2, Math.PI);
+      const shell = mesh(arcG(1), m, 0, 5.4, 0, 'box_top', g); shell.rotation.x = Math.PI / 2;
+      const shellIn = mesh(arcG(0.94), inner, 0, 5.4, 0, 'box_top_in', g); shellIn.rotation.x = Math.PI / 2;
+      const capS = new THREE.Shape(); capS.moveTo(1, 0); capS.absarc(0, 0, 1, 0, Math.PI, false); capS.closePath();
+      const backCap = mesh(new THREE.ShapeGeometry(capS, 12), m, 0, 5.4, -1.5, 'box_backcap', g); backCap.rotation.y = Math.PI;
+      for (const z of [-1.2, 0, 1.2]) { mesh(new THREE.TorusGeometry(1.02, 0.05, 6, 18, Math.PI), metal, 0, 5.4, z, 'box_rib', g); }
+      // cửa trước: bản lề ở mép dưới, mở sập ra ngoài (+Z)
+      const door = group('mailbox_door'); door.position.set(0, 3.82, 1.5); g.add(door);
+      const ds = new THREE.Shape(); ds.moveTo(-1.02, 0); ds.lineTo(1.02, 0); ds.lineTo(1.02, 1.58); ds.absarc(0, 1.58, 1.02, 0, Math.PI, false); ds.lineTo(-1.02, 0);
+      const leaf = mesh(new THREE.ExtrudeGeometry(ds, { depth: 0.1, bevelEnabled: false }), m, 0, 0, 0, 'door_leaf', door);
+      mesh(new THREE.ShapeGeometry(ds, 12), inner, 0, 0, -0.01, 'door_inner', door).rotation.y = Math.PI;
+      box(0.6, 0.18, 0.35, metal, 0, 2.2, 0.25, 'door_handle', door);
+      for (const s of [-1, 1]) box(0.22, 0.12, 0.22, metal, s * 0.75, 0.06, 0.05, 'door_hinge', door);
+      door.rotation.x = open * 1.72;          // mở ~100°: cửa nằm chúc xuống phía trước
+      // số nhà
+      for (const s of [-1, 1]) box(0.02, 0.5, 1.1, '#f4f1ea', s * 1.01, 4.5, 0.3, 'house_number', g);
+      // cờ báo thư (cạnh phải, xoay lên khi có thư)
+      const flag = group('mailbox_flag'); flag.position.set(1.06, 4.4, -0.6); g.add(flag);
+      box(0.1, 1.9, 0.18, '#d9413a', 0, 0.95, 0, 'flag_arm', flag); box(0.1, 0.55, 0.75, '#d9413a', 0, 1.7, 0.3, 'flag_plate', flag);
+      cyl(0.16, 0.16, 0.12, metal, 0, 0, 0, 'flag_pin', flag, 10).rotation.z = Math.PI / 2;
+      flag.rotation.x = -Math.PI / 2 * (1 - open);
+      // thư bên trong: phong bì + bưu thiếp ló ra cửa
+      if (card) {
+        const env1 = box(1.5, 0.05, 2.2, '#f2ead8', -0.05, 4.0, -0.3, 'letter', g); env1.rotation.y = 0.08;
+        const env2 = box(1.4, 0.05, 2.0, '#e8d9b8', 0.1, 4.06, -0.4, 'letter', g); env2.rotation.y = -0.12;
+        box(0.3, 0.06, 0.36, '#d9413a', 0.4, 4.1, -1.0, 'letter_stamp', g);
+        const pc = makePostcard(THREE, card, { w: 1.7 }); pc.name = 'mailbox_card';
+        pc.position.set(0.05, 4.18, 1.55); pc.rotation.set(-1.05, 0.12, -0.06); g.add(pc);
+      }
       return g;
     },
     lighthouse() {

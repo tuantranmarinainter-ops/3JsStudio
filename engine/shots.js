@@ -26,6 +26,7 @@ const EASE = {
 export const ease = (name, k) => (EASE[name] || EASE.smooth)(clamp01(k));
 const isRange = (v) => Array.isArray(v) && v.length === 2 && typeof v[0] === 'number';
 export const val = (v, k, def = 0) => (v === undefined ? def : isRange(v) ? v[0] + (v[1] - v[0]) * k : v);
+import { fxPuffs, fxPrints, fxWind } from './fx.js';
 const lerp3 = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
 // tiến độ cục bộ trong một đoạn con của shot: win = [k0,k1]
 const sub = (k, win) => (win ? clamp01((k - win[0]) / (win[1] - win[0])) : k);
@@ -34,6 +35,63 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
   const { scene, camera } = stage;
   const _v = new THREE.Vector3();
   const tmpObj = new THREE.Object3D();
+  // --- hiệu ứng tự động (bụi/tuyết ở chân nhà, dấu chân, hơi thở, gió): tất định theo pha bước; bật/tắt qua globalThis.__autoFx ---
+  //   window.__autoFx = { foot:true, prints:true, breath:true, wind:true }  (mặc định bật hết; shot có thể ghi shot.wind = 0..1.5 / 0)
+  const AUTO = (globalThis.__autoFx ||= { foot: true, prints: true, breath: true, wind: true });
+  const auto = { puffs: fxPuffs(THREE, { maxEvents: 40 }), prints: fxPrints(THREE), wind: fxWind(THREE), breath: fxPuffs(THREE, { maxEvents: 12, per: 8, seed: 31 }) };
+  for (const f of Object.values(auto)) { f.obj.visible = false; scene.add(f.obj); }
+  const camBasis = { pos: new THREE.Vector3(), fwd: new THREE.Vector3(), right: new THREE.Vector3(), up: new THREE.Vector3() };
+  const GROUND = { hawaii: 'sand', island: 'sand', reef: 'sand', sahara: 'sand', town: 'dirt', brazil: 'grass', forest: 'grass' };
+  const FOOT_PHASE = [0, 0.5, 0.5, 0];          // = PHASE trong house.js (FL, FR, BL, BR)
+  // Các lần bàn chân nhà CHẠM ĐẤT tới thời điểm t của shot (đã trừ những lần chưa tới): [{ t0, at:[x,y,z], yaw, leg }]
+  // Chân i chạm đất khi quãng đường D = (n − PHASE[i]) · 2·STRIDE (house.js: cyc = D / 2·STRIDE, ph = 0 ⇒ bắt đầu chịu tải).
+  function footEvents(shot, k, past = 1) {
+    const sp = shot.house, h = activeHouse;
+    if (!sp || !sp.to || !h || !h.legs) return [];
+    const a = sp.at || [0, 0], b = sp.to, len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (len < 1e-3) return [];
+    const stride2 = 2 * (h.dims?.STRIDE || 7), w = sp.win || [0, 1], w0 = w[0], dw = w[1] - w[0], walk0 = sp.walk0 || 0;
+    const kw = clamp01((k - w0) / dw), dNow = len * kw + walk0, back = walk0 - stride2 * past, out = [];
+    for (const L of h.legs) {
+      const ph = FOOT_PHASE[L.i], nMin = Math.ceil(back / stride2 + ph), nMax = Math.floor(dNow / stride2 + ph + 1e-9);
+      for (let n = nMin; n <= nMax; n++) {
+        const D = (n - ph) * stride2, ke = (D - walk0) / len, kc = clamp01(ke);
+        if (val(sp.legsOut, kc, 1) < 0.9 || val(sp.lift, kc, 1) <= 0.5) continue;
+        const ry = val(sp.ry, kc, 0), cs = Math.cos(ry), sn = Math.sin(ry);
+        const lx = L.hx + L.side * (10 + 3 * val(sp.kneel, kc, 0)), lz = L.hz + L.front * 3.5 + (h.dims?.STRIDE || 7) / 2;
+        const px = a[0] + (b[0] - a[0]) * ke, pz = a[1] + (b[1] - a[1]) * ke;
+        out.push({ t0: shot.t0 + (w0 + ke * dw) * shot.dur, at: [px + lx * cs + lz * sn, sp.y ?? 0, pz - lx * sn + lz * cs], yaw: ry + L.side * 0.5, leg: L.i });
+      }
+    }
+    return out.sort((p, q) => p.t0 - q.t0);
+  }
+  function applyAutoFx(shot, envObj, k, t, night) {
+    for (const f of Object.values(auto)) f.obj.visible = false;
+    camera.updateMatrixWorld(true); camera.getWorldPosition(camBasis.pos); camera.getWorldDirection(camBasis.fwd);
+    camBasis.right.setFromMatrixColumn(camera.matrixWorld, 0).normalize(); camBasis.up.setFromMatrixColumn(camera.matrixWorld, 1).normalize();
+    const gr = envObj.ground || { kind: GROUND[shot.env] || 'dirt' }, snow = gr.kind === 'snow';
+    const light = 1 - 0.22 * night, scale = (stage.renderer?.domElement?.height || 1920) / 2;
+    const steps = footEvents(shot, k, snow ? 3 : 1);
+    if (AUTO.foot && steps.length) auto.puffs.update(t, steps.map((e) => ({ at: [e.at[0], e.at[1], e.at[2]], t0: e.t0, kind: snow ? 'snow' : gr.kind })), { scale, light });
+    if (AUTO.prints && snow && steps.length) auto.prints.update(t, steps, { y: gr.y ?? 0.08, tint: night > 0.5 ? '#5d6c95' : '#9bb0d4' });
+    else if (AUTO.prints && !snow) {   // dấu chân trên cát/đất/cỏ/đường (góp ý 2026-11-11 #6: "đi phải có dấu chân") — giữ ~6 sải gần nhất
+      const pr = footEvents(shot, k, 6);
+      const tint = { sand: '#a3814c', grass: '#2f3b24', dirt: '#3b3129' }[gr.kind] || '#3b3129';
+      if (pr.length) auto.prints.update(t, pr, { y: gr.y ?? 0.14, tint: night > 0.5 ? '#6a5a44' : tint });
+    }
+    if (AUTO.breath && snow) {
+      const ev = [];
+      for (const [name, a] of Object.entries(actors)) {
+        if (!a.root.visible || !shot.cast?.[name]) continue;
+        const per = 1.5, off = (name.length % 3) * 0.37, n = Math.floor((t - off) / per);
+        const head = anchorOf('face:' + name, [0, -0.15, 0]), yaw = headingOf(name);
+        for (const m of [n - 1, n]) ev.push({ at: [head[0] + Math.sin(yaw) * 0.7, head[1], head[2] + Math.cos(yaw) * 0.7], t0: m * per + off, kind: 'breath', dir: [Math.sin(yaw) * 0.8, 0.2, Math.cos(yaw) * 0.8] });
+      }
+      if (ev.length) auto.breath.update(t, ev, { scale, light });
+    }
+    const wind = shot.wind ?? (snow ? (shot.env === 'antarctica' ? 1 : 0.7) : 0);
+    // (vệt gió đã bỏ — gió nay là tuyết rơi trôi ngang trong fxSnow, đọc AUTO.wind)
+  }
 
   function anchorOf(ref, look = [0, 0, 0]) {
     if (Array.isArray(ref)) return [ref[0] + look[0], ref[1] + look[1], ref[2] + look[2]];
@@ -70,10 +128,11 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
       pos = [tgt[0] + Math.sin(yaw) * dist, tgt[1] + h, tgt[2] + Math.cos(yaw) * dist]; look = tgt;
       fov = c.fov2 ? c.fov + (c.fov2 - c.fov) * ke : c.fov || 40;
     }
-    if (c.shake) { const s = c.shake; pos = [pos[0] + Math.sin(t * 23) * s * 0.3, pos[1] + Math.sin(t * 31 + 1) * s * 0.5, pos[2] + Math.cos(t * 19) * s * 0.3]; }
+    if (c.shake) { const s = c.shake; pos = [pos[0] + (Math.sin(t * 9.1) + 0.5 * Math.sin(t * 15.7 + 2)) * s * 0.22, pos[1] + (Math.sin(t * 11.3 + 1) + 0.5 * Math.sin(t * 17.9)) * s * 0.3, pos[2] + Math.cos(t * 8.3) * s * 0.22]; }   // rung tay máy chậm (~1.5–2.8 Hz), không giật
     const roll = val(c.roll, ke, 0);
     stage.setCamera(pos, look, { fov, roll, focusShadow: c.shadow !== false });
     if (c.shadowAt) stage.shadowFocus(anchorOf(c.shadowAt));
+    else if (c.shadow === false) stage.shadowFocus(c.shadowFocus || [0, 0, 0]);   // vùng bóng cố định — không giữ chỗ của shot trước (tất định)
   }
 
   function placeHouse(spec, k, t, night) {
@@ -116,7 +175,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
       const opt = { speed: s.speed, amp: s.amp, from: s.from, mix: s.from ? ease('smooth', clamp01(sub(k, s.mixWin || [0, 0.3]))) : undefined };
       const pose = a.animate(anim, at, opt);
       const want = s.face || pose.face || a._defaultFace;
-      if (want && a.options.face !== want) a.setFace(want);
+      if (want && a.options.face !== want) { a.setFace(want); a.animate(anim, at, opt); }   // đổi mặt xong dựng lại pose → hướng mắt không phụ thuộc shot trước (tất định)
       if (s.pose) applyExtra(a, s.pose, ke);
       // vật cầm tay
       for (const side of ['holdR', 'holdL', 'hold']) if (s[side]) holdProp(a, s[side], side);
@@ -185,6 +244,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     placeCamera(shot.cam || { at: 'house', dist: 90, h: 10 }, k, t);
     ctx.focus = [camera.position.x, Math.max(0, camera.position.y - 20), camera.position.z];
     envs.use(shot.env, t, ctx);
+    applyAutoFx(shot, envObj, k, t, night);
   }
 
   return { render, anchorOf, get house() { return activeHouse; } };

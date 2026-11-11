@@ -1,6 +1,6 @@
 // house.js — Ngôi nhà biết đi: thân nhà dựng bằng code + 4 chân gỗ (IK 2 đoạn, dáng đi chéo, chân neo đất).
 //
-//   const house = createHouse(THREE, { style: 'family' });   // 'family' (đỏ, mái ngọc) | 'illustration' (sáng, mái xanh)
+//   const house = createHouse(THREE, { style: 'family' });   // 'family' (đỏ, mái ngọc) | 'illustration' (sáng, mái đỏ)
 //   scene.add(house.root);
 //   house.root.position.set(x, 0, z); house.root.rotation.y = heading;   // vị trí do shot quyết định
 //   house.pose({ legsOut: 1, lift: 1, walk: d, shake: 0, pitch: 0, roll: 0 });
@@ -14,12 +14,12 @@
 
 export const HOUSE_STYLES = {
   family: {
-    wall: '#b23a32', plank: '#8f2a25', trim: '#f4f1ea', roof: '#2bb3a3', roofDark: '#1f8d80',
+    wall: '#b23a32', plank: '#8f2a25', trim: '#f4f1ea', roof: '#d92b22', roofDark: '#9e1c16',   // mái ĐỎ (người dùng chốt: khác mái xanh của xóm)
     door: '#7a4424', doorTrim: '#f4f1ea', accent: '#f2c14e', base: '#8c8c94', glass: '#2b3b55',
     porch: '#c9b79c', chimney: '#8f4a3a',
   },
   illustration: {
-    wall: '#cdeee6', plank: '#a9d8cd', trim: '#ffffff', roof: '#2e3d63', roofDark: '#222d4a',
+    wall: '#cdeee6', plank: '#a9d8cd', trim: '#ffffff', roof: '#d92b22', roofDark: '#9e1c16',   // mái ĐỎ như bản family (người dùng chốt 2026-11-11: mọi khung mái đỏ)
     door: '#8a4b2a', doorTrim: '#ffffff', accent: '#f2c14e', base: '#9aa0a8', glass: '#2b3b55',
     porch: '#e8e2d6', chimney: '#7d7d86',
   },
@@ -30,8 +30,8 @@ const L1 = 17, L2 = 19;                         // đùi, ống chân
 const STAND = 19;                               // cao độ sàn khi đứng
 const STRIDE = 7;                               // nửa chu kỳ bước
 const HIPS = [                                  // [x, z] cục bộ thân; thứ tự FL, FR, BL, BR (trái = +X)
-  [W / 2 - 2.5, D / 2 - 2.5], [-(W / 2 - 2.5), D / 2 - 2.5],
-  [W / 2 - 2.5, -(D / 2 - 2.5)], [-(W / 2 - 2.5), -(D / 2 - 2.5)],
+  [W / 2 - 1.4, D / 2 - 1.8], [-(W / 2 - 1.4), D / 2 - 1.8],
+  [W / 2 - 1.4, -(D / 2 - 1.8)], [-(W / 2 - 1.4), -(D / 2 - 1.8)],
 ];
 const PHASE = [0, 0.5, 0.5, 0];                 // cặp chéo FL+BR, FR+BL
 
@@ -216,9 +216,10 @@ export function createHouse(THREE, opts = {}) {
     const l1 = L1 * (0.12 + 0.88 * smooth(k)), l2 = L2 * (0.12 + 0.88 * smooth(k));
     for (const L of legs) {
       L.g.visible = legsOut > 0.001;
-      H.set(L.hx, -BASE + 0.8, L.hz).applyMatrix4(body.matrix);
+      H.set(L.hx, -BASE + 0.4, L.hz).applyMatrix4(body.matrix);
       // chỗ đặt chân trên đất (dang ra ngoài + ra trước/sau)
-      const spread = 10 + 3 * kneel;
+      // nhà càng thấp (lift→0) bàn chân càng dang xa → đùi đi ngang dưới đáy tầng hầm, gối nằm NGOÀI tường (không xuyên thân)
+      const spread = 10 + 3 * kneel + 18 * (1 - smooth(lift));
       let fx = L.hx + L.side * spread, fz = L.hz + L.front * 3.5, fy = 0;
       if (walking && lift > 0.5) {
         const ph = ((cyc + PHASE[L.i]) % 1 + 1) % 1;
@@ -236,7 +237,7 @@ export function createHouse(THREE, opts = {}) {
       if (dl < minL) dl = minL;
       dir.normalize();
       const a = (l1 * l1 - l2 * l2 + dl * dl) / (2 * dl), h = Math.sqrt(Math.max(0, l1 * l1 - a * a));
-      pole.set(L.side, 1.1, L.front * 0.3).normalize();
+      pole.set(L.side, 0.45, L.front * 0.35).normalize();
       pole.addScaledVector(dir, -pole.dot(dir)).normalize();
       K.copy(H).addScaledVector(dir, a).addScaledVector(pole, h);
       orient(L.thigh, H, K); orient(L.shin, K, F);

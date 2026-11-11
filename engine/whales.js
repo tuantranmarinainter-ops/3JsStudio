@@ -29,7 +29,7 @@ export const WHALE_PLAN = {
 export function createOceanLife(THREE, A, { seaY = 11, plan = WHALE_PLAN } = {}) {
   const group = new THREE.Group(); group.name = 'ocean_life';
   const ID = 'sea/sperm_whale';
-  if (!A || !A.has(ID)) return { group, update() {} };
+  if (!A || !A.has(ID)) return { group, update() {}, snapshot() {}, unsnap() {} };
   const M = A.manifest()?.byId.get(ID) || {};
   const k = M.scale_to_m || 0.98, wy = M.water_y_native || 4.283, S = plan.S;
 
@@ -146,11 +146,43 @@ export function createOceanLife(THREE, A, { seaY = 11, plan = WHALE_PLAN } = {})
   }
   // vẻ ướt: lên khỏi mặt nước thì bóng hơn (roughness thấp, ánh nhẹ), chìm thì mờ; hàm thuần của vị trí rig
   const wet = (w, aboveM) => { const k2 = smooth(-1.5, 1.5, aboveM); w.mat.roughness = 0.62 - 0.34 * k2; w.mat.emissive.setRGB(0.05 * k2, 0.07 * k2, 0.09 * k2); };
+  // --- CHỈ cho ảnh bưu thiếp (engine/snap.js): 1 con nổi lên thở + cột nước phun ở lỗ thở ---
+  // Cột phun: các cụm bụi nước trắng xếp hình phễu nghiêng về trước-trái (kiểu cá nhà táng), toạ độ rig = mét.
+  // Ẩn mặc định; snapshot() bật, unsnap() tắt. update(t) mỗi khung đặt lại vị trí/pose cá → shot biển không đổi.
+  const spout = new THREE.Group(); spout.name = 'whale_spout'; spout.visible = false;
+  {
+    const hs = (i, k) => { const x = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return x - Math.floor(x); };
+    const geo = new THREE.IcosahedronGeometry(1, 2);
+    const mist = new THREE.MeshLambertMaterial({ color: '#ffffff', emissive: '#c8d6e2', transparent: true, opacity: 0.55, depthWrite: false, name: 'whale_spout_mist' });
+    const core = new THREE.MeshLambertMaterial({ color: '#ffffff', emissive: '#dde8f0', transparent: true, opacity: 0.85, depthWrite: false, name: 'whale_spout_core' });
+    const N = 260;
+    for (let i = 0; i < N; i++) {
+      const h = Math.pow(i / (N - 1), 0.9);                       // 0 = lỗ thở, 1 = đỉnh cột
+      const spread = 0.2 + h * h * 1.8, a = hs(i, 1) * Math.PI * 2, r = spread * Math.sqrt(hs(i, 2));
+      const m = new THREE.Mesh(geo, h < 0.5 ? core : mist);
+      m.position.set(Math.cos(a) * r - h * 0.9, h * 6.5 + (hs(i, 3) - 0.5) * 0.4, Math.sin(a) * r + h * 1.5);   // nghiêng về trước
+      m.scale.setScalar(0.18 + h * 0.5 + hs(i, 4) * 0.18);
+      m.renderOrder = 4; spout.add(m);
+    }
+  }
+  w1.rig.add(spout);
+  const hidden = [];
+  // snapshot({ at:[x,z], heading, lift (m), clip giây BREATHE, spout:[x,y,z] trong rig (m) })
+  function snapshot({ at = [0, 0], heading = 0, lift = 1.2, breathe = 0.8, clips = null, spoutAt = [0, 2.6, 6.2], spoutScale = 1 } = {}) {
+    for (const w of [w2, wj]) { hidden.push([w.rig, w.rig.visible]); w.rig.visible = false; }
+    hidden.push([splash.object, splash.object.visible]); splash.object.visible = false;
+    w1.rig.position.set(at[0], seaY + lift * S, at[1]); w1.rig.rotation.y = heading;
+    w1.pose(clips || [['BREATHE', breathe, 1]]);
+    wet(w1, 2);
+    spout.position.set(...spoutAt); spout.scale.setScalar(spoutScale); spout.visible = true;
+    w1.rig.updateMatrixWorld(true);
+  }
+  function unsnap() { spout.visible = false; while (hidden.length) { const [o, v] = hidden.pop(); o.visible = v; } }
   const _update = update;
   function update2(t, camera, renderer) {
     _update(t, camera, renderer);
     wet(w1, (w1.rig.position.y - seaY) / S); wet(w2, (w2.rig.position.y - seaY) / S);
     const tc = (t - J.t0) * J.speed; wet(wj, tc > 0 && tc < jumpDur ? 2 : -2);
   }
-  return { group, update: update2, events, whales: { circler: w1, far: w2, jumper: wj }, splash };
+  return { group, update: update2, events, whales: { circler: w1, far: w2, jumper: wj }, splash, snapshot, unsnap };
 }

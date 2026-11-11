@@ -6,6 +6,30 @@ import { fxSnow, fxRain, lightning, fxBolt } from './fx.js';
 import { createWater } from './water.js';
 import { createOceanLife, OCEAN_LIFE_ASSETS } from './whales.js';
 import { townLife } from './townlife.js';
+import { createSummit, createRange } from './peaks.js';
+import { createCloudSea, createCloudPuffs } from './clouds.js';
+import { pyramid, camel, jungleGiant, bigLeaves } from './env_desert.js';
+import { snowRanges } from './snowpeaks.js';
+import { createCliff, naturalRock, coralRock } from './cliff.js';
+import { createCrabs, createBeachGrass } from './crabs.js';
+import { createCamp } from './castaway.js';
+import { smoothFlash } from './flash.js';
+import TOWN_ENV from './envs/town.js';
+import FOREST_ENV from './envs/forest.js';
+import HAWAII_ENV from './envs/hawaii.js';
+import BRAZIL_ENV from './envs/brazil.js';
+import SAHARA_ENV from './envs/sahara.js';
+import ANTARCTICA_ENV from './envs/antarctica.js';
+import OCEAN_ENV from './envs/ocean.js';
+import MOUNTAIN_ENV from './envs/mountain.js';
+import SNOWNIGHT_ENV from './envs/snowNight.js';
+import ICESEA_ENV from './envs/iceSea.js';
+import STORM_ENV from './envs/storm.js';
+import SHIPSTORM_ENV from './envs/shipStorm.js';
+import ISLAND_ENV from './envs/island.js';
+import REEF_ENV from './envs/reef.js';
+import KITCHEN_ENV from './envs/kitchen.js';
+import BEDROOM_ENV from './envs/bedroom.js';
 
 export const LIGHTS = {
   day:      { top: '#3f9fe6', bottom: '#cdeeff', fog: '#cfeaff', fogR: [160, 700], hemi: ['#ffffff', '#7a9a66', 1.15], sun: ['#fff3dc', 2.6], dir: [0.5, 1, 0.6], exposure: 1.0, night: 0 },
@@ -25,6 +49,7 @@ const hash = (i, s) => { let x = Math.imul(i ^ 0x9e3779b9, 0x85ebca6b) ^ Math.im
 
 // Asset Kenney dùng trong env (index.html gọi A.load(ENV_ASSETS) trước khi createEnvs).
 export const ENV_ASSETS = [
+  'nature-kit/plant_bushLargeTriangle', 'nature-kit/plant_bushTriangle', 'nature-kit/grass_leafsLarge', 'nature-kit/plant_flatTall', 'nature-kit/hanging_moss', 'nature-kit/mushroom_redGroup', 'nature-kit/rock_smallA', 'nature-kit/rock_smallFlatA', 'nature-kit/stone_tallA', 'nature-kit/stone_tallB',
   ...'abcdefghijklmnopqrstu'.split('').map((c) => `city-kit-suburban/building-type-${c}`),
   'city-kit-suburban/tree-large', 'city-kit-suburban/tree-small', 'city-kit-suburban/fence-1x4', 'city-kit-suburban/planter',
   'city-kit-roads/light-square', 'city-kit-roads/light-curved',
@@ -134,182 +159,6 @@ export function createEnvs(THREE, stage, K0, A = null) {
   const nbWins = [];
 
   // ---------- THỊ TRẤN ĐÊM (dùng cả ban ngày) ----------
-  def('town', 'night', (g) => {
-    g.add(plane(900, 900, mat('#5f9d4e'), 0, 'lawn'));
-    const road = plane(900, 18, mat('#3d4049', { roughness: 0.9 }), 0.05, 'road'); road.position.z = 36; g.add(road);
-    for (const z of [26, 46]) { const sw = plane(900, 3, mat('#b9b6ad'), 0.08, 'sidewalk'); sw.position.z = z; g.add(sw); }
-    for (let i = -40; i < 40; i++) { const s = plane(5, 0.5, mat('#f4f1e1'), 0.1, 'stripe'); s.position.set(i * 11, 0.1, 36); g.add(s); }
-    for (const x of [-60, 70]) for (let i = 0; i < 7; i++) { const s = plane(1.4, 14, mat('#f4f1e1'), 0.1, 'crosswalk'); s.position.set(x + i * 2.6, 0.11, 36); g.add(s); }
-    const dirt = plane(36, 30, mat('#5a4330'), 0.06, 'dirt_lot'); dirt.name = 'dirt_lot'; dirt.visible = false; g.add(dirt);
-    const hole = plane(26, 20, mat('#2e2219'), 0.07, 'lot_hole'); hole.visible = false; g.add(hole);
-    const cols = [['#e3d5b8', '#5b6f8f'], ['#9fc5e8', '#3b4a6b'], ['#f2c6a0', '#7a3b2e'], ['#c8e0b0', '#4a5a3a'], ['#f4f1ea', '#2f6f6a'], ['#e8b4b8', '#5b3b4b']];
-    let k = 0;
-    for (const x of [-120, -62, 62, 120, 178, -178, 236, -236]) { const [c, r] = cols[k++ % cols.length]; const kh = kenneyHouse(k * 3); if (kh) place(g, kh, x, 0, 0, 0); else { const h = place(g, nbHouse(c, r, k), x, 0, 0, 0, 1.1); nbWins.push(h.userData.win); } }
-    for (const x of [-150, -90, -30, 30, 90, 150, 210, -210]) { const [c, r] = cols[k++ % cols.length]; const kh = kenneyHouse(k * 3 + 1); if (kh) place(g, kh, x, 0, 125, Math.PI); else { const h = place(g, nbHouse(c, r, k), x, 0, 125, Math.PI, 1.1); nbWins.push(h.userData.win); } }
-    // --- dãy nhà phía sau (2 hàng sau nhà gia đình, 1 hàng sau dãy bên kia đường) → thị trấn dày, có chiều sâu ---
-    for (const [z, ry, x0, step, sd] of [[-68, 0, -286, 52, 50], [-136, 0, -260, 52, 80], [190, Math.PI, -264, 54, 110]])
-      for (let i = 0, x = x0; x <= -x0; i++, x += step) {
-        const kh = pickFit('abcdefghijklmnopqrstu'.split('').map((c) => `city-kit-suburban/building-type-${c}`), sd + i * 5, 26 + hash(i, sd) * 6, { axis: 'xz' });
-        if (kh) place(g, kh, x + (hash(i, sd + 1) - 0.5) * 8, 0, z + (hash(i, sd + 2) - 0.5) * 6, ry + (hash(i, sd + 3) - 0.5) * 0.16);
-        if (hash(i, sd + 4) < 0.6) place(g, K.roundTree(9 + hash(i, sd + 5) * 5), x + step / 2, 0, z + (ry ? -8 : 10));
-      }
-    // --- lối xe + xe đậu ở khe giữa các nhà; xe chạy + người đi bộ ban ngày (engine/townlife.js) ---
-    const parked = [];
-    for (const x of [-207, -149, -91, 91, 149, 207]) parked.push([x + (hash(x, 1) - 0.5) * 3, 10, Math.PI * (hash(x, 2) < 0.5 ? 0 : 1)]);
-    for (const x of [-240, -180, -120, -60, 0, 60, 120, 180, 240]) if (!(x === 60)) parked.push([x + (hash(x, 3) - 0.5) * 3, 104, Math.PI * (hash(x, 4) < 0.5 ? 0 : 1)]);
-    for (const [x, z] of parked) { const dw = plane(9, 18, mat('#8d8a82'), 0.07, 'driveway'); dw.position.set(x, 0.07, z + (z < 50 ? 6 : -6)); g.add(dw); }
-    const life = townLife(THREE, K, { parked }); g.add(life.group);
-    for (let i = -10; i <= 10; i++) { place(g, K.streetLamp(), i * 40 + 12, 0, 27.5, Math.PI / 2); place(g, K.roundTree(10 + hash(i, 7) * 4, ['#3f8f3f', '#4caf50', '#2e7d32'][(i + 30) % 3]), i * 40 - 6, 0, 22 - hash(i, 3) * 6); }
-    for (const x of [-26, 26]) place(g, K.fence(16), x, 0, 22);
-    place(g, K.bush(2.5), -18, 0, 16); place(g, K.bush(2.2), 19, 0, 17);
-    for (let i = 0; i < 24; i++) { const f = pickFit(['nature-kit/flower_redA', 'nature-kit/flower_yellowB', 'nature-kit/flower_purpleA'], i, 1.2); if (f) place(g, f, -24 + (i % 12) * 4.2 + hash(i, 2), 0, 18 + Math.floor(i / 12) * 2.5, hash(i, 3) * 6); }
-    const moon = place(g, K.moon(34), -170, 170, -420); moon.name = 'moon_town';
-    return { setNight(n) { nbWins.forEach((w) => { w.emissiveIntensity = n * 1.4; }); moon.visible = n > 0.5; }, dirt, hole,
-      update(t, ctx) { const L = LIGHTS[ctx.light || 'night']; life.update(t, !L.night); } };
-  });
-
-  // ---------- RỪNG ----------
-  def('forest', 'night', (g) => {
-    g.add(plane(900, 900, mat('#2f5a33'), 0, 'forest_floor'));
-    const path = plane(900, 16, mat('#6b5a3c'), 0.05, 'path'); g.add(path);
-    for (let i = 0; i < 160; i++) { const x = (hash(i, 1) - 0.5) * 600, z = (hash(i, 2) - 0.5) * 300; if (Math.abs(z) < 16) continue; place(g, K.pine(14 + hash(i, 3) * 14), x, 0, z, hash(i, 4) * 6); }
-  });
-
-  // ---------- HAWAII (bãi biển) ----------
-  def('hawaii', 'beach', (g, e) => {
-    const sand = plane(900, 260, mat('#f1d79a'), 0, 'sand'); sand.position.z = -60; g.add(sand);
-    e.sea = makeSea(g, { preset: 'tropical', y: 0.4, amp: 0.6, size: 1400, center: [0, -380], shore: { line: [0, 1, 62, 5] } }); g.children[g.children.length - 1].position.z = 380;
-    for (let i = 0; i < 14; i++) place(g, K.palm(14 + hash(i, 5) * 8, 0.2 + hash(i, 6) * 0.2), -120 + i * 18 + hash(i, 1) * 8, 0, -30 - hash(i, 2) * 50, hash(i, 3) * 6);
-    for (let i = 0; i < 6; i++) place(g, K.rock(2 + hash(i, 9) * 2, '#9a8a7a', i), -60 + i * 25, 0, 40 + hash(i, 4) * 10);
-    place(g, K.cloud(2.2), -80, 90, -260); place(g, K.cloud(1.8), 90, 110, -300);
-    return { update(t) { e.sea(t); } };
-  });
-
-  // ---------- BRAZIL (rừng rậm) ----------
-  def('brazil', 'day', (g) => {
-    g.add(plane(900, 900, mat('#4f8f3a'), 0, 'jungle_floor'));
-    g.add(plane(14, 200, mat('#7a5a3a'), 0.05, 'jungle_path'));
-    for (let i = 0; i < 120; i++) { const x = (hash(i, 1) - 0.5) * 300, z = (hash(i, 2) - 0.5) * 300; if (Math.hypot(x, z) < 34 || (z > 0 && Math.abs(x) < 70)) continue; place(g, K.jungleTree(16 + hash(i, 3) * 16), x, 0, z, hash(i, 4) * 6); }
-    for (let i = 0; i < 60; i++) { const x = (hash(i, 5) - 0.5) * 200, z = (hash(i, 6) - 0.5) * 200; if (Math.hypot(x, z) < 26 || (z > 10 && Math.abs(x) < 50)) continue; place(g, K.bush(2 + hash(i, 7) * 2, ['#2e8b3c', '#3c9a46', '#56b04a'][i % 3]), x, 0, z); }
-    for (let i = 0; i < 4; i++) { const b = K.box(1.2, 0.6, 1.8, '#d9413a', 0, 0, 0, 'bird', g); b.position.set(-20 + i * 9, 28 + i * 3, -10); }
-  });
-
-  // ---------- SAHARA ----------
-  def('sahara', 'desert', (g) => {
-    g.add(bumpy(900, 900, 80, '#e7b86a', 10, 1.7, 'dunes', 0.025));
-    for (let i = 0; i < 4; i++) place(g, K.rock(1.5, '#c08a52', i + 20), -30 + i * 20, 0, 30 + i * 4);
-    for (let i = 0; i < 9; i++) { const c = pickFit(['nature-kit/cactus_tall', 'nature-kit/cactus_short'], i, 6 + hash(i, 1) * 5); if (c) place(g, c, (hash(i, 2) - 0.5) * 220, 0, -40 - hash(i, 3) * 120 + (i % 2) * 90, hash(i, 4) * 6); }
-  });
-
-  // ---------- NAM CỰC ----------
-  def('antarctica', 'snow', (g, e) => {
-    g.add(bumpy(900, 900, 70, '#f3f8fb', 6, 0.4, 'snowfield', 0.03));
-    for (let i = 0; i < 10; i++) place(g, K.iceberg(40 + hash(i, 1) * 50, i % 2 ? '#e8f3f9' : '#d8eaf3'), -300 + i * 70, 0, -200 - hash(i, 2) * 120, hash(i, 3) * 6);
-    e.mailbox = place(g, pf('curbside-mailbox-0e0736', 1.6) || K.mailbox(), 11, 0, 31, 0);
-    e.penguins = [0, 1, 2, 3].map((i) => place(g, pf('penguin-base', 1.7) || K.penguin(), 0, 0, 0, 0, 1));
-    for (let i = 0; i < 14; i++) { const o = pf(['boulder-field-cluster-08e364', 'rock-outcrop-158ac3', 'dwarf-pine-mat-faee77'][i % 3], 1.4 + hash(i, 9)); if (o) place(g, o, (hash(i, 1) - 0.5) * 220, 0, -30 - hash(i, 2) * 120 + (i % 3 === 0 ? 100 : 0), hash(i, 3) * 6); }
-    e.snow = fxSnow(THREE, { count: 900, area: [120, 60, 120], speed: 3, size: 0.45, wind: [3, 0] }); g.add(e.snow.obj);
-    return { update(t, ctx) { e.snow.update(t, ctx.focus || [0, 0, 0]); e.penguins.forEach((p, i) => { const x = -22 + ((t * 2.2 + i * 5) % 60); p.position.set(x, 0, 38 + (i % 2) * 3); p.rotation.y = Math.PI / 2; if (p.userData.pf) { p.rotation.z = Math.sin((t + i * 0.3) * 7) * 0.12; p.position.y = Math.abs(Math.sin((t + i * 0.3) * 7)) * 0.15; } else K.waddle(p, t + i * 0.3); }); } };
-  });
-
-  // ---------- ĐẠI DƯƠNG (nhà ngập nước) ----------
-  def('ocean', 'ocean', (g, e) => {
-    e.sea = makeSea(g, { preset: 'deep', y: 11, amp: 0.6, size: 1600 });
-    g.add(plane(900, 900, mat('#0e5f86'), -10, 'seabed'));
-    // cá voi GLB (nổi lên, bơi vòng quanh chân nhà, 1 cú nhảy + nước văng); thiếu asset → về cá voi khối cũ
-    e.life = A && A.has('sea/sperm_whale') ? createOceanLife(THREE, A, { seaY: 11 }) : null;
-    if (e.life) g.add(e.life.group);
-    else e.whales = [0, 1, 2].map(() => place(g, K.whale(), 0, 0, 0, 0, 1));
-    place(g, K.cloud(2.5), -120, 120, -300); place(g, K.cloud(2), 150, 100, -350);
-    return { update(t) { e.sea(t);
-      if (e.life) e.life.update(t, stage.camera, stage.renderer);
-      else e.whales.forEach((w, i) => { const a = t * 0.18 + i * 2.1, r = 30 + i * 9; w.position.set(Math.cos(a) * r, 7 + Math.sin(t * 0.9 + i) * 0.6, Math.sin(a) * r); w.rotation.y = -a; K.swim(w, t, i); }); } };
-  });
-
-  // ---------- ĐỈNH NÚI TRÊN MÂY ----------
-  def('mountain', 'sky', (g, e) => {
-    const peak = new THREE.Mesh(new THREE.ConeGeometry(70, 120, 9, 3), mat('#7d7069', { flatShading: true })); peak.position.y = -62; peak.name = 'peak'; peak.receiveShadow = true; g.add(peak);
-    const top = new THREE.Mesh(new THREE.CylinderGeometry(26, 34, 6, 9), mat('#8a7d74', { flatShading: true })); top.position.y = -3; top.name = 'peak_top'; top.receiveShadow = true; g.add(top);
-    const cap = new THREE.Mesh(new THREE.CylinderGeometry(27, 29, 1.2, 9), mat('#f4f8fb', { flatShading: true })); cap.position.y = 0.2; cap.name = 'snow_cap'; cap.receiveShadow = true; g.add(cap);
-    for (let i = 0; i < 10; i++) place(g, K.rock(3 + hash(i, 1) * 4, '#6b5f58', i + 40), Math.cos(i) * (24 + hash(i, 2) * 6), -2, Math.sin(i) * (24 + hash(i, 3) * 6));
-    for (let i = 0; i < 70; i++) { const a = hash(i, 4) * Math.PI * 2, r = 40 + hash(i, 5) * 360; place(g, K.cloud(2.5 + hash(i, 6) * 2.5), Math.cos(a) * r, -18 - hash(i, 7) * 14, Math.sin(a) * r, hash(i, 8) * 6); }
-    for (let i = 0; i < 5; i++) place(g, K.iceberg(120, '#a8a6b0'), Math.cos(i * 1.3) * 420, -90, Math.sin(i * 1.3) * 420 - 100);
-  });
-
-  // ---------- NÚI TUYẾT ĐÊM (bắt đầu chương 10) ----------
-  def('snowNight', 'snowNight', (g, e) => {
-    g.add(bumpy(900, 900, 70, '#dfe8f5', 8, 2.2, 'snow_night', 0.03));
-    for (let i = 0; i < 8; i++) place(g, K.iceberg(60 + hash(i, 1) * 60, '#c9d6ec'), -300 + i * 80, 0, -220 - hash(i, 2) * 100);
-    for (let i = 0; i < 30; i++) place(g, pf(['snow-laden-spruce-36716e', 'snow-laden-spruce-36716e', 'windblown-larch-abb99c', 'bare-mountain-rowan-10e72e'][i % 4], 1.1 + hash(i, 4) * 0.8) || K.pine(12 + hash(i, 4) * 10, true), (hash(i, 5) - 0.5) * 300, 0, -60 - hash(i, 6) * 120, hash(i, 7) * 6);
-    e.moon = place(g, K.moon(26), -120, 160, -500);
-    e.snow = fxSnow(THREE, { count: 700, area: [120, 60, 120], speed: 2.5, size: 0.4 }); g.add(e.snow.obj);
-    return { update(t, ctx) { e.snow.update(t, ctx.focus || [0, 0, 0]); } };
-  });
-
-  // ---------- BIỂN BĂNG (đêm) ----------
-  def('iceSea', 'snowNight', (g, e) => {
-    e.sea = makeSea(g, { preset: 'night', y: -0.3, amp: 0.2, size: 1400, name: 'dark_water' });
-    for (let i = 0; i < 160; i++) { const x = (hash(i, 1) - 0.5) * 500, z = (hash(i, 2) - 0.5) * 500; const r = 6 + hash(i, 3) * 12;
-      const fl = new THREE.Mesh(new THREE.CylinderGeometry(r, r * 1.05, 0.8, 6), mat(i % 3 ? '#e8eef8' : '#cfdaee', { flatShading: true })); fl.position.set(x, 0, z); fl.rotation.y = hash(i, 4) * 3; fl.receiveShadow = true; fl.name = 'ice_floe'; g.add(fl); }
-    const sheet = plane(70, 70, mat('#eef3fb'), 0.35, 'ice_sheet'); g.add(sheet);
-    e.moon = place(g, K.moon(30), 140, 170, -520);
-    return { update(t) { e.sea(t); } };
-  });
-
-  // ---------- BÃO (biển đêm, mưa, chớp) ----------
-  def('storm', 'storm', (g, e) => {
-    e.sea = makeSea(g, { preset: 'storm', y: 2, amp: 2.4, size: 1600 });
-    e.rain = fxRain(THREE, { count: 2200 }); g.add(e.rain.obj);
-    e.bolt = fxBolt(THREE); e.bolt.position.set(-40, 20, -140); e.bolt.scale.setScalar(2); g.add(e.bolt);
-    return { update(t, ctx) { e.sea(t * 1.6, 2.4); e.rain.update(t, ctx.focus || [0, 0, 0]); const f = lightning(t); e.bolt.visible = f > 0.5; ctx.flash = f; } };
-  });
-
-  // ---------- BOONG TÀU TRONG BÃO (hồi tưởng) ----------
-  def('shipStorm', 'storm', (g, e) => {
-    e.sea = makeSea(g, { preset: 'storm', y: -1, amp: 2.2, size: 1600 });
-    e.ship = place(g, K.ship(), 0, 0, 0, 0, 1);
-    e.rain = fxRain(THREE, { count: 1600, area: [70, 50, 70] }); g.add(e.rain.obj);
-    e.bolt = fxBolt(THREE, { seed: 9 }); e.bolt.position.set(30, 25, -120); e.bolt.scale.setScalar(1.8); g.add(e.bolt);
-    return { update(t, ctx) { e.sea(t * 1.5, 2.2); e.rain.update(t, ctx.focus || [0, 0, 0]); e.ship.rotation.z = Math.sin(t * 1.1) * 0.12; e.ship.rotation.x = Math.sin(t * 0.8) * 0.06; e.ship.position.y = Math.sin(t * 1.3) * 0.8; const f = lightning(t, { every: 2.4, seed: 8 }); e.bolt.visible = f > 0.5; ctx.flash = f; } };
-  });
-
-  // ---------- ĐẢO HẢI ĐĂNG ----------
-  def('island', 'beach', (g, e) => {
-    e.sea = makeSea(g, { preset: 'tropical', y: -0.6, amp: 0.4, size: 1600, shore: { circle: [0, 0, 70.6, 5] } });
-    const isl = new THREE.Mesh(new THREE.CylinderGeometry(70, 82, 6, 28), mat('#f2d89a')); isl.position.y = -3; isl.receiveShadow = true; isl.name = 'island_sand'; g.add(isl);
-    const grass = new THREE.Mesh(new THREE.CylinderGeometry(30, 34, 1.2, 20), mat('#6cbf58')); grass.position.set(-30, 0.1, -30); grass.receiveShadow = true; g.add(grass);
-    // mỏm đá + hải đăng
-    e.cliff = new THREE.Group(); e.cliff.name = 'cliff'; e.cliff.position.set(60, 0, -50); g.add(e.cliff);
-    for (let i = 0; i < 9; i++) { const r = K.rock(6 + hash(i, 1) * 5, i % 2 ? '#6b5444' : '#7d6452', i + 60); r.position.set((hash(i, 2) - 0.5) * 18, hash(i, 3) * 4, (hash(i, 4) - 0.5) * 18); e.cliff.add(r); }
-    const plinth = new THREE.Mesh(new THREE.CylinderGeometry(9, 12, 8, 10), mat('#6b5444', { flatShading: true })); plinth.position.y = 4; plinth.castShadow = plinth.receiveShadow = true; e.cliff.add(plinth);
-    const pfl = pf('old-lighthouse-48ca6c', 0.8, (h) => (h.s > 0.35 && (h.h < 0.06 || h.h > 0.94) ? '#2f8f6b' : (h.l > 0.75 && h.s > 0.2 ? '#f4f4ef' : null)));
-    if (pfl) { plinth.scale.set(1.3, 0.6, 1.3); plinth.position.y = 2.4; }
-    e.lighthouse = pfl || K.lighthouse(); e.lighthouse.position.y = pfl ? 4.6 : 8; e.cliff.add(e.lighthouse);
-    e.seat = new THREE.Vector3(44, 2.4, -28);   // chỗ cha ngồi (mỏm đá dưới chân hải đăng)
-    place(g, K.rock(2.6, '#7d6452', 77), 44, -0.9, -28.6);
-    for (let i = 0; i < 26; i++) { const a = hash(i, 5) * Math.PI * 2, r = 30 + hash(i, 6) * 32, px = Math.cos(a) * r - 10, pz = Math.sin(a) * r - 20;
-      if (Math.hypot(px + 10, pz) < 36 || Math.hypot(px - 40, pz + 22) < 22 || Math.hypot(px - 60, pz + 50) < 16 || (px > -10 && pz > -30 && px < 50)) continue; place(g, K.palm(13 + hash(i, 7) * 8, 0.2 + hash(i, 8) * 0.25), px, 0, pz, hash(i, 9) * 6); }
-    for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; place(g, K.rock(2 + hash(i, 10) * 2, '#8a7a6a', i + 80), Math.cos(a) * 76, -1, Math.sin(a) * 76); }
-    place(g, K.cloud(2.4), -100, 110, -320); place(g, K.cloud(2), 120, 130, -380);
-    // chi tiết bãi biển Polyfork: gỗ trôi, cỏ biển, vỏ sò, bụi, thuyền chèo, mòng biển
-    for (let i = 0; i < 40; i++) { const a = hash(i, 21) * Math.PI * 2, r = 20 + hash(i, 22) * 52, x = Math.cos(a) * r - 10, z = Math.sin(a) * r - 20;
-      if (Math.hypot(x + 10, z) < 30 || Math.hypot(x - 42, z + 26) < 9) continue;
-      const o = pf(['marram-grass-tuft-8c7a99', 'marram-grass-tuft-8c7a99', 'shell-scatter-6d36b7', 'tamarisk-bush-ba4337', 'driftwood-log-89a68f'][i % 5], 1 + hash(i, 23) * 0.5); if (o) place(g, o, x, 0, z, hash(i, 24) * 6); }
-    const dinghy = pf('rowing-dinghy-022673', 1.1); if (dinghy) place(g, dinghy, -40, 0, 62, 0.8);
-    e.gulls = [0, 1, 2].map((i) => { const o = pf('herring-gull-55c3da', 1.3); return o ? place(g, o, 0, 0, 0) : null; }).filter(Boolean);
-    return { update(t) { e.sea(t); e.gulls.forEach((gl, i) => { const a = t * 0.35 + i * 2.1; gl.position.set(30 + Math.cos(a) * (18 + i * 6), 26 + i * 4 + Math.sin(t * 1.3 + i) * 1.2, -20 + Math.sin(a) * (14 + i * 5)); gl.rotation.y = -a; }); } };
-  });
-
-  // ---------- BÃI ĐÁ NGẦM + XÁC TÀU ----------
-  def('reef', 'beach', (g, e) => {
-    const reefSpots = Array.from({ length: 12 }, (_, i) => [(hash(i, 2) - 0.5) * 70, (hash(i, 3) - 0.5) * 40, (5 + hash(i, 1) * 7) * 0.7]);
-    e.sea = makeSea(g, { preset: 'shallow', y: 0, amp: 0.5, size: 1400, spots: reefSpots });
-    for (let i = 0; i < 18; i++) place(g, K.rock(5 + hash(i, 1) * 7, i % 2 ? '#5b5752' : '#6e6862', i + 100), (hash(i, 2) - 0.5) * 70, -2, (hash(i, 3) - 0.5) * 40);
-    e.ship = place(g, K.ship({ sails: false }), 5, 0, 0, 0.5, 1); e.ship.rotation.z = 0.35; e.ship.rotation.x = -0.15; e.ship.position.y = -1.5;
-    return { update(t) { e.sea(t); } };
-  });
-
-  // ---------- NỘI THẤT: BẾP ----------
   const checker = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 256; const g = cv.getContext('2d'); for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) { g.fillStyle = (x + y) % 2 ? '#5a3524' : '#f1e6cc'; g.fillRect(x * 32, y * 32, 32, 32); } const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(5, 5); t.anisotropy = 4; return t; })();
   const views = {};
   const viewTex = (kind) => {
@@ -323,47 +172,54 @@ export function createEnvs(THREE, stage, K0, A = null) {
     else { grad('#8fd0f5', '#e6f6ff'); g.fillStyle = '#5f9d4e'; g.fillRect(0, 180, 256, 76); }
     const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return (views[kind] = t);
   };
-  def('kitchen', 'interior', (g, e) => {
-    e.room = new THREE.Group(); e.room.name = 'kitchen_room'; g.add(e.room);
-    const R = e.room;
-    const floor = plane(60, 60, new THREE.MeshStandardMaterial({ map: checker, roughness: 0.7 }), 0, 'checker_floor'); R.add(floor);
-    const wall = mat('#f3dc8c', { roughness: 0.9 }), wains = mat('#5fae7a');
-    const wallAt = (x, z, ry, name) => { const w = new THREE.Mesh(new THREE.PlaneGeometry(60, 22), wall); w.position.set(x, 11, z); w.rotation.y = ry; w.name = name; w.receiveShadow = true; R.add(w);
-      const wc = new THREE.Mesh(new THREE.PlaneGeometry(60, 4), wains); wc.position.set(x, 2, z); wc.rotation.y = ry; wc.position.addScaledVector(new THREE.Vector3(Math.sin(ry), 0, Math.cos(ry)), 0.05); R.add(wc); };
-    wallAt(0, -20, 0, 'wall_back'); wallAt(-24, 0, Math.PI / 2, 'wall_left'); wallAt(24, 0, -Math.PI / 2, 'wall_right'); wallAt(0, 24, Math.PI, 'wall_front');
-    const ceil = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), mat('#fff6e0')); ceil.rotation.x = Math.PI / 2; ceil.position.y = 22; R.add(ceil);
-    for (let i = -2; i <= 2; i++) K.box(1.2, 1.2, 60, '#7a4a2c', i * 10, 21.4, 0, 'beam', R);
-    e.fridge = K.fridge(); e.fridge.position.set(-8, 0, -17.6); R.add(e.fridge);
-    e.fridgeDense = K.fridge({ dense: true }); e.fridgeDense.position.set(-8, 0, -17.6); e.fridgeDense.visible = false; R.add(e.fridgeDense);
-    e.table = place(R, K.table(), 6, 0, 2); place(R, K.chair(), 0, 0, 2, Math.PI / 2); place(R, K.chair(), 12, 0, 2, -Math.PI / 2); place(R, K.chair(), 6, 0, -3.5, 0);
-    place(R, K.fruitBowl(), 6, 2.82, 2);
-    e.window = K.window({ w: 7, h: 8, view: viewTex('day') }); e.window.position.set(10, 11, -19.8); R.add(e.window);
-    e.window2 = K.window({ w: 6, h: 7, view: viewTex('day') }); e.window2.position.set(23.8, 11, 4); e.window2.rotation.y = -Math.PI / 2; R.add(e.window2);
-    K.box(14, 4, 4, '#f4f1ea', 14, 2, -18, 'counter', R); K.box(14.4, 0.4, 4.4, '#8a5a36', 14, 4.2, -18, 'counter_top', R);
-    for (const [x, y] of [[-18, 13], [-12, 15], [2, 14]]) { K.box(3.4, 2.6, 0.2, '#8a5a36', x, y, -19.8, 'frame', R); K.box(2.8, 2, 0.25, ['#5fa8d8', '#e09a5a', '#7fc86a'][Math.abs(x) % 3], x, y, -19.75, 'picture', R); }
-    const lamp = K.cyl(1.6, 0.6, 1.2, mat('#fff1c4', { emissive: C('#ffe39a'), emissiveIntensity: 0.8 }), 6, 18, 2, 'lamp', R, 12); K.box(0.1, 3.4, 0.1, '#333', 6, 20.3, 2, 'lamp_cord', R);
-    e.point = new THREE.PointLight('#ffe2b0', 1.2, 70, 1.2); e.point.position.set(6, 17, 2); R.add(e.point);
-    e.door = new THREE.Group(); e.door.name = 'kitchen_door'; e.door.position.set(-16, 0, 23.9); R.add(e.door);
-    return { setView(kind) { const t = viewTex(kind); for (const w of [e.window, e.window2]) w.getObjectByName('window_view').material.map = t; }, };
-  });
+  // bộ công cụ chung cho các file engine/envs/<tên>.js
+  const H = () => ({ THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs });
+  def('town', 'night', (g, e) => TOWN_ENV(g, e, H()));   // engine/envs/town.js
+
+  // ---------- RỪNG ----------
+  def('forest', 'night', (g, e) => FOREST_ENV(g, e, H()));   // engine/envs/forest.js
+
+  // ---------- HAWAII (bãi biển) ----------
+  def('hawaii', 'beach', (g, e) => HAWAII_ENV(g, e, H()));   // engine/envs/hawaii.js
+
+  // ---------- BRAZIL (rừng rậm) ----------
+  def('brazil', 'day', (g, e) => BRAZIL_ENV(g, e, H()));   // engine/envs/brazil.js
+
+  // ---------- SAHARA ----------
+  def('sahara', 'desert', (g, e) => SAHARA_ENV(g, e, H()));   // engine/envs/sahara.js
+
+  // ---------- NAM CỰC ----------
+  def('antarctica', 'snow', (g, e) => ANTARCTICA_ENV(g, e, H()));   // engine/envs/antarctica.js
+
+  // ---------- ĐẠI DƯƠNG (nhà ngập nước) ----------
+  def('ocean', 'ocean', (g, e) => OCEAN_ENV(g, e, H()));   // engine/envs/ocean.js
+
+  // ---------- ĐỈNH NÚI TRÊN MÂY ----------
+  def('mountain', 'sky', (g, e) => MOUNTAIN_ENV(g, e, H()));   // engine/envs/mountain.js
+
+  // ---------- NÚI TUYẾT ĐÊM (bắt đầu chương 10) ----------
+  def('snowNight', 'snowNight', (g, e) => SNOWNIGHT_ENV(g, e, H()));   // engine/envs/snowNight.js
+
+  // ---------- BIỂN BĂNG (đêm) ----------
+  def('iceSea', 'snowNight', (g, e) => ICESEA_ENV(g, e, H()));   // engine/envs/iceSea.js
+
+  // ---------- BÃO (biển đêm, mưa, chớp) ----------
+  def('storm', 'storm', (g, e) => STORM_ENV(g, e, H()));   // engine/envs/storm.js
+
+  // ---------- BOONG TÀU TRONG BÃO (hồi tưởng) ----------
+  def('shipStorm', 'storm', (g, e) => SHIPSTORM_ENV(g, e, H()));   // engine/envs/shipStorm.js
+
+  // ---------- ĐẢO HẢI ĐĂNG ----------
+  def('island', 'beach', (g, e) => ISLAND_ENV(g, e, H()));   // engine/envs/island.js
+
+  // ---------- BÃI ĐÁ NGẦM + XÁC TÀU ----------
+  def('reef', 'beach', (g, e) => REEF_ENV(g, e, H()));   // engine/envs/reef.js
+
+  // ---------- NỘI THẤT: BẾP ----------
+  def('kitchen', 'interior', (g, e) => KITCHEN_ENV(g, e, H()));   // engine/envs/kitchen.js
 
   // ---------- NỘI THẤT: PHÒNG NGỦ ----------
-  def('bedroom', 'bedNight', (g, e) => {
-    e.room = new THREE.Group(); e.room.name = 'bedroom_room'; g.add(e.room); const R = e.room;
-    const stars = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 256; const c = cv.getContext('2d'); c.fillStyle = '#4b4f9e'; c.fillRect(0, 0, 256, 256); c.fillStyle = '#e8e4ff';
-      for (let i = 0; i < 14; i++) { const x = hash(i, 1) * 256, y = hash(i, 2) * 256, r = 5 + hash(i, 3) * 5; c.beginPath(); for (let k = 0; k < 10; k++) { const a = k / 10 * Math.PI * 2 - Math.PI / 2, rr = k % 2 ? r * 0.45 : r; c.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } c.fill(); }
-      const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(4, 2); return t; })();
-    const wall = new THREE.MeshStandardMaterial({ map: stars, roughness: 0.9 });
-    R.add(plane(50, 50, mat('#7a5a44'), 0, 'bed_floor'));
-    const rug = plane(14, 10, mat('#f2c14e'), 0.05, 'rug'); rug.position.set(6, 0.05, 6); R.add(rug);
-    for (const [x, z, ry] of [[0, -18, 0], [-20, 0, Math.PI / 2], [20, 0, -Math.PI / 2], [0, 20, Math.PI]]) { const w = new THREE.Mesh(new THREE.PlaneGeometry(50, 22), wall); w.position.set(x, 11, z); w.rotation.y = ry; w.receiveShadow = true; R.add(w); }
-    e.bed = place(R, K.bed(), -10, 0, -8);
-    e.window = K.window({ w: 7, h: 8, curtains: '#c8c0ff', view: viewTex('night') }); e.window.position.set(19.8, 11, -6); e.window.rotation.y = -Math.PI / 2; R.add(e.window);
-    place(R, K.books(5), 4, 0, -14); K.box(3, 3, 3, '#8a5a36', -2, 1.5, -15, 'nightstand', R); place(R, K.books(3), -2, 3, -15);
-    K.box(4, 3, 0.2, '#8a5a36', 6, 13, -17.8, 'poster', R);
-    e.point = new THREE.PointLight('#aab6ff', 0.8, 60, 1.2); e.point.position.set(14, 14, -6); R.add(e.point);
-    return { setView(kind) { e.window.getObjectByName('window_view').material.map = viewTex(kind); } };
-  });
+  def('bedroom', 'bedNight', (g, e) => BEDROOM_ENV(g, e, H()));   // engine/envs/bedroom.js
 
   // ---------- áp dụng ----------
   let current = null;

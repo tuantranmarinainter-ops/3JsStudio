@@ -73,7 +73,7 @@
       // Tuỳ chọn người xem: ngôn ngữ (phụ đề + giọng + chữ bưu thiếp), bật/tắt phụ đề, bật/tắt giọng đọc.
       // ?lang=en  ?subs=0  ?voice=0   hoặc gọi window.setOptions({ lang, subs, voice }) (nút trong bản gộp).
       const OPTS = { lang: q.get('lang') === 'en' ? 'en' : 'vi', subs: q.get('subs') !== '0', voice: q.get('voice') !== '0',
-        vid: { vi: 'BV074_streaming_dsp', en: 'en-US-AndrewMultilingualNeural' } };
+        vid: { vi: 'BV075_streaming', en: 'en-US-AndrewMultilingualNeural' } };
       const CAPS = { vi: CAPTIONS, en: CAPTIONS_EN };
       // Nhiều giọng đọc cả phim (tools/voices_build.py → voices/index.json): 22 giọng Việt CapCut + giọng Anh Microsoft.
       // Giọng Anh có phụ đề riêng (mốc từng chữ). Không có index.json → dùng narration.mp3 / narration_en.mp3 như cũ.
@@ -99,7 +99,8 @@
       for (const p of Object.values(props)) stage.scene.add(p);
       for (const f of Object.values(fx)) stage.scene.add(f.obj);
       // vân bụi / đồ cũ kiểu Roblox (engine/grunge.js) — bật/tắt ở ô "Hiệu ứng hình": worn (nhân vật), grime (cảnh)
-      for (const a of Object.values(actors)) applyGrunge(THREE, a.root, 'char');
+      const WEAR = { dad: 1.5, dadIsland: 1.6 };   // mức quần áo cũ riêng từng nhân vật (mặc định 1)
+      for (const [n, a] of Object.entries(actors)) applyGrunge(THREE, a.root, 'char', { amount: WEAR[n] || 1 });
       applyGrunge(THREE, stage.scene, 'build');
       const tl = buildTimeline(SHOTS, 30);
       const director = createDirector({ THREE, stage, envs, K, actors, houses, props, fx });

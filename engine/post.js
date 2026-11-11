@@ -23,11 +23,12 @@ import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 import { GRUNGE } from './grunge.js';
 
-export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true };
+export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
   worn: 'Quần áo cũ, bụi (nhân vật)', grime: 'Vân sần, bụi (nhà, đường, cảnh)',
+  foot: 'Bụi / tuyết bốc ở chân nhà', prints: 'Dấu chân trên tuyết', wind: 'Gió tuyết thổi vào mặt', breath: 'Hơi thở trắng (cảnh lạnh)',
 };
 
 // Màu theo preset ánh sáng (engine/envs.js LIGHTS). temp > 0 ấm, < 0 lạnh; sat bão hoà; con tương phản; gain/lift sáng.
@@ -143,6 +144,7 @@ export function createPost(THREE, stage, { actors = [] } = {}) {
   const _f = new THREE.Vector3();
 
   function render({ t = 0, light = 'day', env = '', focus = null, flash = 0 } = {}) {
+    const AF = (globalThis.__autoFx ||= {}); AF.foot = fx.foot; AF.prints = fx.prints; AF.wind = fx.wind; AF.breath = fx.breath;   // engine/shots.js hiệu ứng tự động
     GRUNGE.char.value = fx.worn ? 1 : 0; GRUNGE.build.value = fx.grime ? 1 : 0;   // engine/grunge.js (vân bụi trên vật liệu)
     renderer.setRenderTarget(null); renderer.render(scene, camera);   // khung gốc (giống hệt khi không hậu kỳ)
     if (!anyOn()) return;
@@ -174,7 +176,7 @@ export function createPost(THREE, stage, { actors = [] } = {}) {
   return {
     composer, passes: { copyIn, outline, bokeh, bloom, grade },
     get options() { return { ...fx }; },
-    set(o = {}) { for (const k of Object.keys(FX_DEFAULTS)) if (o[k] !== undefined) fx[k] = !!o[k]; return { ...fx }; },
+    set(o = {}) { for (const k of Object.keys(FX_DEFAULTS)) if (o[k] !== undefined) fx[k] = !!o[k]; const AF = (globalThis.__autoFx ||= {}); for (const k of ['foot', 'prints', 'wind', 'breath']) AF[k] = fx[k]; return { ...fx }; },
     render, resize,
   };
 }

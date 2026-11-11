@@ -181,6 +181,50 @@ const PIVOTS = {
   RightUpperLeg: [-0.5, 2.0, 0], RightLowerLeg: [-0.5, 1.0, 0], RightFoot: [-0.5, 0.3, 0],
   LeftUpperLeg: [0.5, 2.0, 0], LeftLowerLeg: [0.5, 1.0, 0], LeftFoot: [0.5, 0.3, 0],
 };
+// Vá lỗ hở: mesh tách theo khớp bị hở ở mặt cắt → tìm cạnh biên (cạnh có hướng không có cạnh ngược),
+// nối thành vòng, quạt tam giác về tâm vòng; thứ tự (b, a, tâm) giữ đúng chiều quấn → pháp tuyến hướng ra ngoài.
+function capHoles(ps, ns) {
+  const nt = ps.length / 9, key = (i) => `${Math.round(ps[i * 3] * 1e3)},${Math.round(ps[i * 3 + 1] * 1e3)},${Math.round(ps[i * 3 + 2] * 1e3)}`;
+  const kid = new Map(), P = [];
+  const vk = (i) => { const k = key(i); if (!kid.has(k)) { kid.set(k, P.length); P.push([ps[i * 3], ps[i * 3 + 1], ps[i * 3 + 2]]); } return kid.get(k); };
+  const E = new Set(), list = [];
+  for (let t = 0; t < nt; t++) {
+    const v = [vk(t * 3), vk(t * 3 + 1), vk(t * 3 + 2)];
+    for (let e = 0; e < 3; e++) { const a = v[e], b = v[(e + 1) % 3]; if (a === b) continue; E.add(a + '>' + b); list.push([a, b]); }
+  }
+  const next = new Map();
+  for (const [a, b] of list) if (!E.has(b + '>' + a)) { if (!next.has(a)) next.set(a, []); next.get(a).push(b); }
+  if (!next.size) return { ps, ns };
+  const add = [];
+  const used = new Set();
+  for (const start of next.keys()) {
+    for (const first of next.get(start)) {
+      if (used.has(start + '>' + first)) continue;
+      const loop = [start]; let a = start, b = first, guard = 0;
+      while (guard++ < 10000) {
+        used.add(a + '>' + b);
+        if (b === start) break;
+        loop.push(b);
+        const nb = (next.get(b) || []).find((x) => !used.has(b + '>' + x));
+        if (nb === undefined) break;
+        a = b; b = nb;
+      }
+      if (loop.length < 3) continue;
+      const c = [0, 0, 0]; loop.forEach((i) => { c[0] += P[i][0]; c[1] += P[i][1]; c[2] += P[i][2]; }); c.forEach((_, k) => { c[k] /= loop.length; });
+      for (let i = 0; i < loop.length; i++) add.push(P[loop[(i + 1) % loop.length]], P[loop[i]], c);
+    }
+  }
+  if (!add.length) return { ps, ns };
+  const ps2 = new Float32Array(ps.length + add.length * 3), ns2 = new Float32Array(ps2.length);
+  ps2.set(ps); ns2.set(ns);
+  for (let t = 0; t < add.length / 3; t++) {
+    const [A, B, C2] = [add[t * 3], add[t * 3 + 1], add[t * 3 + 2]];
+    const ux = B[0] - A[0], uy = B[1] - A[1], uz = B[2] - A[2], wx = C2[0] - A[0], wy = C2[1] - A[1], wz = C2[2] - A[2];
+    let nx = uy * wz - uz * wy, ny = uz * wx - ux * wz, nz = ux * wy - uy * wx; const l = Math.hypot(nx, ny, nz) || 1; nx /= l; ny /= l; nz /= l;
+    for (let k = 0; k < 3; k++) { const o = ps.length + t * 9 + k * 3, V = add[t * 3 + k]; ps2[o] = V[0]; ps2[o + 1] = V[1]; ps2[o + 2] = V[2]; ns2[o] = nx; ns2[o + 1] = ny; ns2[o + 2] = nz; }
+  }
+  return { ps: ps2, ns: ns2 };
+}
 let _bodyPromise = null;
 export function loadR15Body(THREE, url = '/assets/characters/r15_body.glb') {
   if (_bodyPromise) return _bodyPromise;
@@ -231,8 +275,9 @@ export function loadR15Body(THREE, url = '/assets/characters/r15_body.glb') {
       if (!tris.length) continue;
       const pv = PIVOTS[part], ps = new Float32Array(tris.length * 9), ns = new Float32Array(tris.length * 9);
       tris.forEach((t, j) => { for (let k = 0; k < 9; k++) { ps[j * 9 + k] = pos[t * 9 + k] - pv[k % 3]; ns[j * 9 + k] = nor[t * 9 + k]; } });
+      const capped = capHoles(ps, ns);   // vá mặt cắt ở khớp (gối, khuỷu, eo…) để không nhìn xuyên qua khi gập
       const bg = new THREE.BufferGeometry();
-      bg.setAttribute('position', new THREE.BufferAttribute(ps, 3)); bg.setAttribute('normal', new THREE.BufferAttribute(ns, 3));
+      bg.setAttribute('position', new THREE.BufferAttribute(capped.ps, 3)); bg.setAttribute('normal', new THREE.BufferAttribute(capped.ns, 3));
       bg.computeBoundingBox(); out[part] = bg;
     }
     return out;

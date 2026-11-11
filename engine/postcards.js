@@ -111,6 +111,9 @@ const ART = {
   jungle(g, x, y, w, h) { sky(g, x, y, w, h, '#8ed38b', '#2e7d3a'); for (let i = 0; i < 9; i++) { g.fillStyle = i % 2 ? '#1f6b2e' : '#3c9a46'; g.beginPath(); g.arc(x + i * w / 8, y + h * (0.4 + (i % 3) * 0.15), 40, 0, Math.PI * 2); g.fill(); } },
   desert(g, x, y, w, h) { sky(g, x, y, w, h * 0.5, '#f7c77a', '#fde9c2'); g.fillStyle = '#e2a75a'; g.beginPath(); g.moveTo(x, y + h); g.quadraticCurveTo(x + w * 0.3, y + h * 0.3, x + w * 0.6, y + h * 0.7); g.quadraticCurveTo(x + w * 0.8, y + h * 0.45, x + w, y + h * 0.6); g.lineTo(x + w, y + h); g.fill(); },
   city(g, x, y, w, h) { sky(g, x, y, w, h, '#ffb68a', '#ffe3c8'); for (let i = 0; i < 8; i++) { g.fillStyle = ['#596a8a', '#7b88a8', '#495878'][i % 3]; const bh = h * (0.3 + ((i * 37) % 50) / 100); g.fillRect(x + i * w / 8, y + h - bh, w / 8 - 4, bh); } },
+  town(g, x, y, w, h) { ART.city(g, x, y, w, h); },
+  reef(g, x, y, w, h) { ART.beach(g, x, y, w, h); },
+  iceberg(g, x, y, w, h) { ART.penguin(g, x, y, w, h); },
   forest(g, x, y, w, h) { sky(g, x, y, w, h * 0.6, '#a6d8f5', '#e6f6ff'); g.fillStyle = '#7dbd5a'; g.fillRect(x, y + h * 0.7, w, h * 0.3); for (let i = 0; i < 7; i++) { g.fillStyle = '#2f7a3a'; g.beginPath(); g.moveTo(x + i * w / 6, y + h * 0.25); g.lineTo(x + i * w / 6 + 28, y + h * 0.75); g.lineTo(x + i * w / 6 - 28, y + h * 0.75); g.fill(); } },
 };
 
@@ -141,8 +144,12 @@ export function postcardTexture(THREE, kind, opts = {}) {
     g.save(); g.beginPath(); g.rect(28, 28, W - 56, ah); g.clip();
     const img = ARTIMG[kind];
     if (img) {   // ảnh chụp: phủ kín khung (cover) + chút ấm/tương phản như ảnh in
-      const iw = img.width, ih = img.height, sc = Math.max((W - 56) / iw, ah / ih);
-      g.drawImage(img, 28 + (W - 56 - iw * sc) / 2, 28 + (ah - ih * sc) / 2, iw * sc, ih * sc);
+      // ảnh dán tủ lạnh (variant > 0): mỗi tấm cắt/zoom một vùng khác của cùng cảnh → không tấm nào giống hệt tấm nào
+      const v = opts.variant || 0, z = v ? 1 + 0.12 + ((v * 37) % 23) / 100 : 1;
+      const iw = img.width, ih = img.height, sc = Math.max((W - 56) / iw, ah / ih) * z;
+      const ox = v ? ((((v * 53) % 17) / 16) - 0.5) : 0, oy = v ? ((((v * 29) % 11) / 10) - 0.5) : 0;
+      const dx = (W - 56 - iw * sc) / 2, dy = (ah - ih * sc) / 2;
+      g.drawImage(img, 28 + dx + ox * dx * -1 * 0.9, 28 + dy + oy * dy * -1 * 0.9, iw * sc, ih * sc);
       g.fillStyle = 'rgba(255,236,200,0.08)'; g.fillRect(28, 28, W - 56, ah);
     } else (ART[kind] || ART.beach)(g, 28, 28, W - 56, ah);
     g.restore();
@@ -187,4 +194,16 @@ export function makePostcard(THREE, kind, opts = {}) {
 }
 
 export const POSTCARD_ASPECT = H / W;
-export function seededKinds(n, seed = 3) { const r = rng(seed); const k = Object.keys(ART); return Array.from({ length: n }, () => k[Math.floor(r() * k.length)]); }
+// Ảnh dán tủ lạnh: toàn ảnh chụp cảnh thật của phim (engine/snap.js SNAPS). Xáo theo seed, đi vòng hết danh sách
+// trước khi lặp lại → các tấm cạnh nhau luôn khác cảnh.
+export const PHOTO_KINDS = ['town', 'beach', 'forest', 'desert', 'penguin', 'mountain', 'whale', 'island', 'jungle', 'reef', 'iceberg'];
+export function seededKinds(n, seed = 3) {
+  const r = rng(seed), out = [];
+  while (out.length < n) {
+    const k = PHOTO_KINDS.slice();
+    for (let i = k.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [k[i], k[j]] = [k[j], k[i]]; }
+    if (out.length && k[0] === out[out.length - 1]) k.push(k.shift());
+    out.push(...k);
+  }
+  return out.slice(0, n);
+}

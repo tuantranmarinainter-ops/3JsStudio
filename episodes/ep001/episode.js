@@ -23,8 +23,8 @@ export async function buildCast(THREE) {
   const CAST = {
     hero: { skin: SKIN, shirt: '#f2c230', sleeves: '#f2c230', hoodie: '#6b4226', pants: '#3f6fb5', shoes: '#1b1b1b', hat: 'beanie', hatColor: '#d6322b' },
     mom: { skin: '#f0c89a', shirt: '#9fe0c0', sleeves: '#9fe0c0', shirtPattern: 'stripes', shirtPattern2: '#d9f5e8', pants: '#8a6a4a', skirt: '#8a6a4a', scarf: '#d6322b', hair: 'braids', hairColor: '#1b1b1b', lashes: true },
-    dad: { skin: '#f0c89a', shirt: '#283a66', sleeves: '#283a66', pants: '#d8cfb8', shoes: '#3b2a1e', hat: 'beanie', hatColor: '#d6322b', zipper: true, boots: true, browThickness: 1.4 },
-    dadIsland: { skin: '#f0c89a', shirt: '#2f4a7a', sleeves: '#2f4a7a', shirtPattern: 'torn', shirtPattern2: '#f0c89a', pants: '#7a5a3a', pantsPattern: 'torn', hat: 'beanie', hatColor: '#c42e28', beard: '#cfcfd2', browThickness: 1.4, tired: true },
+    dad: { skin: '#e2a878', shirt: '#283a66', sleeves: '#283a66', pants: '#d8cfb8', shoes: '#3b2a1e', hat: 'beanie', hatColor: '#d6322b', zipper: true, boots: true, browThickness: 1.4 },
+    dadIsland: { skin: '#dba070', shirt: '#2f4a7a', sleeves: '#2f4a7a', shirtPattern: 'torn', shirtPattern2: '#f0c89a', pants: '#7a5a3a', pantsPattern: 'torn', hat: 'beanie', hatColor: '#c42e28', beard: '#cfcfd2', browThickness: 1.4, tired: true },
   };
   const FACE = { hero: 'smile', mom: 'smile', dad: 'smile', dadIsland: 'worried' };
   const out = {};

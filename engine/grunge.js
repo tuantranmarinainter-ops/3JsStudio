@@ -18,7 +18,7 @@ const VERT_MAIN = /* glsl */`
   vGrP = position * grS; vGrN = normal; vGrB = aGrBox; vGrSz = aGrSize * grS; }`;
 
 const FRAG_PARS = /* glsl */`
-uniform float uGrunge;
+uniform float uGrunge; uniform float uGrAmt;
 varying vec3 vGrP; varying vec3 vGrN; varying vec3 vGrB; varying vec3 vGrSz;
 float grH(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
 float grN3(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);
@@ -41,8 +41,11 @@ const FRAG_COLOR = {
   float shade = mix(0.72, 1.0, edge) * mix(0.88, 1.0, smoothstep(0.0, 0.8, vGrB.y)) * mix(0.90, 1.03, fold) * mix(0.96, 1.02, fine);
   vec3 c = diffuseColor.rgb;
   float l = dot(c, vec3(0.299, 0.587, 0.114));
-  c = mix(c, vec3(l), 0.10);                                            // xỉn màu
-  c = mix(c, vec3(0.42, 0.37, 0.30) * (0.6 + l), smoothstep(0.6, 0.9, blot) * 0.14);   // bám bụi
+  float amt = uGrAmt, dark = 1.0 - smoothstep(0.06, 0.32, l);          // vải tối (xanh than, đen) → bụi bạc màu thấy rõ hơn
+  c = mix(c, vec3(l), 0.10 * amt);                                      // xỉn màu
+  c = mix(c, vec3(0.46, 0.43, 0.38) * (0.55 + l), (smoothstep(0.6, 0.9, blot) * 0.14 + dark * (0.05 + 0.10 * blot)) * amt);   // bám bụi, bạc màu
+  float light = smoothstep(0.25, 0.6, l), extra = max(amt - 1.0, 0.0) * 4.0;   // vải sáng của người mặc lâu (amount > 1): ố đất, gấu quần bẩn
+  c = mix(c, vec3(0.24, 0.18, 0.11), clamp(light * extra * (0.12 + 0.32 * smoothstep(0.35, 0.85, blot) + 0.30 * (1.0 - smoothstep(0.0, 0.45, vGrB.y))), 0.0, 0.75));
   c *= shade;
   diffuseColor.rgb = mix(diffuseColor.rgb, c, k);
   grHeight = fold * k; }`,
@@ -65,7 +68,7 @@ const FRAG_COLOR = {
   grHeight = grit * k; }`,
 };
 
-const FRAG_ROUGH = /* glsl */`roughnessFactor = mix(roughnessFactor, clamp(roughnessFactor + 0.12 + grHeight * 0.1, 0.0, 1.0), uGrunge);`;
+const FRAG_ROUGH = /* glsl */`roughnessFactor = mix(roughnessFactor, clamp(roughnessFactor + 0.22 + grHeight * 0.1, 0.0, 1.0), uGrunge);   // vải/tường nhám, hết bóng`;
 const FRAG_BUMP = (amp) => /* glsl */`
 { vec3 sp = -vViewPosition; vec3 sx = dFdx(sp), sy = dFdy(sp);
   vec3 r1 = cross(sy, normal), r2 = cross(normal, sx); float det = dot(sx, r1);
@@ -88,7 +91,7 @@ function ensureBoxAttr(THREE, geo) {
   geo.setAttribute('aGrSize', new THREE.BufferAttribute(size, 3));
 }
 
-function patch(mat, kind) {
+function patch(mat, kind, amount = 1) {
   if (mat.userData.grunge) return;
   mat.userData.grunge = kind;
   // mesh dùng chung vật liệu nhưng tạo sau (chưa có aGrBox) → giá trị cố định, không đọc rác (giữ tất định)
@@ -96,7 +99,7 @@ function patch(mat, kind) {
   const prev = mat.onBeforeCompile;
   mat.onBeforeCompile = (sh, r) => {
     prev?.call(mat, sh, r);
-    sh.uniforms.uGrunge = GRUNGE[kind];
+    sh.uniforms.uGrunge = GRUNGE[kind]; sh.uniforms.uGrAmt = { value: amount };
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\n' + VERT_PARS)
       .replace('#include <begin_vertex>', '#include <begin_vertex>\n' + VERT_MAIN);
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\n' + FRAG_PARS)
@@ -109,13 +112,13 @@ function patch(mat, kind) {
   mat.needsUpdate = true;
 }
 
-export function applyGrunge(THREE, root, kind = 'build') {
+export function applyGrunge(THREE, root, kind = 'build', { amount = 1 } = {}) {   // amount: mức cũ/bụi riêng (vd. người cha 1.5)
   const walk = (o, k) => {
     k = o.userData.grungeKind || k;
     if (o.isMesh && k !== 'none' && !o.isInstancedMesh) {
       const mats = Array.isArray(o.material) ? o.material : [o.material];
       const ok = mats.filter((m) => m && m.isMeshStandardMaterial && !m.transparent && !m.userData.noGrunge && (k !== 'char' || m.map));   // nhân vật: chỉ quần áo/mũ (có texture), da/mặt giữ trơn
-      if (ok.length) { ensureBoxAttr(THREE, o.geometry); ok.forEach((m) => patch(m, k)); }
+      if (ok.length) { ensureBoxAttr(THREE, o.geometry); ok.forEach((m) => patch(m, k, amount)); }
     }
     for (const c of o.children) walk(c, k);
   };
