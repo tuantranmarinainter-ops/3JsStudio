@@ -9,7 +9,14 @@
 //   // trong render(t):  mixer.setTime(t); splash.update(t);
 //   // clip lặp:         splash.update(t, clip.duration)  → hiệu ứng nối mượt qua điểm lặp
 //
-// events: [{ time, x, y, z, dir: 'up'|'down', speed }]  (toạ độ world; speed = m/s theo phương đứng)
+// events: [{ time, x, y, z, dir: 'up'|'down', speed }]  (toạ độ của nhóm splash; speed = đơn vị/s theo phương đứng)
+//
+// Đơn vị: toạ độ CỤC BỘ của splash.object — đặt nó trong 1 rig có scale (vd. stud/m) thì mọi số dưới đây là mét.
+//   scale ≈ chiều dài con vật; gravity theo cùng đơn vị. Thời gian: t truyền vào update() (cùng hệ với events[].time,
+//   vd. giây trong clip). opts: { seed, scale, drops, mist, life, gravity, color, linger (đời sương đọng, giây của t), lingerN }.
+// sea2 (globalThis.__autoFx.sea2, mặc định bật): thêm vương miện/màn nước (ống hở xé ngón, loe rồi sụp; 'down' cao hơn 'up'),
+//   màn sương hạt mịn đọng ~linger giây, và bỏ đĩa bọt/vòng phẳng (mặt biển water.js setEvents tự vẽ bọt + vòng sóng theo sóng).
+//   Sea2 tắt ⇒ y hệt bản cũ. Muốn có sự kiện cho mặt biển: whales.js breachEvents(findSurfaceCrossings(...), {...}).
 
 function rng(seed = 1) {
   let a = seed >>> 0 || 1;

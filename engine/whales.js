@@ -1,37 +1,89 @@
-// whales.js — Cá voi cho env 'ocean' (shot s052–s056, lời kể câu 23 "…cá voi bơi quanh chân nó").
-// Cá nhà táng GLB có xương (sea/sperm_whale, 13 clip) — tất định: mọi thứ là hàm thuần của t toàn cục.
-//   const life = createOceanLife(THREE, A, { seaY: 11 });  g.add(life.group);
-//   life.update(t, camera, renderer);                      // gọi mỗi khung trong env.update
+// whales.js — Sinh vật biển GLB có xương (mặc định cá nhà táng sea/sperm_whale, 13 clip) cho mọi env có biển.
+// LÕI DÙNG LẠI: không chứa số liệu của tập nào. Kịch bản (ai, ở đâu, lúc nào) là DỮ LIỆU `plan` do env truyền vào
+// (ví dụ ep001: OCEAN_PLAN_EP001 trong engine/envs/ocean.js).
 //
-// Cách dựng mỗi con: rig (Group, đặt tại mặt biển, scale S = stud/m) → model (scale_to_m, hạ -water_y_native)
-// ⇒ trong hệ toạ độ của rig: đơn vị = mét, mặt nước gốc của tác giả ở y = 0. Clip điều khiển bằng
-// action.time + mixer.update(0) (không đồng hồ) → tua tới/lui ra cùng khung.
+// Đơn vị: thế giới = stud. Trong rig mỗi con (scale plan.S stud/m) đơn vị = MÉT, mặt nước gốc của tác giả GLB ở y = 0.
+//   plan: R, at, sea events (x, z, radius) = stud;  deep/lift/approach/clipTravel = mét.
+// Thời gian: t = thời gian env truyền vào update (ep001: giây toàn cục, cùng t mà env đưa cho sea(t)).
+//   Mọi mốc của actor TƯƠNG ĐỐI với plan.t0 (mốc tuyệt đối = plan.t0 + giá trị). Mọi thứ là hàm thuần của t.
+//
+//   const life = createOceanLife(THREE, A, { seaY: 11, plan: MY_PLAN });  g.add(life.group);
+//   life.update(t, camera, renderer);                                     // mỗi khung
+//   sea.setEvents?.(life.seaEvents(t));                                   // sea2: vòng sóng/hố/bọt trên mặt biển
+//
+// plan = { asset?, S, swimSpeed, t0, actors: [actor…] }
+//   { type: 'circler', name, R, w (rad/s), a0 (góc lúc t0), rise: [a, b], deep, lift, swimPhase?,
+//     breathe?: [lúc, tốc độ clip], spout?: { at: [x,y,z] (m, trong rig) },
+//     surfaceRing?: { strength, radius },  wake?: { every (s), life (s), strength, radius, delay (s sau rise[1]), until (s) } }
+//   { type: 'jumper', name, at: [x, z], heading, t0 (lúc bắt đầu clip JUMP), speed (tốc độ clip), approach (m/s), clipTravel (m),
+//     depth (m), splash: { seed, scale (m), dropScale }, exit: { strength, radius }, entry: { strength, radius }, drips?: true }
+//
+// Hàm phụ dùng lại cho sinh vật/env khác (sự kiện cùng định dạng engine/water.js setEvents):
+//   breachEvents(crossings, { toWorld, toTime, exit, entry })  → { events, tExit, tEntry }   (crossings = findSurfaceCrossings)
+//   wakeEvents(pathAt, { from, to, every, life, strength, radius }) → vệt bọt dọc đường đi pathAt(t) → [x, z]
+//   liveSeaEvents(list, t, max = 8)   → các sự kiện đang sống tại t (có `taper` ⇒ cường độ tắt mượt về 0 trước khi bỏ)
+//   applyWetSkin(material | material[], opts) → { set(outK, sinceExit), dry() }  — da ướt khi ra khỏi nước, khô dần theo thời gian
 // Nước văng (splash.js) đặt trong cùng hệ rig của con nhảy → trọng lực/kích thước giọt tính bằng mét.
+// Hiệu ứng mới (sự kiện mặt nước, da ướt v2, giọt nhỏ, cột phun khi thở) chỉ bật khi globalThis.__autoFx.sea2 (mặc định bật).
 import { findSurfaceCrossings, createSplash } from './splash.js';
 
 export const OCEAN_LIFE_ASSETS = ['sea/sperm_whale'];
 
 const smooth = (a, b, x) => { const k = Math.min(1, Math.max(0, (x - a) / (b - a))); return k * k * (3 - 2 * k); };
+const SEA2 = () => (globalThis.__autoFx?.sea2 ?? true);
 
-// Kịch bản (giây toàn cục). Mốc shot: s053 62.13–62.77, s054 62.77–64.27, s055 64.30–65.20, s056 65.20–66.90.
-export const WHALE_PLAN = {
-  S: 3.0,                 // stud / mét → cá dài 16 m ≈ 48 stud (nhà rộng ~38 stud)
-  swimSpeed: 0.55,        // clip SWIM chạy chậm lại cho ra dáng con vật lớn
-  // Con 1: từ dưới sâu nổi lên trước chân nhà (s054), thở (lưng gù vồng lên), rồi bơi vòng quanh chân nhà
-  //   góc a: x = R·cos a, z = R·sin a (a tăng = ngược chiều kim đồng hồ nhìn từ trên). a(63.5) ≈ 0.82 = phía trước nhà, giữa máy s054 và chân nhà.
-  circler: { R: 72, w: 0.4, a0: -24.36, rise: [62.6, 63.3], deep: -6, lift: 2.4, breathe: [62.95, 1.15] },
-  // Con 2: cùng vòng, đối diện con 1; lặn sâu trong s054 rồi nổi lên trong s055 (cảnh từ trên cao thấy 2 con quanh nhà)
-  second: { R: 47, w: 0.4, a0: -24.38 + Math.PI, rise: [63.9, 64.6], deep: -7, lift: 3.0 },
-  // Con nhảy: lao lên khỏi mặt nước bên phải chân nhà, hướng về máy s056 (cắt mặt nước lên ~65.36 s, rơi xuống ~66.30 s)
-  jumper: { at: [40.7, 13.9], heading: 0.56, t0: 64.976, speed: 0.7 },
-};
+// ---------- hàm phụ dùng lại ----------
+// crossings: [{ time, x, z, dir: 'up'|'down' }] (hệ cục bộ); toWorld(x, z) → [X, Z] stud; toTime(time) → t của env.
+// Lần lên đầu tiên = ra khỏi nước (vừa), lần xuống cuối = đập xuống (lớn hơn).
+export function breachEvents(crossings, { toWorld = (x, z) => [x, z], toTime = (t) => t, exit = { strength: 1.3, radius: 13 }, entry = { strength: 2.7, radius: 22 } } = {}) {
+  const up = crossings.find((e) => e.dir === 'up'), down = [...crossings].reverse().find((e) => e.dir === 'down');
+  const events = [];
+  const tExit = up ? toTime(up.time) : null, tEntry = down ? toTime(down.time) : null;
+  if (up && exit) { const [x, z] = toWorld(up.x, up.z); events.push({ x, z, t0: tExit, strength: exit.strength, radius: exit.radius, kind: 'exit' }); }
+  if (down && entry) { const [x, z] = toWorld(down.x, down.z); events.push({ x, z, t0: tEntry, strength: entry.strength, radius: entry.radius, kind: 'entry' }); }
+  return { events, tExit, tEntry };
+}
+// vệt bọt nhỏ: 1 điểm mỗi `every` giây từ `from` đến `to`, mỗi điểm tắt dần trong `life` giây
+export function wakeEvents(pathAt, { from, to, every = 1, life = 2, strength = 0.32, radius = 5 } = {}) {
+  const out = [];
+  for (let t = from; t < to; t += every) { const [x, z] = pathAt(t); out.push({ x, z, t0: t, strength, radius, taper: life, kind: 'wake' }); }
+  return out;
+}
+// sự kiện không có `taper` (cú nhảy) luôn được ưu tiên; còn lại lấy mới nhất trước. Hàm thuần của t.
+export function liveSeaEvents(list, t, max = 8) {
+  const live = (e) => t >= e.t0 && t - e.t0 <= (e.taper || 8);
+  const sc = (e) => ({ x: e.x, z: e.z, t0: e.t0, radius: e.radius, strength: e.taper ? e.strength * (1 - smooth(e.taper * 0.55, e.taper, t - e.t0)) : e.strength });
+  const out = list.filter((e) => !e.taper && live(e)).map(sc);
+  for (const e of list.filter((e) => e.taper && live(e)).sort((a, b) => b.t0 - a.t0)) { if (out.length >= max) break; out.push(sc(e)); }
+  return out.slice(0, max);
+}
+// da ướt: outK = 0..1 (đang ở trên mặt nước), sinceExit = giây kể từ lúc ra khỏi nước (khô dần sau dryTime).
+//   Ướt ⇒ nhám thấp, màu sẫm lại, phản chiếu trời mạnh hơn. dry() trả vật liệu về trạng thái lúc tạo.
+export function applyWetSkin(materials, { wetRough = 0.16, darken = [0.2, 0.18, 0.15], envBoost = 0.8, sheen = [0.012, 0.02, 0.03], dryTime = 5, dryKeep = 0.65 } = {}) {
+  const mats = Array.isArray(materials) ? materials : [materials];
+  const base = mats.map((m) => ({ r: m.roughness, c: m.color.clone(), e: m.emissive.clone(), env: m.envMapIntensity ?? 1 }));
+  return {
+    set(outK, sinceExit) {
+      const wk = outK * (1 - (1 - dryKeep) * smooth(0, dryTime, Math.max(0, sinceExit)));
+      mats.forEach((m, i) => { const b = base[i];
+        m.roughness = b.r + (wetRough - b.r) * wk;
+        m.color.setRGB(b.c.r * (1 - darken[0] * wk), b.c.g * (1 - darken[1] * wk), b.c.b * (1 - darken[2] * wk));
+        m.envMapIntensity = b.env * (1 + envBoost * wk);
+        m.emissive.setRGB(b.e.r + sheen[0] * wk, b.e.g + sheen[1] * wk, b.e.b + sheen[2] * wk); });
+      return wk;
+    },
+    dry() { mats.forEach((m, i) => { const b = base[i]; m.roughness = b.r; m.color.copy(b.c); m.emissive.copy(b.e); m.envMapIntensity = b.env; }); },
+  };
+}
 
-export function createOceanLife(THREE, A, { seaY = 11, plan = WHALE_PLAN } = {}) {
+// ---------- sinh vật ----------
+export function createOceanLife(THREE, A, { seaY = 0, plan = null } = {}) {
   const group = new THREE.Group(); group.name = 'ocean_life';
-  const ID = 'sea/sperm_whale';
-  if (!A || !A.has(ID)) return { group, update() {}, snapshot() {}, unsnap() {} };
+  const ID = plan?.asset || OCEAN_LIFE_ASSETS[0];
+  const none = { group, update() {}, seaEvents: () => [], snapshot() {}, unsnap() {}, events: [], whales: {}, actors: [] };
+  if (!plan || !A || !A.has(ID)) return none;
   const M = A.manifest()?.byId.get(ID) || {};
-  const k = M.scale_to_m || 0.98, wy = M.water_y_native || 4.283, S = plan.S;
+  const k = M.scale_to_m || 0.98, wy = M.water_y_native || 4.283, S = plan.S ?? 3, T0 = plan.t0 ?? 0, swimSpeed = plan.swimSpeed ?? 0.55;
 
   // Màu cá nhà táng: lưng xanh-xám đậm → bụng sáng ngả kem; tô 1 lần lúc init bằng vertex color từ pose bind
   // (y hình học gốc + pháp tuyến + vài đốm nhiễu theo vị trí, không random) → tất định, không phụ thuộc t.
@@ -84,153 +136,20 @@ export function createOceanLife(THREE, A, { seaY = 11, plan = WHALE_PLAN } = {})
       }
       mixer.update(0);
     };
-    return { rig, body, mixer, acts, pose, mat };
+    return { rig, body, mixer, acts, pose, mat, skin: applyWetSkin(mat) };
   };
-
-  const w1 = makeWhale('whale_circler');
-  const w2 = makeWhale('whale_far');
-  const wj = makeWhale('whale_jumper');
-
-  // --- nước văng của cú nhảy: tính lúc cắt mặt nước 1 lần lúc init (bản sao riêng, không đụng mixer chính) ---
-  const J = plan.jumper;
-  const probe = A.instance(ID); probe.scale.setScalar(k); probe.position.y = -wy * k; probe.updateMatrixWorld(true);
-  const jumpClip = probe.animations.find((c) => c.name.toUpperCase().startsWith('JUMP-'));
-  const events = jumpClip ? findSurfaceCrossings(THREE, probe, new THREE.AnimationMixer(probe), jumpClip, 0) : [];
-  const splashRig = new THREE.Group(); splashRig.name = 'whale_splash_rig'; splashRig.scale.setScalar(S); group.add(splashRig);
-  const splash = createSplash(THREE, { seed: 5, scale: 21 });   // to hơn chiều dài thật một chút cho cột nước đọc rõ trong khung dọc
-  splash.setEvents(events);
-  splash.object.traverse((o) => { o.renderOrder = 3; });   // vẽ sau mặt biển (trong suốt)
-  splashRig.add(splash.object);
-  const jumpDur = jumpClip ? jumpClip.duration : 1.42;
-
-  // --- sea2: sự kiện mặt nước (engine/water.js setEvents), thời gian = t toàn cục như env truyền cho sea(t) ---
-  //   con nhảy: lúc lao lên (vừa) + lúc đập xuống (lớn hơn: hố sâu, vòng sóng rộng, bọt lâu tan);
-  //   con bơi vòng: vòng bọt khi nổi lên thở + vệt bọt nhỏ dọc đường bơi khi lưng nhô trên mặt nước.
-  const toWorld = (x, z) => { const c = Math.cos(J.heading), s = Math.sin(J.heading);
-    return [J.at[0] + S * (x * c + z * s), J.at[1] + S * (-x * s + z * c)]; };
-  const gT = (tc) => J.t0 + tc / J.speed;
-  const upEv = events.find((e) => e.dir === 'up'), downEv = [...events].reverse().find((e) => e.dir === 'down');
-  const tExit = upEv ? gT(upEv.time) : gT(0.3), tIn = downEv ? gT(downEv.time) : gT(jumpDur - 0.2);
-  const big = [];
-  if (upEv) { const [x, z] = toWorld(upEv.x, upEv.z); big.push({ x, z, t0: tExit, strength: 1.3, radius: 13, taper: 0 }); }
-  if (downEv) { const [x, z] = toWorld(downEv.x, downEv.z); big.push({ x, z, t0: tIn, strength: 2.7, radius: 22, taper: 0 }); }
-  const orbitAt = (O, t) => { const a = O.a0 + O.w * t; return [Math.cos(a) * O.R, Math.sin(a) * O.R]; };
-  const small = [];
-  { const C = plan.circler, F = plan.second;
-    const [x1, z1] = orbitAt(C, C.rise[1] - 0.1); small.push({ x: x1, z: z1, t0: C.rise[1] - 0.1, strength: 0.75, radius: 11, taper: 4.5 });
-    const [x2, z2] = orbitAt(F, F.rise[1] - 0.1); small.push({ x: x2, z: z2, t0: F.rise[1] - 0.1, strength: 0.75, radius: 10, taper: 4.5 });
-    // vệt bọt khi bơi: 1 điểm / giây, tắt dần trong 2 s (≤ 2 điểm sống / con) → tổng ≤ 8 sự kiện cùng lúc
-    for (const [O, t1, ph] of [[C, C.rise[1] + 0.3, 0], [F, F.rise[1] + 0.3, 0.5]])
-      for (let tw = t1 + ph; tw < 90; tw += 1.0) { const [x, z] = orbitAt(O, tw); small.push({ x, z, t0: tw, strength: 0.32, radius: 5, taper: 2.0 }); }
-  }
-  // danh sách sự kiện đang sống tại t (hàm thuần của t): cường độ giảm mượt về 0 trước khi bị bỏ khỏi danh sách
-  function seaEvents(t) {
-    const live = (e) => t >= e.t0 && t - e.t0 <= (e.taper || 8);
-    const sc = (e) => ({ x: e.x, z: e.z, t0: e.t0, radius: e.radius, strength: e.taper ? e.strength * (1 - smooth(e.taper * 0.55, e.taper, t - e.t0)) : e.strength });
-    const out = big.filter(live).map(sc);
-    const rest = small.filter(live).sort((a, b) => b.t0 - a.t0);
-    for (const e of rest) { if (out.length >= 8) break; out.push(sc(e)); }
-    return out;
-  }
-
-  // --- sea2: giọt nước nhỏ từ thân con nhảy khi ở trên không (toạ độ = hệ splashRig = hệ rig con nhảy lúc nhảy) ---
-  //   lấy mẫu clip JUMP 1 lần (bản sao probe) → vị trí vài xương theo thời gian clip; giọt i rơi tự do từ xương b lúc ts_i
-  const drips = (() => {
-    if (!jumpClip) return null;
-    const bones = []; probe.traverse((o) => { if (o.isBone) bones.push(o); });
-    if (!bones.length) return null;
-    const pickB = bones.filter((_, i) => i % Math.max(1, Math.floor(bones.length / 14)) === 0).slice(0, 14);
-    const mx = new THREE.AnimationMixer(probe), act = mx.clipAction(jumpClip); act.play();
-    const NS = 48, track = pickB.map(() => []), v = new THREE.Vector3();
-    for (let i = 0; i <= NS; i++) { mx.setTime((i / NS) * jumpDur); probe.updateMatrixWorld(true); pickB.forEach((b, j) => track[j].push(b.getWorldPosition(v).toArray())); }
-    act.stop();
-    const at = (j, tc) => { const f = Math.min(NS - 1e-4, Math.max(0, (tc / jumpDur) * NS)), i = Math.floor(f), u = f - i, A0 = track[j][i], B0 = track[j][i + 1];
-      return [A0[0] + (B0[0] - A0[0]) * u, A0[1] + (B0[1] - A0[1]) * u, A0[2] + (B0[2] - A0[2]) * u]; };
-    const N = 700, hs = (i, k) => { const x = Math.sin(i * 91.7 + k * 47.3) * 43758.5453; return x - Math.floor(x); };
-    const c0 = upEv ? upEv.time : 0.3, c1 = downEv ? downEv.time : jumpDur - 0.2;
-    const seeds = Array.from({ length: N }, (_, i) => {
-      const j = i % pickB.length, ts = c0 + (c1 - c0) * hs(i, 1);
-      const p0 = at(j, ts), p1 = at(j, ts + 0.02);
-      const vel = [(p1[0] - p0[0]) / 0.02 * J.speed * 0.5, (p1[1] - p0[1]) / 0.02 * J.speed * 0.5, (p1[2] - p0[2]) / 0.02 * J.speed * 0.5];
-      return { ts, p0: [p0[0] + (hs(i, 2) - 0.5) * 1.6, p0[1] + (hs(i, 3) - 0.5) * 0.8, p0[2] + (hs(i, 4) - 0.5) * 1.6], vel };
-    });
-    const pos = new Float32Array(N * 3), geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    const m = new THREE.PointsMaterial({ color: '#eaf8ff', size: 0.45, sizeAttenuation: true, transparent: true, opacity: 0.85, depthWrite: false, fog: true, name: 'whale_drips' });
-    const pts = new THREE.Points(geo, m); pts.name = 'whale_drips'; pts.frustumCulled = false; pts.renderOrder = 3; pts.visible = false;
-    splashRig.add(pts);
-    return { pts, update(tc) {
-      let any = false;
-      for (let i = 0; i < N; i++) {
-        const d = seeds[i], age = (tc - d.ts) / J.speed;      // giây thật kể từ khi giọt rời thân
-        let y = -1e4, x = 0, z = 0;
-        if (age > 0 && age < 2.2) {
-          x = d.p0[0] + d.vel[0] * age; z = d.p0[2] + d.vel[2] * age; y = d.p0[1] + d.vel[1] * age - 4.9 * age * age;
-          if (y < 0) y = -1e4; else any = true;
-        }
-        pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = z;
-      }
-      geo.attributes.position.needsUpdate = true; pts.visible = any;
-    } };
-  })();
+  // vẻ ướt bản cũ (sea2 tắt): lên khỏi mặt nước thì bóng hơn, chìm thì mờ; hàm thuần của vị trí rig
+  const wetOld = (w, aboveM) => { const k2 = smooth(-1.5, 1.5, aboveM); w.skin.dry(); w.mat.roughness = 0.62 - 0.34 * k2; w.mat.emissive.setRGB(0.05 * k2, 0.07 * k2, 0.09 * k2); };
 
   const fwd = (ry) => [Math.sin(ry), Math.cos(ry)];
-  const orbit = (w, t, { R, w: om, a0 }) => {   // vòng tròn quanh gốc (nhà), mặt hướng theo vận tốc
-    const a = a0 + om * t;
-    w.rig.position.x = Math.cos(a) * R; w.rig.position.z = Math.sin(a) * R; w.rig.rotation.y = -a;
-  };
   const _v = new THREE.Vector2();
+  const seaList = [];   // mọi sự kiện mặt nước của plan (t của env), dựng 1 lần
+  const actors = [];
 
-  function update(t, camera, renderer) {
-    const sw = t * plan.swimSpeed;
-    // con 1: từ dưới sâu nổi lên, rồi thở (BREATHE: lưng gù vồng lên khỏi mặt nước) và bơi vòng
-    const C = plan.circler;
-    orbit(w1, t, C);
-    const up = smooth(C.rise[0], C.rise[1], t);
-    w1.rig.position.y = seaY + (C.deep + (C.lift - C.deep) * up) * S;
-    const bt = (t - C.breathe[0]) * C.breathe[1];                 // giây trong clip BREATHE (1.67 s)
-    const bw = bt > 0 && bt < 1.67 ? smooth(0, 0.25, bt) * (1 - smooth(1.35, 1.67, bt)) : 0;
-    w1.pose([['SWIM', sw, 1 - bw], ['BREATHE', Math.max(0, bt), bw]]);
-
-    const F = plan.second;
-    orbit(w2, t, F);
-    w2.rig.position.y = seaY + (F.deep + (F.lift - F.deep) * smooth(F.rise[0], F.rise[1], t)) * S;
-    w2.pose([['SWIM', sw + 0.31, 1]]);
-
-    // con nhảy: tiếp cận dưới nước theo hướng heading → đứng yên (clip JUMP tự di chuyển thân) → bơi tiếp dưới nước
-    const tc = (t - J.t0) * J.speed;                              // giây trong clip JUMP
-    const [fx, fz] = fwd(J.heading);
-    const before = Math.min(tc, 0), after = Math.max(0, tc - jumpDur);
-    const travel = (before + after) * 7 + (tc > jumpDur ? 11 : 0); // m (clip JUMP đẩy thân tới ~11 m)
-    wj.rig.position.set(J.at[0] + fx * travel * S, seaY, J.at[1] + fz * travel * S);
-    wj.rig.rotation.y = J.heading;
-    if (tc < 0 || tc > jumpDur) { wj.rig.position.y = seaY - 6 * S; wj.pose([['SWIM', sw, 1]]); }
-    else wj.pose([['JUMP', tc, 1]]);
-    wj.rig.visible = tc > -1.5 && tc < jumpDur + 1.5;
-
-    splashRig.position.set(J.at[0], seaY, J.at[1]); splashRig.rotation.y = J.heading;
-    // giọt nước: kích thước điểm theo pixel thật của canvas (đổi theo độ phân giải xuất) và theo scale của rig
-    let px = 1000;
-    if (camera && renderer) { renderer.getDrawingBufferSize(_v); px = _v.y / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))); }
-    splash.update(tc, 0, px * S * 0.6);   // 0.6: giọt nhỏ hơn bản demo → ra bụi nước, không thành bong bóng
-    splash.object.visible = tc > -0.1 && tc < jumpDur + ((globalThis.__autoFx?.sea2 ?? true) ? 7 : 4);   // sea2: sương đọng lâu hơn
-    if (drips) { if (globalThis.__autoFx?.sea2 ?? true) drips.update(tc); else drips.pts.visible = false; }
-  }
-  // vẻ ướt: lên khỏi mặt nước thì bóng hơn (roughness thấp, ánh nhẹ), chìm thì mờ; hàm thuần của vị trí rig
-  const wet = (w, aboveM) => { const k2 = smooth(-1.5, 1.5, aboveM); w.mat.roughness = 0.62 - 0.34 * k2; w.mat.emissive.setRGB(0.05 * k2, 0.07 * k2, 0.09 * k2); w.mat.color.setRGB(1, 1, 1); w.mat.envMapIntensity = 1; };
-  // sea2: ướt sũng ngay khi vừa ra khỏi nước (nhám thấp, da sẫm lại, phản chiếu trời mạnh) rồi khô dần theo thời gian
-  //   kể từ lúc ra khỏi nước — wetK = 0..1 tính từ (t − lúc nổi), hàm thuần của t.
-  const wet2 = (w, outK, since) => {
-    const wk = outK * (1 - 0.35 * smooth(0, 5, Math.max(0, since)));
-    w.mat.roughness = 0.6 - 0.44 * wk; w.mat.color.setRGB(1 - 0.2 * wk, 1 - 0.18 * wk, 1 - 0.15 * wk);
-    w.mat.envMapIntensity = 1 + 0.8 * wk; w.mat.emissive.setRGB(0.012 * wk, 0.02 * wk, 0.03 * wk);
-  };
-  // --- CHỈ cho ảnh bưu thiếp (engine/snap.js): 1 con nổi lên thở + cột nước phun ở lỗ thở ---
-  // Cột phun: các cụm bụi nước trắng xếp hình phễu nghiêng về trước-trái (kiểu cá nhà táng), toạ độ rig = mét.
-  // Ẩn mặc định; snapshot() bật, unsnap() tắt. update(t) mỗi khung đặt lại vị trí/pose cá → shot biển không đổi.
-  const spout = new THREE.Group(); spout.name = 'whale_spout'; spout.visible = false;
-  {
-    const hs = (i, k) => { const x = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return x - Math.floor(x); };
+  // cột phun khi thở: các cụm bụi nước trắng xếp hình phễu nghiêng về trước-trái (kiểu cá nhà táng), toạ độ rig = mét
+  const makeSpout = () => {
+    const spout = new THREE.Group(); spout.name = 'whale_spout'; spout.visible = false;
+    const hs = (i, k2) => { const x = Math.sin(i * 127.1 + k2 * 311.7) * 43758.5453; return x - Math.floor(x); };
     const geo = new THREE.IcosahedronGeometry(1, 2);
     const mist = new THREE.MeshLambertMaterial({ color: '#ffffff', emissive: '#c8d6e2', transparent: true, opacity: 0.55, depthWrite: false, name: 'whale_spout_mist' });
     const core = new THREE.MeshLambertMaterial({ color: '#ffffff', emissive: '#dde8f0', transparent: true, opacity: 0.85, depthWrite: false, name: 'whale_spout_core' });
@@ -243,51 +162,161 @@ export function createOceanLife(THREE, A, { seaY = 11, plan = WHALE_PLAN } = {})
       m.scale.setScalar(0.18 + h * 0.5 + hs(i, 4) * 0.18);
       m.renderOrder = 4; spout.add(m);
     }
+    spout.userData.mats = [core, mist]; spout.userData.base = [0.85, 0.55];
+    return spout;
+  };
+
+  for (const P of plan.actors || []) {
+    const w = makeWhale(P.name || `whale_${actors.length}`);
+    const a = { P, w, type: P.type };
+    if (P.type === 'circler') {
+      const at = (t) => { const ang = P.a0 + P.w * (t - T0); return [Math.cos(ang) * P.R, Math.sin(ang) * P.R]; };
+      a.pathAt = at;
+      const riseEnd = T0 + P.rise[1];
+      if (P.surfaceRing) { const [x, z] = at(riseEnd - 0.1); seaList.push({ x, z, t0: riseEnd - 0.1, strength: P.surfaceRing.strength, radius: P.surfaceRing.radius, taper: P.surfaceRing.life ?? 4.5, kind: 'surface' }); }
+      if (P.wake) seaList.push(...wakeEvents(at, { from: riseEnd + (P.wake.delay ?? 0.3), to: T0 + (P.wake.until ?? 30), ...P.wake }));
+      if (P.spout) { a.spout = makeSpout(); w.rig.add(a.spout); }
+    } else if (P.type === 'jumper') {
+      // nước văng: tìm lúc cắt mặt nước 1 lần lúc init (bản sao riêng, không đụng mixer chính)
+      const probe = A.instance(ID); probe.scale.setScalar(k); probe.position.y = -wy * k; probe.updateMatrixWorld(true);
+      const jumpClip = probe.animations.find((c) => c.name.toUpperCase().startsWith('JUMP-'));
+      const cross = jumpClip ? findSurfaceCrossings(THREE, probe, new THREE.AnimationMixer(probe), jumpClip, 0) : [];
+      const rigS = new THREE.Group(); rigS.name = (P.name || 'whale') + '_splash_rig'; rigS.scale.setScalar(S); group.add(rigS);
+      const sp = P.splash || {};
+      const splash = createSplash(THREE, { seed: sp.seed ?? 5, scale: sp.scale ?? 21 });
+      splash.setEvents(cross);
+      splash.object.traverse((o) => { o.renderOrder = 3; });   // vẽ sau mặt biển (trong suốt)
+      rigS.add(splash.object);
+      const jumpDur = jumpClip ? jumpClip.duration : 1.42;
+      const toWorld = (x, z) => { const c = Math.cos(P.heading), s = Math.sin(P.heading); return [P.at[0] + S * (x * c + z * s), P.at[1] + S * (-x * s + z * c)]; };
+      const toTime = (tc) => T0 + P.t0 + tc / P.speed;
+      const br = breachEvents(cross, { toWorld, toTime, exit: P.exit, entry: P.entry });
+      seaList.push(...br.events);
+      Object.assign(a, { splash, rigS, jumpDur, cross, tExit: br.tExit ?? toTime(0.3), tEntry: br.tEntry ?? toTime(jumpDur - 0.2) });
+      a.drips = P.drips === false ? null : makeDrips(probe, jumpClip, jumpDur, cross, P.speed, rigS);
+    }
+    actors.push(a);
   }
-  w1.rig.add(spout);
-  const hidden = [];
-  // snapshot({ at:[x,z], heading, lift (m), clip giây BREATHE, spout:[x,y,z] trong rig (m) })
-  function snapshot({ at = [0, 0], heading = 0, lift = 1.2, breathe = 0.8, clips = null, spoutAt = [0, 2.6, 6.2], spoutScale = 1 } = {}) {
-    for (const w of [w2, wj]) { hidden.push([w.rig, w.rig.visible]); w.rig.visible = false; }
-    hidden.push([splash.object, splash.object.visible]); splash.object.visible = false;
-    w1.rig.position.set(at[0], seaY + lift * S, at[1]); w1.rig.rotation.y = heading;
-    w1.pose(clips || [['BREATHE', breathe, 1]]);
-    wet(w1, 2);
-    snapOn = true; spMats.forEach((m, i) => { m.opacity = spBase[i]; });
-    spout.position.set(...spoutAt); spout.scale.setScalar(spoutScale); spout.visible = true;
-    w1.rig.updateMatrixWorld(true);
+
+  // giọt nước nhỏ từ thân con nhảy khi ở trên không (hệ splash rig = hệ rig con nhảy lúc nhảy, mét):
+  //   lấy mẫu clip JUMP 1 lần → vị trí vài xương theo thời gian clip; giọt i rơi tự do từ xương j lúc ts_i
+  function makeDrips(probe, clip, dur, cross, speed, parent) {
+    if (!clip) return null;
+    const bones = []; probe.traverse((o) => { if (o.isBone) bones.push(o); });
+    if (!bones.length) return null;
+    const pickB = bones.filter((_, i) => i % Math.max(1, Math.floor(bones.length / 14)) === 0).slice(0, 14);
+    const mx = new THREE.AnimationMixer(probe), act = mx.clipAction(clip); act.play();
+    const NS = 48, track = pickB.map(() => []), v = new THREE.Vector3();
+    for (let i = 0; i <= NS; i++) { mx.setTime((i / NS) * dur); probe.updateMatrixWorld(true); pickB.forEach((b, j) => track[j].push(b.getWorldPosition(v).toArray())); }
+    act.stop();
+    const at = (j, tc) => { const f = Math.min(NS - 1e-4, Math.max(0, (tc / dur) * NS)), i = Math.floor(f), u = f - i, A0 = track[j][i], B0 = track[j][i + 1];
+      return [A0[0] + (B0[0] - A0[0]) * u, A0[1] + (B0[1] - A0[1]) * u, A0[2] + (B0[2] - A0[2]) * u]; };
+    const N = 700, hs = (i, k2) => { const x = Math.sin(i * 91.7 + k2 * 47.3) * 43758.5453; return x - Math.floor(x); };
+    const up = cross.find((e) => e.dir === 'up'), down = [...cross].reverse().find((e) => e.dir === 'down');
+    const c0 = up ? up.time : 0.3, c1 = down ? down.time : dur - 0.2;
+    const seeds = Array.from({ length: N }, (_, i) => {
+      const j = i % pickB.length, ts = c0 + (c1 - c0) * hs(i, 1);
+      const p0 = at(j, ts), p1 = at(j, ts + 0.02), q = speed * 0.5 / 0.02;
+      return { ts, p0: [p0[0] + (hs(i, 2) - 0.5) * 1.6, p0[1] + (hs(i, 3) - 0.5) * 0.8, p0[2] + (hs(i, 4) - 0.5) * 1.6], vel: [(p1[0] - p0[0]) * q, (p1[1] - p0[1]) * q, (p1[2] - p0[2]) * q] };
+    });
+    const pos = new Float32Array(N * 3), geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const m = new THREE.PointsMaterial({ color: '#eaf8ff', size: 0.45, sizeAttenuation: true, transparent: true, opacity: 0.85, depthWrite: false, fog: true, name: 'whale_drips' });
+    const pts = new THREE.Points(geo, m); pts.name = 'whale_drips'; pts.frustumCulled = false; pts.renderOrder = 3; pts.visible = false;
+    parent.add(pts);
+    return { pts, update(tc) {
+      let any = false;
+      for (let i = 0; i < N; i++) {
+        const d = seeds[i], age = (tc - d.ts) / speed;      // giây của env kể từ khi giọt rời thân
+        let y = -1e4, x = 0, z = 0;
+        if (age > 0 && age < 2.2) {
+          x = d.p0[0] + d.vel[0] * age; z = d.p0[2] + d.vel[2] * age; y = d.p0[1] + d.vel[1] * age - 4.9 * age * age;
+          if (y < 0) y = -1e4; else any = true;
+        }
+        pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = z;
+      }
+      geo.attributes.position.needsUpdate = true; pts.visible = any;
+    } };
   }
-  function unsnap() { snapOn = false; spout.visible = false; while (hidden.length) { const [o, v] = hidden.pop(); o.visible = v; } }
-  const _update = update;
-  function update2(t, camera, renderer) {
-    _update(t, camera, renderer);
-    const tc = (t - J.t0) * J.speed;
-    if (globalThis.__autoFx?.sea2 ?? true) {
-      const C = plan.circler, F = plan.second;
-      wet2(w1, smooth(-1.5, 1.5, (w1.rig.position.y - seaY) / S), t - C.rise[1]);
-      wet2(w2, smooth(-1.5, 1.5, (w2.rig.position.y - seaY) / S), t - F.rise[1]);
-      wet2(wj, smooth(tExit - 0.12, tExit + 0.05, t) * (1 - smooth(tIn, tIn + 0.35, t)), t - tExit);
-      spoutTick(t);
-    } else {
-      wet(w1, (w1.rig.position.y - seaY) / S); wet(w2, (w2.rig.position.y - seaY) / S);
-      wet(wj, tc > 0 && tc < jumpDur ? 2 : -2);
-      if (!snapOn) spout.visible = false;
+
+  let snapOn = false;
+  function spoutTick(a, t) {
+    const sp = a.spout; if (!sp || snapOn) return;
+    const mats = sp.userData.mats, base = sp.userData.base;
+    const B = a.P.breathe, on = SEA2() && B;
+    const kk = on ? ((t - T0 - B[0]) * B[1] - 0.35) / 1.6 : -1;   // giây clip BREATHE → 0..1 của cột phun
+    sp.visible = kk > 0 && kk < 1;
+    if (!sp.visible) { mats.forEach((m, i) => { m.opacity = base[i]; }); return; }
+    sp.position.set(...(a.P.spout.at || [0, 2.6, 6.2]));
+    const g2 = smooth(0, 0.35, kk);
+    sp.scale.set(0.6 + 0.6 * g2, 0.15 + 0.95 * g2, 0.6 + 0.6 * g2);
+    mats.forEach((m, i) => { m.opacity = base[i] * (1 - smooth(0.45, 1, kk)); });
+  }
+
+  function update(t, camera, renderer) {
+    const sea2 = SEA2();
+    const sw = (t - T0) * swimSpeed;
+    let px = 1000;   // giọt nước: kích thước điểm theo pixel thật của canvas (đổi theo độ phân giải xuất)
+    if (camera && renderer) { renderer.getDrawingBufferSize(_v); px = _v.y / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))); }
+    for (const a of actors) {
+      const { P, w } = a;
+      if (a.type === 'circler') {
+        // từ dưới sâu nổi lên (rise), có thể thở (BREATHE: lưng gù vồng lên khỏi mặt nước), bơi vòng quanh gốc
+        const ang = P.a0 + P.w * (t - T0);
+        w.rig.position.x = Math.cos(ang) * P.R; w.rig.position.z = Math.sin(ang) * P.R; w.rig.rotation.y = -ang;
+        w.rig.position.y = seaY + (P.deep + (P.lift - P.deep) * smooth(T0 + P.rise[0], T0 + P.rise[1], t)) * S;
+        let bw = 0, bt = 0;
+        if (P.breathe) { bt = (t - T0 - P.breathe[0]) * P.breathe[1]; bw = bt > 0 && bt < 1.67 ? smooth(0, 0.25, bt) * (1 - smooth(1.35, 1.67, bt)) : 0; }
+        w.pose(bw > 0 ? [['SWIM', sw + (P.swimPhase || 0), 1 - bw], ['BREATHE', Math.max(0, bt), bw]] : [['SWIM', sw + (P.swimPhase || 0), 1]]);
+        const above = (w.rig.position.y - seaY) / S;
+        if (sea2) w.skin.set(smooth(-1.5, 1.5, above), t - (T0 + P.rise[1])); else wetOld(w, above);
+        spoutTick(a, t);
+      } else if (a.type === 'jumper') {
+        // tiếp cận dưới nước theo heading → đứng yên (clip JUMP tự di chuyển thân) → bơi tiếp dưới nước
+        const tc = (t - T0 - P.t0) * P.speed, dur = a.jumpDur;
+        const [fx, fz] = fwd(P.heading);
+        const before = Math.min(tc, 0), after = Math.max(0, tc - dur);
+        const travel = (before + after) * (P.approach ?? 7) + (tc > dur ? (P.clipTravel ?? 11) : 0);
+        w.rig.position.set(P.at[0] + fx * travel * S, seaY, P.at[1] + fz * travel * S);
+        w.rig.rotation.y = P.heading;
+        if (tc < 0 || tc > dur) { w.rig.position.y = seaY - (P.depth ?? 6) * S; w.pose([['SWIM', sw + (P.swimPhase || 0), 1]]); }
+        else w.pose([['JUMP', tc, 1]]);
+        w.rig.visible = tc > -1.5 && tc < dur + 1.5;
+        a.rigS.position.set(P.at[0], seaY, P.at[1]); a.rigS.rotation.y = P.heading;
+        a.splash.update(tc, 0, px * S * (P.splash?.dropScale ?? 0.6));   // < 1: giọt nhỏ → bụi nước, không thành bong bóng
+        a.splash.object.visible = tc > -0.1 && tc < dur + (sea2 ? 7 : 4);  // sea2: sương đọng lâu hơn
+        if (a.drips) { if (sea2) a.drips.update(tc); else a.drips.pts.visible = false; }
+        if (sea2) w.skin.set(smooth(a.tExit - 0.12, a.tExit + 0.05, t) * (1 - smooth(a.tEntry, a.tEntry + 0.35, t)), t - a.tExit);
+        else wetOld(w, tc > 0 && tc < dur ? 2 : -2);
+      }
     }
   }
-  // sea2: cột phun khi con 1 thở (BREATHE), hàm thuần của t: phụt lên nhanh, toả ra, tan dần
-  const spMats = []; spout.traverse((o) => { if (o.isMesh && !spMats.includes(o.material)) spMats.push(o.material); });
-  const spBase = spMats.map((m) => m.opacity);
-  let snapOn = false;
-  function spoutTick(t) {
-    if (snapOn) return;
-    const C = plan.circler, bt = (t - C.breathe[0]) * C.breathe[1];
-    const k = (bt - 0.35) / 1.6;
-    spout.visible = k > 0 && k < 1;
-    if (!spout.visible) { spMats.forEach((m, i) => { m.opacity = spBase[i]; }); return; }
-    spout.position.set(0, 2.6, 6.2);
-    const g2 = smooth(0, 0.35, k);
-    spout.scale.set(0.6 + 0.6 * g2, 0.15 + 0.95 * g2, 0.6 + 0.6 * g2);
-    spMats.forEach((m, i) => { m.opacity = spBase[i] * (1 - smooth(0.45, 1, k)); });
+  const seaEvents = (t) => liveSeaEvents(seaList, t);
+
+  // --- CHỈ cho ảnh bưu thiếp (engine/snap.js): con có `spout` (hoặc circler đầu tiên) nổi lên thở + cột phun ---
+  // Ẩn các con khác + nước văng; update(t) mỗi khung đặt lại vị trí/pose → shot biển không đổi.
+  const hidden = [];
+  // snapshot({ at:[x,z], heading, lift (m), breathe (giây clip BREATHE), clips, spoutAt:[x,y,z] (m, trong rig), spoutScale })
+  function snapshot({ at = [0, 0], heading = 0, lift = 1.2, breathe = 0.8, clips = null, spoutAt = [0, 2.6, 6.2], spoutScale = 1 } = {}) {
+    const hero = actors.find((a) => a.spout) || actors.find((a) => a.type === 'circler') || actors[0];
+    if (!hero) return;
+    for (const a of actors) {
+      if (a !== hero) { hidden.push([a.w.rig, a.w.rig.visible]); a.w.rig.visible = false; }
+      if (a.splash) { hidden.push([a.splash.object, a.splash.object.visible]); a.splash.object.visible = false; }
+      if (a.drips) { hidden.push([a.drips.pts, a.drips.pts.visible]); a.drips.pts.visible = false; }
+    }
+    const w = hero.w;
+    w.rig.position.set(at[0], seaY + lift * S, at[1]); w.rig.rotation.y = heading;
+    w.pose(clips || [['BREATHE', breathe, 1]]);
+    wetOld(w, 2);
+    if (!hero.spout) { hero.spout = makeSpout(); w.rig.add(hero.spout); }
+    snapOn = true; hero.spout.userData.mats.forEach((m, i) => { m.opacity = hero.spout.userData.base[i]; });
+    hero.spout.position.set(...spoutAt); hero.spout.scale.setScalar(spoutScale); hero.spout.visible = true;
+    hidden.push([hero.spout, false]);
+    w.rig.updateMatrixWorld(true);
   }
-  return { group, update: update2, events, seaEvents, whales: { circler: w1, far: w2, jumper: wj }, splash, snapshot, unsnap };
+  function unsnap() { snapOn = false; while (hidden.length) { const [o, v] = hidden.pop(); o.visible = v; } }
+
+  const whales = Object.fromEntries(actors.map((a) => [a.P.name, a.w]));
+  return { group, update, seaEvents, events: actors.find((a) => a.cross)?.cross || [], actors, whales, splash: actors.find((a) => a.splash)?.splash, snapshot, unsnap };
 }
