@@ -2,6 +2,34 @@
 
 Đọc `CLAUDE.md` trước (luật dự án), rồi file này (trạng thái + việc tiếp theo). Người dùng nói tiếng Việt.
 
+## Phiên 2026-11-12 (v4 + CORE) — TẠM DỪNG theo yêu cầu người dùng, nhánh `claude/ep1-v2`
+**Nguyên tắc người dùng chốt:** mọi thứ học từ nguồn tham khảo (2 game Fable 5.2 *Saltline*, *Tidewright*; repo
+`thuann-vn/claude-3d-animated-shorts`) phải thành **code LÕI dùng lại cho mọi tập**, không sửa lẻ ep001. Tính năng mới luôn có ô bật/tắt.
+Hướng dẫn lõi: **`docs/core.md`**. Danh mục kỹ thuật + trạng thái: **`docs/tham-khao-game.md`**.
+Nguồn tham khảo (chỉ có trong cloud, mất khi hết phiên): `scratchpad/games/tidewright.html` (10220 dòng, mã đầy đủ, người dùng
+lấy từ artifact LG3TnqwofP3VfPcShHy8iB), `scratchpad/games/src-salt/index.html` (git clone realcodebear/saltline-fable-5.2),
+`scratchpad/ref/c3d` (git clone thuann-vn/claude-3d-animated-shorts). Phiên mới: clone lại 2 repo; Tidewright xin lại người dùng.
+
+| Phần | File | Trạng thái |
+|---|---|---|
+| Ánh sáng môi trường (IBL) | `engine/ibl.js`, ô **ibl** | ✅ kiểm: bếp luma 129–136 (interior 0.3, hemi ×0.6) |
+| Đồ quét Poly Haven | `engine/scans.js`, `assets/polyhaven/`, bếp/phòng ngủ, ô **scans** | ✅ (đã bỏ khung tranh lỗi) |
+| Sóng CPU=GPU, vật nổi khớp sóng, bọt/bóng quanh thân, vệt ướt, sự kiện mặt nước | `engine/water.js` (sample/setHull/setEvents/setLook), `engine/floating.js` (floatHull/floatPose/wetline), ô **sea2** | ✅ kiểm tất định (diff 0); s095–s097 nhà nổi, s023 tàu + bố trên boong |
+| Lõi biển: đồng hồ tự khớp, `float`/`seaEvents`/`seaWeather` trong shot | `engine/sea.js`, `engine/shots.js` (prepareSea), `engine/envs.js` makeSea, `engine/lights.js` | ✅ |
+| Thang thời tiết biển 10 kiểu (lang, nang, gio-nhe, u-am, mua, giong, bao, dem-trang, dem-bao, bang) + env `'sea'` | `engine/seaweather.js`, `engine/envs/openSea.js`, ô **seaWx**, thử: `engine/sea-lab.html?wx=giong&wx2=bao&mix=0.5` | ✅ ảnh: `output/look/agentD/sealab/sheet.jpg` |
+| Cá voi: kịch bản dạng dữ liệu, vòng sóng khi nhảy/rơi, da ướt | `engine/whales.js` (createOceanLife plan, seaEvents, applyWetSkin), `engine/splash.js`, dữ liệu `OCEAN_PLAN_EP001` trong `engine/envs/ocean.js` | 🟡 agent bị dừng giữa chừng: chạy được (ảnh `output/look/handoff/sheet.jpg`), CHƯA kiểm tất định + chưa chỉnh màu biển ban ngày (s054 tối hơn B: luma 98 — người dùng muốn **xanh trong**) |
+| Tranh sơn dầu Kuwahara | `engine/painterly.js`, ô **paint** (mặc định TẮT) | 🟡 đã nối vào post.js, CHƯA chụp kiểm |
+| Vỏ thuyền dựng bằng code (skiff/ship/raft) | `engine/hull.js`, `engine/hull-lab.html` | 🟡 đang viết dở, chưa kiểm; chưa nối vào tập |
+| AO (học repo c3d) | `engine/ao.js` | ⬜ file dở, CHƯA nối post.js |
+| Bày đồ theo dữ liệu `furnish()` + nội thất CC0 KayKit/Kenney (từ repo c3d) | `engine/furnish.js` (chưa có) | ⬜ chưa bắt đầu — kế hoạch: `furnish(H, parent, layout)` với `on:`/`fit:`/`wall:`, bếp/phòng ngủ chuyển sang mảng layout, thêm manifest + ghi công |
+| Danh mục kỹ thuật 3 nguồn | `docs/tham-khao-game.md` | 🟡 có 2 game; còn thiếu phần repo c3d (SMAA, n8ao, viền cọ, IK, mặt vẽ, phụ đề từng chữ…) |
+
+**Việc tiếp theo (thứ tự):** 1) chỉnh biển ban ngày s052–s056 xanh trong (preset `nang`/`water.setLook`), `--det` cảnh cá voi 65.2–68 s;
+2) kiểm `paint` on/off (s054, s021); 3) hoàn tất `hull.js` + chụp `hull-lab.html`; 4) `furnish.js` + nội thất CC0; 5) nối `ao.js` (ô riêng, mặc định tắt);
+6) bổ sung docs; 7) `npm run bundle:ep001` → `dist/ep1_v4.html`, giao link `S:\3JS Studio\dist\ep1_v4.html` + `file:///S:/3JS%20Studio/dist/ep1_v4.html`.
+Lưu ý: s095 nhà chúi gần giới hạn `maxPitch` 0.2 cả shot — hỏi người dùng có giảm không. Floats đặt trước env update → env nên khai `e.seaEvents(t)` để vật nổi thấy sóng cá voi cùng khung.
+Chạy kiểm: `BROWSER=chromium GL=swiftshader node tools/look.mjs episodes/ep001/index.html --t … --out output/look/<tên>` (`--det`, `--ab`, `--luma`).
+
 ## Trạng thái (2026-11-10)
 
 ### Đã xong và đã kiểm chứng

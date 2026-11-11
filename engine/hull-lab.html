@@ -59,8 +59,8 @@ const boats = {
 };
 const turn = new THREE.Group(); turn.name = 'turntable'; scene.add(turn);
 for (const b of Object.values(boats)) turn.add(b);
-const LAYOUT = { all: { ship: [0, -26], skiff: [-9, 24], raft: [11, 26] }, ship: { ship: [0, 0] }, skiff: { skiff: [0, 0] }, raft: { raft: [0, 0] } };
-const FRAME = { all: 95, ship: 82, skiff: 30, raft: 24 };
+const LAYOUT = { all: { ship: [0, -45], skiff: [-14, 22], raft: [16, 26] }, ship: { ship: [0, 0] }, skiff: { skiff: [0, 0] }, raft: { raft: [0, 0] } };
+const FRAME = { all: 175, ship: 135, skiff: 52, raft: 40 };
 
 function apply() {
   const type = $('type').value, ang = +$('ang').value, el = +$('el').value;
@@ -69,7 +69,7 @@ function apply() {
   for (const [k, b] of Object.entries(boats)) { const p = LAYOUT[type][k]; b.visible = !!p; if (p) b.position.set(p[0], 0, p[1]); }
   turn.rotation.y = THREE.MathUtils.degToRad(ang);
   const R = FRAME[type], e = THREE.MathUtils.degToRad(el);
-  cam.position.set(0, Math.sin(e) * R + 3, Math.cos(e) * R); cam.lookAt(0, type === 'all' ? 2 : 3, 0);
+  cam.position.set(0, Math.sin(e) * R + 3, Math.cos(e) * R); cam.lookAt(0, type === 'all' ? 4 : type === 'ship' ? 4 : 5, 0);
   renderer.render(scene, cam);
   const vis = Object.entries(boats).filter(([, b]) => b.visible).map(([k, b]) => `${k}: ${b.userData.length}×${b.userData.beam} stud, mớn ${b.userData.draft.toFixed(2)}, mạn khô ${b.userData.freeboard.toFixed(2)}, footprint ${b.userData.footprint.hx}/${b.userData.footprint.hz}`);
   $('info').textContent = vis.join(' · ');

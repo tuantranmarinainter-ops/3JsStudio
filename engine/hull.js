@@ -431,7 +431,7 @@ function buildShip(THREE, o, root) {
   const rowY = (u) => [...below, ...above.map((f) => f * sheer(u))];
   const NR = below.length + above.length;
   const steel = steelTex(THREE, o.seed); if (steel) steel.repeat.set(L / 24, 1);
-  const mHull = paintMaterial(THREE, { top: C.top, bottom: C.bottom, boot: o.boot || '#151515', wl: 0, bootH: 0.45 * k, dirt: o.dirt, seed: o.seed, map: steel, rough: 0.55, metal: 0.25, tag: 'ship' });
+  const mHull = paintMaterial(THREE, { top: C.top, bottom: C.bottom, boot: o.boot || '#151515', wl: 0, bootH: 0.45 * k, dirt: o.dirt, seed: o.seed, map: steel, rough: 0.55, metal: 0.1, tag: 'ship' });
   const mDeck = stdMat(THREE, o.deckColor || '#5d6b5a', { map: steel, roughness: 0.8, name: 'hull_deck' });
   const mTrim = stdMat(THREE, C.trim, { map: steel, roughness: 0.6, name: 'hull_trim' });
   const mDark = stdMat(THREE, '#1c1c1e', { roughness: 0.55, metalness: 0.4, name: 'hull_steelDark' });
@@ -548,7 +548,8 @@ function buildRaft(THREE, o, root) {
   const bX = Builder(THREE), bLash = Builder(THREE), top = yc + r;
   for (const f of [-0.36, 0.36, 0]) {
     const z = f * L; bX.tube([[-Bm / 2 - 0.2 * r, top + 0.35 * r, z], [Bm / 2 + 0.2 * r, top + 0.35 * r, z]], 0.42 * r, 8);
-    for (let i = 0; i < n; i++) { const x = -Bm / 2 + r + i * d; for (const s of [-1, 1]) bLash.tube([[x - 0.45 * r, top + 0.9 * r, z + s * 0.38 * r], [x, top - 0.3 * r, z + s * 0.5 * r], [x + 0.45 * r, top + 0.9 * r, z + s * 0.38 * r]], 0.07 * r, 4, false); }
+    // dây buộc: vòng elip ôm xà ngang + lưng khúc gỗ bên dưới, mỗi chỗ giao 2 vòng chéo
+    for (let i = 0; i < n; i++) { const x = -Bm / 2 + r + i * d; for (const s of [-1, 1]) { const ring = []; for (let a = 0; a <= 16; a++) { const q = (a / 16) * Math.PI * 2; ring.push([x + s * 0.18 * r * Math.sin(q), top + 0.2 * r + 0.72 * r * Math.cos(q), z + 0.5 * r * Math.sin(q)]); } bLash.tube(ring, 0.06 * r, 4, false); } }
   }
   deck.add(meshOf(THREE, 'crossbeams', bX.geo(), mLog), meshOf(THREE, 'lashings', bLash.geo(), mRope));
   if (o.mast !== false) {
@@ -572,7 +573,7 @@ function buildRaft(THREE, o, root) {
 // ================================================================= API
 export const HULL_DEFAULTS = {
   skiff: { length: 18, beam: 5.6, depth: 2.9, strakes: 8, colors: { top: '#3a2a1e', bottom: '#2a1d14', trim: '#cbbd98' } },
-  ship: { length: 60, beam: 12, depth: 8, strakes: 0, colors: { top: '#1f3550', bottom: '#8a2b1f', trim: '#ece8dc' } },
+  ship: { length: 60, beam: 12, depth: 8, strakes: 0, colors: { top: '#2b4c72', bottom: '#8a2b1f', trim: '#ece8dc' } },
   raft: { length: 12, beam: 7, depth: 1.2, strakes: 0, colors: { top: '#8a6a44', bottom: '#4a3a26', trim: '#c9b48a' } },
 };
 

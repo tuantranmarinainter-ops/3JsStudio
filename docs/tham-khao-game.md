@@ -126,7 +126,7 @@ post.paint.params.flat = 0.4;       // độ rộng nét khi không có depth
 // thân tàu
 import { createHull } from '/engine/hull.js';
 const boat = createHull(THREE, { type: 'ship', length: 60, beam: 12, depth: 8, name: 'Hải Âu', seed: 4,
-  colors: { top: '#1f3550', bottom: '#8a2b1f', trim: '#ece8dc' } });
+  colors: { top: '#2b4c72', bottom: '#8a2b1f', trim: '#ece8dc' } });
 boat.position.y = seaY;                        // gốc = đường nước
 const F = floatHull(sea.sample, { ...boat.userData.footprint, x, z, yaw, t, clock: sea.clock });
 ```
