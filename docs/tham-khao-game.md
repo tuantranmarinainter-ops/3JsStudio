@@ -71,14 +71,14 @@ Bắt buộc với mọi mục: chỉ là hàm thuần của `t`, rng có seed, 
 
 | Kỹ thuật | Là gì | Nguồn | Lõi | TT |
 |---|---|---|---|---|
-| Xuồng ván chồng mép đôi mũi | `sheerY/keelY/halfBeam/hullPt` → 8 ván chồng mép (lap 3 cm) + gờ tối dưới mép, ván trong, sườn, sống liền, sàn, băng ngồi, sàn mũi | TW 40-boat 3650–4030 | `engine/hull.js` `createHull({type:'skiff'})` | ✅ |
-| Buồm lug + cột | 4 góc tack/clew/throat/peak, bụng buồm, yard + boom, dây chằng | TW 40-boat `CORNERS` 3865, mast 4005 | `hull.js` (`sail`, `sailAngle`, `camber`, `sailColor`) | ✅ (tĩnh; buồm phồng theo gió = ⬜: dời đỉnh theo `wind(t)` ở vertex shader như TW `SAIL_VS` 4323) |
+| Xuồng ván chồng mép đôi mũi | `sheerY/keelY/halfBeam/hullPt` → 8 ván chồng mép (lap 3 cm) + gờ tối dưới mép, ván trong, sườn, sống liền, sàn, băng ngồi, sàn mũi | TW 40-boat 3650–4030 | `engine/hull.js` `createHull({type:'skiff'})` (bí danh `kind`; đã chụp kiểm: `output/look/agentE2/`) | ✅ |
+| Buồm lug + cột | 4 góc tack/clew/throat/peak, bụng buồm, yard + boom, dây chằng | TW 40-boat `CORNERS` 3865, mast 4005 | `hull.js` (`sail`, `sailAngle`, `camber`, `sailColor`) | ✅ (phồng theo gió: `userData.animate(t,{wind})`, hàm thuần của t) |
 | Thân thép dựng theo trạm | Trạm dọc thân (dày ở 2 đầu) × hàng (dưới nước tuyệt đối, trên nước theo % mạn khô), mũi thon, đuôi vách lái, đáy phẳng + hông bo | Saltline `vb(` + `fn/ha/hs/Bo` (~5282) | `hull.js` `type:'ship'` | ✅ |
 | Sơn hai màu + boot-top | Đỏ chống hà dưới đường nước, sọc đen, màu thân phía trên; loang, vệt chảy, rêu sát nước, gỉ (fbm 3D) | Saltline `hull_red`/`hull_paint` | `hull.js` `paintMaterial` (onBeforeCompile, nối tiếp được) | ✅ |
 | Gân mối hàn, gờ chắn va, lỗ thoát nước + vệt gỉ, thang mớn nước, tên tàu | Chi tiết thân tàu bám mặt cong (miếng dán lấy mẫu trên mặt thân + đẩy theo pháp tuyến) | Saltline `vb` (`jt` mối hàn, `rust_run` decal 848470, `label("KITTIWAKE")`) | `hull.js` (`welds`, `fender`, `scuppers`, `rust`, `marks`, `nameL/nameR`) | ✅ |
 | Bè gỗ | Thân gỗ tròn, xà ngang, dây buộc, buồm vuông | — (mở rộng) | `hull.js` `type:'raft'` | ✅ |
 | Lồng đèn bão đung đưa | Lồng đèn trên móc sắt ở mũi, con lắc quanh điểm treo, quầng sáng | TW 40-boat 3852–3854, 4031; 41-fx halo | (đề xuất) `hull.js` `lantern:true` + `fx.js` | ⬜ Thêm bộ phận `lantern` (con lắc = hàm của độ chúi/lắc từ `floatHull`) + PointLight + quầng additive |
-| Bánh lái / cần lái điều khiển được | Trục bản lề nghiêng, `rudder > 0` = rẽ phải | TW 40-boat 3857–3862 | `hull.js` (`rudder`, tĩnh) | 🟡 Chưa có pivot xoay |
+| Bánh lái / cần lái điều khiển được | Trục bản lề nghiêng, `rudder > 0` = rẽ phải | TW 40-boat 3857–3862 | `hull.js` (`rudderPivot`, `setRudder(rad)`) | ✅ |
 
 ## 6. Bến cảng và mặt đất ướt (Saltline)
 
@@ -113,6 +113,52 @@ Bắt buộc với mọi mục: chỉ là hàm thuần của `t`, rng có seed, 
 | Mức chất lượng cố định | q0/q1/q2 đổi biến thể shader, không tự đổi theo FPS | TW `qLevel` 50-post; 21-ocean 1919 | `painterly.params.quality` (0..2) | 🟡 Kế hoạch: một `engine/quality.js` chung (chưa có trong repo) |
 | Tự kiểm offline | Render âm thanh bằng OfflineAudioContext rồi đo, vì không ai nghe được lúc phát triển | TW 60-audio đầu file | `tools/audio-check.py` | 🟡 |
 
+## PHẦN 3 — Repo `thuann-vn/claude-3d-animated-shorts` (MIT)
+
+Kỹ năng Claude làm short dọc 9:16 với nhân vật 3D thật (three.js), phong cách kênh RicksClips (đầu trắng, mặt lạnh, thân hình quả lê, tay mì).
+Đã clone tạm ra ngoài repo để đọc mã (không chép asset; mã MIT, asset Kenney/KayKit CC0, Xbot/ngựa tải qua script).
+Cấu trúc: `SKILL.md` (quy trình + giá trị nhìn đã duyệt) · `engine/stickrig.js` (405 dòng, dòng rất dài) · `engine/main.js` (750) ·
+`engine/post.js` (47) · `engine/world.js` (347) · `tools/{captions,fit,sheet}.py`, `tools/tts.mjs` · `engine/render.cjs` · `upstream-2d/` (bản 2D gốc của mromidev).
+Chỉ học kỹ thuật; không chép phong cách riêng của kênh (đầu trắng/mặt lạnh) hay nội dung. Ký hiệu: **SR** = `engine/stickrig.js`, **MN** = `engine/main.js`, **PP** = `engine/post.js` (số = dòng).
+
+### 3.1 Hậu kỳ và ánh sáng
+
+| Kỹ thuật | Là gì | Nguồn | Lõi | TT |
+|---|---|---|---|---|
+| **SMAA** (khử răng cưa hậu kỳ) | Chuỗi `postprocessing` (pmndrs): RenderPass → DoF → Bloom+Grade (một Effect tuỳ biến) → SMAA HIGH; buffer HalfFloat, tone map nằm trong grade (HDR trước đó) | PP 1–47 (`SMAAEffect`, `frameBufferType: HalfFloatType`) | `engine/post.js` (hiện chỉ MSAA của renderer, `stage.js` 46) | ⬜ Thêm `SMAAPass` (three/addons) cuối chuỗi, ô **`smaa`**; cần khi bật painterly/AO (RT không MSAA). Chủ file `post.js` làm |
+| **n8ao** (AO màn hình) | `N8AOPostPass` chèn ngay sau RenderPass: aoRadius 0.9, falloff 0.8, intensity 2.6, màu nâu ấm `#3a2a22` → bóng dịu ở góc tường, dưới bàn ghế | PP `addAO` | `engine/ao.js` `createAO` (mẫu bán cầu mulberry32 + xoay theo toạ độ điểm ảnh → tất định; n8ao dùng nhiễu ngẫu nhiên) | ✅ (ô `ao`) |
+| **Phòng studio RoomEnvironment** | `PMREMGenerator.fromScene(new RoomEnvironment(), 0.04)` làm `scene.environment`, cường độ 0.55 → PBR (kim loại, men) có gì để phản chiếu | MN 621 | `engine/ibl.js` (phòng studio dựng bằng code, 0.3–0.6) | ✅ (ô `ibl`) |
+| Grade ACES + tách tông + vignette + hạt | Một Effect: ACES × exposure, tối xanh (`uShTint`), sáng ấm (`uWarm`), contrast/saturation, vignette bầu dục, hạt theo `uTime` | PP `frag` | `post.js` `GRADES` + `vignette` | ✅ (tách tông bóng/sáng = 🟡, xem mục 4) |
+| Bloom mipmap | `BloomEffect` mipmapBlur, ngưỡng 0.9, mượt 0.25 | PP | `post.js` (UnrealBloom) | ✅ |
+| DoF bokeh theo shot | `DepthOfFieldEffect`; API cũ `bokeh.focus/aperture` đặt riêng mỗi shot (cận: khẩu to) | PP `bokeh` adapter; MN từng shot | `post.js` (`BokehPass`, ô `dof`) | ✅ |
+| **Tia nắng qua cửa sổ** | Nhân chéo từ cửa sổ xuống sàn, texture gradient cộng sáng (additive) + mảng sáng trên sàn nơi tia rơi; thêm `rays` hậu kỳ 40 mẫu theo `uSun` | MN 601–609; PP `rays` | chỉ có god rays hậu kỳ (đề xuất ở mục 3); env trong nhà chưa có | ⬜ `engine/fx.js` `sunShaft(THREE,{from,to,width})`: hộp mảnh additive gradient + mảng sáng sàn, tất định; ô `shafts` |
+| **Kiểm độ sáng khung** | QA: luma TB ≈ 100–130 / 255, đầu nhân vật là thứ sáng nhất khung; đo trên 12 Short tham khảo | SKILL.md mục 3 + 6 | `tools/look.mjs` (cột "sáng", khoảng 100–150, ⚠ nếu lệch, `--luma a:b`) | ✅ |
+
+### 3.2 Nhân vật
+
+| Kỹ thuật | Là gì | Nguồn | Lõi | TT |
+|---|---|---|---|---|
+| **Viền nét cọ quanh nhân vật** | Vỏ lật mặt (BackSide) đẩy đỉnh theo pháp tuyến `inkPx` điểm ảnh MÀN HÌNH (dày như nhau ở mọi zoom); bản `inkClean` nhấp nhô dày/mỏng như vẽ tay, dày hơn dưới cằm; màu nâu đậm `#2a1612`, không đen tuyền; thêm dải viền trong để dính sát mặt | SR 65–73 (`inkPx`, `inkClean`, `inkM`), 93–95 | `post.js` `outline` (OutlinePass đồng đều, mặc định TẮT) | 🟡 Có viền đồng đều. Kế hoạch: `engine/ink.js` `inkHull(mesh,{px,seed})` — vỏ BackSide, độ dày = hàm của pháp tuyến (`sin` chồng, tất định), bù theo khoảng cách để giữ độ dày màn hình; ô riêng |
+| **Mặt vẽ trên canvas (decal)** | Mỗi tâm trạng = 1 hàm vẽ trong `FACES` (mắt oval + mí nặng, miệng nhỏ); `wobble()` làm nét run; texture 1024² dán decal lên mặt cầu, đính theo bề mặt (không nổi khi nhìn ngang) | SR 74–129 (`faceTex`, `wobble`, `decal`); MN 74–97 | `engine/r6.js` `setFace` (8 biểu cảm, `faceStyle:'cartoon'`) | 🟡 Có 8 biểu cảm; ⬜ nét run `wobble` + decal bám cong |
+| **IK 2 xương** (tay/chân) | `ik2(a,c,l1,l2,hint)` giải tay 2 đốt (khuỷu theo hint), `aim`, `limb` đặt bàn tay lên chuột/ly; chụp tư thế idle 1 lần rồi khôi phục mỗi khung (không cộng dồn xoay) | SR 335–400 (`ik2`, `limb`, `pose`, `clipAt`) | `r6.js` chỉ có pose theo `t` (không IK) | ⬜ `engine/ik.js` `solveArm(THREE,{shoulder,target,l1,l2,hint})` hàm thuần; r6 gọi cho `point`/cầm vật (tránh tay trượt khỏi đạo cụ) |
+| Tay mì + găng liền | `noodle:true`: mỗi tay/chân là MỘT ống cong mượt qua các khớp; `mitten` bàn tay có ngón cái | SR 388–398, 176 | — (R6 là khối vuông, khác phong cách) | ⬜ không cần (giữ R6) |
+| Áo quần hoạ tiết | `pattern`: sọc, kẻ ô, chấm, zigzag, gile; hoodie, polo, cà vạt; vải hạt + ribTex | SR 36–62, 134 | `r6.js`/`r15.js` (màu phẳng + vài mẫu) | 🟡 Mẫu hoạ tiết áo ⬜ (canvas có seed trong `proctex.js` đề xuất ở mục 6) |
+| Duyệt nhân vật OK / Cần sửa | `viewer.html?viewer=1`: OrbitControls quanh dàn nhân vật, chọn tâm trạng + dáng, nút OK / Cần sửa gửi ghi chú về máy chủ | MN 572–685 | `engine/r6-preview.html`, `engine/asset-preview.html`; góp ý khung = nút "Ghi chú lỗi" (skill `gop-y`) | 🟡 Có trang xem; ⬜ nút OK/Cần sửa lưu `episodes/<ep>/review.json` (tải JSON xuống, không cần máy chủ) |
+
+### 3.3 Máy quay, phụ đề, giọng, QA
+
+| Kỹ thuật | Là gì | Nguồn | Lõi | TT |
+|---|---|---|---|---|
+| **Kế hoạch đạo diễn** | Mỗi shot đủ cỡ + góc + chuyển động có lý do: establish (cẩu xuống) → hero thấp đẩy vào → OTS insert → ECU snap-zoom lúc bấm → **whip pan** (giữ, quét 0.28 s có nghiêng nhẹ, giữ) → **dolly-zoom** (vertigo) + nghiêng dutch ở câu "ôi không" | SKILL.md mục 4; MN 735–744 (`look(camPos,target,fov)`) | `engine/shottypes.js` (luật camera dồn dập: zoom in/out) | ⬜ Thêm 3 loại shot: `whip` (xoay nhanh giữa 2 phản ứng, có `roll`), `snap` (zoom giật 0.12 s), `vertigo` (`fov = 2·atan(h/2dz)` khi `dz` đổi để mặt giữ cỡ) |
+| **Phụ đề từng chữ + thẻ chữ nổi** | Lớp phủ trong suốt: mỗi chữ hiện đúng mốc `t` của giọng (ElevenLabs word timing), 122 px viền đen dày `size/10`, tự co khi dài, thẻ vàng `cards.json` ở y=0.16; dòng cuối cắt giữa câu để lặp vòng | `tools/captions.py` (35 dòng); `tools/tts.mjs` | `episodes/ep001/captions_en.js` (cụm 1–3 chữ từ `narration_en.json`); chữ nổi = trường `text` của shot | ✅ tiếng Anh · 🟡 tiếng Việt chưa theo từng chữ (cần mốc từng chữ từ CapCut; hiện theo câu) |
+| Khớp nhịp giọng ↔ độ dài | `fit.py`: tăng tốc giọng tới mục tiêu (≤ ×1.3, quá thì CẮT chữ chứ không tăng tốc) + chèn 1.2 s lặng trước câu cuối để shot kết chạy xong | `tools/fit.py` | `tools/fit_voice.py` | ✅ (kiểm lại ngưỡng ×1.3) |
+| Bảng khung (contact sheet) | `sheet.py` ghép `still-<t>.jpg` thành bảng 216×384 | `tools/sheet.py`; `render.cjs` (stills) | `tools/look.mjs --sheet/--cols/--tile` | ✅ |
+| Dựng từng khung rồi ghép | `render.cjs`: puppeteer gọi `window.frame(t)` → ffmpeg `image2pipe` | `engine/render.cjs` | HTML tự xuất bằng WebCodecs (`tools/export-ui.js`) | ✅ |
+| Công thức câu chuyện | Hành vi lạ nêu như sự thật ở câu 1 → hệ quả trong 3 s → người hoài nghi chế giễu → khoa học một câu + một so sánh → cắt giữa câu để lặp vòng | SKILL.md mục 1 | (quy trình; gần với format "Ở thị trấn này") | ✅ chỉ tham khảo |
+| Bộ đạo cụ nội thất | Kenney Furniture Kit + KayKit Furniture Bits (CC0) đặt qua `put(kit,name,x,z,ry,{k,y})`, một tỉ lệ cho mỗi bộ | MN 590+; `engine/assets/props/` | `assets/kenney`, `scans.js` (Poly Haven) | 🟡 KayKit chưa nhập; cần cho cảnh trong nhà |
+
+Việc nên làm tiếp từ phần này (theo độ lợi/giá): `smaa` (rẻ) → `shafts` → `whip/snap/vertigo` → `ink.js` → `ik.js` → review OK/Cần sửa.
+
 ## Dùng nhanh các module mới
 
 ```js
@@ -125,8 +171,8 @@ post.paint.params.flat = 0.4;       // độ rộng nét khi không có depth
 
 // thân tàu
 import { createHull } from '/engine/hull.js';
-const boat = createHull(THREE, { type: 'ship', length: 60, beam: 12, depth: 8, name: 'Hải Âu', seed: 4,
-  colors: { top: '#2b4c72', bottom: '#8a2b1f', trim: '#ece8dc' } });
+const boat = createHull(THREE, { type: 'ship' /* hoặc kind: skiff | ship | raft */, length: 60, beam: 12, depth: 8, name: 'Hải Âu', seed: 4,
+  colors: { top: '#3f6f9e', bottom: '#a8362a', trim: '#ece8dc' } });
 boat.position.y = seaY;                        // gốc = đường nước
 const F = floatHull(sea.sample, { ...boat.userData.footprint, x, z, yaw, t, clock: sea.clock });
 ```

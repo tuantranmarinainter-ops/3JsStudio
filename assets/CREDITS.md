@@ -6,3 +6,8 @@ Asset CC-BY-4.0 BẮT BUỘC ghi tên khi đăng video:
 
 CC0 (không bắt buộc, ghi để cảm ơn):
 - Fish Pack (Animated) by Quaternius (https://quaternius.com) — cá heo, cá mập, cá đuối manta, 3 cá nhỏ.
+
+Nội thất (engine/furnish.js) — CC0, không bắt buộc ghi, ghi để cảm ơn:
+- KayKit : Furniture Bits 1.0 by Kay Lousberg (https://www.kaylousberg.com, https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0) — assets/kaykit/furniture/, CC0.
+- Furniture Kit by Kenney (https://kenney.nl/assets/furniture-kit) — assets/kenney/furniture-kit/, CC0.
+- Mô hình quét Poly Haven (polyhaven.com), CC0 — ghi công từng món trong assets/manifest.json (`credit`).

@@ -10,17 +10,21 @@
 //
 //   import { createHull } from './hull.js';
 //   const boat = createHull(THREE, { type: 'skiff', length: 18, beam: 5.6, depth: 2.9, strakes: 8,
-//                                    colors: { top: '#3a2a1e', bottom: '#241912', trim: '#cbbd98' }, name: 'MAI', seed: 3, sail: true });
+//                                    colors: { top: '#8a6240', bottom: '#4a3322', trim: '#d8c9a2' }, name: 'MAI', seed: 3, sail: true });   // = màu mặc định skiff
 //   scene.add(boat);  boat.position.y = mặtNước;   // GỐC = ĐƯỜNG NƯỚC (y = 0 cục bộ), +Z = mũi, +Y lên, +X = mạn trái
 //   floatHull(sea.sample, { ...boat.userData.footprint, x, z, yaw, t, clock })   // engine/floating.js
 //   boat.getObjectByName('sail').rotation.y = 0.4;  // xoay buồm quanh cột
+//   boat.userData.animate(t, { wind: 1, rudder: 0.2 })  // hàm THUẦN của t (+ seed): buồm skiff/raft phồng–xẹp theo gió (gió giật 2 tần số + rung
+//                                                       //   mép buồm khi xẹp), tuỳ chọn bánh lái (rad, >0 = rẽ phải). Gọi sau mỗi lần seek; không giữ trạng thái.
+//   boat.userData.setRudder(0.2)                         // chỉ xoay bánh lái: pivot 'rudderPivot' (skiff: trục nghiêng của bản lề; ship: trục đứng)
 //
 // Đơn vị: stud (1 stud = 1 đơn vị R6; engine/scans.js M2STUD = 2.9 stud/m). Mặc định: skiff 18×5.6×2.9 (≈ 6.2 m như Tidewright),
 // ship 60×12×8, raft 12×7×1.2.
 // userData: { type, length, beam, depth, waterline: 0, draft, freeboard, footprint: { hx, hz }, parts: [tên…] }
 // Bộ phận có tên: hull (+ strakes/ledges/inner/keel/ribs | plating/bottom/welds/fender/transom | logs), deck, rail,
-//   mast, sail (+ yard/boom), rudder, house, scuppers, rust, marks, nameL/nameR, lashings. Tất cả mesh: userData.noMerge = true
+//   mast, sail (+ yard/boom), rudderPivot (> rudder), house, scuppers, rust, marks, nameL/nameR, lashings. Tất cả mesh: userData.noMerge = true
 //   (vật liệu sơn hai màu dùng toạ độ CỤC BỘ của thân — không gộp vào world).
+// Đổ bóng: sàn/mái phẳng cần mặt trời có shadow.bias ≤ -0.0004 và normalBias ≥ 0.02 (engine/stage.js đã đặt); thiếu → nhiễu sọc moiré (shadow acne).
 // Vật liệu sơn: MeshStandardMaterial + onBeforeCompile (fbm 3D: loang màu, vệt chảy dọc, rêu sát nước, gỉ); nối tiếp được
 //   (grunge.js / materials.js / floating.wetline dùng mẫu `prev` + customProgramCacheKey).
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
@@ -352,16 +356,18 @@ function buildSkiff(THREE, o, root) {
   for (const [n, b, m] of [['foredeck', bDeck, mOak], ['floor', bFloor, mInner], ['thwarts', bThw, mOak]]) { const x = mergeOf(THREE, n, [b], m); if (x) deck.add(x); }
   const rail = mergeOf(THREE, 'rail', [bRail], mOak); root.add(rail);
 
-  // bánh lái + cần lái
+  // bánh lái + cần lái: nhóm 'rudderPivot' đặt TẠI bản lề dưới (RA0), trục xoay = hướng bản lề RD (nghiêng ra sau) → setRudder(rad)
   {
-    const b = B();
     const RD = vnorm([0, 1.33, -0.50]), RE = [0, RD[2], -RD[1]], RA0 = vadd([0, -0.25, -2.56], vmul(RE, 0.10));
+    const bR = Builder(THREE, (p) => sc(vsub(p, RA0)));   // hình học tính theo bản lề, pivot đặt ở sc(RA0)
     const rp = (a, d) => [0, RA0[1] + RD[1] * a + RE[1] * d, RA0[2] + RD[2] * a + RE[2] * d];
     const blade = [rp(0, 0), rp(0, 0.42), rp(0.9, 0.36), rp(1.15, 0.05)];
     const th = 0.022;
-    b.box8([...blade.map((p) => [p[0] - th, p[1], p[2]]), ...blade.map((p) => [p[0] + th, p[1], p[2]])].map((p, i) => p).slice(0, 8));
-    b.beam([rp(1.5, 0.02), [0, 0.80, -2.14]], [0, 1, 0], 0.04, 0.05);
-    const m = mergeOf(THREE, 'rudder', [b], mPlank); root.add(m);
+    bR.box8([...blade.map((p) => [p[0] - th, p[1], p[2]]), ...blade.map((p) => [p[0] + th, p[1], p[2]])]);
+    bR.beam([rp(1.5, 0.02), [0, 0.80, -2.14]], [0, 1, 0], 0.04, 0.05);   // cần lái (tiller) quay theo bánh lái
+    const pv = new THREE.Group(); pv.name = 'rudderPivot'; pv.position.set(...sc(RA0)); root.add(pv);
+    pv.add(meshOf(THREE, 'rudder', bR.geo(), mPlank));
+    o._rudder = { pivot: pv, axis: new THREE.Vector3(0, RD[1] * S[1], RD[2] * S[2]).normalize() };
   }
   // cột + buồm lug
   if (o.mast !== false) {
@@ -390,9 +396,10 @@ function buildSkiff(THREE, o, root) {
         rows.push(row);
       }
       bSail.grid(rows, (i, j) => [i / NS, j / NT]);
-      const mSail = stdMat(THREE, '#ffffff', { map: sailTex(THREE, o.seed, o.sailColor || '#9a5a34'), roughness: 0.9, side: THREE.DoubleSide, name: 'hull_sail' });
-      if (!mSail.map) mSail.color.set(o.sailColor || '#9a5a34');
-      pivot.add(meshOf(THREE, 'sailCloth', bSail.geo(), mSail));
+      const mSail = stdMat(THREE, '#ffffff', { map: sailTex(THREE, o.seed, o.sailColor || '#c98a58'), roughness: 0.9, side: THREE.DoubleSide, name: 'hull_sail' });
+      if (!mSail.map) mSail.color.set(o.sailColor || '#c98a58');
+      const clothG = bSail.geo(); pivot.add(meshOf(THREE, 'sailCloth', clothG, mSail));
+      (o._sails ||= []).push({ geo: clothG, axis: 0, amp: (o.camber ?? 0.32) * k });   // phồng theo trục X cục bộ (cùng phía bụng buồm)
       const bY = Builder(THREE, sp); bY.tube([P3(cn[2], SAILX + 0.02), P3(cn[3], SAILX + 0.02)], 0.035, 6);
       const bB = Builder(THREE, sp); bB.tube([P3(cn[0], SAILX + 0.02), P3(cn[1], SAILX + 0.02)], 0.04, 6);
       pivot.add(meshOf(THREE, 'yard', bY.geo(), mSpar), meshOf(THREE, 'boom', bB.geo(), mSpar));
@@ -430,9 +437,9 @@ function buildShip(THREE, o, root) {
   const below = [0, 0.05, 0.16, 0.36, 0.62, 0.84, 1].map((f) => -T + T * f), above = [0.22, 0.46, 0.7, 0.88, 1];
   const rowY = (u) => [...below, ...above.map((f) => f * sheer(u))];
   const NR = below.length + above.length;
-  const steel = steelTex(THREE, o.seed); if (steel) steel.repeat.set(L / 24, 1);
+  const steel = steelTex(THREE, o.seed); if (steel) steel.repeat.set(L / 60, 0.6);
   const mHull = paintMaterial(THREE, { top: C.top, bottom: C.bottom, boot: o.boot || '#151515', wl: 0, bootH: 0.45 * k, dirt: o.dirt, seed: o.seed, map: steel, rough: 0.55, metal: 0.1, tag: 'ship' });
-  const mDeck = stdMat(THREE, o.deckColor || '#5d6b5a', { map: steel, roughness: 0.8, name: 'hull_deck' });
+  const mDeck = stdMat(THREE, o.deckColor || '#6f7d68', { roughness: 0.8, name: 'hull_deck' });
   const mTrim = stdMat(THREE, C.trim, { map: steel, roughness: 0.6, name: 'hull_trim' });
   const mDark = stdMat(THREE, '#1c1c1e', { roughness: 0.55, metalness: 0.4, name: 'hull_steelDark' });
   const mGlass = stdMat(THREE, '#1d2a33', { roughness: 0.15, metalness: 0.3, emissive: new THREE.Color('#ffd9a0'), emissiveIntensity: o.lit ?? 0, name: 'hull_glass' });
@@ -524,7 +531,13 @@ function buildShip(THREE, o, root) {
     }
   }
   // bánh lái dưới vách lái
-  { const b = Builder(THREE); b.box(-0.12 * k, -T + 0.1 * T, -L / 2 - 1.2 * k, 0.12 * k, -0.15 * T, -L / 2 + 0.2 * k); root.add(meshOf(THREE, 'rudder', b.geo(), mHull)); }
+  {
+    const hz = -L / 2 + 0.2 * k, b = Builder(THREE, (p) => [p[0], p[1], p[2] - hz]);   // bản lề = mép trước, trục đứng
+    b.box(-0.12 * k, -T + 0.1 * T, -L / 2 - 1.2 * k, 0.12 * k, -0.15 * T, hz);
+    const pv = new THREE.Group(); pv.name = 'rudderPivot'; pv.position.set(0, 0, hz); root.add(pv);
+    pv.add(meshOf(THREE, 'rudder', b.geo(), mHull));
+    o._rudder = { pivot: pv, axis: new THREE.Vector3(0, 1, 0) };
+  }
   return { draft: T, freeboard: free };
 }
 
@@ -562,7 +575,8 @@ function buildRaft(THREE, o, root) {
       b.grid(rows, (i, j) => [i / 10, j / 10]);
       const mS = stdMat(THREE, '#ffffff', { map: sailTex(THREE, o.seed, o.sailColor || '#d8c7a2'), roughness: 0.95, side: THREE.DoubleSide, name: 'hull_sail' });
       if (!mS.map) mS.color.set(o.sailColor || '#d8c7a2');
-      sail.add(meshOf(THREE, 'sailCloth', b.geo(), mS));
+      const clothG = b.geo(); sail.add(meshOf(THREE, 'sailCloth', clothG, mS));
+      (o._sails ||= []).push({ geo: clothG, axis: 2, amp: (o.camber ?? 0.12) * w });   // buồm vuông phồng về +Z (cùng phía bụng buồm)
       const by = Builder(THREE); by.tube([[-w / 2 - 0.3 * r, y1, 0.25 * r], [w / 2 + 0.3 * r, y1, 0.25 * r]], 0.16 * r, 6); sail.add(meshOf(THREE, 'yard', by.geo(), mLog));
       if (o.sailAngle) sail.rotation.y = o.sailAngle;
     }
@@ -572,22 +586,47 @@ function buildRaft(THREE, o, root) {
 
 // ================================================================= API
 export const HULL_DEFAULTS = {
-  skiff: { length: 18, beam: 5.6, depth: 2.9, strakes: 8, colors: { top: '#3a2a1e', bottom: '#2a1d14', trim: '#cbbd98' } },
-  ship: { length: 60, beam: 12, depth: 8, strakes: 0, colors: { top: '#2b4c72', bottom: '#8a2b1f', trim: '#ece8dc' } },
-  raft: { length: 12, beam: 7, depth: 1.2, strakes: 0, colors: { top: '#8a6a44', bottom: '#4a3a26', trim: '#c9b48a' } },
+  skiff: { length: 18, beam: 5.6, depth: 2.9, strakes: 8, colors: { top: '#8a6240', bottom: '#4a3322', trim: '#d8c9a2' } },
+  ship: { length: 60, beam: 12, depth: 8, strakes: 0, colors: { top: '#3f6f9e', bottom: '#a8362a', trim: '#ece8dc' } },
+  raft: { length: 12, beam: 7, depth: 1.2, strakes: 0, colors: { top: '#b08a5a', bottom: '#6a5236', trim: '#d9c79c' } },
 };
 
 export function createHull(THREE, opts = {}) {
-  const type = HULL_DEFAULTS[opts.type] ? opts.type : 'skiff';
+  const want = opts.type ?? opts.kind;   // `kind` = bí danh của `type`
+  const type = HULL_DEFAULTS[want] ? want : 'skiff';
   const D = HULL_DEFAULTS[type];
-  const o = { dirt: 0.5, seed: 1, ...D, ...opts, type, colors: { ...D.colors, ...(opts.colors || {}) } };
+  const o = { dirt: 0.5, seed: 1, ...D, ...opts, type, kind: type, colors: { ...D.colors, ...(opts.colors || {}) } };
   o.seed = Math.abs(Math.floor(o.seed)) || 1;
   const root = new THREE.Group();
   root.name = opts.id || `hull_${type}`;
   const info = type === 'ship' ? buildShip(THREE, o, root) : type === 'raft' ? buildRaft(THREE, o, root) : buildSkiff(THREE, o, root);
   const parts = []; root.traverse((x) => { if (x !== root && x.name) parts.push(x.name); });
+  const sails = (o._sails || []).map((sl) => {
+    const pos = sl.geo.attributes.position, uv = sl.geo.attributes.uv, n = pos.count, bell = new Float32Array(n), s01 = new Float32Array(n);
+    for (let i = 0; i < n; i++) { bell[i] = Math.sin(Math.PI * uv.getX(i)) * Math.sin(Math.PI * uv.getY(i)); s01[i] = uv.getX(i); }
+    return { ...sl, base: pos.array.slice(), bell, s01 };
+  });
+  const rud = o._rudder;
+  const ph = mulberry(o.seed * 97 + 13), ph1 = ph() * 6.283, ph2 = ph() * 6.283, ph3 = ph() * 6.283;
+  const setRudder = (a) => { if (rud) rud.pivot.quaternion.setFromAxisAngle(rud.axis, a || 0); };
+  // gió giật = tổng 2 sin lệch pha theo seed (0.15..0.95); k = độ phồng so với bụng buồm dựng sẵn (1 = như tĩnh)
+  const animate = (t, a = {}) => {
+    const wind = a.wind ?? 1, g = 0.55 + 0.25 * Math.sin(6.283 * 0.13 * t + ph1) + 0.15 * Math.sin(6.283 * 0.37 * t + ph2);
+    const kb = clamp(0.75 + 1.1 * wind * (g - 0.4), 0, 1.7), flut = clamp(1.05 - kb, 0, 1);   // xẹp → mép rung
+    for (const sl of sails) {
+      const p = sl.geo.attributes.position, A = p.array;
+      for (let i = 0; i < p.count; i++) {
+        const w = sl.bell[i], e = sl.base[i * 3 + sl.axis] + sl.amp * (kb - 1) * w + sl.amp * 0.12 * flut * Math.sin(9 * sl.s01[i] + 4.2 * t + ph3) * (1 - w) * Math.min(1, sl.s01[i] * 2);
+        A[i * 3 + sl.axis] = e;
+      }
+      p.needsUpdate = true; sl.geo.computeVertexNormals();
+    }
+    if (a.rudder !== undefined) setRudder(a.rudder);
+    return { billow: kb, gust: g };
+  };
+  if (o.rudder) setRudder(o.rudder);
   root.userData = {
-    ...root.userData, type, length: o.length, beam: o.beam, depth: o.depth, name: o.name || '', seed: o.seed,
+    ...root.userData, animate, setRudder, type, length: o.length, beam: o.beam, depth: o.depth, name: o.name || '', seed: o.seed,
     waterline: 0, draft: info.draft, freeboard: info.freeboard,
     footprint: { hx: o.beam / 2, hz: o.length / 2 }, parts,
   };

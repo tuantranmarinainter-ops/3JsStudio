@@ -76,6 +76,7 @@ export function createSplash(THREE, opts = {}) {
   const r = rng(o.seed);
   const group = new THREE.Group();
   group.name = 'splash';
+  group.userData.noAO = true;   // nước văng/bọt/sương: không vào prepass AO (engine/ao.js bỏ qua userData.noAO)
 
   const uEvt = Array.from({ length: MAX_EVENTS }, () => new THREE.Vector4(0, -1e5, 0, -1e5)); // xyz + time
   const uPow = Array.from({ length: MAX_EVENTS }, () => new THREE.Vector2(0, 0));              // strength, dir(1 up,-1 down)

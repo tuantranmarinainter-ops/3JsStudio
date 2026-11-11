@@ -13,7 +13,18 @@ import { createCrabs, createBeachGrass } from '../crabs.js';
 import { createCamp } from '../castaway.js';
 import { smoothFlash } from '../flash.js';
 
-import { scanPut, scanToggle } from '../scans.js';
+import { furnish } from '../furnish.js';
+
+// BÀY ĐỒ bằng dữ liệu (engine/furnish.js). 'nightstand', 'books5', 'poster', 'bed' là vật dựng tay (refs) mà món mới thế chỗ / đặt lên.
+export const BEDROOM_FURNISH = [
+  { id: 'scan:side_table_01', fit: 'nightstand' },
+  { id: 'scan:book_encyclopedia_set_01', fit: 'books5', keepRatio: true },
+  { id: 'scan:alarm_clock_01', at: [-0.9, 3, -14.6], h: 0.9, rot: 0.4 },
+  { id: 'scan:potted_plant_04', at: [16, 0, -15], h: 3.2 },
+  // đồ CC0 mới (KayKit Furniture Bits): đèn đứng áp tường giữa giường và tủ đầu giường, khung tranh lớn áp tường thế tấm bìa nâu
+  { id: 'kaykit:lamp_standing', wall: 'north', at: [5], h: 6.5 },
+  { id: 'kaykit:pictureframe_large_B', name: 'frame', wall: 'north', at: [6], y: 11.5, w: 4, replace: 'poster' },
+];
 
 export default function build(g, e, H) {
   const { THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
@@ -29,13 +40,7 @@ export default function build(g, e, H) {
   e.window = K.window({ w: 7, h: 8, curtains: '#c8c0ff', view: viewTex('night') }); e.window.position.set(19.8, 11, -6); e.window.rotation.y = -Math.PI / 2; R.add(e.window);
   const books5 = place(R, K.books(5), 4, 0, -14); const nstand = K.box(3, 3, 3, '#8a5a36', -2, 1.5, -15, 'nightstand', R); place(R, K.books(3), -2, 3, -15);
   const poster = K.box(4, 3, 0.2, '#8a5a36', 6, 13, -17.8, 'poster', R);
-  // mô hình quét thật Poly Haven (engine/scans.js): tủ đầu giường, bộ sách, khung tranh thay đồ dựng tay; đồng hồ, chậu cây
-  e.scans = [
-    scanPut(H, 'polyhaven/side_table_01', R, { fit: nstand }),
-    scanPut(H, 'polyhaven/book_encyclopedia_set_01', R, { fit: books5, keepRatio: true }),
-    scanPut(H, 'polyhaven/alarm_clock_01', R, { at: [-0.9, 3, -14.6], h: 0.9, ry: 0.4 }),
-    scanPut(H, 'polyhaven/potted_plant_04', R, { at: [16, 0, -15], h: 3.2 }),
-  ];
+  e.furn = furnish(THREE, R, BEDROOM_FURNISH, { assets: A, walls: { north: -18, south: 20, west: -20, east: 20 }, refs: { bed: e.bed, nightstand: nstand, books5, poster } });
   e.point = new THREE.PointLight('#aab6ff', 0.8, 60, 1.2); e.point.position.set(14, 14, -6); R.add(e.point);
-  return { update() { scanToggle(e.scans, globalThis.__autoFx?.scans ?? true); }, setView(kind) { e.window.getObjectByName('window_view').material.map = viewTex(kind); } };
+  return { update() { e.furn.update(globalThis.__autoFx?.scans ?? true); }, setView(kind) { e.window.getObjectByName('window_view').material.map = viewTex(kind); } };
 }

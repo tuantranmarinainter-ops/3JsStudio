@@ -109,7 +109,7 @@ export function createOceanLife(THREE, A, { seaY = 0, plan = null } = {}) {
   const makeMat = () => new THREE.MeshStandardMaterial({ color: '#ffffff', vertexColors: true, roughness: 0.6, metalness: 0.05, side: THREE.DoubleSide, name: 'whale_lit' });
   const makeWhale = (name) => {
     const mat = makeMat();
-    const rig = new THREE.Group(); rig.name = name; rig.scale.setScalar(S); group.add(rig);
+    const rig = new THREE.Group(); rig.name = name; rig.scale.setScalar(S); rig.userData.aoDepthOnly = true; group.add(rig);
     const body = A.instance(ID, { name: name + '_model', castShadow: false });
     body.scale.setScalar(k); body.position.y = -wy * k; rig.add(body);
     body.traverse((o) => {
@@ -148,7 +148,7 @@ export function createOceanLife(THREE, A, { seaY = 0, plan = null } = {}) {
 
   // cột phun khi thở: các cụm bụi nước trắng xếp hình phễu nghiêng về trước-trái (kiểu cá nhà táng), toạ độ rig = mét
   const makeSpout = () => {
-    const spout = new THREE.Group(); spout.name = 'whale_spout'; spout.visible = false;
+    const spout = new THREE.Group(); spout.name = 'whale_spout'; spout.visible = false; spout.userData.noAO = true;
     const hs = (i, k2) => { const x = Math.sin(i * 127.1 + k2 * 311.7) * 43758.5453; return x - Math.floor(x); };
     const geo = new THREE.IcosahedronGeometry(1, 2);
     const mist = new THREE.MeshLambertMaterial({ color: '#ffffff', emissive: '#c8d6e2', transparent: true, opacity: 0.55, depthWrite: false, name: 'whale_spout_mist' });
@@ -186,7 +186,7 @@ export function createOceanLife(THREE, A, { seaY = 0, plan = null } = {}) {
       const splash = createSplash(THREE, { seed: sp.seed ?? 5, scale: sp.scale ?? 21 });
       splash.setEvents(cross);
       splash.object.traverse((o) => { o.renderOrder = 3; });   // vẽ sau mặt biển (trong suốt)
-      rigS.add(splash.object);
+      splash.object.userData.noAO = true; rigS.add(splash.object);
       const jumpDur = jumpClip ? jumpClip.duration : 1.42;
       const toWorld = (x, z) => { const c = Math.cos(P.heading), s = Math.sin(P.heading); return [P.at[0] + S * (x * c + z * s), P.at[1] + S * (-x * s + z * c)]; };
       const toTime = (tc) => T0 + P.t0 + tc / P.speed;
@@ -223,7 +223,7 @@ export function createOceanLife(THREE, A, { seaY = 0, plan = null } = {}) {
     const pos = new Float32Array(N * 3), geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     const m = new THREE.PointsMaterial({ color: '#eaf8ff', size: 0.45, sizeAttenuation: true, transparent: true, opacity: 0.85, depthWrite: false, fog: true, name: 'whale_drips' });
-    const pts = new THREE.Points(geo, m); pts.name = 'whale_drips'; pts.frustumCulled = false; pts.renderOrder = 3; pts.visible = false;
+    const pts = new THREE.Points(geo, m); pts.name = 'whale_drips'; pts.userData.noAO = true; pts.frustumCulled = false; pts.renderOrder = 3; pts.visible = false;
     parent.add(pts);
     return { pts, update(tc) {
       let any = false;

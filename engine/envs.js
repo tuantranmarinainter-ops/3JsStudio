@@ -33,8 +33,9 @@ import STORM_ENV from './envs/storm.js';
 import SHIPSTORM_ENV from './envs/shipStorm.js';
 import ISLAND_ENV from './envs/island.js';
 import REEF_ENV from './envs/reef.js';
-import KITCHEN_ENV from './envs/kitchen.js';
-import BEDROOM_ENV from './envs/bedroom.js';
+import KITCHEN_ENV, { KITCHEN_FURNISH } from './envs/kitchen.js';
+import BEDROOM_ENV, { BEDROOM_FURNISH } from './envs/bedroom.js';
+import { furnishIds } from './furnish.js';
 
 import { LIGHTS } from './lights.js';
 export { LIGHTS };
@@ -44,6 +45,7 @@ const hash = (i, s) => { let x = Math.imul(i ^ 0x9e3779b9, 0x85ebca6b) ^ Math.im
 // Asset Kenney dùng trong env (index.html gọi A.load(ENV_ASSETS) trước khi createEnvs).
 export const ENV_ASSETS = [
   ...SCAN_IDS,   // mô hình quét Poly Haven (engine/scans.js) — bếp, phòng ngủ
+  ...furnishIds(KITCHEN_FURNISH), ...furnishIds(BEDROOM_FURNISH),   // đồ bày bằng engine/furnish.js (KayKit/Kenney/quét)
   'nature-kit/plant_bushLargeTriangle', 'nature-kit/plant_bushTriangle', 'nature-kit/grass_leafsLarge', 'nature-kit/plant_flatTall', 'nature-kit/hanging_moss', 'nature-kit/mushroom_redGroup', 'nature-kit/rock_smallA', 'nature-kit/rock_smallFlatA', 'nature-kit/stone_tallA', 'nature-kit/stone_tallB',
   ...'abcdefghijklmnopqrstu'.split('').map((c) => `city-kit-suburban/building-type-${c}`),
   'city-kit-suburban/tree-large', 'city-kit-suburban/tree-small', 'city-kit-suburban/fence-1x4', 'city-kit-suburban/planter',

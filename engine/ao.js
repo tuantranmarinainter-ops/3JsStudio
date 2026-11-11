@@ -12,10 +12,19 @@
 // Prepass: vẽ lại cảnh ở scale × độ phân giải với MeshNormalMaterial (pháp tuyến không gian nhìn) + DepthTexture.
 //   Bỏ qua vật trong suốt (nước, kính, hạt) và vật có userData.noAO = true. Không cập nhật shadow map trong prepass.
 //   Lưu ý: vật đẩy đỉnh trong shader riêng (sóng biển) vẽ phẳng trong prepass → đánh userData.noAO cho chúng.
+//   userData.aoDepthOnly = true (kế thừa xuống con): vật VẪN ghi depth/pháp tuyến để che đúng vật khác, nhưng AO tại điểm ảnh của nó = 1
+//   (không bị tối, không làm tối mặt nước phía trên) — vd. thân cá voi chìm dưới nước. Ghi alpha pháp tuyến = 0 bằng lượt vẽ thứ hai chỉ vật có cờ.
+//
+// createDepthPrepass(THREE, { scale }) — chỉ vẽ ĐỘ SÂU (không pháp tuyến), dùng cho painterly (nét cọ to dần ở xa).
+//   Khác AO: KHÔNG bỏ vật trong suốt / noAO (mặt nước, đáy biển phải có độ sâu, nếu không biển bị coi là trời → nét cọ trời khổng lồ);
+//   chỉ bỏ Points/Sprite/Line và vật có userData.noPaintDepth = true. Mặt nước vẽ phẳng ở độ cao gốc (đủ cho cỡ nét cọ).
+//   Vật liệu ghi đè colorWrite=false → chỉ tốn đỉnh, không tốn điểm ảnh.
 import { Pass, FullScreenQuad } from 'three/addons/postprocessing/Pass.js';
 
 function mulberry(seed) { let a = (seed >>> 0) || 1; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
 const NS = 16;
+// mặt nước/vật đẩy đỉnh trong shader riêng (ShaderMaterial không phải nhân vật) hoặc tên sea/water/ocean: tự loại khỏi prepass AO dù chưa đánh noAO
+const isCustomVertex = (o) => { const m = o.material; return !o.isSkinnedMesh && ((m && !Array.isArray(m) && m.isShaderMaterial) || /^(sea|water|ocean)/i.test(o.name || '')); };
 const VS = 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
 
 const FS_AO = `
@@ -25,6 +34,7 @@ vec3 viewPos(vec2 uv){ float d = texture2D(tDepth, uv).x; vec4 v = uProjInv*vec4
 void main(){
   float d = texture2D(tDepth, vUv).x;
   if (d >= 0.99999) { gl_FragColor = vec4(1.0); return; }
+  if (texture2D(tNormal, vUv).a < 0.5) { gl_FragColor = vec4(1.0, -viewPos(vUv).z, 0.0, 1.0); return; }   // aoDepthOnly
   vec3 P = viewPos(vUv);
   vec3 N = normalize(texture2D(tNormal, vUv).xyz*2.0 - 1.0);
   float ign = fract(52.9829189*fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715))));   // tất định theo điểm ảnh
@@ -67,6 +77,30 @@ void main(){
   gl_FragColor = c;
 }`;
 
+export function createDepthPrepass(THREE, { scale = 0.5 } = {}) {
+  const texture = new THREE.DepthTexture(2, 2);
+  const rt = new THREE.WebGLRenderTarget(2, 2, { depthTexture: texture, depthBuffer: true, type: THREE.UnsignedByteType });
+  const mat = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }); mat.colorWrite = false; mat.toneMapped = false;
+  const hidden = [], clear = new THREE.Color(), fb = new THREE.Vector2();
+  function render(renderer, scene, camera) {
+    renderer.getDrawingBufferSize(fb);
+    const sw = Math.max(2, Math.round(fb.x * scale)), sh = Math.max(2, Math.round(fb.y * scale));
+    if (sw !== rt.width || sh !== rt.height) rt.setSize(sw, sh);
+    hidden.length = 0;
+    scene.traverseVisible((o) => { if (o.userData.noPaintDepth || o.isPoints || o.isSprite || o.isLine) hidden.push(o); });
+    for (const o of hidden) o.visible = false;
+    const bg = scene.background, ov = scene.overrideMaterial, au = renderer.shadowMap.autoUpdate, a0 = renderer.getClearAlpha();
+    renderer.getClearColor(clear);
+    scene.background = null; scene.overrideMaterial = mat; renderer.shadowMap.autoUpdate = false;
+    renderer.setClearColor(0x000000, 1);
+    renderer.setRenderTarget(rt); renderer.clear(); renderer.render(scene, camera);
+    renderer.setRenderTarget(null);
+    scene.background = bg; scene.overrideMaterial = ov; renderer.shadowMap.autoUpdate = au; renderer.setClearColor(clear, a0);
+    for (const o of hidden) o.visible = true;
+  }
+  return { render, texture, dispose() { rt.dispose(); texture.dispose(); mat.dispose(); } };
+}
+
 export const AO_DEFAULTS = { radius: 2.5, intensity: 1, bias: 0.08, fade: [120, 260], color: '#3a2a22', scale: 0.5, seed: 7 };
 
 export function createAO(THREE, opts = {}) {
@@ -83,6 +117,14 @@ export function createAO(THREE, opts = {}) {
   const rtA = new THREE.WebGLRenderTarget(2, 2, { type: THREE.HalfFloatType, depthBuffer: false });
   const rtB = rtA.clone();
   const normalMat = new THREE.MeshNormalMaterial(); normalMat.toneMapped = false;
+  // bản ghi alpha = 0 cho vật aoDepthOnly (đánh dấu "đừng tối điểm ảnh này")
+  const flagMat = new THREE.MeshNormalMaterial(); flagMat.toneMapped = false;
+  flagMat.onBeforeCompile = (sh) => {
+    const f = sh.fragmentShader.replace('gl_FragColor.a = 1.0;', 'gl_FragColor.a = 0.0;');   // nhánh OPAQUE của MeshNormalMaterial
+    if (f === sh.fragmentShader) console.warn('[ao] không vá được shader aoDepthOnly'); sh.fragmentShader = f;
+  };
+  flagMat.customProgramCacheKey = () => 'aoFlag';
+  const _flag = [], _flagSet = new Set(), _others = [];
   const mat = (fs, u) => new THREE.ShaderMaterial({ vertexShader: VS, fragmentShader: fs, uniforms: u, depthTest: false, depthWrite: false });
   const mAO = mat(FS_AO, { tDepth: { value: depthTexture }, tNormal: { value: pre.texture }, uProj: { value: new THREE.Matrix4() }, uProjInv: { value: new THREE.Matrix4() },
     uKernel: { value: kernel }, uRadius: { value: 1 }, uBias: { value: 0.05 }, uFade: { value: new THREE.Vector2() } });
@@ -104,14 +146,25 @@ export function createAO(THREE, opts = {}) {
     _hidden.length = 0;
     scene.traverseVisible((o) => {
       const m = o.material;
-      if (o.userData.noAO || (m && (Array.isArray(m) ? m.some((x) => x.transparent) : m.transparent)) || o.isPoints || o.isSprite || o.isLine) { _hidden.push(o); }
+      if (o.userData.noAO || (o.isMesh && isCustomVertex(o)) || (m && (Array.isArray(m) ? m.some((x) => x.transparent) : m.transparent)) || o.isPoints || o.isSprite || o.isLine) { _hidden.push(o); }
     });
     for (const o of _hidden) o.visible = false;
+    _flag.length = 0; _flagSet.clear();
+    scene.traverseVisible((o) => { if (o.visible && ((o.userData.aoDepthOnly) || _flagSet.has(o.parent))) { _flagSet.add(o); if (o.isMesh) _flag.push(o); } });
     const bg = scene.background, ov = scene.overrideMaterial, au = renderer.shadowMap.autoUpdate, a0 = renderer.getClearAlpha();
     renderer.getClearColor(_clear);
     scene.background = null; scene.overrideMaterial = normalMat; renderer.shadowMap.autoUpdate = false;
     renderer.setClearColor(0x8080ff, 1);
     renderer.setRenderTarget(pre); renderer.clear(); renderer.render(scene, camera);
+    if (_flag.length) {   // lượt 2: chỉ vật aoDepthOnly, alpha = 0, thử độ sâu với lượt 1 (không xoá)
+      _others.length = 0;
+      scene.traverseVisible((o) => { if (o.isMesh && !_flagSet.has(o)) _others.push(o); });
+      for (const o of _others) o.visible = false;
+      const ac = renderer.autoClear; scene.overrideMaterial = flagMat; renderer.autoClear = false;
+      renderer.render(scene, camera);
+      renderer.autoClear = ac;
+      for (const o of _others) o.visible = true;
+    }
     renderer.setRenderTarget(null);
     scene.background = bg; scene.overrideMaterial = ov; renderer.shadowMap.autoUpdate = au; renderer.setClearColor(_clear, a0);
     for (const o of _hidden) o.visible = true;
@@ -134,6 +187,6 @@ export function createAO(THREE, opts = {}) {
     mMix.uniforms.uInt.value = params.intensity; mMix.uniforms.uColor.value.set(params.color);
     draw(mMix, out);
   };
-  pass.dispose = () => { for (const r of [pre, rtA, rtB]) r.dispose(); depthTexture.dispose(); for (const m of [normalMat, mAO, mBlur, mMix]) m.dispose(); quad.dispose(); };
+  pass.dispose = () => { for (const r of [pre, rtA, rtB]) r.dispose(); depthTexture.dispose(); for (const m of [normalMat, flagMat, mAO, mBlur, mMix]) m.dispose(); quad.dispose(); };
   return { pass, prepass, setSize, params, depthTexture, get ready() { return ready; }, invalidate() { ready = false; } };
 }

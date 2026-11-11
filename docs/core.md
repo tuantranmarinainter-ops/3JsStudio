@@ -122,11 +122,14 @@ scanToggle(e, on);
 Toggle **scans**. Tải: thêm `polyhaven:<id>` vào `assets/queue.txt`.
 
 ## splash / whales — `engine/splash.js`, `engine/whales.js`
-API do agent C ghi ở đầu file.
+API ghi ở đầu file. Kịch bản sinh vật là dữ liệu (vd `OCEAN_PLAN_EP001` trong `engine/envs/ocean.js`, gồm cả `seaLook` = màu biển riêng tập). Env khai `e.seaEvents(t)` → vật nổi thấy sóng cá voi cùng khung.
+
+## hull — `engine/hull.js` (vỏ thuyền dựng bằng code)
+`createHull(THREE, {type|kind:'skiff'|'ship'|'raft', seed, length, beam, depth, colors:{top,bottom,trim}, name, sail, mast, funnel, …})` → Group, gốc = đường nước, +Z mũi. `userData.footprint` truyền thẳng vào `floatPose/floatHull`; `userData.animate(t,{wind,rudder})` buồm phồng theo gió (hàm thuần của t); `userData.setRudder(rad)` (pivot `rudderPivot`). Sàn phẳng cần `shadow.bias ≤ -0.0004`, `normalBias ≥ 0.02` (như stage.js) để không sọc. Thử: `engine/hull-lab.html?type=all`, `engine/sea-lab.html?boat=skiff&wx=giong`.
 
 ## post toggles — `engine/post.js`
 `FX_DEFAULTS` và `FX_LABELS` là danh sách ô bật/tắt trong trình phát:
-- hậu kỳ: grade, bloom, dof, vignette, outline, storm
+- hậu kỳ: grade, bloom, dof, vignette, outline, storm, paint (tranh sơn dầu Kuwahara, tắt), ao (che khuất môi trường, tắt), smaa (khử răng cưa, tắt)
 - vật liệu: worn, grime, aged, mats, ibl, scans, folds, hair2
 - hiệu ứng tự động: foot, prints, wind, breath
 - biển: sea2, seaWx
@@ -137,6 +140,12 @@ post.set({ bloom: false, sea2: true });        // index.html: ?fx=grade,bloom,se
 const on = globalThis.__autoFx?.sea2 ?? true;
 ```
 Tính năng mới phải có ô riêng, và tắt ô đi thì hình phải y hệt như trước khi có tính năng.
+
+Chuỗi pass: `copyIn → ao → outline → bokeh → paint → bloom → grade → smaa`.
+- **ao** (`engine/ao.js`): prepass depth+normal sau khung chính, nhân mẫu cố định (tất định). `userData.noAO` = loại khỏi prepass (nước, bọt, tia nước); `userData.aoDepthOnly` = vẫn che vật khác nhưng chính nó không bị tối (cá voi, phần chìm dưới nước). Mesh ShaderMaterial không skinned hoặc tên `sea*/water*/ocean*` tự bị loại. Tham số: `post.ao.params {radius, intensity, bias, fade, color}`.
+- **paint** (`engine/painterly.js`): `post.paintDepth = 'own'` (mặc định, depth riêng nửa độ phân giải, có cả mặt nước) | `'ao'` (dùng depth AO — KHÔNG dùng cho cảnh biển) | `'flat'`.
+- **smaa**: bảng tra nạp qua DefaultLoadingManager, chỉ chạy khi `post.smaaReady`.
+- Chụp kiểm với ô bật: `node tools/look.mjs <trang> --shots … --opts '{"fx":{"paint":true,"ao":true}}' --det`.
 
 ## look.mjs — `tools/look.mjs` (kiểm khung)
 Chụp, ghép bảng có nhãn, so A/B (PSNR), kiểm tất định. Chạy được với mọi trang có `window.__ready` + `window.renderAt(t)`, kể cả sea-lab.
@@ -152,3 +161,25 @@ Mỗi lần chụp ≤ 12 khung, mỗi agent dùng `--out` riêng.
 2. `shots.js`: chọn `type` từ `engine/shottypes.js`, thêm `seaWeather`, `float`, `seaEvents`, `house.boat` khi cần (ví dụ có trong `episodes/_template/shots.js`).
 3. Cần biển có đảo/bờ riêng: tạo `engine/envs/<tên>.js` gọi `makeSea(g, {…, rate})` + `update(t) { e.sea(t) }`. Phần nổi, sự kiện và thời tiết tự có.
 4. Kiểm bằng `look.mjs --shots … --det` và `engine/sea-lab.html`.
+
+## furnish — `engine/furnish.js` (bày đồ đạc bằng dữ liệu)
+Mỗi phòng khai MỘT mảng layout (1 món = 1 dòng); không viết tay vị trí/kích thước. Nguồn nội thất CC0: KayKit Furniture Bits (`kaykit:`, 53 món, `assets/kaykit/furniture/`), Kenney Furniture Kit (`kenney:`, 140 món, `assets/kenney/furniture-kit/`), đồ quét Poly Haven (`scan:`). Đơn vị chuẩn hoá về stud: KayKit ×2.4, Kenney ×6.5, scan ×2.9 (`KITS` trong file). Danh sách tên món: `assets/manifest.json` (`kaykit/…`, `furniture-kit/…`, `polyhaven/…`).
+```js
+import { furnish, furnishIds } from '../furnish.js';
+export const ROOM = [
+  { id: 'kaykit:table_medium', name: 'table', at: [6, 2] },
+  { id: 'kaykit:chair_A', at: [0, 2], rot: Math.PI / 2 },
+  { id: 'kaykit:pillow_A', on: 'bed', at: [dx, dz] },                  // đặt lên MẶT THẬT của vật đỡ (bắn tia xuống), không lên đỉnh hộp bao
+  { id: 'scan:potted_plant_01', wall: 'north', at: [-21], h: 6 },      // áp lưng vào tường, tự quay mặt ra phòng
+  { id: 'scan:wooden_table_02', fit: 'oldTable' },                     // thế chỗ đồ cũ: vừa khít hộp bao, cùng hướng; đồ cũ ẩn khi bật
+  { id: 'kenney:toaster', on: 'counter_top', at: [-2.4, 0.2], off: false },
+];
+const F = furnish(THREE, R, ROOM, { assets: A, walls: { north: -20, south: 24, west: -24, east: 24 }, refs: { oldTable: e.table, bed: e.bed } });
+return { update() { F.update(globalThis.__autoFx?.scans ?? true); } };   // ô "scans" bật/tắt cả bộ
+```
+Khoá một món: `id` · `name` · `at [x,z]|[x,y,z]` (gốc = giữa đáy) · `y` · `rot` · `scale` · `h|w|d` (giữ tỉ lệ) · `size [w,h,d]` (kéo méo, null = giữ) · `on` · `wall` + `gap` · `fit` (+`keepRatio`) · `replace` · `mat:'none'` (bỏ materials.js/grunge.js; mặc định bật cho `scan:`) · `off:true`. Chi tiết đầu `engine/furnish.js`.
+- `refs` = vật dựng tay cần thế chỗ/đặt lên (tên → Object3D); món trong layout tự đăng ký theo `name` nên `on:`/`fit:` trỏ được tới món khác.
+- Trả về `{ group, items, get(name), set(name,on), update(on) }`; mỗi món là Group đặt tên rõ (`name`), tắt riêng qua `F.set(name,false)` hoặc `globalThis.__autoFx.furnishItems = { tên: false }`.
+- Asset: `ENV_ASSETS` gồm `...furnishIds(LAYOUT)` (layout xuất `export const KITCHEN_FURNISH/BEDROOM_FURNISH` từ file env, `engine/envs.js` import). Asset thiếu → món bị bỏ, có cảnh báo, phim vẫn render.
+- Phải đứng ở build của env (cha tại gốc toạ độ, chưa xoay) vì đo hộp bao theo toạ độ thế giới.
+Ví dụ dùng thật: `engine/envs/kitchen.js` (`KITCHEN_FURNISH`), `engine/envs/bedroom.js` (`BEDROOM_FURNISH`).

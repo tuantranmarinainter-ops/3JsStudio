@@ -256,21 +256,27 @@ export function createWater(THREE, opts = {}) {
       // sea2: bọt + vệt ướt quanh thân vật nổi (SDF hộp xoay, Saltline) — bùng lên khi thân lao xuống
       if (uHullR.y > 0.001) {
         vec2 hd = xz - uHull.xy; float cy = cos(uHullR.x), sy = sin(uHullR.x);
-        vec2 hq = abs(vec2(hd.x*cy - hd.y*sy, hd.x*sy + hd.y*cy)) - uHull.zw;
-        float sdH = length(max(hq, 0.0)) + min(max(hq.x, hq.y), 0.0);
+        vec2 hlq = vec2(hd.x*cy - hd.y*sy, hd.x*sy + hd.y*cy);
+        vec2 hr = uHull.zw * 1.08;                                   // elip ôm thân (không còn hộp chữ nhật)
+        float ek0 = length(hlq/hr), ek1 = length(hlq/(hr*hr));
+        float sdH = ek0*(ek0 - 1.0)/max(ek1, 1e-4);                  // khoảng cách xấp xỉ tới elip (đơn vị thế giới)
         float nzH = vnD(xz*0.55 + vec2(uTime*0.23, -uTime*0.17)).x*0.6 + vnD(xz*1.7 - vec2(uTime*0.4, uTime*0.1)).x*0.4;
+        float nzS = vnD(xz*0.21 + vec2(3.7, uTime*0.05)).x;
         float pl = uHullR.z;
-        // bóng tiếp xúc hình elip (Tidewright hullAO): ngồi HẲN trong nước; bán trục 1.25× nửa hộp → phủ cả góc
-        vec2 hl = vec2(hd.x*cy - hd.y*sy, hd.x*sy + hd.y*cy) / (uHull.zw*1.25);
-        float he = dot(hl, hl);
-        body *= 1.0 - 0.42*(1.0 - smoothstep(0.70, 1.22, he))*uHullR.y;
-        float hxr = (sqrt(he) - 1.03)/0.17;
-        foam += exp(-hxr*hxr)*(0.16 + 0.62*pl)*(0.35 + 1.3*nzH)*uHullR.y;      // bọt ôm đường nước
-        float bandW = 1.6 + 2.6*nzH + 4.5*pl;
-        float band = 1.0 - smoothstep(0.0, bandW, sdH);
-        float scum = smoothstep(0.62 - 0.32*pl - 0.25*band, 0.9 - 0.2*pl, fn*0.75 + nzH*0.45);
-        float ring = smoothstep(0.35, 0.0, abs(sdH - (0.6 + 3.5*pl))) * pl;    // vành bọt đẩy ra khi lao xuống
-        foam += clamp(band*scum*1.15 + ring*0.7*smoothstep(0.3, 0.6, nzH), 0.0, 1.0) * uHullR.y * step(-0.3, sdH);
+        sdH += (nzH - 0.5)*1.1 + (nzS - 0.5)*0.9;                    // mép nhiễu cho tự nhiên
+        // bóng tiếp xúc hình elip mềm (Tidewright hullAO): thân như chìm vào nước, mờ dần ra ngoài
+        vec2 hl = hlq / (uHull.zw*1.45);
+        float he = dot(hl, hl) + (nzS - 0.5)*0.22;
+        body *= 1.0 - 0.38*(1.0 - smoothstep(0.35, 1.25, he))*uHullR.y;
+        float fall = 1.0 - smoothstep(0.0, 2.2 + 4.0*pl, sdH);       // mờ dần ra ngoài
+        // vành bọt mảnh sát mạn
+        float rimW = 0.55 + 0.5*nzH;
+        float rimX = (sdH - 0.35)/rimW; float rim = exp(-rimX*rimX)*(0.22 + 0.6*pl)*(0.45 + 1.2*nzH);
+        // bọt loang nhẹ, mép mềm
+        float scum = smoothstep(0.55 - 0.3*pl, 0.95, fn*0.7 + nzH*0.5);
+        float ring = smoothstep(0.5, 0.0, abs(sdH - (0.8 + 3.5*pl))) * pl;   // vành đẩy ra khi lao xuống
+        float hf = rim + fall*fall*scum*(0.35 + 0.5*pl) + ring*0.7*smoothstep(0.3, 0.6, nzH);
+        foam += clamp(hf, 0.0, 1.0) * uHullR.y * smoothstep(-0.8, 0.15, sdH);
       }
       // sea2: sự kiện mặt nước — bọt trắng dày rồi vỡ thành ren khi lan + đĩa nước sục khí xanh ngọc tối bên dưới
       if (uSea2 > 0.5 && uEvN > 0.5) {

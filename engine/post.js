@@ -17,6 +17,10 @@
 //   outline  — viền đen quanh nhân vật (kiểu hoạt hình), chỉ viền ngoài, không xuyên tường
 //   storm    — cảnh bão: vệt mưa chéo trên màn hình + loé sáng theo nhịp chớp của cảnh
 //   paint    — tranh sơn dầu: Kuwahara dị hướng 8 quạt + vân vải/nổi sơn (engine/painterly.js, học Tidewright). Mặc định TẮT.
+//   ao       — che khuất môi trường màn hình (engine/ao.js, học n8ao nhưng tất định). Mặc định TẮT. post.ao.params = { radius, intensity, bias, fade, color }
+//   smaa     — khử răng cưa hình học SMAA (three/addons SMAAPass) ở CUỐI chuỗi, sau grade. Mặc định TẮT. Nên bật cùng paint/ao (RT không MSAA).
+//   độ sâu cho paint (post.paintDepth): 'own' (mặc định; pass độ sâu rẻ riêng, CÓ mặt nước) | 'ao' (dùng depth của AO khi ô ao bật — rẻ hơn
+//              nhưng mặt nước/đáy biển noAO nên biển bị coi là trời) | 'flat' (không depth, nét hằng số params.flat)
 //              post.paint.params = { strength, radius, weave, flat, quality } · post.paint.setDepth(depthTex, camera) nếu có depth
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
@@ -24,10 +28,12 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 import { createPainterlyPass } from './painterly.js';
+import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
+import { createAO, createDepthPrepass } from './ao.js';
 import { GRUNGE } from './grunge.js';
 import { MATS } from './materials.js';
 
-export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, seaWx: true };
+export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, seaWx: true };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
@@ -40,6 +46,8 @@ export const FX_LABELS = {
   sea2: 'Biển + thuyền nổi khớp sóng, bọt quanh thân, vệt ướt (v4, học Saltline)',
   seaWx: 'Thời tiết biển theo shot: lặng → nắng → mưa → giông → bão (seaWeather)',
   paint: 'Tranh sơn dầu (Kuwahara)',
+  ao: 'Che khuất môi trường: tối dịu góc tường, chân đồ vật (AO, tất định)',
+  smaa: 'Khử răng cưa SMAA (cuối chuỗi, nên bật cùng sơn dầu / AO)',
 };
 
 // Màu theo preset ánh sáng (engine/envs.js LIGHTS). temp > 0 ấm, < 0 lạnh; sat bão hoà; con tương phản; gain/lift sáng.
@@ -106,7 +114,7 @@ const GradeShader = {
     }`,
 };
 
-export function createPost(THREE, stage, { actors = [], paint: paintOpts = {} } = {}) {
+export function createPost(THREE, stage, { actors = [], paint: paintOpts = {}, ao: aoOpts = {} } = {}) {
   const { renderer, scene, camera } = stage;
   const fx = { ...FX_DEFAULTS };
   const css = new THREE.Vector2(); renderer.getSize(css);
@@ -151,7 +159,20 @@ export function createPost(THREE, stage, { actors = [], paint: paintOpts = {} } 
   grade.uniforms.uRes.value = new THREE.Vector2(W * pr(), H * pr());
   // tranh sơn dầu: sau mờ hậu cảnh, TRƯỚC bloom (bloom toả trên lớp sơn) và grade (chỉnh màu sau cùng)
   const paint = createPainterlyPass(THREE, paintOpts);
-  for (const p of [copyIn, outline, bokeh, paint, bloom, grade]) composer.addPass(p);
+  const ao = createAO(THREE, aoOpts);
+  const smaa = new SMAAPass();
+  for (const p of [copyIn, ao.pass, outline, bokeh, paint, bloom, grade, smaa]) composer.addPass(p);
+  // SMAA nạp 2 bảng tra (area/search) bất đồng bộ từ data-URI: báo cho DefaultLoadingManager (adapter HyperFrames chờ) và chỉ chạy khi đã nạp xong
+  let smaaReady = false;
+  {
+    const imgs = [smaa._areaTexture.image, smaa._searchTexture.image];
+    const done = () => { if (!smaaReady && imgs.every((i) => i.complete && i.naturalWidth > 0)) { smaaReady = true; THREE.DefaultLoadingManager.itemEnd('smaa-tables'); } };
+    THREE.DefaultLoadingManager.itemStart('smaa-tables');
+    for (const i of imgs) { i.addEventListener('load', done); i.addEventListener('error', () => { smaaReady = false; THREE.DefaultLoadingManager.itemEnd('smaa-tables'); }); }
+    done();
+  }
+  const depthPre = createDepthPrepass(THREE, { scale: 0.5 });
+  let paintDepth = 'own';   // 'own' | 'ao' | 'flat' (xem đầu file)
 
   const anyOn = () => Object.values(fx).some(Boolean);
   const _f = new THREE.Vector3();
@@ -165,6 +186,15 @@ export function createPost(THREE, stage, { actors = [], paint: paintOpts = {} } 
     renderer.setRenderTarget(null); renderer.render(scene, camera);   // khung gốc (giống hệt khi không hậu kỳ)
     if (!anyOn()) return;
     ensureFb(); renderer.copyFramebufferToTexture(fbTex); copyIn.uniforms.tFrame.value = fbTex;
+    ao.pass.enabled = fx.ao;
+    if (fx.ao) ao.prepass(renderer, scene, camera);
+    // độ sâu cho tranh sơn dầu (nét cọ to dần ở xa); mặt nước CÓ độ sâu ở chế độ 'own'
+    if (fx.paint) {
+      if (paintDepth === 'ao' && fx.ao) paint.setDepth(ao.depthTexture, camera);
+      else if (paintDepth === 'flat') paint.setDepth(null);
+      else { depthPre.render(renderer, scene, camera); paint.setDepth(depthPre.texture, camera); }
+    }
+    smaa.enabled = fx.smaa && smaaReady;
     outline.enabled = fx.outline && actors.some((a) => a.visible);
     // mờ hậu cảnh: chỉ khi camera gần điểm nhìn (cảnh cận), cảnh rộng giữ nét
     const dist = focus ? camera.position.distanceTo(_f.copy(focus)) : 1e9;
@@ -191,7 +221,9 @@ export function createPost(THREE, stage, { actors = [], paint: paintOpts = {} } 
 
   resize();
   return {
-    composer, paint, passes: { copyIn, outline, bokeh, paint, bloom, grade },
+    composer, paint, ao, smaa, passes: { copyIn, ao: ao.pass, outline, bokeh, paint, bloom, grade, smaa },
+    get paintDepth() { return paintDepth; }, set paintDepth(v) { paintDepth = ['own', 'ao', 'flat'].includes(v) ? v : 'own'; },
+    get smaaReady() { return smaaReady; },
     get options() { return { ...fx }; },
     set(o = {}) { for (const k of Object.keys(FX_DEFAULTS)) if (o[k] !== undefined) fx[k] = !!o[k]; const AF = (globalThis.__autoFx ||= {}); for (const k of ['foot', 'prints', 'wind', 'breath', 'ibl', 'scans', 'sea2']) AF[k] = fx[k]; return { ...fx }; },
     render, resize,

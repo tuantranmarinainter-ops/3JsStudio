@@ -11142,5 +11142,906 @@
    706.0248255729675,
    799.5428870490286
   ]
+ },
+ {
+  "id": "kaykit/armchair",
+  "src": "assets/kaykit/furniture/armchair.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   1.8,
+   1.224,
+   1.6
+  ],
+  "nodes": [
+   "armchair"
+  ]
+ },
+ {
+  "id": "kaykit/armchair_pillows",
+  "src": "assets/kaykit/furniture/armchair_pillows.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   1.8,
+   1.224,
+   1.6
+  ],
+  "nodes": [
+   "armchair_pillows"
+  ]
+ },
+ {
+  "id": "kaykit/bed_double_A",
+  "src": "assets/kaykit/furniture/bed_double_A.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   3.1,
+   1,
+   3
+  ],
+  "nodes": [
+   "bed_double_A"
+  ]
+ },
+ {
+  "id": "kaykit/bed_double_B",
+  "src": "assets/kaykit/furniture/bed_double_B.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   3.1,
+   1,
+   3
+  ],
+  "nodes": [
+   "bed_double_B"
+  ]
+ },
+ {
+  "id": "kaykit/bed_single_A",
+  "src": "assets/kaykit/furniture/bed_single_A.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   1.6,
+   1,
+   3
+  ],
+  "nodes": [
+   "bed_single_A"
+  ]
+ },
+ {
+  "id": "kaykit/bed_single_B",
+  "src": "assets/kaykit/furniture/bed_single_B.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   1.6,
+   1,
+   3
+  ],
+  "nodes": [
+   "bed_single_B"
+  ]
+ },
+ {
+  "id": "kaykit/book_set",
+  "src": "assets/kaykit/furniture/book_set.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.78,
+   0.5,
+   0.365
+  ],
+  "nodes": [
+   "book_set"
+  ]
+ },
+ {
+  "id": "kaykit/book_single",
+  "src": "assets/kaykit/furniture/book_single.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.26,
+   0.5,
+   0.365
+  ],
+  "nodes": [
+   "book_single"
+  ]
+ },
+ {
+  "id": "kaykit/cabinet_medium",
+  "src": "assets/kaykit/furniture/cabinet_medium.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   2,
+   1,
+   1.002
+  ],
+  "nodes": [
+   "cabinet_medium"
+  ]
+ },
+ {
+  "id": "kaykit/cabinet_medium_decorated",
+  "src": "assets/kaykit/furniture/cabinet_medium_decorated.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   2.042,
+   1.827,
+   1.002
+  ],
+  "nodes": [
+   "cabinet_medium_decorated"
+  ]
+ },
+ {
+  "id": "kaykit/cabinet_small",
+  "src": "assets/kaykit/furniture/cabinet_small.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   1,
+   1,
+   1.002
+  ],
+  "nodes": [
+   "cabinet_small"
+  ]
+ },
+ {
+  "id": "kaykit/cabinet_small_decorated",
+  "src": "assets/kaykit/furniture/cabinet_small_decorated.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   1.048,
+   1.618,
+   1.104
+  ],
+  "nodes": [
+   "cabinet_small_decorated"
+  ]
+ },
+ {
+  "id": "kaykit/cactus_medium_A",
+  "src": "assets/kaykit/furniture/cactus_medium_A.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.88,
+   0.827,
+   0.837
+  ],
+  "nodes": [
+   "cactus_medium_A"
+  ]
+ },
+ {
+  "id": "kaykit/cactus_medium_B",
+  "src": "assets/kaykit/furniture/cactus_medium_B.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.88,
+   0.827,
+   0.837
+  ],
+  "nodes": [
+   "cactus_medium_B"
+  ]
+ },
+ {
+  "id": "kaykit/cactus_small_A",
+  "src": "assets/kaykit/furniture/cactus_small_A.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.5,
+   0.552,
+   0.5
+  ],
+  "nodes": [
+   "cactus_small_A"
+  ]
+ },
+ {
+  "id": "kaykit/cactus_small_B",
+  "src": "assets/kaykit/furniture/cactus_small_B.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.5,
+   0.552,
+   0.5
+  ],
+  "nodes": [
+   "cactus_small_B"
+  ]
+ },
+ {
+  "id": "kaykit/chair_A",
+  "src": "assets/kaykit/furniture/chair_A.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.75,
+   1.258,
+   0.845
+  ],
+  "nodes": [
+   "chair_A"
+  ]
+ },
+ {
+  "id": "kaykit/chair_A_wood",
+  "src": "assets/kaykit/furniture/chair_A_wood.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.75,
+   1.258,
+   0.845
+  ],
+  "nodes": [
+   "chair_A_wood"
+  ]
+ },
+ {
+  "id": "kaykit/chair_B",
+  "src": "assets/kaykit/furniture/chair_B.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.75,
+   1.258,
+   0.845
+  ],
+  "nodes": [
+   "chair_B"
+  ]
+ },
+ {
+  "id": "kaykit/chair_B_wood",
+  "src": "assets/kaykit/furniture/chair_B_wood.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.75,
+   1.258,
+   0.845
+  ],
+  "nodes": [
+   "chair_B_wood"
+  ]
+ },
+ {
+  "id": "kaykit/chair_C",
+  "src": "assets/kaykit/furniture/chair_C.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.75,
+   1.203,
+   0.936
+  ],
+  "nodes": [
+   "chair_C"
+  ]
+ },
+ {
+  "id": "kaykit/chair_stool",
+  "src": "assets/kaykit/furniture/chair_stool.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.75,
+   0.5,
+   0.75
+  ],
+  "nodes": [
+   "chair_stool"
+  ]
+ },
+ {
+  "id": "kaykit/chair_stool_wood",
+  "src": "assets/kaykit/furniture/chair_stool_wood.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.75,
+   0.5,
+   0.75
+  ],
+  "nodes": [
+   "chair_stool_wood"
+  ]
+ },
+ {
+  "id": "kaykit/couch",
+  "src": "assets/kaykit/furniture/couch.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   3,
+   1.224,
+   1.6
+  ],
+  "nodes": [
+   "couch"
+  ]
+ },
+ {
+  "id": "kaykit/couch_pillows",
+  "src": "assets/kaykit/furniture/couch_pillows.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   3,
+   1.224,
+   1.6
+  ],
+  "nodes": [
+   "couch_pillows"
+  ]
+ },
+ {
+  "id": "kaykit/lamp_standing",
+  "src": "assets/kaykit/furniture/lamp_standing.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   1,
+   2.52,
+   1
+  ],
+  "nodes": [
+   "lamp_standing"
+  ]
+ },
+ {
+  "id": "kaykit/lamp_table",
+  "src": "assets/kaykit/furniture/lamp_table.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   1,
+   1.022,
+   1
+  ],
+  "nodes": [
+   "lamp_table"
+  ]
+ },
+ {
+  "id": "kaykit/pictureframe_large_A",
+  "src": "assets/kaykit/furniture/pictureframe_large_A.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   1.01,
+   1.2,
+   0.2
+  ],
+  "nodes": [
+   "pictureframe_large_A"
+  ]
+ },
+ {
+  "id": "kaykit/pictureframe_large_B",
+  "src": "assets/kaykit/furniture/pictureframe_large_B.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   2,
+   1.2,
+   0.2
+  ],
+  "nodes": [
+   "pictureframe_large_B"
+  ]
+ },
+ {
+  "id": "kaykit/pictureframe_medium",
+  "src": "assets/kaykit/furniture/pictureframe_medium.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.7,
+   0.9,
+   0.2
+  ],
+  "nodes": [
+   "pictureframe_medium"
+  ]
+ },
+ {
+  "id": "kaykit/pictureframe_small_A",
+  "src": "assets/kaykit/furniture/pictureframe_small_A.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.5,
+   0.6,
+   0.2
+  ],
+  "nodes": [
+   "pictureframe_small_A"
+  ]
+ },
+ {
+  "id": "kaykit/pictureframe_small_B",
+  "src": "assets/kaykit/furniture/pictureframe_small_B.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.7,
+   0.44,
+   0.2
+  ],
+  "nodes": [
+   "pictureframe_small_B"
+  ]
+ },
+ {
+  "id": "kaykit/pictureframe_small_C",
+  "src": "assets/kaykit/furniture/pictureframe_small_C.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.5,
+   0.5,
+   0.2
+  ],
+  "nodes": [
+   "pictureframe_small_C"
+  ]
+ },
+ {
+  "id": "kaykit/pictureframe_standing_A",
+  "src": "assets/kaykit/furniture/pictureframe_standing_A.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.5,
+   0.619,
+   0.379
+  ],
+  "nodes": [
+   "pictureframe_standing_A"
+  ]
+ },
+ {
+  "id": "kaykit/pictureframe_standing_B",
+  "src": "assets/kaykit/furniture/pictureframe_standing_B.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.7,
+   0.468,
+   0.357
+  ],
+  "nodes": [
+   "pictureframe_standing_B"
+  ]
+ },
+ {
+  "id": "kaykit/pillow_A",
+  "src": "assets/kaykit/furniture/pillow_A.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.65,
+   0.2,
+   0.5
+  ],
+  "nodes": [
+   "pillow_A"
+  ]
+ },
+ {
+  "id": "kaykit/pillow_B",
+  "src": "assets/kaykit/furniture/pillow_B.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   0.65,
+   0.2,
+   0.5
+  ],
+  "nodes": [
+   "pillow_B"
+  ]
+ },
+ {
+  "id": "kaykit/rug_oval_A",
+  "src": "assets/kaykit/furniture/rug_oval_A.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   3,
+   0.1,
+   2
+  ],
+  "nodes": [
+   "rug_oval_A"
+  ]
+ },
+ {
+  "id": "kaykit/rug_oval_B",
+  "src": "assets/kaykit/furniture/rug_oval_B.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   3,
+   0.1,
+   2
+  ],
+  "nodes": [
+   "rug_oval_B"
+  ]
+ },
+ {
+  "id": "kaykit/rug_rectangle_A",
+  "src": "assets/kaykit/furniture/rug_rectangle_A.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   3,
+   0.1,
+   2
+  ],
+  "nodes": [
+   "rug_rectangle_A"
+  ]
+ },
+ {
+  "id": "kaykit/rug_rectangle_B",
+  "src": "assets/kaykit/furniture/rug_rectangle_B.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   3,
+   0.1,
+   2
+  ],
+  "nodes": [
+   "rug_rectangle_B"
+  ]
+ },
+ {
+  "id": "kaykit/rug_rectangle_stripes_A",
+  "src": "assets/kaykit/furniture/rug_rectangle_stripes_A.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   3,
+   0.1,
+   2
+  ],
+  "nodes": [
+   "rug_rectangle_stripes_A"
+  ]
+ },
+ {
+  "id": "kaykit/rug_rectangle_stripes_B",
+  "src": "assets/kaykit/furniture/rug_rectangle_stripes_B.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   3,
+   0.1,
+   2
+  ],
+  "nodes": [
+   "rug_rectangle_stripes_B"
+  ]
+ },
+ {
+  "id": "kaykit/shelf_A_big",
+  "src": "assets/kaykit/furniture/shelf_A_big.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   2,
+   0.4,
+   0.5
+  ],
+  "nodes": [
+   "shelf_A_big"
+  ]
+ },
+ {
+  "id": "kaykit/shelf_A_small",
+  "src": "assets/kaykit/furniture/shelf_A_small.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   1,
+   0.4,
+   0.5
+  ],
+  "nodes": [
+   "shelf_A_small"
+  ]
+ },
+ {
+  "id": "kaykit/shelf_B_large",
+  "src": "assets/kaykit/furniture/shelf_B_large.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   2,
+   0.4,
+   0.5
+  ],
+  "nodes": [
+   "shelf_B_large"
+  ]
+ },
+ {
+  "id": "kaykit/shelf_B_large_decorated",
+  "src": "assets/kaykit/furniture/shelf_B_large_decorated.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   2,
+   0.818,
+   0.5
+  ],
+  "nodes": [
+   "shelf_B_large_decorated"
+  ]
+ },
+ {
+  "id": "kaykit/shelf_B_small",
+  "src": "assets/kaykit/furniture/shelf_B_small.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   1,
+   0.4,
+   0.5
+  ],
+  "nodes": [
+   "shelf_B_small"
+  ]
+ },
+ {
+  "id": "kaykit/shelf_B_small_decorated",
+  "src": "assets/kaykit/furniture/shelf_B_small_decorated.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   1,
+   1.012,
+   0.571
+  ],
+  "nodes": [
+   "shelf_B_small_decorated"
+  ]
+ },
+ {
+  "id": "kaykit/table_low",
+  "src": "assets/kaykit/furniture/table_low.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   2.4,
+   0.5,
+   1.5
+  ],
+  "nodes": [
+   "table_low"
+  ]
+ },
+ {
+  "id": "kaykit/table_medium",
+  "src": "assets/kaykit/furniture/table_medium.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   2,
+   1,
+   2
+  ],
+  "nodes": [
+   "table_medium"
+  ]
+ },
+ {
+  "id": "kaykit/table_medium_long",
+  "src": "assets/kaykit/furniture/table_medium_long.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   3,
+   1,
+   2
+  ],
+  "nodes": [
+   "table_medium_long"
+  ]
+ },
+ {
+  "id": "kaykit/table_small",
+  "src": "assets/kaykit/furniture/table_small.gltf",
+  "source": "kaylousberg.com/game-assets (KayKit Furniture Bits 1.0; github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0)",
+  "license": "CC0",
+  "credit": "KayKit Furniture Bits 1.0 by Kay Lousberg (kaylousberg.com), CC0",
+  "scale": 1,
+  "stud": 2.4,
+  "bbox": [
+   1,
+   1,
+   1
+  ],
+  "nodes": [
+   "table_small"
+  ]
  }
 ]

@@ -2,6 +2,20 @@
 
 Đọc `CLAUDE.md` trước (luật dự án), rồi file này (trạng thái + việc tiếp theo). Người dùng nói tiếng Việt.
 
+## Phiên 2026-11-12 (chiều, máy người dùng) — làm tiếp v4, nhánh local `ep1-v2` (theo dõi `origin/claude/ep1-v2`)
+Bản gộp: **`dist/ep1_v4.html`** (80,5 MB). Kiểm cả phim trên bản gộp: 145 shot, `--det` OK (`output/look/v4-full/sheet.jpg`).
+| Phần | Trạng thái |
+|---|---|
+| Biển ngày s052–s056 xanh trong | ✅ `OCEAN_PLAN_EP001.seaLook` trong `engine/envs/ocean.js`; luma 99→113–114; cá voi `--det` OK; env khai `e.seaEvents(t)` |
+| Tranh sơn dầu `paint` | ✅ kiểm (mặc định tắt); depth thật `post.paintDepth='own'` |
+| AO `ao` | ✅ nối post.js (mặc định tắt); `userData.noAO` / `aoDepthOnly` (cá voi); tự bỏ mặt nước |
+| SMAA `smaa` | ✅ mặc định tắt; vendor thêm SMAAPass/SMAAShader r187 |
+| hull.js | ✅ 3 kiểu, buồm phồng theo gió, bánh lái `rudderPivot`; nổi trong `sea-lab.html?boat=…`; chưa nối vào tập |
+| Bọt quanh thân (`water.setHull`) | ✅ elip mềm có nhiễu (hết hình chữ nhật) |
+| furnish.js + KayKit Furniture Bits (CC0) | ✅ bếp/phòng ngủ chuyển sang layout (`KITCHEN_FURNISH`/`BEDROOM_FURNISH`), chung ô `scans` |
+| docs | ✅ core.md (ao/paint/smaa/hull/furnish), tham-khao-game.md phần 3 (repo c3d) |
+**Còn lại:** xuất MP4 chậm (~5m27 so với 1m17 trước) — agent điều tra bị dừng, chưa sửa gì; sea-lab `lang` t≈4.5 có mảng trắng cạnh thẳng cạnh bè (không do hull, chưa rõ); s054 lệch tất định 2 điểm ảnh có từ trước; s095 nhà chúi gần `maxPitch` — chờ người dùng; Tidewright cần người dùng gửi lại artifact LG3TnqwofP3VfPcShHy8iB nếu học thêm.
+
 ## Phiên 2026-11-12 (v4 + CORE) — TẠM DỪNG theo yêu cầu người dùng, nhánh `claude/ep1-v2`
 **Nguyên tắc người dùng chốt:** mọi thứ học từ nguồn tham khảo (2 game Fable 5.2 *Saltline*, *Tidewright*; repo
 `thuann-vn/claude-3d-animated-shorts`) phải thành **code LÕI dùng lại cho mọi tập**, không sửa lẻ ep001. Tính năng mới luôn có ô bật/tắt.
