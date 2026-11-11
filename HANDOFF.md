@@ -51,6 +51,7 @@ tone mapping ACES exposure 0.6, `FogExp2('#b9c7da', 0.0011)`, mặt trời eleva
 Hiệu năng (cloud không GPU, swiftshader): ~0.6–1 s/frame 1080×1920. Tốn nhất: Water (render phản chiếu thêm 1 lần)
 và ~9600 hạt tuyết. Shot không thấy hồ → `water.object.visible = false`.
 
+Đã áp chất game khối (2026-11-11): nhà có texture gạch/ván/ngói (proctex), AO màu đỉnh, gộp mesh, GTAO + bloom; `?look=old` = bản cũ. ~4,8 s/frame ở mức high (cũ ~1,4 s).
 Chưa làm: ghép vào `stage.js`/HyperFrames (demo hiện tự có renderer); Kenney + tuyết phủ; dấu chân trên tuyết; hơi thở/khói ống khói.
 
 ## Xem/kiểm tra cảnh 3D trong cloud
