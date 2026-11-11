@@ -54,6 +54,7 @@ export function createAssetLib(THREE, manifest = null) {
       try {
         const gltf = await loader.loadAsync('/' + e.src.replace(/^\/+/, ''));
         tune(gltf.scene);
+        gltf.scene.animations = gltf.animations || []; // giữ clip (sinh vật có xương); instance()/clone sao chép theo
         models.set(id, gltf.scene);
       } catch (err) { warn(id, 'tải GLB lỗi: ' + err.message); }
     }));

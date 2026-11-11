@@ -16,10 +16,36 @@ Một phim hoàn chỉnh ghép từ **~140 cảnh nhỏ (shot)** → mọi thứ
 - Chỉ dùng ý tưởng TỰ NGHĨ; không chép cốt truyện của kênh khác.
 Cảnh 3D dựng bằng three.js, render ra MP4 bằng **HyperFrames**. Claude điều khiển qua skill + CLI + Polyfork MCP.
 
+## Quy tắc người dùng (cập nhật 2026-11-11 — ưu tiên hơn các mục cũ bên dưới)
+- **Render trên máy người dùng, KHÔNG qua cloud/Actions.** Sản phẩm = `dist/<ep>.html` một file (nút ⬇ Xuất MP4 2K/1080p/4K
+  bằng GPU máy họ). Làm xong **luôn đưa link file HTML**. Skill: `xuat-phim`.
+- **Mọi tính năng mới phải bật/tắt được** trong trình phát (ngôn ngữ, giọng, phụ đề, tiếng, hiệu ứng hình…).
+- Bộ kịch bản người dùng đưa (khung ảnh + mô tả chi tiết) là **tài sản của họ** → làm luôn, không hỏi lại về nguồn.
+- Duyệt trước rồi mới ghép: đoạn mẫu / trang nghe thử → người dùng chốt → mới gộp vào HTML.
+- Giọng: Việt = CapCut qua VoiceStudio, Anh = Microsoft Edge đọc nhấn ở cú cắt. Skill: `giong-doc`.
+- Đã chốt: hải đăng màu xanh; bỏ Three.js Water Pro; phông Be Vietnam Pro (phụ đề) + Patrick Hand (bưu thiếp).
+
+## Công cụ (dùng thay vì viết script tạm)
+| Lệnh | Việc |
+|---|---|
+| `node tools/doctor.mjs ep001 [--fix-procs]` | kiểm cả repo: asset/manifest/ghi công, phông, shot liền frame, giọng/phụ đề/nhịp, bản gộp cũ, tiến trình treo, git |
+| `bash tools/branches.sh [--fetch]` | phiên cloud nào đã push gì, nhánh nào chưa gộp |
+| `node tools/look.mjs <trang> --shots … / --t … / --range a:b:s [--ab trang2] [--det]` | bảng khung có nhãn, so A/B + PSNR, kiểm tất định (skill `kiem-tra-khung`) |
+| `npm run bundle:ep001` | gộp `dist/ep001.html` |
+| `node tools/export-test.mjs dist/ep001.html --range a:b --matrix "lang=vi,en;subs=1,0;voice=1,0"` | bấm Xuất MP4 tự động mọi tổ hợp + báo cáo |
+| `python tools/voices_build.py ep001 sample|vi|en|index [--only …]` | giọng nhiều giọng, trang nghe thử |
+| `python tools/en/beats.py` / `tools/en/tts_en.py` | lời Anh theo nhịp cắt cảnh |
+
+## Làm việc theo LỚP (người dùng chốt 2026-11-11)
+Mỗi tập chia lớp độc lập: **canh** (cảnh/model/camera), **hieu-ung-hinh**, **phu-de**, **giong**, **tieng-anh**, và tiếng động
+gồm **nen**, **buoc-chan**, **khoanh-khac** (sau này thêm **nhac**). Bản đồ lớp → file → lệnh: `episodes/<ep>/LAYERS.md`.
+Người dùng nói "sửa lớp X" → chỉ sửa file của lớp đó → `node tools/build.mjs <ep> <lớp>` (tự gộp `dist/<ep>.html`).
+Không trộn lẫn sửa nhiều lớp trong một lần nếu người dùng chỉ nhắc một lớp.
+
 ## Stack (chỉ 3 thành phần)
 | Lớp | Công cụ | Vai trò |
 |---|---|---|
-| Render video | **HyperFrames** (heygen-com/hyperframes, Apache 2.0) | HTML → MP4 tất định; chữ, phụ đề, chuyển cảnh, âm thanh; Studio để xem trước |
+| Render video | **Bản gộp 1 file + WebCodecs** trên máy người dùng (tools/bundle.mjs, tools/export-ui.js); HyperFrames chỉ còn dự phòng | HTML → MP4 tất định; phụ đề, giọng, hiệu ứng bật/tắt |
 | Cảnh 3D | **three.js** + engine tự viết (`engine/`) | Nhân vật R6, thị trấn, camera |
 | Asset | **Kenney** (gốc) + **Polyfork** (bổ sung, có MCP) | Nhà, đường, đạo cụ |
 
@@ -202,6 +228,7 @@ Render 140 shot:
 - Giọng Edge tham khảo: `tools/voice_studio/voices-edge-vi.txt`.
 
 ## Skill hỗ trợ (`.claude/skills/` + `skills/`)
+- `xuat-phim` (gộp HTML + xuất MP4 + giao link), `giong-doc` (CapCut/Edge nhiều giọng, nghe thử), `kiem-tra-khung` (look/A-B/tất định).
 - `r6-anim` (animation R6), `ref-model` (model từ ảnh), `scene-env` (môi trường), `vfx3d` (hiệu ứng tất định):
   phương pháp của **fwjelaa (FWJ STUDIOS)** chuyển sang three.js. Gói gốc (Roblox Studio/Blender) ở `skills/fwjelaa/`
   — đọc khi cần chi tiết; cloud không có Blender/Studio nên chỉ dùng phương pháp. Ghi công fwjelaa khi chia sẻ.

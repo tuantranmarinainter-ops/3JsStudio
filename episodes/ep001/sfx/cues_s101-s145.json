@@ -1,0 +1,330 @@
+[
+ {
+  "t": 119.8,
+  "name": "wooden door creak open",
+  "vol": 0.5,
+  "dur": 1.8,
+  "shot": "s100",
+  "why": "cửa trước mở ra"
+ },
+ {
+  "t": 120.9,
+  "name": "seagull call",
+  "vol": 0.3,
+  "dur": 1.5,
+  "shot": "s101",
+  "why": "mòng biển chào buổi sáng trên đảo"
+ },
+ {
+  "t": 122.3,
+  "name": "palm leaves rustle",
+  "vol": 0.22,
+  "dur": 1.5,
+  "shot": "s103",
+  "why": "hàng cọ xào xạc"
+ },
+ {
+  "t": 123,
+  "name": "wave crash shore",
+  "vol": 0.3,
+  "dur": 2,
+  "shot": "s104",
+  "why": "sóng vỗ bờ cạnh hải đăng"
+ },
+ {
+  "t": 124.3,
+  "name": "seagull call",
+  "vol": 0.25,
+  "dur": 1.5,
+  "shot": "s105",
+  "why": "toàn cảnh đảo nhỏ"
+ },
+ {
+  "t": 125.6,
+  "name": "soft whoosh",
+  "vol": 0.2,
+  "dur": 1,
+  "shot": "s106",
+  "why": "chuyển sang tấm bưu thiếp trên đảo"
+ },
+ {
+  "t": 127.4,
+  "name": "cloth rustle",
+  "vol": 0.2,
+  "dur": 1,
+  "shot": "s107",
+  "why": "ba ngồi trên mỏm đá, áo rách"
+ },
+ {
+  "t": 128.8,
+  "name": "paper shuffle cards",
+  "vol": 0.25,
+  "dur": 1.5,
+  "shot": "s108",
+  "why": "ba cầm xấp bưu thiếp"
+ },
+ {
+  "t": 130.3,
+  "name": "wind gust light",
+  "vol": 0.2,
+  "dur": 1.5,
+  "shot": "s110",
+  "why": "gió lay áo khoác ba"
+ },
+ {
+  "t": 131.3,
+  "name": "paper rustle",
+  "vol": 0.22,
+  "dur": 1,
+  "shot": "s111",
+  "why": "xấp bưu thiếp rung trong tay"
+ },
+ {
+  "t": 133.3,
+  "name": "wood creak heavy",
+  "vol": 0.35,
+  "dur": 1.5,
+  "shot": "s113",
+  "why": "ba ngước nhìn, nhà đứng trên 4 chân"
+ },
+ {
+  "t": 134.3,
+  "name": "wood groan",
+  "vol": 0.3,
+  "dur": 1.5,
+  "shot": "s114",
+  "why": "ngôi nhà kẽo kẹt trên bãi biển"
+ },
+ {
+  "t": 136.9,
+  "name": "gasp short",
+  "vol": 0.3,
+  "dur": 0.8,
+  "shot": "s117",
+  "why": "ba há hốc, giơ tay"
+ },
+ {
+  "t": 137.2,
+  "name": "paper cards falling",
+  "vol": 0.5,
+  "dur": 1.6,
+  "shot": "s117",
+  "why": "ba đánh rơi xấp bưu thiếp"
+ },
+ {
+  "t": 137.7,
+  "name": "paper cards falling",
+  "vol": 0.35,
+  "dur": 1.2,
+  "shot": "s117",
+  "why": "tấm lẻ rơi xuống đất"
+ },
+ {
+  "t": 138.3,
+  "name": "short gasp surprise",
+  "vol": 0.3,
+  "dur": 0.6,
+  "shot": "s118",
+  "why": "con ngạc nhiên trước khi hô Ba"
+ },
+ {
+  "t": 138.45,
+  "name": "footsteps running sand",
+  "vol": 0.45,
+  "dur": 2,
+  "shot": "s119",
+  "why": "con chạy trên cát"
+ },
+ {
+  "t": 139.6,
+  "name": "footsteps running sand",
+  "vol": 0.4,
+  "dur": 2,
+  "shot": "s121",
+  "why": "mẹ chạy theo"
+ },
+ {
+  "t": 140.75,
+  "name": "cloth hug rustle",
+  "vol": 0.35,
+  "dur": 1.4,
+  "shot": "s122",
+  "why": "cả nhà ôm chầm"
+ },
+ {
+  "t": 140.8,
+  "name": "body thud soft",
+  "vol": 0.35,
+  "dur": 0.6,
+  "shot": "s122",
+  "why": "va vào nhau lúc ôm"
+ },
+ {
+  "t": 143.05,
+  "name": "body fall sand",
+  "vol": 0.55,
+  "dur": 1,
+  "shot": "s122",
+  "why": "cả ba ngã nhào xuống cát"
+ },
+ {
+  "t": 143.15,
+  "name": "sand scatter",
+  "vol": 0.25,
+  "dur": 1,
+  "shot": "s123",
+  "why": "cát bắn lên"
+ },
+ {
+  "t": 143.6,
+  "name": "happy laughter cry",
+  "vol": 0.2,
+  "dur": 1.5,
+  "shot": "s123",
+  "why": "cười khóc sau cú ngã"
+ },
+ {
+  "t": 144.3,
+  "name": "soft whoosh",
+  "vol": 0.22,
+  "dur": 1,
+  "shot": "s124",
+  "why": "chuyển sang hồi tưởng bãi đá ngầm"
+ },
+ {
+  "t": 145.3,
+  "name": "ship wreck crash",
+  "vol": 0.5,
+  "dur": 2,
+  "shot": "s125",
+  "why": "tàu va bãi đá ngầm"
+ },
+ {
+  "t": 146,
+  "name": "seagull call",
+  "vol": 0.2,
+  "dur": 1.5,
+  "shot": "s126",
+  "why": "cảnh cọ trên đảo, mòng biển xa"
+ },
+ {
+  "t": 148.1,
+  "name": "pencil writing paper",
+  "vol": 0.3,
+  "dur": 2,
+  "shot": "s128",
+  "why": "ba viết bưu thiếp mỗi ngày"
+ },
+ {
+  "t": 150.95,
+  "name": "wood creak heavy",
+  "vol": 0.3,
+  "dur": 1.5,
+  "shot": "s130",
+  "why": "nhà bắt đầu động đậy"
+ },
+ {
+  "t": 151.05,
+  "name": "wood creak heavy",
+  "vol": 0.5,
+  "dur": 2,
+  "shot": "s131",
+  "why": "chân nhà gập lại, kẽo kẹt"
+ },
+ {
+  "t": 153.2,
+  "name": "wood groan",
+  "vol": 0.45,
+  "dur": 2,
+  "shot": "s132",
+  "why": "nhà khuỵu xuống từ từ"
+ },
+ {
+  "t": 154.1,
+  "name": "wood joint squeak",
+  "vol": 0.3,
+  "dur": 1,
+  "shot": "s132",
+  "why": "khớp chân gỗ ken két"
+ },
+ {
+  "t": 154.9,
+  "name": "heavy wood thud",
+  "vol": 0.55,
+  "dur": 1.2,
+  "shot": "s133",
+  "why": "nhà chạm cát khi quỳ hẳn"
+ },
+ {
+  "t": 154.95,
+  "name": "sand settle",
+  "vol": 0.25,
+  "dur": 1,
+  "shot": "s134",
+  "why": "cát lún quanh chân nhà"
+ },
+ {
+  "t": 155.3,
+  "name": "footsteps wooden porch",
+  "vol": 0.4,
+  "dur": 1.2,
+  "shot": "s134",
+  "why": "ba bước lên hiên nhà"
+ },
+ {
+  "t": 156.6,
+  "name": "soft whoosh",
+  "vol": 0.22,
+  "dur": 1,
+  "shot": "s135",
+  "why": "chuyển sang đêm về nhà"
+ },
+ {
+  "t": 158.4,
+  "name": "wood groan",
+  "vol": 0.2,
+  "dur": 1.5,
+  "shot": "s137",
+  "why": "nhà đứng dậy chậm rãi"
+ },
+ {
+  "t": 160.5,
+  "name": "soft whoosh",
+  "vol": 0.2,
+  "dur": 1,
+  "shot": "s138",
+  "why": "cắt từ đêm sang cận bưu thiếp trên tủ lạnh"
+ },
+ {
+  "t": 162.9,
+  "name": "paper cards flutter",
+  "vol": 0.25,
+  "dur": 1.2,
+  "shot": "s139",
+  "why": "hàng ngàn thiếp rung nhẹ"
+ },
+ {
+  "t": 163.3,
+  "name": "magnet click fridge",
+  "vol": 0.3,
+  "dur": 0.5,
+  "shot": "s138",
+  "why": "nam châm giữ thiếp"
+ },
+ {
+  "t": 164.9,
+  "name": "magnet click fridge",
+  "vol": 0.25,
+  "dur": 0.5,
+  "shot": "s141",
+  "why": "gắn thêm thiếp lên tủ"
+ },
+ {
+  "t": 169.9,
+  "name": "soft magical chime",
+  "vol": 0.25,
+  "dur": 2,
+  "shot": "s145",
+  "why": "kết ấm áp, cả nhà bên nhau"
+ }
+]

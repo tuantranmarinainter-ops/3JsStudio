@@ -13,11 +13,23 @@
     "test:walk": "npx --yes hyperframes@0.9.30 render . -c episodes/_test_walk/index.html -o output/test_walk.mp4",
     "render:ep001": "npx --yes hyperframes@0.9.30 render . -c episodes/ep001/index.html --workers 3 -o output/ep001.mp4",
     "png:ep001": "npx --yes hyperframes@0.9.30 render . -c episodes/ep001/index.html --format png-sequence -o output/ep001_png",
-    "sheet:ep001": "bash tools/sheet_ep.sh ep001 1 15 output/sheet_ep001_1.jpg"
+    "sheet:ep001": "bash tools/sheet_ep.sh ep001 1 15 output/sheet_ep001_1.jpg",
+    "bundle": "node tools/bundle.mjs",
+    "bundle:ep001": "node tools/bundle.mjs ep001",
+    "doctor": "node tools/doctor.mjs ep001",
+    "branches": "bash tools/branches.sh --fetch",
+    "look": "node tools/look.mjs",
+    "export-test": "node tools/export-test.mjs dist/ep001.html",
+    "voices:sample": "python tools/voices_build.py ep001 sample"
   },
   "hyperframes": "0.9.30",
   "vendored": {
     "three": "0.187.0",
     "gsap": "3.15.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.12",
+    "mp4-muxer": "^5.2.1",
+    "playwright-core": "^1.56.1"
   }
 }

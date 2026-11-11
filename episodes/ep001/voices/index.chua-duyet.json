@@ -1,0 +1,17 @@
+[
+ {
+  "id": "vi_female_huong",
+  "lang": "vi",
+  "source": "capcut",
+  "label": "Giọng Nữ Phổ Thông",
+  "audio": "/episodes/ep001/voices/vi/vi_female_huong.ogg"
+ },
+ {
+  "id": "en-CA-LiamNeural",
+  "lang": "en",
+  "source": "edge",
+  "label": "Liam (CA, nam)",
+  "audio": "/episodes/ep001/voices/en/en-CA-LiamNeural.ogg",
+  "caps": "/episodes/ep001/voices/en/en-CA-LiamNeural.caps.json"
+ }
+]

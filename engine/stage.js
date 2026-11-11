@@ -138,8 +138,10 @@ export function createStage(THREE, opts = {}) {
       const r = fn(lastT, api);
       if (r && typeof r.then === 'function') pending.push(r);
     }
-    if (!pending.length) { renderer.render(scene, camera); return null; }
-    return Promise.all(pending).then(() => renderer.render(scene, camera));
+    // api.draw (nếu có) = vẽ qua lớp hậu kỳ (engine/post.js); không có thì vẽ thẳng như cũ
+    const draw = () => (api.draw ? api.draw(lastT) : renderer.render(scene, camera));
+    if (!pending.length) { draw(); return null; }
+    return Promise.all(pending).then(draw);
   }
 
   let started = false;
@@ -158,6 +160,7 @@ export function createStage(THREE, opts = {}) {
     THREE, renderer, scene, camera, sun, hemi, ground, options: o,
     setCamera, orbit, shadowFocus, setSunDir, onFrame, renderAt, start,
     get time() { return lastT; },
+    get target() { return _target; },   // điểm camera đang nhìn (setCamera) — dùng cho mờ hậu cảnh
   };
   return api;
 }

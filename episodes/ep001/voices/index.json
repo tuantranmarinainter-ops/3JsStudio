@@ -1,0 +1,160 @@
+[
+ {
+  "id": "BV074_streaming_dsp",
+  "lang": "vi",
+  "source": "capcut",
+  "label": "Giọng Bé",
+  "audio": "/episodes/ep001/voices/vi/BV074_streaming_dsp.ogg"
+ },
+ {
+  "id": "BV560_streaming",
+  "lang": "vi",
+  "source": "capcut",
+  "label": "Alex Đại Đế",
+  "audio": "/episodes/ep001/voices/vi/BV560_streaming.ogg"
+ },
+ {
+  "id": "multi_female_sisi_uranus_bigtts",
+  "lang": "vi",
+  "source": "capcut",
+  "label": "Bản Tin nữ",
+  "audio": "/episodes/ep001/voices/vi/multi_female_sisi_uranus_bigtts.ogg"
+ },
+ {
+  "id": "BV074_streaming",
+  "lang": "vi",
+  "source": "capcut",
+  "label": "Cô Gái Hoạt Ngôn",
+  "audio": "/episodes/ep001/voices/vi/BV074_streaming.ogg"
+ },
+ {
+  "id": "vi_female_huong",
+  "lang": "vi",
+  "source": "capcut",
+  "label": "Giọng Nữ Phổ Thông",
+  "audio": "/episodes/ep001/voices/vi/vi_female_huong.ogg"
+ },
+ {
+  "id": "BV562_streaming",
+  "lang": "vi",
+  "source": "capcut",
+  "label": "Mai",
+  "audio": "/episodes/ep001/voices/vi/BV562_streaming.ogg"
+ },
+ {
+  "id": "BV421_vivn_streaming",
+  "lang": "vi",
+  "source": "capcut",
+  "label": "Nhỏ Ngọt Ngào",
+  "audio": "/episodes/ep001/voices/vi/BV421_vivn_streaming.ogg"
+ },
+ {
+  "id": "multi_female_daqi_uranus_bigtts",
+  "lang": "vi",
+  "source": "capcut",
+  "label": "Review Phim 3",
+  "audio": "/episodes/ep001/voices/vi/multi_female_daqi_uranus_bigtts.ogg"
+ },
+ {
+  "id": "multi_female_kiwi_uranus_bigtts",
+  "lang": "vi",
+  "source": "capcut",
+  "label": "Sunny Idol",
+  "audio": "/episodes/ep001/voices/vi/multi_female_kiwi_uranus_bigtts.ogg"
+ },
+ {
+  "id": "BV075_streaming",
+  "lang": "vi",
+  "source": "capcut",
+  "label": "Thanh Niên Tự Tin",
+  "audio": "/episodes/ep001/voices/vi/BV075_streaming.ogg"
+ },
+ {
+  "id": "en-US-AndrewMultilingualNeural",
+  "lang": "en",
+  "source": "edge",
+  "label": "Andrew Multilingual (US, nam)",
+  "audio": "/episodes/ep001/voices/en/en-US-AndrewMultilingualNeural.ogg",
+  "caps": "/episodes/ep001/voices/en/en-US-AndrewMultilingualNeural.caps.json"
+ },
+ {
+  "id": "en-US-AndrewNeural",
+  "lang": "en",
+  "source": "edge",
+  "label": "Andrew (US, nam)",
+  "audio": "/episodes/ep001/voices/en/en-US-AndrewNeural.ogg",
+  "caps": "/episodes/ep001/voices/en/en-US-AndrewNeural.caps.json"
+ },
+ {
+  "id": "en-US-AvaNeural",
+  "lang": "en",
+  "source": "edge",
+  "label": "Ava (US, nữ)",
+  "audio": "/episodes/ep001/voices/en/en-US-AvaNeural.ogg",
+  "caps": "/episodes/ep001/voices/en/en-US-AvaNeural.caps.json"
+ },
+ {
+  "id": "en-US-AvaMultilingualNeural",
+  "lang": "en",
+  "source": "edge",
+  "label": "Ava Multilingual (US, nữ)",
+  "audio": "/episodes/ep001/voices/en/en-US-AvaMultilingualNeural.ogg",
+  "caps": "/episodes/ep001/voices/en/en-US-AvaMultilingualNeural.caps.json"
+ },
+ {
+  "id": "en-US-BrianNeural",
+  "lang": "en",
+  "source": "edge",
+  "label": "Brian (US, nam)",
+  "audio": "/episodes/ep001/voices/en/en-US-BrianNeural.ogg",
+  "caps": "/episodes/ep001/voices/en/en-US-BrianNeural.caps.json"
+ },
+ {
+  "id": "en-IE-ConnorNeural",
+  "lang": "en",
+  "source": "edge",
+  "label": "Connor (IE, nam)",
+  "audio": "/episodes/ep001/voices/en/en-IE-ConnorNeural.ogg",
+  "caps": "/episodes/ep001/voices/en/en-IE-ConnorNeural.caps.json"
+ },
+ {
+  "id": "en-US-EmmaNeural",
+  "lang": "en",
+  "source": "edge",
+  "label": "Emma (US, nữ)",
+  "audio": "/episodes/ep001/voices/en/en-US-EmmaNeural.ogg",
+  "caps": "/episodes/ep001/voices/en/en-US-EmmaNeural.caps.json"
+ },
+ {
+  "id": "en-CA-LiamNeural",
+  "lang": "en",
+  "source": "edge",
+  "label": "Liam (CA, nam)",
+  "audio": "/episodes/ep001/voices/en/en-CA-LiamNeural.ogg",
+  "caps": "/episodes/ep001/voices/en/en-CA-LiamNeural.caps.json"
+ },
+ {
+  "id": "en-GB-SoniaNeural",
+  "lang": "en",
+  "source": "edge",
+  "label": "Sonia (GB, nữ)",
+  "audio": "/episodes/ep001/voices/en/en-GB-SoniaNeural.ogg",
+  "caps": "/episodes/ep001/voices/en/en-GB-SoniaNeural.caps.json"
+ },
+ {
+  "id": "en-US-SteffanNeural",
+  "lang": "en",
+  "source": "edge",
+  "label": "Steffan (US, nam)",
+  "audio": "/episodes/ep001/voices/en/en-US-SteffanNeural.ogg",
+  "caps": "/episodes/ep001/voices/en/en-US-SteffanNeural.caps.json"
+ },
+ {
+  "id": "en-AU-WilliamMultilingualNeural",
+  "lang": "en",
+  "source": "edge",
+  "label": "William Multilingual (AU, nam)",
+  "audio": "/episodes/ep001/voices/en/en-AU-WilliamMultilingualNeural.ogg",
+  "caps": "/episodes/ep001/voices/en/en-AU-WilliamMultilingualNeural.caps.json"
+ }
+]

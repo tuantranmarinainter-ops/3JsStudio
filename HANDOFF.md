@@ -19,6 +19,28 @@
 | ep001 "Ngôi nhà biết đi" | `episodes/ep001/` (README), `engine/house.js`, `envs.js`, `props.js`, `postcards.js`, `fx.js`, `shots.js`, `timeline.js` | Dựng theo tài liệu bàn giao của người dùng: 145 shot, 5132 frame, giọng CapCut từ SRT, phụ đề cụm chữ. `npm run render:ep001`. Sai lệch ghi trong README tập. |
 | Skill hỗ trợ | `.claude/skills/{r6-anim,ref-model,scene-env,vfx3d}`, gói gốc `skills/fwjelaa/` | Phương pháp fwjelaa (Roblox/Blender) chuyển sang three.js. |
 
+### Xuất video trên máy người dùng (2026-11-11 — người dùng chốt: KHÔNG render qua cloud)
+- `npm run bundle:ep001` → `dist/<ep>.html` một file tự chứa (tools/bundle.mjs) + trình phát và nút **Xuất MP4**
+  2K/1080p/4K (tools/export-ui.js: WebCodecs H.264 + AAC, mp4-muxer) chạy trong Chrome/Edge của người dùng.
+- index.html của tập phải đặt `window.__stage = stage` (nút xuất đổi pixel ratio renderer) và `window.renderAt`.
+- Trình phát có chọn **Tiếng Việt / English (Edge Andrew)**, bật/tắt **phụ đề** và **giọng đọc** (index.html: `setOptions`,
+  `getOptions`; `engine/postcards.js#setPostcardLang` vẽ lại chữ bưu thiếp). Bản Anh: `tools/en/` (xem README tập).
+- Cá voi/nước văng: asset + `engine/splash.js` lấy từ nhánh `ccr-c8a35e66-l14aqp` (phiên trước, chưa từng gộp vào ep001).
+- Hiệu ứng hình bật/tắt: `engine/post.js` (vendor thêm `vendor/three/addons/postprocessing` + `shaders` bản r187);
+  `stage.draw` móc vào renderAt, `envs.last` cho biết light/env/flash, `stage.target` cho mờ hậu cảnh.
+- Nhiều giọng đọc: `tools/voices_build.py` (en / vi / sample / index). Đoạn nghe thử 69 giọng ở `output/nghe-thu/`.
+  `voices/index.json` CHỈ tạo sau khi người dùng chốt danh sách giọng (bản chưa duyệt: `index.chua-duyet.json`).
+- Giọng đã chốt và ghép (2026-11-11): 10 Việt + 11 Anh (`output/giong-da-chot.txt`, `voices/index.json`); giọng chậm đã bỏ,
+  3 giọng bigtts ranh giới được canh bằng `tools/fit_voice.py`. Bảng repo 3D/WebGL: `docs/thu-vien-3d-webgl.md`.
+- **Làm việc theo lớp**: `episodes/ep001/LAYERS.md` + `node tools/build.mjs ep001 <lớp>`. Tiếng động 3 lớp (nen, buoc-chan,
+  khoanh-khac) → `sfx_<lớp>.ogg`, cấu hình `sfx/layers.json`, trộn `tools/sfx/mix.py`, tải `tools/sfx/fetch.py` (CC0/CC BY,
+  ghi công `assets/sfx/CREDITS.md`), mốc chân nhà `tools/sfx/steps.mjs`.
+- **Người dùng đã BỎ Three.js Water Pro (2026-11-11)** — không tích hợp, không nhắc lại. Đại dương dùng mặt nước hiện có
+  (`engine/water.js` / envs ocean) + lớp `splash.js` chồng lên.
+- Đã kiểm: cả tập 2K 5132 frame / 171,07 s, khung 13,5 / 60 / 120 s khớp trang gốc. Repo trên máy người dùng: `S:\3JS Studio`.
+- Công cụ + skill mới (2026-11-11): `tools/doctor.mjs`, `tools/branches.sh`, `tools/look.mjs`, `tools/export-test.mjs`;
+  skill `xuat-phim`, `giong-doc`, `kiem-tra-khung` (xem bảng "Công cụ" trong CLAUDE.md).
+
 ### Lưu ý kỹ thuật mới
 - Composition render qua `-c episodes/<ep>/index.html` được phục vụ như ở gốc repo → **import trong index.html dùng
   đường dẫn tuyệt đối** (`/engine/...`, `/episodes/ep001/...`), không dùng `./`.

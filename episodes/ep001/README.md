@@ -23,6 +23,34 @@ Sửa lời kể: sửa `narration.txt` → push → workflow `tts-narration` t�
 Tạo lại phụ đề/lời kể từ SRT: `python tools/srt2narration.py refs/ngoinha/subtitles.json`.
 Trích lại frame tham chiếu: `python tools/ref_frames.py refs/ngoinha <Phần_1.html> <Phần_2.html>`.
 
+## Một file HTML có nút "Xuất MP4" (render trên máy người xem, không cần cloud)
+```bash
+npm install                 # lần đầu (esbuild, mp4-muxer, playwright-core)
+npm run bundle:ep001        # → dist/ep001.html (~18 MB, tự chứa: JS + three + GLB + texture + giọng đọc)
+```
+Mở `dist/ep001.html` bằng **Chrome hoặc Edge** (bấm đúp, không cần server/mạng):
+- **▶ Xem** / thanh tua: xem trước có tiếng (Space = phát/dừng).
+- Chọn **2K 1440×2560** (mặc định), Full HD hoặc 4K; tuỳ chọn đoạn (giây) → **⬇ Xuất MP4** → chọn chỗ lưu.
+  Trình duyệt render từng frame bằng card đồ hoạ của máy, phụ đề vẽ vào hình, H.264 High + AAC (WebCodecs + mp4-muxer).
+- Đã đo trên máy người dùng: cả tập 2K (5132 frame) xuất trong ~42 s; mọi khung so với trang gốc đều khớp.
+- **Ngôn ngữ** Tiếng Việt / English (giọng Andrew) — đổi cả phụ đề, giọng đọc và chữ trên bưu thiếp; ô **Phụ đề** và
+  **Giọng đọc** bật/tắt độc lập (áp dụng cho cả xem trước lẫn file xuất; tên file có hậu tố `_EN/_VI`, `_nosub`, `_novoice`).
+  Trang gốc cũng nhận `?lang=en&subs=0&voice=0` hoặc `window.setOptions({lang, subs, voice})`.
+- **Hiệu ứng hình** (`engine/post.js`, mỗi ô bật/tắt riêng, áp dụng cả lúc xem và lúc xuất): chỉnh màu theo cảnh
+  (theo preset ánh sáng), toả sáng (bloom), mờ hậu cảnh (tự bật ở cảnh cận), tối viền + hạt phim, viền đen nhân vật
+  (mặc định tắt), mưa bão mạnh (vệt mưa + loé chớp ở cảnh `storm`/`shipStorm`). Trang gốc: `?fx=grade,bloom` hoặc `?fx=none`.
+  Cảnh vẽ ra canvas như cũ rồi mới phủ hiệu ứng → tắt hết = giống hệt bản gốc. Tất định theo t.
+Sửa engine/shot → chạy lại `npm run bundle:ep001` (file gộp không tự cập nhật).
+Dự phòng không dùng giao diện: `node tools/render-local.mjs dist/ep001.html -o output/ep001.mp4` (Chrome headless + ffmpeg, 1080p).
+
+## Bản tiếng Anh (bám cú cắt)
+- `tools/en/beats.py ep001 --keep s055 > episodes/ep001/beats.json`: chia lời kể theo cú cắt (nhịp ≥ 1,15 s, gộp shot không lời).
+- `tools/en/en_ep001.py`: lời kể tiếng Anh, MỖI NHỊP 1 CỤM bắt đầu đúng cú cắt, từ khoá đặt đầu cụm (đọc nhấn khi chuyển khung).
+- `python tools/en/tts_en.py ep001`: Edge TTS `en-US-AndrewMultilingualNeural`, mỗi nhịp đặt tại cú cắt +0,04 s; dài quá khung
+  thì tự tăng tốc (≤ +45%, rồi atempo ≤ 1,25) → `narration_en.mp3`, `captions_en.js` (cụm 1–3 chữ theo mốc từng chữ),
+  `narration_en.json` (báo cáo tốc độ từng nhịp). Cache `.cache/tts_en/`. Sửa câu ở `en_ep001.py` rồi chạy lại.
+- Sửa `shots.js` làm đổi cú cắt → chạy lại `beats.py` (id nhịp có thể dịch, kiểm `en_ep001.py`) rồi `tts_en.py`.
+
 ## Cấu trúc
 - `episode.js`: diễn viên (cậu bé mũ len đỏ áo hoodie vàng; mẹ tóc bím áo sọc mint khăn đỏ váy nâu; cha mũ đỏ áo
   khoác navy; cha trên đảo có râu, áo/quần rách), 2 nhà (gia đình đỏ mái ngọc / nhà minh hoạ sáng mái xanh), đạo cụ.

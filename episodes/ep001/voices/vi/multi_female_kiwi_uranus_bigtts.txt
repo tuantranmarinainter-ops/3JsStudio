@@ -1,0 +1,69 @@
+# Ngôi nhà biết đi — lời kể từ SRT gốc (refs/ngoinha/subtitles.srt). @at = giây bắt đầu theo SRT.
+@source capcut
+@narrator multi_female_kiwi_uranus_bigtts 20
+
+@at 0.00 Trong thế giới này, mỗi đêm có một ngôi nhà ngẫu nhiên trong thị trấn biến mất, rồi thức dậy ở một nơi khác trên thế giới.
+@at 4.88 Bạn thấy đấy, vào lúc nửa đêm, những chiếc chân gỗ khổng lồ vươn ra từ tầng hầm.
+@at 8.61 Ngôi nhà đứng dậy, rũ sạch đất cát, rồi bước đi khi cả gia đình vẫn đang say ngủ bên trong.
+@at 13.04 Đến sáng, nó có thể ở bất cứ đâu, một bãi biển Hawaii, một khu rừng rậm Brazil, hay giữa sa mạc Sahara.
+@at 18.28 Bạn có một ngày để khám phá, và đến đêm tiếp theo, nó sẽ đưa bạn đi bộ về nhà.
+@at 22.39 Suốt 100 năm qua, chưa có nhà nào một đi không trở lại cho đến lượt nhà chúng tôi.
+@at 26.58 Khi ấy, chỉ có tôi và mẹ.
+@at 28.08 Ba tôi là một nhà thám hiểm.
+@at 29.50 Ông đi khắp thế giới và đặt chân đến đâu, ông cũng gửi về một tấm bưu thiếp.
+@at 32.83 Chúng tôi giữ tất cả trên cửa tủ lạnh.
+@at 34.57 Ba năm trước, những tấm bưu thiếp ngừng gửi về.
+@at 36.63 Con tàu của ông không bao giờ quay lại, và mẹ tôi cũng thôi nhìn vào tủ lạnh.
+@at 40.21 Rồi một đêm nọ, ngôi nhà của chúng tôi thức giấc.
+@at 42.38 Cả sàn nhà nghiêng đi.
+@at 43.53 Tôi chạy ra cửa sổ và thấy nhà mình đang đứng trên bốn chiếc chân khổng lồ, sải bước xuống phố.
+@at 47.82 Rầm, rầm, rầm.
+@at 48.85 Nó bước ra khỏi thị trấn, băng qua khu rừng, rồi tiến vào bóng tối.
+@at 52.48 Sáng hôm sau, tôi mở cửa ra và hơi băng giá thổi tạt vào mặt.
+@at 55.55 Những chú chim cánh cụt lạch bạch đi qua hộp thư nhà tôi.
+@at 58.09 Nam Cực.
+@at 58.59 Nhưng đêm đó, ngôi nhà không đi về, mà lại đến một nơi khác.
+@at 61.76 Sáng hôm sau là nước.
+@at 62.79 Ngôi nhà đang đứng ngập đến ngang lưng giữa đại dương, với những chú cá voi bơi quanh chân nó.
+@at 66.93 Và sáng hôm sau nữa, chúng tôi đã ở trên đỉnh núi, với biển mây ngay dưới hiên nhà.
+@at 70.75 Mẹ tôi bắt đầu hoảng loạn.
+@at 71.93 Các ngôi nhà luôn quay về cơ mà.
+@at 73.36 Tại sao nó không về nhà?
+@at 74.64 Tôi vào bếp lấy nước, rồi sững lại ngay trước những tấm bưu thiếp.
+@at 77.51 Tấm đầu tiên có hình chim cánh cụt.
+@at 79.13 Lời chào từ Nam Cực.
+@at 80.32 Tấm thứ hai có hình cá voi.
+@at 81.78 Giữa Thái Bình Dương.
+@at 82.82 Thấy một chú cá voi ngay dưới thuyền.
+@at 84.43 Tấm thứ ba là ngọn núi trên tầng mây.
+@at 86.30 Đỉnh của thế giới.
+@at 87.43 Ước gì hai mẹ con ở đây.
+@at 88.76 Tim tôi đập thình thịch.
+@at 90.02 Mẹ ơi.
+@at 90.36 Mẹ bước vào.
+@at 91.13 Tôi chỉ vào tủ lạnh, rồi chỉ ra ngoài cửa sổ.
+@at 93.54 Mọi nơi ngôi nhà dừng chân đều là nơi ba đã gửi bưu thiếp theo đúng thứ tự đó.
+@at 97.43 Ngôi nhà không hề bị lạc.
+@at 98.65 Nó đang lần theo dấu vết của ba.
+@at 100.25 Nó đang đi tìm ông.
+@at 101.34 Mẹ nhìn chằm chằm vào tủ lạnh, rồi gỡ tấm bưu thiếp cuối cùng xuống.
+@at 104.49 Đó là tấm gửi về từ ba năm trước, ngay trước khi ông mất tích.
+@at 107.00 Một hòn đảo nhỏ xíu và một ngọn hải đăng nhỏ.
+@at 109.06 Đã tìm thấy một thứ tuyệt vời.
+@at 110.45 Sẽ sớm về nhà thôi.
+@at 111.61 Yêu cả hai mẹ con.
+@at 112.66 Đêm đó, ngôi nhà lại đứng dậy.
+@at 114.52 Nó đi bộ suốt nhiều giờ liền, băng qua biển đóng băng, vượt qua một cơn bão, rồi cuối cùng cũng dừng lại.
+@at 119.54 Trời sáng, tôi mở cửa trước, cát, những hàng cây cọ, những con sóng và một ngọn hải đăng nhỏ nằm ở rìa một hòn đảo tí hon.
+@at 125.69 Chính là nơi trong tấm bưu thiếp.
+@at 127.01 Và ngồi trên mỏm đá dưới chân hải đăng là một người đàn ông râu dài, mặc chiếc áo khoác rách, tay cầm một xấp bưu thiếp không bao giờ gửi đi được.
+@at 133.28 Ông ngước nhìn lên ngôi nhà đang đứng trên bãi biển bằng bốn chiếc chân khổng lồ, rồi đánh rơi cả xấp bưu thiếp.
+@at 138.25 Ba!
+@at 138.47 Tôi chạy băng qua bãi cát, mẹ chạy ngay phía sau và chúng tôi lao vào ôm chầm lấy ông mạnh đến mức cả ba ngã nhào xuống cát.
+@at 144.49 Tàu của ông đã đắm ở bãi đá ngầm.
+@at 146.21 Suốt ba năm, ông bị mắc kẹt trên đảo và vẫn viết bưu thiếp mỗi ngày.
+@at 149.72 Và rồi, ngôi nhà đã làm một điều tôi chưa thấy nhà nào làm.
+@at 152.38 Nó gập những chiếc chân khổng lồ lại và khuỵu xuống để ba có thể bước thẳng lên hiên nhà.
+@at 156.93 Đêm đó, nó đưa cả ba chúng tôi trở về nhà thật chậm rãi và cẩn thận.
+@at 160.55 Giờ đây, đã có thêm hàng ngàn tấm bưu thiếp mới trên tủ lạnh, tất cả đều từ hòn đảo đó và tấm nào cũng kết thúc bằng cùng một câu: Ước gì hai mẹ con ở đây.
+@at 168.52 Nhưng giờ thì chúng tôi đã ở bên nhau rồi.

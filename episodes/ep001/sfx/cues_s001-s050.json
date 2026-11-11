@@ -1,0 +1,338 @@
+[
+ {
+  "t": 0.15,
+  "name": "wood creak groan",
+  "vol": 0.4,
+  "dur": 1.5,
+  "shot": "s001",
+  "why": "chân gỗ nhô lên dưới nhà, kẽo kẹt"
+ },
+ {
+  "t": 1.9,
+  "name": "deep rumble earth",
+  "vol": 0.35,
+  "dur": 1.5,
+  "shot": "s002",
+  "why": "đất rung quanh hố tầng hầm"
+ },
+ {
+  "t": 2.6,
+  "name": "dirt debris falling",
+  "vol": 0.3,
+  "dur": 1.2,
+  "shot": "s002",
+  "why": "đất đá rơi vào hố"
+ },
+ {
+  "t": 3.4,
+  "name": "seagull call",
+  "vol": 0.25,
+  "dur": 1.5,
+  "shot": "s003",
+  "why": "nhà trên bãi biển Hawaii"
+ },
+ {
+  "t": 6.85,
+  "name": "wood creak long",
+  "vol": 0.45,
+  "dur": 1.4,
+  "shot": "s006",
+  "why": "chân gỗ bắt đầu vươn ra khỏi tầng hầm"
+ },
+ {
+  "t": 7,
+  "name": "wood crack snap",
+  "vol": 0.55,
+  "dur": 1,
+  "shot": "s006",
+  "why": "chân gỗ phá nền, gỗ gãy rắc"
+ },
+ {
+  "t": 7.85,
+  "name": "dirt burst thud",
+  "vol": 0.5,
+  "dur": 1.2,
+  "shot": "s006",
+  "why": "bụi đất bung ra ở 3 góc"
+ },
+ {
+  "t": 8.65,
+  "name": "low rumble rising",
+  "vol": 0.5,
+  "dur": 2,
+  "shot": "s007",
+  "why": "ngôi nhà đứng dậy, nâng lên"
+ },
+ {
+  "t": 8.9,
+  "name": "wood creak heavy",
+  "vol": 0.35,
+  "dur": 1.5,
+  "shot": "s007",
+  "why": "khung nhà ghì căng khi nhấc lên"
+ },
+ {
+  "t": 9.55,
+  "name": "building shake rattle",
+  "vol": 0.35,
+  "dur": 1,
+  "shot": "s008",
+  "why": "nhà rung lắc mạnh rồi dịu"
+ },
+ {
+  "t": 10,
+  "name": "rocks dirt falling debris",
+  "vol": 0.5,
+  "dur": 1.5,
+  "shot": "s008",
+  "why": "rũ sạch đất cát, đất rơi rào rào"
+ },
+ {
+  "t": 11.6,
+  "name": "soft snoring",
+  "vol": 0.2,
+  "dur": 1.8,
+  "shot": "s010",
+  "why": "cả nhà đang ngủ trong phòng"
+ },
+ {
+  "t": 14.95,
+  "name": "seagull call",
+  "vol": 0.25,
+  "dur": 1.5,
+  "shot": "s012",
+  "why": "bãi biển Hawaii"
+ },
+ {
+  "t": 15.9,
+  "name": "tropical jungle birds",
+  "vol": 0.3,
+  "dur": 2,
+  "shot": "s013",
+  "why": "rừng rậm Brazil"
+ },
+ {
+  "t": 17.35,
+  "name": "wind gust sand",
+  "vol": 0.3,
+  "dur": 1.8,
+  "shot": "s014",
+  "why": "gió cát giữa sa mạc Sahara"
+ },
+ {
+  "t": 18.45,
+  "name": "kids cheer happy",
+  "vol": 0.4,
+  "dur": 1.5,
+  "shot": "s015",
+  "why": "hai mẹ con reo vui khám phá"
+ },
+ {
+  "t": 19.5,
+  "name": "whoosh soft",
+  "vol": 0.25,
+  "dur": 0.8,
+  "shot": "s016",
+  "why": "chuyển cảnh về thị trấn, nhà đi ngang"
+ },
+ {
+  "t": 26.45,
+  "name": "fridge door open",
+  "vol": 0.3,
+  "dur": 1,
+  "shot": "s021",
+  "why": "không khí bếp, mẹ mở tủ lạnh"
+ },
+ {
+  "t": 29.65,
+  "name": "ship horn distant",
+  "vol": 0.4,
+  "dur": 1.8,
+  "shot": "s023",
+  "why": "ba vẫy tay trên tàu"
+ },
+ {
+  "t": 30.4,
+  "name": "snow footsteps crunch",
+  "vol": 0.3,
+  "dur": 1.5,
+  "shot": "s024",
+  "why": "ba bước trên tuyết Nam Cực"
+ },
+ {
+  "t": 32,
+  "name": "paper rustle card",
+  "vol": 0.3,
+  "dur": 0.8,
+  "shot": "s025",
+  "why": "ba cầm tấm bưu thiếp chim cánh cụt"
+ },
+ {
+  "t": 33.55,
+  "name": "magnet click fridge",
+  "vol": 0.5,
+  "dur": 0.6,
+  "shot": "s027",
+  "why": "cận bưu thiếp gắn nam châm trên tủ lạnh"
+ },
+ {
+  "t": 34.6,
+  "name": "mailbox flap clunk",
+  "vol": 0.4,
+  "dur": 0.7,
+  "shot": "s028",
+  "why": "bưu thiếp rơi vào hộp thư"
+ },
+ {
+  "t": 35.8,
+  "name": "mailbox flap clunk",
+  "vol": 0.35,
+  "dur": 0.7,
+  "shot": "s030",
+  "why": "hộp thư nhận thêm bưu thiếp"
+ },
+ {
+  "t": 36.55,
+  "name": "ship horn distant",
+  "vol": 0.3,
+  "dur": 1.5,
+  "shot": "s031",
+  "why": "tàu của ba trong bão"
+ },
+ {
+  "t": 37.05,
+  "name": "thunder crack close",
+  "vol": 0.55,
+  "dur": 2,
+  "shot": "s032",
+  "why": "sét đánh, tàu không về nữa"
+ },
+ {
+  "t": 37.65,
+  "name": "big wave crash",
+  "vol": 0.5,
+  "dur": 1.8,
+  "shot": "s033",
+  "why": "sóng dữ đập vào tàu"
+ },
+ {
+  "t": 38.5,
+  "name": "slow footsteps wooden floor",
+  "vol": 0.25,
+  "dur": 1.5,
+  "shot": "s034",
+  "why": "mẹ buồn bước đi trong bếp"
+ },
+ {
+  "t": 41.1,
+  "name": "wood creak groan",
+  "vol": 0.4,
+  "dur": 1.4,
+  "shot": "s036",
+  "why": "nhà thức giấc, chân lại vươn ra"
+ },
+ {
+  "t": 41.95,
+  "name": "dirt burst thud",
+  "vol": 0.45,
+  "dur": 1,
+  "shot": "s036",
+  "why": "bụi đất bung ở hai góc"
+ },
+ {
+  "t": 42.55,
+  "name": "furniture creak tilt",
+  "vol": 0.4,
+  "dur": 1.2,
+  "shot": "s037",
+  "why": "sàn nghiêng, đồ đạc kẽo kẹt"
+ },
+ {
+  "t": 43.1,
+  "name": "objects sliding rattle",
+  "vol": 0.35,
+  "dur": 1,
+  "shot": "s037",
+  "why": "đồ vật trượt khi sàn nghiêng"
+ },
+ {
+  "t": 44.8,
+  "name": "wood creak heavy",
+  "vol": 0.4,
+  "dur": 1.4,
+  "shot": "s039",
+  "why": "nhà đứng trên bốn chân khổng lồ"
+ },
+ {
+  "t": 45.5,
+  "name": "whoosh fast",
+  "vol": 0.3,
+  "dur": 0.8,
+  "shot": "s040",
+  "why": "cắt cảnh nhà sải bước xuống phố"
+ },
+ {
+  "t": 50.4,
+  "name": "forest birds morning",
+  "vol": 0.25,
+  "dur": 1.8,
+  "shot": "s043",
+  "why": "nhà băng qua khu rừng"
+ },
+ {
+  "t": 53.3,
+  "name": "wooden door creak open",
+  "vol": 0.5,
+  "dur": 1.4,
+  "shot": "s045",
+  "why": "tôi mở cửa ra"
+ },
+ {
+  "t": 53.4,
+  "name": "cold wind gust",
+  "vol": 0.4,
+  "dur": 1.8,
+  "shot": "s045",
+  "why": "chuyển Nam Cực, gió lạnh thốc vào"
+ },
+ {
+  "t": 54.2,
+  "name": "teeth chattering shiver",
+  "vol": 0.25,
+  "dur": 1.2,
+  "shot": "s046",
+  "why": "hơi băng giá, tôi run lạnh"
+ },
+ {
+  "t": 56.1,
+  "name": "penguin squawk",
+  "vol": 0.45,
+  "dur": 1,
+  "shot": "s047",
+  "why": "chim cánh cụt lạch bạch"
+ },
+ {
+  "t": 56.55,
+  "name": "penguin squawk",
+  "vol": 0.4,
+  "dur": 1,
+  "shot": "s048",
+  "why": "đàn cánh cụt đi qua hộp thư"
+ },
+ {
+  "t": 58.3,
+  "name": "kids gasp",
+  "vol": 0.35,
+  "dur": 0.7,
+  "shot": "s049",
+  "why": "mẹ ngạc nhiên ở cửa"
+ },
+ {
+  "t": 58.8,
+  "name": "low rumble rising",
+  "vol": 0.4,
+  "dur": 1.8,
+  "shot": "s050",
+  "why": "đêm tuyết, nhà trồi lên rồi rời đi"
+ }
+]

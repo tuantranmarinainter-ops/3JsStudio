@@ -11,14 +11,17 @@
     <script src="/vendor/gsap/gsap.min.js"></script>
     <script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
     <style>
+      /* Phông hỗ trợ đầy đủ tiếng Việt (Google Fonts, OFL — assets/fonts/*-OFL.txt): phụ đề + chữ bưu thiếp */
+      @font-face { font-family: 'Be Vietnam Pro'; font-weight: 900; font-style: normal; src: url('/assets/fonts/BeVietnamPro-Black.ttf') format('truetype'); }
+      @font-face { font-family: 'Patrick Hand'; font-weight: 400; font-style: normal; src: url('/assets/fonts/PatrickHand-Regular.ttf') format('truetype'); }
       * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
       #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
       #stage { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
       #cap {
         position: absolute; left: 40px; right: 40px; top: 1250px; text-align: center;
-        font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 92px; line-height: 1.05; color: #fff;
-        -webkit-text-stroke: 14px #15121c; paint-order: stroke fill; letter-spacing: 0.5px;
+        font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 84px; line-height: 1.12; color: #fff;
+        -webkit-text-stroke: 14px #15121c; paint-order: stroke fill; letter-spacing: 0;
         text-shadow: 0 6px 0 rgba(0,0,0,0.35); transform-origin: 50% 60%;
       }
       body.peek #stage { width: 540px; height: 960px; }
@@ -30,7 +33,13 @@
     <div id="root" data-composition-id="main" data-start="0" data-duration="171.0666" data-width="1080" data-height="1920" data-fps="30">
       <canvas id="stage" width="1080" height="1920"></canvas>
       <div id="cap" class="clip" data-start="0" data-duration="171.0666" data-track-index="1"></div>
-      <audio id="narration" class="clip" src="narration.mp3" data-start="0" data-track-index="2" data-volume="1"></audio>
+      <audio id="narration" class="clip" src="narration.mp3" data-start="0" data-track-index="2" data-volume="1" data-lang="vi"></audio>
+      <!-- giọng tiếng Anh (Edge en-US-AndrewMultilingualNeural, tools/en/tts_en.py) — không phải clip HyperFrames; nút Xuất MP4 chọn theo ngôn ngữ -->
+      <audio id="narration_en" src="narration_en.mp3" preload="auto" data-lang="en"></audio>
+      <!-- LỚP TIẾNG ĐỘNG (tools/sfx/mix.py, cấu hình sfx/layers.json): mỗi lớp 1 track, trình phát bật/tắt + chỉnh âm lượng riêng -->
+      <audio id="sfx_nen" class="clip" src="sfx_nen.ogg" data-start="0" data-track-index="3" data-volume="1" data-sfx-layer="nen" data-label="Tiếng nền (gió, sóng, mưa…)"></audio>
+      <audio id="sfx_buoc-chan" class="clip" src="sfx_buoc-chan.ogg" data-start="0" data-track-index="4" data-volume="1" data-sfx-layer="buoc-chan" data-label="Bước chân nhà (rầm)"></audio>
+      <audio id="sfx_khoanh-khac" class="clip" src="sfx_khoanh-khac.ogg" data-start="0" data-track-index="5" data-volume="1" data-sfx-layer="khoanh-khac" data-label="Tiếng động theo cảnh"></audio>
     </div>
 
     <script>
@@ -47,12 +56,34 @@
       import { createAssetLib } from '/engine/assets.js';
       import { buildTimeline } from '/engine/timeline.js';
       import { createDirector } from '/engine/shots.js';
+      import { createPost, FX_DEFAULTS, FX_LABELS } from '/engine/post.js';
       import { snapPostcards } from '/engine/snap.js';
       import { buildCast, buildHouses, buildProps, buildFx } from '/episodes/ep001/episode.js';
       import { SHOTS } from '/episodes/ep001/shots.js';
       import { CAPTIONS } from '/episodes/ep001/captions.js';
+      import { CAPTIONS_EN } from '/episodes/ep001/captions_en.js';
+      import { setPostcardLang } from '/engine/postcards.js';
 
+      // nạp phông TRƯỚC khi vẽ bưu thiếp (canvas) và phụ đề — không thì chữ dùng phông thay thế
+      await Promise.all([document.fonts.load("900 84px 'Be Vietnam Pro'", 'Việt ữ ầ ặ'), document.fonts.load("30px 'Patrick Hand'", 'Việt ữ ầ ặ')]).catch(() => {});
       const q = new URLSearchParams(location.search);
+      // Tuỳ chọn người xem: ngôn ngữ (phụ đề + giọng + chữ bưu thiếp), bật/tắt phụ đề, bật/tắt giọng đọc.
+      // ?lang=en  ?subs=0  ?voice=0   hoặc gọi window.setOptions({ lang, subs, voice }) (nút trong bản gộp).
+      const OPTS = { lang: q.get('lang') === 'en' ? 'en' : 'vi', subs: q.get('subs') !== '0', voice: q.get('voice') !== '0',
+        vid: { vi: 'BV074_streaming_dsp', en: 'en-US-AndrewMultilingualNeural' } };
+      const CAPS = { vi: CAPTIONS, en: CAPTIONS_EN };
+      // Nhiều giọng đọc cả phim (tools/voices_build.py → voices/index.json): 22 giọng Việt CapCut + giọng Anh Microsoft.
+      // Giọng Anh có phụ đề riêng (mốc từng chữ). Không có index.json → dùng narration.mp3 / narration_en.mp3 như cũ.
+      let VOICES = [];
+      try { const r = await fetch('/episodes/ep001/voices/index.json'); if (r.ok) VOICES = await r.json(); } catch (e) {}
+      await Promise.all(VOICES.filter((v) => v.caps).map(async (v) => { try { v.capsData = await (await fetch(v.caps)).json(); } catch (e) {} }));
+      for (const lang of ['vi', 'en']) {   // giọng mặc định chưa có → lấy giọng đầu tiên của ngôn ngữ đó
+        const has = VOICES.filter((v) => v.lang === lang);
+        if (has.length && !has.some((v) => v.id === OPTS.vid[lang])) OPTS.vid[lang] = has[0].id;
+      }
+      if (q.get('vid')) { const v = VOICES.find((x) => x.id === q.get('vid')); if (v) { OPTS.lang = v.lang; OPTS.vid[v.lang] = v.id; } }
+      const curVoice = () => VOICES.find((v) => v.id === OPTS.vid[OPTS.lang] && v.lang === OPTS.lang);
+      setPostcardLang(OPTS.lang);
       if (q.get('peek')) document.body.classList.add('peek');
       const stage = createStage(THREE, { canvas: document.getElementById('stage'), ground: null, fov: 40 });
       const K = propKit(THREE);
@@ -66,14 +97,20 @@
       for (const f of Object.values(fx)) stage.scene.add(f.obj);
       const tl = buildTimeline(SHOTS, 30);
       const director = createDirector({ THREE, stage, envs, K, actors, houses, props, fx });
+      // Hiệu ứng hình (engine/post.js), mỗi cái bật/tắt riêng: ?fx=grade,bloom  (danh sách bật) hoặc ?fx=none
+      const post = createPost(THREE, stage, { actors: Object.values(actors).map((a) => a.root) });
+      if (q.get('fx') !== null) { const on = new Set(q.get('fx').split(',')); post.set(Object.fromEntries(Object.keys(FX_DEFAULTS).map((k) => [k, on.has(k)]))); }
+      stage.draw = (t) => post.render({ t, ...envs.last, focus: stage.target });
+      window.__post = post;
 
       // phụ đề cụm chữ: bật nảy 0.12 s khi đổi cụm
       const cap = document.getElementById('cap');
       let lastCap = -1;
       function caption(t) {
-        let i = -1; for (let j = 0; j < CAPTIONS.length; j++) { if (CAPTIONS[j][0] <= t + 1e-4 && t < CAPTIONS[j][1]) { i = j; break; } }
-        if (i !== lastCap) { cap.textContent = i >= 0 ? CAPTIONS[i][2] : ''; lastCap = i; }
-        const k = i >= 0 ? Math.min(1, (t - CAPTIONS[i][0]) / 0.12) : 1;
+        const L = OPTS.subs ? ((OPTS.lang === 'en' && curVoice()?.capsData) || CAPS[OPTS.lang]) : [];
+        let i = -1; for (let j = 0; j < L.length; j++) { if (L[j][0] <= t + 1e-4 && t < L[j][1]) { i = j; break; } }
+        if (i !== lastCap) { cap.textContent = i >= 0 ? L[i][2] : ''; lastCap = i; }
+        const k = i >= 0 ? Math.min(1, (t - L[i][0]) / 0.12) : 1;
         cap.style.transform = (document.body.classList.contains('peek') ? 'scale(0.5) ' : '') + `scale(${0.82 + 0.18 * (1 - Math.pow(1 - k, 3))})`;
       }
 
@@ -93,6 +130,25 @@
       stage.start();
       window.renderAt = (t) => stage.renderAt(t);
       window.__shots = tl;
+      window.__stage = stage;
+      window.getOptions = () => ({ ...OPTS, vid: { ...OPTS.vid }, voices: VOICES.map(({ id, lang, label, source }) => ({ id, lang, label, source })),
+        fx: window.__post ? window.__post.options : null, fxLabels: FX_LABELS });
+      window.setOptions = (o = {}) => {
+        if (o.lang && CAPS[o.lang] && o.lang !== OPTS.lang) { OPTS.lang = o.lang; setPostcardLang(o.lang); }
+        if (o.subs !== undefined) OPTS.subs = !!o.subs;
+        if (o.voice !== undefined) OPTS.voice = !!o.voice;
+        if (o.fx && window.__post) window.__post.set(o.fx);
+        if (o.vid) { const v = VOICES.find((x) => x.id === o.vid); if (v) OPTS.vid[v.lang] = v.id; }
+        // gắn file giọng đang chọn vào thẻ <audio> của ngôn ngữ đó (bản gộp: blob URL từ dữ liệu nhúng)
+        for (const lang of ['vi', 'en']) {
+          const v = VOICES.find((x) => x.id === OPTS.vid[lang] && x.lang === lang), a = document.querySelector(`audio[data-lang="${lang}"]`);
+          if (v && a && a.dataset.vid !== v.id) { a.src = (window.__embedURL && window.__embedURL(v.audio)) || v.audio; a.dataset.vid = v.id; }
+        }
+        lastCap = -2; // ép vẽ lại phụ đề
+        for (const a of document.querySelectorAll('audio[data-lang]')) a.dataset.volume = (OPTS.voice && a.dataset.lang === OPTS.lang) ? '1' : '0';
+        return window.getOptions();
+      };
+      window.setOptions({}); // cho nút "Xuất MP4" trong bản gộp (đổi độ phân giải renderer)
       window.__ready = true;
     </script>
   </body>

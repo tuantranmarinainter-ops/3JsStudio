@@ -4,12 +4,33 @@
 //   const card = makePostcard(THREE, 'island', { back });  // Mesh 2 mặt, rộng 3 × cao 2.1 (stud)
 // Chữ trên thiếp lấy theo lời kể (SRT) của tập.
 
-export const CARD_TEXT = {
-  penguin: ['Lời chào từ', 'Nam Cực.'],
-  whale: ['Giữa Thái Bình Dương.', 'Thấy một chú cá voi', 'ngay dưới thuyền!'],
-  mountain: ['Đỉnh của thế giới.', 'Ước gì hai mẹ con ở đây.'],
-  island: ['Ước gì hai mẹ con ở đây.'],
+const CARD_TEXT_L = {
+  vi: {
+    penguin: ['Lời chào từ', 'Nam Cực.'],
+    whale: ['Giữa Thái Bình Dương.', 'Thấy một chú cá voi', 'ngay dưới thuyền!'],
+    mountain: ['Đỉnh của thế giới.', 'Ước gì hai mẹ con ở đây.'],
+    island: ['Ước gì hai mẹ con ở đây.'],
+  },
+  en: {
+    penguin: ['Greetings from', 'Antarctica.'],
+    whale: ['Mid-Pacific.', 'A whale swam right', 'under the boat!'],
+    mountain: ['Top of the world.', 'Wish you were here.'],
+    island: ['Wish you were here.'],
+  },
 };
+// Lời nhắn mặt sau (khoá = dòng tiếng Việt nối bằng '|')
+const BACK_EN = {
+  'Đã tìm thấy một thứ|tuyệt vời.|Sẽ sớm về nhà thôi.|Yêu cả hai mẹ con.': ['Found something', 'amazing.', 'Home soon.', 'Love you both.'],
+};
+let LANG = 'vi';
+export let CARD_TEXT = CARD_TEXT_L.vi;
+// Đổi ngôn ngữ chữ trên mọi bưu thiếp (vẽ lại texture có sẵn). Gọi lúc init hoặc khi người xem đổi Việt/Anh.
+export function setPostcardLang(lang) {
+  if (!CARD_TEXT_L[lang] || lang === LANG) return;
+  LANG = lang; CARD_TEXT = CARD_TEXT_L[lang];
+  for (const tex of cache.values()) if (tex.userData.redraw) { tex.userData.redraw(); tex.needsUpdate = true; }
+  for (const cb of listeners) cb('island');
+}
 
 const W = 512, H = 360;
 const cache = new Map();
@@ -94,7 +115,7 @@ const ART = {
 };
 
 function hand(g, lines, x, y, size, color = '#4a3b2a', lh = 1.25) {
-  g.fillStyle = color; g.font = `italic 600 ${size}px "Comic Sans MS", "Segoe Print", cursive, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillStyle = color; g.font = `400 ${Math.round(size * 1.12)}px "Patrick Hand", "Comic Sans MS", cursive, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
   lines.forEach((l, i) => g.fillText(l, x, y + i * size * lh));
 }
 
@@ -115,7 +136,7 @@ export function postcardTexture(THREE, kind, opts = {}) {
   const draw = () => {
     g.setTransform(RES, 0, 0, RES, 0, 0); g.clearRect(0, 0, W, H);
     frame(g);
-    const text = opts.text === false ? null : (opts.lines || CARD_TEXT[kind]);
+    const text = opts.text === false ? null : (opts.lines || CARD_TEXT_L[LANG][kind]);
     const ah = text ? H * 0.6 : H - 56;
     g.save(); g.beginPath(); g.rect(28, 28, W - 56, ah); g.clip();
     const img = ARTIMG[kind];
@@ -138,13 +159,18 @@ export function postcardTexture(THREE, kind, opts = {}) {
 export function postcardBack(THREE, lines) {
   const key = 'back:' + lines.join('|');
   if (cache.has(key)) return cache.get(key);
-  const cv = document.createElement('canvas'); cv.width = W * RES; cv.height = H * RES; const g = cv.getContext('2d'); g.setTransform(RES, 0, 0, RES, 0, 0);
-  frame(g);
-  g.strokeStyle = '#cdbb98'; g.lineWidth = 2; g.beginPath(); g.moveTo(W * 0.62, 40); g.lineTo(W * 0.62, H - 40); g.stroke();
-  for (let i = 0; i < 4; i++) { g.beginPath(); g.moveTo(W * 0.66, 170 + i * 36); g.lineTo(W - 40, 170 + i * 36); g.stroke(); }
-  stamp(g, W - 100, 40);
-  hand(g, lines, W * 0.32, 110, 30, '#3a3226', 1.6);
+  const cv = document.createElement('canvas'); cv.width = W * RES; cv.height = H * RES; const g = cv.getContext('2d');
+  const draw = () => {
+    g.setTransform(RES, 0, 0, RES, 0, 0); g.clearRect(0, 0, W, H);
+    frame(g);
+    g.strokeStyle = '#cdbb98'; g.lineWidth = 2; g.beginPath(); g.moveTo(W * 0.62, 40); g.lineTo(W * 0.62, H - 40); g.stroke();
+    for (let i = 0; i < 4; i++) { g.beginPath(); g.moveTo(W * 0.66, 170 + i * 36); g.lineTo(W - 40, 170 + i * 36); g.stroke(); }
+    stamp(g, W - 100, 40);
+    hand(g, (LANG === 'en' && BACK_EN[lines.join('|')]) || lines, W * 0.32, 110, 30, '#3a3226', 1.6);
+  };
+  draw();
   const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+  tex.userData.redraw = draw;
   cache.set(key, tex); return tex;
 }
 

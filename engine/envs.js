@@ -4,6 +4,7 @@
 // Nhà gia đình đứng ở gốc, mặt trước +Z. Phố chạy theo trục X ở z = +34.
 import { fxSnow, fxRain, lightning, fxBolt } from './fx.js';
 import { createWater } from './water.js';
+import { createOceanLife, OCEAN_LIFE_ASSETS } from './whales.js';
 
 export const LIGHTS = {
   day:      { top: '#3f9fe6', bottom: '#cdeeff', fog: '#cfeaff', fogR: [160, 700], hemi: ['#ffffff', '#7a9a66', 1.15], sun: ['#fff3dc', 2.6], dir: [0.5, 1, 0.6], exposure: 1.0, night: 0 },
@@ -36,6 +37,7 @@ export const ENV_ASSETS = [
   'pirate-kit/palm-detailed-straight', 'pirate-kit/palm-detailed-bend', 'pirate-kit/barrel', 'pirate-kit/crate', 'pirate-kit/chest',
   'furniture-kit/kitchenCabinet', 'furniture-kit/kitchenCabinetDrawer', 'furniture-kit/kitchenSink', 'furniture-kit/kitchenStove', 'furniture-kit/kitchenCabinetUpper',
   'polyfork/penguin-base', 'polyfork/old-lighthouse-48ca6c', 'polyfork/curbside-mailbox-0e0736', 'polyfork/herring-gull-55c3da', 'polyfork/driftwood-log-89a68f', 'polyfork/marram-grass-tuft-8c7a99', 'polyfork/shell-scatter-6d36b7', 'polyfork/tamarisk-bush-ba4337', 'polyfork/rowing-dinghy-022673', 'polyfork/snow-laden-spruce-36716e', 'polyfork/windblown-larch-abb99c', 'polyfork/boulder-field-cluster-08e364', 'polyfork/rock-outcrop-158ac3', 'polyfork/dwarf-pine-mat-faee77', 'polyfork/bare-mountain-rowan-10e72e',
+  ...OCEAN_LIFE_ASSETS,   // cá nhà táng có xương + clip (engine/whales.js)
   'furniture-kit/pottedPlant', 'furniture-kit/plantSmall1', 'furniture-kit/bookcaseOpen', 'furniture-kit/sideTable', 'furniture-kit/lampRoundTable', 'furniture-kit/rugRound', 'furniture-kit/coatRack',
 ];
 
@@ -199,9 +201,14 @@ export function createEnvs(THREE, stage, K0, A = null) {
   def('ocean', 'ocean', (g, e) => {
     e.sea = makeSea(g, { preset: 'deep', y: 11, amp: 0.6, size: 1600 });
     g.add(plane(900, 900, mat('#0e5f86'), -10, 'seabed'));
-    e.whales = [0, 1, 2].map(() => place(g, K.whale(), 0, 0, 0, 0, 1));
+    // cá voi GLB (nổi lên, bơi vòng quanh chân nhà, 1 cú nhảy + nước văng); thiếu asset → về cá voi khối cũ
+    e.life = A && A.has('sea/sperm_whale') ? createOceanLife(THREE, A, { seaY: 11 }) : null;
+    if (e.life) g.add(e.life.group);
+    else e.whales = [0, 1, 2].map(() => place(g, K.whale(), 0, 0, 0, 0, 1));
     place(g, K.cloud(2.5), -120, 120, -300); place(g, K.cloud(2), 150, 100, -350);
-    return { update(t) { e.sea(t); e.whales.forEach((w, i) => { const a = t * 0.18 + i * 2.1, r = 30 + i * 9; w.position.set(Math.cos(a) * r, 7 + Math.sin(t * 0.9 + i) * 0.6, Math.sin(a) * r); w.rotation.y = -a; K.swim(w, t, i); }); } };
+    return { update(t) { e.sea(t);
+      if (e.life) e.life.update(t, stage.camera, stage.renderer);
+      else e.whales.forEach((w, i) => { const a = t * 0.18 + i * 2.1, r = 30 + i * 9; w.position.set(Math.cos(a) * r, 7 + Math.sin(t * 0.9 + i) * 0.6, Math.sin(a) * r); w.rotation.y = -a; K.swim(w, t, i); }); } };
   });
 
   // ---------- ĐỈNH NÚI TRÊN MÂY ----------
@@ -360,12 +367,14 @@ export function createEnvs(THREE, stage, K0, A = null) {
     if (current !== e) { if (current) current.group.visible = false; e.group.visible = true; current = e; }
     return e;
   }
+  let last = { env: '', light: 'day', flash: 0 };
   function use(name, t, ctx = {}) {
     const e = activate(name);
     ctx.flash = 0;
     e.update?.(t, ctx);
     const L = { ...LIGHTS[ctx.light || e.light], ...(ctx.lightOverride || {}) };
     applyLight(L, ctx.flash || 0);
+    last = { env: name, light: ctx.light || e.light, flash: ctx.flash || 0 };   // cho engine/post.js (màu theo cảnh, chớp)
     if (e.group.userData.waters) {
       wl.sunDir.copy(stage.sun.position).sub(stage.sun.target.position).normalize();
       wl.sunColor.copy(stage.sun.color).multiplyScalar(stage.sun.intensity);
@@ -377,5 +386,5 @@ export function createEnvs(THREE, stage, K0, A = null) {
     skyDome.position.copy(stage.camera.position);
     return { env: e, light: L };
   }
-  return { envs, use, activate, LIGHTS, viewTex, get current() { return current; } };
+  return { envs, use, activate, LIGHTS, viewTex, get current() { return current; }, get last() { return last; } };
 }
