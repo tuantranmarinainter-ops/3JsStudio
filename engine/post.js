@@ -24,7 +24,7 @@ import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 import { GRUNGE } from './grunge.js';
 import { MATS } from './materials.js';
 
-export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true };
+export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
@@ -33,6 +33,7 @@ export const FX_LABELS = {
   folds: 'Nếp vải vẽ sẵn trên áo quần (v2)', hair2: 'Tóc cụm lởm chởm (v2)', aged: 'Nhà cũ bán thực: sơn tróc, ố, rêu (v2)',
   mats: 'Chất liệu thật: gỗ, giấy, sắt, vải, đá, cát… (v3)',
   ibl: 'Ánh sáng môi trường: kim loại, men, kính phản chiếu thật (v4)',
+  scans: 'Đồ vật quét thật Poly Haven: bàn ghế gỗ, cây, gốm, sách (v4)',
 };
 
 // Màu theo preset ánh sáng (engine/envs.js LIGHTS). temp > 0 ấm, < 0 lạnh; sat bão hoà; con tương phản; gain/lift sáng.
@@ -148,7 +149,7 @@ export function createPost(THREE, stage, { actors = [] } = {}) {
   const _f = new THREE.Vector3();
 
   function render({ t = 0, light = 'day', env = '', focus = null, flash = 0 } = {}) {
-    const AF = (globalThis.__autoFx ||= {}); AF.foot = fx.foot; AF.prints = fx.prints; AF.wind = fx.wind; AF.breath = fx.breath; AF.ibl = fx.ibl;   // engine/shots.js hiệu ứng tự động
+    const AF = (globalThis.__autoFx ||= {}); AF.foot = fx.foot; AF.prints = fx.prints; AF.wind = fx.wind; AF.breath = fx.breath; AF.ibl = fx.ibl; AF.scans = fx.scans;   // engine/shots.js hiệu ứng tự động
     GRUNGE.char.value = fx.worn ? 1 : 0; GRUNGE.build.value = fx.grime ? 1 : 0;   // engine/grunge.js (vân bụi trên vật liệu)
     GRUNGE.aged.value = fx.aged ? 1 : 0;
     MATS.on.value = fx.mats ? 1 : 0;   // engine/materials.js
@@ -183,7 +184,7 @@ export function createPost(THREE, stage, { actors = [] } = {}) {
   return {
     composer, passes: { copyIn, outline, bokeh, bloom, grade },
     get options() { return { ...fx }; },
-    set(o = {}) { for (const k of Object.keys(FX_DEFAULTS)) if (o[k] !== undefined) fx[k] = !!o[k]; const AF = (globalThis.__autoFx ||= {}); for (const k of ['foot', 'prints', 'wind', 'breath', 'ibl']) AF[k] = fx[k]; return { ...fx }; },
+    set(o = {}) { for (const k of Object.keys(FX_DEFAULTS)) if (o[k] !== undefined) fx[k] = !!o[k]; const AF = (globalThis.__autoFx ||= {}); for (const k of ['foot', 'prints', 'wind', 'breath', 'ibl', 'scans']) AF[k] = fx[k]; return { ...fx }; },
     render, resize,
   };
 }

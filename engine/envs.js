@@ -5,6 +5,7 @@
 import { fxSnow, fxRain, lightning, fxBolt } from './fx.js';
 import { createWater } from './water.js';
 import { createIBL, IBL_HEMI_SCALE } from './ibl.js';
+import { SCAN_IDS } from './scans.js';
 import { createOceanLife, OCEAN_LIFE_ASSETS } from './whales.js';
 import { townLife } from './townlife.js';
 import { createSummit, createRange } from './peaks.js';
@@ -50,6 +51,7 @@ const hash = (i, s) => { let x = Math.imul(i ^ 0x9e3779b9, 0x85ebca6b) ^ Math.im
 
 // Asset Kenney dùng trong env (index.html gọi A.load(ENV_ASSETS) trước khi createEnvs).
 export const ENV_ASSETS = [
+  ...SCAN_IDS,   // mô hình quét Poly Haven (engine/scans.js) — bếp, phòng ngủ
   'nature-kit/plant_bushLargeTriangle', 'nature-kit/plant_bushTriangle', 'nature-kit/grass_leafsLarge', 'nature-kit/plant_flatTall', 'nature-kit/hanging_moss', 'nature-kit/mushroom_redGroup', 'nature-kit/rock_smallA', 'nature-kit/rock_smallFlatA', 'nature-kit/stone_tallA', 'nature-kit/stone_tallB',
   ...'abcdefghijklmnopqrstu'.split('').map((c) => `city-kit-suburban/building-type-${c}`),
   'city-kit-suburban/tree-large', 'city-kit-suburban/tree-small', 'city-kit-suburban/fence-1x4', 'city-kit-suburban/planter',

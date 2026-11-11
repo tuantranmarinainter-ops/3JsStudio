@@ -53,7 +53,8 @@ export function createAssetLib(THREE, manifest = null) {
       if (!e) return warn(id, 'không có trong manifest');
       try {
         const gltf = await loader.loadAsync('/' + e.src.replace(/^\/+/, ''));
-        tune(gltf.scene);
+        if (id.startsWith('polyhaven/')) gltf.scene.traverse((o) => { if (o.isMesh) for (const m of [].concat(o.material)) for (const k of ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap']) if (m[k]) m[k].anisotropy = 8; });   // mô hình quét: GIỮ nguyên vật liệu PBR
+        else tune(gltf.scene);
         gltf.scene.animations = gltf.animations || []; // giữ clip (sinh vật có xương); instance()/clone sao chép theo
         models.set(id, gltf.scene);
       } catch (err) { warn(id, 'tải GLB lỗi: ' + err.message); }

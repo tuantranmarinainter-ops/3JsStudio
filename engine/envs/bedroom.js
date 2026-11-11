@@ -13,6 +13,8 @@ import { createCrabs, createBeachGrass } from '../crabs.js';
 import { createCamp } from '../castaway.js';
 import { smoothFlash } from '../flash.js';
 
+import { scanPut, scanToggle } from '../scans.js';
+
 export default function build(g, e, H) {
   const { THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
   e.room = new THREE.Group(); e.room.name = 'bedroom_room'; g.add(e.room); const R = e.room;
@@ -25,8 +27,16 @@ export default function build(g, e, H) {
   for (const [x, z, ry] of [[0, -18, 0], [-20, 0, Math.PI / 2], [20, 0, -Math.PI / 2], [0, 20, Math.PI]]) { const w = new THREE.Mesh(new THREE.PlaneGeometry(50, 22), wall); w.position.set(x, 11, z); w.rotation.y = ry; w.receiveShadow = true; R.add(w); }
   e.bed = place(R, K.bed(), -10, 0, -8);
   e.window = K.window({ w: 7, h: 8, curtains: '#c8c0ff', view: viewTex('night') }); e.window.position.set(19.8, 11, -6); e.window.rotation.y = -Math.PI / 2; R.add(e.window);
-  place(R, K.books(5), 4, 0, -14); K.box(3, 3, 3, '#8a5a36', -2, 1.5, -15, 'nightstand', R); place(R, K.books(3), -2, 3, -15);
-  K.box(4, 3, 0.2, '#8a5a36', 6, 13, -17.8, 'poster', R);
+  const books5 = place(R, K.books(5), 4, 0, -14); const nstand = K.box(3, 3, 3, '#8a5a36', -2, 1.5, -15, 'nightstand', R); place(R, K.books(3), -2, 3, -15);
+  const poster = K.box(4, 3, 0.2, '#8a5a36', 6, 13, -17.8, 'poster', R);
+  // mô hình quét thật Poly Haven (engine/scans.js): tủ đầu giường, bộ sách, khung tranh thay đồ dựng tay; đồng hồ, chậu cây
+  e.scans = [
+    scanPut(H, 'polyhaven/side_table_01', R, { fit: nstand }),
+    scanPut(H, 'polyhaven/book_encyclopedia_set_01', R, { fit: books5, keepRatio: true }),
+    scanPut(H, 'polyhaven/hanging_picture_frame_01', R, { fit: poster }),
+    scanPut(H, 'polyhaven/alarm_clock_01', R, { at: [-0.9, 3, -14.6], h: 0.9, ry: 0.4 }),
+    scanPut(H, 'polyhaven/potted_plant_04', R, { at: [16, 0, -15], h: 3.2 }),
+  ];
   e.point = new THREE.PointLight('#aab6ff', 0.8, 60, 1.2); e.point.position.set(14, 14, -6); R.add(e.point);
-  return { setView(kind) { e.window.getObjectByName('window_view').material.map = viewTex(kind); } };
+  return { update() { scanToggle(e.scans, globalThis.__autoFx?.scans ?? true); }, setView(kind) { e.window.getObjectByName('window_view').material.map = viewTex(kind); } };
 }
