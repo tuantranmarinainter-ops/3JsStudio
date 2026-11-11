@@ -64,6 +64,8 @@ engine/
   town.js      dựng thị trấn từ asset Kenney/Polyfork theo seed
   shots.js     thư viện LOẠI SHOT (camera + bố trí mặc định), dùng lại cho mọi tập
   timeline.js  t toàn cục → shot đang chạy + t cục bộ; nối trạng thái nhân vật giữa các shot
+  winter.js    trời (Sky.js + IBL), mây khối, tuyết rơi, tuyết phủ material, núi tuyết, nước (xem HANDOFF.md)
+  splash.js    nước văng khi vật cắt mặt nước (tự tìm thời điểm từ animation)
 assets/
   kenney/      GLB CC0 (City Kit Roads/Commercial/Suburban)
   polyfork/    asset tải từ Polyfork — nằm trong .gitignore (không được phân phối lại .mjs/HD)
