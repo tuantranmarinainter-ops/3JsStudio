@@ -11,7 +11,7 @@
 | **Ngôn ngữ** | Tiếng Việt / English — đổi cả phụ đề, giọng đọc và chữ trên bưu thiếp |
 | **Giọng** | chọn giọng đọc của ngôn ngữ đang chọn |
 | **Phụ đề** / **Giọng đọc** | bật/tắt phụ đề, bật/tắt giọng đọc |
-| **Hiệu ứng hình** | 6 ô bật/tắt: chỉnh màu theo cảnh, toả sáng, mờ hậu cảnh, tối viền + hạt phim, viền đen nhân vật, mưa bão |
+| **Hiệu ứng hình** | 8 ô bật/tắt: chỉnh màu theo cảnh, toả sáng, mờ hậu cảnh, tối viền + hạt phim, viền đen nhân vật, mưa bão, quần áo cũ/bụi, vân sần/bụi nhà và cảnh |
 | **Tiếng động** | từng lớp (tiếng nền, bước chân nhà, tiếng động theo cảnh…): ô bật/tắt + thanh âm lượng 0–150% |
 | **▶ Xem** + thanh tua | xem trước có tiếng (phím **Space** = phát/dừng) |
 

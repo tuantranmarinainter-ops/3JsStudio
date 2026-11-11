@@ -5,6 +5,7 @@
 import { fxSnow, fxRain, lightning, fxBolt } from './fx.js';
 import { createWater } from './water.js';
 import { createOceanLife, OCEAN_LIFE_ASSETS } from './whales.js';
+import { townLife } from './townlife.js';
 
 export const LIGHTS = {
   day:      { top: '#3f9fe6', bottom: '#cdeeff', fog: '#cfeaff', fogR: [160, 700], hemi: ['#ffffff', '#7a9a66', 1.15], sun: ['#fff3dc', 2.6], dir: [0.5, 1, 0.6], exposure: 1.0, night: 0 },
@@ -145,12 +146,26 @@ export function createEnvs(THREE, stage, K0, A = null) {
     let k = 0;
     for (const x of [-120, -62, 62, 120, 178, -178, 236, -236]) { const [c, r] = cols[k++ % cols.length]; const kh = kenneyHouse(k * 3); if (kh) place(g, kh, x, 0, 0, 0); else { const h = place(g, nbHouse(c, r, k), x, 0, 0, 0, 1.1); nbWins.push(h.userData.win); } }
     for (const x of [-150, -90, -30, 30, 90, 150, 210, -210]) { const [c, r] = cols[k++ % cols.length]; const kh = kenneyHouse(k * 3 + 1); if (kh) place(g, kh, x, 0, 125, Math.PI); else { const h = place(g, nbHouse(c, r, k), x, 0, 125, Math.PI, 1.1); nbWins.push(h.userData.win); } }
+    // --- dãy nhà phía sau (2 hàng sau nhà gia đình, 1 hàng sau dãy bên kia đường) → thị trấn dày, có chiều sâu ---
+    for (const [z, ry, x0, step, sd] of [[-68, 0, -286, 52, 50], [-136, 0, -260, 52, 80], [190, Math.PI, -264, 54, 110]])
+      for (let i = 0, x = x0; x <= -x0; i++, x += step) {
+        const kh = pickFit('abcdefghijklmnopqrstu'.split('').map((c) => `city-kit-suburban/building-type-${c}`), sd + i * 5, 26 + hash(i, sd) * 6, { axis: 'xz' });
+        if (kh) place(g, kh, x + (hash(i, sd + 1) - 0.5) * 8, 0, z + (hash(i, sd + 2) - 0.5) * 6, ry + (hash(i, sd + 3) - 0.5) * 0.16);
+        if (hash(i, sd + 4) < 0.6) place(g, K.roundTree(9 + hash(i, sd + 5) * 5), x + step / 2, 0, z + (ry ? -8 : 10));
+      }
+    // --- lối xe + xe đậu ở khe giữa các nhà; xe chạy + người đi bộ ban ngày (engine/townlife.js) ---
+    const parked = [];
+    for (const x of [-207, -149, -91, 91, 149, 207]) parked.push([x + (hash(x, 1) - 0.5) * 3, 10, Math.PI * (hash(x, 2) < 0.5 ? 0 : 1)]);
+    for (const x of [-240, -180, -120, -60, 0, 60, 120, 180, 240]) if (!(x === 60)) parked.push([x + (hash(x, 3) - 0.5) * 3, 104, Math.PI * (hash(x, 4) < 0.5 ? 0 : 1)]);
+    for (const [x, z] of parked) { const dw = plane(9, 18, mat('#8d8a82'), 0.07, 'driveway'); dw.position.set(x, 0.07, z + (z < 50 ? 6 : -6)); g.add(dw); }
+    const life = townLife(THREE, K, { parked }); g.add(life.group);
     for (let i = -10; i <= 10; i++) { place(g, K.streetLamp(), i * 40 + 12, 0, 27.5, Math.PI / 2); place(g, K.roundTree(10 + hash(i, 7) * 4, ['#3f8f3f', '#4caf50', '#2e7d32'][(i + 30) % 3]), i * 40 - 6, 0, 22 - hash(i, 3) * 6); }
     for (const x of [-26, 26]) place(g, K.fence(16), x, 0, 22);
     place(g, K.bush(2.5), -18, 0, 16); place(g, K.bush(2.2), 19, 0, 17);
     for (let i = 0; i < 24; i++) { const f = pickFit(['nature-kit/flower_redA', 'nature-kit/flower_yellowB', 'nature-kit/flower_purpleA'], i, 1.2); if (f) place(g, f, -24 + (i % 12) * 4.2 + hash(i, 2), 0, 18 + Math.floor(i / 12) * 2.5, hash(i, 3) * 6); }
     const moon = place(g, K.moon(34), -170, 170, -420); moon.name = 'moon_town';
-    return { setNight(n) { nbWins.forEach((w) => { w.emissiveIntensity = n * 1.4; }); moon.visible = n > 0.5; }, dirt, hole };
+    return { setNight(n) { nbWins.forEach((w) => { w.emissiveIntensity = n * 1.4; }); moon.visible = n > 0.5; }, dirt, hole,
+      update(t, ctx) { const L = LIGHTS[ctx.light || 'night']; life.update(t, !L.night); } };
   });
 
   // ---------- RỪNG ----------

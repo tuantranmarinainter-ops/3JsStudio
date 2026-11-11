@@ -60,6 +60,7 @@
       import { createDirector } from '/engine/shots.js';
       import { createPost, FX_DEFAULTS, FX_LABELS } from '/engine/post.js';
       import { snapPostcards } from '/engine/snap.js';
+      import { applyGrunge } from '/engine/grunge.js';
       import { buildCast, buildHouses, buildProps, buildFx } from '/episodes/ep001/episode.js';
       import { SHOTS } from '/episodes/ep001/shots.js';
       import { CAPTIONS } from '/episodes/ep001/captions.js';
@@ -97,6 +98,9 @@
       for (const h of Object.values(houses)) stage.scene.add(h.root);
       for (const p of Object.values(props)) stage.scene.add(p);
       for (const f of Object.values(fx)) stage.scene.add(f.obj);
+      // vân bụi / đồ cũ kiểu Roblox (engine/grunge.js) — bật/tắt ở ô "Hiệu ứng hình": worn (nhân vật), grime (cảnh)
+      for (const a of Object.values(actors)) applyGrunge(THREE, a.root, 'char');
+      applyGrunge(THREE, stage.scene, 'build');
       const tl = buildTimeline(SHOTS, 30);
       const director = createDirector({ THREE, stage, envs, K, actors, houses, props, fx });
       // Hiệu ứng hình (engine/post.js), mỗi cái bật/tắt riêng: ?fx=grade,bloom  (danh sách bật) hoặc ?fx=none

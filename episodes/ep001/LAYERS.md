@@ -8,8 +8,8 @@ node tools/build.mjs ep001 <lớp>        # vd: node tools/build.mjs ep001 khoan
 
 | Lớp (tên gọi khi nói với Claude) | Gồm | File dữ liệu cần sửa | Lệnh dựng lại | Bật/tắt trong trình phát |
 |---|---|---|---|---|
-| **canh** — cảnh & model | bối cảnh, model, nhân vật, nhà, camera, cắt cảnh | `shots.js` (shot, camera, cú cắt), `episode.js` (diễn viên, nhà, đạo cụ), `engine/*.js`, `assets/` | `build.mjs ep001 canh` (tự tính lại bước chân + tiếng nền) | — |
-| **hieu-ung-hinh** — hiệu ứng hình | màu theo cảnh, bloom, mờ hậu cảnh, tối viền, viền nhân vật, mưa bão | `engine/post.js` (`GRADES`, `FX_DEFAULTS`, thông số từng hiệu ứng) | `build.mjs ep001 hieu-ung-hinh` | 6 ô "Hiệu ứng hình" |
+| **canh** — cảnh & model | bối cảnh, model, nhân vật, nhà, camera, cắt cảnh; thị trấn: dãy nhà phía sau + xe đậu/xe chạy/người đi bộ (`engine/townlife.js`, trong env `town` của `engine/envs.js`) | `shots.js` (shot, camera, cú cắt), `episode.js` (diễn viên, màu da `SKIN`, nhà, đạo cụ), `engine/*.js`, `assets/` | `build.mjs ep001 canh` (tự tính lại bước chân + tiếng nền) | — |
+| **hieu-ung-hinh** — hiệu ứng hình | màu theo cảnh, bloom, mờ hậu cảnh, tối viền, viền nhân vật, mưa bão, quần áo cũ/bụi, vân sần/bụi công trình | `engine/post.js` (`GRADES`, `FX_DEFAULTS`, thông số từng hiệu ứng); vân bụi: `engine/grunge.js` (`FRAG_COLOR.char` / `.build`) | `build.mjs ep001 hieu-ung-hinh` | 8 ô "Hiệu ứng hình" |
 | **phu-de** — phụ đề | chữ phụ đề Việt / Anh, phông, vị trí | `captions.js` (Việt), phụ đề Anh sinh theo giọng; kiểu chữ: `#cap` trong `index.html` | `build.mjs ep001 phu-de` | ô "Phụ đề" |
 | **giong** — giọng đọc | 22 giọng Việt CapCut + giọng Anh Microsoft | `narration.txt` (lời Việt), `voices/` (`tools/voices_build.py`) | tạo giọng: `python tools/voices_build.py ep001 vi\|en`; rồi `build.mjs ep001 giong` | ô "Ngôn ngữ", "Giọng", "Giọng đọc" |
 | **tieng-anh** — lời kể tiếng Anh | câu tiếng Anh theo từng nhịp cắt cảnh | `tools/en/en_ep001.py` | `build.mjs ep001 tieng-anh` | ô "Ngôn ngữ: English" |

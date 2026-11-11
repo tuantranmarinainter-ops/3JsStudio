@@ -16,7 +16,7 @@ export const EPISODE = {
   solution: 'Theo tấm thiếp cuối (đảo hải đăng), nhà tìm thấy ba và đưa cả nhà về.',
 };
 
-const SKIN = '#f3d27a';      // đầu vàng nhạt (phong cách khối)
+const SKIN = '#ecc095';      // màu da (trước: vàng khối #f3d27a)
 // Nhân vật R15 (engine/r15.js): thân theo mô hình tham chiếu assets/characters/r15_body.glb; texture Codex nếu có.
 export async function buildCast(THREE) {
   const body = await loadR15Body(THREE);
