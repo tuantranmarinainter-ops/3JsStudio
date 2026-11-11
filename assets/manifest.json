@@ -1,0 +1,34 @@
+[
+  {
+    "id": "hdri/quarry_01",
+    "file": "hdri/quarry_01_1k.hdr",
+    "source": "Poly Haven (polyhaven.com/a/quarry_01), bản 1k lấy qua repo three.js examples/textures/equirectangular",
+    "license": "CC0",
+    "type": "hdri",
+    "note": "trời ảnh 360°, dùng trong engine/skies.js HDRI_SKIES"
+  },
+  {
+    "id": "hdri/blouberg_sunrise_2",
+    "file": "hdri/blouberg_sunrise_2_1k.hdr",
+    "source": "Poly Haven (polyhaven.com/a/blouberg_sunrise_2), bản 1k lấy qua repo three.js examples/textures/equirectangular",
+    "license": "CC0",
+    "type": "hdri",
+    "note": "trời ảnh 360°, dùng trong engine/skies.js HDRI_SKIES"
+  },
+  {
+    "id": "hdri/venice_sunset",
+    "file": "hdri/venice_sunset_1k.hdr",
+    "source": "Poly Haven (polyhaven.com/a/venice_sunset), bản 1k lấy qua repo three.js examples/textures/equirectangular",
+    "license": "CC0",
+    "type": "hdri",
+    "note": "trời ảnh 360°, dùng trong engine/skies.js HDRI_SKIES"
+  },
+  {
+    "id": "hdri/moonless_golf",
+    "file": "hdri/moonless_golf_1k.hdr",
+    "source": "Poly Haven (polyhaven.com/a/moonless_golf), bản 1k lấy qua repo three.js examples/textures/equirectangular",
+    "license": "CC0",
+    "type": "hdri",
+    "note": "trời ảnh 360°, dùng trong engine/skies.js HDRI_SKIES"
+  }
+]

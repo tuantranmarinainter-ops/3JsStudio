@@ -35,10 +35,11 @@
 import * as THREE from 'three';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import { createR6, randomLook } from './r6.js';
 import { createHouse } from './winter.js';
 import { applyStyle, SHADER_STYLES } from './shaders.js';
-import { createSkyPreset, SKY_PRESETS } from './skies.js';
+import { createSkyPreset, SKY_PRESETS, HDRI_SKIES, hdriTextureFromParsed } from './skies.js';
 
 window.THREE = THREE;
 const DURATION = 12;
@@ -111,15 +112,33 @@ subjects.add(knot, ball, crate, house.object);
 // --- Chọn shader + trời ---
 const styleSel = document.getElementById('style'), skySel = document.getElementById('sky'), expIn = document.getElementById('exp');
 for (const [k, v] of Object.entries(SHADER_STYLES)) styleSel.add(new Option(v, k));
-for (const [k, v] of Object.entries(SKY_PRESETS)) skySel.add(new Option(v, k));
+// Trời ảnh 360° Poly Haven: tải hết TRƯỚC khi render (bản nhúng dùng window.__HDRI_DATA base64)
+const hdri = {};
+await Promise.all(Object.entries(HDRI_SKIES).map(async ([k, v]) => {
+  try {
+    const b64 = window.__HDRI_DATA?.[v.file];
+    if (b64) {
+      const bin = atob(b64), buf = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+      hdri[k] = hdriTextureFromParsed(THREE, new RGBELoader().parse(buf.buffer));
+    } else {
+      const tex = await new RGBELoader().loadAsync(`../assets/hdri/${v.file}`);
+      tex.mapping = THREE.EquirectangularReflectionMapping;
+      hdri[k] = tex;
+    }
+  } catch (err) { console.warn('Không tải được', v.file, err); }
+}));
+const ALL_SKIES = { ...SKY_PRESETS };
+for (const k of Object.keys(hdri)) ALL_SKIES[k] = HDRI_SKIES[k].label;
+for (const [k, v] of Object.entries(ALL_SKIES)) skySel.add(new Option(v, k));
 styleSel.value = SHADER_STYLES[params.get('style')] ? params.get('style') : 'anime';
-skySel.value = SKY_PRESETS[params.get('sky')] ? params.get('sky') : 'cartoon';
+skySel.value = ALL_SKIES[params.get('sky')] ? params.get('sky') : 'cartoon';
 
 let fx = null, sky = null, curT = 0;
 function setStyle(name) { fx?.restore(); fx = applyStyle(THREE, subjects, name); renderAt(curT); }
 function setSky(name) {
   sky?.dispose();
-  sky = createSkyPreset(THREE, name, { renderer, scene, Sky, sun, hemi });
+  sky = createSkyPreset(THREE, name, { renderer, scene, Sky, sun, hemi, hdri });
   expIn.value = sky.exposure;
   renderAt(curT);
 }

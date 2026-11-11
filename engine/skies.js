@@ -90,7 +90,34 @@ export function createStars(THREE, { seed = 21, count = 1500, radius = 3500, siz
   return { object: pts };
 }
 
-export function createSkyPreset(THREE, name, { renderer, scene, Sky, sun, hemi }) {
+// Trời ảnh HDRI 360° từ Poly Haven (CC0, polyhaven.com). File .hdr nằm ở assets/hdri/ (bản 1k).
+// Tải bằng RGBELoader rồi truyền vào createSkyPreset(..., { hdri: { [key]: texture } }).
+// sun: hướng nắng ước lượng theo ảnh (để có bóng đổ); ảnh tự chiếu sáng qua IBL nên đèn để nhẹ.
+export const HDRI_SKIES = {
+  hdri_quarry:  { label: 'Ảnh 360°: trưa nắng (Poly Haven)', file: 'quarry_01_1k.hdr', exposure: 0.9,
+                  elevation: 45, azimuth: 120, sun: ['#fff1dc', 1.6], hemi: ['#cfe0ff', '#7a6a55', 0.7] },
+  hdri_sunrise: { label: 'Ảnh 360°: bình minh (Poly Haven)', file: 'blouberg_sunrise_2_1k.hdr', exposure: 0.9,
+                  elevation: 8, azimuth: 250, sun: ['#ffc58a', 1.8], hemi: ['#ffd9b0', '#4a3b4f', 0.8] },
+  hdri_sunset:  { label: 'Ảnh 360°: hoàng hôn phố cổ (Poly Haven)', file: 'venice_sunset_1k.hdr', exposure: 0.9,
+                  elevation: 6, azimuth: 200, sun: ['#ffae6b', 1.8], hemi: ['#ffcf9f', '#4a3b4f', 0.8] },
+  hdri_night:   { label: 'Ảnh 360°: đêm không trăng (Poly Haven)', file: 'moonless_golf_1k.hdr', exposure: 1.6,
+                  elevation: 40, azimuth: 220, sun: ['#9fb4ff', 0.5], hemi: ['#5a6aa0', '#101018', 0.8] },
+};
+
+// Đổi dữ liệu RGBELoader.parse(buffer) → texture trời (dùng khi đã có sẵn ArrayBuffer, vd: nhúng base64)
+export function hdriTextureFromParsed(THREE, d) {
+  const tex = new THREE.DataTexture(d.data, d.width, d.height, THREE.RGBAFormat, d.type);
+  tex.colorSpace = THREE.LinearSRGBColorSpace;
+  tex.minFilter = tex.magFilter = THREE.LinearFilter;
+  tex.generateMipmaps = false;
+  tex.flipY = true;
+  tex.mapping = THREE.EquirectangularReflectionMapping;
+  tex.needsUpdate = true;
+  return tex;
+}
+
+export function createSkyPreset(THREE, name, { renderer, scene, Sky, sun, hemi, hdri = {} }) {
+  if (HDRI_SKIES[name] && hdri[name]) return createHdriPreset(THREE, name, { renderer, scene, sun, hemi, texture: hdri[name] });
   const c = CONF[name] || CONF.cartoon;
   const group = new THREE.Group();
   group.name = `sky_${name}`;
@@ -142,5 +169,30 @@ export function createSkyPreset(THREE, name, { renderer, scene, Sky, sun, hemi }
       scene.environment = null;
       group.traverse((x) => { x.geometry?.dispose(); x.material?.dispose?.(); });
     },
+  };
+}
+
+function createHdriPreset(THREE, name, { renderer, scene, sun, hemi, texture }) {
+  const c = HDRI_SKIES[name];
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const env = pmrem.fromEquirectangular(texture).texture;
+  pmrem.dispose();
+  scene.background = texture;
+  scene.environment = env;
+  scene.fog = null;
+  const sunDir = dirFrom(THREE, c.elevation, c.azimuth);
+  sun.color.set(c.sun[0]);
+  sun.intensity = c.sun[1];
+  sun.position.copy(sunDir).multiplyScalar(80).add(sun.target.position);
+  hemi.color.set(c.hemi[0]);
+  hemi.groundColor.set(c.hemi[1]);
+  hemi.intensity = c.hemi[2];
+  renderer.toneMappingExposure = c.exposure;
+  const group = new THREE.Group();
+  group.name = `sky_${name}`;
+  return {
+    name, object: group, sunDir, exposure: c.exposure,
+    update() {},
+    dispose() { scene.background = null; env.dispose(); scene.environment = null; },
   };
 }
