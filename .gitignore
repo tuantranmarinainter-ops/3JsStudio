@@ -19,3 +19,7 @@ dist/
 episodes/*/voices/**/*.mp3
 episodes/*/voices/**/*.raw.*
 episodes/*/voices/**/*.srt
+
+# video2kb: video nguồn tải về + tệp tạm
+kich-ban/*/_nguon/
+kich-ban/*/_tmp/

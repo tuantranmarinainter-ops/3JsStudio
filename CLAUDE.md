@@ -36,6 +36,7 @@ Cảnh 3D dựng bằng three.js, render ra MP4 bằng **HyperFrames**. Claude �
 | `python tools/voices_build.py ep001 sample|vi|en|index [--only …]` | giọng nhiều giọng, trang nghe thử |
 | `python tools/en/beats.py` / `tools/en/tts_en.py` | lời Anh theo nhịp cắt cảnh |
 | `python tools/storyboard.py <thư mục> epNNN [--sheet] [--force]` | storyboard (khung + mô tả) → tập mới: episode/shots theo loại shot/narration `@at`/phụ đề/tiếng động/index.html + bảng so khung (skill `nhap-kich-ban`, định dạng `docs/kich-ban-vao.md`) |
+| `python tools/video2kb.py <video|URL> [--cua-toi] [--loi off] [--no-am-thanh]` | quăng video vào → shot + khung đầu/giữa/cuối + lời (faster-whisper GPU) + tiếng động/nhịp → `kich-ban/<tên>/storyboard.md` nháp cho Claude điền rồi `storyboard.py` (skill `video-sang-kich-ban`) |
 
 ## Làm việc theo LỚP (người dùng chốt 2026-11-11)
 Mỗi tập chia lớp độc lập: **canh** (cảnh/model/camera), **hieu-ung-hinh**, **phu-de**, **giong**, **tieng-anh**, và tiếng động
