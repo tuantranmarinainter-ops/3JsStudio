@@ -33,7 +33,6 @@ export default function build(g, e, H) {
   e.scans = [
     scanPut(H, 'polyhaven/side_table_01', R, { fit: nstand }),
     scanPut(H, 'polyhaven/book_encyclopedia_set_01', R, { fit: books5, keepRatio: true }),
-    scanPut(H, 'polyhaven/hanging_picture_frame_01', R, { fit: poster }),
     scanPut(H, 'polyhaven/alarm_clock_01', R, { at: [-0.9, 3, -14.6], h: 0.9, ry: 0.4 }),
     scanPut(H, 'polyhaven/potted_plant_04', R, { at: [16, 0, -15], h: 3.2 }),
   ];

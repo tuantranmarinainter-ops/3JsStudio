@@ -9,6 +9,20 @@
 //   scene.add(w.mesh);  w.update(t, camera, light);
 //   light = { sunDir: Vector3, sunColor: Color(đã nhân cường độ), skyTop: Color, skyBottom: Color, amb: Color, flash: 0 }
 //
+//
+// ---- API cho env (sea2) — makeSea(g, …) trong engine/envs.js trả về hàm sea(t, amp) kèm các thuộc tính sau ----
+//   sea.sample(x, z, { t, amp, cam, box }) → { y, vy }   cao độ mặt nước THẾ GIỚI đúng như vertex shader (Gerstner + sự kiện)
+//        t/amp = giá trị env truyền vào sea(t, amp) (mặc định: lần update gần nhất); cam = {x,z} camera (fade xa; bỏ ⇒ 1);
+//        box = { hx, hz, yaw } lấy trung bình trên đáy thân nổi (lọc sóng ngắn). Engine/floating.js floatHull dùng hàm này.
+//   sea.setHull({ x, z, hx, hz, yaw, k, plunge } | null)   bọt + bóng tiếp xúc quanh thân nổi (k = 0..1, plunge = 0..1)
+//   sea.setEvents(list | null)   ≤ 8 sự kiện mặt nước { x, z, t0, strength = 1.5, radius = 10 } (toạ độ thế giới,
+//        t0 CÙNG đơn vị thời gian env truyền vào sea(t, …)). age = t − t0; hoạt động khi 0 ≤ age ≤ 8. Mỗi sự kiện:
+//        sóng vòng lan ra (c ≈ 7.5·radius/10 đv/s, bước sóng dài dần) + hố lõm giữa 0.6 s đầu rồi gồ lên,
+//        bọt trắng dày → vỡ thành ren khi lan + đĩa nước sục khí xanh ngọc tối. sample() cộng đúng độ cao này.
+//        Đặt lại mỗi khung (hoặc 1 lần khi dựng env — danh sách là dữ liệu, kết quả chỉ phụ thuộc t).
+//   createWater/makeSea nhận ghi đè màu/nhìn: shallow, deep, sss, foam (hoặc colors:{…}), glint, skyMix, alpha.
+//   Mọi thứ trên (trừ ghi đè màu) chỉ chạy khi ô sea2 bật (globalThis.__autoFx.sea2, mặc định bật); tắt ⇒ y hệt bản cũ.
+//
 // Preset: waves = [bước sóng, hướng (độ), biên độ tương đối, ] ; steep = độ nhọn tổng (Σ Q·k·A); g = "trọng lực" (tốc độ sóng);
 // foam = [lo, hi] ngưỡng bọt theo (1 - Jacobian); detail = độ gợn pháp tuyến; alpha = độ đục cơ bản.
 
@@ -71,7 +85,8 @@ export function createWater(THREE, opts = {}) {
   const ampScale = opts.amp ?? P.amp;
   const [cx, cz] = opts.center || [0, 0], half = size / 2;
   const C = (c) => new THREE.Color(c);
-  const col = { shallow: P.shallow, deep: P.deep, sss: P.sss_c, foam: P.foamC, ...(opts.colors || {}) };
+  const pickC = (k) => (opts[k] != null ? { [k]: opts[k] } : {});
+  const col = { shallow: P.shallow, deep: P.deep, sss: P.sss_c, foam: P.foamC, ...pickC('shallow'), ...pickC('deep'), ...pickC('sss'), ...pickC('foam'), ...(opts.colors || {}) };
 
   // lưới dày quanh `center`, thưa dần ra xa (ẩn mép bằng sương mù)
   const warp = (s, c) => { const e = s < 0 ? c + half : half - c; return c + Math.sign(s) * Math.pow(Math.abs(s), 1.7) * e; };
@@ -98,15 +113,33 @@ export function createWater(THREE, opts = {}) {
     uShallow: { value: C(col.shallow) }, uDeep: { value: C(col.deep) }, uSss: { value: C(col.sss) }, uFoam: { value: C(col.foam) },
     uShoreMode: { value: shoreMode }, uShoreP: { value: new THREE.Vector4(...shoreP) },
     uSpots: { value: spotArr }, uSpotN: { value: Math.min(spots.length, SPOTS) },
-    uAlpha: { value: opts.alpha ?? P.alpha }, uDetail: { value: P.detail }, uFoamR: { value: new THREE.Vector4(P.foam[0], P.foam[1], P.foamAmt, P.glint) },
-    uSssK: { value: P.sss }, uF0: { value: P.fres0 }, uSkyMix: { value: P.skyMix },
+    uAlpha: { value: opts.alpha ?? P.alpha }, uDetail: { value: P.detail }, uFoamR: { value: new THREE.Vector4(P.foam[0], P.foam[1], P.foamAmt, opts.glint ?? P.glint) },
+    uSssK: { value: P.sss }, uF0: { value: P.fres0 }, uSkyMix: { value: opts.skyMix ?? P.skyMix },
     uAmpMax: { value: ampScale * P.waves.reduce((a, w) => a + w[2], 0) },
     // sea2 (v4, học Saltline): đánh bóng shader + bọt quanh thân vật nổi. uSea2 = 0 → y hệt bản cũ.
+    uEv: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, 0, -1e6, 0)) }, uEvR: { value: new Array(8).fill(10) }, uEvN: { value: 0 },
     uSea2: { value: 0 }, uHull: { value: new THREE.Vector4(0, 0, 1, 1) }, uHullR: { value: new THREE.Vector4(0, 0, 0, 0) },
   }]);
 
   const vertex = /* glsl */`
-    uniform float uTime, uAmp;
+    uniform float uTime, uAmp, uSea2;
+    uniform vec4 uEv[8]; uniform float uEvR[8]; uniform float uEvN;
+    // sự kiện mặt nước (sea2): độ cao tại p (chưa dời) — PHẢI khớp evH() bản CPU trong water.js
+    float evH(vec2 p){
+      float h = 0.0;
+      for (int i = 0; i < 8; i++) {
+        if (float(i) >= uEvN) break;
+        vec4 e = uEv[i]; float age = uTime - e.z;
+        if (age < 0.0 || age > 8.0) continue;
+        float R = max(uEvR[i], 0.5), sc = R / 10.0, r = length(p - e.xy);
+        float front = 7.5*sc*age, wl = (3.0 + 2.5*age)*sc, ww = (2.5 + 1.2*age)*sc, x = r - front;
+        float ring = sin(6.2831853*x/wl) * exp(-(x/ww)*(x/ww)) * exp(-age*0.6) * (1.0 - smoothstep(6.0, 8.0, age));
+        float cr = exp(-(r/(0.5*R))*(r/(0.5*R)));
+        float ctr = age < 0.6 ? -1.3*sin(3.14159265*age/0.6) : 0.5*exp(-(age - 0.6)*1.8)*sin(3.14159265*min((age - 0.6)/0.9, 1.0));
+        h += e.w * (ring + cr*ctr);
+      }
+      return h;
+    }
     varying vec3 vW; varying vec3 vN; varying float vH; varying float vJ;
     #include <fog_pars_vertex>
     void main(){
@@ -116,6 +149,10 @@ export function createWater(THREE, opts = {}) {
       float fade = 1.0 - 0.7*smoothstep(120.0, 450.0, dc);
       vec3 disp = vec3(0.0); vec3 nrm = vec3(0.0, 1.0, 0.0); float jxx = 1.0, jzz = 1.0, jxz = 0.0;
       ${waveCode(P, ampScale)}
+      if (uSea2 > 0.5 && uEvN > 0.5) {
+        float e0 = evH(p), ex = evH(p + vec2(0.25, 0.0)), ez = evH(p + vec2(0.0, 0.25));
+        disp.y += e0; nrm.x -= (ex - e0)*4.0; nrm.z -= (ez - e0)*4.0;
+      }
       vec3 wp = p0 + disp;
       vW = wp; vN = nrm; vH = clamp(disp.y / max(uAmpMax_, 0.001) * 0.5 + 0.5, 0.0, 1.0);
       float J = jxx*jzz - jxz*jxz; vJ = clamp(1.0 - J, 0.0, 2.0);
@@ -128,7 +165,7 @@ export function createWater(THREE, opts = {}) {
     uniform float uTime, uFlash, uAlpha, uDetail, uSssK, uF0, uSkyMix, uAmpMax;
     uniform vec3 uSunDir, uSunCol, uTop, uBot, uAmb, uShallow, uDeep, uSss, uFoam;
     uniform float uShoreMode; uniform vec4 uShoreP, uFoamR; uniform vec3 uSpots[${SPOTS}]; uniform float uSpotN;
-    uniform float uSea2; uniform vec4 uHull, uHullR;   // uHull = (tâm x, tâm z, nửa dài X cục bộ, nửa rộng Z cục bộ); uHullR = (yaw, cường độ, lao xuống 0..1, -)
+    uniform float uSea2; uniform vec4 uHull, uHullR; uniform vec4 uEv[8]; uniform float uEvR[8]; uniform float uEvN;   // uHull = (tâm x, tâm z, nửa dài X cục bộ, nửa rộng Z cục bộ); uHullR = (yaw, cường độ, lao xuống 0..1, -)
     varying vec3 vW; varying vec3 vN; varying float vH; varying float vJ;
     ${GLSL_NOISE}
     #include <fog_pars_fragment>
@@ -229,6 +266,25 @@ export function createWater(THREE, opts = {}) {
         float ring = smoothstep(0.35, 0.0, abs(sdH - (0.6 + 3.5*pl))) * pl;    // vành bọt đẩy ra khi lao xuống
         foam += clamp(band*scum*1.15 + ring*0.7*smoothstep(0.3, 0.6, nzH), 0.0, 1.0) * uHullR.y * step(-0.3, sdH);
       }
+      // sea2: sự kiện mặt nước — bọt trắng dày rồi vỡ thành ren khi lan + đĩa nước sục khí xanh ngọc tối bên dưới
+      if (uSea2 > 0.5 && uEvN > 0.5) {
+        float lace = vnD(xz*0.33 + vec2(uTime*0.05, -uTime*0.04)).x*0.5 + vnD(mat2(0.8,-0.6,0.6,0.8)*xz*1.25).x*0.33 + vnD(xz*3.6 - uTime*0.1).x*0.17;
+        for (int i = 0; i < 8; i++) {
+          if (float(i) >= uEvN) break;
+          vec4 e = uEv[i]; float age = uTime - e.z;
+          if (age < 0.0 || age > 8.0) continue;
+          float R = max(uEvR[i], 0.5), sc = R/10.0, r = length(xz - e.xy);
+          float life = 1.0 - smoothstep(5.5, 8.0, age), st = clamp(e.w/1.5, 0.3, 1.5);
+          float Rf = R*(0.55 + 0.35*age);
+          float disc = (1.0 - smoothstep(Rf*0.55, Rf*1.05, r + (lace - 0.5)*R*0.35)) * exp(-age*0.3) * life;
+          body = mix(body, uShallow*0.62 + uSss*0.12, disc*0.65*min(st, 1.0));
+          float cover = clamp(disc*(1.25*exp(-age*0.42))*st, 0.0, 1.0);
+          float fe = smoothstep(1.0 - cover, 1.0 - cover + 0.16, lace);
+          float front = 7.5*sc*age, x = r - front, ww = (1.2 + 0.8*age)*sc;
+          float rf = exp(-(x/ww)*(x/ww)) * exp(-age*0.55) * life * smoothstep(0.4, 0.62, lace + 0.1);
+          foam += clamp(fe + rf*0.7, 0.0, 1.0);
+        }
+      }
       foam = clamp(foam, 0.0, 1.0);
       // --- chói mặt trời ---
       vec3 H = normalize(V + uSunDir);
@@ -310,6 +366,27 @@ export function createWater(THREE, opts = {}) {
     }
     return D;
   }
+  const evs = [];   // sự kiện mặt nước (setEvents)
+  const SEA2 = () => (globalThis.__autoFx?.sea2 ?? true);
+  function evH(px, pz, T) {   // = evH() trong vertex shader
+    let h = 0;
+    for (const e of evs) {
+      const age = T - e.t0; if (age < 0 || age > 8) continue;
+      const R = Math.max(e.radius, 0.5), sc = R / 10, r = Math.hypot(px - e.x, pz - e.z);
+      const front = 7.5 * sc * age, wl = (3 + 2.5 * age) * sc, ww = (2.5 + 1.2 * age) * sc, x = r - front;
+      const ring = Math.sin(2 * Math.PI * x / wl) * Math.exp(-(x / ww) * (x / ww)) * Math.exp(-age * 0.6) * (1 - smoothstep(6, 8, age));
+      const cr = Math.exp(-((r / (0.5 * R)) ** 2));
+      const ctr = age < 0.6 ? -1.3 * Math.sin(Math.PI * age / 0.6) : 0.5 * Math.exp(-(age - 0.6) * 1.8) * Math.sin(Math.PI * Math.min((age - 0.6) / 0.9, 1));
+      h += e.strength * (ring + cr * ctr);
+    }
+    return h;
+  }
+  function setEvents(list) {
+    evs.length = 0;
+    for (const e of (list || []).slice(0, 8)) evs.push({ x: e.x ?? 0, z: e.z ?? 0, t0: e.t0 ?? 0, strength: e.strength ?? 1.5, radius: e.radius ?? 10 });
+    for (let i = 0; i < 8; i++) { const e = evs[i]; u.uEv.value[i].set(e ? e.x : 0, e ? e.z : 0, e ? e.t0 : -1e6, e ? e.strength : 0); u.uEvR.value[i] = e ? e.radius : 10; }
+    u.uEvN.value = evs.length;
+  }
   let lastT = 0, lastAmp;
   // sample(x, z, { t, amp, cam, box }) → { y (cao độ mặt nước thế giới), vy (dy/d(uTime)) }
   //   t/amp = đúng giá trị env truyền vào update (mặc định: lần update gần nhất); cam = vị trí camera (fade xa) — bỏ qua ⇒ fade = 1 (đúng khi camera < 120 đv)
@@ -320,7 +397,9 @@ export function createWater(THREE, opts = {}) {
     let px = x, pz = z;
     for (let it = 0; it < 3; it++) { disp(px, pz, t, uA, cam); px = x - D.x; pz = z - D.z; }
     disp(px, pz, t, uA, cam);
-    return { y: mesh.position.y + D.y, vy: D.vy };
+    let ey = 0, evy = 0;
+    if (evs.length && SEA2()) { ey = evH(px, pz, t); evy = (evH(px, pz, t + 0.02) - ey) / 0.02; }
+    return { y: mesh.position.y + D.y + ey, vy: D.vy + evy };
   }
   // bọt quanh thân nổi: { x, z, hx, hz, yaw, k, plunge } | null
   function setHull(h) {
@@ -340,5 +419,5 @@ export function createWater(THREE, opts = {}) {
     if (L.amb) u.uAmb.value.copy(L.amb);
     u.uFlash.value = L.flash || 0;
   }
-  return { mesh, update, uniforms, material, preset: P, sample, setHull };
+  return { mesh, update, uniforms, material, preset: P, sample, setHull, setEvents };
 }

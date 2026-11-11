@@ -143,7 +143,7 @@ export function createEnvs(THREE, stage, K0, A = null) {
     const sea = (t, a) => { w.t = t; w.ampNow = a; return w; };
     // sea2: bản CPU của sóng (engine/water.js sample) + bọt quanh thân nổi. Env có thời gian/biên độ riêng (bão: t*1.6, 2.4)
     //   thì khai báo e.seaClock = (t) => ({ t: …, amp: … }) để engine/shots.js lấy ĐÚNG giá trị shader dùng ở khung này.
-    sea.water = w; sea.sample = w.sample; sea.setHull = w.setHull;
+    sea.water = w; sea.sample = w.sample; sea.setHull = w.setHull; sea.setEvents = w.setEvents;   // API: đầu engine/water.js
     return sea;
   };
   const bumpy = (w, d, seg, color, h, seed, name, freq = 0.04) => {
