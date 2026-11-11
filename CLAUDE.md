@@ -43,6 +43,14 @@ engine/
   skies.js     preset bầu trời (trưa, hoàng hôn, hoạt hình, đêm sao, u ám) kèm đèn/sương/exposure khớp
   roblox-look.js  setupRobloxLook (đèn + sương + bloom) + robloxifyModel (vật liệu nhựa mịn)
   shader-demo.html  phòng thử shader + trời (chọn trên điện thoại, ?style=&sky=&t=, nút + GLB)
+  merge.js     mergeByMaterial: gộp mesh tĩnh theo vật liệu (draw call theo số vật liệu); userData.noMerge = giữ riêng
+  vcolor.js    bakeGroundAO: AO bằng màu đỉnh (tối sát đất, mặt úp tối) cho vật tĩnh — gọi sau merge
+  proctex.js   bakeProcTexture (gạch, vỉa hè, nhựa đường, cỏ, bê tông, ván, ngói, đất) + applyProcTexture (triplanar + bump)
+  weather.js   createRain (vertex shader, quấn quanh camera), createPuddles (gợn sóng), applyWetness (bề mặt ướt)
+  labels.js    chữ trong cảnh qua 1 atlas: biển hiệu, % pin trên đầu, chữ nổi; prepare() mọi giá trị trước khi seek
+  sfx.js       ~20 âm thanh sinh bằng code có seed (pop, ding, whoosh, footstep…); xuất WAV: node tools/sfx.mjs
+  quality.js   ?q=low (xem nhanh) | high (render thật: AO + bloom); mức CỐ ĐỊNH, không tự đổi theo FPS
+  town-fx-demo.html  thị trấn mẫu dùng tất cả module trên (?weather=rain&q=low&merge=0&ao=0)
 assets/
   kenney/      GLB CC0 (City Kit Roads/Commercial/Suburban)
   polyfork/    asset tải từ Polyfork — nằm trong .gitignore (không được phân phối lại .mjs/HD)
@@ -104,6 +112,10 @@ Render 140 shot:
 - Claude chủ yếu sửa `shots.js`/`episode.js`, hạn chế sửa `engine/`.
 
 ## Quy tắc kỹ thuật (bắt buộc)
+- Hiệu năng: dựng xong cảnh tĩnh thì `mergeByMaterial` rồi `bakeGroundAO`; vật cần điều khiển riêng đánh `userData.noMerge`.
+- Không dùng gì phụ thuộc frame trước (motion blur theo frame cũ, tự hạ độ phân giải theo FPS, bóng cập nhật cách frame):
+  cùng `t` phải ra cùng ảnh. Addon dùng `Math.random()` khi khởi tạo → tạm thay bằng `rng(seed)` (xem `quality.js`).
+- Âm thanh hiệu ứng: ưu tiên `assets/sfx/*.wav` sinh bằng `tools/sfx.mjs` (không lo giấy phép); thiếu âm thì thêm vào `engine/sfx.js`.
 - Thời gian chỉ lấy từ HyperFrames: sự kiện `hf-seek` (`e.detail.time`) → đặt pose/camera → `renderer.render()` 1 lần.
   Việc bất đồng bộ trong lúc seek → `e.detail.waitUntil(promise)`.
 - Gán `window.THREE = THREE` để adapter three của HyperFrames theo dõi `DefaultLoadingManager`

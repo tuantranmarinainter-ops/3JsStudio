@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Town FX</title>
+<style>
+  :root { --bg:#0e1118; --panel:#1b2030e6; --line:#3a4258; --ink:#e8ecf4; --muted:#9aa3b8; --accent:#5b8cff; color-scheme: dark; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:14px system-ui,sans-serif; overflow:hidden; }
+  #c { display:block; margin:0 auto; height:100vh; width:auto; aspect-ratio:9/16; max-width:100vw; }
+  .ui { position:fixed; left:0; right:0; bottom:0; padding:8px 12px 12px; background:var(--panel); display:flex; flex-direction:column; gap:8px; }
+  .row { display:flex; gap:8px; align-items:center; }
+  .ui select { flex:1; min-width:0; background:var(--bg); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:7px 6px; font:inherit; }
+  .ui button { border:0; border-radius:999px; padding:8px 14px; background:var(--accent); color:#fff; font:inherit; cursor:pointer; white-space:nowrap; }
+  .ui input[type=range] { flex:1; min-width:0; }
+  .ui span, .ui small { font-variant-numeric:tabular-nums; }
+  .ui span { min-width:3.6em; text-align:right; }
+  .ui small { color:var(--muted); flex:1; }
+  .ui label { display:flex; gap:6px; align-items:center; white-space:nowrap; }
+  body.capture .ui { display:none; }
+  body.capture #c { height:auto; width:100vw; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<div class="ui">
+  <div class="row"><select id="weather" aria-label="Thời tiết"></select><select id="quality" aria-label="Chất lượng"><option value="high">Chất lượng: cao</option><option value="low">Chất lượng: xem nhanh</option></select></div>
+  <div class="row"><label><input id="merge" type="checkbox" checked> Gộp mesh</label><label><input id="ao" type="checkbox" checked> AO đỉnh</label><small id="stats">…</small></div>
+  <div class="row"><select id="sfx" aria-label="Âm thanh"></select><button id="sfxPlay">♪ Nghe</button></div>
+  <div class="row"><button id="play">▶</button><input id="seek" type="range" min="0" max="14" step="0.0333" value="0"><span id="tl">0.00s</span></div>
+</div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+// Thị trấn mẫu dùng các module học từ Saltline: gộp theo vật liệu (merge.js), AO màu đỉnh (vcolor.js),
+// texture shader nướng sẵn (proctex.js), mưa/vũng nước/ướt (weather.js), chữ atlas (labels.js),
+// âm thanh sinh bằng code (sfx.js), 2 mức chất lượng cố định (quality.js).
+// URL: ?weather=rain&q=low&merge=0&ao=0&t=3   — renderAt(t) / hf-seek như các demo khác.
+import * as THREE from 'three';
+import { Sky } from 'three/addons/objects/Sky.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
+import { createR6, randomLook } from './r6.js';
+import { rng } from './winter.js';
+import { createSkyPreset } from './skies.js';
+import { mergeByMaterial } from './merge.js';
+import { bakeGroundAO } from './vcolor.js';
+import { bakeProcTexture, applyProcTexture } from './proctex.js';
+import { createRain, createPuddles, applyWetness } from './weather.js';
+import { createLabelAtlas, createLabel } from './labels.js';
+import { renderSfx, SFX_LIST, SR } from './sfx.js';
+import { getQuality, applyQuality, applyShadowQuality, createPost } from './quality.js';
+
+window.THREE = THREE;
+const DURATION = 14;
+const params = new URLSearchParams(location.search);
+if (params.has('capture')) document.body.classList.add('capture');
+const Q = getQuality();
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: Q.antialias, preserveDrawingBuffer: true });
+renderer.setSize(1080, 1920, false);
+applyQuality(THREE, renderer, Q);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.info.autoReset = false;
+
+const scene = new THREE.Scene();
+const cam = new THREE.PerspectiveCamera(50, 1080 / 1920, 0.1, 30000);
+const sun = new THREE.DirectionalLight('#ffffff', 2.5);
+sun.name = 'sun';
+sun.castShadow = true;
+applyShadowQuality(sun, Q);
+Object.assign(sun.shadow.camera, { left: -45, right: 45, top: 45, bottom: -45, near: 1, far: 300 });
+sun.shadow.bias = -0.0004;
+sun.shadow.normalBias = 0.03;
+const hemi = new THREE.HemisphereLight('#cfe6ff', '#8a7a66', 1);
+scene.add(sun, sun.target, hemi);
+
+// ---------- Texture nướng 1 lần ----------
+const T = {};
+for (const [f, seed] of [['grass', 1], ['asphalt', 2], ['paving', 3], ['brick', 4], ['concrete', 5], ['roof', 6], ['planks', 7]]) {
+  T[f] = bakeProcTexture(THREE, renderer, f, { size: Q.texSize * 2, seed });
+}
+const std = (name, color, rough, tex, scale, bump = 1) => {
+  const m = new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: 0 });
+  m.name = name;
+  if (tex) applyProcTexture(THREE, m, T[tex], { scale, bump });
+  return m;
+};
+const M = {
+  grass: std('grass', '#ffffff', 0.95, 'grass', 0.12, 0.6),
+  road: std('road', '#ffffff', 0.85, 'asphalt', 0.1, 0.8),
+  walk: std('walk', '#ffffff', 0.8, 'paving', 0.3, 1.2),
+  brickA: std('brickA', '#ffffff', 0.85, 'brick', 0.28, 1.4),
+  brickB: std('brickB', '#ffe0c8', 0.85, 'brick', 0.28, 1.4),
+  plaster: std('plaster', '#f2e3c4', 0.9, 'concrete', 0.15, 0.6),
+  plasterB: std('plasterB', '#c9e2f0', 0.9, 'concrete', 0.15, 0.6),
+  roof: std('roof', '#ffffff', 0.7, 'roof', 0.35, 1.2),
+  roofFlat: std('roofFlat', '#9aa0a8', 0.9, 'concrete', 0.2, 0.4),
+  door: std('door', '#ffffff', 0.75, 'planks', 0.6, 1),
+  glass: new THREE.MeshStandardMaterial({ name: 'glass', color: '#24364d', roughness: 0.08, metalness: 0.2, envMapIntensity: 1.5 }),
+  frame: new THREE.MeshStandardMaterial({ name: 'frame', color: '#f4f1ea', roughness: 0.6 }),
+  paint: new THREE.MeshStandardMaterial({ name: 'paint', color: '#f5f5f0', roughness: 0.6 }),
+  awnA: new THREE.MeshStandardMaterial({ name: 'awnA', color: '#d64541', roughness: 0.8 }),
+  awnB: new THREE.MeshStandardMaterial({ name: 'awnB', color: '#2e86de', roughness: 0.8 }),
+  metal: new THREE.MeshStandardMaterial({ name: 'metal', color: '#3b3f46', roughness: 0.45, metalness: 0.6 }),
+  lamp: new THREE.MeshStandardMaterial({ name: 'lamp', color: '#fff3c4', emissive: '#ffd27a', emissiveIntensity: 2 }),
+  trunk: new THREE.MeshStandardMaterial({ name: 'trunk', color: '#6b4a2f', roughness: 0.9 }),
+  leaf: new THREE.MeshStandardMaterial({ name: 'leaf', color: '#4f9a3a', roughness: 0.8, flatShading: true }),
+  crate: std('crate', '#ffffff', 0.8, 'planks', 1.2, 1),
+};
+// Bề mặt ướt cho mọi vật liệu ngoài trời (giá trị 0 khi nắng)
+const WET = Object.entries(M).filter(([k]) => !['glass', 'lamp'].includes(k)).map(([, m]) => applyWetness(THREE, m, { amount: 0 }));
+
+// ---------- Chữ ----------
+const atlas = createLabelAtlas(THREE);
+for (let i = 0; i <= 100; i++) atlas.get(`PIN ${i}%`, 'tag');   // vẽ trước mọi giá trị (trước khi seek)
+
+// ---------- Dựng thị trấn (có seed) ----------
+const box = (w, h, d, mat, x, y, z, parent, name) => {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  m.position.set(x, y, z); m.castShadow = m.receiveShadow = true;
+  if (name) m.name = name;
+  parent.add(m);
+  return m;
+};
+const SIGNS = ['TIỆM BÁNH MÌ', 'TẠP HOÁ CÔ BA', 'TRƯỜNG HỌC', 'CƠM TẤM', 'SỬA XE', 'HIỆU SÁCH'];
+function buildTown(seed = 7) {
+  const r = rng(seed);
+  const town = new THREE.Group();
+  town.name = 'town';
+  const g = box(240, 0.2, 240, M.grass, 0, -0.1, -30, town, 'ground');
+  g.castShadow = false;
+  box(240, 0.06, 9, M.road, 0, 0.03, 0, town, 'road');
+  for (let x = -110; x < 110; x += 5) box(2.4, 0.02, 0.22, M.paint, x, 0.07, 0, town);           // vạch giữa đường
+  box(240, 0.25, 3.6, M.walk, 0, 0.125, 6.3, town, 'walkNear');
+  box(240, 0.25, 4, M.walk, 0, 0.125, -6.5, town, 'walkFar');
+  for (const z of [4.45, -4.45]) box(240, 0.3, 0.3, M.paint, 0, 0.15, z, town);                   // bó vỉa
+
+  let x = -60, i = 0;
+  while (x < 60) {
+    const w = 7 + Math.floor(r() * 4), h = 5 + Math.floor(r() * 3) * 3, d = 8;
+    const b = new THREE.Group();
+    b.name = `building_${i}`;
+    b.position.set(x + w / 2, 0, -13);
+    const wall = [M.brickA, M.brickB, M.plaster, M.plasterB][Math.floor(r() * 4)];
+    box(w, h, d, wall, 0, h / 2, 0, b, 'walls');
+    // mái: dốc hoặc bằng
+    if (r() < 0.5) {
+      const shape = new THREE.Shape([new THREE.Vector2(-w / 2 - 0.4, 0), new THREE.Vector2(w / 2 + 0.4, 0), new THREE.Vector2(0, 2.4)]);
+      const geo = new THREE.ExtrudeGeometry(shape, { depth: d + 0.8, bevelEnabled: false });
+      geo.translate(0, h, -d / 2 - 0.4);
+      const roof = new THREE.Mesh(geo, M.roof); roof.castShadow = roof.receiveShadow = true; roof.name = 'roof';
+      b.add(roof);
+    } else {
+      box(w + 0.3, 0.4, d + 0.3, M.roofFlat, 0, h + 0.2, 0, b, 'roof');
+    }
+    // cửa sổ các tầng (mỗi ô = kính + khung 4 cạnh → nhiều mesh nhỏ, đúng chỗ merge phát huy)
+    const floors = Math.floor((h - 1) / 3), per = Math.max(2, Math.floor(w / 2.6));
+    for (let f = 1; f < floors + 1; f++) for (let k = 0; k < per; k++) {
+      const wx = -w / 2 + (k + 0.5) * (w / per), wy = f * 3 + 0.4;
+      if (f === 1 && Math.abs(wx) < 1.4) continue;
+      box(1.2, 1.4, 0.1, M.glass, wx, wy, d / 2 + 0.02, b);
+      box(1.45, 0.14, 0.18, M.frame, wx, wy - 0.77, d / 2 + 0.05, b);
+      box(1.45, 0.14, 0.18, M.frame, wx, wy + 0.77, d / 2 + 0.05, b);
+      box(0.14, 1.6, 0.18, M.frame, wx - 0.68, wy, d / 2 + 0.05, b);
+      box(0.14, 1.6, 0.18, M.frame, wx + 0.68, wy, d / 2 + 0.05, b);
+    }
+    box(1.6, 2.4, 0.15, M.door, 0, 1.2, d / 2 + 0.03, b, 'door');
+    box(2.0, 0.15, 0.25, M.frame, 0, 2.5, d / 2 + 0.06, b);
+    // cửa hàng: mái hiên + biển
+    if (i % 2 === 0) {
+      box(w - 0.6, 0.2, 1.6, i % 4 === 0 ? M.awnA : M.awnB, 0, 3.2, d / 2 + 0.8, b, 'awning');
+      const sign = createLabel(THREE, atlas, SIGNS[(i / 2) % SIGNS.length], { height: 0.95, style: 'sign' });
+      sign.object.position.set(0, Math.min(h - 0.8, 4.3), d / 2 + 0.12);
+      b.add(sign.object);
+    }
+    town.add(b);
+    x += w + 1 + Math.floor(r() * 2);
+    i++;
+  }
+  // đèn đường + cây trên vỉa hè phía xa
+  for (let lx = -56; lx < 60; lx += 12) {
+    const L = new THREE.Group(); L.name = 'lamp'; L.position.set(lx, 0, -5.2);
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.12, 5, 10), M.metal);
+    pole.position.y = 2.5; pole.castShadow = true; L.add(pole);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.32, 16, 10), M.lamp); head.position.y = 5.1; L.add(head);
+    town.add(L);
+    const tr = new THREE.Group(); tr.name = 'tree'; tr.position.set(lx + 6, 0, -5.4);
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.25, 2.6, 8), M.trunk);
+    trunk.position.y = 1.3; trunk.castShadow = true; tr.add(trunk);
+    for (let k = 0; k < 3; k++) {
+      const leaf = new THREE.Mesh(new THREE.IcosahedronGeometry(1.1 + r() * 0.5, 0), M.leaf);
+      leaf.position.set((r() - 0.5) * 1.2, 3 + k * 0.7, (r() - 0.5) * 1.0); leaf.castShadow = true; tr.add(leaf);
+    }
+    town.add(tr);
+  }
+  for (let k = 0; k < 8; k++) box(0.9, 0.9, 0.9, M.crate, -50 + k * 13 + r() * 3, 0.7, -7.6 + r() * 0.6, town, 'crate');
+  return town;
+}
+
+let town = null;
+function rebuild() {
+  if (town) { scene.remove(town); town.traverse((o) => { if (o.isMesh && !o.userData.noMerge) o.geometry.dispose(); }); }
+  town = buildTown(7);
+  let meshes = 0; town.traverse((o) => { if (o.isMesh) meshes++; });
+  let merged = null;
+  if (document.getElementById('merge').checked) merged = mergeByMaterial(THREE, town, mergeGeometries);
+  if (document.getElementById('ao').checked) bakeGroundAO(THREE, town, { height: 1.8, dark: 0.42 });
+  scene.add(town);
+  townInfo = merged ? `${merged.meshesBefore}→${merged.meshesAfter} mesh` : `${meshes} mesh (chưa gộp)`;
+}
+let townInfo = '';
+
+// ---------- Nhân vật + chữ trên đầu ----------
+const hero = createR6(THREE, { name: 'hero', shirt: '#e74c3c', pants: '#2c3e50', face: 'happy', hat: 'cap', hatColor: '#2d6cdf' });
+scene.add(hero.root);
+const pin = createLabel(THREE, atlas, 'PIN 100%', { height: 0.75, style: 'tag', billboard: true, anchor: 'bottom' });
+pin.object.position.y = 6.0;
+hero.root.add(pin.object);
+const npc = createR6(THREE, { ...randomLook(5), name: 'shopkeeper' });
+npc.root.position.set(-1, 0.25, -7.2);
+scene.add(npc.root);
+const title = createLabel(THREE, atlas, 'Ở THỊ TRẤN NÀY…', { height: 2.2, style: 'big', billboard: true });
+scene.add(title.object);
+
+// ---------- Thời tiết ----------
+const rain = createRain(THREE, { seed: 4, count: Math.round(7000 * Q.rain), area: [50, 26, 40] });
+const puddles = createPuddles(THREE, { seed: 2, count: 14, area: [110, 13], center: [0, 0.5], radius: [0.7, 2.2] });
+puddles.object.position.y = 0.06;
+const WEATHERS = {
+  sunny:  { label: 'Nắng (trời anime)', sky: 'anime_day', wet: 0, rain: false },
+  rain:   { label: 'Mưa (ướt + vũng nước)', sky: 'overcast', wet: 1, rain: true },
+  sunset: { label: 'Hoàng hôn anime', sky: 'anime_sunset', wet: 0, rain: false },
+};
+const wSel = document.getElementById('weather');
+for (const [k, v] of Object.entries(WEATHERS)) wSel.add(new Option(v.label, k));
+wSel.value = WEATHERS[params.get('weather')] ? params.get('weather') : 'sunny';
+let sky = null;
+function setWeather(name) {
+  const w = WEATHERS[name];
+  sky?.dispose();
+  sky = createSkyPreset(THREE, w.sky, { renderer, scene, Sky, sun, hemi });
+  for (const u of WET) u.uWet.value = w.wet;
+  scene.remove(rain.object, puddles.object);
+  if (w.rain) scene.add(rain.object, puddles.object);
+  if (w.rain) scene.fog = new THREE.FogExp2('#b9c2cc', 0.012);
+}
+
+// ---------- Âm thanh (xem thử; video dùng assets/sfx/*.wav từ tools/sfx.mjs) ----------
+let actx = null;
+const sfxCache = {};
+function playSfx(name, variant = 0, when = 0) {
+  actx ??= new AudioContext();
+  const k = `${name}_${variant}`;
+  if (!sfxCache[k]) {
+    const pcm = renderSfx(name, variant);
+    const b = actx.createBuffer(1, pcm.length, SR); b.copyToChannel(pcm, 0); sfxCache[k] = b;
+  }
+  const s = actx.createBufferSource(); s.buffer = sfxCache[k]; s.connect(actx.destination); s.start(actx.currentTime + when);
+}
+const sSel = document.getElementById('sfx');
+for (const n of SFX_LIST) sSel.add(new Option(`Âm: ${n}`, n));
+document.getElementById('sfxPlay').onclick = () => playSfx(sSel.value, 0);
+
+// ---------- Hậu kỳ theo chất lượng ----------
+const post = createPost(THREE, renderer, scene, cam, { EffectComposer, RenderPass, OutputPass, UnrealBloomPass, GTAOPass }, Q);
+const qSel = document.getElementById('quality');
+qSel.value = Q.name;
+qSel.onchange = () => { params.set('q', qSel.value); location.search = params.toString(); };
+
+// ---------- Render theo t ----------
+const STEP = 0.42;   // nhịp bước chân khi đi
+function heroX(t) { return -14 + t * 2.0; }
+function renderAt(t) {
+  t = Math.max(0, Math.min(DURATION, t));
+  curT = t;
+  const hx = heroX(t);
+  hero.root.position.set(hx, 0.25, 6.2);
+  hero.root.rotation.y = Math.PI / 2;
+  hero.animate('walk', t);
+  npc.animate('wave', t + 0.4);
+  pin.setText(`PIN ${Math.max(1, Math.round(100 - (t / DURATION) * 99))}%`);
+  title.object.position.set(-8, 11.5, -2);
+  title.object.visible = t < 4;
+  cam.position.set(hx - 3, 4.2, 27);
+  cam.lookAt(hx + 1.5, 6.2, -6);
+  sun.target.position.set(hx, 0, -4);
+  sun.position.copy(sky.sunDir).multiplyScalar(90).add(sun.target.position);
+  sky.update(t);
+  rain.update(t, cam.position.clone().add(new THREE.Vector3(0, -4, -12)));
+  puddles.update(t);
+  renderer.info.reset();
+  post.render();
+  document.getElementById('stats').textContent = `${townInfo} · ${renderer.info.render.calls} lần vẽ`;
+}
+let curT = 0;
+window.renderAt = renderAt;
+window.DURATION = DURATION;
+window.setWeather = (n) => { wSel.value = n; setWeather(n); };
+
+const onSeek = (e) => renderAt(e.detail?.time ?? 0);
+window.addEventListener('hf-seek', onSeek);
+document.addEventListener('hf-seek', onSeek);
+
+wSel.onchange = () => { setWeather(wSel.value); renderAt(curT); };
+document.getElementById('merge').checked = params.get('merge') !== '0';
+document.getElementById('ao').checked = params.get('ao') !== '0';
+for (const id of ['merge', 'ao']) document.getElementById(id).onchange = () => { rebuild(); renderAt(curT); };
+
+const seek = document.getElementById('seek'), tl = document.getElementById('tl'), play = document.getElementById('play');
+const show = (t) => { renderAt(t); seek.value = t; tl.textContent = t.toFixed(2) + 's'; };
+seek.oninput = () => { playing = false; play.textContent = '▶'; show(+seek.value); };
+let playing = false, t0 = 0, tStart = 0, lastStep = -1;
+play.onclick = () => {
+  playing = !playing; play.textContent = playing ? '⏸' : '▶';
+  if (playing) { tStart = +seek.value >= DURATION ? 0 : +seek.value; t0 = performance.now(); lastStep = -1; tick(); }
+};
+function tick() {
+  if (!playing) return;
+  const t = (tStart + (performance.now() - t0) / 1000) % DURATION;
+  const step = Math.floor(t / STEP);
+  if (step !== lastStep) { playSfx('footstep', step % 4); lastStep = step; }   // tiếng bước chân theo nhịp đi
+  show(t);
+  requestAnimationFrame(tick);
+}
+
+rebuild();
+setWeather(wSel.value);
+show(+(params.get('t') ?? 0));
+window.__ready = true;
+</script>
+</body>
+</html>
