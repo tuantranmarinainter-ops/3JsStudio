@@ -16,9 +16,25 @@ export const SKY_PRESETS = {
   cartoon: 'Trời hoạt hình',
   night: 'Đêm sao + trăng',
   overcast: 'U ám',
+  anime_day: 'Anime: trời xanh mây trắng',
+  anime_sunset: 'Anime: hoàng hôn hồng tím',
+  anime_night: 'Anime: đêm tím trăng to',
 };
 
 const CONF = {
+  // Kiểu trời anime: gradient rực, mây khối lớn tô 2 tông cứng (sáng/bóng tím) + viền sáng, đáy mây phẳng
+  anime_day:    { kind: 'grad', top: '#1f6dff', mid: '#5fb2ff', midH: 0.18, horizon: '#d8f3ff', bottom: '#a9d6ff', exponent: 0.7,
+                  elevation: 50, azimuth: 150, disk: '#fffbe6', diskSize: 0.9992, exposure: 1.0,
+                  sun: ['#ffffff', 2.6], hemi: ['#d7ecff', '#8a7a66', 1.0], fog: ['#d8f3ff', 90, 500],
+                  anime: { lit: '#ffffff', shade: '#a9b8f0', rim: '#ffffff' } },
+  anime_sunset: { kind: 'grad', top: '#2a3b9c', mid: '#e86fa8', midH: 0.16, horizon: '#ffb36b', bottom: '#6b4a8a', exponent: 0.8,
+                  elevation: 4, azimuth: 200, disk: '#fff0b3', diskSize: 0.9985, exposure: 1.0,
+                  sun: ['#ffb36b', 2.2], hemi: ['#ffc2d6', '#4a3060', 0.9], fog: ['#f3a07e', 70, 450],
+                  anime: { lit: '#ffd9b3', shade: '#8c62b8', rim: '#fff3c4' } },
+  anime_night:  { kind: 'grad', top: '#0d0b2e', mid: '#2d2470', midH: 0.2, horizon: '#7a5cc7', bottom: '#120f2b', exponent: 0.7,
+                  elevation: 17, azimuth: 195, disk: '#fff6d8', diskSize: 0.9975, exposure: 1.0,
+                  sun: ['#b7b4ff', 1.0], hemi: ['#6c62c9', '#141024', 0.8], fog: ['#3a2e7a', 60, 420], stars: true,
+                  anime: { lit: '#7d78d6', shade: '#2e2766', rim: '#d6d3ff' } },
   day:      { kind: 'phys', elevation: 50, azimuth: 160, turbidity: 2, rayleigh: 1, exposure: 0.4,
               sun: ['#ffffff', 3.2], hemi: ['#cfe6ff', '#7a6a55', 0.4], fog: ['#bcd4ee', 0.0016], clouds: true },
   sunset:   { kind: 'phys', elevation: 3, azimuth: 250, turbidity: 8, rayleigh: 3, exposure: 0.5,
@@ -40,13 +56,14 @@ function dirFrom(THREE, elevation, azimuth) {
 
 // Bầu trời gradient 3 màu + đĩa mặt trời/trăng (shader trên mặt cầu lớn)
 export function createGradientSky(THREE, opts = {}) {
-  const o = { top: '#3d8bff', horizon: '#d4ecff', bottom: '#9cc0e0', exponent: 0.6, radius: 4000,
+  const o = { top: '#3d8bff', mid: null, midH: 0.001, horizon: '#d4ecff', bottom: '#9cc0e0', exponent: 0.6, radius: 4000,
               sunDir: new THREE.Vector3(0, 1, 0), disk: '#fff8d6', diskSize: 0.9994, ...opts };
   const mat = new THREE.ShaderMaterial({
     side: THREE.BackSide, depthWrite: false, fog: false, toneMapped: false,
     uniforms: {
       uTop: { value: new THREE.Color(o.top) }, uHorizon: { value: new THREE.Color(o.horizon) },
       uBottom: { value: new THREE.Color(o.bottom) }, uExp: { value: o.exponent },
+      uMid: { value: new THREE.Color(o.mid || o.horizon) }, uMidH: { value: o.mid ? o.midH : 0.001 },
       uSunDir: { value: o.sunDir.clone().normalize() }, uDisk: { value: new THREE.Color(o.disk || '#000000') },
       uDiskSize: { value: o.disk ? o.diskSize : 2.0 },
     },
@@ -54,12 +71,14 @@ export function createGradientSky(THREE, opts = {}) {
       varying vec3 vDir;
       void main() { vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
     fragmentShader: /* glsl */ `
-      uniform vec3 uTop, uHorizon, uBottom, uSunDir, uDisk; uniform float uExp, uDiskSize;
+      uniform vec3 uTop, uMid, uHorizon, uBottom, uSunDir, uDisk; uniform float uExp, uDiskSize, uMidH;
       varying vec3 vDir;
       void main() {
         vec3 d = normalize(vDir);
         float h = d.y;
-        vec3 c = h > 0.0 ? mix(uHorizon, uTop, pow(h, uExp)) : mix(uHorizon, uBottom, pow(-h, 0.5));
+        vec3 c = h < 0.0 ? mix(uHorizon, uBottom, pow(-h, 0.5))
+               : h < uMidH ? mix(uHorizon, uMid, h / uMidH)
+               : mix(uMid, uTop, pow((h - uMidH) / (1.0 - uMidH), uExp));
         float s = dot(d, normalize(uSunDir));
         c += uDisk * smoothstep(uDiskSize - 0.0004, uDiskSize, s);           // đĩa
         c += uDisk * 0.25 * pow(max(s, 0.0), 64.0) * step(uDiskSize, 1.5);  // quầng sáng
@@ -72,6 +91,67 @@ export function createGradientSky(THREE, opts = {}) {
   mesh.renderOrder = -1;
   mesh.frustumCulled = false;
   return { object: mesh, material: mat };
+}
+
+// Mây anime: cụm cầu tròn, đáy phẳng, tô 2 tông cứng theo hướng nắng + viền sáng mép. Trôi quanh trục Y theo t.
+export function createAnimeClouds(THREE, opts = {}) {
+  const o = { seed: 8, count: 16, dist: [380, 620], height: [25, 130], speed: 0.004,
+              lit: '#ffffff', shade: '#a9b8f0', rim: '#ffffff', sunDir: new THREE.Vector3(0, 1, 0), ...opts };
+  const r = rng(o.seed);
+  const mat = new THREE.ShaderMaterial({
+    fog: false, toneMapped: false,
+    uniforms: { uLit: { value: new THREE.Color(o.lit) }, uShade: { value: new THREE.Color(o.shade) },
+                uRim: { value: new THREE.Color(o.rim) }, uSun: { value: o.sunDir.clone().normalize() } },
+    vertexShader: /* glsl */ `
+      varying vec3 vN; varying vec3 vV; varying vec3 vWN;
+      void main() {
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        vN = normalize(normalMatrix * normal); vV = -mv.xyz;
+        vWN = normalize(mat3(modelMatrix) * normal);
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: /* glsl */ `
+      uniform vec3 uLit, uShade, uRim, uSun; varying vec3 vN; varying vec3 vV; varying vec3 vWN;
+      void main() {
+        float l = dot(normalize(vWN), uSun) + vWN.y * 0.35;          // nắng + trời chiếu từ trên
+        vec3 c = mix(uShade, uLit, smoothstep(0.02, 0.08, l));       // 2 tông cứng
+        float fr = 1.0 - max(dot(normalize(vN), normalize(vV)), 0.0);
+        c = mix(c, uRim, smoothstep(0.62, 0.7, fr) * 0.85);           // viền sáng
+        gl_FragColor = vec4(c, 1.0);
+        #include <colorspace_fragment>
+      }`,
+  });
+  const geo = new THREE.IcosahedronGeometry(1, 3);
+  const group = new THREE.Group();
+  group.name = 'animeClouds';
+  for (let i = 0; i < o.count; i++) {
+    const c = new THREE.Group();
+    c.name = `animeCloud_${i}`;
+    const puffs = 5 + Math.floor(r() * 5), len = 70 + r() * 90, base = o.height[0] + r() * (o.height[1] - o.height[0]);
+    for (let k = 0; k < puffs; k++) {
+      const u = puffs > 1 ? k / (puffs - 1) : 0.5;
+      const s = (18 + r() * 16) * (1.15 - Math.abs(u - 0.5));        // giữa to, hai đầu nhỏ
+      const m = new THREE.Mesh(geo, mat);
+      m.scale.set(s * 1.25, s, s);
+      m.position.set((u - 0.5) * len, s * 0.55 + r() * s * 0.5, (r() - 0.5) * 30); // đáy gần phẳng ở y=0
+      c.add(m);
+    }
+    // vài cụm phụ chồng lên đỉnh cho dáng "bông cải"
+    for (let k = 0; k < 2; k++) {
+      const s = 20 + r() * 14, m = new THREE.Mesh(geo, mat);
+      m.scale.setScalar(s);
+      m.position.set((r() - 0.5) * len * 0.4, s * 1.4, (r() - 0.5) * 15);
+      c.add(m);
+    }
+    const a = (i / o.count) * Math.PI * 2 + r() * 0.3, d = o.dist[0] + r() * (o.dist[1] - o.dist[0]);
+    c.position.set(Math.sin(a) * d, base, Math.cos(a) * d);
+    c.lookAt(0, base, 0);
+    group.add(c);
+  }
+  return {
+    object: group,
+    update(t) { group.rotation.y = t * o.speed; },
+  };
 }
 
 // Sao: điểm cố định trên nửa trên bầu trời, có seed
@@ -143,6 +223,11 @@ export function createSkyPreset(THREE, name, { renderer, scene, Sky, sun, hemi, 
   pmrem.dispose();
 
   if (c.stars) group.add(createStars(THREE).object);
+  if (c.anime) {
+    const ac = createAnimeClouds(THREE, { ...c.anime, sunDir });
+    group.add(ac.object);
+    updates.push((t) => ac.update(t));
+  }
   if (c.clouds) {
     const cl = createClouds(THREE, { seed: 3, count: 12, area: 420, height: [45, 85] });
     group.add(cl.object);

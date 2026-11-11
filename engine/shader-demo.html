@@ -132,7 +132,7 @@ const ALL_SKIES = { ...SKY_PRESETS };
 for (const k of Object.keys(hdri)) ALL_SKIES[k] = HDRI_SKIES[k].label;
 for (const [k, v] of Object.entries(ALL_SKIES)) skySel.add(new Option(v, k));
 styleSel.value = SHADER_STYLES[params.get('style')] ? params.get('style') : 'anime';
-skySel.value = ALL_SKIES[params.get('sky')] ? params.get('sky') : 'cartoon';
+skySel.value = ALL_SKIES[params.get('sky')] ? params.get('sky') : 'anime_day';
 
 let fx = null, sky = null, curT = 0;
 function setStyle(name) { fx?.restore(); fx = applyStyle(THREE, subjects, name); renderAt(curT); }
