@@ -63,7 +63,8 @@ const MAX_EVENTS = 6;
 
 // scale: kích thước con vật (m) → độ cao/độ rộng tia nước. strength nhân thêm theo vận tốc cắt mặt nước.
 export function createSplash(THREE, opts = {}) {
-  const o = { seed: 7, scale: 10, drops: 2600, mist: 260, life: 2.6, gravity: 9.8, color: '#f4fbff', ...opts };
+  // linger = đời màn sương đọng (giây của t truyền vào update); crown = vương miện/màn nước khi rơi xuống (chỉ khi sea2 bật)
+  const o = { seed: 7, scale: 10, drops: 2600, mist: 260, linger: 4.6, lingerN: 900, life: 2.6, gravity: 9.8, color: '#f4fbff', ...opts };
   const r = rng(o.seed);
   const group = new THREE.Group();
   group.name = 'splash';
@@ -73,7 +74,7 @@ export function createSplash(THREE, opts = {}) {
   const common = {
     uTime: { value: 0 }, uLoop: { value: 0 }, uEvt: { value: uEvt }, uPow: { value: uPow },
     uScale: { value: o.scale }, uGrav: { value: o.gravity }, uLife: { value: o.life },
-    uPx: { value: 1000 }, uColor: { value: new THREE.Color(o.color) },
+    uPx: { value: 1000 }, uColor: { value: new THREE.Color(o.color) }, uLinger: { value: o.linger },
   };
 
   // Mỗi hạt thuộc 1 event (theo chỉ số), vận tốc + kích thước ngẫu nhiên có seed
@@ -105,7 +106,7 @@ export function createSplash(THREE, opts = {}) {
       vertexShader: /* glsl */`
         #define N ${MAX_EVENTS}
         attribute float aEv; attribute vec3 aVel; attribute vec2 aRnd; attribute vec2 aOff;
-        uniform float uTime, uLoop, uScale, uGrav, uLife, uPx, uKind;
+        uniform float uTime, uLoop, uScale, uGrav, uLife, uPx, uKind, uLinger;
         uniform vec4 uEvt[N]; uniform vec2 uPow[N];
         varying float vA;
         void main() {
@@ -117,6 +118,20 @@ export function createSplash(THREE, opts = {}) {
           float life = uLife * aRnd.y * (uKind > 0.5 ? 1.4 : 1.0);
           vA = 0.0;
           vec3 p = vec3(0.0, -1e5, 0.0);
+          float sz2 = 1.0;
+          if (uKind > 1.5) {
+            // sea2: màn sương hạt mịn đọng lại sau cú đập — bốc chậm, trôi theo gió, nở to, mờ dần (~uLinger)
+            life = uLinger * (0.55 + 0.45 * aRnd.y);
+            if (tau > 0.0 && tau < life && pw.x > 0.0) {
+              float k = tau / life, big = pw.y < 0.0 ? 1.0 : 0.5;
+              float rr = uScale * (0.18 + 0.32 * (1.0 - exp(-1.5 * tau))) * (0.6 + 0.4 * big);
+              p = ev.xyz + vec3(aOff.x * rr, 0.0, aOff.y * rr)
+                + vec3(0.9, 0.0, 0.35) * uScale * 0.05 * tau                          // gió nhẹ
+                + vec3(0.0, uScale * (0.05 + 0.22 * aVel.y) * pow(tau, 0.6) * big, 0.0);
+              sz2 = 0.6 + 1.4 * k;
+              vA = 0.16 * big * pw.x * pow(1.0 - k, 1.4) * smoothstep(0.0, 0.5, tau);
+            }
+          } else
           if (tau > 0.0 && tau < life && pw.x > 0.0) {
             // vào nước (down) → vương miện rộng, cao; ra khỏi nước (up) → màn nước bám theo thân
             float h = sqrt(uScale) * 3.0 * pw.x * (pw.y < 0.0 ? 1.0 : 0.7);
@@ -131,7 +146,7 @@ export function createSplash(THREE, opts = {}) {
           }
           vec4 mv = modelViewMatrix * vec4(p, 1.0);
           gl_Position = projectionMatrix * mv;
-          float s = (uKind > 0.5 ? 0.2 : 0.03) * uScale * aRnd.x;
+          float s = (uKind > 1.5 ? 0.3 * sz2 : uKind > 0.5 ? 0.2 : 0.03) * uScale * aRnd.x;
           gl_PointSize = s * uPx / max(-mv.z, 0.1);
         }`,
       fragmentShader: /* glsl */`
@@ -139,7 +154,7 @@ export function createSplash(THREE, opts = {}) {
         varying float vA;
         void main() {
           float d = length(gl_PointCoord - 0.5);
-          float a = (uKind > 0.5 ? smoothstep(0.5, 0.0, d) * 0.5 : smoothstep(0.5, 0.25, d)) * vA;
+          float a = (uKind > 1.5 ? smoothstep(0.5, 0.0, d) * smoothstep(0.5, 0.0, d) : uKind > 0.5 ? smoothstep(0.5, 0.0, d) * 0.5 : smoothstep(0.5, 0.25, d)) * vA;
           if (a < 0.01) discard;
           gl_FragColor = vec4(uColor, a);
         }`,
@@ -152,6 +167,55 @@ export function createSplash(THREE, opts = {}) {
   const drops = makePoints(o.drops, 0);
   const mist = makePoints(o.mist, 1);
   group.add(drops, mist);
+  // sea2: sương đọng + vương miện nước (tạo sau drops/mist để dãy rng của chúng không đổi → bản sea2 tắt y hệt cũ)
+  const linger = makePoints(o.lingerN, 2);
+  linger.name = 'splash_linger_mist';
+  group.add(linger);
+
+  // --- sea2: vương miện / màn nước (ống hở, mép trên xé thành ngón, loe ra rồi sụp) — 1 ống / event ---
+  const crownGeo = new THREE.CylinderGeometry(1, 1, 1, 96, 12, true);
+  crownGeo.translate(0, 0.5, 0);   // y: 0 (mặt nước) → 1 (mép trên)
+  const crowns = uEvt.map((_, i) => {
+    const m = new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, side: THREE.DoubleSide,
+      uniforms: { uTau: { value: 0 }, uLifeC: { value: 1.6 }, uR: { value: 1 }, uH: { value: 1 }, uFlare: { value: 0.6 }, uSeed: { value: i * 1.37 + o.seed }, uColor: common.uColor, uA: { value: 0.8 } },
+      vertexShader: /* glsl */`
+        uniform float uTau, uLifeC, uR, uH, uFlare, uSeed;
+        varying vec2 vUv; varying float vShade;
+        float wav(float a, float s){ return 0.5 + 0.5*(sin(a*7.0 + s)*0.5 + sin(a*13.0 + s*2.3)*0.3 + sin(a*29.0 + s*4.1)*0.2); }
+        void main(){
+          vUv = uv;
+          float a = uv.x * 6.2831853, v = position.y;
+          float k = clamp(uTau / uLifeC, 0.0, 1.0);
+          float jag = wav(a, uSeed);
+          float r = uR * (1.0 + uFlare * v * v * (0.6 + 0.8 * k)) * (0.92 + 0.16 * jag);   // mép trên loe ra, sau đó đổ ra ngoài
+          float h = uH * v * (0.75 + 0.5 * wav(a, uSeed + 3.0));
+          h -= uH * 0.55 * k * k * v * v;                                                     // sụp xuống theo thời gian
+          vec3 p = vec3(cos(a) * r, max(h, 0.0), sin(a) * r);
+          vShade = 0.75 + 0.25 * cos(a - 0.8);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+        }`,
+      fragmentShader: /* glsl */`
+        uniform float uTau, uLifeC, uSeed, uA; uniform vec3 uColor;
+        varying vec2 vUv; varying float vShade;
+        float wav(float a, float s){ return 0.5 + 0.5*(sin(a*7.0 + s)*0.5 + sin(a*13.0 + s*2.3)*0.3 + sin(a*29.0 + s*4.1)*0.2); }
+        void main(){
+          float a = vUv.x * 6.2831853, v = vUv.y;
+          float k = clamp(uTau / uLifeC, 0.0, 1.0);
+          float cut = 0.45 + 0.5 * wav(a * 2.0, uSeed + 7.0);                                 // ngón nước ở mép
+          float fing = 1.0 - smoothstep(cut - 0.18, cut, v + 0.25 * k);
+          float streak = 0.55 + 0.45 * wav(a * 5.0 + v * 2.0, uSeed + 11.0);                  // vệt dọc
+          float holes = smoothstep(0.25 + 0.5 * k, 0.55 + 0.4 * k, wav(a * 9.0 - v * 6.0, uSeed + 5.0) * 0.6 + streak * 0.4);
+          float al = uA * fing * streak * holes * pow(1.0 - k, 1.3) * smoothstep(0.0, 0.06, uTau) * smoothstep(0.0, 0.08, v + 0.02);
+          if (al < 0.01) discard;
+          gl_FragColor = vec4(uColor * vShade * (0.85 + 0.25 * v), al);
+        }`,
+    });
+    const c = new THREE.Mesh(crownGeo, m);
+    c.name = `splash_crown_${i}`; c.visible = false; c.frustumCulled = false; c.renderOrder = 4;
+    group.add(c);
+    return c;
+  });
 
   // Vòng bọt loang trên mặt nước, 1 vòng / event
   const ringGeo = new THREE.RingGeometry(0.82, 1, 64);
@@ -180,6 +244,7 @@ export function createSplash(THREE, opts = {}) {
   const ripUni = {
     uTime: common.uTime, uLoop: common.uLoop, uEvt: common.uEvt, uPow: common.uPow,
     uSpeed: { value: Math.sqrt(o.scale) * 1.7 }, uLife: { value: RIP_LIFE }, uScale: common.uScale, uColor: common.uColor,
+    uRipK: { value: 1 },      // sea2: mặt biển tự vẽ vòng sóng thật → gợn phẳng này mờ bớt
     uRipM: { value: null },   // ma trận cục bộ của mesh gợn sóng → toạ độ của nhóm splash (cùng hệ với events)
   };
   const ripples = new THREE.Mesh(
@@ -193,7 +258,7 @@ export function createSplash(THREE, opts = {}) {
         void main() { vW = (uRipM * vec4(position, 1.0)).xyz; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
       fragmentShader: /* glsl */`
         #define N ${MAX_EVENTS}
-        uniform float uTime, uLoop, uSpeed, uLife, uScale; uniform vec4 uEvt[N]; uniform vec2 uPow[N]; uniform vec3 uColor;
+        uniform float uTime, uLoop, uSpeed, uLife, uScale, uRipK; uniform vec4 uEvt[N]; uniform vec2 uPow[N]; uniform vec3 uColor;
         varying vec3 vW;
         void main() {
           float a = 0.0;
@@ -209,7 +274,7 @@ export function createSplash(THREE, opts = {}) {
             float wave = sin(d * k) * exp(-max(d, 0.0) / (uScale * 0.35)) * smoothstep(-0.5, 0.3, d);
             a += max(wave, 0.0) * uPow[i].x * (1.0 - tau / uLife) * (uPow[i].y < 0.0 ? 1.0 : 0.6);
           }
-          a = min(a, 1.0) * 0.85;
+          a = min(a, 1.0) * 0.85 * uRipK;
           if (a < 0.01) discard;
           gl_FragColor = vec4(uColor, a);
         }`,
@@ -299,6 +364,9 @@ export function createSplash(THREE, opts = {}) {
       common.uTime.value = t;
       common.uLoop.value = loop;
       if (px) common.uPx.value = px;
+      const sea2 = globalThis.__autoFx?.sea2 ?? true;
+      linger.visible = sea2;
+      ripUni.uRipK.value = sea2 ? 0.35 : 1;
       ripples.visible = events.length > 0;
       if (ripples.visible) {
         const cx = events.reduce((s, e) => s + e.x, 0) / events.length, cz = events.reduce((s, e) => s + e.z, 0) / events.length;
@@ -318,8 +386,19 @@ export function createSplash(THREE, opts = {}) {
           sheet.scale.set(sz, sz, 1);
           sheet.position.set(e.x, e.y, e.z);
         }
+        // sea2: vương miện nước — rơi xuống: cao + rộng; lên: màn thấp bám thân
+        const crown = crowns[i], down = e.dir === 'down', cl = down ? 1.7 : 1.1;
+        crown.visible = sea2 && tau > 0 && tau < cl;
+        if (crown.visible) {
+          const cu = crown.material.uniforms, sc = o.scale * uPow[i].x;
+          cu.uTau.value = tau; cu.uLifeC.value = cl;
+          cu.uR.value = sc * (down ? 0.2 : 0.12) * (1 + (down ? 1.3 : 0.6) * (1 - Math.exp(-2.4 * tau)));
+          cu.uH.value = sc * (down ? 0.62 : 0.28) * Math.pow(Math.sin(Math.PI * Math.min(tau / (cl * 0.75), 1) * 0.5 + 0.0001), 0.6);
+          cu.uFlare.value = down ? 0.9 : 0.35; cu.uA.value = down ? 0.82 : 0.55;
+          crown.position.set(e.x, e.y, e.z);
+        }
         const life = o.life * 1.5;
-        const on = tau > 0 && tau < life;
+        const on = tau > 0 && tau < life && !sea2;   // sea2: bọt + vòng trên mặt biển do water.js vẽ (theo sóng) → bỏ đĩa phẳng
         const k = tau / life;
         const ring = rings[i], foam = foams[i];
         ring.visible = foam.visible = on;

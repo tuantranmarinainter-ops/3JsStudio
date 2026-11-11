@@ -103,6 +103,77 @@ export function createOceanLife(THREE, A, { seaY = 11, plan = WHALE_PLAN } = {})
   splashRig.add(splash.object);
   const jumpDur = jumpClip ? jumpClip.duration : 1.42;
 
+  // --- sea2: sự kiện mặt nước (engine/water.js setEvents), thời gian = t toàn cục như env truyền cho sea(t) ---
+  //   con nhảy: lúc lao lên (vừa) + lúc đập xuống (lớn hơn: hố sâu, vòng sóng rộng, bọt lâu tan);
+  //   con bơi vòng: vòng bọt khi nổi lên thở + vệt bọt nhỏ dọc đường bơi khi lưng nhô trên mặt nước.
+  const toWorld = (x, z) => { const c = Math.cos(J.heading), s = Math.sin(J.heading);
+    return [J.at[0] + S * (x * c + z * s), J.at[1] + S * (-x * s + z * c)]; };
+  const gT = (tc) => J.t0 + tc / J.speed;
+  const upEv = events.find((e) => e.dir === 'up'), downEv = [...events].reverse().find((e) => e.dir === 'down');
+  const tExit = upEv ? gT(upEv.time) : gT(0.3), tIn = downEv ? gT(downEv.time) : gT(jumpDur - 0.2);
+  const big = [];
+  if (upEv) { const [x, z] = toWorld(upEv.x, upEv.z); big.push({ x, z, t0: tExit, strength: 1.3, radius: 13, taper: 0 }); }
+  if (downEv) { const [x, z] = toWorld(downEv.x, downEv.z); big.push({ x, z, t0: tIn, strength: 2.7, radius: 22, taper: 0 }); }
+  const orbitAt = (O, t) => { const a = O.a0 + O.w * t; return [Math.cos(a) * O.R, Math.sin(a) * O.R]; };
+  const small = [];
+  { const C = plan.circler, F = plan.second;
+    const [x1, z1] = orbitAt(C, C.rise[1] - 0.1); small.push({ x: x1, z: z1, t0: C.rise[1] - 0.1, strength: 0.75, radius: 11, taper: 4.5 });
+    const [x2, z2] = orbitAt(F, F.rise[1] - 0.1); small.push({ x: x2, z: z2, t0: F.rise[1] - 0.1, strength: 0.75, radius: 10, taper: 4.5 });
+    // vệt bọt khi bơi: 1 điểm / giây, tắt dần trong 2 s (≤ 2 điểm sống / con) → tổng ≤ 8 sự kiện cùng lúc
+    for (const [O, t1, ph] of [[C, C.rise[1] + 0.3, 0], [F, F.rise[1] + 0.3, 0.5]])
+      for (let tw = t1 + ph; tw < 90; tw += 1.0) { const [x, z] = orbitAt(O, tw); small.push({ x, z, t0: tw, strength: 0.32, radius: 5, taper: 2.0 }); }
+  }
+  // danh sách sự kiện đang sống tại t (hàm thuần của t): cường độ giảm mượt về 0 trước khi bị bỏ khỏi danh sách
+  function seaEvents(t) {
+    const live = (e) => t >= e.t0 && t - e.t0 <= (e.taper || 8);
+    const sc = (e) => ({ x: e.x, z: e.z, t0: e.t0, radius: e.radius, strength: e.taper ? e.strength * (1 - smooth(e.taper * 0.55, e.taper, t - e.t0)) : e.strength });
+    const out = big.filter(live).map(sc);
+    const rest = small.filter(live).sort((a, b) => b.t0 - a.t0);
+    for (const e of rest) { if (out.length >= 8) break; out.push(sc(e)); }
+    return out;
+  }
+
+  // --- sea2: giọt nước nhỏ từ thân con nhảy khi ở trên không (toạ độ = hệ splashRig = hệ rig con nhảy lúc nhảy) ---
+  //   lấy mẫu clip JUMP 1 lần (bản sao probe) → vị trí vài xương theo thời gian clip; giọt i rơi tự do từ xương b lúc ts_i
+  const drips = (() => {
+    if (!jumpClip) return null;
+    const bones = []; probe.traverse((o) => { if (o.isBone) bones.push(o); });
+    if (!bones.length) return null;
+    const pickB = bones.filter((_, i) => i % Math.max(1, Math.floor(bones.length / 14)) === 0).slice(0, 14);
+    const mx = new THREE.AnimationMixer(probe), act = mx.clipAction(jumpClip); act.play();
+    const NS = 48, track = pickB.map(() => []), v = new THREE.Vector3();
+    for (let i = 0; i <= NS; i++) { mx.setTime((i / NS) * jumpDur); probe.updateMatrixWorld(true); pickB.forEach((b, j) => track[j].push(b.getWorldPosition(v).toArray())); }
+    act.stop();
+    const at = (j, tc) => { const f = Math.min(NS - 1e-4, Math.max(0, (tc / jumpDur) * NS)), i = Math.floor(f), u = f - i, A0 = track[j][i], B0 = track[j][i + 1];
+      return [A0[0] + (B0[0] - A0[0]) * u, A0[1] + (B0[1] - A0[1]) * u, A0[2] + (B0[2] - A0[2]) * u]; };
+    const N = 700, hs = (i, k) => { const x = Math.sin(i * 91.7 + k * 47.3) * 43758.5453; return x - Math.floor(x); };
+    const c0 = upEv ? upEv.time : 0.3, c1 = downEv ? downEv.time : jumpDur - 0.2;
+    const seeds = Array.from({ length: N }, (_, i) => {
+      const j = i % pickB.length, ts = c0 + (c1 - c0) * hs(i, 1);
+      const p0 = at(j, ts), p1 = at(j, ts + 0.02);
+      const vel = [(p1[0] - p0[0]) / 0.02 * J.speed * 0.5, (p1[1] - p0[1]) / 0.02 * J.speed * 0.5, (p1[2] - p0[2]) / 0.02 * J.speed * 0.5];
+      return { ts, p0: [p0[0] + (hs(i, 2) - 0.5) * 1.6, p0[1] + (hs(i, 3) - 0.5) * 0.8, p0[2] + (hs(i, 4) - 0.5) * 1.6], vel };
+    });
+    const pos = new Float32Array(N * 3), geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const m = new THREE.PointsMaterial({ color: '#eaf8ff', size: 0.45, sizeAttenuation: true, transparent: true, opacity: 0.85, depthWrite: false, fog: true, name: 'whale_drips' });
+    const pts = new THREE.Points(geo, m); pts.name = 'whale_drips'; pts.frustumCulled = false; pts.renderOrder = 3; pts.visible = false;
+    splashRig.add(pts);
+    return { pts, update(tc) {
+      let any = false;
+      for (let i = 0; i < N; i++) {
+        const d = seeds[i], age = (tc - d.ts) / J.speed;      // giây thật kể từ khi giọt rời thân
+        let y = -1e4, x = 0, z = 0;
+        if (age > 0 && age < 2.2) {
+          x = d.p0[0] + d.vel[0] * age; z = d.p0[2] + d.vel[2] * age; y = d.p0[1] + d.vel[1] * age - 4.9 * age * age;
+          if (y < 0) y = -1e4; else any = true;
+        }
+        pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = z;
+      }
+      geo.attributes.position.needsUpdate = true; pts.visible = any;
+    } };
+  })();
+
   const fwd = (ry) => [Math.sin(ry), Math.cos(ry)];
   const orbit = (w, t, { R, w: om, a0 }) => {   // vòng tròn quanh gốc (nhà), mặt hướng theo vận tốc
     const a = a0 + om * t;
@@ -142,10 +213,18 @@ export function createOceanLife(THREE, A, { seaY = 11, plan = WHALE_PLAN } = {})
     let px = 1000;
     if (camera && renderer) { renderer.getDrawingBufferSize(_v); px = _v.y / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))); }
     splash.update(tc, 0, px * S * 0.6);   // 0.6: giọt nhỏ hơn bản demo → ra bụi nước, không thành bong bóng
-    splash.object.visible = tc > -0.1 && tc < jumpDur + 4;
+    splash.object.visible = tc > -0.1 && tc < jumpDur + ((globalThis.__autoFx?.sea2 ?? true) ? 7 : 4);   // sea2: sương đọng lâu hơn
+    if (drips) { if (globalThis.__autoFx?.sea2 ?? true) drips.update(tc); else drips.pts.visible = false; }
   }
   // vẻ ướt: lên khỏi mặt nước thì bóng hơn (roughness thấp, ánh nhẹ), chìm thì mờ; hàm thuần của vị trí rig
-  const wet = (w, aboveM) => { const k2 = smooth(-1.5, 1.5, aboveM); w.mat.roughness = 0.62 - 0.34 * k2; w.mat.emissive.setRGB(0.05 * k2, 0.07 * k2, 0.09 * k2); };
+  const wet = (w, aboveM) => { const k2 = smooth(-1.5, 1.5, aboveM); w.mat.roughness = 0.62 - 0.34 * k2; w.mat.emissive.setRGB(0.05 * k2, 0.07 * k2, 0.09 * k2); w.mat.color.setRGB(1, 1, 1); w.mat.envMapIntensity = 1; };
+  // sea2: ướt sũng ngay khi vừa ra khỏi nước (nhám thấp, da sẫm lại, phản chiếu trời mạnh) rồi khô dần theo thời gian
+  //   kể từ lúc ra khỏi nước — wetK = 0..1 tính từ (t − lúc nổi), hàm thuần của t.
+  const wet2 = (w, outK, since) => {
+    const wk = outK * (1 - 0.35 * smooth(0, 5, Math.max(0, since)));
+    w.mat.roughness = 0.6 - 0.44 * wk; w.mat.color.setRGB(1 - 0.2 * wk, 1 - 0.18 * wk, 1 - 0.15 * wk);
+    w.mat.envMapIntensity = 1 + 0.8 * wk; w.mat.emissive.setRGB(0.012 * wk, 0.02 * wk, 0.03 * wk);
+  };
   // --- CHỈ cho ảnh bưu thiếp (engine/snap.js): 1 con nổi lên thở + cột nước phun ở lỗ thở ---
   // Cột phun: các cụm bụi nước trắng xếp hình phễu nghiêng về trước-trái (kiểu cá nhà táng), toạ độ rig = mét.
   // Ẩn mặc định; snapshot() bật, unsnap() tắt. update(t) mỗi khung đặt lại vị trí/pose cá → shot biển không đổi.
@@ -174,15 +253,41 @@ export function createOceanLife(THREE, A, { seaY = 11, plan = WHALE_PLAN } = {})
     w1.rig.position.set(at[0], seaY + lift * S, at[1]); w1.rig.rotation.y = heading;
     w1.pose(clips || [['BREATHE', breathe, 1]]);
     wet(w1, 2);
+    snapOn = true; spMats.forEach((m, i) => { m.opacity = spBase[i]; });
     spout.position.set(...spoutAt); spout.scale.setScalar(spoutScale); spout.visible = true;
     w1.rig.updateMatrixWorld(true);
   }
-  function unsnap() { spout.visible = false; while (hidden.length) { const [o, v] = hidden.pop(); o.visible = v; } }
+  function unsnap() { snapOn = false; spout.visible = false; while (hidden.length) { const [o, v] = hidden.pop(); o.visible = v; } }
   const _update = update;
   function update2(t, camera, renderer) {
     _update(t, camera, renderer);
-    wet(w1, (w1.rig.position.y - seaY) / S); wet(w2, (w2.rig.position.y - seaY) / S);
-    const tc = (t - J.t0) * J.speed; wet(wj, tc > 0 && tc < jumpDur ? 2 : -2);
+    const tc = (t - J.t0) * J.speed;
+    if (globalThis.__autoFx?.sea2 ?? true) {
+      const C = plan.circler, F = plan.second;
+      wet2(w1, smooth(-1.5, 1.5, (w1.rig.position.y - seaY) / S), t - C.rise[1]);
+      wet2(w2, smooth(-1.5, 1.5, (w2.rig.position.y - seaY) / S), t - F.rise[1]);
+      wet2(wj, smooth(tExit - 0.12, tExit + 0.05, t) * (1 - smooth(tIn, tIn + 0.35, t)), t - tExit);
+      spoutTick(t);
+    } else {
+      wet(w1, (w1.rig.position.y - seaY) / S); wet(w2, (w2.rig.position.y - seaY) / S);
+      wet(wj, tc > 0 && tc < jumpDur ? 2 : -2);
+      if (!snapOn) spout.visible = false;
+    }
   }
-  return { group, update: update2, events, whales: { circler: w1, far: w2, jumper: wj }, splash, snapshot, unsnap };
+  // sea2: cột phun khi con 1 thở (BREATHE), hàm thuần của t: phụt lên nhanh, toả ra, tan dần
+  const spMats = []; spout.traverse((o) => { if (o.isMesh && !spMats.includes(o.material)) spMats.push(o.material); });
+  const spBase = spMats.map((m) => m.opacity);
+  let snapOn = false;
+  function spoutTick(t) {
+    if (snapOn) return;
+    const C = plan.circler, bt = (t - C.breathe[0]) * C.breathe[1];
+    const k = (bt - 0.35) / 1.6;
+    spout.visible = k > 0 && k < 1;
+    if (!spout.visible) { spMats.forEach((m, i) => { m.opacity = spBase[i]; }); return; }
+    spout.position.set(0, 2.6, 6.2);
+    const g2 = smooth(0, 0.35, k);
+    spout.scale.set(0.6 + 0.6 * g2, 0.15 + 0.95 * g2, 0.6 + 0.6 * g2);
+    spMats.forEach((m, i) => { m.opacity = spBase[i] * (1 - smooth(0.45, 1, k)); });
+  }
+  return { group, update: update2, events, seaEvents, whales: { circler: w1, far: w2, jumper: wj }, splash, snapshot, unsnap };
 }
