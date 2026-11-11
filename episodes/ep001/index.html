@@ -61,6 +61,7 @@
       import { createPost, FX_DEFAULTS, FX_LABELS } from '/engine/post.js';
       import { snapPostcards } from '/engine/snap.js';
       import { applyGrunge } from '/engine/grunge.js';
+      import { applyMaterials } from '/engine/materials.js';
       import { buildCast, buildHouses, buildProps, buildFx } from '/episodes/ep001/episode.js';
       import { SHOTS } from '/episodes/ep001/shots.js';
       import { CAPTIONS } from '/episodes/ep001/captions.js';
@@ -103,6 +104,8 @@
       for (const [n, a] of Object.entries(actors)) applyGrunge(THREE, a.root, 'char', { amount: WEAR[n] || 1 });
       for (const h of Object.values(houses)) applyGrunge(THREE, h.root, 'build', { aged: true });   // v2: nhà cũ bán thực (ô "aged")
       applyGrunge(THREE, stage.scene, 'build');
+      // chất liệu thật cho mọi vật (engine/materials.js) — bật/tắt ở ô "mats"; vá SAU grunge
+      applyMaterials(THREE, stage.scene);
       const tl = buildTimeline(SHOTS, 30);
       const director = createDirector({ THREE, stage, envs, K, actors, houses, props, fx });
       // Hiệu ứng hình (engine/post.js), mỗi cái bật/tắt riêng: ?fx=grade,bloom  (danh sách bật) hoặc ?fx=none

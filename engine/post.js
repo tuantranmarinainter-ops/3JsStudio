@@ -22,14 +22,16 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 import { GRUNGE } from './grunge.js';
+import { MATS } from './materials.js';
 
-export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true };
+export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
   worn: 'Quần áo cũ, bụi (nhân vật)', grime: 'Vân sần, bụi (nhà, đường, cảnh)',
   foot: 'Bụi / tuyết bốc ở chân nhà', prints: 'Dấu chân trên tuyết', wind: 'Gió tuyết thổi vào mặt', breath: 'Hơi thở trắng (cảnh lạnh)',
   folds: 'Nếp vải vẽ sẵn trên áo quần (v2)', hair2: 'Tóc cụm lởm chởm (v2)', aged: 'Nhà cũ bán thực: sơn tróc, ố, rêu (v2)',
+  mats: 'Chất liệu thật: gỗ, giấy, sắt, vải, đá, cát… (v3)',
 };
 
 // Màu theo preset ánh sáng (engine/envs.js LIGHTS). temp > 0 ấm, < 0 lạnh; sat bão hoà; con tương phản; gain/lift sáng.
@@ -148,6 +150,7 @@ export function createPost(THREE, stage, { actors = [] } = {}) {
     const AF = (globalThis.__autoFx ||= {}); AF.foot = fx.foot; AF.prints = fx.prints; AF.wind = fx.wind; AF.breath = fx.breath;   // engine/shots.js hiệu ứng tự động
     GRUNGE.char.value = fx.worn ? 1 : 0; GRUNGE.build.value = fx.grime ? 1 : 0;   // engine/grunge.js (vân bụi trên vật liệu)
     GRUNGE.aged.value = fx.aged ? 1 : 0;
+    MATS.on.value = fx.mats ? 1 : 0;   // engine/materials.js
     for (const a of actors) a.userData.setDetail?.({ folds: fx.folds, hair: fx.hair2 });   // engine/r15.js v2
     renderer.setRenderTarget(null); renderer.render(scene, camera);   // khung gốc (giống hệt khi không hậu kỳ)
     if (!anyOn()) return;

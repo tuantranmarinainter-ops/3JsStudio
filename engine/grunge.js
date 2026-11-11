@@ -102,7 +102,7 @@ const FRAG_BUMP = (amp) => /* glsl */`
   vec3 g = sign(det) * (dh.x * r1 + dh.y * r2);
   normal = normalize(mix(normal, normalize(abs(det) * normal - g), step(1e-9, abs(det)))); }`;
 
-function ensureBoxAttr(THREE, geo) {
+export function ensureBoxAttr(THREE, geo) {
   if (geo.attributes.aGrBox || !geo.attributes.position) return;
   geo.computeBoundingBox(); const bb = geo.boundingBox, p = geo.attributes.position, n = p.count;
   const sz = new THREE.Vector3(); bb.getSize(sz);
