@@ -24,3 +24,15 @@ polyfork:boulder-field-cluster-08e364
 polyfork:rock-outcrop-158ac3
 polyfork:dwarf-pine-mat-faee77
 polyfork:bare-mountain-rowan-10e72e
+
+# Poly Haven (CC0, mô hình quét thật, bản 1k glTF) — dòng "polyhaven:<id>" (id = đuôi link polyhaven.com/a/<id>)
+polyhaven:potted_plant_01
+polyhaven:potted_plant_04
+polyhaven:ceramic_vase_01
+polyhaven:book_encyclopedia_set_01
+polyhaven:alarm_clock_01
+polyhaven:hanging_picture_frame_01
+polyhaven:painted_wooden_shelves
+polyhaven:side_table_01
+polyhaven:painted_wooden_chair_02
+polyhaven:wooden_table_02
