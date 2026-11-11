@@ -11,63 +11,72 @@
   "lang": "vi",
   "source": "capcut",
   "label": "Alex Đại Đế",
-  "audio": "/episodes/ep001/voices/vi/BV560_streaming.ogg"
+  "audio": "/episodes/ep001/voices/vi/BV560_streaming.ogg",
+  "caps": "/episodes/ep001/voices/vi/BV560_streaming.caps.json"
  },
  {
   "id": "multi_female_sisi_uranus_bigtts",
   "lang": "vi",
   "source": "capcut",
   "label": "Bản Tin nữ",
-  "audio": "/episodes/ep001/voices/vi/multi_female_sisi_uranus_bigtts.ogg"
+  "audio": "/episodes/ep001/voices/vi/multi_female_sisi_uranus_bigtts.ogg",
+  "caps": "/episodes/ep001/voices/vi/multi_female_sisi_uranus_bigtts.caps.json"
  },
  {
   "id": "BV074_streaming",
   "lang": "vi",
   "source": "capcut",
   "label": "Cô Gái Hoạt Ngôn",
-  "audio": "/episodes/ep001/voices/vi/BV074_streaming.ogg"
+  "audio": "/episodes/ep001/voices/vi/BV074_streaming.ogg",
+  "caps": "/episodes/ep001/voices/vi/BV074_streaming.caps.json"
  },
  {
   "id": "vi_female_huong",
   "lang": "vi",
   "source": "capcut",
   "label": "Giọng Nữ Phổ Thông",
-  "audio": "/episodes/ep001/voices/vi/vi_female_huong.ogg"
+  "audio": "/episodes/ep001/voices/vi/vi_female_huong.ogg",
+  "caps": "/episodes/ep001/voices/vi/vi_female_huong.caps.json"
  },
  {
   "id": "BV562_streaming",
   "lang": "vi",
   "source": "capcut",
   "label": "Mai",
-  "audio": "/episodes/ep001/voices/vi/BV562_streaming.ogg"
+  "audio": "/episodes/ep001/voices/vi/BV562_streaming.ogg",
+  "caps": "/episodes/ep001/voices/vi/BV562_streaming.caps.json"
  },
  {
   "id": "BV421_vivn_streaming",
   "lang": "vi",
   "source": "capcut",
   "label": "Nhỏ Ngọt Ngào",
-  "audio": "/episodes/ep001/voices/vi/BV421_vivn_streaming.ogg"
+  "audio": "/episodes/ep001/voices/vi/BV421_vivn_streaming.ogg",
+  "caps": "/episodes/ep001/voices/vi/BV421_vivn_streaming.caps.json"
  },
  {
   "id": "multi_female_daqi_uranus_bigtts",
   "lang": "vi",
   "source": "capcut",
   "label": "Review Phim 3",
-  "audio": "/episodes/ep001/voices/vi/multi_female_daqi_uranus_bigtts.ogg"
+  "audio": "/episodes/ep001/voices/vi/multi_female_daqi_uranus_bigtts.ogg",
+  "caps": "/episodes/ep001/voices/vi/multi_female_daqi_uranus_bigtts.caps.json"
  },
  {
   "id": "multi_female_kiwi_uranus_bigtts",
   "lang": "vi",
   "source": "capcut",
   "label": "Sunny Idol",
-  "audio": "/episodes/ep001/voices/vi/multi_female_kiwi_uranus_bigtts.ogg"
+  "audio": "/episodes/ep001/voices/vi/multi_female_kiwi_uranus_bigtts.ogg",
+  "caps": "/episodes/ep001/voices/vi/multi_female_kiwi_uranus_bigtts.caps.json"
  },
  {
   "id": "BV075_streaming",
   "lang": "vi",
   "source": "capcut",
   "label": "Thanh Niên Tự Tin",
-  "audio": "/episodes/ep001/voices/vi/BV075_streaming.ogg"
+  "audio": "/episodes/ep001/voices/vi/BV075_streaming.ogg",
+  "caps": "/episodes/ep001/voices/vi/BV075_streaming.caps.json"
  },
  {
   "id": "en-US-AndrewMultilingualNeural",

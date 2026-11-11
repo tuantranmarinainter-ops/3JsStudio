@@ -26,10 +26,30 @@ man = json.loads((ROOT / 'assets/sfx/sfx_manifest.json').read_text(encoding='utf
 
 # tiếng không có trên kho → thử cụm gần nghĩa / tiếng tương tự đã có
 ALIAS = {
-    'whale blow spout': ['whale breathing blowhole', 'whale breath', 'water spray burst', 'big water splash'],
-    'ice cracking wind arctic night': ['arctic wind night', 'antarctic wind ambience'],
-    'town ambience day birds': ['city park birds ambience', 'birds morning ambience'],
-    'mountain wind high': ['mountain wind whistle', 'wind howling high'],
+    'whale blow spout': ['steam hiss burst', 'gentle water slosh'],
+    'snow wind gust': ['cold wind gust', 'wind gust light'],
+    'paper postcard slide': ['paper slide', 'paper rustle'],
+    'wood groan stretching': ['wood creak groan', 'wood groan'],
+    'low rumble stand up': ['deep rumble earth', 'low rumble rising'],
+    'cloth hug rustle': ['cloth rustle'],
+    'body fall sand': ['body fall', 'body thud soft'],
+    'sand scatter': ['sand pour'],
+    'wood joint squeak': ['wood squeak'],
+    'paper cards flutter': ['paper cards falling', 'paper rustle'],
+    'dirt burst thud': ['earth impact thump', 'dirt debris falling'],
+    'furniture creak tilt': ['chair creak', 'wood creak long'],
+    'gentle water slosh': ['water slosh'],
+    'kitchen footsteps quick': ['footsteps floor'],
+    'nervous footsteps floor': ['footsteps floor'],
+    'magnet click fridge': ['magnet click'],
+    'mailbox flap clunk': ['mailbox'],
+    'paper postcard flip': ['paper flip', 'paper rustle card'],
+    'sigh worried': ['woman sigh'],
+    'water drip cascade': ['water streaming down'],
+    'water rushing rising': ['water streaming down'],
+    'ice cracking wind arctic night': ['cold wind gust', 'arctic wind night'],
+    'village ambience birds day': ['forest ambience birds', 'town ambience day birds'],
+    'mountain wind high': ['mountain wind howl', 'mountain wind whistle'],
 }
 _cache = {}
 def _ok(n):
@@ -57,10 +77,16 @@ def shots():
 
 SH = shots(); TOTAL = SH[-1][2]; N = int(TOTAL * SR)
 
-def place(buf, sig, t, vol, dur=None, fade=0.08, rate=1.0):
+def place(buf, sig, t, vol, dur=None, fade=0.08, rate=1.0, offset=0.0, align=None):
+    """Đặt tiếng vào lớp. offset = bỏ qua bao nhiêu giây đầu file; align='peak' = đỉnh lớn nhất của tiếng rơi đúng t
+    (cho tiếng va chạm: rầm, nước văng, sập, đổ) — tự tìm đỉnh trong 8 s đầu, bắt đầu trước đỉnh 0,06 s."""
     if sig is None: return
     if abs(rate - 1) > 1e-3:
         sig = np.interp(np.arange(0, len(sig) - 1, rate), np.arange(len(sig)), sig).astype(np.float32)
+    if align == 'peak':
+        win = np.abs(sig[: int(8 * SR)]); pk = int(np.argmax(win)) if len(win) else 0
+        pre = int(0.06 * SR); offset = max(0, pk - pre) / SR; t = t - min(pk, pre) / SR
+    if offset: sig = sig[int(offset * SR):]
     sig = (sig[: int(dur * SR)] if dur else sig).copy()
     nf = min(len(sig), int(fade * SR))
     if nf > 0: sig[-nf:] *= np.linspace(1, 0, nf, dtype=np.float32)
@@ -95,7 +121,8 @@ def layer_buoc_chan(buf, rep):
         last = e['t']; d = float(e.get('dist') or 80)
         vol = (c['near'] * min(1.0, c['refDist'] / max(d, 20.0))) if e.get('onScreen', True) else c['offscreen']
         vol *= 0.85 + 0.3 * hsh(e['t'])
-        place(buf, thud, e['t'] + c.get('shift', 0), vol, dur=c['maxDur'], rate=0.88 + 0.16 * hsh(e['t'] * 3.1))
+        place(buf, thud, e['t'] + c.get('shift', 0), vol, dur=c['maxDur'], rate=0.88 + 0.16 * hsh(e['t'] * 3.1),
+              offset=c.get('offset', 0.0), align=c.get('align', 'peak'))
         rep['items'].append([round(e['t'], 3), e.get('shot'), round(vol, 2)])
 
 def layer_khoanh_khac(buf, rep):
@@ -108,7 +135,7 @@ def layer_khoanh_khac(buf, rep):
         seen[k] = float(x['t'])
         sig, used = sound(x['name'])
         if sig is None: rep['missing'].append(x['name']); continue
-        place(buf, sig, float(x['t']), float(x.get('vol', 0.5)), dur=x.get('dur'))
+        place(buf, sig, float(x['t']), float(x.get('vol', 0.5)), dur=x.get('dur'), offset=float(x.get('offset', 0) or 0), align=x.get('align'))
         rep['items'].append([x['t'], x['name'] if used == x['name'] else f"{x['name']} → {used}", x.get('shot')])
 
 FN = {'nen': layer_nen, 'buoc-chan': layer_buoc_chan, 'khoanh-khac': layer_khoanh_khac}
@@ -118,7 +145,7 @@ for L in want:
     buf = np.zeros(N + SR, dtype=np.float32); rep = {'items': [], 'missing': []}
     FN[L](buf, rep)
     buf = buf[:N]; peak = float(np.max(np.abs(buf))) or 1.0
-    buf *= min(1.0, 0.5 / peak)                      # đỉnh ~ -6 dBFS, nằm dưới giọng đọc
+    buf *= CFG[L].get('peak', 0.5) / peak            # đưa đỉnh lớp về mức mục tiêu (layers.json: peak), nâng hoặc hạ
     out = EPD / f'sfx_{L}.ogg'
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'f32le', '-ar', str(SR), '-ac', '1', '-i', '-', '-c:a', 'libopus', '-b:a', '64k', str(out)],
                    input=buf.astype(np.float32).tobytes(), check=True)

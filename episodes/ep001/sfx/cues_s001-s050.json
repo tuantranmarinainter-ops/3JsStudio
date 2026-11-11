@@ -1,11 +1,12 @@
 [
  {
   "t": 0.15,
-  "name": "wood creak groan",
+  "name": "wooden house creak",
   "vol": 0.4,
-  "dur": 1.5,
+  "dur": 2.0,
   "shot": "s001",
-  "why": "chân gỗ nhô lên dưới nhà, kẽo kẹt"
+  "why": "chân gỗ nhô lên dưới nhà, kẽo kẹt",
+  "offset": 1.9
  },
  {
   "t": 1.9,
@@ -45,15 +46,17 @@
   "vol": 0.55,
   "dur": 1,
   "shot": "s006",
-  "why": "chân gỗ phá nền, gỗ gãy rắc"
+  "why": "chân gỗ phá nền, gỗ gãy rắc",
+  "align": "peak"
  },
  {
-  "t": 7.85,
-  "name": "dirt burst thud",
+  "t": 7.97,
+  "name": "earth impact thump",
   "vol": 0.5,
-  "dur": 1.2,
+  "dur": 1.0,
   "shot": "s006",
-  "why": "bụi đất bung ra ở 3 góc"
+  "why": "bụi đất bung ra ở 3 góc",
+  "align": "peak"
  },
  {
   "t": 8.65,
@@ -65,19 +68,21 @@
  },
  {
   "t": 8.9,
-  "name": "wood creak heavy",
+  "name": "wooden house creak",
   "vol": 0.35,
-  "dur": 1.5,
+  "dur": 2.0,
   "shot": "s007",
-  "why": "khung nhà ghì căng khi nhấc lên"
+  "why": "khung nhà ghì căng khi nhấc lên",
+  "offset": 1.9
  },
  {
   "t": 9.55,
-  "name": "building shake rattle",
+  "name": "house rattle earthquake",
   "vol": 0.35,
-  "dur": 1,
+  "dur": 1.5,
   "shot": "s008",
-  "why": "nhà rung lắc mạnh rồi dịu"
+  "why": "nhà rung lắc mạnh rồi dịu",
+  "offset": 8.6
  },
  {
   "t": 10,
@@ -113,11 +118,12 @@
  },
  {
   "t": 17.35,
-  "name": "wind gust sand",
+  "name": "dry wind gust",
   "vol": 0.3,
   "dur": 1.8,
   "shot": "s014",
-  "why": "gió cát giữa sa mạc Sahara"
+  "why": "gió cát giữa sa mạc Sahara",
+  "offset": 36.0
  },
  {
   "t": 18.45,
@@ -134,14 +140,6 @@
   "dur": 0.8,
   "shot": "s016",
   "why": "chuyển cảnh về thị trấn, nhà đi ngang"
- },
- {
-  "t": 26.45,
-  "name": "fridge door open",
-  "vol": 0.3,
-  "dur": 1,
-  "shot": "s021",
-  "why": "không khí bếp, mẹ mở tủ lạnh"
  },
  {
   "t": 29.65,
@@ -166,30 +164,6 @@
   "dur": 0.8,
   "shot": "s025",
   "why": "ba cầm tấm bưu thiếp chim cánh cụt"
- },
- {
-  "t": 33.55,
-  "name": "magnet click fridge",
-  "vol": 0.5,
-  "dur": 0.6,
-  "shot": "s027",
-  "why": "cận bưu thiếp gắn nam châm trên tủ lạnh"
- },
- {
-  "t": 34.6,
-  "name": "mailbox flap clunk",
-  "vol": 0.4,
-  "dur": 0.7,
-  "shot": "s028",
-  "why": "bưu thiếp rơi vào hộp thư"
- },
- {
-  "t": 35.8,
-  "name": "mailbox flap clunk",
-  "vol": 0.35,
-  "dur": 0.7,
-  "shot": "s030",
-  "why": "hộp thư nhận thêm bưu thiếp"
  },
  {
   "t": 36.55,
@@ -225,19 +199,21 @@
  },
  {
   "t": 41.1,
-  "name": "wood creak groan",
+  "name": "wooden house creak",
   "vol": 0.4,
-  "dur": 1.4,
+  "dur": 2.0,
   "shot": "s036",
-  "why": "nhà thức giấc, chân lại vươn ra"
+  "why": "nhà thức giấc, chân lại vươn ra",
+  "offset": 1.9
  },
  {
-  "t": 41.95,
-  "name": "dirt burst thud",
+  "t": 42.15,
+  "name": "earth impact thump",
   "vol": 0.45,
-  "dur": 1,
+  "dur": 1.0,
   "shot": "s036",
-  "why": "bụi đất bung ở hai góc"
+  "why": "bụi đất bung ở hai góc",
+  "align": "peak"
  },
  {
   "t": 42.55,
@@ -248,39 +224,32 @@
   "why": "sàn nghiêng, đồ đạc kẽo kẹt"
  },
  {
-  "t": 43.1,
-  "name": "objects sliding rattle",
-  "vol": 0.35,
-  "dur": 1,
-  "shot": "s037",
-  "why": "đồ vật trượt khi sàn nghiêng"
- },
- {
   "t": 44.8,
-  "name": "wood creak heavy",
+  "name": "wooden house creak",
   "vol": 0.4,
-  "dur": 1.4,
+  "dur": 2.0,
   "shot": "s039",
-  "why": "nhà đứng trên bốn chân khổng lồ"
+  "why": "nhà đứng trên bốn chân khổng lồ",
+  "offset": 1.9
  },
  {
   "t": 45.5,
-  "name": "whoosh fast",
-  "vol": 0.3,
+  "name": "swish fast soft",
+  "vol": 0.35,
   "dur": 0.8,
   "shot": "s040",
   "why": "cắt cảnh nhà sải bước xuống phố"
  },
  {
   "t": 50.4,
-  "name": "forest birds morning",
-  "vol": 0.25,
-  "dur": 1.8,
+  "name": "owl hoot night",
+  "vol": 0.3,
+  "dur": 2.5,
   "shot": "s043",
   "why": "nhà băng qua khu rừng"
  },
  {
-  "t": 53.3,
+  "t": 53.38,
   "name": "wooden door creak open",
   "vol": 0.5,
   "dur": 1.4,
@@ -321,7 +290,7 @@
  },
  {
   "t": 58.3,
-  "name": "kids gasp",
+  "name": "female gasp surprise",
   "vol": 0.35,
   "dur": 0.7,
   "shot": "s049",

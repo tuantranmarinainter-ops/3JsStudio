@@ -22,10 +22,11 @@ Chỉnh gì ở trên thì **file MP4 xuất ra đúng như vậy**.
 2. Muốn xuất một đoạn: điền giây bắt đầu – kết thúc. Để nguyên = cả phim.
 3. Bấm **⬇ Xuất MP4** → Chrome/Edge hỏi chỗ lưu → chờ thanh tiến độ (cả phim 2K khoảng 1 phút với card đồ hoạ rời).
 4. Giữ tab mở trong lúc xuất. Bấm **Dừng** để huỷ.
+Âm thanh khi xuất: nhạc nền tự nhỏ đi khi có lời (ô **Giảm nhạc khi có lời**), và cả track được chuẩn về khoảng −14 LUFS cho YouTube (ô **Chuẩn âm lượng YouTube**; tắt thì giữ nguyên mức trộn).
 Tên file tự ghi tuỳ chọn: `…_VI_<giọng>_1440x2560.mp4`, thêm `_nosub`, `_novoice`, `_nosfx` khi tắt.
 
 ## 4. Khi đăng YouTube
-- Dán phần ghi công vào mô tả video: **`assets/sfx/CREDITS.md`** (tiếng động CC BY) và **`assets/CREDITS.md`** (model 3D CC BY).
+- Dán phần ghi công vào mô tả video: **`assets/sfx/CREDITS.md`** (tiếng động CC BY), **`assets/music/CREDITS.md`** (nhạc nền CC BY) và **`assets/CREDITS.md`** (model 3D CC BY).
 
 ## 5. Muốn sửa
 Nói với Claude theo **lớp**: "sửa lớp tiếng nền…", "lớp hiệu ứng hình: cảnh đảo ấm hơn", "lớp khoảnh khắc: tiếng cửa to hơn"…

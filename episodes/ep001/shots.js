@@ -1,5 +1,5 @@
 // ep001 — danh sách 145 shot (cut list refs/ngoinha/cuts.json, khung F0–F5131 @30fps).
-// Mỗi shot = dữ liệu (xem engine/shots.js). Toạ độ: nhà gia đình ở gốc, mặt trước +Z; phố theo trục X ở z=36.
+// Mỗi shot = dữ liệu (xem engine/shots.js). `cap: { y }` = vị trí (top, px) của phụ đề riêng shot đó, tránh đè chữ bưu thiếp. Toạ độ: nhà gia đình ở gốc, mặt trước +Z; phố theo trục X ở z=36.
 // Bếp: tủ lạnh (-8,0,-17.6), bàn (6,0,2), cửa sổ (10,11,-19.8). Đảo: mỏm hải đăng (52,0,-40), chỗ cha ngồi (46,3.2,-26).
 const PI = Math.PI;
 const FAM = (o = {}) => ({ style: 'family', ...o });
@@ -115,11 +115,11 @@ export const SHOTS = [
   { id: 's063', f: [2241, 2259], env: 'kitchen', line: 28, cast: { hero: R(-2, 0, -10, { anim: 'hold', ry: 0.2, s: 0.92, holdR: { name: 'glass', at: [0.55, -2.0, 0.9] } }) }, cam: orb('hero', 0.2, 8, 0, { look: [0, -1.5, 0], fov: 40 }) },
   { id: 's064', f: [2260, 2274], env: 'kitchen', line: 28, cast: { hero: R(-6, 0, -9, { anim: 'idle', face: 'surprised', ry: PI, s: 0.92 }) }, cam: orb('face:hero', 0, 3.9, 0, { rel: true, fov: 40, look: [0, -0.3, 0] }) },
   { id: 's065', f: [2275, 2324], env: 'kitchen', line: 28, cast: { hero: R(-6, 0, -9, { anim: 'idle', ry: PI, s: 0.92 }) }, cam: { p: [-3, 6, -2], l: [-8, 6, -15.4], p2: [-5, 6.5, -5], fov: 46 } },
-  { id: 's066', f: [2325, 2411], env: 'kitchen', line: 29, cam: card('penguin', 3.8, { dist2: 3.2 }) },
-  { id: 's067', f: [2412, 2443], env: 'kitchen', line: 30, cam: card('whale', 4.4) },
-  { id: 's068', f: [2444, 2532], env: 'kitchen', line: 30, cam: card('whale', 3.4, { dist2: 3.0 }) },
-  { id: 's069', f: [2533, 2584], env: 'kitchen', line: 32, cam: card('mountain', 4.2) },
-  { id: 's070', f: [2585, 2668], env: 'kitchen', line: 33, cam: card('mountain', 3.3, { dist2: 3.0, look: [0, -0.3, 0] }) },
+  { id: 's066', f: [2325, 2411], cap: { y: 260 }, env: 'kitchen', line: 29, cam: card('penguin', 3.8, { dist2: 3.2 }) },
+  { id: 's067', f: [2412, 2443], cap: { y: 260 }, env: 'kitchen', line: 30, cam: card('whale', 4.4) },
+  { id: 's068', f: [2444, 2532], cap: { y: 260 }, env: 'kitchen', line: 30, cam: card('whale', 3.4, { dist2: 3.0 }) },
+  { id: 's069', f: [2533, 2584], cap: { y: 260 }, env: 'kitchen', line: 32, cam: card('mountain', 4.2) },
+  { id: 's070', f: [2585, 2668], cap: { y: 260 }, env: 'kitchen', line: 33, cam: card('mountain', 3.3, { dist2: 3.0, look: [0, -0.3, 0] }) },
   { id: 's071', f: [2669, 2700], env: 'kitchen', line: 34, cast: { hero: R(-6, 0, -9, { anim: 'idle', face: 'surprised', ry: 0.1, s: 0.92 }) }, cam: orb('face:hero', 0, 4.2, -0.2, { rel: true, fov: 40, dist2: 3.8, look: [0, -0.3, 0] }) },
   { id: 's072', f: [2701, 2716], env: 'kitchen', line: 35, cast: { hero: R(-6, 0, -9, { anim: 'idle', face: 'scared', ry: 0.9, s: 0.92 }) }, cam: orb('face:hero', 0, 4.0, 0, { rel: true, fov: 40, look: [0, -0.3, 0] }) },
   { id: 's073', f: [2717, 2731], env: 'kitchen', line: 36, cast: { mom: R(-16, 0, 21, { to: [-14, 0, 18], anim: 'walk', face: 'worried' }) }, cam: orb('mom', PI + 0.2, 11, 0, { look: [0, -1, 0], fov: 42 }) },
@@ -136,15 +136,15 @@ export const SHOTS = [
   // ===== 09 · Tấm thiếp cuối =====
   { id: 's082', f: [3002, 3034], env: 'antarctica', line: 42, house: FAM({ ry: 0.2 }), cam: orb('house', 0.1, 92, -4, { look: [0, -8, 0], dist2: 86, fov: 52 }) },
   { id: 's083', f: [3035, 3081], env: 'kitchen', line: 43, cast: { mom: R(-3, 0, -11, { anim: 'idle', face: 'worried', ry: 0.3 }) }, cam: { p: [0, 7.5, -2], l: [-6, 6, -13], fov: 46 } },
-  { id: 's084', f: [3082, 3124], env: 'kitchen', line: 43, props: { cardIsland: { parent: 'room', at: [-6.8, 5.0, -15.05], to: [-6.6, 4.6, -12.5], win: [0.45, 1] } },
+  { id: 's084', f: [3082, 3124], cap: { y: 260 }, env: 'kitchen', line: 43, props: { cardIsland: { parent: 'room', at: [-6.8, 5.0, -15.05], to: [-6.6, 4.6, -12.5], win: [0.45, 1] } },
     cast: { mom: R(-4.2, 0, -13.4, { anim: 'point', ry: -2.17, pose: { rightArm: { x: [-1.4, -1.0] } } }) }, cam: { p: [-7.8, 5.6, -10.6], l: [-6.8, 5, -15.2], fov: 46 } },
   { id: 's085', f: [3125, 3172], env: 'kitchen', line: 44, cast: { mom: R(-4, 0, -10, { anim: 'hold', face: 'worried', ry: 0, pose: { rightArm: { x: -0.75 }, leftArm: { x: -0.75 } }, holdR: { name: 'cardIsland', at: [2.9, -2.1, 0.9], rot: [0.95, 0, 0], s: 0.72 } }) },
     cam: orb('mom', 0, 7.5, 0.4, { look: [0, -1.4, 0], fov: 42 }) },
   { id: 's086', f: [3173, 3211], env: 'shipStorm', line: 45, cast: { dad: { at: [4, 3.6, 1], ry: 0.4, anim: 'scared' } }, cam: orb('dad', 0.6, 8, -1.5, { look: [0, 0, 0], fov: 46, shake: 0.6 }) },
-  { id: 's087', f: [3212, 3233], env: 'kitchen', line: 46, props: { cardIsland: { parent: 'room', at: [6, 3.8, 4.2], rx: -0.5 } }, cam: { p: [6, 6.4, 7.4], l: [6, 3.8, 4.2], fov: 40 } },
+  { id: 's087', f: [3212, 3233], cap: { y: 260 }, env: 'kitchen', line: 46, props: { cardIsland: { parent: 'room', at: [6, 3.8, 4.2], rx: -0.5 } }, cam: { p: [6, 6.4, 7.4], l: [6, 3.8, 4.2], fov: 40 } },
   { id: 's088', f: [3234, 3266], env: 'island', line: 46, cam: { p: [86, 12, 26], l: [60, 18, -50], p2: [82, 12, 20], fov: 40 } },
-  { id: 's089', f: [3267, 3270], env: 'kitchen', line: 46, props: { cardIsland: { parent: 'room', at: [6, 3.8, 4.2], rx: -0.5 } }, cam: { p: [6, 6.2, 7.2], l: [6, 3.8, 4.2], fov: 40 } },
-  { id: 's090', f: [3271, 3347], env: 'kitchen', line: 47, props: { cardIsland: { parent: 'room', at: [6, 3.8, 4.2], rx: -0.5, ry: [0, PI], win: [0, 0.18] } }, cam: { p: [6, 7.0, 7.6], l: [6, 3.8, 4.2], p2: [6, 6.8, 7.2], fov: 40 } },
+  { id: 's089', f: [3267, 3270], cap: { y: 260 }, env: 'kitchen', line: 46, props: { cardIsland: { parent: 'room', at: [6, 3.8, 4.2], rx: -0.5 } }, cam: { p: [6, 6.2, 7.2], l: [6, 3.8, 4.2], fov: 40 } },
+  { id: 's090', f: [3271, 3347], cap: { y: 260 }, env: 'kitchen', line: 47, props: { cardIsland: { parent: 'room', at: [6, 3.8, 4.2], rx: -0.5, ry: [0, PI], win: [0, 0.18] } }, cam: { p: [6, 7.0, 7.6], l: [6, 3.8, 4.2], p2: [6, 6.8, 7.2], fov: 40 } },
   { id: 's091', f: [3348, 3380], env: 'kitchen', line: 49, cast: { mom: R(-4, 0, -10, { anim: 'hold', face: 'moved', ry: 0, pose: { rightArm: { x: -0.75 }, leftArm: { x: -0.75 } }, holdR: { name: 'cardIsland', at: [2.9, -2.1, 0.9], rot: [0.95, PI, 0], s: 0.72 } }) },
     cam: orb('mom', 0, 6.5, 0.3, { look: [0, -1.2, 0], fov: 42 }) },
   { id: 's092', f: [3381, 3435], env: 'snowNight', line: 50, house: FAM({ legsOut: 1, lift: [0.3, 1], win: [0.1, 0.8] }), cam: orb('house', 0.45, 96, 0, { look: [0, -4, 0], fov: 52 }) },
@@ -165,7 +165,7 @@ export const SHOTS = [
   { id: 's105', f: [3720, 3768], env: 'island', line: 52, house: FAM({ ...ISL, lift: 0.85 }), cam: { p: [-140, 120, 160], l: [0, 0, -10], p2: [-130, 110, 150], fov: 40 } },
 
   // ===== 11 · Người cha dưới hải đăng =====
-  { id: 's106', f: [3769, 3806], env: 'island', line: 53, props: { cardIsland: { at: [21.4, 15.3, -15], ry: -0.83 } }, cam: { p: [17, 14.5, -11], l: [60, 22, -50], fov: 44 } },
+  { id: 's106', f: [3769, 3806], cap: { y: 260 }, env: 'island', line: 53, props: { cardIsland: { at: [21.4, 15.3, -15], ry: -0.83 } }, cam: { p: [17, 14.5, -11], l: [60, 22, -50], fov: 44 } },
   { id: 's107', f: [3807, 3852], env: 'island', line: 54, cast: { dadIsland: { at: DADSEAT, ry: -0.9, anim: 'sitHold' } }, props: { cardStack: { at: [43.0, 3.5, -27.2], ry: -0.9, s: 0.7 } },
     cam: { p: [28, 12, -8], l: [60, 34, -50], l2: [44, 4, -28], fov: 46 } },
   { id: 's108', f: [3853, 3881], env: 'island', line: 54, cast: { dadIsland: { at: DADSEAT, ry: -0.9, anim: 'sitHold' } }, props: { cardStack: { at: [43.0, 3.5, -27.2], ry: -0.9, s: 0.7 } }, cam: orb('dadIsland', -0.9, 9, 3, { look: [0, -2, 0], fov: 42 }) },

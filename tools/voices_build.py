@@ -25,6 +25,10 @@ EPD = ROOT / 'episodes' / args.ep
 VD = EPD / 'voices'
 ENV = {**os.environ, 'PYTHONIOENCODING': 'utf8', 'PYTHONDONTWRITEBYTECODE': '1'}
 only = set(args.only.split(',')) if args.only else None
+# danh sách giọng người dùng đã chốt (voices/da-chot.txt: dòng Việt, dòng Anh, id cách nhau bằng dấu phẩy) — mặc định khi không có --only
+_chot = EPD / 'voices' / 'da-chot.txt'
+if only is None and args.what == 'index' and _chot.exists():
+    only = set(x.strip() for x in _chot.read_text(encoding='utf8').replace(chr(10), ',').split(',') if x.strip())
 
 
 def edge_voices():
@@ -85,8 +89,11 @@ def do_index():
     for mp3 in sorted((VD / 'vi').glob('*.mp3')):
         vid = mp3.stem
         if only and vid not in only: continue   # chỉ giọng người dùng đã chốt
-        items.append({'id': vid, 'lang': 'vi', 'source': 'capcut', 'label': names.get(vid, vid),
-                      'audio': '/' + ogg(mp3).relative_to(ROOT).as_posix()})
+        it = {'id': vid, 'lang': 'vi', 'source': 'capcut', 'label': names.get(vid, vid),
+              'audio': '/' + ogg(mp3).relative_to(ROOT).as_posix()}
+        vc = mp3.with_suffix('.caps.json')   # phụ đề riêng theo giọng (tools/caps_vi.py); Giọng Bé không có = dùng captions.js
+        if vc.exists(): it['caps'] = '/' + vc.relative_to(ROOT).as_posix()
+        items.append(it)
     try: info = {v['ShortName']: v for v in edge_voices()}
     except Exception: info = {}
     for mp3 in sorted((VD / 'en').glob('*.mp3')):

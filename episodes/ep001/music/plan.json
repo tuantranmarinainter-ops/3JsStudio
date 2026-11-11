@@ -1,0 +1,14 @@
+{
+ "_doc": "Kế hoạch NHẠC NỀN ep001 (lớp nhac). Mỗi đoạn: from/to (giây trên phim), track (khoá trong assets/music/music_manifest.json), offset (giây bắt đầu trong bài), vol (0..1 tương đối giữa các đoạn), fadeIn/fadeOut (giây; các đoạn kề nhau cho chồng lên nhau để hoà dần). vol 1.0 = cùng độ to chuẩn (mỗi đoạn tự cân bằng RMS trước). targetLUFS = độ to cả track khi chưa hạ nhạc (giọng đọc ≈ −18.5). Bài ngắn hơn đoạn thì tự lặp có hoà dần. Sửa rồi chạy: node tools/build.mjs ep001 nhac",
+ "label": "Nhạc nền",
+ "targetLUFS": -26,
+ "loopFade": 2.0,
+ "segments": [
+  { "from": 0.0,   "to": 41.0,  "track": "bidous_transit",  "offset": 0,   "vol": 0.8,  "fadeIn": 1.5, "fadeOut": 4.0, "why": "mở đầu êm, tò mò: thế giới nhà biết đi, ba mất tích" },
+  { "from": 37.0,  "to": 105.5, "track": "wingspan",        "offset": 6,   "vol": 0.9,  "fadeIn": 4.0, "fadeOut": 3.0, "why": "phiêu lưu ấm: nhà đi Nam Cực, rừng, núi, đại dương" },
+  { "from": 103.0, "to": 119.0, "track": "storm_adventure", "offset": 14,  "vol": 1.0,  "fadeIn": 2.5, "fadeOut": 3.0, "why": "bão trên tàu / băng biển căng thẳng" },
+  { "from": 117.0, "to": 133.5, "track": "bidous_transit",  "offset": 60,  "vol": 0.7,  "fadeIn": 3.0, "fadeOut": 3.0, "why": "lắng xuống sau bão, tìm ba" },
+  { "from": 131.0, "to": 161.5, "track": "feeling_piano",   "offset": 30,  "vol": 0.9,  "fadeIn": 3.0, "fadeOut": 3.5, "why": "đoàn tụ xúc động" },
+  { "from": 159.0, "to": 171.04, "track": "wingspan",       "offset": 150, "vol": 0.7,  "fadeIn": 3.0, "fadeOut": 5.0, "why": "kết ấm, gợi cảnh đầu" }
+ ]
+}

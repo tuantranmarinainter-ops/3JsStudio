@@ -19,7 +19,7 @@ export const WHALE_PLAN = {
   swimSpeed: 0.55,        // clip SWIM chạy chậm lại cho ra dáng con vật lớn
   // Con 1: từ dưới sâu nổi lên trước chân nhà (s054), thở (lưng gù vồng lên), rồi bơi vòng quanh chân nhà
   //   góc a: x = R·cos a, z = R·sin a (a tăng = ngược chiều kim đồng hồ nhìn từ trên). a(63.5) ≈ 0.82 = phía trước nhà, giữa máy s054 và chân nhà.
-  circler: { R: 47, w: 0.4, a0: -24.58, rise: [62.6, 63.3], deep: -6, lift: 3.2, breathe: [62.95, 1.15] },
+  circler: { R: 72, w: 0.4, a0: -24.36, rise: [62.6, 63.3], deep: -6, lift: 2.4, breathe: [62.95, 1.15] },
   // Con 2: cùng vòng, đối diện con 1; lặn sâu trong s054 rồi nổi lên trong s055 (cảnh từ trên cao thấy 2 con quanh nhà)
   second: { R: 47, w: 0.4, a0: -24.38 + Math.PI, rise: [63.9, 64.6], deep: -7, lift: 3.0 },
   // Con nhảy: lao lên khỏi mặt nước bên phải chân nhà, hướng về máy s056 (cắt mặt nước lên ~65.36 s, rơi xuống ~66.30 s)
@@ -33,12 +33,30 @@ export function createOceanLife(THREE, A, { seaY = 11, plan = WHALE_PLAN } = {})
   const M = A.manifest()?.byId.get(ID) || {};
   const k = M.scale_to_m || 0.98, wy = M.water_y_native || 4.283, S = plan.S;
 
-  const mats = new Map();
-  const whaleMat = (m) => {
-    if (!mats.has(m)) mats.set(m, new THREE.MeshStandardMaterial({ color: '#62738a', roughness: 0.55, metalness: 0, side: THREE.DoubleSide, name: 'whale_lit' }));
-    return mats.get(m);
+  // Màu cá nhà táng: lưng xanh-xám đậm → bụng sáng ngả kem; tô 1 lần lúc init bằng vertex color từ pose bind
+  // (y hình học gốc + pháp tuyến + vài đốm nhiễu theo vị trí, không random) → tất định, không phụ thuộc t.
+  const BACK = new THREE.Color('#2b4262'), BELLY = new THREE.Color('#8fa5ba'), SPOT = new THREE.Color('#1f3149');
+  const paintWhale = (geo) => {
+    if (geo.userData.whalePainted) return;
+    geo.userData.whalePainted = true;
+    geo.computeBoundingBox();
+    const bb = geo.boundingBox, pos = geo.attributes.position, nor = geo.attributes.normal;
+    const col = new Float32Array(pos.count * 3), c = new THREE.Color();
+    for (let i = 0; i < pos.count; i++) {
+      const y = (pos.getY(i) - bb.min.y) / Math.max(1e-6, bb.max.y - bb.min.y);
+      const n = nor ? nor.getY(i) : 0;
+      let h = Math.min(1, Math.max(0, 1 - smooth(0.25, 0.6, y)));
+      h = Math.min(1, h * 0.7 + Math.max(0, -n) * 0.4); h *= h;   // lưng đậm chiếm phần lớn, bụng sáng chỉ ở dưới
+      const hash = Math.sin(pos.getX(i) * 12.9898 + pos.getZ(i) * 78.233 + pos.getY(i) * 37.719) * 43758.5453;
+      const sp = (hash - Math.floor(hash)) * (1 - h) * 0.22;           // đốm tối nhẹ trên lưng
+      c.copy(BACK).lerp(BELLY, h).lerp(SPOT, sp);
+      col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+    }
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
   };
+  const makeMat = () => new THREE.MeshStandardMaterial({ color: '#ffffff', vertexColors: true, roughness: 0.6, metalness: 0.05, side: THREE.DoubleSide, name: 'whale_lit' });
   const makeWhale = (name) => {
+    const mat = makeMat();
     const rig = new THREE.Group(); rig.name = name; rig.scale.setScalar(S); group.add(rig);
     const body = A.instance(ID, { name: name + '_model', castShadow: false });
     body.scale.setScalar(k); body.position.y = -wy * k; rig.add(body);
@@ -47,7 +65,8 @@ export function createOceanLife(THREE, A, { seaY = 11, plan = WHALE_PLAN } = {})
       o.frustumCulled = false;   // xương nhảy ra khỏi khung bind → đừng cull
       // GLB gốc dùng unlit + texture gần như đen → trên biển sáng chỉ thấy bóng đen; đổi sang vật liệu có ánh sáng màu xám đá
       if (!o.geometry.attributes.normal) o.geometry.computeVertexNormals();
-      o.material = whaleMat(o.material);
+      paintWhale(o.geometry);
+      o.material = mat;
     });
     const mixer = new THREE.AnimationMixer(body), acts = {};
     for (const c of body.animations) {
@@ -65,7 +84,7 @@ export function createOceanLife(THREE, A, { seaY = 11, plan = WHALE_PLAN } = {})
       }
       mixer.update(0);
     };
-    return { rig, body, mixer, acts, pose };
+    return { rig, body, mixer, acts, pose, mat };
   };
 
   const w1 = makeWhale('whale_circler');
@@ -125,5 +144,13 @@ export function createOceanLife(THREE, A, { seaY = 11, plan = WHALE_PLAN } = {})
     splash.update(tc, 0, px * S * 0.6);   // 0.6: giọt nhỏ hơn bản demo → ra bụi nước, không thành bong bóng
     splash.object.visible = tc > -0.1 && tc < jumpDur + 4;
   }
-  return { group, update, events, whales: { circler: w1, far: w2, jumper: wj }, splash };
+  // vẻ ướt: lên khỏi mặt nước thì bóng hơn (roughness thấp, ánh nhẹ), chìm thì mờ; hàm thuần của vị trí rig
+  const wet = (w, aboveM) => { const k2 = smooth(-1.5, 1.5, aboveM); w.mat.roughness = 0.62 - 0.34 * k2; w.mat.emissive.setRGB(0.05 * k2, 0.07 * k2, 0.09 * k2); };
+  const _update = update;
+  function update2(t, camera, renderer) {
+    _update(t, camera, renderer);
+    wet(w1, (w1.rig.position.y - seaY) / S); wet(w2, (w2.rig.position.y - seaY) / S);
+    const tc = (t - J.t0) * J.speed; wet(wj, tc > 0 && tc < jumpDur ? 2 : -2);
+  }
+  return { group, update: update2, events, whales: { circler: w1, far: w2, jumper: wj }, splash };
 }

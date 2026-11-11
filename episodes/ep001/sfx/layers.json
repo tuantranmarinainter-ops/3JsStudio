@@ -1,33 +1,57 @@
 {
- "_doc": "Cấu hình các LỚP tiếng động của ep001. Sửa ở đây rồi chạy: node tools/build.mjs ep001 <lớp> (nen | buoc-chan | khoanh-khac). gain = âm lượng mặc định của lớp trong trình phát (người xem chỉnh lại được bằng thanh trượt, không cần dựng lại).",
+ "_doc": "Cấu hình các LỚP tiếng động của ep001. Sửa ở đây rồi chạy: node tools/build.mjs ep001 <lớp> (nen | buoc-chan | khoanh-khac). gain = âm lượng mặc định của lớp trong trình phát (người xem chỉnh lại được bằng thanh trượt, không cần dựng lại). peak = mức đỉnh mục tiêu của track lớp (0–1, nâng hoặc hạ cho đúng).",
  "nen": {
   "label": "Tiếng nền (gió, sóng, mưa…)",
   "gain": 1.0,
   "vol": 0.16,
   "fade": 0.35,
   "map": {
-   "town": "town ambience day birds", "forest": "forest ambience birds", "brazil": "forest ambience birds",
-   "antarctica": "antarctic wind ambience", "iceSea": "ice cracking wind arctic night", "snowNight": "ice cracking wind arctic night",
-   "ocean": "ocean waves open sea", "reef": "ocean waves open sea", "island": "waves beach shore gentle", "hawaii": "waves beach shore gentle",
-   "storm": "rain heavy storm ambience", "shipStorm": "rain heavy storm ambience", "mountain": "mountain wind high", "sahara": "mountain wind high",
-   "kitchen": "kitchen room tone quiet", "bedroom": "kitchen room tone quiet"
+   "town": "village ambience birds day",
+   "forest": "forest ambience birds",
+   "brazil": "forest ambience birds",
+   "antarctica": "antarctic wind ambience",
+   "iceSea": "ice cracking wind arctic night",
+   "snowNight": "ice cracking wind arctic night",
+   "ocean": "ocean waves open sea",
+   "reef": "ocean waves open sea",
+   "island": "waves beach shore gentle",
+   "hawaii": "waves beach shore gentle",
+   "storm": "rain heavy storm ambience",
+   "shipStorm": "rain heavy storm ambience",
+   "mountain": "mountain wind howl",
+   "sahara": "dry wind gust",
+   "kitchen": "kitchen room tone quiet",
+   "bedroom": "kitchen room tone quiet"
   },
-  "night": { "town": "night crickets ambience", "island": "night crickets ambience", "bedroom": "night crickets ambience" },
-  "boost": { "rain heavy storm ambience": 1.5, "kitchen room tone quiet": 0.6, "night crickets ambience": 0.8 }
+  "night": {
+   "town": "night crickets ambience",
+   "island": "night crickets ambience",
+   "bedroom": "night crickets ambience"
+  },
+  "boost": {
+   "rain heavy storm ambience": 1.5,
+   "kitchen room tone quiet": 0.6,
+   "night crickets ambience": 0.8,
+   "village ambience birds day": 0.7,
+   "dry wind gust": 2.5
+  },
+  "peak": 0.35
  },
  "buoc-chan": {
   "label": "Bước chân nhà (rầm)",
   "gain": 1.0,
-  "sound": "heavy wooden thud",
+  "sound": "heavy footstep thud",
   "near": 0.75,
   "offscreen": 0.22,
   "refDist": 70,
   "maxDur": 1.6,
-  "shift": -0.017
+  "shift": -0.017,
+  "peak": 0.6
  },
  "khoanh-khac": {
   "label": "Tiếng động theo cảnh",
   "gain": 1.0,
-  "dedupe": 0.6
+  "dedupe": 0.6,
+  "peak": 0.5
  }
 }

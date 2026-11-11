@@ -1,0 +1,13 @@
+{
+ "_doc": "Lớp tiếng động của tập (mẫu, chép bởi tools/storyboard.py). Sửa rồi chạy: node tools/build.mjs <ep> <lớp> (nen | khoanh-khac). Mốc tiếng động theo shot: sfx/cues_*.json.",
+ "nen": {
+  "label": "Tiếng nền (gió, sóng, mưa…)",
+  "gain": 1.0, "vol": 0.16, "fade": 0.35,
+  "map": { "kenneyTown": "town ambience day birds", "town": "town ambience day birds", "forest": "forest ambience birds",
+   "hawaii": "waves beach shore gentle", "island": "waves beach shore gentle", "ocean": "ocean waves open sea",
+   "storm": "rain heavy storm ambience", "kitchen": "kitchen room tone quiet", "bedroom": "kitchen room tone quiet" },
+  "night": { "kenneyTown": "night crickets ambience", "town": "night crickets ambience" },
+  "boost": {}
+ },
+ "khoanh-khac": { "label": "Tiếng động theo cảnh", "gain": 1.0, "dedupe": 0.6 }
+}

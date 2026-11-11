@@ -9,6 +9,9 @@
 //     cast:  { hero: { at:[x,y,z], to, ry, ry2, anim, from, face, speed, tOff, lie, parent:'house', hold } , … }
 //     props: { <tên>: { at, to, ry, rx, rz, s, parent } },  fx: { cards:{at,t0}, dust:[{at,t0}] },
 //     room:  { tilt, roll, view, dense },  fn(ctx) }
+// Shot ngắn theo LOẠI ({ type:'closeup', who:'hero', at:'square', … }) → engine/shottypes.js điền cam/cast mặc định:
+//   index.html gọi expandShots(SHOTS, ctx) trước buildTimeline (có liên tục giữa shot), hoặc truyền
+//   resolveType = makeTypeResolver(ctx) vào createDirector (mở rộng từng shot lẻ). Shot không có `type` không bị đụng.
 // Giá trị số dạng [a, b] = nội suy a→b theo tiến độ shot (ease mặc định smooth, đi bộ thì tuyến tính).
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
@@ -27,7 +30,7 @@ const lerp3 = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, 
 // tiến độ cục bộ trong một đoạn con của shot: win = [k0,k1]
 const sub = (k, win) => (win ? clamp01((k - win[0]) / (win[1] - win[0])) : k);
 
-export function createDirector({ THREE, stage, envs, K, actors, houses, props = {}, fx = {} }) {
+export function createDirector({ THREE, stage, envs, K, actors, houses, props = {}, fx = {}, resolveType = null }) {
   const { scene, camera } = stage;
   const _v = new THREE.Vector3();
   const tmpObj = new THREE.Object3D();
@@ -156,6 +159,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
   }
 
   function render(shot, local, k, t) {
+    if (shot.type && resolveType) shot = resolveType(shot);
     held.clear();
     for (const obj of Object.values(props)) if (obj.parent && obj.parent.type !== 'Scene' && obj.parent.name && /Arm$/.test(obj.parent.name)) { obj.visible = false; }
     const ctx = { focus: [0, 0, 0], light: shot.light, lightOverride: shot.lightOverride };

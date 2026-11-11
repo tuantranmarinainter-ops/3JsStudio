@@ -17,3 +17,4 @@ primitive three.js (Box/Cylinder/Extrude/Lathe + texture canvas), giữ phong c�
    (`tools/compare.py`), sửa khác biệt lớn nhất trước: silhouette > tỷ lệ > màu > chi tiết. 5–10 vòng; đừng dừng ở "gần giống".
 5. Ngân sách: ≤ 20k tam giác / model; dùng InstancedMesh cho vật lặp.
 6. Ghi asset vào `assets/manifest.json` nếu là file ngoài; asset dựng bằng code ghi chú trong README tập.
+- Texture nhân vật tuỳ chọn: chỉ file có trong assets/textures/index.json ("files") mới được tải; thêm PNG rồi thêm tên vào index.json (engine/r15.js loadCharacterTextures).

@@ -15,8 +15,8 @@ node tools/build.mjs ep001 <lớp>        # vd: node tools/build.mjs ep001 khoan
 | **tieng-anh** — lời kể tiếng Anh | câu tiếng Anh theo từng nhịp cắt cảnh | `tools/en/en_ep001.py` | `build.mjs ep001 tieng-anh` | ô "Ngôn ngữ: English" |
 | **nen** — tiếng nền | gió, sóng, mưa, côn trùng, phòng bếp… theo bối cảnh | `sfx/layers.json` → `nen` (bối cảnh → âm thanh, âm lượng, mờ đầu/cuối) | `build.mjs ep001 nen` | lớp "Tiếng nền" + thanh âm lượng |
 | **buoc-chan** — bước chân nhà | tiếng "rầm" lúc chân nhà chạm đất | `sfx/layers.json` → `buoc-chan` (âm thanh, độ lớn gần/xa); mốc: `sfx/steps.json` (tự tính) | `build.mjs ep001 buoc-chan` | lớp "Bước chân nhà" + thanh âm lượng |
-| **khoanh-khac** — tiếng động theo cảnh | cửa, sóng vỗ, cá voi, giấy, sấm, tiếng thở… | `sfx/cues_s001-s050.json`, `cues_s051-s100.json`, `cues_s101-s145.json` (`t`, `name`, `vol`, `dur`) | `build.mjs ep001 khoanh-khac` | lớp "Tiếng động theo cảnh" + thanh âm lượng |
-| (sau này) **nhac** — nhạc nền | | | | |
+| **khoanh-khac** — tiếng động theo cảnh | cửa, sóng vỗ, cá voi, giấy, sấm, tiếng thở… | `sfx/cues_s001-s050.json`, `cues_s051-s100.json`, `cues_s101-s145.json` (`t`, `name`, `vol`, `dur`, tuỳ chọn `offset` giây bỏ đầu file, `align: "peak"` đặt đỉnh tiếng đúng t) | `build.mjs ep001 khoanh-khac` | lớp "Tiếng động theo cảnh" + thanh âm lượng |
+| **nhac** — nhạc nền | 4 bài CC BY (Blue Dot Sessions, Komiku, E. Erkut) ghép theo đoạn phim; tự hạ nhỏ khi có lời | `music/plan.json` (đoạn `from/to`, `track`, `offset`, `vol`, `fadeIn/fadeOut`); bài: `assets/music/` | `build.mjs ep001 nhac` | lớp "Nhạc nền" + thanh âm lượng; ô "Giảm nhạc khi có lời" |
 
 - `tieng-dong` = nen + buoc-chan + khoanh-khac; `all` = mọi lớp.
 - Âm lượng từng lớp tiếng động chỉnh ngay trong trình phát (0–150%), **không cần dựng lại**; muốn đổi mặc định thì sửa `gain` trong `sfx/layers.json`.

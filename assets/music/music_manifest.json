@@ -1,0 +1,38 @@
+{
+  "wingspan": {
+    "file": "assets/music/wingspan.mp3",
+    "title": "Wingspan",
+    "creator": "Blue Dot Sessions",
+    "license": "by",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "source_url": "https://www.jamendo.com/track/1365390",
+    "duration": 203.78
+  },
+  "bidous_transit": {
+    "file": "assets/music/bidous_transit.mp3",
+    "title": "Bidous Transit",
+    "creator": "Blue Dot Sessions",
+    "license": "by",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "source_url": "https://www.jamendo.com/track/1365389",
+    "duration": 133.9
+  },
+  "storm_adventure": {
+    "file": "assets/music/storm_adventure.mp3",
+    "title": "The Storm and the Adventure",
+    "creator": "Komiku",
+    "license": "by",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "source_url": "https://www.jamendo.com/track/1262526",
+    "duration": 189.45
+  },
+  "feeling_piano": {
+    "file": "assets/music/feeling_piano.mp3",
+    "title": "Feeling - Piano Instrumental",
+    "creator": "E. Erkut",
+    "license": "by",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "source_url": "https://www.jamendo.com/track/1320222",
+    "duration": 191.65
+  }
+}

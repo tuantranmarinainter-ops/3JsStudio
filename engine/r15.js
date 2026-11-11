@@ -96,19 +96,31 @@ export const R15_FACES = ['smile', 'happy', 'laugh', 'neutral', 'sad', 'worried'
   'sleepy', 'sleep', 'cold', 'moved'];
 
 // ---------- Tải texture (chỉ lúc init; file thiếu → null, không ném lỗi) ----------
+// Texture là TUỲ CHỌN. Chỉ file được liệt kê trong assets/textures/index.json ("files": [...], đường dẫn
+// tương đối) mới được tải → không còn request 404 dò mù. Muốn dùng texture mới: đặt PNG vào
+// assets/textures/characters|faces rồi thêm tên vào index.json (vd "characters/hero_outfit.png").
+const _texIndex = new Map();
+function texIndex(base) {
+  if (!_texIndex.has(base)) {
+    _texIndex.set(base, fetch(`${base}/index.json`).then((r) => (r.ok ? r.json() : null)).then((j) => new Set((j && j.files) || [])).catch(() => new Set()));
+  }
+  return _texIndex.get(base);
+}
 export async function loadCharacterTextures(THREE, name, { base = '/assets/textures' } = {}) {
+  const have = await texIndex(base);
   const loader = new THREE.TextureLoader();
-  const get = (url, srgb = true) => new Promise((res) => {
+  const get = (rel, srgb = true) => new Promise((res) => {
+    if (!have.has(rel)) return res(null);
     try {
-      loader.load(url, (t) => { if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; res(t); }, undefined, () => res(null));
+      loader.load(`${base}/${rel}`, (t) => { if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; res(t); }, undefined, () => res(null));
     } catch { res(null); }
   });
   const [outfit, outfitNormal, face0] = await Promise.all([
-    get(`${base}/characters/${name}_outfit.png`),
-    get(`${base}/characters/${name}_outfit_normal.png`, false),
-    get(`${base}/faces/${name}_face.png`),
+    get(`characters/${name}_outfit.png`),
+    get(`characters/${name}_outfit_normal.png`, false),
+    get(`faces/${name}_face.png`),
   ]);
-  const face = face0 || (await get(`${base}/faces/default_face.png`));
+  const face = face0 || (await get('faces/default_face.png'));
   return { outfit, outfitNormal, face };
 }
 

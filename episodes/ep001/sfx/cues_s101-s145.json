@@ -1,13 +1,5 @@
 [
  {
-  "t": 119.8,
-  "name": "wooden door creak open",
-  "vol": 0.5,
-  "dur": 1.8,
-  "shot": "s100",
-  "why": "cửa trước mở ra"
- },
- {
   "t": 120.9,
   "name": "seagull call",
   "vol": 0.3,
@@ -25,8 +17,8 @@
  },
  {
   "t": 123,
-  "name": "wave crash shore",
-  "vol": 0.3,
+  "name": "wave crash rocks",
+  "vol": 0.15,
   "dur": 2,
   "shot": "s104",
   "why": "sóng vỗ bờ cạnh hải đăng"
@@ -48,7 +40,7 @@
   "why": "chuyển sang tấm bưu thiếp trên đảo"
  },
  {
-  "t": 127.4,
+  "t": 128.3,
   "name": "cloth rustle",
   "vol": 0.2,
   "dur": 1,
@@ -81,27 +73,30 @@
  },
  {
   "t": 133.3,
-  "name": "wood creak heavy",
+  "name": "wooden house creak",
   "vol": 0.35,
-  "dur": 1.5,
+  "dur": 2.0,
   "shot": "s113",
-  "why": "ba ngước nhìn, nhà đứng trên 4 chân"
+  "why": "ba ngước nhìn, nhà đứng trên 4 chân",
+  "offset": 1.9
  },
  {
   "t": 134.3,
-  "name": "wood groan",
+  "name": "wooden house creak",
   "vol": 0.3,
-  "dur": 1.5,
+  "dur": 2.0,
   "shot": "s114",
-  "why": "ngôi nhà kẽo kẹt trên bãi biển"
+  "why": "ngôi nhà kẽo kẹt trên bãi biển",
+  "offset": 1.9
  },
  {
   "t": 136.9,
-  "name": "gasp short",
+  "name": "girl gasp surprise",
   "vol": 0.3,
-  "dur": 0.8,
+  "dur": 1.0,
   "shot": "s117",
-  "why": "ba há hốc, giơ tay"
+  "why": "ba há hốc, giơ tay",
+  "offset": 0.3
  },
  {
   "t": 137.2,
@@ -120,26 +115,27 @@
   "why": "tấm lẻ rơi xuống đất"
  },
  {
-  "t": 138.3,
-  "name": "short gasp surprise",
+  "t": 138.12,
+  "name": "girl gasp surprise",
   "vol": 0.3,
-  "dur": 0.6,
+  "dur": 0.8,
   "shot": "s118",
-  "why": "con ngạc nhiên trước khi hô Ba"
+  "why": "con ngạc nhiên trước khi hô Ba",
+  "offset": 0.3
  },
  {
   "t": 138.45,
-  "name": "footsteps running sand",
-  "vol": 0.45,
-  "dur": 2,
+  "name": "running footsteps wood",
+  "vol": 0.35,
+  "dur": 1.4,
   "shot": "s119",
   "why": "con chạy trên cát"
  },
  {
   "t": 139.6,
-  "name": "footsteps running sand",
-  "vol": 0.4,
-  "dur": 2,
+  "name": "running footsteps wood",
+  "vol": 0.3,
+  "dur": 1.4,
   "shot": "s121",
   "why": "mẹ chạy theo"
  },
@@ -157,15 +153,17 @@
   "vol": 0.35,
   "dur": 0.6,
   "shot": "s122",
-  "why": "va vào nhau lúc ôm"
+  "why": "va vào nhau lúc ôm",
+  "align": "peak"
  },
  {
   "t": 143.05,
-  "name": "body fall sand",
+  "name": "body fall",
   "vol": 0.55,
   "dur": 1,
   "shot": "s122",
-  "why": "cả ba ngã nhào xuống cát"
+  "why": "cả ba ngã nhào xuống cát",
+  "align": "peak"
  },
  {
   "t": 143.15,
@@ -177,11 +175,12 @@
  },
  {
   "t": 143.6,
-  "name": "happy laughter cry",
+  "name": "family laughter happy",
   "vol": 0.2,
   "dur": 1.5,
   "shot": "s123",
-  "why": "cười khóc sau cú ngã"
+  "why": "cười khóc sau cú ngã",
+  "offset": 1.0
  },
  {
   "t": 144.3,
@@ -197,7 +196,8 @@
   "vol": 0.5,
   "dur": 2,
   "shot": "s125",
-  "why": "tàu va bãi đá ngầm"
+  "why": "tàu va bãi đá ngầm",
+  "align": "peak"
  },
  {
   "t": 146,
@@ -217,27 +217,21 @@
  },
  {
   "t": 150.95,
-  "name": "wood creak heavy",
-  "vol": 0.3,
-  "dur": 1.5,
-  "shot": "s130",
-  "why": "nhà bắt đầu động đậy"
- },
- {
-  "t": 151.05,
-  "name": "wood creak heavy",
+  "name": "wooden house creak",
   "vol": 0.5,
-  "dur": 2,
-  "shot": "s131",
-  "why": "chân nhà gập lại, kẽo kẹt"
+  "dur": 2.0,
+  "shot": "s130",
+  "why": "nhà bắt đầu động đậy",
+  "offset": 1.9
  },
  {
   "t": 153.2,
-  "name": "wood groan",
+  "name": "wooden house creak",
   "vol": 0.45,
-  "dur": 2,
+  "dur": 2.0,
   "shot": "s132",
-  "why": "nhà khuỵu xuống từ từ"
+  "why": "nhà khuỵu xuống từ từ",
+  "offset": 1.9
  },
  {
   "t": 154.1,
@@ -249,19 +243,12 @@
  },
  {
   "t": 154.9,
-  "name": "heavy wood thud",
+  "name": "giant stomp impact",
   "vol": 0.55,
-  "dur": 1.2,
+  "dur": 1.5,
   "shot": "s133",
-  "why": "nhà chạm cát khi quỳ hẳn"
- },
- {
-  "t": 154.95,
-  "name": "sand settle",
-  "vol": 0.25,
-  "dur": 1,
-  "shot": "s134",
-  "why": "cát lún quanh chân nhà"
+  "why": "nhà chạm cát khi quỳ hẳn",
+  "align": "peak"
  },
  {
   "t": 155.3,
@@ -281,11 +268,12 @@
  },
  {
   "t": 158.4,
-  "name": "wood groan",
+  "name": "wooden house creak",
   "vol": 0.2,
-  "dur": 1.5,
+  "dur": 2.0,
   "shot": "s137",
-  "why": "nhà đứng dậy chậm rãi"
+  "why": "nhà đứng dậy chậm rãi",
+  "offset": 1.9
  },
  {
   "t": 160.5,
@@ -306,7 +294,7 @@
  {
   "t": 163.3,
   "name": "magnet click fridge",
-  "vol": 0.3,
+  "vol": 0.2,
   "dur": 0.5,
   "shot": "s138",
   "why": "nam châm giữ thiếp"
@@ -314,7 +302,7 @@
  {
   "t": 164.9,
   "name": "magnet click fridge",
-  "vol": 0.25,
+  "vol": 0.2,
   "dur": 0.5,
   "shot": "s141",
   "why": "gắn thêm thiếp lên tủ"

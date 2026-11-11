@@ -9,6 +9,7 @@
 //   nen           tiếng nền theo bối cảnh (sfx/layers.json: nen)                        → tải tiếng thiếu + trộn lớp nền
 //   buoc-chan     tiếng "rầm" chân nhà (sfx/steps.json, layers.json: buoc-chan)          → trộn lớp bước chân
 //   khoanh-khac   tiếng động theo khoảnh khắc (sfx/cues_*.json)                         → tải tiếng thiếu + trộn lớp
+//   nhac          nhạc nền (episodes/<ep>/music/plan.json, tools/music/mix.py)          → tải bài còn thiếu + trộn music_nhac.ogg
 //   tieng-dong    = nen + buoc-chan + khoanh-khac
 //   all           mọi lớp (không tạo lại giọng CapCut/Edge — việc đó chạy tools/voices_build.py riêng)
 import { spawnSync } from 'child_process';
@@ -21,7 +22,7 @@ const [ep, ...rest] = process.argv.slice(2);
 if (!ep) { console.log(readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').filter((l) => l.startsWith('//')).join('\n')); process.exit(1); }
 const flags = new Set(rest.filter((a) => a.startsWith('--')));
 let layers = rest.filter((a) => !a.startsWith('--'));
-const ALL = ['canh', 'hieu-ung-hinh', 'phu-de', 'giong', 'tieng-anh', 'nen', 'buoc-chan', 'khoanh-khac'];
+const ALL = ['canh', 'hieu-ung-hinh', 'phu-de', 'giong', 'tieng-anh', 'nen', 'buoc-chan', 'khoanh-khac', 'nhac'];
 if (!layers.length || layers.includes('all')) layers = ALL;
 layers = layers.flatMap((l) => (l === 'tieng-dong' ? ['nen', 'buoc-chan', 'khoanh-khac'] : [l]));
 for (const l of layers) if (!ALL.includes(l)) { console.error(`Lớp không có: ${l}. Có: ${ALL.join(', ')}, tieng-dong, all`); process.exit(1); }
@@ -46,6 +47,7 @@ if (has('tieng-anh')) {
   run('Nhịp cắt cảnh cho tiếng Anh', py, ['-c', `import subprocess,sys;open('episodes/${ep}/beats.json','w',encoding='utf8').write(subprocess.run([sys.executable,'tools/en/beats.py','${ep}','--keep','s055'],capture_output=True,text=True,encoding='utf8').stdout)`]);
   run('Giọng Anh mặc định + phụ đề Anh', py, ['tools/en/tts_en.py', ep]);
 }
+if ((has('giong') || has('phu-de')) && existsSync(join(epd, 'voices', 'vi'))) run('Phụ đề Việt theo từng giọng (voices/vi/*.caps.json)', py, ['tools/caps_vi.py', ep]);
 if (has('giong') && existsSync(join(epd, 'voices'))) run('Danh sách giọng (voices/index.json)', py, ['tools/voices_build.py', ep, 'index']);
 if (has('nen')) {
   const cfg = JSON.parse(readFileSync(join(epd, 'sfx', 'layers.json'), 'utf8')).nen;
@@ -56,6 +58,14 @@ if (has('nen')) {
 if (has('khoanh-khac')) {
   run('Tải tiếng động còn thiếu', py, ['tools/sfx/fetch.py', '--cues', ...readdirCues()]);
   mixLayers.add('khoanh-khac');
+}
+if (has('nhac')) {
+  const plan = JSON.parse(readFileSync(join(epd, 'music', 'plan.json'), 'utf8'));
+  const mf = join(root, 'assets', 'music', 'music_manifest.json');
+  const have = existsSync(mf) ? JSON.parse(readFileSync(mf, 'utf8')) : {};
+  const miss = [...new Set(plan.segments.map((s) => s.track))].filter((t) => !have[t] || !existsSync(join(root, have[t].file)));
+  if (miss.length) { console.error(`✗ Thiếu bài nhạc: ${miss.join(', ')}. Tải: python tools/sfx/fetch.py --music "<cụm>" [--list] --pick N --as <tên>`); process.exit(1); }
+  run('Trộn nhạc nền (music/plan.json)', py, ['tools/music/mix.py', ep]);
 }
 if (has('buoc-chan')) mixLayers.add('buoc-chan');
 if (mixLayers.size) run(`Trộn lớp tiếng động: ${[...mixLayers].join(', ')}`, py, ['tools/sfx/mix.py', ep, ...mixLayers]);

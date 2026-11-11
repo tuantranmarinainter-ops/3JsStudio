@@ -43,10 +43,10 @@ def slug(p):
     return re.sub(r"[^a-z0-9]+", "_", s).strip("_") or hashlib.md5(p.encode()).hexdigest()[:8]
 
 
-def search(phrase):
+def search(phrase, music=False):
     global _last_call
     CACHE.mkdir(parents=True, exist_ok=True)
-    cf = CACHE / f"search_{slug(phrase)}.json"
+    cf = CACHE / f"search_{'music_' if music else ''}{slug(phrase)}.json"
     if cf.exists():
         return json.loads(cf.read_text(encoding="utf-8"))
     for attempt in range(4):
@@ -54,7 +54,8 @@ def search(phrase):
         if wait > 0:
             time.sleep(wait)
         _last_call = time.time()
-        r = requests.get(API, params={"q": phrase, "license": "cc0,by", "page_size": 20},
+        r = requests.get(API, params=({"q": phrase, "license": "cc0,by", "page_size": 20, "category": "music"} if music
+                                 else {"q": phrase, "license": "cc0,by", "page_size": 20}),
                          headers=UA, timeout=30)
         if r.status_code == 429:
             ra = r.headers.get("Retry-After")
@@ -157,9 +158,17 @@ def fetch_one(phrase, ambience, man):
         man[phrase] = {"missing": True}
         return False
     tmp = CACHE / f"dl_{slug(phrase)}.mp3"
-    r = requests.get(x["url"], headers=UA, timeout=120)
-    r.raise_for_status()
-    tmp.write_bytes(r.content)
+    # tải có giới hạn: quá 60 s hoặc > 25 MB → bỏ (tránh treo vì file khổng lồ / máy chủ nhỏ giọt)
+    data, t0 = bytearray(), time.time()
+    with requests.get(x["url"], headers=UA, timeout=(15, 30), stream=True) as r:
+        r.raise_for_status()
+        for chunk in r.iter_content(65536):
+            data += chunk
+            if len(data) > 25 * 1024 * 1024 or time.time() - t0 > 60:
+                print(f"  bỏ: tải quá lâu/quá lớn ({len(data) // 1024} KB)", file=sys.stderr)
+                man[phrase] = {"missing": True}
+                return False
+    tmp.write_bytes(bytes(data))
     dst = OUT / f"{slug(phrase)}.mp3"
     convert(tmp, dst, ambience)
     d = probe_dur(dst)
@@ -174,6 +183,68 @@ def fetch_one(phrase, ambience, man):
         "duration": d, "ambience": ambience,
     }
     return True
+
+
+def music_candidates(phrase, lo=60, hi=300):
+    """Nhạc CC0/CC BY dài lo..hi giây từ Openverse (category=music)."""
+    out = []
+    for x in search(phrase, music=True):
+        d = (x.get("duration") or 0) / 1000.0
+        if (x.get("license") or "").lower() in OK_LICENSES and x.get("url") and lo <= d <= hi:
+            out.append(x)
+    return out
+
+
+def convert_music(src, dst):
+    """Nhạc: stereo 48 kHz, cắt lặng đầu, đỉnh ~ -3 dBFS, mp3 192k."""
+    mx, _ = volume_stats(src, "")
+    gain = max(-30.0, min(30.0, (-3.0 - mx) if mx is not None else 0.0))
+    r = run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", str(src), "-vn",
+             "-af", f"volume={gain:.2f}dB,alimiter=limit=0.95", "-ar", "48000", "-ac", "2",
+             "-c:a", "libmp3lame", "-b:a", "192k", str(dst)])
+    if r.returncode != 0:
+        raise RuntimeError(r.stderr[-300:])
+
+
+MUSIC_DIR = ROOT / "assets" / "music"
+MUSIC_MANIFEST = MUSIC_DIR / "music_manifest.json"
+
+
+def write_music_credits(man):
+    t = ["# Music credits", "",
+         "Nhạc nền tìm qua Openverse (Jamendo / ccMixter…), chỉ CC0 / CC BY. Dán các dòng CC BY vào mô tả YouTube.", "",
+         "## Tracks used", ""]
+    for _, e in sorted(man.items()):
+        t.append(f'- "{e["title"]}" by {e["creator"]} ({e["source_url"]}), licensed under {e["license"].upper()} ({e.get("license_url") or ""})')
+    (MUSIC_DIR / "CREDITS.md").write_text(chr(10).join(t) + chr(10), encoding="utf-8")
+
+
+def music_main(a):
+    """--music "<cụm>" [--list] [--pick N] [--as tên]: liệt kê / tải bản nhạc thứ N vào assets/music/<tên>.mp3
+    (manifest riêng assets/music/music_manifest.json — tách khỏi sfx_manifest.json để tiến trình tải SFX không ghi đè)."""
+    phrase = a.phrases[0]
+    cands = music_candidates(phrase)
+    if a.list or a.pick is None:
+        for i, x in enumerate(cands):
+            print(f"{i:2d} {x['license']:3s} {(x.get('duration') or 0)/1000:6.0f}s  {x.get('title')!r} — {x.get('creator')}  {x.get('foreign_landing_url')}")
+        return
+    x = cands[a.pick]
+    name = slug(a.as_name or x.get("title") or phrase)
+    MUSIC_DIR.mkdir(parents=True, exist_ok=True)
+    tmp = CACHE / f"dl_music_{name}.bin"
+    r = requests.get(x["url"], headers=UA, timeout=300)
+    r.raise_for_status()
+    tmp.write_bytes(r.content)
+    dst = MUSIC_DIR / f"{name}.mp3"
+    convert_music(tmp, dst)
+    man = json.loads(MUSIC_MANIFEST.read_text(encoding="utf-8")) if MUSIC_MANIFEST.exists() else {}
+    man[name] = {"file": f"assets/music/{dst.name}", "title": x.get("title") or "untitled",
+                 "creator": x.get("creator") or "unknown", "license": x["license"].lower(),
+                 "license_url": x.get("license_url"), "source_url": x.get("foreign_landing_url") or x.get("url"),
+                 "duration": probe_dur(dst)}
+    MUSIC_MANIFEST.write_text(json.dumps(man, indent=2, ensure_ascii=False), encoding="utf-8")
+    write_music_credits(man)
+    print(f"-> {dst} {man[name]['duration']}s {x['license']} {x.get('title')!r} by {x.get('creator')}")
 
 
 def cue_names(files):
@@ -193,7 +264,13 @@ def main():
     ap.add_argument("--ambience", action="store_true", help="fetch the built-in ambience bed list")
     ap.add_argument("--amb", action="store_true", help="treat CLI phrases as ambience beds")
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--music", action="store_true", help="CLI phrase = tìm NHẠC (60-300 s); --list xem, --pick N tải")
+    ap.add_argument("--list", action="store_true")
+    ap.add_argument("--pick", type=int)
+    ap.add_argument("--as", dest="as_name")
     a = ap.parse_args()
+    if a.music:
+        return music_main(a)
 
     jobs = [(p, a.amb) for p in a.phrases]
     if a.ambience:

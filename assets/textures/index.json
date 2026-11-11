@@ -1,0 +1,4 @@
+{
+  "_ghi_chu": "Danh sách texture TUỲ CHỌN thật sự có mặt, đường dẫn tương đối so với assets/textures/. engine/r15.js chỉ tải file có trong 'files' (không dò mù -> không 404). Thêm file ảnh rồi thêm tên vào đây là được dùng ngay. Mẫu: characters/hero_outfit.png, characters/hero_outfit_normal.png, faces/hero_face.png, faces/default_face.png",
+  "files": []
+}

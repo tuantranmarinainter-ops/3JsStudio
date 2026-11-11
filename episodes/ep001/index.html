@@ -40,6 +40,8 @@
       <audio id="sfx_nen" class="clip" src="sfx_nen.ogg" data-start="0" data-track-index="3" data-volume="1" data-sfx-layer="nen" data-label="Tiếng nền (gió, sóng, mưa…)"></audio>
       <audio id="sfx_buoc-chan" class="clip" src="sfx_buoc-chan.ogg" data-start="0" data-track-index="4" data-volume="1" data-sfx-layer="buoc-chan" data-label="Bước chân nhà (rầm)"></audio>
       <audio id="sfx_khoanh-khac" class="clip" src="sfx_khoanh-khac.ogg" data-start="0" data-track-index="5" data-volume="1" data-sfx-layer="khoanh-khac" data-label="Tiếng động theo cảnh"></audio>
+      <!-- NHẠC NỀN (tools/music/mix.py, kế hoạch music/plan.json): hạ nhỏ khi có lời (ducking) trong trình phát -->
+      <audio id="music_nhac" class="clip" src="music_nhac.ogg" data-start="0" data-track-index="6" data-volume="1" data-sfx-layer="nhac" data-label="Nhạc nền"></audio>
     </div>
 
     <script>
@@ -107,9 +109,13 @@
       const cap = document.getElementById('cap');
       let lastCap = -1;
       function caption(t) {
-        const L = OPTS.subs ? ((OPTS.lang === 'en' && curVoice()?.capsData) || CAPS[OPTS.lang]) : [];
+        const L = OPTS.subs ? (curVoice()?.capsData || CAPS[OPTS.lang]) : [];   // phụ đề riêng theo giọng (Việt: voices/vi/<id>.caps.json; Giọng Bé = captions.js)
         let i = -1; for (let j = 0; j < L.length; j++) { if (L[j][0] <= t + 1e-4 && t < L[j][1]) { i = j; break; } }
         if (i !== lastCap) { cap.textContent = i >= 0 ? L[i][2] : ''; lastCap = i; }
+        // vị trí theo shot (dữ liệu: shots.js `cap: { y: 520 }` = top của phụ đề, px trong khung 1080×1920) — tránh đè chữ bưu thiếp/tủ lạnh
+        const cy = tl.at(Math.min(t, tl.total - 1e-4)).shot.cap?.y;
+        const top = cy == null ? '' : (document.body.classList.contains('peek') ? cy / 2 : cy) + 'px';
+        if (cap.style.top !== top) cap.style.top = top;
         const k = i >= 0 ? Math.min(1, (t - L[i][0]) / 0.12) : 1;
         cap.style.transform = (document.body.classList.contains('peek') ? 'scale(0.5) ' : '') + `scale(${0.82 + 0.18 * (1 - Math.pow(1 - k, 3))})`;
       }

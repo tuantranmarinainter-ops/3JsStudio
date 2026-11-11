@@ -35,10 +35,11 @@ Cảnh 3D dựng bằng three.js, render ra MP4 bằng **HyperFrames**. Claude �
 | `node tools/export-test.mjs dist/ep001.html --range a:b --matrix "lang=vi,en;subs=1,0;voice=1,0"` | bấm Xuất MP4 tự động mọi tổ hợp + báo cáo |
 | `python tools/voices_build.py ep001 sample|vi|en|index [--only …]` | giọng nhiều giọng, trang nghe thử |
 | `python tools/en/beats.py` / `tools/en/tts_en.py` | lời Anh theo nhịp cắt cảnh |
+| `python tools/storyboard.py <thư mục> epNNN [--sheet] [--force]` | storyboard (khung + mô tả) → tập mới: episode/shots theo loại shot/narration `@at`/phụ đề/tiếng động/index.html + bảng so khung (skill `nhap-kich-ban`, định dạng `docs/kich-ban-vao.md`) |
 
 ## Làm việc theo LỚP (người dùng chốt 2026-11-11)
 Mỗi tập chia lớp độc lập: **canh** (cảnh/model/camera), **hieu-ung-hinh**, **phu-de**, **giong**, **tieng-anh**, và tiếng động
-gồm **nen**, **buoc-chan**, **khoanh-khac** (sau này thêm **nhac**). Bản đồ lớp → file → lệnh: `episodes/<ep>/LAYERS.md`.
+gồm **nen**, **buoc-chan**, **khoanh-khac** + **nhac** (nhạc nền, tự hạ khi có lời; `episodes/<ep>/music/plan.json`). Bản đồ lớp → file → lệnh: `episodes/<ep>/LAYERS.md`.
 Người dùng nói "sửa lớp X" → chỉ sửa file của lớp đó → `node tools/build.mjs <ep> <lớp>` (tự gộp `dist/<ep>.html`).
 Không trộn lẫn sửa nhiều lớp trong một lần nếu người dùng chỉ nhắc một lớp.
 
@@ -61,8 +62,10 @@ CLAUDE.md
 engine/
   r6.js        nhân vật R6 (6 khối, 15 animation, 8 biểu cảm, randomLook)
   stage.js     renderer 1080×1920, camera, ánh sáng, nghe sự kiện hf-seek
-  town.js      dựng thị trấn từ asset Kenney/Polyfork theo seed
-  shots.js     thư viện LOẠI SHOT (camera + bố trí mặc định), dùng lại cho mọi tập
+  town.js      dựng thị trấn từ asset Kenney theo seed, trả địa điểm có tên (square, home, shop, street…)
+  shottypes.js thư viện LOẠI SHOT (camera + bố trí mặc định, liên tục giữa shot), dùng lại cho mọi tập
+  shots.js     đạo diễn: shot (dữ liệu) + t → camera/diễn viên/env/đạo cụ
+  cast.js      diễn viên R15 từ episode.actors (+ crowd theo seed)
   timeline.js  t toàn cục → shot đang chạy + t cục bộ; nối trạng thái nhân vật giữa các shot
   winter.js    trời (Sky.js + IBL), mây khối, tuyết rơi, tuyết phủ material, núi tuyết, nước (xem HANDOFF.md)
   splash.js    nước văng khi vật cắt mặt nước (tự tìm thời điểm từ animation)
@@ -105,7 +108,7 @@ export const SHOTS = [
 ];
 ```
 
-Loại shot trong `engine/shots.js` (thư viện dùng chung, ~10–12 loại, thêm khi thật cần):
+Loại shot trong `engine/shottypes.js` (thư viện dùng chung, ~10–12 loại, thêm khi thật cần):
 establish (toàn cảnh), crowd (đám đông), walkBy (đi ngang), follow (bám theo), closeup (cận mặt),
 reaction (phản ứng), overShoulder (qua vai), insert (cận đạo cụ), chase (rượt), reveal (lộ twist), dialogue (thoại 2 người).
 Mỗi loại tự quyết camera + bố trí mặc định; shot chỉ ghi đè khi cần.

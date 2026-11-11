@@ -1,0 +1,939 @@
+{
+ "nen": {
+  "label": "Tiếng nền (gió, sóng, mưa…)",
+  "gain": 1.0,
+  "src": "sfx_nen.ogg",
+  "count": 43,
+  "missing": [],
+  "items": [
+   [
+    1.7,
+    3.13,
+    "village ambience birds day → forest ambience birds"
+   ],
+   [
+    3.13,
+    4.83,
+    "waves beach shore gentle"
+   ],
+   [
+    6.33,
+    11.0,
+    "village ambience birds day → forest ambience birds"
+   ],
+   [
+    12.87,
+    15.67,
+    "waves beach shore gentle"
+   ],
+   [
+    15.67,
+    16.73,
+    "forest ambience birds"
+   ],
+   [
+    16.73,
+    18.4,
+    "dry wind gust"
+   ],
+   [
+    18.4,
+    19.43,
+    "waves beach shore gentle"
+   ],
+   [
+    19.43,
+    26.33,
+    "village ambience birds day → forest ambience birds"
+   ],
+   [
+    26.33,
+    28.07,
+    "kitchen room tone quiet"
+   ],
+   [
+    28.07,
+    29.57,
+    "antarctic wind ambience"
+   ],
+   [
+    29.57,
+    30.2,
+    "rain heavy storm ambience"
+   ],
+   [
+    30.2,
+    32.7,
+    "antarctic wind ambience"
+   ],
+   [
+    32.7,
+    34.47,
+    "kitchen room tone quiet"
+   ],
+   [
+    34.47,
+    34.97,
+    "village ambience birds day → forest ambience birds"
+   ],
+   [
+    34.97,
+    35.77,
+    "kitchen room tone quiet"
+   ],
+   [
+    35.77,
+    36.53,
+    "village ambience birds day → forest ambience birds"
+   ],
+   [
+    36.53,
+    38.1,
+    "rain heavy storm ambience"
+   ],
+   [
+    38.1,
+    40.0,
+    "kitchen room tone quiet"
+   ],
+   [
+    40.0,
+    42.37,
+    "village ambience birds day → forest ambience birds"
+   ],
+   [
+    42.37,
+    44.73,
+    "kitchen room tone quiet"
+   ],
+   [
+    44.73,
+    50.3,
+    "village ambience birds day → forest ambience birds"
+   ],
+   [
+    50.3,
+    52.5,
+    "forest ambience birds"
+   ],
+   [
+    52.5,
+    58.73,
+    "antarctic wind ambience"
+   ],
+   [
+    58.73,
+    61.63,
+    "ice cracking wind arctic night → cold wind gust"
+   ],
+   [
+    61.63,
+    66.93,
+    "ocean waves open sea"
+   ],
+   [
+    66.93,
+    70.8,
+    "mountain wind howl"
+   ],
+   [
+    70.8,
+    97.27,
+    "kitchen room tone quiet"
+   ],
+   [
+    97.27,
+    98.73,
+    "ice cracking wind arctic night → cold wind gust"
+   ],
+   [
+    98.73,
+    101.17,
+    "antarctic wind ambience"
+   ],
+   [
+    101.17,
+    105.77,
+    "kitchen room tone quiet"
+   ],
+   [
+    105.77,
+    107.07,
+    "rain heavy storm ambience"
+   ],
+   [
+    107.07,
+    107.8,
+    "kitchen room tone quiet"
+   ],
+   [
+    107.8,
+    108.9,
+    "waves beach shore gentle"
+   ],
+   [
+    108.9,
+    112.7,
+    "kitchen room tone quiet"
+   ],
+   [
+    112.7,
+    117.1,
+    "ice cracking wind arctic night → cold wind gust"
+   ],
+   [
+    117.1,
+    118.0,
+    "rain heavy storm ambience"
+   ],
+   [
+    118.0,
+    119.43,
+    "night crickets ambience"
+   ],
+   [
+    119.43,
+    144.33,
+    "waves beach shore gentle"
+   ],
+   [
+    144.33,
+    145.97,
+    "ocean waves open sea"
+   ],
+   [
+    145.97,
+    156.57,
+    "waves beach shore gentle"
+   ],
+   [
+    156.57,
+    157.47,
+    "ice cracking wind arctic night → cold wind gust"
+   ],
+   [
+    157.47,
+    160.47,
+    "village ambience birds day → forest ambience birds"
+   ],
+   [
+    160.47,
+    171.07,
+    "kitchen room tone quiet"
+   ]
+  ]
+ },
+ "buoc-chan": {
+  "label": "Bước chân nhà (rầm)",
+  "gain": 1.0,
+  "src": "sfx_buoc-chan.ogg",
+  "count": 24,
+  "missing": [],
+  "items": [
+   [
+    10.733,
+    "s009",
+    0.37
+   ],
+   [
+    21.7,
+    "s017",
+    0.42
+   ],
+   [
+    22.233,
+    "s017",
+    0.63
+   ],
+   [
+    46.133,
+    "s040",
+    0.5
+   ],
+   [
+    46.833,
+    "s040",
+    0.54
+   ],
+   [
+    47.533,
+    "s040",
+    0.43
+   ],
+   [
+    48.433,
+    "s041",
+    0.55
+   ],
+   [
+    48.933,
+    "s041",
+    0.22
+   ],
+   [
+    49.6,
+    "s042",
+    0.37
+   ],
+   [
+    50.033,
+    "s042",
+    0.4
+   ],
+   [
+    51.533,
+    "s044",
+    0.42
+   ],
+   [
+    52.067,
+    "s044",
+    0.56
+   ],
+   [
+    59.367,
+    "s050",
+    0.55
+   ],
+   [
+    60,
+    "s050",
+    0.41
+   ],
+   [
+    60.733,
+    "s051",
+    0.43
+   ],
+   [
+    61.3,
+    "s051",
+    0.8
+   ],
+   [
+    99.967,
+    "s081",
+    0.55
+   ],
+   [
+    115.3,
+    "s093",
+    0.39
+   ],
+   [
+    116.4,
+    "s094",
+    0.43
+   ],
+   [
+    157.1,
+    "s135",
+    0.67
+   ],
+   [
+    158.833,
+    "s137",
+    0.5
+   ],
+   [
+    159.333,
+    "s137",
+    0.86
+   ],
+   [
+    159.833,
+    "s137",
+    0.47
+   ],
+   [
+    160.333,
+    "s137",
+    0.8
+   ]
+  ]
+ },
+ "khoanh-khac": {
+  "label": "Tiếng động theo cảnh",
+  "gain": 1.0,
+  "src": "sfx_khoanh-khac.ogg",
+  "count": 115,
+  "missing": [],
+  "items": [
+   [
+    0.15,
+    "wooden house creak",
+    "s001"
+   ],
+   [
+    1.9,
+    "deep rumble earth",
+    "s002"
+   ],
+   [
+    2.6,
+    "dirt debris falling",
+    "s002"
+   ],
+   [
+    3.4,
+    "seagull call",
+    "s003"
+   ],
+   [
+    6.85,
+    "wood creak long",
+    "s006"
+   ],
+   [
+    7,
+    "wood crack snap",
+    "s006"
+   ],
+   [
+    7.97,
+    "earth impact thump",
+    "s006"
+   ],
+   [
+    8.65,
+    "low rumble rising",
+    "s007"
+   ],
+   [
+    8.9,
+    "wooden house creak",
+    "s007"
+   ],
+   [
+    9.55,
+    "house rattle earthquake",
+    "s008"
+   ],
+   [
+    10,
+    "rocks dirt falling debris",
+    "s008"
+   ],
+   [
+    11.6,
+    "soft snoring",
+    "s010"
+   ],
+   [
+    14.95,
+    "seagull call",
+    "s012"
+   ],
+   [
+    15.9,
+    "tropical jungle birds",
+    "s013"
+   ],
+   [
+    17.35,
+    "dry wind gust",
+    "s014"
+   ],
+   [
+    18.45,
+    "kids cheer happy",
+    "s015"
+   ],
+   [
+    19.5,
+    "whoosh soft",
+    "s016"
+   ],
+   [
+    29.65,
+    "ship horn distant",
+    "s023"
+   ],
+   [
+    30.4,
+    "snow footsteps crunch",
+    "s024"
+   ],
+   [
+    32,
+    "paper rustle card",
+    "s025"
+   ],
+   [
+    36.55,
+    "ship horn distant",
+    "s031"
+   ],
+   [
+    37.05,
+    "thunder crack close",
+    "s032"
+   ],
+   [
+    37.65,
+    "big wave crash",
+    "s033"
+   ],
+   [
+    38.5,
+    "slow footsteps wooden floor",
+    "s034"
+   ],
+   [
+    41.1,
+    "wooden house creak",
+    "s036"
+   ],
+   [
+    42.15,
+    "earth impact thump",
+    "s036"
+   ],
+   [
+    42.55,
+    "furniture creak tilt → chair creak",
+    "s037"
+   ],
+   [
+    44.8,
+    "wooden house creak",
+    "s039"
+   ],
+   [
+    45.5,
+    "swish fast soft",
+    "s040"
+   ],
+   [
+    50.4,
+    "owl hoot night",
+    "s043"
+   ],
+   [
+    53.38,
+    "wooden door creak open",
+    "s045"
+   ],
+   [
+    53.4,
+    "cold wind gust",
+    "s045"
+   ],
+   [
+    54.2,
+    "teeth chattering shiver",
+    "s046"
+   ],
+   [
+    56.1,
+    "penguin squawk",
+    "s047"
+   ],
+   [
+    58.3,
+    "female gasp surprise",
+    "s049"
+   ],
+   [
+    58.8,
+    "low rumble rising",
+    "s050"
+   ],
+   [
+    60.9,
+    "cold wind gust",
+    "s051"
+   ],
+   [
+    62.15,
+    "wooden door creak",
+    "s052"
+   ],
+   [
+    62.2,
+    "gentle water slosh → water slosh",
+    "s052"
+   ],
+   [
+    63.3,
+    "steam hiss burst",
+    "s054"
+   ],
+   [
+    63.9,
+    "whale call underwater",
+    "s054"
+   ],
+   [
+    64.4,
+    "water swirl swim",
+    "s055"
+   ],
+   [
+    65.4,
+    "big water splash",
+    "s056"
+   ],
+   [
+    65.8,
+    "water streaming down",
+    "s056"
+   ],
+   [
+    66.3,
+    "large water splash",
+    "s056"
+   ],
+   [
+    66.95,
+    "short whoosh transition",
+    "s057"
+   ],
+   [
+    67.4,
+    "mountain wind whistle",
+    "s057"
+   ],
+   [
+    70.85,
+    "female gasp surprise",
+    "s060"
+   ],
+   [
+    73.6,
+    "woman sigh",
+    "s062"
+   ],
+   [
+    74.75,
+    "kettle tap water",
+    "s063"
+   ],
+   [
+    75.4,
+    "glass clink table",
+    "s064"
+   ],
+   [
+    75.9,
+    "short suspense sting",
+    "s065"
+   ],
+   [
+    77.5,
+    "paper postcard flip → paper flip",
+    "s066"
+   ],
+   [
+    78.4,
+    "penguin squawk",
+    "s066"
+   ],
+   [
+    80.4,
+    "paper postcard flip → paper flip",
+    "s067"
+   ],
+   [
+    81.6,
+    "whale call underwater",
+    "s068"
+   ],
+   [
+    84.45,
+    "paper postcard flip → paper flip",
+    "s069"
+   ],
+   [
+    88.95,
+    "heartbeat thump",
+    "s071"
+   ],
+   [
+    90.05,
+    "heartbeat thump",
+    "s072"
+   ],
+   [
+    90.6,
+    "kitchen footsteps quick → footsteps floor",
+    "s073"
+   ],
+   [
+    92.8,
+    "short whoosh transition",
+    "s076"
+   ],
+   [
+    94.7,
+    "female gasp surprise",
+    "s078"
+   ],
+   [
+    97.3,
+    "wooden house creak",
+    "s080"
+   ],
+   [
+    98.8,
+    "snow wind gust → cold wind gust",
+    "s081"
+   ],
+   [
+    103.35,
+    "magnet click fridge → magnet click",
+    "s084"
+   ],
+   [
+    103.55,
+    "paper postcard slide → paper slide",
+    "s084"
+   ],
+   [
+    105.85,
+    "ship creak storm",
+    "s086"
+   ],
+   [
+    106.5,
+    "water wave crash",
+    "s086"
+   ],
+   [
+    106.6,
+    "thunder crack close",
+    "s086"
+   ],
+   [
+    107.2,
+    "paper postcard flip → paper flip",
+    "s087"
+   ],
+   [
+    109.4,
+    "paper postcard flip → paper flip",
+    "s090"
+   ],
+   [
+    112.75,
+    "wooden house creak",
+    "s092"
+   ],
+   [
+    113.6,
+    "low rumble stand up → deep rumble earth",
+    "s092"
+   ],
+   [
+    116.5,
+    "ice crack",
+    "s094"
+   ],
+   [
+    117.1,
+    "thunder roll low",
+    "s095"
+   ],
+   [
+    117.7,
+    "water wave crash",
+    "s096"
+   ],
+   [
+    118.05,
+    "short whoosh transition",
+    "s098"
+   ],
+   [
+    119.95,
+    "wooden door creak",
+    "s100"
+   ],
+   [
+    120.9,
+    "seagull call",
+    "s101"
+   ],
+   [
+    122.3,
+    "palm leaves rustle",
+    "s103"
+   ],
+   [
+    123,
+    "wave crash rocks",
+    "s104"
+   ],
+   [
+    124.3,
+    "seagull call",
+    "s105"
+   ],
+   [
+    125.6,
+    "soft whoosh",
+    "s106"
+   ],
+   [
+    128.3,
+    "cloth rustle",
+    "s107"
+   ],
+   [
+    128.8,
+    "paper shuffle cards",
+    "s108"
+   ],
+   [
+    130.3,
+    "wind gust light",
+    "s110"
+   ],
+   [
+    131.3,
+    "paper rustle",
+    "s111"
+   ],
+   [
+    133.3,
+    "wooden house creak",
+    "s113"
+   ],
+   [
+    134.3,
+    "wooden house creak",
+    "s114"
+   ],
+   [
+    136.9,
+    "girl gasp surprise",
+    "s117"
+   ],
+   [
+    137.2,
+    "paper cards falling",
+    "s117"
+   ],
+   [
+    138.12,
+    "girl gasp surprise",
+    "s118"
+   ],
+   [
+    138.45,
+    "running footsteps wood",
+    "s119"
+   ],
+   [
+    139.6,
+    "running footsteps wood",
+    "s121"
+   ],
+   [
+    140.75,
+    "cloth hug rustle → cloth rustle",
+    "s122"
+   ],
+   [
+    140.8,
+    "body thud soft",
+    "s122"
+   ],
+   [
+    143.05,
+    "body fall",
+    "s122"
+   ],
+   [
+    143.15,
+    "sand scatter → sand pour",
+    "s123"
+   ],
+   [
+    143.6,
+    "family laughter happy",
+    "s123"
+   ],
+   [
+    144.3,
+    "soft whoosh",
+    "s124"
+   ],
+   [
+    145.3,
+    "ship wreck crash",
+    "s125"
+   ],
+   [
+    146,
+    "seagull call",
+    "s126"
+   ],
+   [
+    148.1,
+    "pencil writing paper",
+    "s128"
+   ],
+   [
+    150.95,
+    "wooden house creak",
+    "s130"
+   ],
+   [
+    153.2,
+    "wooden house creak",
+    "s132"
+   ],
+   [
+    154.1,
+    "wood joint squeak → wood squeak",
+    "s132"
+   ],
+   [
+    154.9,
+    "giant stomp impact",
+    "s133"
+   ],
+   [
+    155.3,
+    "footsteps wooden porch",
+    "s134"
+   ],
+   [
+    156.6,
+    "soft whoosh",
+    "s135"
+   ],
+   [
+    158.4,
+    "wooden house creak",
+    "s137"
+   ],
+   [
+    160.5,
+    "soft whoosh",
+    "s138"
+   ],
+   [
+    162.9,
+    "paper cards flutter → paper cards falling",
+    "s139"
+   ],
+   [
+    163.3,
+    "magnet click fridge → magnet click",
+    "s138"
+   ],
+   [
+    164.9,
+    "magnet click fridge → magnet click",
+    "s141"
+   ],
+   [
+    169.9,
+    "soft magical chime",
+    "s145"
+   ]
+  ]
+ }
+}

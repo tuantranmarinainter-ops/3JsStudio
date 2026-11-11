@@ -61,6 +61,9 @@ async function init() {
     <div class="row" id="xvidrow"><span class="lbl">Giọng</span><select id="xvid"></select></div>
     <div class="row"><label class="chk"><input id="xsubs" type="checkbox" checked> Phụ đề</label><label class="chk"><input id="xvoice" type="checkbox" checked> Giọng đọc</label></div>
     <div id="xsfxbox" style="display:none"><div class="lbl" style="width:auto;margin:2px 0 6px">Tiếng động</div><div id="xsfx"></div></div>
+    <div id="xaudopt" class="row" style="flex-direction:column;align-items:stretch;gap:6px">
+      <label class="chk" id="xduckrow" style="display:none"><input id="xduck" type="checkbox" checked> Giảm nhạc khi có lời</label>
+      <label class="chk"><input id="xloud" type="checkbox" checked> Chuẩn âm lượng YouTube (−14 LUFS)</label></div>
     <div id="xfxbox" style="display:none"><div class="lbl" style="width:auto;margin:2px 0 6px">Hiệu ứng hình</div><div id="xfx" class="fxgrid"></div></div>
     <div class="row"><button id="xplay">▶ Xem</button><input id="xseek" type="range" min="0" max="${DUR}" step="0.001" value="0"><span id="xtime">0:00.0</span></div>
     <hr style="border:0;border-top:1px solid #262c3b;width:100%;margin:4px 0">
@@ -136,21 +139,39 @@ async function init() {
   // ---- xem trước (thời gian thực theo giọng đọc; chỉ để xem, không dùng khi xuất) ----
   let playing = false, raf = 0, t0 = 0, wall0 = 0;
   const show = (t) => { window.renderAt(t); $('xseek').value = t; $('xtime').textContent = fmt(t, true); };
+  // giảm nhạc khi có lời (xem trước): đường bao giọng đọc tính 1 lần từ chính file giọng đang chọn (xem duckEnvelope)
+  const musicLayers = () => sfxLayers.filter((L) => L.id === 'nhac');
+  const envCache = new Map();   // src giọng → đường bao | Promise
+  function voiceEnvelope() {
+    const v = audioEl; if (!v || !$('xduck').checked) return null;
+    const src = v.currentSrc || v.src, c = envCache.get(src);
+    if (c && !c.then) return c;
+    if (!c) envCache.set(src, loadAudio(src).then((b) => { const e = b ? duckEnvelope(b) : null; envCache.set(src, e); return e; }).catch(() => { envCache.set(src, null); return null; }));
+    return null;   // đang tải → tạm chưa giảm
+  }
+  const nowT = () => (audioEl && !audioEl.paused ? audioEl.currentTime : t0 + (performance.now() - wall0) / 1000);
+  function applyMusicVolume(t) {
+    const ml = musicLayers(); if (!ml.length) return;
+    const env = voiceEnvelope(), d = env ? duckAt(env, t) : 1;
+    for (const L of ml) if (L.on) L.el.volume = Math.max(0, Math.min(1, L.gain * d));
+  }
   function loop() {
-    const t = audioEl && !audioEl.paused ? audioEl.currentTime : t0 + (performance.now() - wall0) / 1000;
+    const t = nowT();
     if (t >= DUR) { pause(); show(DUR - 1e-3); return; }
+    applyMusicVolume(t);
     show(t); raf = requestAnimationFrame(loop);
   }
   // LỚP TIẾNG ĐỘNG: mỗi <audio data-sfx-layer> = 1 lớp (nền, bước chân, khoảnh khắc…) — bật/tắt + âm lượng riêng
   const sfxLayers = [...document.querySelectorAll('audio[data-sfx-layer]')].map((el) => ({ el, id: el.dataset.sfxLayer, label: el.dataset.label || el.dataset.sfxLayer, on: true, gain: 1 }));
   if (sfxLayers.length) {
     $('xsfxbox').style.display = '';
+    if (sfxLayers.some((L) => L.id === 'nhac')) $('xduckrow').style.display = '';
     $('xsfx').innerHTML = sfxLayers.map((L, i) => `<div class="sfxrow"><label class="chk"><input type="checkbox" data-sl="${i}" checked> ${escapeHtml(L.label)}</label>` +
       `<input type="range" min="0" max="150" step="5" value="100" data-sv="${i}"><span class="pct" id="xsp${i}">100%</span></div>`).join('');
     $('xsfx').oninput = (e) => {
       const i = e.target.dataset.sv; if (i === undefined) return;
       sfxLayers[i].gain = e.target.value / 100; $('xsp' + i).textContent = e.target.value + '%';
-      sfxLayers[i].el.volume = Math.min(1, sfxLayers[i].gain);
+      sfxLayers[i].el.volume = Math.min(1, sfxLayers[i].gain); if (playing) applyMusicVolume(nowT());
     };
     $('xsfx').onchange = (e) => {
       const i = e.target.dataset.sl; if (i === undefined) return;
@@ -162,10 +183,12 @@ async function init() {
     t0 = +$('xseek').value; if (t0 >= DUR - 0.05) t0 = 0; wall0 = performance.now();
     if (audioEl) { audioEl.currentTime = t0; audioEl.play().catch(() => {}); }
     for (const L of sfxLayers) if (L.on) { L.el.volume = Math.min(1, L.gain); L.el.currentTime = t0; L.el.play().catch(() => {}); }
+    voiceEnvelope();   // bắt đầu tính đường bao giọng (nếu chưa có)
     raf = requestAnimationFrame(loop);
   }
   function pause() { playing = false; $('xplay').textContent = '▶ Xem'; cancelAnimationFrame(raf); if (audioEl) audioEl.pause(); for (const L of sfxLayers) L.el.pause(); }
   $('xplay').onclick = () => (playing ? pause() : play());
+  $('xduck').onchange = () => { if (playing) applyMusicVolume(nowT()); };
   $('xseek').oninput = () => { if (playing) pause(); show(+$('xseek').value); };
   addEventListener('keydown', (e) => { if (e.code === 'Space' && e.target.tagName !== 'INPUT') { e.preventDefault(); playing ? pause() : play(); } });
 
@@ -179,11 +202,11 @@ async function init() {
     const ts = Math.max(0, +$('xs').value || 0), te = Math.min(DUR, +$('xe').value || DUR);
     const f0 = Math.round(ts * FPS), f1 = Math.round(te * FPS), N = f1 - f0;
     if (N <= 0) { $('xstat').textContent = 'Đoạn rỗng.'; return; }
-    const O = opts(), tag = `${O.lang === 'en' ? '_EN' : '_VI'}${O.voice && O.vid ? '_' + O.vid[O.lang] : ''}${O.subs ? '' : '_nosub'}${O.voice ? '' : '_novoice'}${sfxLayers.length && !sfxLayers.some((L) => L.on) ? '_nosfx' : ''}`;
+    const O = opts(), tag = `${O.lang === 'en' ? '_EN' : '_VI'}${O.voice && O.vid ? '_' + O.vid[O.lang] : ''}${O.subs ? '' : '_nosub'}${O.voice ? '' : '_novoice'}${!sfxLayers.length || sfxLayers.every((L) => L.on) ? '' : sfxLayers.some((L) => L.on) ? '_tat-' + sfxLayers.filter((L) => !L.on).map((L) => L.id).join('-') : '_nosfx'}`;
     const name = `${title}${tag}_${P.w}x${P.h}${ts > 0 || te < DUR ? `_${ts}-${te}s` : ''}.mp4`.replace(/[\\/:*?"<>|]/g, '_');
     busy = true; cancel = false;
     $('xgo').disabled = true; $('xplay').disabled = true; $('xstop').style.display = '';
-    for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice', 'xres']) $(id).disabled = true;
+    for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice', 'xres', 'xduck', 'xloud']) $(id).disabled = true;
     for (const el of document.querySelectorAll('#xsfx input')) el.disabled = true;
     for (const el of document.querySelectorAll('#xfx input')) el.disabled = true;
     const setStat = (s) => { $('xstat').textContent = s; };
@@ -195,9 +218,16 @@ async function init() {
       if (!vcfg) throw new Error('Máy/trình duyệt không mã hoá được H.264/VP9 ở độ phân giải này.');
       const vEl = voiceEl();
       const vBuf = vEl ? await loadAudio(vEl.currentSrc || vEl.src) : null;
-      const parts = vBuf ? [[vBuf, 1]] : [];
-      for (const L of sfxLayers) if (L.on && L.gain > 0) { const b = await loadAudio(L.el.currentSrc || L.el.src); if (b) parts.push([b, L.gain]); }
-      const audio = mixBuffers(parts);   // giọng + các lớp tiếng động (theo âm lượng từng lớp) → 1 track
+      const parts = vBuf ? [[vBuf, 1, null]] : [];
+      const duckEnv = vBuf && $('xduck').checked ? duckEnvelope(vBuf) : null;   // chỉ khi giọng đang bật
+      for (const L of sfxLayers) if (L.on && L.gain > 0) { const b = await loadAudio(L.el.currentSrc || L.el.src); if (b) parts.push([b, L.gain, L.id === 'nhac' ? duckEnv : null]); }
+      const audio = mixBuffers(parts);   // giọng + các lớp tiếng động (theo âm lượng từng lớp, nhạc hạ nhỏ khi có lời) → 1 track
+      let loudInfo = '';
+      if (audio) {
+        edgeFade(audio, ts, te);   // 10 ms vào/ra ở hai đầu đoạn xuất: hết tiếng "bụp" khi cắt giữa tiếng, encoder AAC không bị vấp ở khung cuối
+        if ($('xloud').checked) loudInfo = normalizeLoudness(audio, ts, te).msg;
+        else clampMix(audio);
+      }
       const acfg = audio ? await pickAudioConfig(audio) : null;
 
       // 2. nơi lưu: stream thẳng ra đĩa nếu được (đỡ RAM), không thì giữ trong RAM rồi tải xuống
@@ -277,7 +307,7 @@ async function init() {
       if (stream) { await stream.close(); stream = null; }
       else download(new Blob([target.buffer], { type: 'video/mp4' }), name);
       const el = (performance.now() - tStart) / 1000;
-      setStat(`Xong: ${name}\n${N} frame trong ${fmtS(el)} · video ${vcfg.mux.toUpperCase()}${acfg ? ' + ' + acfg.mux.toUpperCase() : ''}`);
+      setStat(`Xong: ${name}\n${N} frame trong ${fmtS(el)} · video ${vcfg.mux.toUpperCase()}${acfg ? ' + ' + acfg.mux.toUpperCase() : ''}${loudInfo ? '\n' + loudInfo : ''}`);
       bar.style.width = '100%';
     } catch (e) {
       console.error(e);
@@ -285,7 +315,7 @@ async function init() {
       if (stream) { try { await stream.abort(); } catch {} }
     } finally {
       busy = false; $('xgo').disabled = false; $('xplay').disabled = false; $('xstop').style.display = 'none';
-      for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice', 'xres']) $(id).disabled = false;
+      for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice', 'xres', 'xduck', 'xloud']) $(id).disabled = false;
       for (const el of document.querySelectorAll('#xsfx input')) el.disabled = false;
       for (const el of document.querySelectorAll('#xfx input')) el.disabled = false;
       show(+$('xseek').value);
@@ -350,18 +380,140 @@ async function pickAudioConfig(buf) {
   return null;
 }
 // cộng nhiều AudioBuffer (cùng 48 kHz) thành 1 nguồn {sampleRate, numberOfChannels, length, getChannelData}
-function mixBuffers(parts) {   // parts = [[AudioBuffer, gain], …]
+// parts = [[AudioBuffer, gain, đường bao|null], …] — đường bao (duckEnvelope) nhân thêm vào phần đó (nhạc nền hạ khi có lời).
+// KHÔNG chặn đỉnh ở đây: gọi normalizeLoudness (chuẩn −14 LUFS + giới hạn đỉnh) hoặc clampMix.
+function mixBuffers(parts) {
   if (!parts.length) return null;
-  if (parts.length === 1 && parts[0][1] === 1) return parts[0][0];
   const bufs = parts.map((p) => p[0]);
   const sr = bufs[0].sampleRate, ch = Math.max(...bufs.map((b) => b.numberOfChannels)), len = Math.max(...bufs.map((b) => b.length));
   const data = Array.from({ length: ch }, () => new Float32Array(len));
-  for (const [b, g] of parts) for (let c = 0; c < ch; c++) {
+  for (const [b, g, env] of parts) for (let c = 0; c < ch; c++) {
     const src = b.getChannelData(Math.min(c, b.numberOfChannels - 1)), dst = data[c];
-    for (let i = 0; i < src.length; i++) dst[i] += src[i] * g;
+    if (!env) { for (let i = 0; i < src.length; i++) dst[i] += src[i] * g; continue; }
+    const hop = env.hop, gs = env.g, last = gs.length - 1;
+    for (let i = 0; i < src.length; i++) {
+      const k = i / hop, k0 = k | 0, f = k - k0, a0 = gs[k0 > last ? last : k0], a1 = gs[k0 + 1 > last ? last : k0 + 1];
+      dst[i] += src[i] * g * (a0 + (a1 - a0) * f);
+    }
   }
-  for (const d of data) for (let i = 0; i < d.length; i++) { const x = d[i]; d[i] = x > 1 ? 1 : x < -1 ? -1 : x; }
   return { sampleRate: sr, numberOfChannels: ch, length: len, getChannelData: (c) => data[c] };
+}
+function edgeFade(m, ts, te, ms = 10) {
+  const sr = m.sampleRate, a = Math.round(ts * sr), b = Math.min(m.length, Math.round(te * sr)), n = Math.round(sr * ms / 1000);
+  for (let c = 0; c < m.numberOfChannels; c++) {
+    const d = m.getChannelData(c);
+    for (let i = 0; i < n; i++) { const w = i / n; if (a + i < d.length) d[a + i] *= w; if (b - 1 - i >= 0) d[b - 1 - i] *= w; }
+  }
+}
+function clampMix(m) {
+  for (let c = 0; c < m.numberOfChannels; c++) { const d = m.getChannelData(c); for (let i = 0; i < d.length; i++) { const x = d[i]; d[i] = x > 1 ? 1 : x < -1 ? -1 : x; } }
+}
+
+// ---- GIẢM NHẠC KHI CÓ LỜI: đường bao tăng ích từ chính file giọng đọc (đúng với mọi giọng/ngôn ngữ) ----
+// RMS 50 ms (bước 5 ms) > −50 dBFS = "đang nói"; nhạc hạ về DUCK_GAIN trong ~60 ms, giữ 200 ms sau câu, thả lại trong ~350 ms.
+const DUCK_GAIN = 0.35;
+function duckEnvelope(buf, opt = {}) {
+  const sr = buf.sampleRate, hop = Math.round(sr * 0.005), n = Math.ceil(buf.length / hop);
+  const thr = opt.thr ?? 0.0032, gmin = opt.gain ?? DUCK_GAIN, attack = opt.attack ?? 0.06, release = opt.release ?? 0.35, hold = opt.hold ?? 0.2;
+  const e = new Float64Array(n), chs = [];
+  for (let c = 0; c < buf.numberOfChannels; c++) chs.push(buf.getChannelData(c));
+  for (let k = 0; k < n; k++) {
+    let s = 0; const a = k * hop, b = Math.min(buf.length, a + hop);
+    for (const d of chs) for (let i = a; i < b; i++) s += d[i] * d[i];
+    e[k] = s / (Math.max(1, b - a) * chs.length);
+  }
+  const W = 10, g = new Float32Array(n), dt = 0.005, ca = 1 - Math.exp(-dt / attack), cr = 1 - Math.exp(-dt / release);
+  let acc = 0, cur = 1, holdLeft = 0;
+  for (let k = 0; k < n; k++) {
+    acc += e[k]; if (k >= W) acc -= e[k - W];
+    const active = Math.sqrt(acc / Math.min(W, k + 1)) > thr;
+    holdLeft = active ? hold : holdLeft - dt;
+    const target = active || holdLeft > 0 ? gmin : 1;
+    cur += (target - cur) * (target < cur ? ca : cr);
+    g[k] = cur;
+  }
+  return { hop, g, rate: sr / hop };
+}
+function duckAt(env, t) {
+  const g = env.g, l = g.length - 1, k = t * env.rate, k0 = Math.floor(k);
+  if (k0 < 0) return g[0]; if (k0 >= l) return g[l];
+  return g[k0] + (g[k0 + 1] - g[k0]) * (k - k0);
+}
+
+// ---- CHUẨN ÂM LƯỢNG ≈ −14 LUFS (YouTube), BS.1770: K-weighting, khối 400 ms bước 100 ms, cổng −70 LUFS & −10 LU ----
+function kWeighted(x, sr) {   // hệ số chuẩn cho 48 kHz (mọi buffer giải mã ở 48 kHz); tần số khác → tính lại theo công thức
+  let sh, hp;
+  if (Math.abs(sr - 48000) < 1) { sh = [1.53512485958697, -2.69169618940638, 1.19839281085285, -1.69065929318241, 0.73248077421585]; hp = [1, -2, 1, -1.99004745483398, 0.99007225036621]; }
+  else {
+    const f0 = 1681.974450955533, G = 3.999843853973347, Q = 0.7071752369554196, K = Math.tan(Math.PI * f0 / sr), Vh = Math.pow(10, G / 20), Vb = Math.pow(Vh, 0.4996667741545416);
+    let a0 = 1 + K / Q + K * K; sh = [(Vh + Vb * K / Q + K * K) / a0, 2 * (K * K - Vh) / a0, (Vh - Vb * K / Q + K * K) / a0, 2 * (K * K - 1) / a0, (1 - K / Q + K * K) / a0];
+    const f1 = 38.13547087602444, Q1 = 0.5003270373238773, K1 = Math.tan(Math.PI * f1 / sr); a0 = 1 + K1 / Q1 + K1 * K1;
+    hp = [1, -2, 1, 2 * (K1 * K1 - 1) / a0, (1 - K1 / Q1 + K1 * K1) / a0];
+  }
+  const y = new Float32Array(x.length);
+  let x1 = 0, x2 = 0, y1 = 0, y2 = 0, z1 = 0, z2 = 0, w1 = 0, w2 = 0;
+  for (let i = 0; i < x.length; i++) {
+    const xi = x[i];
+    const s = sh[0] * xi + sh[1] * x1 + sh[2] * x2 - sh[3] * y1 - sh[4] * y2; x2 = x1; x1 = xi; y2 = y1; y1 = s;
+    const h = hp[0] * s + hp[1] * z1 + hp[2] * z2 - hp[3] * w1 - hp[4] * w2; z2 = z1; z1 = s; w2 = w1; w1 = h;
+    y[i] = h;
+  }
+  return y;
+}
+function integratedLoudness(chans, sr, a, b) {   // chans: Float32Array[] → LUFS tích phân của đoạn [a,b) mẫu, null nếu im lặng
+  const blk = Math.round(sr * 0.4), step = Math.round(sr * 0.1), pre = [];
+  for (const x of chans) {
+    const k = kWeighted(x.subarray(a, b), sr), cum = new Float64Array(k.length + 1);
+    for (let i = 0; i < k.length; i++) cum[i + 1] = cum[i] + k[i] * k[i];
+    pre.push(cum);
+  }
+  const ms = [];
+  for (let s = 0; s + blk <= b - a; s += step) { let e = 0; for (const cum of pre) e += (cum[s + blk] - cum[s]) / blk; ms.push(e); }
+  const lk = (e) => -0.691 + 10 * Math.log10(e);
+  const abs = ms.filter((e) => e > 0 && lk(e) > -70); if (!abs.length) return null;
+  const rel = lk(abs.reduce((p, e) => p + e, 0) / abs.length) - 10;
+  const gated = abs.filter((e) => lk(e) > rel); if (!gated.length) return null;
+  return lk(gated.reduce((p, e) => p + e, 0) / gated.length);
+}
+// giới hạn đỉnh nhìn trước 5 ms: min trượt (nhìn trước L mẫu) rồi trung bình trượt L mẫu ⇒ độ giảm tại i luôn ≤ độ giảm cần tại i
+function limitPeaks(chans, sr, ceil) {
+  const n = chans[0].length, L = Math.max(2, Math.round(sr * 0.005)), need = new Float32Array(n);
+  let any = false;
+  for (let i = 0; i < n; i++) { let m = 0; for (const d of chans) { const v = Math.abs(d[i]); if (v > m) m = v; } if (m > ceil) { need[i] = ceil / m; any = true; } else need[i] = 1; }
+  if (!any) return;
+  const mn = new Float32Array(n), dq = new Int32Array(n); let h = 0, t = 0;
+  for (let j = n - 1; j >= 0; j--) {
+    while (t > h && need[dq[t - 1]] >= need[j]) t--;
+    dq[t++] = j;
+    while (dq[h] > j + L - 1) h++;
+    mn[j] = need[dq[h]];
+  }
+  let acc = 0;
+  for (let i = 0; i < n; i++) {
+    acc += mn[i]; if (i >= L) acc -= mn[i - L];
+    const g = Math.min(need[i], (acc + Math.max(0, L - 1 - i)) / L);
+    if (g < 1) for (const d of chans) d[i] *= g;
+  }
+}
+function normalizeLoudness(mix, ts, te, target = -14, ceilDb = -2.5) {
+  const sr = mix.sampleRate, chans = [];
+  for (let c = 0; c < mix.numberOfChannels; c++) chans.push(mix.getChannelData(c));
+  const a = Math.max(0, Math.min(mix.length - 1, Math.round(ts * sr))), b = Math.max(a + 1, Math.min(mix.length, Math.round(te * sr)));
+  const l0 = integratedLoudness(chans, sr, a, b), ceil = Math.pow(10, ceilDb / 20);
+  if (l0 === null) { clampMix(mix); return { msg: 'Âm lượng: đoạn quá yên lặng, không chuẩn hoá.' }; }
+  let total = 0, lAfter = l0;
+  const MAX_BOOST = 6;   // không khuếch quá +6 dB tổng (vd chỉ bật 1 lớp tiếng thưa → tránh đẩy tiếng nền/bước chân lên quá to)
+  for (let it = 0; it < 3; it++) {   // chỉnh gain → giới hạn đỉnh → đo lại (giới hạn có thể làm nhỏ đi một chút)
+    const gdb = Math.min(target - lAfter, MAX_BOOST - total);
+    if (it > 0 && Math.abs(gdb) < 0.2) break;
+    const g = Math.pow(10, gdb / 20); total += gdb;
+    for (const d of chans) for (let i = 0; i < d.length; i++) d[i] *= g;
+    limitPeaks(chans, sr, ceil);
+    lAfter = integratedLoudness(chans, sr, a, b);
+    if (lAfter === null) break;
+  }
+  clampMix(mix);
+  return { msg: `Âm lượng: ${l0.toFixed(1)} → ${lAfter === null ? '?' : lAfter.toFixed(1)} LUFS (${total >= 0 ? '+' : ''}${total.toFixed(1)} dB)` };
 }
 async function loadAudio(src) {
   try {

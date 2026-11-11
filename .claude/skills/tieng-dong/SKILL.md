@@ -12,7 +12,7 @@ Dữ liệu ở `episodes/<ep>/sfx/`, track ra `episodes/<ep>/sfx_<lớp>.ogg`, 
 |---|---|---|
 | `nen` | `sfx/layers.json` → `nen.map` (bối cảnh → cụm từ), `night`, `boost`, `vol`, `fade` | bối cảnh lấy từ `env`/`light` trong `shots.js` |
 | `buoc-chan` | `sfx/layers.json` → `buoc-chan` (`sound`, `near`, `offscreen`, `refDist`, `shift`) | mốc `sfx/steps.json` do `tools/sfx/steps.mjs` tính từ chuyển động chân (không sửa tay) |
-| `khoanh-khac` | `sfx/cues_*.json`: `[{t, name, vol, dur?, shot, why}]` | `t` giây tuyệt đối, đặt đúng khung hình; `name` = cụm tiếng Anh CỤ THỂ 2–4 chữ ("wooden door creak", "big water splash"), không mơ hồ |
+| `khoanh-khac` | `sfx/cues_*.json`: `[{t, name, vol, dur?, offset?, align?, shot, why}]` (`align: "peak"` cho tiếng va chạm: đỉnh rơi đúng t; `offset` = bỏ giây đầu file) | `t` giây tuyệt đối, đặt đúng khung hình; `name` = cụm tiếng Anh CỤ THỂ 2–4 chữ ("wooden door creak", "big water splash"), không mơ hồ |
 Dựng lại: `node tools/build.mjs ep001 nen|buoc-chan|khoanh-khac` (tự tải tiếng thiếu → trộn → gộp HTML). Cả 3: `tieng-dong`.
 
 ## Quy tắc âm thanh
