@@ -1,5 +1,415 @@
 [
  {
+  "id": "polyfork/penguin-base",
+  "src": "assets/polyfork/penguin-base.glb",
+  "source": "polyfork.dev/asset/penguin-base",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Penguin by Polyfork (https://polyfork.dev/asset/penguin-base), CC BY 4.0",
+  "title": "Penguin",
+  "size_m": {
+   "x": 0.54,
+   "y": 0.72,
+   "z": 0.55
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/old-lighthouse-48ca6c",
+  "src": "assets/polyfork/old-lighthouse-48ca6c.glb",
+  "source": "polyfork.dev/asset/old-lighthouse-48ca6c",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Old Lighthouse by Polyfork (https://polyfork.dev/asset/old-lighthouse-48ca6c), CC BY 4.0",
+  "title": "Old Lighthouse",
+  "size_m": {
+   "x": 8.85,
+   "y": 13.88,
+   "z": 10.66
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/curbside-mailbox-0e0736",
+  "src": "assets/polyfork/curbside-mailbox-0e0736.glb",
+  "source": "polyfork.dev/asset/curbside-mailbox-0e0736",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Curbside Mailbox by Polyfork (https://polyfork.dev/asset/curbside-mailbox-0e0736), CC BY 4.0",
+  "title": "Curbside Mailbox",
+  "size_m": {
+   "x": 0.31,
+   "y": 1.26,
+   "z": 0.63
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/herring-gull-55c3da",
+  "src": "assets/polyfork/herring-gull-55c3da.glb",
+  "source": "polyfork.dev/asset/herring-gull-55c3da",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Herring Gull by Polyfork (https://polyfork.dev/asset/herring-gull-55c3da), CC BY 4.0",
+  "title": "Herring Gull",
+  "size_m": {
+   "x": 0.23,
+   "y": 0.5,
+   "z": 0.55
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/driftwood-log-89a68f",
+  "src": "assets/polyfork/driftwood-log-89a68f.glb",
+  "source": "polyfork.dev/asset/driftwood-log-89a68f",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Driftwood Log by Polyfork (https://polyfork.dev/asset/driftwood-log-89a68f), CC BY 4.0",
+  "title": "Driftwood Log",
+  "size_m": {
+   "x": 1.31,
+   "y": 0.82,
+   "z": 2.64
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/marram-grass-tuft-8c7a99",
+  "src": "assets/polyfork/marram-grass-tuft-8c7a99.glb",
+  "source": "polyfork.dev/asset/marram-grass-tuft-8c7a99",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Marram Grass Tuft by Polyfork (https://polyfork.dev/asset/marram-grass-tuft-8c7a99), CC BY 4.0",
+  "title": "Marram Grass Tuft",
+  "size_m": {
+   "x": 1.16,
+   "y": 0.93,
+   "z": 1.08
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/shell-scatter-6d36b7",
+  "src": "assets/polyfork/shell-scatter-6d36b7.glb",
+  "source": "polyfork.dev/asset/shell-scatter-6d36b7",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Shell Scatter by Polyfork (https://polyfork.dev/asset/shell-scatter-6d36b7), CC BY 4.0",
+  "title": "Shell Scatter",
+  "size_m": {
+   "x": 1.08,
+   "y": 0.08,
+   "z": 1.09
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/tamarisk-bush-ba4337",
+  "src": "assets/polyfork/tamarisk-bush-ba4337.glb",
+  "source": "polyfork.dev/asset/tamarisk-bush-ba4337",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Tamarisk Bush by Polyfork (https://polyfork.dev/asset/tamarisk-bush-ba4337), CC BY 4.0",
+  "title": "Tamarisk Bush",
+  "size_m": {
+   "x": 1.81,
+   "y": 1.81,
+   "z": 1.84
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/rowing-dinghy-022673",
+  "src": "assets/polyfork/rowing-dinghy-022673.glb",
+  "source": "polyfork.dev/asset/rowing-dinghy-022673",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Rowing Dinghy by Polyfork (https://polyfork.dev/asset/rowing-dinghy-022673), CC BY 4.0",
+  "title": "Rowing Dinghy",
+  "size_m": {
+   "x": 1.45,
+   "y": 0.89,
+   "z": 3.58
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/snow-laden-spruce-36716e",
+  "src": "assets/polyfork/snow-laden-spruce-36716e.glb",
+  "source": "polyfork.dev/asset/snow-laden-spruce-36716e",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Snow-Laden Spruce by Polyfork (https://polyfork.dev/asset/snow-laden-spruce-36716e), CC BY 4.0",
+  "title": "Snow-Laden Spruce",
+  "size_m": {
+   "x": 3,
+   "y": 6.06,
+   "z": 3
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/windblown-larch-abb99c",
+  "src": "assets/polyfork/windblown-larch-abb99c.glb",
+  "source": "polyfork.dev/asset/windblown-larch-abb99c",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Windblown Larch by Polyfork (https://polyfork.dev/asset/windblown-larch-abb99c), CC BY 4.0",
+  "title": "Windblown Larch",
+  "size_m": {
+   "x": 7.95,
+   "y": 7,
+   "z": 3.58
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/boulder-field-cluster-08e364",
+  "src": "assets/polyfork/boulder-field-cluster-08e364.glb",
+  "source": "polyfork.dev/asset/boulder-field-cluster-08e364",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Boulder Field Cluster by Polyfork (https://polyfork.dev/asset/boulder-field-cluster-08e364), CC BY 4.0",
+  "title": "Boulder Field Cluster",
+  "size_m": {
+   "x": 2.5,
+   "y": 1.45,
+   "z": 2
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/rock-outcrop-158ac3",
+  "src": "assets/polyfork/rock-outcrop-158ac3.glb",
+  "source": "polyfork.dev/asset/rock-outcrop-158ac3",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Rock Outcrop by Polyfork (https://polyfork.dev/asset/rock-outcrop-158ac3), CC BY 4.0",
+  "title": "Rock Outcrop",
+  "size_m": {
+   "x": 2.5,
+   "y": 2.05,
+   "z": 2.5
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/dwarf-pine-mat-faee77",
+  "src": "assets/polyfork/dwarf-pine-mat-faee77.glb",
+  "source": "polyfork.dev/asset/dwarf-pine-mat-faee77",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Dwarf Pine Mat by Polyfork (https://polyfork.dev/asset/dwarf-pine-mat-faee77), CC BY 4.0",
+  "title": "Dwarf Pine Mat",
+  "size_m": {
+   "x": 2.5,
+   "y": 1.29,
+   "z": 2.5
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/bare-mountain-rowan-10e72e",
+  "src": "assets/polyfork/bare-mountain-rowan-10e72e.glb",
+  "source": "polyfork.dev/asset/bare-mountain-rowan-10e72e",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Bare Mountain Rowan by Polyfork (https://polyfork.dev/asset/bare-mountain-rowan-10e72e), CC BY 4.0",
+  "title": "Bare Mountain Rowan",
+  "size_m": {
+   "x": 4.37,
+   "y": 5.03,
+   "z": 4.3
+  },
+  "scale": 1
+ },
+ {
+  "id": "characters/r15_body",
+  "src": "assets/characters/r15_body.glb",
+  "source": "sketchfab.com/3d-models/roblox-r15-model-4fb241582b0a4c50b55f890183866b4e",
+  "license": "CC BY 4.0",
+  "credit": "\"ROBLOX R15 Model\" by ShiroTheDream, CC BY 4.0",
+  "scale": 1,
+  "note": "Z-up, cao 5.1 (chân z=-3, đỉnh đầu z=2.1); 8 khối rời"
+ },
+ {
+  "id": "sea/dolphin",
+  "title": "Cá heo",
+  "source": "Quaternius – Fish Pack (Animated)",
+  "url": "https://quaternius.itch.io/lowpoly-animated-fish",
+  "author": "Quaternius",
+  "license": "CC0-1.0",
+  "length_m": 2.5,
+  "clips": [
+   "Armature|Swim"
+  ],
+  "converted": "FBX → GLB bằng tools/fbx2glb.js",
+  "scale_to_m": 0.002719,
+  "native_size": [
+   314.89,
+   301.88,
+   919.34
+  ],
+  "forward": "+z",
+  "src": "assets/special/sea/dolphin.glb",
+  "scale": 1
+ },
+ {
+  "id": "sea/shark",
+  "title": "Cá mập",
+  "source": "Quaternius – Fish Pack (Animated)",
+  "url": "https://quaternius.itch.io/lowpoly-animated-fish",
+  "author": "Quaternius",
+  "license": "CC0-1.0",
+  "length_m": 3.5,
+  "clips": [
+   "Armature|Swim"
+  ],
+  "converted": "FBX → GLB bằng tools/fbx2glb.js",
+  "scale_to_m": 0.002276,
+  "native_size": [
+   575.68,
+   527.24,
+   1537.75
+  ],
+  "forward": "+z",
+  "src": "assets/special/sea/shark.glb",
+  "scale": 1
+ },
+ {
+  "id": "sea/manta_ray",
+  "title": "Cá đuối manta",
+  "source": "Quaternius – Fish Pack (Animated)",
+  "url": "https://quaternius.itch.io/lowpoly-animated-fish",
+  "author": "Quaternius",
+  "license": "CC0-1.0",
+  "length_m": 5,
+  "clips": [
+   "Armature|Swim"
+  ],
+  "converted": "FBX → GLB bằng tools/fbx2glb.js",
+  "scale_to_m": 0.004269,
+  "native_size": [
+   734.24,
+   218.53,
+   1171.2
+  ],
+  "forward": "+z",
+  "src": "assets/special/sea/manta_ray.glb",
+  "scale": 1
+ },
+ {
+  "id": "sea/fish1",
+  "title": "Cá nhỏ 1",
+  "source": "Quaternius – Fish Pack (Animated)",
+  "url": "https://quaternius.itch.io/lowpoly-animated-fish",
+  "author": "Quaternius",
+  "license": "CC0-1.0",
+  "length_m": 0.4,
+  "clips": [
+   "Armature|Swim"
+  ],
+  "converted": "FBX → GLB bằng tools/fbx2glb.js",
+  "scale_to_m": 0.001249,
+  "native_size": [
+   46.57,
+   105.91,
+   320.23
+  ],
+  "forward": "+z",
+  "src": "assets/special/sea/fish1.glb",
+  "scale": 1
+ },
+ {
+  "id": "sea/fish2",
+  "title": "Cá nhỏ 2",
+  "source": "Quaternius – Fish Pack (Animated)",
+  "url": "https://quaternius.itch.io/lowpoly-animated-fish",
+  "author": "Quaternius",
+  "license": "CC0-1.0",
+  "length_m": 0.3,
+  "clips": [
+   "Armature|Swim"
+  ],
+  "converted": "FBX → GLB bằng tools/fbx2glb.js",
+  "scale_to_m": 0.001505,
+  "native_size": [
+   43.72,
+   121.79,
+   199.36
+  ],
+  "forward": "+z",
+  "src": "assets/special/sea/fish2.glb",
+  "scale": 1
+ },
+ {
+  "id": "sea/fish3",
+  "title": "Cá nhỏ 3",
+  "source": "Quaternius – Fish Pack (Animated)",
+  "url": "https://quaternius.itch.io/lowpoly-animated-fish",
+  "author": "Quaternius",
+  "license": "CC0-1.0",
+  "length_m": 0.25,
+  "clips": [
+   "Armature|Swim"
+  ],
+  "converted": "FBX → GLB bằng tools/fbx2glb.js",
+  "scale_to_m": 0.001639,
+  "native_size": [
+   34.42,
+   81.77,
+   152.5
+  ],
+  "forward": "+z",
+  "src": "assets/special/sea/fish3.glb",
+  "scale": 1
+ },
+ {
+  "id": "sea/killer_whale",
+  "title": "Cá voi sát thủ",
+  "source": "Sketchfab – Killer Whale",
+  "url": "https://sketchfab.com/3d-models/killer-whale-63b680d7e58f463a9868ed7bf163094a",
+  "author": "Abner Wu (https://sketchfab.com/dashdu)",
+  "license": "CC-BY-4.0",
+  "credit": "\"Killer Whale\" by Abner Wu, CC-BY-4.0",
+  "length_m": 7,
+  "clips": [
+   "Take 001"
+  ],
+  "scale_to_m": 0.007924,
+  "native_size": [
+   472.71,
+   426.21,
+   883.4
+  ],
+  "forward": "+z",
+  "src": "assets/special/sea/killer_whale.glb",
+  "scale": 1
+ },
+ {
+  "id": "sea/sperm_whale",
+  "title": "Cá nhà táng",
+  "source": "Sketchfab – Sperm Whale - animated - marine mammals series",
+  "url": "https://sketchfab.com/3d-models/sperm-whale-animated-marine-mammals-series-37dd875ead1b44318b682a978ed53983",
+  "author": "nolanfa (https://sketchfab.com/nolanfa)",
+  "license": "CC-BY-4.0",
+  "credit": "\"Sperm Whale - animated - marine mammals series\" by nolanfa, CC-BY-4.0",
+  "length_m": 16,
+  "clips": [
+   "SWIM-delphinidae",
+   "FASTER-delphinidae",
+   "IDLE-delphinidae",
+   "TURNLEFT-delphinidae",
+   "SWIMRIGHT-delphinidae",
+   "BREATHE-delphinidae",
+   "JUMP-delphinidae",
+   "JUMPSPLASH-delphinidae",
+   "JUMPSPLASH-delphinidae.001",
+   "EAT-delphinidae",
+   "ATTACK-delphinidae",
+   "HURT-delphinidae",
+   "DEATH-delphinidae"
+  ],
+  "converted": "glTF → GLB bằng gltf-transform; đã xoá mặt phẳng trong suốt transp.001 (25×25) — đó là MẶT NƯỚC của tác giả, ở y = water_y_native",
+  "scale_to_m": 0.9803,
+  "native_size": [
+   5.95,
+   2.94,
+   16.32
+  ],
+  "forward": "+z",
+  "water_y_native": 4.283,
+  "note": "Material KHR_materials_unlit. Mặt nước: world y = gốc model + water_y_native × scale. Clip JUMP/JUMPSPLASH/BREATHE cắt mặt nước → dùng engine/splash.js (findSurfaceCrossings + createSplash).",
+  "src": "assets/special/sea/sperm_whale.glb",
+  "scale": 1
+ },
+ {
   "id": "city-kit-roads/bridge-pillar-wide",
   "src": "assets/kenney/city-kit-roads/bridge-pillar-wide.glb",
   "source": "kenney.nl/assets/city-kit-roads",
@@ -10604,413 +11014,133 @@
   ]
  },
  {
-  "id": "polyfork/penguin-base",
-  "src": "assets/polyfork/penguin-base.glb",
-  "source": "polyfork.dev/asset/penguin-base",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Penguin by Polyfork (https://polyfork.dev/asset/penguin-base), CC BY 4.0",
-  "title": "Penguin",
-  "size_m": {
-   "x": 0.54,
-   "y": 0.72,
-   "z": 0.55
-  },
-  "scale": 1.0
+  "id": "polyhaven/potted_plant_01",
+  "src": "assets/polyhaven/potted_plant_01/potted_plant_01.gltf",
+  "source": "polyhaven.com/a/potted_plant_01",
+  "license": "CC0",
+  "credit": "“Potted Plant 01” by Rico Cilliers (polyhaven.com/a/potted_plant_01), CC0",
+  "title": "Potted Plant 01",
+  "dimensions_mm": [
+   588.9185070991516,
+   636.6117596626282,
+   1350.7787585258484
+  ]
  },
  {
-  "id": "polyfork/old-lighthouse-48ca6c",
-  "src": "assets/polyfork/old-lighthouse-48ca6c.glb",
-  "source": "polyfork.dev/asset/old-lighthouse-48ca6c",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Old Lighthouse by Polyfork (https://polyfork.dev/asset/old-lighthouse-48ca6c), CC BY 4.0",
-  "title": "Old Lighthouse",
-  "size_m": {
-   "x": 8.85,
-   "y": 13.88,
-   "z": 10.66
-  },
-  "scale": 1.0
+  "id": "polyhaven/potted_plant_04",
+  "src": "assets/polyhaven/potted_plant_04/potted_plant_04.gltf",
+  "source": "polyhaven.com/a/potted_plant_04",
+  "license": "CC0",
+  "credit": "“Potted Plant 04” by James Ray Cock (polyhaven.com/a/potted_plant_04), CC0",
+  "title": "Potted Plant 04",
+  "dimensions_mm": [
+   170.27407884597778,
+   185.9453096985817,
+   267.5964875961654
+  ]
  },
  {
-  "id": "polyfork/curbside-mailbox-0e0736",
-  "src": "assets/polyfork/curbside-mailbox-0e0736.glb",
-  "source": "polyfork.dev/asset/curbside-mailbox-0e0736",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Curbside Mailbox by Polyfork (https://polyfork.dev/asset/curbside-mailbox-0e0736), CC BY 4.0",
-  "title": "Curbside Mailbox",
-  "size_m": {
-   "x": 0.31,
-   "y": 1.26,
-   "z": 0.63
-  },
-  "scale": 1.0
+  "id": "polyhaven/ceramic_vase_01",
+  "src": "assets/polyhaven/ceramic_vase_01/ceramic_vase_01.gltf",
+  "source": "polyhaven.com/a/ceramic_vase_01",
+  "license": "CC0",
+  "credit": "“Ceramic Vase 01” by James Ray Cock (polyhaven.com/a/ceramic_vase_01), CC0",
+  "title": "Ceramic Vase 01",
+  "dimensions_mm": [
+   204.87193763256073,
+   206.37669414281845,
+   401.379804010503
+  ]
  },
  {
-  "id": "polyfork/herring-gull-55c3da",
-  "src": "assets/polyfork/herring-gull-55c3da.glb",
-  "source": "polyfork.dev/asset/herring-gull-55c3da",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Herring Gull by Polyfork (https://polyfork.dev/asset/herring-gull-55c3da), CC BY 4.0",
-  "title": "Herring Gull",
-  "size_m": {
-   "x": 0.23,
-   "y": 0.5,
-   "z": 0.55
-  },
-  "scale": 1.0
+  "id": "polyhaven/book_encyclopedia_set_01",
+  "src": "assets/polyhaven/book_encyclopedia_set_01/book_encyclopedia_set_01.gltf",
+  "source": "polyhaven.com/a/book_encyclopedia_set_01",
+  "license": "CC0",
+  "credit": "“Book Encyclopedia Set 01” by John Malcolm (polyhaven.com/a/book_encyclopedia_set_01), CC0",
+  "title": "Book Encyclopedia Set 01",
+  "dimensions_mm": [
+   551.2974057346582,
+   163.06233406066895,
+   237.41818653931634
+  ]
  },
  {
-  "id": "polyfork/driftwood-log-89a68f",
-  "src": "assets/polyfork/driftwood-log-89a68f.glb",
-  "source": "polyfork.dev/asset/driftwood-log-89a68f",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Driftwood Log by Polyfork (https://polyfork.dev/asset/driftwood-log-89a68f), CC BY 4.0",
-  "title": "Driftwood Log",
-  "size_m": {
-   "x": 1.31,
-   "y": 0.82,
-   "z": 2.64
-  },
-  "scale": 1.0
+  "id": "polyhaven/alarm_clock_01",
+  "src": "assets/polyhaven/alarm_clock_01/alarm_clock_01.gltf",
+  "source": "polyhaven.com/a/alarm_clock_01",
+  "license": "CC0",
+  "credit": "“Alarm Clock 01” by Yann Kervran, James Ray Cock (polyhaven.com/a/alarm_clock_01), CC0",
+  "title": "Alarm Clock 01",
+  "dimensions_mm": [
+   227.71471738815308,
+   168.41959953308105,
+   174.15538430213928
+  ]
  },
  {
-  "id": "polyfork/marram-grass-tuft-8c7a99",
-  "src": "assets/polyfork/marram-grass-tuft-8c7a99.glb",
-  "source": "polyfork.dev/asset/marram-grass-tuft-8c7a99",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Marram Grass Tuft by Polyfork (https://polyfork.dev/asset/marram-grass-tuft-8c7a99), CC BY 4.0",
-  "title": "Marram Grass Tuft",
-  "size_m": {
-   "x": 1.16,
-   "y": 0.93,
-   "z": 1.08
-  },
-  "scale": 1.0
+  "id": "polyhaven/hanging_picture_frame_01",
+  "src": "assets/polyhaven/hanging_picture_frame_01/hanging_picture_frame_01.gltf",
+  "source": "polyhaven.com/a/hanging_picture_frame_01",
+  "license": "CC0",
+  "credit": "“Hanging Picture Frame 01” by James Ray Cock (polyhaven.com/a/hanging_picture_frame_01), CC0",
+  "title": "Hanging Picture Frame 01",
+  "dimensions_mm": [
+   593.999981880188,
+   15.749315607536118,
+   840.999960899353
+  ]
  },
  {
-  "id": "polyfork/shell-scatter-6d36b7",
-  "src": "assets/polyfork/shell-scatter-6d36b7.glb",
-  "source": "polyfork.dev/asset/shell-scatter-6d36b7",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Shell Scatter by Polyfork (https://polyfork.dev/asset/shell-scatter-6d36b7), CC BY 4.0",
-  "title": "Shell Scatter",
-  "size_m": {
-   "x": 1.08,
-   "y": 0.08,
-   "z": 1.09
-  },
-  "scale": 1.0
+  "id": "polyhaven/painted_wooden_shelves",
+  "src": "assets/polyhaven/painted_wooden_shelves/painted_wooden_shelves.gltf",
+  "source": "polyhaven.com/a/painted_wooden_shelves",
+  "license": "CC0",
+  "credit": "“Painted Wooden Shelves” by Kirill Sannikov (polyhaven.com/a/painted_wooden_shelves), CC0",
+  "title": "Painted Wooden Shelves",
+  "dimensions_mm": [
+   511.115700006485,
+   367.09491535348883,
+   1125.072093855124
+  ]
  },
  {
-  "id": "polyfork/tamarisk-bush-ba4337",
-  "src": "assets/polyfork/tamarisk-bush-ba4337.glb",
-  "source": "polyfork.dev/asset/tamarisk-bush-ba4337",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Tamarisk Bush by Polyfork (https://polyfork.dev/asset/tamarisk-bush-ba4337), CC BY 4.0",
-  "title": "Tamarisk Bush",
-  "size_m": {
-   "x": 1.81,
-   "y": 1.81,
-   "z": 1.84
-  },
-  "scale": 1.0
+  "id": "polyhaven/side_table_01",
+  "src": "assets/polyhaven/side_table_01/side_table_01.gltf",
+  "source": "polyhaven.com/a/side_table_01",
+  "license": "CC0",
+  "credit": "“Side Table 01” by James Ray Cock (polyhaven.com/a/side_table_01), CC0",
+  "title": "Side Table 01",
+  "dimensions_mm": [
+   550.0000715255737,
+   450.00001788139343,
+   550.6622816901654
+  ]
  },
  {
-  "id": "polyfork/rowing-dinghy-022673",
-  "src": "assets/polyfork/rowing-dinghy-022673.glb",
-  "source": "polyfork.dev/asset/rowing-dinghy-022673",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Rowing Dinghy by Polyfork (https://polyfork.dev/asset/rowing-dinghy-022673), CC BY 4.0",
-  "title": "Rowing Dinghy",
-  "size_m": {
-   "x": 1.45,
-   "y": 0.89,
-   "z": 3.58
-  },
-  "scale": 1.0
+  "id": "polyhaven/painted_wooden_chair_02",
+  "src": "assets/polyhaven/painted_wooden_chair_02/painted_wooden_chair_02.gltf",
+  "source": "polyhaven.com/a/painted_wooden_chair_02",
+  "license": "CC0",
+  "credit": "“Painted Wooden Chair 02” by Kirill Sannikov (polyhaven.com/a/painted_wooden_chair_02), CC0",
+  "title": "Painted Wooden Chair 02",
+  "dimensions_mm": [
+   639.3895149230957,
+   662.097692489624,
+   1263.7710904044432
+  ]
  },
  {
-  "id": "polyfork/snow-laden-spruce-36716e",
-  "src": "assets/polyfork/snow-laden-spruce-36716e.glb",
-  "source": "polyfork.dev/asset/snow-laden-spruce-36716e",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Snow-Laden Spruce by Polyfork (https://polyfork.dev/asset/snow-laden-spruce-36716e), CC BY 4.0",
-  "title": "Snow-Laden Spruce",
-  "size_m": {
-   "x": 3,
-   "y": 6.06,
-   "z": 3
-  },
-  "scale": 1.0
- },
- {
-  "id": "polyfork/windblown-larch-abb99c",
-  "src": "assets/polyfork/windblown-larch-abb99c.glb",
-  "source": "polyfork.dev/asset/windblown-larch-abb99c",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Windblown Larch by Polyfork (https://polyfork.dev/asset/windblown-larch-abb99c), CC BY 4.0",
-  "title": "Windblown Larch",
-  "size_m": {
-   "x": 7.95,
-   "y": 7,
-   "z": 3.58
-  },
-  "scale": 1.0
- },
- {
-  "id": "polyfork/boulder-field-cluster-08e364",
-  "src": "assets/polyfork/boulder-field-cluster-08e364.glb",
-  "source": "polyfork.dev/asset/boulder-field-cluster-08e364",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Boulder Field Cluster by Polyfork (https://polyfork.dev/asset/boulder-field-cluster-08e364), CC BY 4.0",
-  "title": "Boulder Field Cluster",
-  "size_m": {
-   "x": 2.5,
-   "y": 1.45,
-   "z": 2
-  },
-  "scale": 1.0
- },
- {
-  "id": "polyfork/rock-outcrop-158ac3",
-  "src": "assets/polyfork/rock-outcrop-158ac3.glb",
-  "source": "polyfork.dev/asset/rock-outcrop-158ac3",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Rock Outcrop by Polyfork (https://polyfork.dev/asset/rock-outcrop-158ac3), CC BY 4.0",
-  "title": "Rock Outcrop",
-  "size_m": {
-   "x": 2.5,
-   "y": 2.05,
-   "z": 2.5
-  },
-  "scale": 1.0
- },
- {
-  "id": "polyfork/dwarf-pine-mat-faee77",
-  "src": "assets/polyfork/dwarf-pine-mat-faee77.glb",
-  "source": "polyfork.dev/asset/dwarf-pine-mat-faee77",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Dwarf Pine Mat by Polyfork (https://polyfork.dev/asset/dwarf-pine-mat-faee77), CC BY 4.0",
-  "title": "Dwarf Pine Mat",
-  "size_m": {
-   "x": 2.5,
-   "y": 1.29,
-   "z": 2.5
-  },
-  "scale": 1.0
- },
- {
-  "id": "polyfork/bare-mountain-rowan-10e72e",
-  "src": "assets/polyfork/bare-mountain-rowan-10e72e.glb",
-  "source": "polyfork.dev/asset/bare-mountain-rowan-10e72e",
-  "license": "CC BY 4.0 (mesh)",
-  "credit": "Bare Mountain Rowan by Polyfork (https://polyfork.dev/asset/bare-mountain-rowan-10e72e), CC BY 4.0",
-  "title": "Bare Mountain Rowan",
-  "size_m": {
-   "x": 4.37,
-   "y": 5.03,
-   "z": 4.3
-  },
-  "scale": 1.0
- },
- {
-  "id": "characters/r15_body",
-  "src": "assets/characters/r15_body.glb",
-  "source": "sketchfab.com/3d-models/roblox-r15-model-4fb241582b0a4c50b55f890183866b4e",
-  "license": "CC BY 4.0",
-  "credit": "\"ROBLOX R15 Model\" by ShiroTheDream, CC BY 4.0",
-  "scale": 1.0,
-  "note": "Z-up, cao 5.1 (chân z=-3, đỉnh đầu z=2.1); 8 khối rời"
- },
- {
-  "id": "sea/dolphin",
-  "title": "Cá heo",
-  "source": "Quaternius – Fish Pack (Animated)",
-  "url": "https://quaternius.itch.io/lowpoly-animated-fish",
-  "author": "Quaternius",
-  "license": "CC0-1.0",
-  "length_m": 2.5,
-  "clips": [
-   "Armature|Swim"
-  ],
-  "converted": "FBX → GLB bằng tools/fbx2glb.js",
-  "scale_to_m": 0.002719,
-  "native_size": [
-   314.89,
-   301.88,
-   919.34
-  ],
-  "forward": "+z",
-  "src": "assets/special/sea/dolphin.glb",
-  "scale": 1
- },
- {
-  "id": "sea/shark",
-  "title": "Cá mập",
-  "source": "Quaternius – Fish Pack (Animated)",
-  "url": "https://quaternius.itch.io/lowpoly-animated-fish",
-  "author": "Quaternius",
-  "license": "CC0-1.0",
-  "length_m": 3.5,
-  "clips": [
-   "Armature|Swim"
-  ],
-  "converted": "FBX → GLB bằng tools/fbx2glb.js",
-  "scale_to_m": 0.002276,
-  "native_size": [
-   575.68,
-   527.24,
-   1537.75
-  ],
-  "forward": "+z",
-  "src": "assets/special/sea/shark.glb",
-  "scale": 1
- },
- {
-  "id": "sea/manta_ray",
-  "title": "Cá đuối manta",
-  "source": "Quaternius – Fish Pack (Animated)",
-  "url": "https://quaternius.itch.io/lowpoly-animated-fish",
-  "author": "Quaternius",
-  "license": "CC0-1.0",
-  "length_m": 5,
-  "clips": [
-   "Armature|Swim"
-  ],
-  "converted": "FBX → GLB bằng tools/fbx2glb.js",
-  "scale_to_m": 0.004269,
-  "native_size": [
-   734.24,
-   218.53,
-   1171.2
-  ],
-  "forward": "+z",
-  "src": "assets/special/sea/manta_ray.glb",
-  "scale": 1
- },
- {
-  "id": "sea/fish1",
-  "title": "Cá nhỏ 1",
-  "source": "Quaternius – Fish Pack (Animated)",
-  "url": "https://quaternius.itch.io/lowpoly-animated-fish",
-  "author": "Quaternius",
-  "license": "CC0-1.0",
-  "length_m": 0.4,
-  "clips": [
-   "Armature|Swim"
-  ],
-  "converted": "FBX → GLB bằng tools/fbx2glb.js",
-  "scale_to_m": 0.001249,
-  "native_size": [
-   46.57,
-   105.91,
-   320.23
-  ],
-  "forward": "+z",
-  "src": "assets/special/sea/fish1.glb",
-  "scale": 1
- },
- {
-  "id": "sea/fish2",
-  "title": "Cá nhỏ 2",
-  "source": "Quaternius – Fish Pack (Animated)",
-  "url": "https://quaternius.itch.io/lowpoly-animated-fish",
-  "author": "Quaternius",
-  "license": "CC0-1.0",
-  "length_m": 0.3,
-  "clips": [
-   "Armature|Swim"
-  ],
-  "converted": "FBX → GLB bằng tools/fbx2glb.js",
-  "scale_to_m": 0.001505,
-  "native_size": [
-   43.72,
-   121.79,
-   199.36
-  ],
-  "forward": "+z",
-  "src": "assets/special/sea/fish2.glb",
-  "scale": 1
- },
- {
-  "id": "sea/fish3",
-  "title": "Cá nhỏ 3",
-  "source": "Quaternius – Fish Pack (Animated)",
-  "url": "https://quaternius.itch.io/lowpoly-animated-fish",
-  "author": "Quaternius",
-  "license": "CC0-1.0",
-  "length_m": 0.25,
-  "clips": [
-   "Armature|Swim"
-  ],
-  "converted": "FBX → GLB bằng tools/fbx2glb.js",
-  "scale_to_m": 0.001639,
-  "native_size": [
-   34.42,
-   81.77,
-   152.5
-  ],
-  "forward": "+z",
-  "src": "assets/special/sea/fish3.glb",
-  "scale": 1
- },
- {
-  "id": "sea/killer_whale",
-  "title": "Cá voi sát thủ",
-  "source": "Sketchfab – Killer Whale",
-  "url": "https://sketchfab.com/3d-models/killer-whale-63b680d7e58f463a9868ed7bf163094a",
-  "author": "Abner Wu (https://sketchfab.com/dashdu)",
-  "license": "CC-BY-4.0",
-  "credit": "\"Killer Whale\" by Abner Wu, CC-BY-4.0",
-  "length_m": 7,
-  "clips": [
-   "Take 001"
-  ],
-  "scale_to_m": 0.007924,
-  "native_size": [
-   472.71,
-   426.21,
-   883.4
-  ],
-  "forward": "+z",
-  "src": "assets/special/sea/killer_whale.glb",
-  "scale": 1
- },
- {
-  "id": "sea/sperm_whale",
-  "title": "Cá nhà táng",
-  "source": "Sketchfab – Sperm Whale - animated - marine mammals series",
-  "url": "https://sketchfab.com/3d-models/sperm-whale-animated-marine-mammals-series-37dd875ead1b44318b682a978ed53983",
-  "author": "nolanfa (https://sketchfab.com/nolanfa)",
-  "license": "CC-BY-4.0",
-  "credit": "\"Sperm Whale - animated - marine mammals series\" by nolanfa, CC-BY-4.0",
-  "length_m": 16,
-  "clips": [
-   "SWIM-delphinidae",
-   "FASTER-delphinidae",
-   "IDLE-delphinidae",
-   "TURNLEFT-delphinidae",
-   "SWIMRIGHT-delphinidae",
-   "BREATHE-delphinidae",
-   "JUMP-delphinidae",
-   "JUMPSPLASH-delphinidae",
-   "JUMPSPLASH-delphinidae.001",
-   "EAT-delphinidae",
-   "ATTACK-delphinidae",
-   "HURT-delphinidae",
-   "DEATH-delphinidae"
-  ],
-  "converted": "glTF → GLB bằng gltf-transform; đã xoá mặt phẳng trong suốt transp.001 (25×25) — đó là MẶT NƯỚC của tác giả, ở y = water_y_native",
-  "scale_to_m": 0.9803,
-  "native_size": [
-   5.95,
-   2.94,
-   16.32
-  ],
-  "forward": "+z",
-  "water_y_native": 4.283,
-  "note": "Material KHR_materials_unlit. Mặt nước: world y = gốc model + water_y_native × scale. Clip JUMP/JUMPSPLASH/BREATHE cắt mặt nước → dùng engine/splash.js (findSurfaceCrossings + createSplash).",
-  "src": "assets/special/sea/sperm_whale.glb",
-  "scale": 1
+  "id": "polyhaven/wooden_table_02",
+  "src": "assets/polyhaven/wooden_table_02/wooden_table_02.gltf",
+  "source": "polyhaven.com/a/wooden_table_02",
+  "license": "CC0",
+  "credit": "“Wooden Table 02” by Serhii Khromov (polyhaven.com/a/wooden_table_02), CC0",
+  "title": "Wooden Table 02",
+  "dimensions_mm": [
+   1134.41663980484,
+   706.0248255729675,
+   799.5428870490286
+  ]
  }
 ]
