@@ -8,6 +8,11 @@
 //     house: { style, at:[x,z], to:[x,z], ry, legsOut, lift, kneel, shake, door, walk0, pitch, roll, night, boat (0..1: nổi như thuyền) }
 //     cast:  { hero: { at:[x,y,z], to, ry, ry2, anim, from, face, speed, tOff, lie, parent:'house', hold } , … }
 //     props: { <tên>: { at, to, ry, rx, rz, s, parent } },  fx: { cards:{at,t0}, dust:[{at,t0}] },
+//     — LÕI BIỂN (env có e.sea; docs/core.md) —
+//     cast.<tên>.float / props.<tên>.float: true | { hx, hz, draft, pitchK, rollK, maxPitch, maxRoll, k }   nổi theo sóng thật
+//         (at[1] = độ cao khi biển lặng; hx/hz = nửa dài thân theo X/Z cục bộ, stud; draft = chìm thêm; k 0..1 hoặc [a,b])
+//     seaEvents: [{ at:[x,z], t: giây cục bộ của shot, strength = 1.5, radius = 10 }]   vòng sóng/hố/bọt (≤ 8 cùng lúc)
+//     seaWeather: 'nang' | { from, to, ease, win } | { base, …ghi đè }   thời tiết biển (engine/seaweather.js, ô FX seaWx)
 //     room:  { tilt, roll, view, dense },  fn(ctx) }
 // Shot ngắn theo LOẠI ({ type:'closeup', who:'hero', at:'square', … }) → engine/shottypes.js điền cam/cast mặc định:
 //   index.html gọi expandShots(SHOTS, ctx) trước buildTimeline (có liên tục giữa shot), hoặc truyền
@@ -27,7 +32,8 @@ export const ease = (name, k) => (EASE[name] || EASE.smooth)(clamp01(k));
 const isRange = (v) => Array.isArray(v) && v.length === 2 && typeof v[0] === 'number';
 export const val = (v, k, def = 0) => (v === undefined ? def : isRange(v) ? v[0] + (v[1] - v[0]) * k : v);
 import { fxPuffs, fxPrints, fxWind } from './fx.js';
-import { floatHull, wetline, worldGrad } from './floating.js';
+import { floatPose, floatTilt, wetline, worldGrad } from './floating.js';
+import { resolveSeaWeather, seaWeatherAmp } from './seaweather.js';
 const lerp3 = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
 // tiến độ cục bộ trong một đoạn con của shot: win = [k0,k1]
 const sub = (k, win) => (win ? clamp01((k - win[0]) / (win[1] - win[0])) : k);
@@ -116,6 +122,46 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
   // sea2 (engine/floating.js): nhà nổi cưỡi đúng sóng của shader + vệt ướt trên thân + bọt quanh thân. Tắt ⇒ sin cố định như cũ.
   const SEA2 = () => globalThis.__autoFx?.sea2 ?? true;
   const houseWet = new Map(Object.values(houses).map((h) => [h, wetline(THREE, h.root)]));
+  // --- lõi biển cho shot (engine/sea.js + seaweather.js): đặt MỖI khung trước khi đặt nhà/diễn viên/đạo cụ ---
+  //   seaNow = { e, sea, clock } của env đang chạy (null nếu env không có e.sea) — mọi vật nổi dùng chung
+  let seaNow = null, hullBest = 0;
+  const _q = new THREE.Quaternion();
+  function hullFoam(h, area) {   // water chỉ có 1 vùng bọt thân nổi → lấy vật to nhất (nhà luôn thắng)
+    if (!seaNow || area <= hullBest) return; hullBest = area;
+    seaNow.sea.setHull({ x: h.x, z: h.z, hx: h.hx, hz: h.hz, yaw: h.yaw, k: h.k, plunge: Math.min(1, Math.max(0, -h.vy / 4)) });
+  }
+  function prepareSea(shot, k, t) {
+    for (const e of Object.values(envs.envs)) for (const s of e.group.userData.seas || []) { s.setDrive(null); s.setShotEvents(null); }
+    seaNow = null; hullBest = 0;
+    const e = envs.envs[shot.env], sea = e?.sea;
+    const spec = ((AUTO.seaWx ?? true) && shot.seaWeather) || e?.defaultWeather || null;
+    const W = spec ? resolveSeaWeather(spec, k) : null;
+    if (!sea?.sample) return W;
+    if (W) {   // đồng hồ + biên độ theo thời tiết (hàm thuần của t toàn cục → tiến độ shot)
+      const kOf = (tg) => clamp01((tg - shot.t0) / (shot.dur || 1));
+      sea.setDrive((tg) => ({ amp: seaWeatherAmp(spec, kOf(tg)), rate: W.speed }), { response: W.float });
+    }
+    seaNow = { e, sea, clock: W ? sea.clock : e.seaClock || sea.clock };
+    if (SEA2()) {
+      // sự kiện của env khai báo thuần (e.seaEvents(t)) → vật nổi thấy ngay khung này; không khai ⇒ xoá (không dùng của khung trước)
+      sea.setEvents(e.seaEvents ? e.seaEvents(t) : null);
+      if (shot.seaEvents?.length) sea.setShotEvents(shot.seaEvents.map((ev) => ({ x: ev.at[0], z: ev.at[1],
+        t0: seaNow.clock(shot.t0 + (ev.t || 0)).t, strength: ev.strength ?? 1.5, radius: ev.radius ?? 10 })));
+    }
+    return W;
+  }
+  // vật (root) nổi: f = spec.float; p = vị trí [x, y_lặng, z]; yaw = rotation.y
+  function floatObj(root, f, p, yaw, ke, t) {
+    if (!f || !seaNow || !SEA2() || root.parent !== scene) return;
+    const o = f === true ? {} : f, kf = val(o.k, ke, 1);
+    if (kf <= 0) return;
+    const hx = o.hx ?? 1.5, hz = o.hz ?? 1.5;
+    const F = floatPose(seaNow.sea, { x: p[0], z: p[2], yaw, hx, hz, t, clock: seaNow.clock, draft: o.draft ?? 0,
+      pitchK: o.pitchK ?? 0.9, rollK: o.rollK ?? 0.7, maxPitch: o.maxPitch ?? 0.25, maxRoll: o.maxRoll ?? 0.3 });
+    root.position.y = p[1] + kf * (F.dy + (o.draft ?? 0)) - (o.draft ?? 0);
+    root.quaternion.premultiply(floatTilt(THREE, F, yaw, kf, _q));
+    if (o.foam !== false) hullFoam({ x: p[0], z: p[2], hx, hz, yaw, k: kf, vy: F.vy }, hx * hz);
+  }
 
   function placeCamera(c, k, t) {
     const ke = ease(c.ease || 'smooth', k);
@@ -156,15 +202,15 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     let bRoll = boat * (0.13 * Math.sin(t * 1.9) + 0.05 * Math.sin(t * 3.4 + 0.7));
     let bPitch = boat * (0.07 * Math.sin(t * 1.35 + 1.1) + 0.03 * Math.sin(t * 2.6));
     const yaw = val(spec.ry, ke, 0) + boat * 0.06 * Math.sin(t * 0.9);
-    const envE = envs.envs[envName], sea = envE?.sea;
-    if (boat > 0 && SEA2() && sea?.sample) {
+    const S = seaNow;
+    if (boat > 0 && SEA2() && S) {
       // sea2: nổi theo ĐÚNG mặt nước đang vẽ (đồng hồ biển của env; fade camera = 1 vì camera shot nổi < 120 đv).
       //   spec.y giữ nghĩa cũ = độ cao gốc nhà so với mặt biển trung bình → gốc nhà = spec.y + (mặt nước dưới thân − mặt biển TB)
-      const hx = (h.dims?.W ?? 28) / 2 + 0.3, hz = (h.dims?.D ?? 20) / 2 + 0.3, seaY = sea.water.mesh.position.y;
-      const F = floatHull(sea.sample, { x, z, yaw, hx, hz, t, clock: envE.seaClock, pitchK: 0.85, rollK: 0.75, maxPitch: 0.2, maxRoll: 0.25 });
-      heave = boat * (F.y - seaY); bRoll = boat * F.rotZ; bPitch = boat * F.rotX;
+      const hx = (h.dims?.W ?? 28) / 2 + 0.3, hz = (h.dims?.D ?? 20) / 2 + 0.3;
+      const F = floatPose(S.sea, { x, z, yaw, hx, hz, t, clock: S.clock, pitchK: 0.85, rollK: 0.75, maxPitch: 0.2, maxRoll: 0.25 });
+      heave = boat * F.dy; bRoll = boat * F.rotZ; bPitch = boat * F.rotX;
       houseWet.get(h)?.set({ x, z, y: F.y, ...worldGrad(F.sx, F.sz, yaw), t, k: boat });
-      for (const w of envE.group.userData.waters || []) if (w === sea.water) w.setHull({ x, z, hx, hz, yaw, k: boat, plunge: Math.min(1, Math.max(0, -F.vy / 4)) });
+      hullFoam({ x, z, hx, hz, yaw, k: boat, vy: F.vy }, 1e9);
     }
     h.root.position.set(x, (spec.y ?? 0) + heave, z); h.root.rotation.y = yaw;
     const dist = Math.hypot(b[0] - a[0], b[1] - a[1]) * ke + (spec.walk0 || 0);
@@ -193,6 +239,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
       if (ry === undefined && s.to) ry = Math.atan2(s.to[0] - s.at[0], s.to[2] - s.at[2]);
       a.root.rotation.set(s.lie ? -Math.PI / 2 : s.rx || 0, ry || 0, s.rz || 0);
       a.root.scale.setScalar(s.s || 1);
+      if (s.float) floatObj(a.root, s.float, p, ry || 0, ke, t);
       const at = (s.tOff || 0) + (s.animFromShot ? k * (s.animDur || 1) : t);
       const opt = { speed: s.speed, amp: s.amp, from: s.from, mix: s.from ? ease('smooth', clamp01(sub(k, s.mixWin || [0, 0.3]))) : undefined };
       const pose = a.animate(anim, at, opt);
@@ -225,7 +272,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     obj.visible = true; held.set(name, true);
   }
 
-  function placeProps(spec = {}, k) {
+  function placeProps(spec = {}, k, t = 0) {
     for (const [name, obj] of Object.entries(props)) {
       if (held.get(name)) continue;
       const s = spec[name]; obj.visible = !!s; if (!s) continue;
@@ -236,6 +283,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
       obj.position.set(p[0], p[1], p[2]);
       obj.rotation.set(val(s.rx, ke, 0), val(s.ry, ke, 0), val(s.rz, ke, 0));
       obj.scale.setScalar(val(s.s, ke, 1));
+      if (s.float) floatObj(obj, s.float, p, val(s.ry, ke, 0), ke, t);
     }
   }
 
@@ -244,9 +292,11 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     held.clear();
     for (const obj of Object.values(props)) if (obj.parent && obj.parent.type !== 'Scene' && obj.parent.name && /Arm$/.test(obj.parent.name)) { obj.visible = false; }
     const ctx = { focus: [0, 0, 0], light: shot.light, lightOverride: shot.lightOverride };
+    const W = prepareSea(shot, k, t);   // lõi biển: đồng hồ/thời tiết/sự kiện TRƯỚC khi đặt vật nổi
+    if (W) { ctx.seaWeather = W; ctx.shotLight = shot.light; ctx.shotLightOverride = shot.lightOverride; }
     // env trước (để biết đêm/ngày), camera sau cùng (cần vị trí diễn viên)
     const L = envs.LIGHTS[shot.light || envs.envs[shot.env].light];
-    const night = shot.night ?? L.night ?? 0;
+    const night = shot.night ?? (W && !shot.light ? W.night : L.night ?? 0);
     // sea2: xoá trạng thái nổi của khung trước (vệt ướt, bọt quanh thân) → mỗi khung tự đặt lại (tất định khi tua)
     for (const wl of houseWet.values()) wl.off();
     for (const e of Object.values(envs.envs)) { e.wet?.off(); for (const w of e.group.userData.waters || []) w.setHull?.(null); }
@@ -264,10 +314,10 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     //   (đặt trước camera để camera bám đúng chỗ). Shot tạo cho tàu đứng yên ở gốc → ma trận nghỉ = đơn vị.
     { const M = envObj.carry?.(t);
       if (M) for (const [name, a] of Object.entries(actors)) {
-        if (!a.root.visible || a.root.parent !== scene || shot.cast?.[name]?.parent) continue;
+        if (!a.root.visible || a.root.parent !== scene || shot.cast?.[name]?.parent || shot.cast?.[name]?.float) continue;
         a.root.updateMatrix(); a.root.matrix.premultiply(M); a.root.matrix.decompose(a.root.position, a.root.quaternion, a.root.scale);
       } }
-    placeProps(shot.props, k);
+    placeProps(shot.props, k, t);
     const fxCtx = { t, local, k, shot, actors, house: activeHouse, houses, envs, env: envObj, K, THREE, stage, props, fx, anchorOf };
     for (const f of Object.values(fx)) if (f.obj) f.obj.visible = false;
     if (shot.fx?.cards && fx.cards) { fx.cards.obj.visible = true; fx.cards.update(t, { ...shot.fx.cards, t0: shot.t0 + (shot.fx.cards.t0 || 0) }); }

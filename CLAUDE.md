@@ -259,3 +259,8 @@ Render 140 shot:
   — đọc khi cần chi tiết; cloud không có Blender/Studio nên chỉ dùng phương pháp. Ghi công fwjelaa khi chia sẻ.
 - `skills/forgegui/MASTER_PROMPT_game_ui.md`: prompt dựng UI game Roblox bằng ForgeGUI + Roblox Studio MCP
   (dự án khác; cần Studio MCP trên máy người dùng).
+
+## Core (lõi engine dùng lại cho mọi tập)
+- Hướng dẫn: **`docs/core.md`** — water, sea (`makeSea`), floating, seaweather (thang thời tiết biển), ibl, materials, grunge, scans, post toggles, look.mjs.
+- Tập mới chỉ ghi dữ liệu: `env: 'sea'`, `seaWeather: 'nang' | { from, to }`, `cast/props.<tên>.float`, `seaEvents`, `house.boat` — không viết env/code nổi mới.
+- Thử lõi biển riêng (cả trên điện thoại): `engine/sea-lab.html?wx=giong&wx2=bao&mix=0.5&t=4`.

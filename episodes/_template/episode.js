@@ -9,7 +9,8 @@ export const EPISODE = {
   twist: '',
   solution: '',
   env: 'kenneyTown',                        // env mặc định (engine/town.js); có thể dùng env của engine/envs.js: hawaii, forest, kitchen…
-  light: 'day',                             // preset ánh sáng (engine/envs.js LIGHTS)
+  light: 'day',                             // preset ánh sáng (engine/lights.js LIGHTS)
+  // biển: env 'sea' + shot.seaWeather ('lang' 'nang' 'gio-nhe' 'u-am' 'mua' 'giong' 'bao' 'dem-trang' 'dem-bao' 'bang') — docs/core.md
   town: { blocks: 3 },                      // tuỳ chọn buildTown (blocks, block, tile, houseSize)
   actors: {                                 // tuỳ chọn createR15 (engine/r15.js) + crowd.count
     hero: { shirt: '#e74c3c', sleeves: '#e74c3c', pants: '#2c3e50', hat: 'cap', hatColor: '#2d6cdf', face: 'smile' },

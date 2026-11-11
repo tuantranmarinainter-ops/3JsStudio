@@ -21,11 +21,12 @@ import { smoothFlash } from '../flash.js';
 // (Fresnel), đỉnh mỏng ngược sáng xanh ngọc, ít bọt lác đác hơn (trời lặng gió), chân trời khói xanh nhạt.
 // Bật/tắt bằng ô sea2 (globalThis.__autoFx.sea2) — tắt ⇒ đúng màu/ánh sáng cũ (đọc lại từ preset 'deep').
 const SEA2_LOOK = {
-  deep: '#011d36', shallow: '#0a5f96', sss: '#2fd3b4',        // rãnh gần đen-xanh · mặt sóng · đỉnh ngọc bích ngược sáng
-  skyMix: 0.6, sssK: 1.25, detail: 0.62, glint: 1.25, foam: [0.52, 0.92, 0.38],
+  deep: '#011d36', shallow: '#0a5f96', sss: '#23a89a',        // rãnh gần đen-xanh · mặt sóng · đỉnh ngọc bích ngược sáng
+  skyMix: 0.6, sssK: 0.6, detail: 0.62, glint: 1.25, foam: [0.52, 0.92, 0.38],
 };
-// ánh sáng: chân trời bớt trắng sữa (nước phản chiếu chân trời → khỏi nhạt), sương xa cùng tông; mặt trời ấm, cao vừa
-const SEA2_LIGHT = { top: '#1f7fdb', bottom: '#a6d8f4', fog: '#a9d7f0', fogR: [240, 1000], hemi: ['#ffffff', '#1f6f98', 1.1], sun: ['#fff1d8', 2.75] };
+// ánh sáng: CHỈ đổi chân trời + sương (nước phản chiếu chân trời → bớt trắng sữa). Không đổi hemi/sun/top:
+//   thử hạ hemi đất + sun ấm làm nhân vật/nhà tối hẳn (sáng TB 120 → 83) nên bỏ.
+const SEA2_LIGHT = { bottom: '#a6d8f4', fog: '#a9d7f0' };
 
 // Kịch bản sinh vật biển của ep001 (dữ liệu cho engine/whales.js createOceanLife — lõi không chứa số của tập).
 //   Mốc thời gian tương đối với t0 = 62.0 s (t toàn cục). Mốc shot: s053 62.13–62.77, s054 62.77–64.27, s055 64.30–65.20, s056 65.20–66.90.

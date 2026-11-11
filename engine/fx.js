@@ -58,15 +58,16 @@ function flakeTex(THREE) {
 }
 
 // Mưa: đoạn thẳng nghiêng rơi nhanh
-export function fxRain(THREE, { count = 1800, area = [90, 60, 90], speed = 55, len = 2.2, slant = [0.25, 0.1], color = '#a9c4e8', seed = 2 } = {}) {
+export function fxRain(THREE, { count = 1800, area = [90, 60, 90], speed = 55, len = 2.2, slant: slant0 = [0.25, 0.1], color = '#a9c4e8', seed = 2 } = {}) {
   const geo = new THREE.BufferGeometry(); const pos = new Float32Array(count * 6);
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   const obj = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.55 }));
   obj.name = 'fx_rain'; obj.frustumCulled = false;
-  return {
+  const R = {
     obj,
+    slant: null,   // ghi đè độ xiên [x, z] (gió — engine/seaweather.js); null ⇒ slant lúc tạo
     update(t, c = [0, 0, 0]) {
-      const [ax, ay, az] = area;
+      const [ax, ay, az] = area, slant = R.slant || slant0;
       for (let i = 0; i < count; i++) {
         const fall = (hash(i, seed) * ay + t * speed * (0.8 + hash(i, seed + 4) * 0.4)) % ay;
         const y = ay - fall, x = (hash(i, seed + 1) - 0.5) * ax + slant[0] * fall, z = (hash(i, seed + 2) - 0.5) * az + slant[1] * fall;
@@ -75,6 +76,7 @@ export function fxRain(THREE, { count = 1800, area = [90, 60, 90], speed = 55, l
       geo.attributes.position.needsUpdate = true;
     },
   };
+  return R;
 }
 
 // Bụi bùng (một lần) tại các điểm, t0 = lúc chạm đất

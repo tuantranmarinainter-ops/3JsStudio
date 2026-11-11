@@ -67,6 +67,7 @@ export function findSurfaceCrossings(THREE, root, mixer, clip, waterY, { samples
 }
 
 const MAX_EVENTS = 6;
+const smoothstep01 = (a, b, x) => { const k = Math.min(1, Math.max(0, (x - a) / (b - a))); return k * k * (3 - 2 * k); };
 
 // scale: kích thước con vật (m) → độ cao/độ rộng tia nước. strength nhân thêm theo vận tốc cắt mặt nước.
 export function createSplash(THREE, opts = {}) {
@@ -211,11 +212,12 @@ export function createSplash(THREE, opts = {}) {
           float k = clamp(uTau / uLifeC, 0.0, 1.0);
           float cut = 0.45 + 0.5 * wav(a * 2.0, uSeed + 7.0);                                 // ngón nước ở mép
           float fing = 1.0 - smoothstep(cut - 0.18, cut, v + 0.25 * k);
-          float streak = 0.55 + 0.45 * wav(a * 5.0 + v * 2.0, uSeed + 11.0);                  // vệt dọc
-          float holes = smoothstep(0.25 + 0.5 * k, 0.55 + 0.4 * k, wav(a * 9.0 - v * 6.0, uSeed + 5.0) * 0.6 + streak * 0.4);
-          float al = uA * fing * streak * holes * pow(1.0 - k, 1.3) * smoothstep(0.0, 0.06, uTau) * smoothstep(0.0, 0.08, v + 0.02);
+          float n1 = wav(a * 3.0 + v * 1.7, uSeed + 11.0), n2 = wav(a * 11.0 - v * 4.3 + n1 * 2.0, uSeed + 5.0);
+          float dens = mix(1.0, 0.6, v) * (0.65 + 0.35 * n1);                                  // dày ở chân, mỏng lên mép
+          float holes = smoothstep(0.18 + 0.55 * k, 0.42 + 0.5 * k, n2 * 0.55 + n1 * 0.45);       // vỡ thành ren theo thời gian
+          float al = uA * fing * dens * holes * pow(1.0 - k, 1.3) * smoothstep(0.0, 0.06, uTau) * smoothstep(0.0, 0.08, v + 0.02);
           if (al < 0.01) discard;
-          gl_FragColor = vec4(uColor * vShade * (0.85 + 0.25 * v), al);
+          gl_FragColor = vec4(uColor * (0.92 + 0.08 * vShade) * (0.96 + 0.08 * v), al);
         }`,
     });
     const c = new THREE.Mesh(crownGeo, m);
@@ -401,11 +403,12 @@ export function createSplash(THREE, opts = {}) {
           cu.uTau.value = tau; cu.uLifeC.value = cl;
           cu.uR.value = sc * (down ? 0.2 : 0.12) * (1 + (down ? 1.3 : 0.6) * (1 - Math.exp(-2.4 * tau)));
           cu.uH.value = sc * (down ? 0.62 : 0.28) * Math.pow(Math.sin(Math.PI * Math.min(tau / (cl * 0.75), 1) * 0.5 + 0.0001), 0.6);
-          cu.uFlare.value = down ? 0.9 : 0.35; cu.uA.value = down ? 0.82 : 0.55;
+          cu.uFlare.value = down ? 0.9 : 0.35; cu.uA.value = down ? 0.95 : 0.6;
           crown.position.set(e.x, e.y, e.z);
         }
         const life = o.life * 1.5;
-        const on = tau > 0 && tau < life && !sea2;   // sea2: bọt + vòng trên mặt biển do water.js vẽ (theo sóng) → bỏ đĩa phẳng
+        const on = tau > 0 && tau < life;
+        const fk = sea2 ? 0.55 * (1 - smoothstep01(0.4, 1.4, tau)) : 1;   // sea2: bọt/vòng thật do mặt biển (water.js) vẽ → đĩa phẳng chỉ còn lúc đầu
         const k = tau / life;
         const ring = rings[i], foam = foams[i];
         ring.visible = foam.visible = on;
@@ -413,10 +416,10 @@ export function createSplash(THREE, opts = {}) {
         const R = o.scale * (0.2 + 0.7 * (1 - Math.exp(-2.2 * tau)));
         ring.position.set(e.x, e.y + 0.02, e.z);
         ring.scale.setScalar(R);
-        ring.material.opacity = 0.75 * (1 - k);
+        ring.material.opacity = 0.75 * (1 - k) * fk;
         foam.position.set(e.x, e.y + 0.015, e.z);
         foam.scale.setScalar(R * 0.85);
-        foam.material.opacity = 0.45 * (1 - k) * (1 - k);
+        foam.material.opacity = 0.45 * (1 - k) * (1 - k) * fk;
       });
     },
   };

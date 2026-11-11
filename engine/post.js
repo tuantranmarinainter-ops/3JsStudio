@@ -16,15 +16,18 @@
 //   vignette — tối nhẹ 4 góc + hạt phim mịn
 //   outline  — viền đen quanh nhân vật (kiểu hoạt hình), chỉ viền ngoài, không xuyên tường
 //   storm    — cảnh bão: vệt mưa chéo trên màn hình + loé sáng theo nhịp chớp của cảnh
+//   paint    — tranh sơn dầu: Kuwahara dị hướng 8 quạt + vân vải/nổi sơn (engine/painterly.js, học Tidewright). Mặc định TẮT.
+//              post.paint.params = { strength, radius, weave, flat, quality } · post.paint.setDepth(depthTex, camera) nếu có depth
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
+import { createPainterlyPass } from './painterly.js';
 import { GRUNGE } from './grunge.js';
 import { MATS } from './materials.js';
 
-export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true };
+export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, seaWx: true };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
@@ -35,6 +38,8 @@ export const FX_LABELS = {
   ibl: 'Ánh sáng môi trường: kim loại, men, kính phản chiếu thật (v4)',
   scans: 'Đồ vật quét thật Poly Haven: bàn ghế gỗ, cây, gốm, sách (v4)',
   sea2: 'Biển + thuyền nổi khớp sóng, bọt quanh thân, vệt ướt (v4, học Saltline)',
+  seaWx: 'Thời tiết biển theo shot: lặng → nắng → mưa → giông → bão (seaWeather)',
+  paint: 'Tranh sơn dầu (Kuwahara)',
 };
 
 // Màu theo preset ánh sáng (engine/envs.js LIGHTS). temp > 0 ấm, < 0 lạnh; sat bão hoà; con tương phản; gain/lift sáng.
@@ -101,7 +106,7 @@ const GradeShader = {
     }`,
 };
 
-export function createPost(THREE, stage, { actors = [] } = {}) {
+export function createPost(THREE, stage, { actors = [], paint: paintOpts = {} } = {}) {
   const { renderer, scene, camera } = stage;
   const fx = { ...FX_DEFAULTS };
   const css = new THREE.Vector2(); renderer.getSize(css);
@@ -144,7 +149,9 @@ export function createPost(THREE, stage, { actors = [] } = {}) {
   const bloom = new UnrealBloomPass(new THREE.Vector2(W, H), 0.22, 0.45, 0.93);   // strength, radius, threshold
   const grade = new ShaderPass(GradeShader);
   grade.uniforms.uRes.value = new THREE.Vector2(W * pr(), H * pr());
-  for (const p of [copyIn, outline, bokeh, bloom, grade]) composer.addPass(p);
+  // tranh sơn dầu: sau mờ hậu cảnh, TRƯỚC bloom (bloom toả trên lớp sơn) và grade (chỉnh màu sau cùng)
+  const paint = createPainterlyPass(THREE, paintOpts);
+  for (const p of [copyIn, outline, bokeh, paint, bloom, grade]) composer.addPass(p);
 
   const anyOn = () => Object.values(fx).some(Boolean);
   const _f = new THREE.Vector3();
@@ -164,6 +171,7 @@ export function createPost(THREE, stage, { actors = [] } = {}) {
     const k = Math.max(0, Math.min(1, (26 - dist) / 16));
     bokeh.enabled = fx.dof && k > 0.02;
     if (bokeh.enabled) { bokeh.uniforms.focus.value = dist; bokeh.uniforms.aperture.value = 0.0006 * k; bokeh.uniforms.maxblur.value = 0.011 * k; }
+    paint.enabled = fx.paint;
     bloom.enabled = fx.bloom;
     const storm = fx.storm && (light === 'storm' || /storm/i.test(env));
     bloom.strength = storm ? 0.22 + flash * 0.9 : 0.22;
@@ -183,7 +191,7 @@ export function createPost(THREE, stage, { actors = [] } = {}) {
 
   resize();
   return {
-    composer, passes: { copyIn, outline, bokeh, bloom, grade },
+    composer, paint, passes: { copyIn, outline, bokeh, paint, bloom, grade },
     get options() { return { ...fx }; },
     set(o = {}) { for (const k of Object.keys(FX_DEFAULTS)) if (o[k] !== undefined) fx[k] = !!o[k]; const AF = (globalThis.__autoFx ||= {}); for (const k of ['foot', 'prints', 'wind', 'breath', 'ibl', 'scans', 'sea2']) AF[k] = fx[k]; return { ...fx }; },
     render, resize,

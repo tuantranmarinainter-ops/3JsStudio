@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hull Lab</title>
+<style>
+  :root { --bg:#0f1319; --ink:#e9e4d8; --dim:#9aa3ad; --panel:rgba(15,19,25,.82); }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:14px/1.35 system-ui,sans-serif; overflow:hidden; }
+  #c { display:block; margin:0 auto; height:100vh; width:auto; aspect-ratio:9/16; max-width:100vw; }
+  #ui { position:fixed; left:12px; right:12px; bottom:12px; max-width:520px; margin:0 auto; background:var(--panel); border-radius:12px; padding:10px 14px; display:grid; gap:8px; }
+  #ui label { display:flex; gap:10px; align-items:center; }
+  #ui input[type=range] { flex:1; }
+  #ui select { background:#1b222b; color:var(--ink); border:1px solid #333c47; border-radius:6px; padding:3px 6px; }
+  #info { color:var(--dim); font-size:12px; }
+  body.capture #c { height:auto; width:100vw; } body.capture #ui { display:none; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<div id="ui">
+  <label>Loại <select id="type"><option value="all">tất cả</option><option value="skiff">skiff</option><option value="ship">ship</option><option value="raft">raft</option></select>
+    <label style="margin-left:auto">nước <input type="checkbox" id="water" checked></label></label>
+  <label>Xoay <input type="range" id="ang" min="0" max="360" step="1" value="35"><span id="angv">35°</span></label>
+  <label>Cao cam <input type="range" id="el" min="2" max="60" step="1" value="16"><span id="elv">16°</span></label>
+  <div id="info"></div>
+</div>
+<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
+<script type="module">
+// Phòng thử engine/hull.js: bàn xoay CHỈ theo thanh trượt / tham số URL (không đồng hồ, không rAF):
+//   ?type=all|skiff|ship|raft  &ang=35  &el=16  &water=0  &capture   · window.setLab({type, ang, el, water}) · window.renderAt(t)
+import * as THREE from 'three';
+import { createHull } from './hull.js';
+window.THREE = THREE;
+const q = new URLSearchParams(location.search);
+if (q.has('capture')) document.body.classList.add('capture');
+const $ = (id) => document.getElementById(id);
+const renderer = new THREE.WebGLRenderer({ canvas: $('c'), antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(1080, 1920, false);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#9fb6c8'); scene.fog = new THREE.Fog('#9fb6c8', 220, 600);
+const cam = new THREE.PerspectiveCamera(40, 1080 / 1920, 0.5, 2000);
+scene.add(new THREE.HemisphereLight('#dfeaf5', '#3a4a52', 1.4));
+const sun = new THREE.DirectionalLight('#fff2dd', 2.6); sun.position.set(60, 90, 40); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -80, right: 80, top: 80, bottom: -80, far: 400 }); scene.add(sun);
+// mặt nước phẳng bán trong suốt: thấy rõ đường nước (y = 0) + phần chìm
+const water = new THREE.Mesh(new THREE.CircleGeometry(400, 64).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#2f6f86', transparent: true, opacity: 0.55, roughness: 0.25, metalness: 0.1, depthWrite: false }));
+water.name = 'water'; water.receiveShadow = true; scene.add(water);
+const floor = new THREE.Mesh(new THREE.CircleGeometry(400, 64).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#41525a', roughness: 1 }));
+floor.position.y = -9; scene.add(floor);
+
+const boats = {
+  ship: createHull(THREE, { type: 'ship', name: 'Kittiwake', seed: 4 }),
+  skiff: createHull(THREE, { type: 'skiff', name: 'Mai', seed: 3, sailAngle: 0.35 }),
+  raft: createHull(THREE, { type: 'raft', seed: 5 }),
+};
+const turn = new THREE.Group(); turn.name = 'turntable'; scene.add(turn);
+for (const b of Object.values(boats)) turn.add(b);
+const LAYOUT = { all: { ship: [0, -26], skiff: [-9, 24], raft: [11, 26] }, ship: { ship: [0, 0] }, skiff: { skiff: [0, 0] }, raft: { raft: [0, 0] } };
+const FRAME = { all: 95, ship: 82, skiff: 30, raft: 24 };
+
+function apply() {
+  const type = $('type').value, ang = +$('ang').value, el = +$('el').value;
+  $('angv').textContent = ang + '°'; $('elv').textContent = el + '°';
+  water.visible = $('water').checked;
+  for (const [k, b] of Object.entries(boats)) { const p = LAYOUT[type][k]; b.visible = !!p; if (p) b.position.set(p[0], 0, p[1]); }
+  turn.rotation.y = THREE.MathUtils.degToRad(ang);
+  const R = FRAME[type], e = THREE.MathUtils.degToRad(el);
+  cam.position.set(0, Math.sin(e) * R + 3, Math.cos(e) * R); cam.lookAt(0, type === 'all' ? 2 : 3, 0);
+  renderer.render(scene, cam);
+  const vis = Object.entries(boats).filter(([, b]) => b.visible).map(([k, b]) => `${k}: ${b.userData.length}×${b.userData.beam} stud, mớn ${b.userData.draft.toFixed(2)}, mạn khô ${b.userData.freeboard.toFixed(2)}, footprint ${b.userData.footprint.hx}/${b.userData.footprint.hz}`);
+  $('info').textContent = vis.join(' · ');
+}
+$('type').value = q.get('type') || 'all'; $('ang').value = q.get('ang') ?? 35; $('el').value = q.get('el') ?? 16; $('water').checked = q.get('water') !== '0';
+for (const id of ['type', 'ang', 'el', 'water']) $(id).addEventListener('input', apply);
+window.setLab = (o = {}) => { for (const k of ['type', 'ang', 'el']) if (o[k] !== undefined) $(k).value = o[k]; if (o.water !== undefined) $('water').checked = !!o.water; apply(); };
+window.__boats = boats;
+// cho tools/look.mjs: t (giây) → góc bàn xoay = ang0 + 30°·t (hàm thuần của t)
+const ang0 = +(q.get('ang') ?? 35);
+window.renderAt = (t) => window.setLab({ ang: ((ang0 + 30 * t) % 360 + 360) % 360 });
+apply();
+window.__ready = true;
+</script>
+</body>
+</html>

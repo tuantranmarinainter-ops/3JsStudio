@@ -217,7 +217,8 @@ export function createOceanLife(THREE, A, { seaY = 0, plan = null } = {}) {
     const seeds = Array.from({ length: N }, (_, i) => {
       const j = i % pickB.length, ts = c0 + (c1 - c0) * hs(i, 1);
       const p0 = at(j, ts), p1 = at(j, ts + 0.02), q = speed * 0.5 / 0.02;
-      return { ts, p0: [p0[0] + (hs(i, 2) - 0.5) * 1.6, p0[1] + (hs(i, 3) - 0.5) * 0.8, p0[2] + (hs(i, 4) - 0.5) * 1.6], vel: [(p1[0] - p0[0]) * q, (p1[1] - p0[1]) * q, (p1[2] - p0[2]) * q] };
+      return { ts, p0: [p0[0] + (hs(i, 2) - 0.5) * 4.5, p0[1] + (hs(i, 3) - 0.5) * 1.5, p0[2] + (hs(i, 4) - 0.5) * 4.5],
+        vel: [(p1[0] - p0[0]) * q + (hs(i, 5) - 0.5) * 2.5, (p1[1] - p0[1]) * q, (p1[2] - p0[2]) * q + (hs(i, 6) - 0.5) * 2.5] };
     });
     const pos = new Float32Array(N * 3), geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));

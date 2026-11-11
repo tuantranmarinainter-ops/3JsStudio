@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sea Lab</title>
+<style>
+  :root { --bg:#0e1118; --panel:rgba(14,17,24,.86); --ink:#e8eef6; --mute:#9aa8bb; --line:#2a3344; --acc:#4fb3ff; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:13px/1.35 system-ui, sans-serif; overflow:hidden; }
+  #c { display:block; margin:0 auto; height:100vh; width:auto; aspect-ratio:9/16; max-width:100vw; }
+  #ui { position:fixed; left:8px; right:8px; bottom:8px; max-width:460px; margin:0 auto; background:var(--panel); border:1px solid var(--line);
+        border-radius:10px; padding:8px 10px; display:grid; grid-template-columns:auto 1fr auto; gap:6px 8px; align-items:center; }
+  #ui label { color:var(--mute); white-space:nowrap; }
+  #ui select, #ui input[type=range] { width:100%; min-width:0; }
+  #ui select { background:#1a2130; color:var(--ink); border:1px solid var(--line); border-radius:6px; padding:3px; }
+  #ui output { font-variant-numeric:tabular-nums; min-width:3.5em; text-align:right; }
+  #ui .row { grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:4px 12px; }
+  #ui .row label { color:var(--ink); }
+  #hide { position:fixed; top:8px; right:8px; background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:6px; padding:4px 8px; }
+  body.noui #ui { display:none; }
+  body.cap #hide { display:none; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<button id="hide" type="button">UI</button>
+<div id="ui">
+  <label for="wx">Thời tiết</label><select id="wx"></select><output id="wxo"></output>
+  <label for="wx2">→ sang</label><select id="wx2"></select><output></output>
+  <label for="mix">Trộn</label><input id="mix" type="range" min="0" max="1" step="0.01" value="0"><output id="mixo">0</output>
+  <label for="t">t (giây)</label><input id="t" type="range" min="0" max="30" step="0.02" value="3"><output id="to">3</output>
+  <label for="amp">amp ×</label><input id="amp" type="range" min="0" max="2" step="0.05" value="1"><output id="ampo">1</output>
+  <label for="cam">Camera</label><select id="cam"><option value="near">gần thuyền</option><option value="wide">rộng</option><option value="low">sát mặt nước</option></select><output></output>
+  <div class="row">
+    <label><input type="checkbox" id="float" checked> vật nổi</label>
+    <label><input type="checkbox" id="events" checked> sự kiện</label>
+    <label><input type="checkbox" id="sea2" checked> sea2</label>
+    <label><input type="checkbox" id="rain" checked> mưa/chớp</label>
+  </div>
+</div>
+<script type="importmap">{ "imports": { "three": "../vendor/three/three.module.js", "three/addons/": "../vendor/three/addons/" } }</script>
+<script type="module">
+// sea-lab — trang thử LÕI BIỂN tách riêng (engine/sea.js, water.js, floating.js, seaweather.js), xem được trên điện thoại.
+//   ?wx=giong&wx2=bao&mix=0.5   thời tiết (engine/seaweather.js) + trộn sang preset thứ 2
+//   ?preset=deep                bộ sóng (engine/water.js WATER_PRESETS; mặc định = water của thời tiết đầu)
+//   ?amp=1.2                    nhân biên độ của thời tiết · ?t=4.5 thời điểm · ?events=1 ?float=1 ?sea2=1 ?rain=1 ?cam=near|wide|low
+//   ?ui=0                       ẩn bảng · ?sweep=1  t = i + f → preset thứ i của thang, cùng thời điểm biển 3 + f (bảng so mọi preset)
+// TẤT ĐỊNH: thời gian chỉ từ thanh trượt / ?t / window.renderAt(t) (tools/look.mjs). Không rAF, không đồng hồ, không Math.random.
+import * as THREE from 'three';
+import { createSea } from './sea.js';
+import { floatPose, floatTilt, wetline, worldGrad } from './floating.js';
+import { LIGHTS } from './lights.js';
+import { SEA_WEATHER, resolveSeaWeather, applySeaWeather, preSeaWeather, resetSeaWeather } from './seaweather.js';
+import { fxRain, fxBolt } from './fx.js';
+
+window.THREE = THREE;
+const q = new URLSearchParams(location.search);
+const $ = (id) => document.getElementById(id);
+const on = (k, d = true) => (q.has(k) ? q.get(k) !== '0' : d);
+if (!on('ui')) document.body.classList.add('noui', 'cap');
+$('hide').onclick = () => document.body.classList.toggle('noui');
+const AUTO = (globalThis.__autoFx ||= { sea2: true });
+
+// ---- renderer / scene (giống engine/envs.js: vòm trời gradient + hemi + nắng) ----
+const renderer = new THREE.WebGLRenderer({ canvas: $('c'), antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(1080, 1920, false); renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = false;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, 1080 / 1920, 0.5, 4000);
+const skyMat = new THREE.ShaderMaterial({
+  uniforms: { top: { value: new THREE.Color() }, bottom: { value: new THREE.Color() }, flash: { value: 0 } },
+  vertexShader: 'varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+  fragmentShader: 'uniform vec3 top; uniform vec3 bottom; uniform float flash; varying vec3 vP; void main(){ float h = clamp(vP.y*1.6+0.25,0.0,1.0); gl_FragColor = vec4(mix(bottom, top, h) + flash*0.6, 1.0); }',
+  side: THREE.BackSide, depthWrite: false, fog: false,
+});
+const sky = new THREE.Mesh(new THREE.SphereGeometry(900, 32, 16), skyMat); sky.name = 'sky'; sky.renderOrder = -1; scene.add(sky);
+const hemi = new THREE.HemisphereLight('#fff', '#888', 1); const sun = new THREE.DirectionalLight('#fff', 2); scene.add(hemi, sun, sun.target);
+function applyLight(L, flash) {
+  skyMat.uniforms.top.value.set(L.top); skyMat.uniforms.bottom.value.set(L.bottom); skyMat.uniforms.flash.value = flash;
+  scene.background = new THREE.Color(L.bottom);
+  if (L.fog) { scene.fog ||= new THREE.Fog(L.fog, 100, 500); scene.fog.color.set(L.fog); [scene.fog.near, scene.fog.far] = L.fogR; } else scene.fog = null;
+  hemi.color.set(L.hemi[0]); hemi.groundColor.set(L.hemi[1]); hemi.intensity = L.hemi[2] + flash * 1.5;
+  sun.color.set(L.sun[0]); sun.intensity = L.sun[1] + flash * 3; sun.position.set(...L.dir).normalize().multiplyScalar(100);
+  renderer.toneMappingExposure = L.exposure;
+}
+
+// ---- thời tiết + biển ----
+const ids = SEA_WEATHER.map((p) => p.id);
+for (const sel of [$('wx'), $('wx2')]) for (const p of SEA_WEATHER) sel.add(new Option(`${p.id} — ${p.en}`, p.id));
+$('wx').value = ids.includes(q.get('wx')) ? q.get('wx') : 'nang';
+$('wx2').value = ids.includes(q.get('wx2')) ? q.get('wx2') : $('wx').value;
+const presetQ = q.get('preset');
+const seas = new Map();   // 1 mặt nước / bộ sóng, dựng sẵn khi cần (không đổi giữa các lần seek cùng bộ sóng)
+function seaFor(preset) {
+  if (!seas.has(preset)) {
+    const s = createSea(THREE, { preset, amp: 1, size: 1600, seg: 150, name: 'lab_sea_' + preset });
+    s.water.mesh.visible = false; scene.add(s.water.mesh); seas.set(preset, s);
+  }
+  return seas.get(preset);
+}
+const env = { sea: null, rain: fxRain(THREE, { count: 2400, area: [80, 55, 80] }), bolt: fxBolt(THREE, { seed: 6 }) };
+env.bolt.position.set(-40, 22, -170); env.bolt.scale.setScalar(2); scene.add(env.rain.obj, env.bolt);
+
+// ---- "thuyền" hộp + thùng gỗ nổi (đường chung floatPose) ----
+const M = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.8, ...o });
+const boat = new THREE.Group(); boat.name = 'lab_boat';
+const box = (w, h, d, m, x, y, z, name) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(x, y, z); b.name = name; boat.add(b); return b; };
+box(8, 2.4, 16, M('#7a4a2a'), 0, 0.2, 0, 'hull'); box(7.4, 0.3, 15.4, M('#c89a62'), 0, 1.5, 0, 'deck');
+box(4, 3, 4.5, M('#e8e2d4'), 0, 3.1, -2.5, 'cabin'); box(0.4, 9, 0.4, M('#5a3a22'), 0, 6, 3, 'mast');
+scene.add(boat);
+const crate = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.4, 2.4), M('#b07a3e')); crate.name = 'lab_crate'; scene.add(crate);
+const wet = wetline(THREE, boat);
+const HULL = { hx: 4, hz: 8 }, BOAT = { x: 0, z: 0, yaw: 0.35 }, CRATE = { x: 11, z: 9, yaw: 0.8 };
+
+// ---- nhãn preset vẽ thẳng vào khung (có trong ảnh chụp) ----
+const lc = document.createElement('canvas'); lc.width = 1024; lc.height = 128; const lg = lc.getContext('2d');
+const lt = new THREE.CanvasTexture(lc); lt.colorSpace = THREE.SRGBColorSpace;
+const hud = new THREE.Scene(), hudCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+const hudQ = new THREE.Mesh(new THREE.PlaneGeometry(1.9, 0.19), new THREE.MeshBasicMaterial({ map: lt, transparent: true, depthTest: false }));
+hudQ.position.set(0, 0.86, 0); hud.add(hudQ);
+function label(text) { lg.clearRect(0, 0, 1024, 128); lg.fillStyle = 'rgba(0,0,0,.45)'; lg.fillRect(0, 14, 1024, 100); lg.fillStyle = '#fff'; lg.font = 'bold 54px system-ui, sans-serif'; lg.textAlign = 'center'; lg.fillText(text, 512, 84); lt.needsUpdate = true; }
+
+const CAMS = { near: { p: [22, 11, 30], l: [0, 1.5, 0], fov: 42 }, wide: { p: [60, 34, 95], l: [0, 0, -10], fov: 45 }, low: { p: [14, 3.2, 22], l: [0, 2.5, -6], fov: 40 } };
+const light = { sunDir: new THREE.Vector3(), sunColor: new THREE.Color(), skyTop: new THREE.Color(), skyBottom: new THREE.Color(), amb: new THREE.Color(), flash: 0 };
+
+// ---- 1 khung: hàm thuần của (t, trạng thái UI) ----
+function renderAt(tIn) {
+  let t = +tIn, wxA = $('wx').value, wxB = $('wx2').value, m = +$('mix').value, tag = '';
+  if (on('sweep', false)) { const i = Math.min(ids.length - 1, Math.max(0, Math.floor(t))); wxA = wxB = ids[i]; m = 0; t = 3 + (t - i); tag = ' · sweep'; }
+  AUTO.sea2 = $('sea2').checked;
+  const spec = wxA === wxB ? wxA : { from: wxA, to: wxB, mix: m };
+  const W = resolveSeaWeather(spec, m);
+  const ampK = +$('amp').value;
+  const sea = seaFor(presetQ || W.A.water || 'deep');
+  for (const s of seas.values()) { s.water.mesh.visible = s === sea; s.setDrive(null); s.setShotEvents(null); s.setHull(null); }
+  env.sea = sea;
+  // đồng hồ + biên độ theo thời tiết (như engine/shots.js prepareSea) — sample() theo đúng amp/clock đã trộn
+  sea.setDrive(() => ({ amp: W.amp * ampK, rate: W.speed }), { response: W.float });
+  sea.frame(t);
+  if ($('events').checked && AUTO.sea2) sea.setShotEvents([   // giống seaEvents của shot: t0 = clock(t_toàn_cục).t
+    { x: 6, z: 12, t0: sea.clock(1.5).t, strength: 1.6, radius: 10 }, { x: -9, z: -4, t0: sea.clock(4).t, strength: 2.4, radius: 16 }]);
+  // vật nổi
+  const fl = $('float').checked && AUTO.sea2;
+  boat.position.set(BOAT.x, 0, BOAT.z); boat.rotation.set(0, BOAT.yaw, 0); wet.off();
+  crate.position.set(CRATE.x, 0.6, CRATE.z); crate.rotation.set(0, CRATE.yaw, 0);
+  if (fl) {
+    const F = floatPose(sea, { ...BOAT, ...HULL, t, draft: 0.4, pitchK: 0.9, rollK: 0.7, maxPitch: 0.25, maxRoll: 0.3 });
+    boat.position.y = F.dy; boat.quaternion.premultiply(floatTilt(THREE, F, BOAT.yaw));
+    wet.set({ x: BOAT.x, z: BOAT.z, y: F.y, ...worldGrad(F.sx, F.sz, BOAT.yaw), t: sea.clock(t).t });
+    sea.setHull({ ...BOAT, ...HULL, k: 1, plunge: Math.min(1, Math.max(0, -F.vy / 4)) });
+    const G = floatPose(sea, { ...CRATE, hx: 1.2, hz: 1.2, t, draft: 0.5 });
+    crate.position.y = 0.6 + G.dy; crate.quaternion.premultiply(floatTilt(THREE, G, CRATE.yaw));
+  }
+  // env "giả": như envs.use — trả về, gió cho mưa, cập nhật, áp thời tiết, ánh sáng
+  resetSeaWeather(env); preSeaWeather(env, W);
+  sea(t);
+  const c = CAMS[$('cam').value] || CAMS.near;
+  camera.position.set(...c.p); camera.lookAt(...c.l); camera.fov = c.fov; camera.updateProjectionMatrix();
+  env.rain.update(t, [camera.position.x, Math.max(0, camera.position.y - 20), camera.position.z]); env.bolt.visible = false;
+  const ctx = {};
+  applySeaWeather(env, W, t, ctx);
+  if (!$('rain').checked) { env.rain.obj.visible = false; env.bolt.visible = false; ctx.flash = 0; }
+  const L = { ...LIGHTS[ctx.light], ...ctx.lightOverride };
+  applyLight(L, ctx.flash || 0);
+  light.sunDir.copy(sun.position).normalize(); light.sunColor.copy(sun.color).multiplyScalar(sun.intensity);
+  light.skyTop.copy(skyMat.uniforms.top.value); light.skyBottom.copy(skyMat.uniforms.bottom.value);
+  light.amb.copy(hemi.color).multiplyScalar(hemi.intensity); light.flash = ctx.flash || 0;
+  sea.water.update(sea.water.t, camera, light, sea.water.ampNow);
+  sky.position.copy(camera.position);
+  label(`${wxA === wxB ? wxA : `${wxA} → ${wxB} ${Math.round(m * 100)}%`}  ·  t=${t.toFixed(2)}${tag}`);
+  renderer.autoClear = true; renderer.render(scene, camera);
+  renderer.autoClear = false; renderer.render(hud, hudCam);
+  $('wxo').textContent = W.light; $('mixo').textContent = m.toFixed(2); $('to').textContent = (+tIn).toFixed(2); $('ampo').textContent = ampK.toFixed(2);
+}
+
+// ---- UI ↔ query ----
+const setIf = (id, k) => { if (q.has(k)) { const el = $(id); if (el.type === 'checkbox') el.checked = q.get(k) !== '0'; else el.value = q.get(k); } };
+setIf('mix', 'mix'); setIf('t', 't'); setIf('amp', 'amp'); setIf('cam', 'cam'); setIf('float', 'float'); setIf('events', 'events'); setIf('sea2', 'sea2'); setIf('rain', 'rain');
+for (const el of document.querySelectorAll('#ui select, #ui input')) el.addEventListener('input', () => renderAt(+$('t').value));
+window.renderAt = (t) => { $('t').value = t; renderAt(t); };
+window.__shots = null;
+renderAt(+$('t').value);
+window.__ready = true;
+</script>
+</body>
+</html>

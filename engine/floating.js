@@ -1,5 +1,6 @@
 // floating.js — vật nổi cưỡi sóng THẬT của shader nước (sea2, học Saltline / Tidewright), tất định: hàm thuần của t.
 //
+//   Dùng floatPose(sea, …) bên dưới (đường chung); floatHull là phần tính thuần.
 //   const F = floatHull(sea.sample, { x, z, yaw, hx, hz, t, clock });
 //     sea.sample = createWater(...).sample (bản CPU của tổng sóng Gerstner trong vertex shader)
 //     clock(t) → { t: uTime của biển, amp } — ĐÚNG giá trị env truyền vào update() (vd. bão: t*1.6, 2.4)
@@ -44,6 +45,25 @@ export function floatHull(sample, o) {
   const vy = (yp - y) / h;
   const kp = o.pitchK ?? 0.92, kr = o.rollK ?? 0.62, mp = o.maxPitch ?? 0.22, mr = o.maxRoll ?? 0.25;
   return { y, sx, sz, vy, rotX: clamp(-Math.atan(sz) * kp, -mp, mp), rotZ: clamp(Math.atan(sx) * kr, -mr, mr) };
+}
+
+// ---- đường dùng CHUNG cho mọi vật nổi (nhà boat, cast/props float, tàu shipStorm, sea-lab) ----
+//   const F = floatPose(sea, { x, z, yaw, hx, hz, t, draft, pitchK, rollK, maxPitch, maxRoll, response, clock });
+//   sea = hàm biển của engine/sea.js (có .sample/.clock/.water/.response); t = t TOÀN CỤC (clock đổi sang thời gian biển)
+//   → F của floatHull + dy = F.y − cao độ mặt biển tĩnh − draft  (đặt: position.y = y_khi_biển_lặng + dy)
+//   response (× pitchK/rollK/maxPitch/maxRoll) mặc định = sea.response (thời tiết, engine/seaweather.js float) = 1.
+export function floatPose(sea, o) {
+  const R = o.response ?? sea.response ?? 1;
+  const F = floatHull(sea.sample, { ...o, clock: o.clock || sea.clock,
+    pitchK: (o.pitchK ?? 0.92) * R, rollK: (o.rollK ?? 0.62) * R, maxPitch: (o.maxPitch ?? 0.22) * R, maxRoll: (o.maxRoll ?? 0.25) * R });
+  F.dy = F.y - (sea.water?.mesh.position.y ?? 0) - (o.draft || 0);
+  return F;
+}
+// nghiêng của F (rotX/rotZ trong hệ thân có yaw) thành quaternion THẾ GIỚI để nhân trước (premultiply) vào hướng sẵn có
+export function floatTilt(THREE, F, yaw = 0, k = 1, q = new THREE.Quaternion()) {
+  const e = new THREE.Euler(F.rotX * k, yaw, F.rotZ * k, 'YXZ');
+  q.setFromEuler(e).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -yaw));
+  return q;
 }
 
 const WL_VERT_PARS = 'varying vec3 vWlW;';

@@ -70,7 +70,7 @@ function waveCode(P, ampScale) {
   P.waves.forEach(([L, deg, rel], i) => {
     const a = deg * Math.PI / 180, k = 2 * Math.PI / L, A = rel * ampScale, w = Math.sqrt(P.g * k);
     const Q = P.steep * (0.4 + 0.6 * rel) / (k * A * n);
-    s += `{ vec2 D = vec2(${Math.cos(a).toFixed(5)}, ${Math.sin(a).toFixed(5)}); float k = ${k.toFixed(6)}; float A = ${A.toFixed(5)} * uAmp * fade; float Q = ${Math.min(Q, 3).toFixed(4)};
+    s += `{ vec2 D = vec2(${Math.cos(a).toFixed(5)}, ${Math.sin(a).toFixed(5)}); float k = ${k.toFixed(6)}; float A = ${A.toFixed(5)} * uAmp * fade; float Q = ${Math.min(Q, 3).toFixed(4)}*uWind.w;
       float ph = k*dot(D, p) - ${w.toFixed(5)}*uTime + ${(i * 1.7 + 0.6).toFixed(3)}; float s = sin(ph), c = cos(ph);
       disp.xz += Q*A*D*c; disp.y += A*s; nrm.xz -= D*(k*A*c); nrm.y -= Q*k*A*s;
       float qa = Q*k*A*s; jxx -= qa*D.x*D.x; jzz -= qa*D.y*D.y; jxz -= qa*D.x*D.y; }
@@ -119,10 +119,12 @@ export function createWater(THREE, opts = {}) {
     // sea2 (v4, học Saltline): đánh bóng shader + bọt quanh thân vật nổi. uSea2 = 0 → y hệt bản cũ.
     uEv: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, 0, -1e6, 0)) }, uEvR: { value: new Array(8).fill(10) }, uEvN: { value: 0 },
     uSea2: { value: 0 }, uHull: { value: new THREE.Vector4(0, 0, 1, 1) }, uHullR: { value: new THREE.Vector4(0, 0, 0, 0) },
+    // gió (engine/seaweather.js): (cos θ, sin θ, hệ số cat's-paw, hệ số độ nhọn Q). Mặc định (1,0,1,1) ⇒ y hệt bản cũ (phép tính chính xác).
+    uWind: { value: new THREE.Vector4(1, 0, 1, 1) },
   }]);
 
   const vertex = /* glsl */`
-    uniform float uTime, uAmp, uSea2;
+    uniform float uTime, uAmp, uSea2; uniform vec4 uWind;
     uniform vec4 uEv[8]; uniform float uEvR[8]; uniform float uEvN;
     // sự kiện mặt nước (sea2): độ cao tại p (chưa dời) — PHẢI khớp evH() bản CPU trong water.js
     float evH(vec2 p){
@@ -148,7 +150,10 @@ export function createWater(THREE, opts = {}) {
       float dc = length(p - cameraPosition.xz);
       float fade = 1.0 - 0.7*smoothstep(120.0, 450.0, dc);
       vec3 disp = vec3(0.0); vec3 nrm = vec3(0.0, 1.0, 0.0); float jxx = 1.0, jzz = 1.0, jxz = 0.0;
+      vec2 pW = p; p = vec2(uWind.x*pW.x + uWind.y*pW.y, -uWind.y*pW.x + uWind.x*pW.y);   // vào hệ gió (xoay hướng sóng)
       ${waveCode(P, ampScale)}
+      p = pW; disp.xz = vec2(uWind.x*disp.x - uWind.y*disp.z, uWind.y*disp.x + uWind.x*disp.z);
+      nrm.xz = vec2(uWind.x*nrm.x - uWind.y*nrm.z, uWind.y*nrm.x + uWind.x*nrm.z);
       if (uSea2 > 0.5 && uEvN > 0.5) {
         float e0 = evH(p), ex = evH(p + vec2(0.25, 0.0)), ez = evH(p + vec2(0.0, 0.25));
         disp.y += e0; nrm.x -= (ex - e0)*4.0; nrm.z -= (ez - e0)*4.0;
@@ -162,7 +167,7 @@ export function createWater(THREE, opts = {}) {
     }`.replace(/uAmpMax_/g, (ampScale * P.waves.reduce((a, w) => a + w[2], 0)).toFixed(4));
 
   const fragment = /* glsl */`
-    uniform float uTime, uFlash, uAlpha, uDetail, uSssK, uF0, uSkyMix, uAmpMax;
+    uniform float uTime, uFlash, uAlpha, uDetail, uSssK, uF0, uSkyMix, uAmpMax; uniform vec4 uWind;
     uniform vec3 uSunDir, uSunCol, uTop, uBot, uAmb, uShallow, uDeep, uSss, uFoam;
     uniform float uShoreMode; uniform vec4 uShoreP, uFoamR; uniform vec3 uSpots[${SPOTS}]; uniform float uSpotN;
     uniform float uSea2; uniform vec4 uHull, uHullR; uniform vec4 uEv[8]; uniform float uEvR[8]; uniform float uEvN;   // uHull = (tâm x, tâm z, nửa dài X cục bộ, nửa rộng Z cục bộ); uHullR = (yaw, cường độ, lao xuống 0..1, -)
@@ -193,6 +198,7 @@ export function createWater(THREE, opts = {}) {
       float catPaw = 0.0;
       if (uSea2 > 0.5) {
         catPaw = smoothstep(0.42, 0.78, vnD(xz*0.011 + vec2(uTime*0.012, -uTime*0.007)).x*0.65 + vnD(mat2(0.8,-0.6,0.6,0.8)*xz*0.027 - vec2(uTime*0.02, 0.0)).x*0.35);
+        catPaw *= uWind.z;
         slope *= 1.0 + 0.7*catPaw;
       }
       vec3 N = normalize(vec3(vN.x - slope.x, max(vN.y, 0.15), vN.z - slope.y));
@@ -356,14 +362,17 @@ export function createWater(THREE, opts = {}) {
     }
   }
   const D = { x: 0, y: 0, z: 0, vy: 0 };
-  function disp(px, pz, T, uA, cam) {
-    const fade = cam ? 1 - 0.7 * smoothstep(120, 450, Math.hypot(px - cam.x, pz - cam.z)) : 1;
+  function disp(px0, pz0, T, uA, cam) {
+    const fade = cam ? 1 - 0.7 * smoothstep(120, 450, Math.hypot(px0 - cam.x, pz0 - cam.z)) : 1;
+    const wc = u.uWind.value.x, ws = u.uWind.value.y, qk = u.uWind.value.w;   // = uWind trong vertex shader
+    const px = wc * px0 + ws * pz0, pz = -ws * px0 + wc * pz0;
     D.x = D.y = D.z = D.vy = 0;
     for (let i = 0; i < nW; i++) {
       const W = WV[i], A = W.A * uA * fade * filt[i];
       const ph = W.k * (W.dx * px + W.dz * pz) - W.w * T + W.off, s = Math.sin(ph), c = Math.cos(ph);
-      D.x += W.Q * A * W.dx * c; D.z += W.Q * A * W.dz * c; D.y += A * s; D.vy -= A * W.w * c;
+      D.x += W.Q * qk * A * W.dx * c; D.z += W.Q * qk * A * W.dz * c; D.y += A * s; D.vy -= A * W.w * c;
     }
+    const dx = D.x; D.x = wc * dx - ws * D.z; D.z = ws * dx + wc * D.z;
     return D;
   }
   const evs = [];   // sự kiện mặt nước (setEvents)
@@ -419,5 +428,22 @@ export function createWater(THREE, opts = {}) {
     if (L.amb) u.uAmb.value.copy(L.amb);
     u.uFlash.value = L.flash || 0;
   }
-  return { mesh, update, uniforms, material, preset: P, sample, setHull, setEvents };
+  // ---- nhìn + gió đổi được mỗi khung (engine/seaweather.js) — getLook() = bản chụp để trả lại ----
+  //   setLook({ shallow, deep, sss, foam (màu), foamLo, foamHi, foamAmt, glint, detail, skyMix, sssK, alpha })
+  //   setWind({ dir (radian, 0 = hướng sóng gốc của preset), paw (cat's-paw ×), steep (độ nhọn ×) }) — sample() theo đúng
+  const LOOK_C = { shallow: 'uShallow', deep: 'uDeep', sss: 'uSss', foam: 'uFoam' };
+  function getLook() {
+    const o = {}; for (const [k, n] of Object.entries(LOOK_C)) o[k] = '#' + u[n].value.getHexString();
+    const f = u.uFoamR.value;
+    return { ...o, foamLo: f.x, foamHi: f.y, foamAmt: f.z, glint: f.w, detail: u.uDetail.value, skyMix: u.uSkyMix.value, sssK: u.uSssK.value, alpha: u.uAlpha.value };
+  }
+  function setLook(L = {}) {
+    for (const [k, n] of Object.entries(LOOK_C)) if (L[k] != null) { if (L[k].isColor) u[n].value.copy(L[k]); else u[n].value.set(L[k]); }
+    const f = u.uFoamR.value;
+    if (L.foamLo != null) f.x = L.foamLo; if (L.foamHi != null) f.y = L.foamHi; if (L.foamAmt != null) f.z = L.foamAmt; if (L.glint != null) f.w = L.glint;
+    if (L.detail != null) u.uDetail.value = L.detail; if (L.skyMix != null) u.uSkyMix.value = L.skyMix;
+    if (L.sssK != null) u.uSssK.value = L.sssK; if (L.alpha != null) u.uAlpha.value = L.alpha;
+  }
+  function setWind({ dir = 0, paw = 1, steep = 1 } = {}) { u.uWind.value.set(dir === 0 ? 1 : Math.cos(dir), dir === 0 ? 0 : Math.sin(dir), paw, steep); }
+  return { mesh, update, uniforms, material, preset: P, defaultAmp, sample, setHull, setEvents, getLook, setLook, setWind };
 }
