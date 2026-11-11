@@ -16,6 +16,7 @@ import { smoothFlash } from '../flash.js';
 export default function build(g, e, H) {
   const { THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
   e.sea = makeSea(g, { preset: 'storm', y: 2, amp: 2.4, size: 1600 });
+  e.seaClock = (t) => ({ t: t * 1.6, amp: 2.4 });   // = e.sea(t * 1.6, 2.4) trong update — nhà nổi (engine/shots.js, sea2) lấy đúng giá trị này
   e.rain = fxRain(THREE, { count: 2200 }); g.add(e.rain.obj);
   e.bolt = fxBolt(THREE); e.bolt.position.set(-40, 20, -140); e.bolt.scale.setScalar(2); g.add(e.bolt);
   // chớp mượt (engine/flash.js): sáng 1 khung rồi tắt dần — không nhấp nháy từng 2 khung (gây "giật")

@@ -7,8 +7,8 @@
 // Dùng: const ibl = createIBL(THREE, renderer, LIGHTS); scene.environment = ibl.get(key); scene.environmentIntensity = ibl.intensity(key)
 // Bật/tắt: ô "ibl" trong trình phát (engine/post.js → globalThis.__autoFx.ibl).
 
-const INTENSITY = { interior: 0.55, bedNight: 0.3, night: 0.3, snowNight: 0.35, storm: 0.35 };   // còn lại 0.6
-export const IBL_HEMI_SCALE = 0.72;   // khi bật IBL, giảm đèn bán cầu để tổng độ sáng gần như cũ
+const INTENSITY = { interior: 0.3, bedNight: 0.3, night: 0.3, snowNight: 0.35, storm: 0.35 };   // còn lại 0.6
+export const IBL_HEMI_SCALE = 0.6;   // khi bật IBL, giảm đèn bán cầu để tổng độ sáng gần như cũ
 
 function roomScene(THREE, warm = '#efe3cf') {
   const s = new THREE.Scene();

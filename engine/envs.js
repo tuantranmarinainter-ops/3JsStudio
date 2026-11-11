@@ -140,7 +140,11 @@ export function createEnvs(THREE, stage, K0, A = null) {
   const makeSea = (g, { preset = 'tropical', size = 1400, seg = 150, y = 0, amp, name = 'sea', ...rest } = {}) => {
     const w = createWater(THREE, { preset, size, segments: seg, y, amp, name, ...rest });
     g.add(w.mesh); (g.userData.waters ||= []).push(w);
-    return (t, a) => { w.t = t; w.ampNow = a; return w; };
+    const sea = (t, a) => { w.t = t; w.ampNow = a; return w; };
+    // sea2: bản CPU của sóng (engine/water.js sample) + bọt quanh thân nổi. Env có thời gian/biên độ riêng (bão: t*1.6, 2.4)
+    //   thì khai báo e.seaClock = (t) => ({ t: …, amp: … }) để engine/shots.js lấy ĐÚNG giá trị shader dùng ở khung này.
+    sea.water = w; sea.sample = w.sample; sea.setHull = w.setHull;
+    return sea;
   };
   const bumpy = (w, d, seg, color, h, seed, name, freq = 0.04) => {
     const m = plane(w, d, mat(color, { flatShading: true }), 0, name, seg); const p = m.geometry.attributes.position;

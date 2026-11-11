@@ -27,6 +27,7 @@ export const ease = (name, k) => (EASE[name] || EASE.smooth)(clamp01(k));
 const isRange = (v) => Array.isArray(v) && v.length === 2 && typeof v[0] === 'number';
 export const val = (v, k, def = 0) => (v === undefined ? def : isRange(v) ? v[0] + (v[1] - v[0]) * k : v);
 import { fxPuffs, fxPrints, fxWind } from './fx.js';
+import { floatHull, wetline, worldGrad } from './floating.js';
 const lerp3 = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
 // tiến độ cục bộ trong một đoạn con của shot: win = [k0,k1]
 const sub = (k, win) => (win ? clamp01((k - win[0]) / (win[1] - win[0])) : k);
@@ -112,6 +113,9 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
   }
 
   let activeHouse = null;
+  // sea2 (engine/floating.js): nhà nổi cưỡi đúng sóng của shader + vệt ướt trên thân + bọt quanh thân. Tắt ⇒ sin cố định như cũ.
+  const SEA2 = () => globalThis.__autoFx?.sea2 ?? true;
+  const houseWet = new Map(Object.values(houses).map((h) => [h, wetline(THREE, h.root)]));
 
   function placeCamera(c, k, t) {
     const ke = ease(c.ease || 'smooth', k);
@@ -135,7 +139,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     else if (c.shadow === false) stage.shadowFocus(c.shadowFocus || [0, 0, 0]);   // vùng bóng cố định — không giữ chỗ của shot trước (tất định)
   }
 
-  function placeHouse(spec, k, t, night) {
+  function placeHouse(spec, k, t, night, envName) {
     for (const h of Object.values(houses)) h.root.visible = false;
     activeHouse = null;
     if (!spec) return;
@@ -148,10 +152,21 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     // boat 0→1: nhà hạ xuống mặt nước và NỔI như thuyền — chân thôi bước (dang ra dưới nước), thân nhấp nhô + lắc theo sóng
     //   (hàm thuần của t; shot ghi boat: 1, y = cao độ mặt biển của env). Góp ý 2026-11-11 f3528 (vượt bão).
     const boat = val(spec.boat, ke, 0);
-    const heave = boat * (0.9 * Math.sin(t * 1.7) + 0.45 * Math.sin(t * 2.9 + 1.3));
-    const bRoll = boat * (0.13 * Math.sin(t * 1.9) + 0.05 * Math.sin(t * 3.4 + 0.7));
-    const bPitch = boat * (0.07 * Math.sin(t * 1.35 + 1.1) + 0.03 * Math.sin(t * 2.6));
-    h.root.position.set(x, (spec.y ?? 0) + heave, z); h.root.rotation.y = val(spec.ry, ke, 0) + boat * 0.06 * Math.sin(t * 0.9);
+    let heave = boat * (0.9 * Math.sin(t * 1.7) + 0.45 * Math.sin(t * 2.9 + 1.3));
+    let bRoll = boat * (0.13 * Math.sin(t * 1.9) + 0.05 * Math.sin(t * 3.4 + 0.7));
+    let bPitch = boat * (0.07 * Math.sin(t * 1.35 + 1.1) + 0.03 * Math.sin(t * 2.6));
+    const yaw = val(spec.ry, ke, 0) + boat * 0.06 * Math.sin(t * 0.9);
+    const envE = envs.envs[envName], sea = envE?.sea;
+    if (boat > 0 && SEA2() && sea?.sample) {
+      // sea2: nổi theo ĐÚNG mặt nước đang vẽ (đồng hồ biển của env; fade camera = 1 vì camera shot nổi < 120 đv).
+      //   spec.y giữ nghĩa cũ = độ cao gốc nhà so với mặt biển trung bình → gốc nhà = spec.y + (mặt nước dưới thân − mặt biển TB)
+      const hx = (h.dims?.W ?? 28) / 2 + 0.3, hz = (h.dims?.D ?? 20) / 2 + 0.3, seaY = sea.water.mesh.position.y;
+      const F = floatHull(sea.sample, { x, z, yaw, hx, hz, t, clock: envE.seaClock, pitchK: 0.85, rollK: 0.75, maxPitch: 0.2, maxRoll: 0.25 });
+      heave = boat * (F.y - seaY); bRoll = boat * F.rotZ; bPitch = boat * F.rotX;
+      houseWet.get(h)?.set({ x, z, y: F.y, ...worldGrad(F.sx, F.sz, yaw), t, k: boat });
+      for (const w of envE.group.userData.waters || []) if (w === sea.water) w.setHull({ x, z, hx, hz, yaw, k: boat, plunge: Math.min(1, Math.max(0, -F.vy / 4)) });
+    }
+    h.root.position.set(x, (spec.y ?? 0) + heave, z); h.root.rotation.y = yaw;
     const dist = Math.hypot(b[0] - a[0], b[1] - a[1]) * ke + (spec.walk0 || 0);
     const stepping = walking && boat < 0.5;
     h.pose({ legsOut: val(spec.legsOut, ke, 1), lift: val(spec.lift, ke, 1) * (1 - boat), kneel: val(spec.kneel, ke, 0), walk: stepping ? dist : 0,
@@ -232,7 +247,10 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     // env trước (để biết đêm/ngày), camera sau cùng (cần vị trí diễn viên)
     const L = envs.LIGHTS[shot.light || envs.envs[shot.env].light];
     const night = shot.night ?? L.night ?? 0;
-    placeHouse(shot.house, k, t, night);
+    // sea2: xoá trạng thái nổi của khung trước (vệt ướt, bọt quanh thân) → mỗi khung tự đặt lại (tất định khi tua)
+    for (const wl of houseWet.values()) wl.off();
+    for (const e of Object.values(envs.envs)) { e.wet?.off(); for (const w of e.group.userData.waters || []) w.setHull?.(null); }
+    placeHouse(shot.house, k, t, night, shot.env);
     const envObj = envs.activate(shot.env);
     if (envObj.room) {
       envObj.room.rotation.set(val(shot.room?.tilt, ease('smooth', k), 0), 0, val(shot.room?.roll, ease('smooth', k), 0));
@@ -242,6 +260,13 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     envObj.setNight?.(night);
     if (envObj.dirt) { envObj.dirt.visible = !!shot.dirt; envObj.hole.visible = shot.dirt === 'hole'; }
     placeCast(shot.cast, k, t);
+    // sea2: env có vật nổi chở người (tàu trong bão) → diễn viên đứng trong toạ độ thế giới đi theo biến đổi của tàu
+    //   (đặt trước camera để camera bám đúng chỗ). Shot tạo cho tàu đứng yên ở gốc → ma trận nghỉ = đơn vị.
+    { const M = envObj.carry?.(t);
+      if (M) for (const [name, a] of Object.entries(actors)) {
+        if (!a.root.visible || a.root.parent !== scene || shot.cast?.[name]?.parent) continue;
+        a.root.updateMatrix(); a.root.matrix.premultiply(M); a.root.matrix.decompose(a.root.position, a.root.quaternion, a.root.scale);
+      } }
     placeProps(shot.props, k);
     const fxCtx = { t, local, k, shot, actors, house: activeHouse, houses, envs, env: envObj, K, THREE, stage, props, fx, anchorOf };
     for (const f of Object.values(fx)) if (f.obj) f.obj.visible = false;
