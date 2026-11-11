@@ -8,7 +8,9 @@
 // build (nhà, đường, đá, cỏ…): vết ố loang lớn, vệt bẩn chảy dọc, chân tường bám đất, hạt sần + gồ ghề.
 // Toạ độ nhiễu = toạ độ cục bộ của vật × tỉ lệ thế giới (đơn vị stud) → nhân vật/nhà đi lại thì vân đi theo, không trôi.
 
-export const GRUNGE = { char: { value: 1 }, build: { value: 1 } };
+export const GRUNGE = { char: { value: 1 }, build: { value: 1 }, aged: { value: 1 } };
+// aged (v2, chỉ loại build): nhà "bán thực" — sơn tróc lộ gỗ bạc, sơn phai nắng, ố dưới mái, rêu/đất chân tường.
+// Chỉ ăn vào bề mặt SƠN MÀU (độ bão hoà cao) → đường, đá, cỏ xám gần như không đổi.
 
 const VERT_PARS = /* glsl */`
 attribute vec3 aGrBox; attribute vec3 aGrSize;
@@ -18,7 +20,7 @@ const VERT_MAIN = /* glsl */`
   vGrP = position * grS; vGrN = normal; vGrB = aGrBox; vGrSz = aGrSize * grS; }`;
 
 const FRAG_PARS = /* glsl */`
-uniform float uGrunge; uniform float uGrAmt;
+uniform float uGrunge; uniform float uGrAmt; uniform float uGrAged;
 varying vec3 vGrP; varying vec3 vGrN; varying vec3 vGrB; varying vec3 vGrSz;
 float grH(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
 float grN3(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);
@@ -68,6 +70,30 @@ const FRAG_COLOR = {
   grHeight = grit * k; }`,
 };
 
+
+const FRAG_AGED = /* glsl */`
+{ float ag = uGrAged; vec3 p = vGrP; vec3 c = diffuseColor.rgb;
+  float l = dot(c, vec3(0.299, 0.587, 0.114));
+  float sat = max(max(c.r, c.g), c.b) - min(min(c.r, c.g), c.b);
+  float painted = smoothstep(0.06, 0.22, sat);
+  vec3 n = abs(normalize(vGrN));
+  float wall = 1.0 - step(0.7, n.y);                                    // mặt đứng
+  float peel = grFbm(p * 0.85 + vec3(11.0, 3.0, 7.0));
+  float peelM = smoothstep(0.665, 0.69, peel) * painted * wall;         // mảng sơn tróc (chỉ tường đứng, mái không)
+  float rim = (smoothstep(0.625, 0.66, peel) - smoothstep(0.665, 0.69, peel)) * painted * wall;
+  float grain = grN3(vec3(p.x * 0.5 + p.z * 0.5, p.y * 14.0, p.z * 0.3)); // vân gỗ theo ván ngang
+  vec3 wood = vec3(0.52, 0.47, 0.40) * (0.78 + 0.4 * grain);
+  c = mix(c, mix(vec3(l), c, 0.72) * 1.05, 0.38 * painted);             // sơn phai nắng
+  c *= mix(0.9, 1.05, grain * painted);                                 // vân gỗ hằn qua lớp sơn
+  c = mix(c, wood, peelM * 0.92);
+  c *= 1.0 - rim * 0.4;                                                 // mép tróc tối
+  float under = smoothstep(0.62, 1.0, vGrB.y) * wall;                   // ố dưới mái + vệt chảy
+  c *= mix(1.0, 0.74, under * (0.45 + 0.55 * grN3(vec3(p.x * 1.4, p.y * 0.07, p.z * 1.4))));
+  float moss = (1.0 - smoothstep(0.0, 0.2, vGrB.y)) * smoothstep(0.42, 0.72, grFbm(p * 0.45 + 5.0));
+  c = mix(c, vec3(0.19, 0.25, 0.11) * (0.7 + 0.6 * l), moss * 0.5);    // rêu / đất chân tường
+  diffuseColor.rgb = mix(diffuseColor.rgb, c, ag);
+  grHeight += (peelM * 0.7 + rim) * ag; }`;
+
 const FRAG_ROUGH = /* glsl */`roughnessFactor = mix(roughnessFactor, clamp(roughnessFactor + 0.22 + grHeight * 0.1, 0.0, 1.0), uGrunge);   // vải/tường nhám, hết bóng`;
 const FRAG_BUMP = (amp) => /* glsl */`
 { vec3 sp = -vViewPosition; vec3 sx = dFdx(sp), sy = dFdy(sp);
@@ -91,34 +117,35 @@ function ensureBoxAttr(THREE, geo) {
   geo.setAttribute('aGrSize', new THREE.BufferAttribute(size, 3));
 }
 
-function patch(mat, kind, amount = 1) {
+function patch(mat, kind, amount = 1, aged = false) {
   if (mat.userData.grunge) return;
   mat.userData.grunge = kind;
+  aged = aged && kind === 'build';
   // mesh dùng chung vật liệu nhưng tạo sau (chưa có aGrBox) → giá trị cố định, không đọc rác (giữ tất định)
   mat.defaultAttributeValues = { ...(mat.defaultAttributeValues || {}), aGrBox: [0.5, 0.5, 0.5], aGrSize: [0, 0, 0] };
   const prev = mat.onBeforeCompile;
   mat.onBeforeCompile = (sh, r) => {
     prev?.call(mat, sh, r);
-    sh.uniforms.uGrunge = GRUNGE[kind]; sh.uniforms.uGrAmt = { value: amount };
+    sh.uniforms.uGrunge = GRUNGE[kind]; sh.uniforms.uGrAmt = { value: amount }; sh.uniforms.uGrAged = GRUNGE.aged;
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\n' + VERT_PARS)
       .replace('#include <begin_vertex>', '#include <begin_vertex>\n' + VERT_MAIN);
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\n' + FRAG_PARS)
-      .replace('#include <map_fragment>', '#include <map_fragment>\n' + FRAG_COLOR[kind])
+      .replace('#include <map_fragment>', '#include <map_fragment>\n' + FRAG_COLOR[kind] + (aged ? FRAG_AGED : ''))
       .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n' + FRAG_ROUGH)
       .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\n' + FRAG_BUMP('0.0'));
   };
   const key = mat.customProgramCacheKey?.bind(mat);
-  mat.customProgramCacheKey = () => (key ? key() : '') + '|grunge_' + kind;
+  mat.customProgramCacheKey = () => (key ? key() : '') + '|grunge_' + kind + (aged ? '_aged' : '');
   mat.needsUpdate = true;
 }
 
-export function applyGrunge(THREE, root, kind = 'build', { amount = 1 } = {}) {   // amount: mức cũ/bụi riêng (vd. người cha 1.5)
+export function applyGrunge(THREE, root, kind = 'build', { amount = 1, aged = false } = {}) {   // aged: lớp nhà cũ bán thực (v2) — chỉ gọi cho nhà   // amount: mức cũ/bụi riêng (vd. người cha 1.5)
   const walk = (o, k) => {
     k = o.userData.grungeKind || k;
     if (o.isMesh && k !== 'none' && !o.isInstancedMesh) {
       const mats = Array.isArray(o.material) ? o.material : [o.material];
       const ok = mats.filter((m) => m && m.isMeshStandardMaterial && !m.transparent && !m.userData.noGrunge && (k !== 'char' || m.map));   // nhân vật: chỉ quần áo/mũ (có texture), da/mặt giữ trơn
-      if (ok.length) { ensureBoxAttr(THREE, o.geometry); ok.forEach((m) => patch(m, k, amount)); }
+      if (ok.length) { ensureBoxAttr(THREE, o.geometry); ok.forEach((m) => patch(m, k, amount, aged)); }
     }
     for (const c of o.children) walk(c, k);
   };

@@ -7,6 +7,7 @@
 ### Đã xong và đã kiểm chứng
 | Phần | File | Ghi chú |
 |---|---|---|
+| Chi tiết v2 (2026-11-11) | `engine/r15.js` (paintFolds, buildHairV2, setDetail), `engine/grunge.js` (aged), `engine/post.js` (3 ô bật/tắt), `episodes/ep001/index.html` | 3 ô mới trong "Hiệu ứng hình": **folds** nếp vải vẽ sẵn trên atlas áo quần; **hair2** tóc cụm low-poly lởm chởm (mẹ) + tóc lòi dưới mũ len (hero, bố); **aged** nhà cũ bán thực (sơn tróc chỉ trên tường đứng, sơn phai, ố dưới mái, rêu chân tường) — CHỈ áp cho nhà (`applyGrunge(house,'build',{aged:true})`). Tắt cả 3 = giống bản trước. Bản gộp: `dist/ep1_v2.html`. Lưu ý: s022 lệch tất định sẵn từ trước (không do v2). |
 | Nhân vật R6 | `engine/r6.js`, `engine/r6-preview.html` | 15 animation, 8 biểu cảm, `randomLook(seed)`. Preview đã xem được trên điện thoại. `r6-preview.html` = trang mẫu + r6.js nhúng sẵn (tạo lại nếu sửa r6.js). |
 | Giọng đọc Edge | `tools/tts.py` + workflow `tts-narration` | Chạy thật trên GitHub Actions (~40s / 5 câu). |
 | Giọng đọc CapCut | `tools/voice_studio/` (engine Voice Studio của người dùng + SDK `vendor/capcut-tts-api`) | Chạy thật trên Actions, không cần secret. ~4–5 phút / 5 câu. Tập mẫu `episodes/_template/narration.*` đang dùng CapCut. |

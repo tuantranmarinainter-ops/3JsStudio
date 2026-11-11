@@ -594,6 +594,101 @@ function paintOutfit(o, seed) {
   return cv;
 }
 
+
+// ---------- v2: nếp vải VẼ SẴN lên atlas (như áo game khối có bóng vẽ tay) ----------
+// Phủ lên bản paintOutfit: bóng cổ áo, nếp chéo từ nách, nếp ngang eo, nếp gối/khuỷu, sáng mặt trước đùi,
+// hạt dệt + mảng loang nhẹ cho "sần sần". Tất định theo seed. Chỉ vẽ lên phần là VẢI (bỏ da, giày).
+function paintFolds(src, o, seed) {
+  const cv = canvas(1024, 1024), g = cv.getContext('2d'), P = OUTFIT_LAYOUT.parts;
+  g.drawImage(src, 0, 0);
+  const r = rng(seed ^ 0x2f6b1a3c);
+  const cloth = (part) => {
+    const seg = part.replace(/^(Right|Left)/, '');
+    if (seg === 'Hand' || seg === 'Foot') return false;
+    if ((seg === 'UpperArm' || seg === 'LowerArm') && !o.sleeves) return false;
+    return true;
+  };
+  const path = (pts) => {
+    g.beginPath(); g.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length - 1; i++) { const mx = (pts[i][0] + pts[i + 1][0]) / 2, my = (pts[i][1] + pts[i + 1][1]) / 2; g.quadraticCurveTo(pts[i][0], pts[i][1], mx, my); }
+    const L = pts[pts.length - 1]; g.lineTo(L[0], L[1]);
+  };
+  const soft = (blur, fn) => { g.save(); g.filter = `blur(${blur}px)`; fn(); g.restore(); };
+  // nếp = vệt tối mềm + vệt sáng mảnh ngay phía trên (mép nếp bắt sáng)
+  const crease = (pts, lw = 7, dark = 0.26, light = 0.13, blur = 3) => {
+    g.lineCap = 'round';
+    soft(blur, () => { g.strokeStyle = `rgba(0,0,0,${dark})`; g.lineWidth = lw; path(pts); g.stroke(); });
+    soft(blur * 0.7, () => { g.strokeStyle = `rgba(255,255,255,${light})`; g.lineWidth = lw * 0.5; path(pts.map(([x, y]) => [x, y - lw * 0.85])); g.stroke(); });
+  };
+  const j = (v, a) => v + (r() - 0.5) * 2 * a;
+  const blob = (x, y, rx, ry, col, blur) => soft(blur, () => { g.fillStyle = col; g.beginPath(); g.ellipse(x, y, rx, ry, 0, 0, PI * 2); g.fill(); });
+  const lgrad = (x0, y0, x1, y1, c0, c1, w, h) => { const gr = g.createLinearGradient(x0, y0, x1, y1); gr.addColorStop(0, c0); gr.addColorStop(1, c1); g.fillStyle = gr; g.fillRect(0, 0, w, h); };
+  const weave = (w, h) => {   // sợi dệt li ti + mảng loang lớn (sần sần, không phẳng kiểu vector)
+    g.fillStyle = 'rgba(0,0,0,0.035)'; for (let y = 0; y < h; y += 3) g.fillRect(0, y, w, 1);
+    g.fillStyle = 'rgba(255,255,255,0.03)'; for (let x = 1; x < w; x += 3) g.fillRect(x, 0, 1, h);
+    for (let i = 0, n = Math.max(2, (w * h) / 9000); i < n; i++) blob(r() * w, r() * h, 10 + r() * 26, 8 + r() * 20, r() < 0.5 ? 'rgba(0,0,0,0.07)' : 'rgba(255,255,255,0.05)', 9);
+    for (let i = 0, n = (w * h) / 40; i < n; i++) { g.fillStyle = r() < 0.5 ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'; g.fillRect(r() * w, r() * h, 1, 1); }
+  };
+  for (const [part, faces] of Object.entries(P)) {
+    if (!cloth(part)) continue;
+    const seg = part.replace(/^(Right|Left)/, ''), sx = part.startsWith('Right') ? -1 : 1;
+    for (const [face, rc] of Object.entries(faces)) {
+      const [X, Y, w, h] = rc;
+      g.save(); g.beginPath(); g.rect(X, Y, w, h); g.clip(); g.translate(X, Y);
+      weave(w, h);
+      if (face === 'top' || face === 'bottom') { g.restore(); continue; }
+      const front = face === 'front', back = face === 'back', side = !front && !back;
+      // ánh sáng từ trên: trên sáng nhẹ, dưới tối nhẹ; hai mép tối (vải ôm khối)
+      lgrad(0, 0, 0, h, 'rgba(255,255,255,0.06)', 'rgba(0,0,0,0.10)', w, h);
+      lgrad(0, 0, w, 0, 'rgba(0,0,0,0.10)', 'rgba(0,0,0,0)', Math.min(w, 22), h);
+      g.save(); g.translate(w, 0); g.scale(-1, 1); lgrad(0, 0, w, 0, 'rgba(0,0,0,0.10)', 'rgba(0,0,0,0)', Math.min(w, 22), h); g.restore();
+      if (seg === 'UpperTorso') {
+        if (front) {
+          blob(w / 2, 0, w * 0.24, h * 0.13, 'rgba(0,0,0,0.20)', 7);                       // bóng dưới cổ áo
+          blob(w / 2, h * 0.32, w * 0.36, h * 0.2, 'rgba(255,255,255,0.07)', 14);          // ngực bắt sáng
+          for (const s of [-1, 1]) {                                                         // nếp chéo từ nách
+            const x0 = s < 0 ? 4 : w - 4;
+            crease([[x0, h * 0.14], [x0 - s * w * 0.12, j(h * 0.3, 4)], [w / 2 - s * w * 0.14, j(h * 0.56, 5)]], 7, 0.24, 0.12);
+            crease([[x0, h * 0.3], [x0 - s * w * 0.1, j(h * 0.42, 4)], [w / 2 - s * w * 0.2, j(h * 0.62, 5)]], 5, 0.16, 0.09);
+          }
+        }
+        if (back) {
+          for (const s of [-1, 1]) crease([[w / 2 + s * w * 0.12, h * 0.16], [w / 2 + s * w * 0.3, h * 0.26], [w / 2 + s * w * 0.36, h * 0.44]], 6, 0.18, 0.1, 4);   // bả vai
+          blob(w / 2, h * 0.5, w * 0.05, h * 0.35, 'rgba(255,255,255,0.05)', 8);
+        }
+        if (side) for (let i = 0; i < 2; i++) crease([[j(w * (0.35 + i * 0.3), 4), 4], [j(w * (0.4 + i * 0.25), 6), h * 0.5], [j(w * (0.35 + i * 0.3), 4), h - 6]], 5, 0.14, 0.08, 4);
+        if (!side) for (let i = 0; i < 3; i++) {                                             // nếp ngang ở eo
+          const y = h * (0.78 + i * 0.06), x0 = j(w * (0.12 + i * 0.1), 8), x1 = j(w * (0.88 - i * 0.12), 8);
+          crease([[x0, y], [(x0 + x1) / 2, j(y + 4, 3)], [x1, j(y, 3)]], 5, 0.17, 0.1, 3);
+        }
+      } else if (seg === 'LowerTorso') {
+        blob(w / 2, 0, w * 0.5, 6, 'rgba(0,0,0,0.18)', 4);                                  // bóng dưới gấu áo/thắt lưng
+        if (front && !o.skirt) for (const s of [-1, 1]) crease([[w / 2, h + 4], [w / 2 + s * w * 0.1, h * 0.6], [w / 2 + s * w * 0.28, h * 0.25]], 5, 0.18, 0.09, 3);
+      } else if (seg === 'UpperLeg') {
+        const innerX = sx < 0 ? w : 0;
+        if (front || back) {
+          blob(w * 0.5, h * 0.45, w * 0.16, h * 0.42, back ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.09)', 10);   // đùi bắt sáng
+          lgrad(innerX, 0, w / 2, 0, 'rgba(0,0,0,0.12)', 'rgba(0,0,0,0)', w, h);           // mép trong tối (đường ráp)
+          if (front && !o.skirt) crease([[innerX, h * 0.08], [w * 0.5 + (innerX ? 10 : -10), h * 0.2], [w * 0.5, h * 0.36]], 5, 0.18, 0.1, 3);
+          if (back) crease([[8, h * 0.9], [w / 2, j(h * 0.94, 3)], [w - 8, h * 0.9]], 5, 0.16, 0.08, 3);   // khoeo
+        }
+      } else if (seg === 'LowerLeg') {
+        if (front && !o.skirt) for (let i = 0; i < 2; i++) crease([[j(w * 0.2, 5), h * (0.1 + i * 0.1)], [w / 2, j(h * (0.14 + i * 0.1), 3)], [j(w * 0.8, 5), h * (0.1 + i * 0.1)]], 5, 0.2, 0.1, 3);   // nếp gối
+        if (!o.boots && !o.skirt) for (let i = 0; i < 2; i++) {                             // vải dồn trên gấu
+          const y = h * (0.62 + i * 0.08);
+          crease([[4, y], [w * 0.3, j(y + 5, 3)], [w * 0.6, j(y - 3, 3)], [w - 4, j(y + 3, 3)]], 4, 0.15, 0.08, 3);
+        }
+      } else if (seg === 'UpperArm') {
+        crease([[6, h * 0.16], [w / 2, j(h * 0.2, 3)], [w - 6, h * 0.14]], 5, 0.14, 0.08, 3);
+      } else if (seg === 'LowerArm') {
+        for (let i = 0; i < 2; i++) crease([[j(w * 0.2, 5), h * (0.12 + i * 0.13)], [w / 2, j(h * (0.17 + i * 0.13), 3)], [j(w * 0.8, 5), h * (0.12 + i * 0.13)]], 4, 0.2, 0.1, 3);   // nếp khuỷu
+      }
+      g.restore();
+    }
+  }
+  return cv;
+}
+
 // ---------- MẶT: vẽ vector theo "ô sprite" 256×128 (cùng tên với face_layout.json) ----------
 const INK = '#1b1b1b';
 const OPENISH = new Set(['open', 'wide', 'sad', 'look_up', 'half']);
@@ -800,6 +895,9 @@ export function createR15(THREE, opts = {}) {
   let atlasCanvas = null, atlasTex;
   if (o.outfitTexture) atlasTex = o.outfitTexture;
   else { atlasCanvas = paintOutfit(o, seed); atlasTex = new THREE.CanvasTexture(atlasCanvas); atlasTex.colorSpace = THREE.SRGBColorSpace; atlasTex.anisotropy = 8; }
+  // v2: bản atlas có nếp vải vẽ sẵn (bật/tắt bằng setDetail({ folds })) — chỉ khi áo vẽ thủ tục
+  let foldCanvas = null, foldTex = null;
+  if (atlasCanvas) { foldCanvas = paintFolds(atlasCanvas, o, seed); foldTex = new THREE.CanvasTexture(foldCanvas); foldTex.colorSpace = THREE.SRGBColorSpace; foldTex.anisotropy = 8; }
   const outfitMat = new THREE.MeshStandardMaterial({ map: atlasTex, normalMap: o.outfitNormal || null, roughness: 0.8, metalness: 0 });
   const mat = (c, rough = 0.8) => new THREE.MeshStandardMaterial({ color: c, roughness: rough, metalness: 0 });
 
@@ -865,6 +963,7 @@ export function createR15(THREE, opts = {}) {
     RightUpperLeg: leg.Right.th, RightLowerLeg: leg.Right.kn, RightFoot: leg.Right.ft, LeftUpperLeg: leg.Left.th, LeftLowerLeg: leg.Left.kn, LeftFoot: leg.Left.ft,
   };
 
+  const detail = { folds: false, hair: false };
   // --- phụ kiện ---
   const acc = buildAccessories(THREE, { o, head, torso, hips, parts, addMesh, mat, seed });
 
@@ -919,10 +1018,19 @@ export function createR15(THREE, opts = {}) {
     setColors({ skin: s, shirt, pants } = {}) {
       if (s) { o.skin = s; FP.skin = s; skinMat.color.set(s); faceKey = ''; }
       if (shirt) o.shirt = shirt; if (pants) o.pants = pants;
-      if (atlasCanvas && (s || shirt || pants)) { const cv = paintOutfit(o, seed); atlasCanvas.getContext('2d').drawImage(cv, 0, 0); atlasTex.needsUpdate = true; }
+      if (atlasCanvas && (s || shirt || pants)) {
+        const cv = paintOutfit(o, seed); atlasCanvas.getContext('2d').drawImage(cv, 0, 0); atlasTex.needsUpdate = true;
+        if (foldCanvas) { foldCanvas.getContext('2d').drawImage(paintFolds(atlasCanvas, o, seed), 0, 0); foldTex.needsUpdate = true; }
+      }
       faceAt(lastT, o.face);
     },
     setHat(type, color = o.hatColor) { o.hat = type; o.hatColor = color; buildHat(THREE, hat, type, color, o); },
+    // v2 (bật/tắt trong trình phát, engine/post.js gọi mỗi khung): folds = nếp vải vẽ sẵn, hair = tóc cụm lởm chởm
+    setDetail({ folds = detail.folds, hair = detail.hair } = {}) {
+      if (folds !== detail.folds && foldTex) { outfitMat.map = folds ? foldTex : atlasTex; detail.folds = folds; }
+      if (hair !== detail.hair) { detail.hair = hair; acc.setHairV2?.(hair); }
+      return { ...detail };
+    },
     apply(pose) { applyPose(parts, pose); acc.update(pose, pose, pose); },
     animate(name, t, opt = {}) {
       lastT = t;
@@ -935,6 +1043,7 @@ export function createR15(THREE, opts = {}) {
     },
   };
   root.userData.setFace = (f) => char.setFace(f);
+  root.userData.setDetail = (d) => char.setDetail(d);
   char.setHat(o.hat, o.hatColor);
   faceAt(0, o.face);
   applyPose(parts, {}); acc.update({}, {}, {});
@@ -981,23 +1090,87 @@ function buildHat(THREE, group, type, color, o) {
   shadow(group);
 }
 
+
+// ---------- v2: tóc CỤM LỚN, mép lởm chởm (low-poly có texture sợi + sáng tối từng cụm) ----------
+// Mỗi cụm = hộp chia ô, thót về ngọn, đỉnh lệch nhẹ theo hàm băm vị trí (đỉnh trùng nhau lệch y hệt → không hở),
+// tô phẳng từng mặt (flatShading) → nhìn ra khối cắt tay. 3 tông (sáng/gốc/tối) xen kẽ để thấy rõ từng lọn.
+function hairClumpGeo(THREE, w, h, d, { taper = 0.45, jag = 0.035, bend = 0.12 } = {}) {
+  const g = new THREE.BoxGeometry(w, h, d, 2, 4, 1), p = g.attributes.position;
+  const hs = (a, b, c) => { const v = Math.sin(a * 127.1 + b * 311.7 + c * 74.7) * 43758.5453; return v - Math.floor(v) - 0.5; };
+  for (let i = 0; i < p.count; i++) {
+    let x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+    const u = (y + h / 2) / h;                    // 0 = ngọn, 1 = gốc
+    const k = taper + (1 - taper) * u;
+    const qx = Math.round(x * 1000), qy = Math.round(y * 1000), qz = Math.round(z * 1000);
+    x = x * k + hs(qx, qy, qz) * jag * 2;
+    z = z * k + hs(qz, qx, qy) * jag + bend * (1 - u) * (1 - u);   // ngọn cong ra ngoài
+    y = y + hs(qy, qz, qx) * jag;
+    p.setXYZ(i, x, y, z);
+  }
+  g.computeVertexNormals();
+  return g;
+}
+// Đặt cụm trên mặt cầu quanh đầu: φ = góc từ đỉnh, a = góc phương vị (0 = phía trước +Z); gốc cụm hướng về đỉnh đầu.
+function placeClump(THREE, mesh, { C, R, phi, a, twist = 0, lift = 0 }) {
+  const n = new THREE.Vector3(Math.sin(phi) * Math.sin(a), Math.cos(phi), Math.sin(phi) * Math.cos(a));
+  const down = new THREE.Vector3(Math.cos(phi) * Math.sin(a), -Math.sin(phi), Math.cos(phi) * Math.cos(a));
+  if (twist) down.applyAxisAngle(n, twist).normalize();
+  const yAx = down.clone().negate(), zAx = n.clone(), xAx = new THREE.Vector3().crossVectors(yAx, zAx).normalize();
+  mesh.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(xAx, yAx, zAx));
+  mesh.position.copy(C).addScaledVector(n, R + lift);
+}
+function buildHairV2(THREE, head, color, seed, { cap = false } = {}) {
+  const r = rng(seed ^ 0x68a1);
+  const group = new THREE.Group(); group.name = cap ? 'hair_tufts_v2' : 'hair_v2'; group.visible = false;
+  const tex = (k) => { const t = new THREE.CanvasTexture(strandCanvas(toHex(shade(color, k)), { tip: true, seed: (seed & 255) + 7 })); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
+  const mats = [0.16, 0.0, -0.18].map((k) => new THREE.MeshStandardMaterial({ map: tex(k), roughness: 0.62, metalness: 0, flatShading: true, color: '#ffffff' }));
+  mats.forEach((m) => { m.userData.noGrunge = true; });
+  const C = new THREE.Vector3(0, 0.62, 0), R = 0.6;
+  const add = (w, h, d, at, opt) => {
+    const m = new THREE.Mesh(hairClumpGeo(THREE, w, h, d, opt), mats[Math.floor(r() * 3)]);
+    m.name = 'hair_clump'; m.castShadow = true; m.receiveShadow = true;
+    placeClump(THREE, m, { C, R, ...at }); group.add(m); return m;
+  };
+  if (!cap) {
+    // vòng đỉnh (xoáy) + 2 vòng xuống gáy; phía trước chừa mặt
+    for (let i = 0; i < 7; i++) add(0.34, 0.42, 0.16, { phi: 0.28, a: (i / 7) * PI * 2 + r() * 0.3, twist: 0.5, lift: 0.07 }, { bend: 0.06 });
+    for (let i = 0; i < 11; i++) { const a = (i / 11) * PI * 2 + r() * 0.2; if (Math.abs(Math.atan2(Math.sin(a), Math.cos(a))) < 0.75) continue; add(0.36 + r() * 0.08, 0.58 + r() * 0.12, 0.16, { phi: 0.78, a, twist: (r() - 0.5) * 0.4, lift: 0.06 }); }
+    for (let i = 0; i < 9; i++) { const a = PI * (0.55 + (i / 8) * 0.9) + r() * 0.15; add(0.38, 0.62 + r() * 0.15, 0.15, { phi: 1.25, a, twist: (r() - 0.5) * 0.3, lift: 0.05 }, { bend: 0.16 }); }
+    // mái: một lọn dài lệch qua trán, hai lọn ngắn ở thái dương, đỉnh tóc nhô nhẹ một bên
+    add(0.42, 0.56, 0.15, { phi: 0.72, a: -0.18, twist: 0.75, lift: 0.07 }, { bend: 0.1 });
+    add(0.3, 0.38, 0.14, { phi: 0.8, a: 0.42, twist: 0.45, lift: 0.06 });
+    for (const s of [-1, 1]) add(0.24, 0.4, 0.13, { phi: 1.05, a: s * 1.05, twist: s * 0.15, lift: 0.04 });
+    add(0.16, 0.3, 0.1, { phi: 0.15, a: 2.4, twist: 0, lift: 0.14 }, { taper: 0.25 });
+  } else {
+    // tóc lòi ra dưới mũ len: gáy + tóc mai (tránh vùng mặt)
+    for (let i = 0; i < 7; i++) { const a = PI * (0.62 + (i / 6) * 0.76) + r() * 0.12; add(0.3, 0.32 + r() * 0.1, 0.12, { phi: 1.3, a, twist: (r() - 0.5) * 0.5, lift: 0.05 }, { bend: 0.1 }); }
+    for (const s of [-1, 1]) add(0.2, 0.3, 0.11, { phi: 1.28, a: s * 1.2, twist: s * 0.2, lift: 0.04 });
+  }
+  head.add(group);
+  return group;
+}
+
 // ---------- Tóc, bím, râu, khăn, váy, hoodie ----------
 function buildAccessories(THREE, { o, head, torso, hips, parts, addMesh, mat, seed }) {
   const materials = {};
   const dyn = [];   // các hàm cập nhật phụ (nhận tín hiệu pose)
   const RB = (w, h, d, r = 0.08) => new RoundedBoxGeometry(w, h, d, 2, r);
+  const smoothHair = []; let smoothFringe = null, hairV2 = null, tuftsV2 = null;
+  if (o.hat === 'beanie') tuftsV2 = buildHairV2(THREE, head, o.hairTuft || o.beard || o.hairColor, seed, { cap: true });
 
   if (o.hair === 'braids' || o.hair === 'short') {
     const hm = new THREE.MeshStandardMaterial({ map: repTex(THREE, strandCanvas(o.hairColor, { seed: seed & 255 }), 6, 1), roughness: 0.5, color: '#ffffff' });
     const hmS = new THREE.MeshStandardMaterial({ map: repTex(THREE, strandCanvas(o.hairColor, { seed: seed & 255 }), 6, 1), roughness: 0.5, color: '#ffffff', side: THREE.DoubleSide });
     materials.hair = hm;
-    addMesh(head, lathe(THREE, domeProfile(0.668, 0.9, 0.92, 0.42, 2.8, 16), 48), hm, 'hair_top');
+    smoothHair.push(addMesh(head, lathe(THREE, domeProfile(0.668, 0.9, 0.92, 0.42, 2.8, 16), 48), hm, 'hair_top'));
+    hairV2 = buildHairV2(THREE, head, o.hairColor, seed);
     // tóc sau gáy + hai bên (chừa mặt)
     const back = [[0.665, 0.95], [0.672, 0.6], [0.69, 0.25], [0.66, 0.16]];
     addMesh(head, lathe(THREE, back, 36, 0.95, PI * 2 - 1.9), hmS, 'hair_back');
     // mái: dải cong ôm trán, lệch nhẹ một bên (rẽ ngôi)
     const fringe = addMesh(head, lathe(THREE, [[0.672, 0.84], [0.69, 0.86], [0.695, 0.95], [0.68, 1.0]], 30, -1.15, 2.3), hm, 'hair_fringe');
     fringe.rotation.z = -0.09; fringe.position.y = 0.02;
+    smoothFringe = fringe;
     if (o.hair === 'braids') {
       const tieM = mat('#d6322b', 0.6);
       const ball = new THREE.SphereGeometry(1, 18, 14);
@@ -1185,7 +1358,12 @@ function buildAccessories(THREE, { o, head, torso, hips, parts, addMesh, mat, se
       hatGroup.rotation.set(clamp(sig.dP1 * 0.25, -0.04, 0.04), 0, clamp(sig.dR1 * 0.25, -0.04, 0.04));
     }
   };
-  return { materials, update, dynamic: dyn.length > 0 || o.hat === 'beanie' };
+  // v2: tóc cụm thay mái trơn (vỏ trơn đỉnh/gáy vẫn giữ làm lớp lót, không hở da đầu); tóc lòi dưới mũ len
+  const setHairV2 = (on) => {
+    if (hairV2) { hairV2.visible = on; if (smoothFringe) smoothFringe.visible = !on; }
+    if (tuftsV2) tuftsV2.visible = on;
+  };
+  return { materials, update, setHairV2, dynamic: dyn.length > 0 || o.hat === 'beanie' };
 }
 
 // ---------- Hệ thống pose ----------

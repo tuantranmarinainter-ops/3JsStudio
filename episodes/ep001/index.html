@@ -101,6 +101,7 @@
       // vân bụi / đồ cũ kiểu Roblox (engine/grunge.js) — bật/tắt ở ô "Hiệu ứng hình": worn (nhân vật), grime (cảnh)
       const WEAR = { dad: 1.5, dadIsland: 1.6 };   // mức quần áo cũ riêng từng nhân vật (mặc định 1)
       for (const [n, a] of Object.entries(actors)) applyGrunge(THREE, a.root, 'char', { amount: WEAR[n] || 1 });
+      for (const h of Object.values(houses)) applyGrunge(THREE, h.root, 'build', { aged: true });   // v2: nhà cũ bán thực (ô "aged")
       applyGrunge(THREE, stage.scene, 'build');
       const tl = buildTimeline(SHOTS, 30);
       const director = createDirector({ THREE, stage, envs, K, actors, houses, props, fx });
