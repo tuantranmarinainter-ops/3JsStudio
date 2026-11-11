@@ -59,6 +59,9 @@ const DURATION = 14;
 const params = new URLSearchParams(location.search);
 if (params.has('capture')) document.body.classList.add('capture');
 const Q = getQuality();
+// ?fx=0 → "TRƯỚC": tắt mọi kỹ thuật mới (màu phẳng, không gộp, không AO, không hậu kỳ, không chữ, không mưa) để so sánh
+const FX = params.get('fx') !== '0';
+if (!FX) Q.post = false;
 
 const canvas = document.getElementById('c');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: Q.antialias, preserveDrawingBuffer: true });
@@ -85,10 +88,12 @@ const T = {};
 for (const [f, seed] of [['grass', 1], ['asphalt', 2], ['paving', 3], ['brick', 4], ['concrete', 5], ['roof', 6], ['planks', 7]]) {
   T[f] = bakeProcTexture(THREE, renderer, f, { size: Q.texSize * 2, seed });
 }
+const FLAT = { grass: '#5f9e45', asphalt: '#3c3f44', paving: '#a8a8a4', brick: '#a8553d', concrete: '#cfcac0', roof: '#a84a33', planks: '#8a5a36' };
 const std = (name, color, rough, tex, scale, bump = 1) => {
   const m = new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: 0 });
   m.name = name;
-  if (tex) applyProcTexture(THREE, m, T[tex], { scale, bump });
+  if (tex && FX) applyProcTexture(THREE, m, T[tex], { scale, bump });
+  else if (tex) m.color.multiply(new THREE.Color(FLAT[tex]));
   return m;
 };
 const M = {
@@ -175,9 +180,11 @@ function buildTown(seed = 7) {
     // cửa hàng: mái hiên + biển
     if (i % 2 === 0) {
       box(w - 0.6, 0.2, 1.6, i % 4 === 0 ? M.awnA : M.awnB, 0, 3.2, d / 2 + 0.8, b, 'awning');
+      if (FX) {
       const sign = createLabel(THREE, atlas, SIGNS[(i / 2) % SIGNS.length], { height: 0.95, style: 'sign' });
       sign.object.position.set(0, Math.min(h - 0.8, 4.3), d / 2 + 0.12);
       b.add(sign.object);
+      }
     }
     town.add(b);
     x += w + 1 + Math.floor(r() * 2);
@@ -209,8 +216,8 @@ function rebuild() {
   town = buildTown(7);
   let meshes = 0; town.traverse((o) => { if (o.isMesh) meshes++; });
   let merged = null;
-  if (document.getElementById('merge').checked) merged = mergeByMaterial(THREE, town, mergeGeometries);
-  if (document.getElementById('ao').checked) bakeGroundAO(THREE, town, { height: 1.8, dark: 0.42 });
+  if (FX && document.getElementById('merge').checked) merged = mergeByMaterial(THREE, town, mergeGeometries);
+  if (FX && document.getElementById('ao').checked) bakeGroundAO(THREE, town, { height: 1.8, dark: 0.42 });
   scene.add(town);
   townInfo = merged ? `${merged.meshesBefore}→${merged.meshesAfter} mesh` : `${meshes} mesh (chưa gộp)`;
 }
@@ -247,7 +254,8 @@ function setWeather(name) {
   sky = createSkyPreset(THREE, w.sky, { renderer, scene, Sky, sun, hemi });
   for (const u of WET) u.uWet.value = w.wet;
   scene.remove(rain.object, puddles.object);
-  if (w.rain) scene.add(rain.object, puddles.object);
+  if (w.rain && FX) scene.add(rain.object, puddles.object);
+  if (!FX) for (const u of WET) u.uWet.value = 0;
   if (w.rain) scene.fog = new THREE.FogExp2('#b9c2cc', 0.012);
 }
 
@@ -286,7 +294,8 @@ function renderAt(t) {
   npc.animate('wave', t + 0.4);
   pin.setText(`PIN ${Math.max(1, Math.round(100 - (t / DURATION) * 99))}%`);
   title.object.position.set(-8, 11.5, -2);
-  title.object.visible = t < 4;
+  title.object.visible = FX && t < 4;
+  pin.object.visible = FX;
   cam.position.set(hx - 3, 4.2, 27);
   cam.lookAt(hx + 1.5, 6.2, -6);
   sun.target.position.set(hx, 0, -4);
