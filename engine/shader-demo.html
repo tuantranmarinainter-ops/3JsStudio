@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shader Lab</title>
+<style>
+  :root { --bg:#0e1118; --panel:#1b2030e6; --ink:#e8ecf4; --accent:#5b8cff; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:14px system-ui,sans-serif; overflow:hidden; }
+  #c { display:block; margin:0 auto; height:100vh; width:auto; aspect-ratio:9/16; max-width:100vw; object-fit:contain; }
+  .ui { position:fixed; left:0; right:0; bottom:0; padding:8px 12px 12px; background:var(--panel); display:flex; flex-direction:column; gap:8px; }
+  .row { display:flex; gap:8px; align-items:center; }
+  .ui select { flex:1; min-width:0; background:#0e1118; color:var(--ink); border:1px solid #3a4258; border-radius:8px; padding:7px 6px; font:inherit; }
+  .ui button, .ui label.btn { border:0; border-radius:999px; padding:8px 14px; background:var(--accent); color:#fff; font:inherit; cursor:pointer; white-space:nowrap; }
+  .ui input[type=range] { flex:1; min-width:0; }
+  .ui span { min-width:3.6em; text-align:right; font-variant-numeric:tabular-nums; }
+  .ui small { opacity:.75; white-space:nowrap; }
+  #glb { display:none; }
+  body.capture .ui { display:none; }
+  body.capture #c { height:auto; width:100vw; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<div class="ui">
+  <div class="row"><select id="style" aria-label="Kiểu shader"></select><select id="sky" aria-label="Bầu trời"></select></div>
+  <div class="row"><small>Sáng</small><input id="exp" type="range" min="0.2" max="2" step="0.05" value="1"><label class="btn" for="glb">+ GLB</label><input id="glb" type="file" accept=".glb,.gltf"></div>
+  <div class="row"><button id="play">▶</button><input id="seek" type="range" min="0" max="12" step="0.0333" value="0"><span id="tl">0.00s</span></div>
+</div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+// Phòng thử shader: đổi kiểu shader (engine/shaders.js) + bầu trời (engine/skies.js) trên R6 và vật mẫu.
+// Tham số URL: ?style=anime&sky=sunset&t=2  (snap: node tools/snap.js engine/shader-demo.html out 1 4 --three ...)
+// Mọi thứ là hàm của t: renderAt(t) / sự kiện hf-seek. Nút ▶ chỉ để xem thử.
+import * as THREE from 'three';
+import { Sky } from 'three/addons/objects/Sky.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { createR6, randomLook } from './r6.js';
+import { createHouse } from './winter.js';
+import { applyStyle, SHADER_STYLES } from './shaders.js';
+import { createSkyPreset, SKY_PRESETS } from './skies.js';
+
+window.THREE = THREE;
+const DURATION = 12;
+const params = new URLSearchParams(location.search);
+if (params.has('capture')) document.body.classList.add('capture');
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.setSize(1080, 1920, false);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+const cam = new THREE.PerspectiveCamera(50, 1080 / 1920, 0.1, 30000);
+
+// --- Đèn (bầu trời sẽ chỉnh màu/cường độ) ---
+const sun = new THREE.DirectionalLight('#ffffff', 2.5);
+sun.name = 'sun';
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -25, right: 25, top: 25, bottom: -25, near: 1, far: 250 });
+sun.shadow.bias = -0.0005;
+sun.shadow.normalBias = 0.04;
+const hemi = new THREE.HemisphereLight('#cfe6ff', '#8a7a66', 1);
+hemi.name = 'hemi';
+scene.add(sun, sun.target, hemi);
+
+// --- Mặt đất (không đổi shader) ---
+const ground = new THREE.Mesh(new THREE.CircleGeometry(400, 64), new THREE.MeshStandardMaterial({ color: '#6fbf5a', roughness: 0.95 }));
+ground.name = 'ground';
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+ground.userData.noStyle = true;
+scene.add(ground);
+
+// --- Vật mẫu: mọi thứ trong "subjects" sẽ nhận shader ---
+const subjects = new THREE.Group();
+subjects.name = 'subjects';
+scene.add(subjects);
+
+const hero = createR6(THREE, { name: 'hero', shirt: '#e74c3c', pants: '#2c3e50', face: 'happy', hat: 'cap', hatColor: '#2d6cdf' });
+const npcA = createR6(THREE, { ...randomLook(11), name: 'npcA' });
+const npcB = createR6(THREE, { ...randomLook(29), name: 'npcB', face: 'surprised' });
+hero.root.position.set(0, 0, 2);
+npcA.root.position.set(-3.6, 0, 0.5); npcA.root.rotation.y = 0.35;
+npcB.root.position.set(3.6, 0, 0.5);  npcB.root.rotation.y = -0.35;
+subjects.add(hero.root, npcA.root, npcB.root);
+
+const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(1.6, 0.55, 160, 24), new THREE.MeshStandardMaterial({ color: '#f1c40f', roughness: 0.35, metalness: 0.1 }));
+knot.name = 'knot';
+knot.position.set(0, 10.5, -1);
+knot.castShadow = true;
+const ball = new THREE.Mesh(new THREE.SphereGeometry(1.4, 48, 24), new THREE.MeshStandardMaterial({ color: '#9b59b6', roughness: 0.4 }));
+ball.name = 'ball';
+ball.position.set(-4.5, 1.4, -5);
+ball.castShadow = ball.receiveShadow = true;
+const crate = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), new THREE.MeshStandardMaterial({ color: '#d35400', roughness: 0.8 }));
+crate.name = 'crate';
+crate.position.set(4.5, 1, -5);
+crate.rotation.y = 0.5;
+crate.castShadow = crate.receiveShadow = true;
+const house = createHouse(THREE, { seed: 7 });
+house.object.name = 'house';
+house.object.position.set(0, 0, -14);
+subjects.add(knot, ball, crate, house.object);
+
+// --- Chọn shader + trời ---
+const styleSel = document.getElementById('style'), skySel = document.getElementById('sky'), expIn = document.getElementById('exp');
+for (const [k, v] of Object.entries(SHADER_STYLES)) styleSel.add(new Option(v, k));
+for (const [k, v] of Object.entries(SKY_PRESETS)) skySel.add(new Option(v, k));
+styleSel.value = SHADER_STYLES[params.get('style')] ? params.get('style') : 'anime';
+skySel.value = SKY_PRESETS[params.get('sky')] ? params.get('sky') : 'cartoon';
+
+let fx = null, sky = null, curT = 0;
+function setStyle(name) { fx?.restore(); fx = applyStyle(THREE, subjects, name); renderAt(curT); }
+function setSky(name) {
+  sky?.dispose();
+  sky = createSkyPreset(THREE, name, { renderer, scene, Sky, sun, hemi });
+  expIn.value = sky.exposure;
+  renderAt(curT);
+}
+styleSel.onchange = () => setStyle(styleSel.value);
+skySel.onchange = () => setSky(skySel.value);
+expIn.oninput = () => { renderer.toneMappingExposure = +expIn.value; renderAt(curT); };
+
+// --- Thử GLB của bạn: chuẩn hoá cao ~5 (bằng R6), đặt phía trước ---
+let userModel = null;
+document.getElementById('glb').onchange = async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const url = URL.createObjectURL(f);
+  const g = await new GLTFLoader().loadAsync(url);
+  URL.revokeObjectURL(url);
+  if (userModel) subjects.remove(userModel);
+  userModel = g.scene;
+  userModel.name = 'userGLB';
+  const box = new THREE.Box3().setFromObject(userModel);
+  const s = 5 / Math.max(box.getSize(new THREE.Vector3()).y, 1e-3);
+  userModel.scale.setScalar(s);
+  box.setFromObject(userModel);
+  const c = box.getCenter(new THREE.Vector3());
+  userModel.position.set(-c.x, -box.min.y, 5 - c.z);
+  userModel.traverse((o) => { if (o.isMesh) o.castShadow = o.receiveShadow = true; });
+  subjects.add(userModel);
+  setStyle(styleSel.value);
+};
+
+// --- Render theo t ---
+function renderAt(t) {
+  t = Math.max(0, Math.min(DURATION, t));
+  curT = t;
+  hero.animate('dance', t);
+  npcA.animate('wave', t + 0.5);
+  npcB.animate('idle', t + 1.3);
+  knot.rotation.set(t * 0.4, t * 0.7, 0);
+  fx?.update(t);
+  sky?.update(t);
+  const a = 0.25 * Math.sin((t / DURATION) * Math.PI * 2);   // camera lắc nhẹ trái phải
+  cam.position.set(Math.sin(a) * 27, 7, Math.cos(a) * 27);
+  cam.lookAt(0, 5.2, 0);
+  renderer.render(scene, cam);
+}
+window.renderAt = renderAt;
+window.DURATION = DURATION;
+window.setStyle = (n) => { styleSel.value = n; setStyle(n); };
+window.setSky = (n) => { skySel.value = n; setSky(n); };
+
+const onSeek = (e) => renderAt(e.detail?.time ?? 0);
+window.addEventListener('hf-seek', onSeek);
+document.addEventListener('hf-seek', onSeek);
+
+const seek = document.getElementById('seek'), tl = document.getElementById('tl'), play = document.getElementById('play');
+const show = (t) => { renderAt(t); seek.value = t; tl.textContent = t.toFixed(2) + 's'; };
+seek.oninput = () => { playing = false; play.textContent = '▶'; show(+seek.value); };
+let playing = false, t0 = 0, tStart = 0;
+play.onclick = () => {
+  playing = !playing; play.textContent = playing ? '⏸' : '▶';
+  if (playing) { tStart = +seek.value >= DURATION ? 0 : +seek.value; t0 = performance.now(); tick(); }
+};
+function tick() {
+  if (!playing) return;
+  show((tStart + (performance.now() - t0) / 1000) % DURATION);
+  requestAnimationFrame(tick);
+}
+
+setSky(skySel.value);
+setStyle(styleSel.value);
+show(+(params.get('t') ?? 0));
+window.__ready = true;
+</script>
+</body>
+</html>

@@ -39,6 +39,10 @@ engine/
   shots.js     thư viện LOẠI SHOT (camera + bố trí mặc định), dùng lại cho mọi tập
   timeline.js  t toàn cục → shot đang chạy + t cục bộ; nối trạng thái nhân vật giữa các shot
   winter.js    trời (Sky.js + IBL), mây khối, tuyết rơi, tuyết phủ material, núi tuyết, nước (xem HANDOFF.md)
+  shaders.js   kiểu shader áp cho cả nhóm vật: applyStyle(THREE, nhom, 'anime'|'roblox'|'hologram'…) → {update(t), restore()}
+  skies.js     preset bầu trời (trưa, hoàng hôn, hoạt hình, đêm sao, u ám) kèm đèn/sương/exposure khớp
+  roblox-look.js  setupRobloxLook (đèn + sương + bloom) + robloxifyModel (vật liệu nhựa mịn)
+  shader-demo.html  phòng thử shader + trời (chọn trên điện thoại, ?style=&sky=&t=, nút + GLB)
 assets/
   kenney/      GLB CC0 (City Kit Roads/Commercial/Suburban)
   polyfork/    asset tải từ Polyfork — nằm trong .gitignore (không được phân phối lại .mjs/HD)
