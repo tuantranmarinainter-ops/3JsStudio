@@ -146,6 +146,10 @@ html = await replaceAsync(html, /(<audio\b[^>]*\ssrc=")([^"]+)(")/g, async (m, a
 });
 const embedTag = `<script>window.__EMBED=${JSON.stringify(embed)};</script>`;
 html = html.replace(/<script type="module">[\s\S]*?<\/script>/, () => `${embedTag}\n<script type="module">${js}</script>${uiJs ? `\n<script type="module">${uiJs}</script>` : ''}`);
+// Che khung phim gốc 1080×1920 cho tới khi trình phát dựng xong (tránh chớp "giao diện cũ" lúc đang đọc ~50 MB dữ liệu nhúng).
+// Chỉ khi có trình phát (không che khi công cụ tự động chạy bằng webdriver mà không có ?ui). Tự gỡ sau 20 s phòng lỗi.
+if (uiJs) html = html.replace(/<head>/i, (h) => `${h}
+<script>(function(){if(navigator.webdriver&&!new URLSearchParams(location.search).has('ui'))return;var s=document.createElement('style');s.id='xpre';s.textContent="html,body{background:#0d0f14!important}#root{visibility:hidden!important}html::after{content:'Đang mở trình phát…';position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#8b93a7;font:15px system-ui,sans-serif}";document.documentElement.appendChild(s);setTimeout(function(){s.remove()},20000)})()</script>`);
 html = html.replace(/<!doctype html>/i, (d) => `${d}\n<!-- Bản gộp 1 file từ episodes/${ep}/ bởi tools/bundle.mjs (${new Date().toISOString()}). Render: node tools/render-local.mjs ${pathRel(out)} -->`);
 await mkdir(dirname(out), { recursive: true });
 await writeFile(out, html);

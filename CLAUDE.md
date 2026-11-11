@@ -19,6 +19,7 @@ Cảnh 3D dựng bằng three.js, render ra MP4 bằng **HyperFrames**. Claude �
 ## Quy tắc người dùng (cập nhật 2026-11-11 — ưu tiên hơn các mục cũ bên dưới)
 - **Render trên máy người dùng, KHÔNG qua cloud/Actions.** Sản phẩm = `dist/<ep>.html` một file (nút ⬇ Xuất MP4 2K/1080p/4K
   bằng GPU máy họ). Làm xong **luôn đưa link file HTML**. Skill: `xuat-phim`.
+- **Sau MỖI lần sửa xong (dù nhỏ) luôn gộp lại và đưa link file HTML** ở cuối câu trả lời: đường dẫn `S:\3JS Studio\dist\<file>.html` + `file:///S:/3JS%20Studio/dist/<file>.html` (bản xem thử khi chưa chốt: `dist/<ep>_xem-thu.html`).
 - **Mọi tính năng mới phải bật/tắt được** trong trình phát (ngôn ngữ, giọng, phụ đề, tiếng, hiệu ứng hình…).
 - Bộ kịch bản người dùng đưa (khung ảnh + mô tả chi tiết) là **tài sản của họ** → làm luôn, không hỏi lại về nguồn.
 - Duyệt trước rồi mới ghép: đoạn mẫu / trang nghe thử → người dùng chốt → mới gộp vào HTML.
@@ -63,6 +64,7 @@ CLAUDE.md
 engine/
   r6.js        nhân vật R6 (6 khối, 15 animation, 8 biểu cảm, randomLook)
   stage.js     renderer 1080×1920, camera, ánh sáng, nghe sự kiện hf-seek
+  envs.js      ánh sáng + nạp bối cảnh; MỖI bối cảnh 1 file engine/envs/<tên>.js (town, forest, island, mountain…)
   town.js      dựng thị trấn từ asset Kenney theo seed, trả địa điểm có tên (square, home, shop, street…)
   shottypes.js thư viện LOẠI SHOT (camera + bố trí mặc định, liên tục giữa shot), dùng lại cho mọi tập
   shots.js     đạo diễn: shot (dữ liệu) + t → camera/diễn viên/env/đạo cụ
@@ -83,6 +85,13 @@ episodes/
     index.html   composition HyperFrames tổng (đọc 2 file trên)
 output/        MP4, ảnh preview
 ```
+
+## Luật camera "dồn dập" (người dùng chốt 2026-11-11, bắt buộc cho mọi shot)
+- Camera **gần như không bao giờ đứng yên**: mỗi shot có zoom in hoặc zoom out rõ (đổi `dist`/`fov` hoặc `p`→`p2`), tạo nhịp cuốn.
+- **1 người trong khung → zoom IN** (đẩy dần vào mặt/thân). **2 người trở lên hoặc vật lớn (ngôi nhà) → zoom OUT** (lùi dần cho thấy toàn bộ).
+- **Nhà có chân**: zoom out hoặc lia ngang trái↔phải để **thấy trọn 4 chân**; không giữ khung tĩnh làm mất chân.
+- Shot tĩnh chỉ dùng hiếm, khi cần dừng nhịp (bưu thiếp cận để đọc chữ).
+- Không để đạo cụ/cây che mặt nhân vật hoặc mặt tiền nhà; không cắt nửa người nhân vật chính.
 
 ## Hệ thống shot (~140 shot / phim)
 **Nguyên tắc:** shot là DỮ LIỆU, không phải code. Không viết tay 140 cảnh — chọn LOẠI SHOT có sẵn rồi điền tham số.
@@ -178,7 +187,17 @@ Render 140 shot:
 5. Thiếu asset → Kenney trước, Polyfork sau; ghi manifest.
 6. Xem contact sheet cả phim → sửa shot lỗi → render từng đoạn → ghép MP4 1080×1920.
 
-## Sử dụng agent
+## Sử dụng agent — chia việc NHANH (người dùng chốt 2026-11-11)
+- **Mỗi agent sở hữu file riêng**: bối cảnh = `engine/envs/<tên>.js` (16 file, mỗi env 1 file; `engine/envs.js` chỉ còn ánh sáng + nạp env),
+  shot = dải dòng trong `episodes/<ep>/shots.js` (sửa từng dòng bằng Edit, không ghi lại cả file). Không giao 2 agent cùng một file env.
+- **Chia đều, ≤ 3–4 lỗi mỗi agent**; việc nặng (bão, mây, đảo…) tách nhỏ. Cả đợt chỉ nhanh bằng agent chậm nhất.
+- **Chụp kiểm nhanh**: `look.mjs` mặc định chụp 540×960, tua không chụp, tự chạy 4 tab khi > 8 thời điểm (`--jobs N`).
+  Agent chỉ chụp đúng shot mình sửa (`--shots …` / `--t …`), mỗi agent `--out output/look/<tên-agent>` riêng.
+- **Người dùng báo lỗi theo frame → chỉ chụp phân cảnh chứa frame đó**: `look.mjs --frames 676,1262` tự tìm shot của từng frame và chụp frame đó + đầu/giữa/cuối shot (3 frame lỗi ≈ 35 giây). Không chụp cả phim để tìm lỗi.
+- **Kiểm cả phim 1 lần ở cuối** (agent chính): `node tools/look.mjs episodes/<ep>/index.html --shots all --det` (~2–3 phút).
+- Góp ý của người dùng từ trình phát (nút "Ghi chú lỗi") → `node tools/feedback.mjs --latest` (frame + shot + ảnh khoanh) → chia agent theo file.
+
+## Sử dụng agent (chung)
 - Claude ĐƯỢC PHÉP dùng agent nhỏ hơn (Haiku/Sonnet) để hỗ trợ, không cần hỏi lại.
 - **Huy động nhiều agent chạy song song** (gọi nhiều Agent trong cùng 1 lượt, chạy nền) mỗi khi việc chia được thành
   phần độc lập: các chương shot, các asset/env, các đoạn contact sheet cần kiểm, các đoạn render.
@@ -220,7 +239,7 @@ Render 140 shot:
     và secret `TTS_CAPCUT_DEVICE_CONFIG` (nếu tool cần). Giọng CapCut: chỉ tốc độ -50..100%, không cao độ/âm lượng.
     Danh sách ID giọng: `tools/voice_studio/voices-capcut.txt` (workflow tự cập nhật).
     SDK được commit sẵn trong repo; chạy được trên GitHub Actions không cần cấu hình thiết bị (đã kiểm chứng).
-    Giọng gợi ý: người dẫn (đứa trẻ) `BV074_streaming_dsp` "Giọng Bé"; mẹ `multi_female_yangguangnv_uranus_bigtts`
+    Giọng gợi ý: **mặc định tiếng Việt = `BV075_streaming` "Thanh Niên Tự Tin"** (người dùng chốt 2026-11-11); bé `BV074_streaming_dsp` "Giọng Bé"; mẹ `multi_female_yangguangnv_uranus_bigtts`
     "Ban Mai"; nam trầm `multi_male_felipe_uranus_bigtts`. CapCut chậm hơn Edge (~1 phút/câu, 2 câu song song)
     → tập 140 câu mất khoảng 1 giờ lần đầu; các lần sau chỉ tạo lại câu bị sửa (cache).
   - `--dry`: không gọi dịch vụ, ước lượng ~14 ký tự/giây → dựng shot trước khi có giọng thật.

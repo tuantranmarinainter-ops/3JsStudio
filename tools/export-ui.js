@@ -48,11 +48,35 @@ async function init() {
     #xbar > div { height: 100%; width: 0; background: #e5484d; transition: width .2s; }
     #xstat { min-height: 38px; white-space: pre-line; }
     #xtime { font-variant-numeric: tabular-nums; min-width: 92px; text-align: right; }
+    #xui .xfr { gap: 6px; } #xui .xstep { padding: 6px 0; flex: 1; font-variant-numeric: tabular-nums; }
+    #xframe { width: 78px; font: inherit; background: #1b2030; color: #e8ecf3; border: 1px solid #343c50; border-radius: 6px; padding: 4px 6px; }
+    #xftot, #xshot { font-variant-numeric: tabular-nums; }
+    #xui { max-height: 100vh; overflow-y: auto; padding-right: 4px; box-sizing: border-box; }
+    #xwrap { cursor: pointer; }
+    #xann { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 5; display: none; touch-action: none; cursor: crosshair; }
+    #xwrap.annot { cursor: crosshair; outline: 3px solid #e5484d; }
+    #xwrap.annot #xann { display: block; }
+    #xannbox { display: flex; flex-direction: column; gap: 8px; }
+    #xanntools { display: none; flex-direction: column; gap: 8px; background: #151a27; border: 1px solid #343c50; border-radius: 8px; padding: 10px; }
+    #xanntools.on { display: flex; }
+    #xanntools .tl { padding: 7px 4px; flex: 1; font-size: 12.5px; }
+    #xanntools .tl.act { background: #e5484d; color: #fff; }
+    #xnote { font: inherit; width: 100%; box-sizing: border-box; min-height: 70px; resize: vertical; background: #1b2030; color: #e8ecf3; border: 1px solid #343c50; border-radius: 6px; padding: 7px 8px; }
+    #xmic.rec { background: #e5484d; color: #fff; }
+    #xnotes { display: flex; flex-direction: column; gap: 6px; }
+    #xnotes .nt { display: flex; gap: 8px; align-items: center; background: #1b2030; border: 1px solid #343c50; border-radius: 6px; padding: 5px; cursor: pointer; }
+    #xnotes .nt:hover { background: #232a3d; }
+    #xnotes .nt img { width: 36px; height: 64px; object-fit: cover; border-radius: 3px; flex: none; background: #000; }
+    #xnotes .nt .tx { flex: 1; min-width: 0; font-size: 12.5px; line-height: 1.35; }
+    #xnotes .nt .tx b { color: #ffb4b6; font-variant-numeric: tabular-nums; }
+    #xnotes .nt .tx span { display: block; color: #8b93a7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #xnotes .nt .del { padding: 4px 8px; background: #3a2226; }
     @media (max-aspect-ratio: 1/1) { body { flex-direction: column; gap: 12px; } #xui { width: min(92vw, 420px); } }
   `;
   document.head.appendChild(css);
   const wrap = document.createElement('div'); wrap.id = 'xwrap';
   root.parentNode.insertBefore(wrap, root); wrap.appendChild(root);
+  const annCv = document.createElement('canvas'); annCv.id = 'xann'; wrap.appendChild(annCv);   // lớp vẽ ghi chú — chỉ trên màn hình, không bao giờ vào video xuất
   const ui = document.createElement('div'); ui.id = 'xui';
   ui.innerHTML = `
     <h1>${escapeHtml(title)}</h1>
@@ -66,6 +90,25 @@ async function init() {
       <label class="chk"><input id="xloud" type="checkbox" checked> Chuẩn âm lượng YouTube (−14 LUFS)</label></div>
     <div id="xfxbox" style="display:none"><div class="lbl" style="width:auto;margin:2px 0 6px">Hiệu ứng hình</div><div id="xfx" class="fxgrid"></div></div>
     <div class="row"><button id="xplay">▶ Xem</button><input id="xseek" type="range" min="0" max="${DUR}" step="0.001" value="0"><span id="xtime">0:00.0</span></div>
+    <div class="row xfr"><span class="lbl" style="width:auto">Frame</span><input id="xframe" type="number" min="0" step="1" value="0"><span id="xftot" class="muted"></span><span id="xshot" class="muted"></span></div>
+    <div class="row xfr">${[-10, -5, -1, 1, 5, 10].map((d) => `<button class="xstep" data-d="${d}" title="${d < 0 ? 'Lùi' : 'Tới'} ${Math.abs(d)} frame">${d < 0 ? '◀' : ''}${Math.abs(d)}${d > 0 ? '▶' : ''}</button>`).join('')}</div>
+    <div id="xannbox">
+      <button id="xannbtn">✎ Ghi chú lỗi</button>
+      <div id="xanntools">
+        <div class="muted">Vẽ lên khung hình để chỉ chỗ lỗi (video tạm dừng). Nét vẽ KHÔNG nằm trong file MP4 xuất ra.</div>
+        <div class="row xfr"><button class="tl act" data-tool="pen">✏ Bút</button><button class="tl" data-tool="ell">◯ Elip</button><button class="tl" data-tool="arrow">➚ Mũi tên</button></div>
+        <div class="row xfr"><button class="tl" id="xundo">↶ Hoàn tác</button><button class="tl" id="xclr">🗑 Xoá nét</button></div>
+        <textarea id="xnote" placeholder="Ghi chú cho khung này (gõ hoặc bấm micro để nói)…"></textarea>
+        <div class="row xfr"><button id="xmic" style="flex:1">🎤 Nói</button><button id="xsave" class="main" style="flex:2;padding:10px 14px;font-size:14px">Lưu ghi chú</button></div>
+        <div id="xmicst" class="muted"></div>
+      </div>
+      <div id="xnotes"></div>
+      <div id="xsendrow" style="display:none;flex-direction:column;gap:6px">
+        <button id="xsend" class="main" style="font-size:14px">📨 Gửi góp ý (<span id="xncnt">0</span>)</button>
+        <div class="muted">Bấm Gửi góp ý → lưu file .json vào thư mục <b>S:\\3JS Studio\\feedback\\</b> để Claude đọc.</div>
+        <div id="xsendst" class="muted"></div>
+      </div>
+    </div>
     <hr style="border:0;border-top:1px solid #262c3b;width:100%;margin:4px 0">
     <div class="row"><select id="xres">${Object.entries(PRESETS).map(([k, p]) => `<option value="${k}"${k === '2k' ? ' selected' : ''}>${p.label}</option>`).join('')}</select></div>
     <div class="row"><label class="muted" style="flex:1">Đoạn (giây)</label>
@@ -89,6 +132,7 @@ async function init() {
     wrap.style.width = `${W0 * k}px`; wrap.style.height = `${H0 * k}px`;
   }
   addEventListener('resize', fit); fit();
+  document.getElementById('xpre')?.remove();   // gỡ lớp che của bản gộp (tools/bundle.mjs) — giờ khung đã thu vừa cửa sổ
 
   // chờ cảnh sẵn sàng
   $('xstat').textContent = 'Đang tải cảnh…';
@@ -137,8 +181,17 @@ async function init() {
   }
 
   // ---- xem trước (thời gian thực theo giọng đọc; chỉ để xem, không dùng khi xuất) ----
-  let playing = false, raf = 0, t0 = 0, wall0 = 0;
-  const show = (t) => { window.renderAt(t); $('xseek').value = t; $('xtime').textContent = fmt(t, true); };
+  let playing = false, raf = 0, t0 = 0, wall0 = 0, annotating = false;
+  const NF = Math.round(DUR * FPS);   // tổng số frame; frame f hiển thị ở t = f / FPS
+  const show = (t) => {
+    window.renderAt(t); $('xseek').value = t; $('xtime').textContent = fmt(t, true);
+    const f = Math.min(NF - 1, Math.round(t * FPS)); if (document.activeElement !== $('xframe')) $('xframe').value = f;
+    $('xftot').textContent = '/ ' + (NF - 1);
+    try { const sh = window.__shots && window.__shots.at(Math.min(t, DUR - 1e-4)).shot; $('xshot').textContent = sh ? '· ' + sh.id : ''; } catch (e) {}
+  };
+  // đi từng frame: nút ◀10 ◀5 ◀1 1▶ 5▶ 10▶, ô số frame, phím ← → (giữ Shift = 10 frame)
+  const goFrame = (f) => { if (playing) pause(); f = Math.max(0, Math.min(NF - 1, Math.round(f))); show(f / FPS); };
+  const curFrame = () => Math.round(+$('xseek').value * FPS);
   // giảm nhạc khi có lời (xem trước): đường bao giọng đọc tính 1 lần từ chính file giọng đang chọn (xem duckEnvelope)
   const musicLayers = () => sfxLayers.filter((L) => L.id === 'nhac');
   const envCache = new Map();   // src giọng → đường bao | Promise
@@ -190,14 +243,152 @@ async function init() {
   $('xplay').onclick = () => (playing ? pause() : play());
   $('xduck').onchange = () => { if (playing) applyMusicVolume(nowT()); };
   $('xseek').oninput = () => { if (playing) pause(); show(+$('xseek').value); };
-  addEventListener('keydown', (e) => { if (e.code === 'Space' && e.target.tagName !== 'INPUT') { e.preventDefault(); playing ? pause() : play(); } });
+  addEventListener('keydown', (e) => { if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !annotating) { e.preventDefault(); playing ? pause() : play(); } });
+  for (const b of document.querySelectorAll('.xstep')) b.onclick = () => goFrame(curFrame() + +b.dataset.d);
+  $('xframe').onchange = () => goFrame(+$('xframe').value);
+  addEventListener('keydown', (e) => {
+    if ((e.code !== 'ArrowLeft' && e.code !== 'ArrowRight') || ((e.target.tagName === 'INPUT' && e.target.type !== 'range') || e.target.tagName === 'TEXTAREA')) return;
+    e.preventDefault(); goFrame(curFrame() + (e.code === 'ArrowLeft' ? -1 : 1) * (e.shiftKey ? 10 : 1));
+  });
+
+  // ---- CLICK VÀO KHUNG = PHÁT / TẠM DỪNG ----
+  wrap.addEventListener('click', () => { if (annotating || busy) return; playing ? pause() : play(); });
+
+  // ---- GHI CHÚ LỖI: vẽ lên khung hình + ghi chú chữ/giọng nói → file góp ý .json (không bao giờ vào MP4) ----
+  const AW = 540, AH = Math.round(540 * H0 / W0), CW = 450, CH = Math.round(450 * H0 / W0);
+  annCv.width = AW; annCv.height = AH;
+  const ag = annCv.getContext('2d');
+  const epId = ((document.body.dataset && document.body.dataset.ep) || (title.match(/ep\d+/i) || [])[0] || (location.pathname.match(/ep\d+/i) || [])[0] || 'ep001').toLowerCase();
+  const LSKEY = 'gopy:' + epId;
+  let tool = 'pen', strokes = [], cur = null, notes = [];
+  try { notes = JSON.parse(localStorage.getItem(LSKEY) || '[]') || []; } catch { notes = []; }
+  const persist = () => {
+    try { localStorage.setItem(LSKEY, JSON.stringify(notes)); return true; } catch {}
+    try { localStorage.setItem(LSKEY, JSON.stringify(notes.map((n) => ({ ...n, img: '' })))); } catch {}
+    return false;
+  };
+  function drawShape(g, st) {
+    g.lineWidth = 5; g.strokeStyle = '#ff2b2b'; g.fillStyle = '#ff2b2b'; g.lineCap = 'round'; g.lineJoin = 'round';
+    if (st.type === 'pen') {
+      g.beginPath(); st.pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
+      if (st.pts.length === 1) g.lineTo(st.pts[0][0] + 0.1, st.pts[0][1]);
+      g.stroke();
+    } else if (st.type === 'ell') {
+      const [x0, y0] = st.a, [x1, y1] = st.b;
+      g.beginPath(); g.ellipse((x0 + x1) / 2, (y0 + y1) / 2, Math.max(1, Math.abs(x1 - x0) / 2), Math.max(1, Math.abs(y1 - y0) / 2), 0, 0, Math.PI * 2); g.stroke();
+    } else if (st.type === 'arrow') {
+      const [x0, y0] = st.a, [x1, y1] = st.b, ang = Math.atan2(y1 - y0, x1 - x0), hl = 22;
+      g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke();
+      g.beginPath(); g.moveTo(x1, y1); g.lineTo(x1 - hl * Math.cos(ang - 0.45), y1 - hl * Math.sin(ang - 0.45));
+      g.lineTo(x1 - hl * Math.cos(ang + 0.45), y1 - hl * Math.sin(ang + 0.45)); g.closePath(); g.fill();
+    }
+  }
+  const redrawAnn = () => { ag.clearRect(0, 0, AW, AH); for (const st of strokes) drawShape(ag, st); if (cur) drawShape(ag, cur); };
+  const apos = (e) => { const r = annCv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * AW, (e.clientY - r.top) / r.height * AH]; };
+  annCv.addEventListener('pointerdown', (e) => {
+    if (!annotating || e.button > 0) return; e.preventDefault(); annCv.setPointerCapture(e.pointerId);
+    const p = apos(e); cur = tool === 'pen' ? { type: 'pen', pts: [p] } : { type: tool, a: p, b: p }; redrawAnn();
+  });
+  annCv.addEventListener('pointermove', (e) => {
+    if (!cur) return; const p = apos(e);
+    if (cur.type === 'pen') cur.pts.push(p); else cur.b = p; redrawAnn();
+  });
+  const endStroke = () => { if (!cur) return; strokes.push(cur); cur = null; redrawAnn(); };
+  annCv.addEventListener('pointerup', endStroke); annCv.addEventListener('pointercancel', endStroke);
+  for (const b of document.querySelectorAll('#xanntools .tl[data-tool]')) b.onclick = () => {
+    tool = b.dataset.tool; for (const o of document.querySelectorAll('#xanntools .tl[data-tool]')) o.classList.toggle('act', o === b);
+  };
+  $('xundo').onclick = () => { strokes.pop(); redrawAnn(); };
+  $('xclr').onclick = () => { strokes = []; cur = null; redrawAnn(); };
+  function setAnnotate(on) {
+    if (on && busy) return;
+    annotating = on; if (on && playing) pause();
+    wrap.classList.toggle('annot', on); $('xanntools').classList.toggle('on', on);
+    $('xannbtn').textContent = on ? '✕ Thoát ghi chú' : '✎ Ghi chú lỗi';
+    if (!on) stopMic();
+  }
+  $('xannbtn').onclick = () => setAnnotate(!annotating);
+
+  // micro (Web Speech API)
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let rec = null, listening = false, micBase = '';
+  function stopMic() { listening = false; try { rec && rec.stop(); } catch {} $('xmic').classList.remove('rec'); $('xmic').textContent = '🎤 Nói'; }
+  if (!SR) { $('xmic').disabled = true; $('xmicst').textContent = 'Trình duyệt này không hỗ trợ nhận dạng giọng nói (Web Speech API) → gõ ghi chú bằng tay, hoặc mở bằng Chrome/Edge.'; }
+  $('xmic').onclick = () => {
+    if (!SR) return;
+    if (listening) { stopMic(); $('xmicst').textContent = ''; return; }
+    rec = new SR(); rec.lang = 'vi-VN'; rec.continuous = true; rec.interimResults = true;
+    micBase = $('xnote').value ? $('xnote').value.replace(/\s*$/, ' ') : '';
+    rec.onresult = (e) => { let tx = ''; for (let i = 0; i < e.results.length; i++) tx += e.results[i][0].transcript; $('xnote').value = micBase + tx; };
+    rec.onerror = (e) => { $('xmicst').textContent = 'Micro lỗi: ' + (e.error === 'not-allowed' ? 'chưa cho phép dùng micro (hoặc trang mở từ file:// bị chặn) → gõ tay.' : e.error); stopMic(); };
+    rec.onend = () => { if (listening) { micBase = $('xnote').value.replace(/\s*$/, ' '); try { rec.start(); } catch { stopMic(); } } };
+    try { rec.start(); listening = true; $('xmic').classList.add('rec'); $('xmic').textContent = '⏺ Đang nghe… (bấm để dừng)'; $('xmicst').textContent = 'Nói tiếng Việt, chữ sẽ hiện vào ô ghi chú.'; }
+    catch (e) { $('xmicst').textContent = 'Không bật được micro: ' + e.message; }
+  };
+
+  // lưu ghi chú: chụp khung hiện tại (render rồi vẽ ngay) + phụ đề + nét vẽ → PNG nhỏ
+  async function saveNote() {
+    if (busy) return;
+    const t = Math.min(+$('xseek').value, DUR - 1e-4), frame = Math.round(t * FPS);
+    const text = $('xnote').value.trim();
+    if (!text && !strokes.length) { $('xmicst').textContent = 'Hãy vẽ hoặc gõ/nói ghi chú trước khi lưu.'; return; }
+    let img = '';
+    try {
+      const p = window.renderAt(t); if (p && p.then) await p;
+      const cv = document.createElement('canvas'); cv.width = CW; cv.height = CH;
+      const g = cv.getContext('2d'); g.drawImage(stage.renderer.domElement, 0, 0, CW, CH);
+      try { drawCaption(g, document.getElementById('cap'), CW / W0); } catch {}
+      if (strokes.length) g.drawImage(annCv, 0, 0, CW, CH);
+      img = cv.toDataURL('image/png');
+    } catch (e) { console.warn('không chụp được khung', e); }
+    let shotId = ''; try { const sh = window.__shots && window.__shots.at(t).shot; shotId = sh ? sh.id : ''; } catch {}
+    notes.push({ id: Date.now().toString(36), frame, t: +t.toFixed(3), shotId, text, img, created: new Date().toISOString() });
+    notes.sort((a, b) => a.frame - b.frame);
+    const ok = persist();
+    strokes = []; cur = null; redrawAnn(); $('xnote').value = ''; stopMic();
+    $('xmicst').textContent = ok ? 'Đã lưu ghi chú ở frame ' + frame + '.' : 'Đã lưu, nhưng bộ nhớ trình duyệt đầy: hãy bấm Gửi góp ý sớm (ảnh sẽ mất khi tải lại trang).';
+    renderNotes();
+  }
+  $('xsave').onclick = saveNote;
+  function renderNotes() {
+    $('xnotes').innerHTML = notes.map((n, i) => `<div class="nt" data-i="${i}">${n.img ? `<img src="${n.img}" alt="">` : '<img alt="">'}` +
+      `<div class="tx"><b>f${n.frame}</b> · ${n.t.toFixed(2)}s${n.shotId ? ' · ' + escapeHtml(n.shotId) : ''}<span>${escapeHtml(n.text || '(chỉ có nét vẽ)')}</span></div>` +
+      `<button class="del" data-del="${i}" title="Xoá ghi chú">✕</button></div>`).join('');
+    $('xsendrow').style.display = notes.length ? 'flex' : 'none'; $('xncnt').textContent = notes.length;
+  }
+  $('xnotes').onclick = (e) => {
+    const d = e.target.closest('[data-del]');
+    if (d) { notes.splice(+d.dataset.del, 1); persist(); renderNotes(); return; }
+    const n = e.target.closest('.nt'); if (n) goFrame(notes[+n.dataset.i].frame);
+  };
+  renderNotes();
+
+  // gửi góp ý: 1 file json (ảnh dạng data URL)
+  $('xsend').onclick = async () => {
+    if (!notes.length) return;
+    const d = new Date(), z = (n) => String(n).padStart(2, '0');
+    const name = `gop-y_${epId}_${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}_${z(d.getHours())}-${z(d.getMinutes())}.json`;
+    const data = { app: 'gop-y', version: 1, episode: epId, title, fps: FPS, duration: DUR, created: d.toISOString(), notes };
+    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    const st = (s) => { $('xsendst').textContent = s; };
+    try {
+      if (window.showSaveFilePicker) {
+        const fh = await showSaveFilePicker({ suggestedName: name, types: [{ description: 'Góp ý (JSON)', accept: { 'application/json': ['.json'] } }] });
+        const w = await fh.createWritable(); await w.write(blob); await w.close();
+        st('Đã lưu: ' + fh.name + '\nNhớ để file trong thư mục S:\\3JS Studio\\feedback\\ rồi nhắn Claude "đọc góp ý".');
+      } else { download(blob, name); st('Đã tải: ' + name + '\nChuyển file vào thư mục S:\\3JS Studio\\feedback\\ rồi nhắn Claude "đọc góp ý".'); }
+    } catch (e) {
+      if (e && e.name === 'AbortError') { st('Đã huỷ.'); return; }
+      download(blob, name); st('Không mở được hộp lưu → đã tải: ' + name + '\nChuyển vào S:\\3JS Studio\\feedback\\.');
+    }
+  };
 
   // ---- XUẤT MP4 ----
   let cancel = false;
   $('xstop').onclick = () => { cancel = true; };
   $('xgo').onclick = async () => {
     if (busy) return;
-    pause();
+    pause(); setAnnotate(false);
     const P = PRESETS[$('xres').value];
     const ts = Math.max(0, +$('xs').value || 0), te = Math.min(DUR, +$('xe').value || DUR);
     const f0 = Math.round(ts * FPS), f1 = Math.round(te * FPS), N = f1 - f0;
@@ -208,7 +399,7 @@ async function init() {
     $('xgo').disabled = true; $('xplay').disabled = true; $('xstop').style.display = '';
     for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice', 'xres', 'xduck', 'xloud']) $(id).disabled = true;
     for (const el of document.querySelectorAll('#xsfx input')) el.disabled = true;
-    for (const el of document.querySelectorAll('#xfx input')) el.disabled = true;
+    for (const el of document.querySelectorAll('#xfx input, .xstep, #xframe, #xannbox button, #xannbox textarea')) el.disabled = true;
     const setStat = (s) => { $('xstat').textContent = s; };
     const bar = $('xbar').firstElementChild;
     let fileHandle = null, stream = null;
@@ -317,7 +508,8 @@ async function init() {
       busy = false; $('xgo').disabled = false; $('xplay').disabled = false; $('xstop').style.display = 'none';
       for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice', 'xres', 'xduck', 'xloud']) $(id).disabled = false;
       for (const el of document.querySelectorAll('#xsfx input')) el.disabled = false;
-      for (const el of document.querySelectorAll('#xfx input')) el.disabled = false;
+      for (const el of document.querySelectorAll('#xfx input, .xstep, #xframe, #xannbox button, #xannbox textarea')) el.disabled = false;
+      if (!SR) $('xmic').disabled = true;
       show(+$('xseek').value);
     }
   };

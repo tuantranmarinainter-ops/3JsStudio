@@ -22,3 +22,6 @@ Luôn MỞ ẢNH RA XEM (Read) trước khi kết luận; báo trung thực cái
 - Asset không thiếu (khối xám = GLB không tải), hải đăng màu xanh (đã chốt), cá voi/nước văng ở s054–s056.
 - Bật/tắt từng hiệu ứng hình (`?fx=none` vs mặc định) phải khác đúng chỗ, tắt hết phải giống bản gốc.
 - Lỗi `net::ERR_FILE_NOT_FOUND` khi mở bản gộp: 14 texture nhân vật Codex chưa có trong repo — engine tự dùng bản dự phòng, không phải lỗi mới.
+
+## Lỗi theo frame → chỉ chụp phân cảnh đó
+`node tools/look.mjs episodes/<ep>/index.html --frames 676,1262` — tự tìm shot chứa từng frame, chụp frame đó + đầu/giữa/cuối shot. Không chụp cả phim để tìm lỗi; kiểm cả phim (`--shots all --det`) chỉ 1 lần ở cuối.

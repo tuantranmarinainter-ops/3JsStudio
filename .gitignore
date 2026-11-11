@@ -23,3 +23,11 @@ episodes/*/voices/**/*.srt
 # video2kb: video nguồn tải về + tệp tạm
 kich-ban/*/_nguon/
 kich-ban/*/_tmp/
+
+# góp ý từ trình phát (ghi chú lỗi)
+feedback/*.json
+feedback/*/
+
+# góp ý từ trình phát (file của người dùng + ảnh kiểm) — chỉ giữ thư mục
+feedback/*
+!feedback/.gitkeep

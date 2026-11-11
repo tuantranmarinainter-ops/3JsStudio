@@ -1,6 +1,6 @@
 ---
 name: scene-env
-description: Dựng môi trường/bối cảnh 3D (thị trấn, rừng, biển, sa mạc, tuyết, núi mây, đảo, nội thất) cho shot three.js theo phương pháp make-map của fwjelaa — kế hoạch 5 dòng, xây theo pha, ánh sáng/bầu trời theo "family" phong cách, QA bằng ảnh chụp các góc shot và ngân sách hiệu năng. Dùng khi tạo hoặc sửa env trong engine/envs.js hay town.js.
+description: Dựng môi trường/bối cảnh 3D (thị trấn, rừng, biển, sa mạc, tuyết, núi mây, đảo, nội thất) cho shot three.js theo phương pháp make-map của fwjelaa — kế hoạch 5 dòng, xây theo pha, ánh sáng/bầu trời theo "family" phong cách, QA bằng ảnh chụp các góc shot và ngân sách hiệu năng. Dùng khi tạo hoặc sửa env trong engine/envs/<tên>.js (mỗi bối cảnh 1 file) hay town.js.
 ---
 
 # Môi trường (three.js) — phương pháp make-map của fwjelaa
