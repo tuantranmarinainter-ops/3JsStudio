@@ -26,7 +26,7 @@ for ch, t in chars:
 if cur.strip(): sent.append((t0, cur))
 print('# Ngôi nhà biết đi — lời kể từ SRT gốc (refs/ngoinha/subtitles.srt). @at = giây bắt đầu theo SRT.')
 print('@source capcut')
-print('@narrator BV074_streaming_dsp 20')
+print('@narrator BV075_streaming 20')
 print()
 for t, s in sent:
     s = re.sub(r'\s+', ' ', s).strip().replace(' "', ' “').replace('"', '”') if False else re.sub(r'\s+', ' ', s).strip()

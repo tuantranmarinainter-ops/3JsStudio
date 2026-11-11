@@ -1,5 +1,13 @@
 [
  {
+  "id": "BV075_streaming",
+  "lang": "vi",
+  "source": "capcut",
+  "label": "Thanh Niên Tự Tin",
+  "audio": "/episodes/ep001/voices/vi/BV075_streaming.ogg",
+  "caps": "/episodes/ep001/voices/vi/BV075_streaming.caps.json"
+ },
+ {
   "id": "BV074_streaming_dsp",
   "lang": "vi",
   "source": "capcut",
@@ -69,14 +77,6 @@
   "label": "Sunny Idol",
   "audio": "/episodes/ep001/voices/vi/multi_female_kiwi_uranus_bigtts.ogg",
   "caps": "/episodes/ep001/voices/vi/multi_female_kiwi_uranus_bigtts.caps.json"
- },
- {
-  "id": "BV075_streaming",
-  "lang": "vi",
-  "source": "capcut",
-  "label": "Thanh Niên Tự Tin",
-  "audio": "/episodes/ep001/voices/vi/BV075_streaming.ogg",
-  "caps": "/episodes/ep001/voices/vi/BV075_streaming.caps.json"
  },
  {
   "id": "en-US-AndrewMultilingualNeural",

@@ -12,6 +12,8 @@ description: Tạo và quản lý giọng đọc nhiều giọng cho một tập
   ~2 s/câu, 2 câu song song. Lỗi "CapCut báo tác vụ thất bại" thường thoáng qua → chạy lại (câu xong nằm trong `.cache/tts/`).
   Giọng chậm được `tools/tts.py` tự tăng tốc ≤ ×1,4 để câu bắt đầu đúng `@at`.
 - **Tiếng Anh — Microsoft Edge** (47 giọng `en-*`, python hệ thống có `edge-tts`). Mặc định `en-US-AndrewMultilingualNeural`.
+- **Mặc định tiếng Việt: `BV075_streaming` "Thanh Niên Tự Tin"** (người dùng chốt 2026-11-11) — trình phát, `@narrator` tập mới
+  (`storyboard.py`, `_template`, `srt2narration.py`), thứ tự trong ô Giọng.
 
 ## Tiếng Anh: đọc nhấn ở cú cắt
 1. `python tools/en/beats.py ep001 --keep s055 > episodes/ep001/beats.json` — chia lời kể theo cú cắt (nhịp ≥ 1,15 s).
@@ -22,7 +24,7 @@ description: Tạo và quản lý giọng đọc nhiều giọng cho một tập
 
 ## Nhiều giọng: nghe thử → chốt → cả phim → ghép
 - `python tools/voices_build.py ep001 sample` → đoạn ~26 s cho MỌI giọng + `output/nghe-thu/index.html` (nút ▶, ô "Giữ",
-  "Chép danh sách"). Mở bằng Chrome cho người dùng duyệt. **Ưu tiên gửi trước mẫu giọng mặc định** (Giọng Bé + Andrew).
+  "Chép danh sách"). Mở bằng Chrome cho người dùng duyệt. **Ưu tiên gửi trước mẫu giọng mặc định** (Thanh Niên Tự Tin `BV075_streaming` + Andrew).
 - Người dùng gửi "Giữ các giọng: id1, id2…" → `python tools/voices_build.py ep001 vi --only <id…>` và `… en --only <id…>`
   (cả phim) → `python tools/voices_build.py ep001 index` (nén .ogg Opus 32k + ghi `voices/index.json`).
 - **Chỉ ghép vào HTML sau khi người dùng chốt** (bản chưa duyệt để tên `voices/index.chua-duyet.json`). Rồi chạy skill `xuat-phim`.

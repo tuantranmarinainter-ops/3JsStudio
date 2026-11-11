@@ -105,7 +105,7 @@ def do_index():
         items.append({'id': vid, 'lang': 'en', 'source': 'edge', 'label': f"{nm} ({vid[3:5]}{', ' + g if g else ''})",
                       'audio': '/' + ogg(mp3).relative_to(ROOT).as_posix(), 'caps': '/' + caps.relative_to(ROOT).as_posix()})
     # giọng mặc định: Giọng Bé (vi), Andrew Multilingual (en)
-    order = {'BV074_streaming_dsp': 0, 'en-US-AndrewMultilingualNeural': 0}
+    order = {'BV075_streaming': 0, 'en-US-AndrewMultilingualNeural': 0}
     items.sort(key=lambda x: (x['lang'] != 'vi', order.get(x['id'], 1), x['label']))
     (VD / 'index.json').write_text(json.dumps(items, ensure_ascii=False, indent=1), encoding='utf8')
     print(f"index.json: {sum(i['lang'] == 'vi' for i in items)} giọng Việt, {sum(i['lang'] == 'en' for i in items)} giọng Anh")

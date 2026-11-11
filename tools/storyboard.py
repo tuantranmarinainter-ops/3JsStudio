@@ -314,7 +314,7 @@ def write_episode(ep, meta, shots, lines, total, src, board_file, frames, force)
 
     # narration.txt (@at = lúc shot đầu của câu bắt đầu)
     nl = [f'# {title} — lời kể từ storyboard ({board_file.name}). @at = giây shot đầu tiên của câu bắt đầu (tools/tts.py canh đúng mốc).',
-          f"@source {meta.get('voice_source', 'capcut')}", f"@narrator {meta.get('narrator', 'BV074_streaming_dsp')}"]
+          f"@source {meta.get('voice_source', 'capcut')}", f"@narrator {meta.get('narrator', 'BV075_streaming')}"]
     roles = sorted({m.group(1) for L in lines for m in [re.match(r'^\[(\w+)\]', L['text'])] if m})
     for r in roles: nl.append(f'@voice {r} multi_female_yangguangnv_uranus_bigtts' + ('   # TODO: chọn giọng cho vai' if r not in ('me', 'mom') else ''))
     nl.append('')
