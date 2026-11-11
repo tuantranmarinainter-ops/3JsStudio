@@ -1,5 +1,6 @@
 // quality.js — 2 mức chất lượng CỐ ĐỊNH (không tự đổi theo FPS → cùng t luôn ra cùng hình):
 //   low  : xem nhanh / contact sheet (nửa độ phân giải, bóng nhỏ, không hậu kỳ, ít hạt mưa)
+//   medium: xem trên điện thoại (3/4 độ phân giải, bóng mềm, có bloom, không AO)
 //   high : render thật (đủ 1080×1920, bóng mềm, AO + bloom)
 // Chọn bằng URL ?q=low | ?q=high (mặc định high).
 //
@@ -15,6 +16,7 @@ import { rng } from './winter.js';
 
 export const QUALITY = {
   low:  { pixelRatio: 0.5, shadowMapSize: 1024, softShadows: false, texSize: 256, rain: 0.4, antialias: false, post: false, bloom: 0, ao: false },
+  medium: { pixelRatio: 0.75, shadowMapSize: 2048, softShadows: true, texSize: 512, rain: 0.7, antialias: false, post: true, bloom: 0.2, ao: false },
   high: { pixelRatio: 1,   shadowMapSize: 2048, softShadows: true,  texSize: 512, rain: 1,   antialias: true,  post: true,  bloom: 0.2, ao: true },
 };
 
@@ -36,7 +38,7 @@ export function applyShadowQuality(light, Q) { light.shadow.mapSize.set(Q.shadow
 export function createPost(THREE, renderer, scene, camera, addons = {}, Q = QUALITY.high) {
   const { EffectComposer, RenderPass, OutputPass, UnrealBloomPass, GTAOPass } = addons;
   if (!Q.post || !EffectComposer || !RenderPass || !OutputPass) {
-    return { composer: null, render: () => renderer.render(scene, camera) };
+    return { composer: null, render: () => renderer.render(scene, camera), dispose() {} };
   }
   const size = renderer.getSize(new THREE.Vector2());
   const rtSize = size.clone().multiplyScalar(renderer.getPixelRatio());
@@ -61,5 +63,8 @@ export function createPost(THREE, renderer, scene, camera, addons = {}, Q = QUAL
   }
   if (Q.bloom > 0 && UnrealBloomPass) composer.addPass(new UnrealBloomPass(rtSize.clone(), Q.bloom, 0.4, 0.88));
   composer.addPass(new OutputPass());
-  return { composer, render: () => composer.render() };
+  // đồng bộ kích thước mọi pass với pixelRatio (mức medium < 1)
+  composer.setPixelRatio(renderer.getPixelRatio());
+  composer.setSize(size.x, size.y);
+  return { composer, render: () => composer.render(), dispose: () => composer.dispose() };
 }

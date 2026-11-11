@@ -24,7 +24,7 @@
 <body>
 <canvas id="c" width="1080" height="1920"></canvas>
 <div class="ui">
-  <div class="row"><select id="weather" aria-label="Thời tiết"></select><select id="quality" aria-label="Chất lượng"><option value="high">Chất lượng: cao</option><option value="low">Chất lượng: xem nhanh</option></select></div>
+  <div class="row"><select id="weather" aria-label="Thời tiết"></select><select id="quality" aria-label="Chất lượng"><option value="low">Xem nhanh</option><option value="medium">Vừa (điện thoại)</option><option value="high">Cao (xuất video, chậm)</option></select></div>
   <div class="row"><label><input id="merge" type="checkbox" checked> Gộp mesh</label><label><input id="ao" type="checkbox" checked> AO đỉnh</label><small id="stats">…</small></div>
   <div class="row"><select id="sfx" aria-label="Âm thanh"></select><button id="sfxPlay">♪ Nghe</button></div>
   <div class="row"><button id="play">▶</button><input id="seek" type="range" min="0" max="14" step="0.0333" value="0"><span id="tl">0.00s</span></div>
@@ -58,13 +58,14 @@ window.THREE = THREE;
 const DURATION = 14;
 const params = new URLSearchParams(location.search);
 if (params.has('capture')) document.body.classList.add('capture');
-const Q = getQuality();
+// Xem trên điện thoại: mặc định "xem nhanh"; render video thì truyền ?q=high
+let Q = getQuality(params.has('q') ? location.search : '?q=low');
 // ?fx=0 → "TRƯỚC": tắt mọi kỹ thuật mới (màu phẳng, không gộp, không AO, không hậu kỳ, không chữ, không mưa) để so sánh
 const FX = params.get('fx') !== '0';
 if (!FX) Q.post = false;
 
 const canvas = document.getElementById('c');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: Q.antialias, preserveDrawingBuffer: true });
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
 renderer.setSize(1080, 1920, false);
 applyQuality(THREE, renderer, Q);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -276,10 +277,24 @@ for (const n of SFX_LIST) sSel.add(new Option(`Âm: ${n}`, n));
 document.getElementById('sfxPlay').onclick = () => playSfx(sSel.value, 0);
 
 // ---------- Hậu kỳ theo chất lượng ----------
-const post = createPost(THREE, renderer, scene, cam, { EffectComposer, RenderPass, OutputPass, UnrealBloomPass, GTAOPass }, Q);
+const ADDONS = { EffectComposer, RenderPass, OutputPass, UnrealBloomPass, GTAOPass };
+let post = createPost(THREE, renderer, scene, cam, ADDONS, Q);
 const qSel = document.getElementById('quality');
 qSel.value = Q.name;
-qSel.onchange = () => { params.set('q', qSel.value); location.search = params.toString(); };
+// đổi chất lượng ngay, không tải lại trang (artifact không giữ được ?q= khi tải lại)
+function setQuality(name) {
+  Q = getQuality(`?q=${name}`);
+  if (!FX) Q.post = false;
+  applyQuality(THREE, renderer, Q);
+  renderer.setSize(1080, 1920, false);
+  sun.shadow.map?.dispose(); sun.shadow.map = null;
+  applyShadowQuality(sun, Q);
+  post.dispose();
+  post = createPost(THREE, renderer, scene, cam, ADDONS, Q);
+  renderAt(curT);
+}
+qSel.onchange = () => setQuality(qSel.value);
+window.setQuality = (n) => { qSel.value = n; setQuality(n); };
 
 // ---------- Render theo t ----------
 const STEP = 0.42;   // nhịp bước chân khi đi
