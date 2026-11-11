@@ -9,7 +9,8 @@ const P = (x = 0, z = 13, o = {}) => ({ parent: 'house', at: [x, 0, z], ...o });
 const R = (x, y, z, o = {}) => ({ parent: 'room', at: [x, y, z], ...o });          // trong phòng
 const walkX = (x0, x1, o = {}) => ({ at: [x0, 36], to: [x1, 36], ry: PI / 2, ...o }); // nhà đi dọc phố
 // vị trí thiếp trên tủ (toạ độ phòng bếp)
-const CARD = { penguin: [-9.2, 8.6, -15.2], whale: [-6.9, 8.0, -15.2], mountain: [-9.0, 5.9, -15.2], island: [-6.8, 5.0, -15.2] };
+// = vị trí tủ lạnh (x −8) + spots trong K.fridge (engine/props.js) — đổi spots thì sửa ở đây cho máy quay cận thiếp đúng tâm
+const CARD = { penguin: [-8.55, 8.6, -15.2], whale: [-6.7, 8.0, -15.2], mountain: [-8.45, 5.9, -15.2], island: [-6.65, 5.0, -15.2] };
 const card = (k, dist = 3.6, o = {}) => ({ at: [CARD[k][0], CARD[k][1] + 0.2, CARD[k][2]], yaw: 0, dist, h: 0, fov: 34, ...o });
 // đảo: nhà quay về phía cha
 const ISL = { at: [-10, 0], ry: 2.0 };
@@ -156,9 +157,9 @@ export const SHOTS = [
   // ===== 10 · Hành trình đến đảo =====
   { id: 's093', f: [3436, 3474], env: 'snowNight', line: 51, house: FAM({ at: [0, 0], to: [12, 0], ry: PI / 2 }), cam: orb([6, 16, 0], 0.15, 78, 0, { fov: 52, dist2: 100 }) },
   { id: 's094', f: [3475, 3512], env: 'iceSea', line: 51, house: FAM({ at: [-8, 0], to: [8, 0], ry: PI / 2 }), cam: orb([0, 16, 0], 0.05, 96, 2, { dist2: 108, fov: 52 }) },
-  { id: 's095', f: [3513, 3524], env: 'storm', line: 51, house: FAM({ at: [-4, 0], to: [0, 0], ry: PI / 2 + 0.3, y: -2 }), cam: orb([0, 18, 0], 0.3, 90, 2, { yaw2: 0.5, dist2: 84, fov: 52, ease: 'linear' }) },
-  { id: 's096', f: [3525, 3535], env: 'storm', line: 51, house: FAM({ at: [0, 0], to: [4, 0], ry: PI / 2 + 0.3, y: -2 }), cam: orb([0, 18, 0], 0.5, 84, 2, { yaw2: 0.7, dist2: 79, look2: [4, 0, 0], fov: 52, ease: 'linear' }) },
-  { id: 's097', f: [3536, 3539], env: 'storm', line: 51, house: FAM({ at: [4, 0], to: [5.4, 0], ry: PI / 2 + 0.3, y: -2 }), cam: orb([0, 18, 0], 0.7, 79, 2, { yaw2: 0.75, dist2: 77, look: [4, 0, 0], fov: 52, ease: 'linear' }) },
+  { id: 's095', f: [3513, 3524], env: 'storm', line: 51, house: FAM({ at: [-4, 0], to: [0, 0], ry: PI / 2 + 0.3, y: 0.2, boat: 1 }), cam: orb([0, 18, 0], 0.3, 90, 2, { yaw2: 0.5, dist2: 84, fov: 52, ease: 'linear' }) },
+  { id: 's096', f: [3525, 3535], env: 'storm', line: 51, house: FAM({ at: [0, 0], to: [4, 0], ry: PI / 2 + 0.3, y: 0.2, boat: 1 }), cam: orb([0, 18, 0], 0.5, 84, 2, { yaw2: 0.7, dist2: 79, look2: [4, 0, 0], fov: 52, ease: 'linear' }) },
+  { id: 's097', f: [3536, 3539], env: 'storm', line: 51, house: FAM({ at: [4, 0], to: [5.4, 0], ry: PI / 2 + 0.3, y: 0.2, boat: 1 }), cam: orb([0, 18, 0], 0.7, 79, 2, { yaw2: 0.75, dist2: 77, look: [4, 0, 0], fov: 52, ease: 'linear' }) },
   { id: 's098', f: [3540, 3582], env: 'island', light: 'night', line: 51, house: FAM({ ...ISL, lift: [1, 0.85] }), cam: orb([-10, 16, 0], 1.4, 96, -2, { dist2: 108, fov: 52 }) },
   { id: 's099', f: [3583, 3597], env: 'island', line: 52, house: FAM({ ...ISL, lift: 0.85 }), cam: orb([-10, 14, 0], 2.0, 62, -6, { fov: 52, dist2: 74, look: [0, 4, 0] }) },
   { id: 's100', f: [3598, 3619], env: 'island', line: 52, house: FAM({ ...ISL, lift: 0.85, door: 1 }), cast: { hero: P(0, 10.6, { anim: 'idle', face: 'surprised', s: 0.92 }) }, cam: orb('hero', 0, 12, 1, { rel: true, look: [0, -1, 0], fov: 42, dist2: 9 }) },

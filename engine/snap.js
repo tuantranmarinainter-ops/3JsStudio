@@ -10,7 +10,7 @@ export const SNAPS = {
   // cả đàn cánh cụt trên nền tuyết + núi tuyết (antarctica.js: t < 50 đàn đứng yên thành nhóm — mốc dành cho ảnh bưu thiếp)
   penguin:  { env: 'antarctica', t: 10, aim: (e) => centroid(e.penguins || []), cam: { p: [20, 5, 6], l: [3, 1.6, -1], fov: 36 } },   // nhìn chéo từ phải: tránh khối đá giữa đàn, núi tuyết làm nền
   // cá nhà táng nổi lên thở (đầu vuông bên phải), phun cột nước ở lỗ thở; thuyền buồm phía xa bên trái (dáng cá: whales.js snapshot())
-  whale:    { env: 'ocean', t: 0.0, cam: { p: [24, 19, 32], l: [24, 19.5, -16], fov: 42 }, props: { shipSail: { at: [-30, 10.4, -75], ry: 0.5, s: 0.55 } },
+  whale:    { env: 'ocean', t: 0.0, cam: { p: [27.5, 19, 32], l: [27.5, 19.5, -16], fov: 42 }, props: { shipSail: { at: [-30, 10.4, -75], ry: 0.5, s: 0.55 } },
               life: { at: [22, -16], heading: Math.PI / 2, lift: 1.2, breathe: 0.6, spoutAt: [0, 1.6, 7.4], spoutScale: 0.55 } },
   // đỉnh núi tuyết nhô trên biển mây (env 'mountain' dựng bằng peaks.js + clouds.js; t=68 = mốc bố cục mây của env)
   // ngọn cao nhất của dãy xa (peaks.js createRange seed 21, ngọn #9 ở (−146, −753), đỉnh y≈174) đặt GIỮA ảnh (góp ý f2552)

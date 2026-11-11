@@ -5,7 +5,7 @@
 //     cam:   { at:'hero'|'house'|'obj:<tên>'|[x,y,z], look:[dx,dy,dz], yaw, h, dist, fov, roll, rel,
 //              yaw2, h2, dist2, fov2, look2, ease, shake }            // quỹ đạo quanh chủ thể
 //         |  { p:[x,y,z], l:[x,y,z], fov, p2, l2, fov2, ease, shake }  // tuyệt đối
-//     house: { style, at:[x,z], to:[x,z], ry, legsOut, lift, kneel, shake, door, walk0, pitch, roll, night }
+//     house: { style, at:[x,z], to:[x,z], ry, legsOut, lift, kneel, shake, door, walk0, pitch, roll, night, boat (0..1: nổi như thuyền) }
 //     cast:  { hero: { at:[x,y,z], to, ry, ry2, anim, from, face, speed, tOff, lie, parent:'house', hold } , … }
 //     props: { <tên>: { at, to, ry, rx, rz, s, parent } },  fx: { cards:{at,t0}, dust:[{at,t0}] },
 //     room:  { tilt, roll, view, dense },  fn(ctx) }
@@ -47,7 +47,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
   // Chân i chạm đất khi quãng đường D = (n − PHASE[i]) · 2·STRIDE (house.js: cyc = D / 2·STRIDE, ph = 0 ⇒ bắt đầu chịu tải).
   function footEvents(shot, k, past = 1) {
     const sp = shot.house, h = activeHouse;
-    if (!sp || !sp.to || !h || !h.legs) return [];
+    if (!sp || !sp.to || !h || !h.legs || sp.boat) return [];   // nổi như thuyền: không có bước chân / bụi / dấu chân
     const a = sp.at || [0, 0], b = sp.to, len = Math.hypot(b[0] - a[0], b[1] - a[1]);
     if (len < 1e-3) return [];
     const stride2 = 2 * (h.dims?.STRIDE || 7), w = sp.win || [0, 1], w0 = w[0], dw = w[1] - w[0], walk0 = sp.walk0 || 0;
@@ -145,10 +145,17 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     const ke = walking ? kw : ease(spec.ease || 'smooth', kw);
     const a = spec.at || [0, 0], b = spec.to || a;
     const x = a[0] + (b[0] - a[0]) * ke, z = a[1] + (b[1] - a[1]) * ke;
-    h.root.position.set(x, spec.y ?? 0, z); h.root.rotation.y = val(spec.ry, ke, 0);
+    // boat 0→1: nhà hạ xuống mặt nước và NỔI như thuyền — chân thôi bước (dang ra dưới nước), thân nhấp nhô + lắc theo sóng
+    //   (hàm thuần của t; shot ghi boat: 1, y = cao độ mặt biển của env). Góp ý 2026-11-11 f3528 (vượt bão).
+    const boat = val(spec.boat, ke, 0);
+    const heave = boat * (0.9 * Math.sin(t * 1.7) + 0.45 * Math.sin(t * 2.9 + 1.3));
+    const bRoll = boat * (0.13 * Math.sin(t * 1.9) + 0.05 * Math.sin(t * 3.4 + 0.7));
+    const bPitch = boat * (0.07 * Math.sin(t * 1.35 + 1.1) + 0.03 * Math.sin(t * 2.6));
+    h.root.position.set(x, (spec.y ?? 0) + heave, z); h.root.rotation.y = val(spec.ry, ke, 0) + boat * 0.06 * Math.sin(t * 0.9);
     const dist = Math.hypot(b[0] - a[0], b[1] - a[1]) * ke + (spec.walk0 || 0);
-    h.pose({ legsOut: val(spec.legsOut, ke, 1), lift: val(spec.lift, ke, 1), kneel: val(spec.kneel, ke, 0), walk: walking ? dist : 0,
-      walking, shake: val(spec.shake, ke, 0), pitch: val(spec.pitch, ke, 0), roll: val(spec.roll, ke, 0), t });
+    const stepping = walking && boat < 0.5;
+    h.pose({ legsOut: val(spec.legsOut, ke, 1), lift: val(spec.lift, ke, 1) * (1 - boat), kneel: val(spec.kneel, ke, 0), walk: stepping ? dist : 0,
+      walking: stepping, shake: val(spec.shake, ke, 0), pitch: val(spec.pitch, ke, 0) + bPitch, roll: val(spec.roll, ke, 0) + bRoll, t });
     h.setNight(spec.night ?? night);
     h.setDoor(val(spec.door, ke, 0));
     h.root.updateMatrixWorld(true);
