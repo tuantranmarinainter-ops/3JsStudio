@@ -12,6 +12,8 @@
 //   --out <thư mục>             lưu từng khung PNG (mặc định output/look/<tên>)
 //   --sheet <file.jpg>          bảng ghép (mặc định <out>/sheet.jpg); --cols 6; --tile 270 (rộng ô, cao = tỉ lệ 9:16)
 //   --ab <trang2>               chụp cùng thời điểm ở trang thứ 2, ghép cặp A|B, in PSNR từng t + trung bình
+//   --luma 100:150              khoảng độ sáng trung bình mong muốn (0–255, Rec.601). Luôn in cột "sáng" (+ % điểm cháy trắng/đen);
+//                               khung ngoài khoảng bị đánh dấu ⚠. Repo tham khảo đo 12 short đẹp ≈ 112; phong cách khối sáng của ta ~110–160
 //   --det                       kiểm tất định: chụp lại mỗi t sau khi tua tới t khác; báo sai khác lớn nhất + số điểm ảnh lệch > 16/255; thoát mã 1 nếu vùng lệch > 0,005% khung (lưu *_det-lai.png)
 //   --full                      chụp + lưu PNG 1080×1920 (mặc định chụp 540×960: nhanh ~4×, đủ để xem/so)
 //   --jobs N                    chụp song song N tab (mặc định: 1 nếu ≤ 8 thời điểm, 4 nếu nhiều hơn)
@@ -150,6 +152,17 @@ async function compare(b1, b2) {
   }, { x: b1.toString('base64'), y: b2.toString('base64') });
 }
 
+async function lumaOf(buf) {   // độ sáng trung bình + % điểm cháy (≥ 250) / tối đặc (≤ 5)
+  return C.evaluate(async (x) => {
+    const im = new Image(); im.src = 'data:image/png;base64,' + x; await im.decode();
+    const c = document.createElement('canvas'); c.width = 135; c.height = 240; const g = c.getContext('2d'); g.drawImage(im, 0, 0, 135, 240);
+    const p = g.getImageData(0, 0, 135, 240).data; let s = 0, hi = 0, lo = 0, n = p.length / 4;
+    for (let i = 0; i < p.length; i += 4) { const l = 0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2]; s += l; if (l >= 250) hi++; if (l <= 5) lo++; }
+    return { mean: s / n, hi: 100 * hi / n, lo: 100 * lo / n };
+  }, buf.toString('base64'));
+}
+const LUMA = (opt.luma || '100:150').split(':').map(Number);
+
 const name = basename(pageArg).replace(/\.html?.*$/i, '').replace(/[^\w.-]/g, '_') || 'trang';
 const outDir = resolve(opt.out || join('output', 'look', name));
 await mkdir(outDir, { recursive: true });
@@ -170,11 +183,13 @@ async function one(PA, idx) {
   row.file = join(outDir, B ? tag + '_A.png' : tag + '.png');
   await save(bufA, row.file);
   tilesA[idx] = bufA;
+  row.luma = await lumaOf(bufA);
   if (B) {
     const bufB = await shot(B, t);
     await save(bufB, join(outDir, tag + '_B.png'));
     tilesB[idx] = bufB;
     row.psnr = (await compare(bufA, bufB)).psnr;
+    row.lumaB = await lumaOf(bufB);
   }
   if (opt.det) {
     // tua xa phía sau (hoặc phía trước nếu đang ở nửa cuối), rồi lùi/nhích tới rồi mới về t — chỉ tua, không chụp
@@ -219,16 +234,20 @@ const sheet = await C.evaluate(() => window.__sheet.cv.toDataURL('image/jpeg', 0
 await writeFile(sheetPath, Buffer.from(sheet, 'base64'));
 
 // ---- tóm tắt ----
-console.log('\n t(s)     shot   ' + (B ? 'PSNR(dB)  ' : '') + (opt.det ? 'maxdiff  lệch>16  ' : '') + 'file');
+console.log('\n t(s)     shot   ' + (B ? 'PSNR(dB)  ' : '') + (opt.det ? 'maxdiff  lệch>16  ' : '') + (B ? 'sáng A/B         ' : 'sáng (cháy%) ') + 'file');
+const lf = (L) => L ? `${L.mean.toFixed(0).padStart(3)}${L.mean < LUMA[0] || L.mean > LUMA[1] ? '⚠' : ' '}` : '  - ';
 for (const r of rows) {
   console.log(` ${r.t.toFixed(2).padStart(7)}  ${(r.id || '-').padEnd(6)} ` +
     (B ? (Number.isFinite(r.psnr) ? r.psnr.toFixed(2) : 'inf').padStart(8) + '  ' : '') +
-    (opt.det ? String(r.diff).padStart(7) + '  ' + String(r.bad).padStart(7) + '  ' : '') + relative(root, r.file));
+    (opt.det ? String(r.diff).padStart(7) + '  ' + String(r.bad).padStart(7) + '  ' : '') +
+    (B ? `${lf(r.luma)}/${lf(r.lumaB)}`.padEnd(17) : `${lf(r.luma)} (${r.luma.hi.toFixed(1)}%) `.padEnd(13)) + relative(root, r.file));
 }
 if (B) {
   const fin = rows.filter((r) => Number.isFinite(r.psnr)).map((r) => r.psnr);
   console.log(`PSNR trung bình: ${fin.length ? (fin.reduce((a, b) => a + b, 0) / fin.length).toFixed(2) : 'inf'} dB (${rows.length - fin.length} khung giống hệt)`);
 }
+{ const m = (k) => rows.filter((r) => r[k]).reduce((a, r) => a + r[k].mean, 0) / Math.max(1, rows.filter((r) => r[k]).length);
+  console.log(`Độ sáng TB: ${m('luma').toFixed(1)}${B ? ` (B: ${m('lumaB').toFixed(1)})` : ''} — khoảng mong muốn ${LUMA[0]}–${LUMA[1]}; ⚠ = ngoài khoảng (--luma a:b để đổi)`); }
 if (opt.det) console.log(detFail ? 'TẤT ĐỊNH: LỖI (có vùng lệch thấy được)' : 'TẤT ĐỊNH: OK (không có vùng lệch thấy được)');
 console.log('Bảng ghép:', sheetPath);
 await browser.close(); if (srv) srv.close();

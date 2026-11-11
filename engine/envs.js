@@ -4,6 +4,7 @@
 // Nhà gia đình đứng ở gốc, mặt trước +Z. Phố chạy theo trục X ở z = +34.
 import { fxSnow, fxRain, lightning, fxBolt } from './fx.js';
 import { createWater } from './water.js';
+import { createIBL, IBL_HEMI_SCALE } from './ibl.js';
 import { createOceanLife, OCEAN_LIFE_ASSETS } from './whales.js';
 import { townLife } from './townlife.js';
 import { createSummit, createRange } from './peaks.js';
@@ -125,6 +126,8 @@ export function createEnvs(THREE, stage, K0, A = null) {
   });
   const skyDome = new THREE.Mesh(new THREE.SphereGeometry(900, 32, 16), skyMat); skyDome.name = 'sky'; skyDome.renderOrder = -1; scene.add(skyDome);
   if (stage.ground) stage.ground.visible = false;
+  // ánh sáng môi trường (IBL) tính sẵn cho mọi preset — engine/ibl.js; bật/tắt ô "ibl"
+  const ibl = createIBL(THREE, stage.renderer, LIGHTS);
 
   const plane = (w, d, mat, y = 0, name = 'plane', seg = 1) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d, seg, seg), mat); m.rotation.x = -Math.PI / 2; m.position.y = y; m.receiveShadow = true; m.name = name; return m; };
   const mat = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.95, ...o });
@@ -245,6 +248,9 @@ export function createEnvs(THREE, stage, K0, A = null) {
     e.update?.(t, ctx);
     const L = { ...LIGHTS[ctx.light || e.light], ...(ctx.lightOverride || {}) };
     applyLight(L, ctx.flash || 0);
+    { const key = ctx.light || e.light, on = (globalThis.__autoFx?.ibl ?? true);
+      scene.environment = on ? ibl.get(key) : null; scene.environmentIntensity = ibl.intensity(key);
+      if (on) stage.hemi.intensity *= IBL_HEMI_SCALE; }
     last = { env: name, light: ctx.light || e.light, flash: ctx.flash || 0 };   // cho engine/post.js (màu theo cảnh, chớp)
     if (e.group.userData.waters) {
       wl.sunDir.copy(stage.sun.position).sub(stage.sun.target.position).normalize();
