@@ -21,9 +21,9 @@ const root = resolve(import.meta.dirname, '..', '..');
 const doc = (p) => readFileSync(join(root, p), 'utf8');
 
 // 17 env hiện có (đồng bộ với def('<tên>', …) trong engine/envs.js — test bên dưới kiểm lệch)
-export const ENV17 = ['town', 'forest', 'hawaii', 'brazil', 'sahara', 'antarctica', 'ocean', 'mountain', 'snowNight', 'iceSea', 'storm', 'shipStorm', 'island', 'reef', 'kitchen', 'bedroom', 'sea'];
+export const ENV17 = ['town', 'forest', 'hawaii', 'brazil', 'sahara', 'antarctica', 'ocean', 'mountain', 'snowNight', 'iceSea', 'storm', 'shipStorm', 'island', 'reef', 'kitchen', 'bedroom', 'sea', 'factory'];
 // Env CHƯA gắn userData.tang. Agent env gỡ tên của mình khỏi danh sách này khi xong (test sẽ bắt đầu kiểm 3 tầng cho env đó).
-const DA_GAN = new Set(['town', 'sea', 'ocean', 'storm', 'shipStorm', 'forest', 'brazil', 'sahara', 'mountain', 'iceSea', 'reef', 'island', 'hawaii', 'kitchen', 'bedroom', 'antarctica', 'snowNight']);
+const DA_GAN = new Set(['town', 'sea', 'ocean', 'storm', 'shipStorm', 'forest', 'brazil', 'sahara', 'mountain', 'iceSea', 'reef', 'island', 'hawaii', 'kitchen', 'bedroom', 'antarctica', 'snowNight', 'factory']);
 export const CHUA_GAN = new Set(ENV17.filter((e) => !DA_GAN.has(e)));
 
 // ---------------------------------------------------------------- phần 1: thuần

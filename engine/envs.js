@@ -22,8 +22,7 @@ import { createSkybox } from './skybox.js';
 import { createStormSky } from './stormsky.js';
 import TOWN_ENV from './envs/town.js';
 import FOREST_ENV from './envs/forest.js';
-import OPENSEA_ENV from './envs/openSea.js';
-import HAWAII_ENV from './envs/hawaii.js';
+import OPENSEA_ENV from './envs/openSea.js';import HAWAII_ENV from './envs/hawaii.js';
 import BRAZIL_ENV from './envs/brazil.js';
 import SAHARA_ENV from './envs/sahara.js';
 import ANTARCTICA_ENV from './envs/antarctica.js';
@@ -37,6 +36,7 @@ import ISLAND_ENV from './envs/island.js';
 import REEF_ENV from './envs/reef.js';
 import KITCHEN_ENV, { KITCHEN_FURNISH } from './envs/kitchen.js';
 import BEDROOM_ENV, { BEDROOM_FURNISH } from './envs/bedroom.js';
+import FACTORY_ENV from './envs/factory.js';
 import { furnishIds } from './furnish.js';
 import { ganTang, layersOf, TANG } from './envs/tang.js';
 import { CAR_ASSETS } from './townlife.js';
@@ -248,10 +248,10 @@ export function createEnvs(THREE, stage, K0, A = null) {
 
   // ---------- NỘI THẤT: PHÒNG NGỦ ----------
   def('bedroom', 'bedNight', (g, e) => BEDROOM_ENV(g, e, H()));   // engine/envs/bedroom.js
+  def('factory', 'night', (g, e) => FACTORY_ENV(g, e, H()));   // engine/envs/factory.js — nhà máy gấu bông (ep002)
 
   // ---------- BIỂN CHUNG: dựng hoàn toàn từ thời tiết (engine/seaweather.js) — shot: { env: 'sea', seaWeather: 'giong' } ----------
   def('sea', 'ocean', (g, e) => OPENSEA_ENV(g, e, H()));   // engine/envs/openSea.js
-
   // ---------- ĐÈN ĐIỂM DÙNG CHUNG ----------
   // Một PointLight LUÔN nằm trong scene (số đèn mọi env như nhau → three không dịch lại program khi đổi env). Env nội thất khai
   // e.pointSpec; env khác → intensity 0 (không chiếu sáng nên hình y hệt). KHÔNG thêm/bớt đèn, KHÔNG đổi visible/castShadow theo t.
@@ -369,5 +369,8 @@ export function createEnvs(THREE, stage, K0, A = null) {
     skyDome.position.copy(stage.camera.position);
     return { env: e, light: L };
   }
-  return { envs, use, activate, LIGHTS, viewTex, get current() { return current; }, get last() { return last; } };
+  // NẠP ENV THEO TÊN lúc chạy (env mới chưa có trong danh sách import tĩnh ở trên): index.html `import('/engine/envs/<tên>.js')` rồi
+  //   envs.define(tên, m.LIGHT || 'day', m.default) — bộ dựng nhận (g, e, H) y như env tĩnh. Tên đã có → trả env cũ (không dựng lại).
+  function define(name, light, build) { return envs[name] || def(name, light, (g, e) => build(g, e, H())); }
+  return { envs, use, activate, define, LIGHTS, viewTex, get current() { return current; }, get last() { return last; } };
 }

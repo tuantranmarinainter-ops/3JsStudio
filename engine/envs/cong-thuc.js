@@ -36,6 +36,7 @@ export const CONG_THUC = {
   'nha bep': { env: 'kitchen', them: ['tu-lanh', 'bep'] },
   'bep': { env: 'kitchen', them: ['tu-lanh'] },
   'phong ngu': { env: 'bedroom', them: ['giuong', 'den-ngu'], time: 'dem' },
+  'nha may': { env: 'factory', them: ['bang-chuyen', 'ke-gau'], time: 'dem' },
 };
 
 // Cụm từ khoá xếp dài → ngắn (dài nhất thắng; cùng độ dài thì theo thứ tự khai báo)
