@@ -1,0 +1,155 @@
+<!doctype html>
+<!-- ep002 — Món đồ biến mất trong phòng khóa kín. Sinh từ episodes/_template/index.html bởi tools/storyboard.py.
+     Xem: node tools/look.mjs episodes/ep002/index.html --shots all -->
+<html lang="vi" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>ep002</title>
+    <script src="/vendor/gsap/gsap.min.js"></script>
+    <script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
+    <style>
+      @font-face { font-family: 'Be Vietnam Pro'; font-weight: 900; font-style: normal; src: url('/assets/fonts/BeVietnamPro-Black.ttf') format('truetype'); }
+      @font-face { font-family: 'Patrick Hand'; font-style: normal; src: url('/assets/fonts/PatrickHand-Regular.ttf') format('truetype'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+      #stage { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+      #cap, #title {
+        position: absolute; left: 40px; right: 40px; text-align: center;
+        font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; line-height: 1.12; color: #fff;
+        -webkit-text-stroke: 14px #15121c; paint-order: stroke fill; text-shadow: 0 6px 0 rgba(0,0,0,0.35);
+      }
+      #cap { top: 1250px; font-size: 84px; transform-origin: 50% 60%; }
+      #title { top: 260px; font-size: 104px; color: #ffe066; transform-origin: 50% 50%; }   /* chữ nổi đặc biệt: trường `text` của shot */
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="175.900" data-width="1080" data-height="1920" data-fps="30">
+      <canvas id="stage" width="1080" height="1920"></canvas>
+      <div id="title" class="clip" data-start="0" data-duration="175.900" data-track-index="1"></div>
+      <div id="cap" class="clip" data-start="0" data-duration="175.900" data-track-index="2"></div>
+      <audio id="narration" class="clip" src="narration.mp3" data-start="0" data-track-index="3" data-volume="1" data-lang="vi"></audio>
+      <audio id="sfx_khoanh-khac" class="clip" src="sfx_khoanh-khac.ogg" data-start="0" data-track-index="4" data-volume="1" data-sfx-layer="khoanh-khac" data-label="Tiếng động theo cảnh"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines['main'] = gsap.timeline({ paused: true });
+    </script>
+
+    <script type="module">
+      import * as THREE from 'three';
+      import { createStage } from '/engine/stage.js';
+      import { propKit } from '/engine/props.js';
+      import { createEnvs, ENV_ASSETS } from '/engine/envs.js';
+      import { buildPropsKB, datDaoCu, ganDaoCu, noiNhom, PROP_SLOTS } from '/engine/props-kb.js';
+      import { createAssetLib } from '/engine/assets.js';
+      import { buildTimeline } from '/engine/timeline.js';
+      import { createDirector } from '/engine/shots.js';
+      import { installMeasure } from '/engine/measure.js';
+      import { expandShots, resolvePlaces } from '/engine/shottypes.js';
+      import { buildTown, TOWN_ASSETS, registerTownEnv } from '/engine/town.js';
+      import { buildCast, crowdNames } from '/engine/cast.js';
+      import { createPost, FX_DEFAULTS, FX_LABELS } from '/engine/post.js';
+      import { EPISODE } from '/episodes/ep002/episode.js';
+      import { SHOTS } from '/episodes/ep002/shots.js';
+      import { createCredits } from '/engine/credits.js';
+      import { CAPTIONS } from '/episodes/ep002/captions.js';
+
+      await document.fonts.load("900 84px 'Be Vietnam Pro'", 'Việt ữ ầ ặ').catch(() => {});
+      await document.fonts.load("40px 'Patrick Hand'", 'Tiệm gấu').catch(() => {});   // chữ viết tay trên đạo cụ (engine/props-kb.js)
+      const q = new URLSearchParams(location.search);
+      // propsKb: đạo cụ theo kịch bản (EPISODE.props) — tắt: ?props=0 hoặc setOptions({ propsKb: false })
+      const OPTS = { lang: 'vi', subs: q.get('subs') !== '0', voice: q.get('voice') !== '0', propsKb: q.get('props') !== '0' };
+      const FPS = EPISODE.fps || 30;
+      const stage = createStage(THREE, { canvas: document.getElementById('stage'), ground: null, fov: 40 });
+      const K = propKit(THREE);
+      const A = createAssetLib(THREE);
+      await A.load([...ENV_ASSETS, ...TOWN_ASSETS]);          // tải hết GLB trước khi seek
+      const envs = createEnvs(THREE, stage, K, A);
+      const town = buildTown(THREE, A, { seed: EPISODE.seed ?? 1, ...(EPISODE.town || {}) });
+      registerTownEnv(envs, stage, town, { name: 'kenneyTown', light: EPISODE.light || 'day' });
+      const townEnv = EPISODE.env || 'kenneyTown';
+      // env riêng của tập (shot.env): env chưa có trong engine/envs.js (import tĩnh) → nạp động engine/envs/<tên>.js (export default bộ dựng,
+      //   tuỳ chọn LIGHT, ASSETS, PROP_SLOTS). Chưa có file → env tạm (sàn trống) + cảnh báo, phim vẫn chạy.
+      const slots = { ...PROP_SLOTS };
+      for (const n of [...new Set(SHOTS.map((s) => s.env).filter(Boolean))]) {
+        if (n === townEnv || n === 'kenneyTown') continue;
+        let m = null;
+        try { m = await import(`/engine/envs/${n}.js`); } catch (e) { if (!envs.envs[n]) console.warn(`[env] chưa có engine/envs/${n}.js → env tạm (sàn trống):`, e?.message || e); }
+        if (m?.PROP_SLOTS) slots[n] = { ...(slots[n] || {}), ...m.PROP_SLOTS };
+        if (envs.envs[n]) continue;
+        if (m?.ASSETS?.length) await A.load(m.ASSETS);
+        envs.define(n, m?.LIGHT || 'day', m?.default || ((g, e, H) => { g.add(H.plane(80, 80, H.mat('#8d8a84'), 0, n + '_san_tam')); }));
+      }
+      const places = resolvePlaces(EPISODE.places, town.places);
+      const actors = await buildCast(THREE, EPISODE.actors, { seed: EPISODE.seed ?? 1 });
+      for (const a of Object.values(actors)) stage.scene.add(a.root);
+      // ĐẠO CỤ theo kịch bản (engine/props-kb.js): đặt (datDaoCu) → dựng (buildPropsKB: PROPS_KB rồi propKit) → gắn vào shot (ganDaoCu)
+      const dat = datDaoCu(EPISODE.props || {}, places, { townEnv, envs: Object.keys(envs.envs), slots });
+      const props = buildPropsKB(THREE, EPISODE.props || {}, { K, dat });
+      for (const p of Object.values(props)) stage.scene.add(p);
+      const SHOTS2 = ganDaoCu(SHOTS, { props: EPISODE.props || {}, dat, actors: EPISODE.actors || {}, townEnv });
+      // shot ngắn theo loại → cam/cast đầy đủ (liên tục địa điểm + vị trí diễn viên giữa các shot); noiNhom: nhóm (bears) chạy cùng, stance, camera trong phòng
+      const shots = noiNhom(expandShots(SHOTS2, { places, crowd: crowdNames(EPISODE.actors), env: townEnv, light: EPISODE.light, fps: FPS }), { slots });
+      const tl = buildTimeline(shots, FPS);
+      // GHI CÔNG cuối phim (engine/credits.js): ảnh episodes/<ep>/ghi-cong.png (tools/ghi-cong.mjs) phủ lên 3 giây cuối, tắt được (?credits=0|1 hoặc setOptions({ credits })).
+      // Mặc định bật khi EPISODE.credits !== false và có file ảnh.
+      const credits = await createCredits({ root: document.getElementById('root'), src: '/episodes/ep002/ghi-cong.png', total: tl.total,
+        on: q.get('credits') !== null ? q.get('credits') !== '0' : EPISODE.credits !== false });
+      window.__credits = credits;   // tools/export-ui.js vẽ ảnh này vào khung xuất MP4
+      const director = createDirector({ THREE, stage, envs, K, actors, houses: {}, props, fx: {}, episode: EPISODE });
+      const post = createPost(THREE, stage, { actors: Object.values(actors).map((a) => a.root) });
+      if (q.get('fx') !== null) { const on = new Set(q.get('fx').split(',')); post.set(Object.fromEntries(Object.keys(FX_DEFAULTS).map((k) => [k, on.has(k)]))); }
+      stage.draw = (t) => post.render({ t, ...envs.last, focus: stage.target });
+      window.__post = post;
+
+      // phụ đề (captions.js: [t0, t1, chữ]) + chữ nổi của shot (trường text), bật nảy 0.12 s
+      const cap = document.getElementById('cap'), title = document.getElementById('title');
+      let lastCap = -1, lastTitle = null;
+      const pop = (k) => `scale(${0.82 + 0.18 * (1 - Math.pow(1 - Math.min(1, k), 3))})`;
+      function overlay(t, shot, local) {
+        const L = OPTS.subs ? CAPTIONS : [];
+        let i = -1; for (let j = 0; j < L.length; j++) { if (L[j][0] <= t + 1e-4 && t < L[j][1]) { i = j; break; } }
+        if (i !== lastCap) { cap.textContent = i >= 0 ? L[i][2] : ''; lastCap = i; }
+        cap.style.transform = pop(i >= 0 ? (t - L[i][0]) / 0.12 : 1);
+        const txt = shot.text || '';
+        if (txt !== lastTitle) { title.textContent = txt; lastTitle = txt; }
+        title.style.transform = pop(local / 0.15);
+      }
+
+      stage.onFrame((t) => {
+        const T = Math.min(t, tl.total - 1e-4);
+        const { shot, local, k, prev } = tl.at(T);
+        director.render(shot, local, k, T, prev);   // prev = shot trước (mặt sống chuyển biểu cảm mềm)
+        if (!OPTS.propsKb) for (const p of Object.values(props)) p.visible = false;
+        overlay(T, shot, local);
+        credits.update(T);
+      });
+      for (const e of Object.values(envs.envs)) e.group.visible = true;
+      stage.renderer.compile(stage.scene, stage.camera);
+      for (const e of Object.values(envs.envs)) e.group.visible = false;
+      stage.start();
+      window.renderAt = (t) => stage.renderAt(t);
+      window.__shots = tl;
+      window.__stage = stage;
+      installMeasure({ THREE, stage, shots: tl });   // window.__measure(t) / window.__mask(t) cho tool kiểm luật
+      window.__places = places;
+      window.__props = props; window.__datDaoCu = dat;   // tool kiểm / test: vị trí đạo cụ đã đặt
+      window.getOptions = () => ({ ...OPTS, vid: {}, voices: [], fx: post.options, fxLabels: FX_LABELS, credits: credits.on });
+      window.setOptions = (o = {}) => {
+        if (o.subs !== undefined) OPTS.subs = !!o.subs;
+        if (o.propsKb !== undefined) OPTS.propsKb = !!o.propsKb;
+        if (o.credits !== undefined) credits.setOn(o.credits);
+        if (o.voice !== undefined) OPTS.voice = !!o.voice;
+        if (o.fx) post.set(o.fx);
+        lastCap = -2;
+        for (const a of document.querySelectorAll('audio[data-lang]')) a.dataset.volume = OPTS.voice ? '1' : '0';
+        return window.getOptions();
+      };
+      window.setOptions({});
+      window.__ready = true;
+    </script>
+  </body>
+</html>

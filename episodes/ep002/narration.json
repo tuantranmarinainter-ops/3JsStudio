@@ -524,22 +524,22 @@
    "who": "bach",
    "text": "Nhà nào có gấu rồi thì đánh dấu.",
    "source": "capcut",
-   "voice": "multi_male_felipe_uranus_bigtts",
+   "voice": "multi_female_yangguangnv_uranus_bigtts",
    "at": 103.45,
    "start": 103.451,
-   "end": 105.468,
-   "dur": 2.017
+   "end": 105.773,
+   "dur": 2.322
   },
   {
    "line": 49,
    "who": "bach",
    "text": "Mai phát tiếp mấy nhà còn lại.",
    "source": "capcut",
-   "voice": "multi_male_felipe_uranus_bigtts",
+   "voice": "multi_female_yangguangnv_uranus_bigtts",
    "at": 105.85,
-   "start": 105.85,
-   "end": 107.974,
-   "dur": 2.124
+   "start": 105.851,
+   "end": 107.868,
+   "dur": 2.017
   },
   {
    "line": 50,
@@ -548,8 +548,8 @@
    "source": "capcut",
    "voice": "BV075_streaming",
    "at": 108.05,
-   "start": 108.051,
-   "end": 109.66,
+   "start": 108.05,
+   "end": 109.659,
    "dur": 1.609
   },
   {
@@ -766,22 +766,22 @@
    "who": "mayor",
    "text": "Ủa, đây là mấy thùng",
    "source": "capcut",
-   "voice": "multi_female_xinwenjieshuo_uranus_bigtts",
+   "voice": "multi_female_yangguangnv_uranus_bigtts",
    "at": 149.35,
    "start": 149.351,
-   "end": 150.8,
-   "dur": 1.449
+   "end": 150.785,
+   "dur": 1.434
   },
   {
    "line": 71,
    "who": "mayor",
    "text": "sáng nay ông báo mất mà?",
    "source": "capcut",
-   "voice": "multi_female_xinwenjieshuo_uranus_bigtts",
+   "voice": "multi_female_yangguangnv_uranus_bigtts",
    "at": 150.85,
    "start": 150.85,
-   "end": 152.575,
-   "dur": 1.725
+   "end": 152.577,
+   "dur": 1.727
   },
   {
    "line": 72,
@@ -791,7 +791,7 @@
    "voice": "BV075_streaming",
    "at": 152.65,
    "start": 152.651,
-   "end": 153.779,
+   "end": 153.78,
    "dur": 1.129
   },
   {
@@ -801,8 +801,8 @@
    "source": "capcut",
    "voice": "BV075_streaming",
    "at": 154.15,
-   "start": 154.151,
-   "end": 154.992,
+   "start": 154.15,
+   "end": 154.991,
    "dur": 0.841
   },
   {
@@ -812,7 +812,7 @@
    "source": "capcut",
    "voice": "BV075_streaming",
    "at": 155.15,
-   "start": 155.15,
+   "start": 155.151,
    "end": 156.951,
    "dur": 1.801
   },
@@ -834,7 +834,7 @@
    "source": "capcut",
    "voice": "BV075_streaming",
    "at": 158.65,
-   "start": 158.65,
+   "start": 158.651,
    "end": 159.995,
    "dur": 1.345
   },
@@ -857,7 +857,7 @@
    "voice": "BV075_streaming",
    "at": 161.45,
    "start": 161.451,
-   "end": 163.395,
+   "end": 163.396,
    "dur": 1.945
   },
   {
@@ -867,8 +867,8 @@
    "source": "capcut",
    "voice": "BV075_streaming",
    "at": 164.45,
-   "start": 164.451,
-   "end": 166.948,
+   "start": 164.45,
+   "end": 166.947,
    "dur": 2.497
   },
   {
