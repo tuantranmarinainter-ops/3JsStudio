@@ -38,9 +38,13 @@ import REEF_ENV from './envs/reef.js';
 import KITCHEN_ENV, { KITCHEN_FURNISH } from './envs/kitchen.js';
 import BEDROOM_ENV, { BEDROOM_FURNISH } from './envs/bedroom.js';
 import { furnishIds } from './furnish.js';
+import { ganTang, layersOf, TANG } from './envs/tang.js';
+import { taoHatThoiTiet } from './envs/gio-thoi-tiet.js';
 
 import { LIGHTS, applyLite } from './lights.js';
 export { LIGHTS };
+const SU_SONG = ['dan', 'xe', 'chim', 'song', 'co-gio'];   // tên nhóm sự sống hợp lệ của env.suSong
+export { ganTang };   // gắn tầng (front|mid|back) cho vật trong env — docs/boi-canh-tang.md
 
 const hash = (i, s) => { let x = Math.imul(i ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(s + 1, 0xc2b2ae35); x ^= x >>> 13; x = Math.imul(x, 0x27d4eb2f); x ^= x >>> 16; return (x >>> 0) / 4294967296; };
 
@@ -143,6 +147,12 @@ export function createEnvs(THREE, stage, K0, A = null) {
     e.skyMeshNight = sb(e.skyboxNight !== undefined ? e.skyboxNight : outdoor ? SKY_NIGHT : null);
     // trời bão nhiều lớp (engine/stormsky.js): env khai báo e.stormSky = { …tham số }
     if (e.stormSky) { e.stormMesh = createStormSky(THREE, e.stormSky); e.stormMesh.visible = false; scene.add(e.stormMesh); }
+    // 3 tầng + sự sống (docs/boi-canh-tang.md): env.layers = { front, mid, back } (vật GỐC gắn userData.tang bằng ganTang, tính lúc đọc nên
+    //   vật thêm sau vẫn có mặt); env.suSong = tên nhóm đã bật (dan, xe, chim, song, co-gio). Env chưa khai tầng: cảnh báo 1 dòng, KHÔNG ném lỗi.
+    if (!Object.getOwnPropertyDescriptor(e, 'layers')) Object.defineProperty(e, 'layers', { get: () => layersOf(g), enumerable: true });
+    if (e.suSong === undefined) e.suSong = [];   // danh sách tên nhóm sự sống (dan, xe, chim, song, co-gio). KHÔNG dùng tên 'life': ocean.js đã dùng e.life làm đối tượng cá voi
+    { const la = e.suSong.filter((n) => !SU_SONG.includes(n)); if (la.length) console.warn(`[env ${name}] suSong có tên lạ: ${la.join(', ')} (cho phép: ${SU_SONG.join(', ')})`); }
+    { const thieu = TANG.filter((k) => !e.layers[k].length); if (thieu.length && globalThis.__autoFx?.canhBaoTang !== false) console.warn(`[env ${name}] tầng rỗng: ${thieu.join(', ')} (docs/boi-canh-tang.md)`); }
     envs[name] = e; return e; };
 
   // biển: engine/sea.js createSea (đồng hồ, sự kiện, nhìn) + thêm vào group của env. Ánh sáng/bầu trời được nạp mỗi khung trong use().
@@ -189,7 +199,7 @@ export function createEnvs(THREE, stage, K0, A = null) {
     const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return (views[kind] = t);
   };
   // bộ công cụ chung cho các file engine/envs/<tên>.js
-  const H = () => ({ THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs });
+  const H = () => ({ ganTang, THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs });
   def('town', 'night', (g, e) => TOWN_ENV(g, e, H()));   // engine/envs/town.js
 
   // ---------- RỪNG ----------
@@ -256,7 +266,7 @@ export function createEnvs(THREE, stage, K0, A = null) {
   if (globalThis.__autoFx?.ibl ?? true) { scene.environment = ibl.get('day'); scene.environmentIntensity = ibl.intensity('day'); }
 
   // ---------- áp dụng ----------
-  let current = null, liteState = false;
+  let current = null, liteState = false, thoiTietFx = null;
   const wl = { sunDir: new THREE.Vector3(), sunColor: new THREE.Color(), skyTop: new THREE.Color(), skyBottom: new THREE.Color(), amb: new THREE.Color(), flash: 0 };
   function applyLight(L, flash = 0) {
     skyMat.uniforms.top.value.set(L.top); skyMat.uniforms.bottom.value.set(L.bottom); skyMat.uniforms.flash.value = flash;
@@ -304,6 +314,7 @@ export function createEnvs(THREE, stage, K0, A = null) {
     for (const s of e.group.userData.seas || []) s.frame(t);
     if (e.group.userData.seas || e.rain) { resetSeaWeather(e); preSeaWeather(e, ctx.seaWeather); }
     e.update?.(t, ctx);
+    if (ctx.thoiTiet?.hat || thoiTietFx) { thoiTietFx ||= taoHatThoiTiet(THREE, scene, { fxRain, fxSnow }); thoiTietFx.update(ctx.thoiTiet?.hat || null, t, ctx.focus); }   // mưa/tuyết theo weather (engine/envs/gio-thoi-tiet.js); tạo lười
     if (ctx.seaWeather) applySeaWeather(e, ctx.seaWeather, t, ctx);
     const L = { ...LIGHTS[ctx.light || e.light], ...(ctx.lightOverride || {}) };
     applyLight(L, ctx.flash || 0);

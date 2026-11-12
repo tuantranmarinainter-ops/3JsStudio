@@ -17,7 +17,7 @@ import { createFarwoods } from '../farwoods.js';
 import { createBackdrop } from '../backdrop.js';
 
 export default function build(g, e, H) {
-  const { THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
+  const { ganTang, THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
   // --- chất liệu đất/cỏ/nhựa (góp ý 2026-11-12 #1 #4): texture nhiễu lát được, tất định (hash), có bumpMap; hố đất mép gồ ghề + cục đất ---
   const noiseCanvas = (seed, contrast, cells, speck = 0) => {
     const S = 256, cv = document.createElement('canvas'); cv.width = cv.height = S; const cx = cv.getContext('2d'), img = cx.createImageData(S, S);
@@ -100,7 +100,7 @@ export default function build(g, e, H) {
   for (const x of XS) crossSt(x, 45, 215);
   // --- khu dân cư dày quanh nhà gia đình: hàng gần, hàng sau, hàng bên kia đường; chừa hành lang |x|<30 (chân nhà) + đường ---
   const TYPES = 'abcdefghijklmnopqrstu'.split('').map((c) => `city-kit-suburban/building-type-${c}`);
-  const dense = (x, z, ry, w, sd) => { const kh = pickFit(TYPES, sd, w, { axis: 'xz' }); if (kh) place(g, kh, x, 0, z, ry); return kh; };
+  const dense = (x, z, ry, w, sd) => { const kh = pickFit(TYPES, sd, w, { axis: 'xz' }); if (kh) ganTang(place(g, kh, x, 0, z, ry), 'mid'); return kh; };   // tầng giữa: dãy nhà hai bên
   const yard = (x, z, ry, sd) => {   // sân trước: lối xe + hàng rào + bụi
     const dz = Math.cos(ry) > 0 ? 1 : -1;
     const dw = plane(5, 12, drive, 0.07, 'driveway'); dw.position.set(x + 8, 0.07, z + dz * 18); g.add(dw);
@@ -155,14 +155,14 @@ export default function build(g, e, H) {
   // đèn đường + cây vỉa hè; chừa sân nhà gia đình (|x|<40, chỗ chân nhà đặt xuống) và miệng phố ngang → không che mặt tiền nhà
   for (let i = -10; i <= 10; i++) {
     let lx = i * 40 + 12; if (i === 0) lx = -32; if (nearX(lx, XN, 10)) lx += 14;
-    place(g, K.streetLamp(), lx, 0, 27.5, Math.PI / 2);
+    ganTang(place(g, K.streetLamp(), lx, 0, 27.5, Math.PI / 2), 'front');   // tầng trước: đèn đường, bụi cây, hoa
     const tx = i * 40 - 6;
     if (Math.abs(tx) > 40 && !nearX(tx, XN, 10)) place(g, K.roundTree(10 + hash(i, 7) * 4, ['#3f8f3f', '#4caf50', '#2e7d32'][(i + 30) % 3]), tx, 0, 22 - hash(i, 3) * 6);
   }
   // cây sân nhà gia đình: sau nhà, ngoài vùng chân nhà dang ra
   place(g, K.roundTree(11), -30, 0, -22); place(g, K.roundTree(10), 31, 0, -24);
   for (const x of [-26, 26]) place(g, K.fence(16), x, 0, 22);
-  place(g, K.bush(2.5), -18, 0, 16); place(g, K.bush(2.2), 19, 0, 17);
+  ganTang(place(g, K.bush(2.5), -18, 0, 16), 'front'); ganTang(place(g, K.bush(2.2), 19, 0, 17), 'front');
   for (let i = 0; i < 24; i++) { const f = pickFit(['nature-kit/flower_redA', 'nature-kit/flower_yellowB', 'nature-kit/flower_purpleA'], i, 1.2); if (f) place(g, f, -24 + (i % 12) * 4.2 + hash(i, 2), 0, 18 + Math.floor(i / 12) * 2.5, hash(i, 3) * 6); }
   const moon = place(g, K.moon(34), -170, 170, -420); moon.name = 'moon_town';
   // rừng xa = thẻ ảnh vẽ quay về camera (engine/farwoods.js, 1 program), chừa con đường; ngọn lay theo gió chung; ô bật/tắt 'farwoods'
@@ -170,14 +170,14 @@ export default function build(g, e, H) {
   const woods = createFarwoods(THREE, { wind, seed: 8, center: [0, 0], ring: [150, 400], count: 2600, size: [10, 22],
     kinds: { leafy: 1, pine: 0.8 }, avoid: (x, z) => Math.abs(z - 36) < 16, clumps: true });
   woods.mesh.onBeforeRender = () => { woods.lightFrom(scene.children.find((o) => o.isDirectionalLight && o.name === 'sun'), scene.children.find((o) => o.isHemisphereLight)); woods.fogFrom(scene.fog); };
-  g.add(woods.group);
+  ganTang(woods.group, 'back'); g.add(woods.group);   // tầng sau: rừng xa + núi xa
   // núi xa vẽ 1 lần thành dải tranh quấn chân trời (engine/backdrop.js, 1 program); màu theo nắng/sương của shot; ô bật/tắt 'backdrop'
   const hills = createBackdrop(THREE, { seed: 8, radius: 900, base: -30, height: 340, snow: 0.6 });
   hills.mesh.onBeforeRender = () => { hills.lightFrom(scene.children.find((o) => o.isDirectionalLight && o.name === 'sun'), scene.children.find((o) => o.isHemisphereLight)); hills.fogFrom(scene.fog); };
-  g.add(hills.group);
+  ganTang(hills.group, 'back'); g.add(hills.group);
   // ghế ngồi hiên (s030: bé ngồi chờ thư). Shot gọi env.seat.userData.want = true + đặt position/rotation (toạ độ thế giới) trong fn mỗi khung;
   // update() đọc cờ rồi xoá → mọi shot khác không thấy ghế (hàm thuần của shot, tua tới/lui như nhau)
   const seat = K.chair(); seat.name = 'porch_chair'; seat.scale.setScalar(1.8); seat.visible = false; g.add(seat);
-  return { setNight(n) { nbWins.forEach((w) => { w.emissiveIntensity = n * 1.4; }); moon.visible = n > 0.5; }, dirt, hole, seat,
+  return { suSong: ['dan', 'xe', 'co-gio'], setNight(n) { nbWins.forEach((w) => { w.emissiveIntensity = n * 1.4; }); moon.visible = n > 0.5; }, dirt, hole, seat,
     update(t, ctx) { woods.group.visible = globalThis.__autoFx?.farwoods !== false; if (woods.group.visible) woods.update(t, stage.camera); hills.group.visible = globalThis.__autoFx?.backdrop !== false; if (hills.group.visible) hills.update(t, stage.camera); const L = LIGHTS[ctx.light || 'night']; life.update(t, !L.night); seat.visible = !!seat.userData.want; seat.userData.want = false; } };
 }

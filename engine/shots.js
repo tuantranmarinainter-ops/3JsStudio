@@ -13,6 +13,7 @@
 //         (at[1] = độ cao khi biển lặng; hx/hz = nửa dài thân theo X/Z cục bộ, stud; draft = chìm thêm; k 0..1 hoặc [a,b])
 //     seaEvents: [{ at:[x,z], t: giây cục bộ của shot, strength = 1.5, radius = 10 }]   vòng sóng/hố/bọt (≤ 8 cùng lúc)
 //     seaWeather: 'nang' | { from, to, ease, win } | { base, …ghi đè }   thời tiết biển (engine/seaweather.js, ô FX seaWx)
+//     time / weather (cũng có thể đặt ở EPISODE.time / EPISODE.weather: mặc định cho shot không ghi; truyền createDirector({ …, episode: EPISODE })): 'sang'|'trua'|'chieu'|'hoang-hon'|'dem' / 'nang'|'may'|'mua'|'giong'|'bao'|'tuyet'|'suong' → ánh sáng + trời + hạt (engine/envs/gio-thoi-tiet.js, docs/boi-canh-tang.md); không ghi = như cũ
 //     skySun / skyMoon: 'frame' | { x, y } (vị trí trong khung 0..1) | { az, el } (độ, so với hướng camera) | [x,y,z] | false
 //         đặt mặt trời/trăng của trời 6 ảnh theo shot (engine/envs.js skyDir, ô FX shotSky); không ghi = theo hướng nắng như cũ
 //     room:  { tilt, roll, view, dense },  fn(ctx) }
@@ -36,11 +37,12 @@ export const val = (v, k, def = 0) => (v === undefined ? def : isRange(v) ? v[0]
 import { fxPuffs, fxPrints, fxWind } from './fx.js';
 import { floatPose, floatTilt, wetline, worldGrad } from './floating.js';
 import { resolveSeaWeather, seaWeatherAmp } from './seaweather.js';
+import { gioThoiTiet } from './envs/gio-thoi-tiet.js';
 const lerp3 = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
 // tiến độ cục bộ trong một đoạn con của shot: win = [k0,k1]
 const sub = (k, win) => (win ? clamp01((k - win[0]) / (win[1] - win[0])) : k);
 
-export function createDirector({ THREE, stage, envs, K, actors, houses, props = {}, fx = {}, resolveType = null }) {
+export function createDirector({ THREE, stage, envs, K, actors, houses, props = {}, fx = {}, resolveType = null, episode = {} }) {   // episode = EPISODE: time/weather mặc định cho mọi shot không ghi riêng
   const { scene, camera } = stage;
   const _v = new THREE.Vector3();
   const tmpObj = new THREE.Object3D();
@@ -69,7 +71,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
         const ry = val(sp.ry, kc, 0), cs = Math.cos(ry), sn = Math.sin(ry);
         const lx = L.hx + L.side * (10 + 3 * val(sp.kneel, kc, 0)), lz = L.hz + L.front * 3.5 + (h.dims?.STRIDE || 7) / 2;
         const px = a[0] + (b[0] - a[0]) * ke, pz = a[1] + (b[1] - a[1]) * ke;
-        out.push({ t0: shot.t0 + (w0 + ke * dw) * shot.dur, at: [px + lx * cs + lz * sn, sp.y ?? 0, pz - lx * sn + lz * cs], yaw: ry + L.side * 0.5, leg: L.i });
+        out.push({ t0: shot.t0 + (w0 + ke * dw) * shot.dur, at: [px + lx * cs + lz * sn, val(sp.y, kc, 0), pz - lx * sn + lz * cs], yaw: ry + L.side * 0.5, leg: L.i });
       }
     }
     return out.sort((p, q) => p.t0 - q.t0);
@@ -214,7 +216,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
       houseWet.get(h)?.set({ x, z, y: F.y, ...worldGrad(F.sx, F.sz, yaw), t, k: boat });
       hullFoam({ x, z, hx, hz, yaw, k: boat, vy: F.vy }, 1e9);
     }
-    h.root.position.set(x, (spec.y ?? 0) + heave, z); h.root.rotation.y = yaw;
+    h.root.position.set(x, val(spec.y, ke, 0) + heave, z); h.root.rotation.y = yaw;   // y có thể là [a,b] (sinkTilt chìm dần)
     const dist = Math.hypot(b[0] - a[0], b[1] - a[1]) * ke + (spec.walk0 || 0);
     const stepping = walking && boat < 0.5;
     h.pose({ legsOut: val(spec.legsOut, ke, 1), lift: val(spec.lift, ke, 1) * (1 - boat), kneel: val(spec.kneel, ke, 0), walk: stepping ? dist : 0,
@@ -291,9 +293,14 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
 
   function render(shot, local, k, t) {
     if (shot.type && resolveType) shot = resolveType(shot);
+    const time = shot.time ?? episode.time, weather = shot.weather ?? episode.weather;   // shot ghi thì thắng; KHÔNG thừa kế sang shot sau
+    if ((time || weather) && (AUTO.gioThoiTiet ?? true)) {   // giờ / thời tiết theo shot (engine/envs/gio-thoi-tiet.js); không ghi gì ⇒ không chạm shot
+      const en = envs.envs[shot.env], tt = gioThoiTiet({ time, weather }, { name: en.name, light: shot.light ?? en.light, sea: !!en.group.userData.seas, rain: !!en.rain, snow: !!en.snow });
+      shot = { ...shot, light: tt.light === undefined ? shot.light : tt.light || undefined, lightOverride: { ...tt.lightOverride, ...shot.lightOverride }, seaWeather: shot.seaWeather ?? tt.seaWeather, thoiTiet: tt };
+    }
     held.clear();
     for (const obj of Object.values(props)) if (obj.parent && obj.parent.type !== 'Scene' && obj.parent.name && /Arm$/.test(obj.parent.name)) { obj.visible = false; }
-    const ctx = { focus: [0, 0, 0], light: shot.light, lightOverride: shot.lightOverride, skySun: shot.skySun, skyMoon: shot.skyMoon, skyScale: shot.skyScale };
+    const ctx = { focus: [0, 0, 0], light: shot.light, lightOverride: shot.lightOverride, skySun: shot.skySun, skyMoon: shot.skyMoon, skyScale: shot.skyScale, thoiTiet: shot.thoiTiet };
     const W = prepareSea(shot, k, t);   // lõi biển: đồng hồ/thời tiết/sự kiện TRƯỚC khi đặt vật nổi
     if (W) { ctx.seaWeather = W; ctx.shotLight = shot.light; ctx.shotLightOverride = shot.lightOverride; }
     // env trước (để biết đêm/ngày), camera sau cùng (cần vị trí diễn viên)
