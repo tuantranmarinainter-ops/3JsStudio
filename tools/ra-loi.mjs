@@ -108,6 +108,11 @@ async function macDinhGhepAnh(bufA, bufB, out) {
 
 // ---- lõi ----
 export async function raLoi(ep, o = {}) {
+  try { return await raLoiTrong(ep, o); } finally {
+    if (trinhDuyet) { await trinhDuyet.close().catch(() => {}); trinhDuyet = null; }
+  }
+}
+async function raLoiTrong(ep, o = {}) {
   const goc = o.goc || GOC, thu = !!o.thu;
   const kiemLuat = o.kiemLuat || macDinhKiemLuat, ghepAnh = o.ghepAnh || macDinhGhepAnh;
   const epDir = path.join(goc, 'episodes', ep), fShots = path.join(epDir, 'shots.js');
@@ -191,10 +196,9 @@ export async function raLoi(ep, o = {}) {
       if (!rec || !A) continue;
       const f = path.join(duyetDir, '01_shots', tenAnh(v.id, rec.khung[1]));
       if (!fs.existsSync(f)) continue;
-      try { await ghepAnh(A, fs.readFileSync(f), path.join(duyetDir, '03_truoc-sau', `${v.id}_${v.ma}_v${vong}.jpg`)); } catch { /* ảnh lỗi không chặn vòng sửa */ }
+      try { await ghepAnh(A, fs.readFileSync(f), path.join(duyetDir, '03_truoc-sau', `${v.id}_${v.ma}_v${vong}.jpg`)); } catch (e) { console.error(`Cảnh báo: ghép ảnh A|B ${v.id} ${v.ma} lỗi: ${e && e.message}`); }
     }
   }
-  if (trinhDuyet) { await trinhDuyet.close().catch(() => {}); trinhDuyet = null; }
 
   if (thu) {
     const theoLuat = {};
@@ -206,7 +210,7 @@ export async function raLoi(ep, o = {}) {
   const { shots: shotsCuoi } = await docShots(fShots);
   const theoIdCuoi = new Map(shotsCuoi.map((s) => [s.id, s]));
   const conLoi = loiHienTai();
-  const khongSua = [], loiKe = [];
+  const khongSua = [], conLai = [], loiKe = [];
   for (const { id, ma, rec } of conLoi) {
     const sd0 = theoIdCuoi.get(id);
     const kq = rec.luat[ma];
@@ -217,24 +221,25 @@ export async function raLoi(ep, o = {}) {
       const r = chonCach(ma, { ...sd0, _dur: rec.dur, _type: rec.type ?? sd0.type ?? null, _vong: soVong + 1 }, kq, ng, new Set());
       lyDo = r.cach ? `con-loi-sau-${soVong}-vong` : r.lyDo;
     }
-    khongSua.push({ shot: id, luat: ma, lyDo, val: kq.val ?? null });
+    const muc = { shot: id, luat: ma, lyDo, val: kq.val ?? null };
+    (lyDo === 'khong-tu-sua' ? khongSua : conLai).push(muc);
     if (['L1', 'L2', 'L3', 'L11'].includes(ma) && sd0) loiKe.push({ shot: id, cau: sd0.line ?? null, lyDo: `${ma} ${JSON.stringify(kq.val)}` });
   }
   for (const x of luat.loiShot || []) khongSua.push({ shot: x.id, luat: '*', lyDo: 'shot-nem-loi: ' + x.loi, val: null });
+  // spec muc 8: chi LOAI loi khong tu sua (L5/L9/L12, shot nem loi), L10 con loi sau vong sua, hoac vuot nguong (luat.goi cua kiem-luat) moi goi nguoi dung
   const lyDo = [...(luat.goi?.lyDo || [])];
-  const nKhong = khongSua.filter((x) => x.lyDo === 'khong-tu-sua' || x.lyDo === 'khong-co-cach' || x.lyDo.startsWith('shot-nem-loi')).length;
-  if (nKhong) lyDo.push(`${nKhong} loi khong tu sua duoc (can nguoi dung)`);
-  const conSau = khongSua.filter((x) => x.lyDo.startsWith('con-loi-sau')).length;
-  if (conSau) lyDo.push(`${conSau} loi con lai sau ${soVong} vong sua`);
+  if (khongSua.length) lyDo.push(`${khongSua.length} loi khong tu sua duoc (can nguoi dung)`);
+  const l10 = conLai.filter((x) => x.luat === 'L10').length;
+  if (l10) lyDo.push(`${l10} loi L10 (bong dang) con lai sau ${soVong} vong sua`);
   const goi = { can: lyDo.length > 0, lyDo };
   const tomTat = {
-    ep, luc: new Date().toISOString(), soVong, daSua, khongSua, loiKe, goi,
+    ep, luc: new Date().toISOString(), soVong, daSua, khongSua, conLai, loiKe, goi,
     soShotLoi: new Set(conLoi.map((x) => x.id)).size,
   };
   fs.mkdirSync(kiemDir, { recursive: true });
   fs.writeFileSync(path.join(kiemDir, 'ra-loi.json'), JSON.stringify(tomTat, null, 1) + '\n');
   datBuoc(ep, 'ra-loi', { hash: hashVao([path.relative(goc, fShots)], { goc }), xong: !goi.can, goi: goi.can ? 1 : 0 }, tg);
-  return { ma: goi.can || conLoi.length || (luat.loiShot || []).length ? 1 : 0, ...tomTat };
+  return { ma: goi.can ? 1 : 0, ...tomTat };
 }
 
 // ---- CLI ----
@@ -251,6 +256,8 @@ export async function chay(argv, o = {}) {
     console.log(`ra-loi ${pos[0]}  ${r.soVong} vong  da sua ${r.daSua.length}  con loi ${r.soShotLoi} shot`);
     for (const d of r.daSua) console.log(`  v${d.vong} ${d.shot} ${d.luat} ${d.cach}: ${d.moTa}`);
     for (const k of r.khongSua.slice(0, 20)) console.log(`  KHONG SUA ${k.shot} ${k.luat}: ${k.lyDo}`);
+    if (r.conLai.length) console.log(`Con lai ${r.conLai.length} loi duoi nguong (tu ra soat):`);
+    for (const k of r.conLai.slice(0, 30)) console.log(`  CON LAI ${k.shot} ${k.luat}: ${k.lyDo}`);
     if (r.loiKe.length) console.log('loiKe (can sua loi ke / giao agent): ' + JSON.stringify(r.loiKe));
     if (r.goi.can) console.log('Can goi: ' + r.goi.lyDo.join('; '));
     return r.ma;

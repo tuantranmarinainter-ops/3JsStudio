@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { raLoi, chenKhoa, chay } from '../ra-loi.mjs';
-import { CACH_SUA, luiCamera, themZoom, keoDaiShot, batHat, canGiuaVatDoc, doiGocTranhChe, themDoPhuTheoTang } from '../kiem/sua.mjs';
+import { CACH_SUA, xoayGoc, luiCamera, themZoom, keoDaiShot, batHat, canGiuaVatDoc, doiGocTranhChe, themDoPhuTheoTang } from '../kiem/sua.mjs';
 import { docNhatKy } from '../kiem/trang-thai.mjs';
 
 const EP = '_test_raloi';
@@ -84,7 +84,7 @@ test('12 shot lỗi vẫn lỗi sau sửa -> dừng sau 2 vòng, mã 1, có goi.
   assert.equal(r.soShotLoi, 12);
   assert.ok(r.goi.can);
   assert.match(r.goi.lyDo.join(' '), /shot-loi 12 > 10/);
-  assert.match(r.goi.lyDo.join(' '), /sau 2 vong/);
+  assert.equal(r.conLai.length, 12);
   fs.rmSync(goc, { recursive: true, force: true });
 });
 
@@ -182,4 +182,50 @@ test('L2: dịch điểm nhìn về tâm, giảm fill; đổi góc tránh che đ
   assert.equal(doiGocTranhChe({ cam: { yaw: 0 }, _vong: 1 }, c, { L3: {} }).patch.cam.yaw, 0.3);
   assert.equal(doiGocTranhChe({ cam: { yaw: 0.3 }, _vong: 2 }, c, { L3: {} }).patch.cam.yaw, -0.3);
   assert.equal(doiGocTranhChe({ cam: { yaw: 0 } }, { ok: false, val: { cheMat: 0.1 } }, { L3: {} }), null);
+});
+
+test('I1: còn 3 lỗi thường dưới ngưỡng -> goi.can false, mã 0, bước xong, liệt kê conLai', async () => {
+  const goc = goc0();
+  const ids = ['s001', 's002', 's003'];
+  const txt = 'export const SHOTS = [\n' + ids.map((id) => `  { id: '${id}', dur: 1.5, type: 'closeup', cam: { at: 'hero', dist: 10, dist2: 10, yaw: 0 } },`).join('\n') + '\n];\n';
+  const mk = () => luatDe(Object.fromEntries(ids.map((id) => [id, rec('closeup', 1.5, 'L4', { ok: false, val: 45, nguong: { psnrMax: 30 } })])));
+  dung(goc, txt, mk());
+  const r = await raLoi(EP, { goc, kiemLuat: async () => mk(), ghepAnh: anhGia });
+  assert.equal(r.goi.can, false);
+  assert.equal(r.ma, 0);
+  assert.equal(r.conLai.length, 3);
+  assert.equal(r.khongSua.length, 0);
+  assert.equal(doc(path.join(goc, 'output', EP, 'kiem', 'trang-thai.json')).buoc['ra-loi'].xong, true);
+  assert.equal(doc(path.join(goc, 'output', EP, 'kiem', 'ra-loi.json')).conLai.length, 3);
+  fs.rmSync(goc, { recursive: true, force: true });
+});
+
+test('I1: L10 còn lỗi sau vòng sửa vẫn gọi; luat.goi vượt ngưỡng vẫn gọi', async () => {
+  const goc = goc0();
+  const txt = "export const SHOTS = [\n  { id: 's001', dur: 1.5, type: 'closeup', cam: { at: 'hero', dist: 10, yaw: 0 } },\n];\n";
+  const mk = () => luatDe({ s001: rec('closeup', 1.5, 'L10', { ok: false, val: { dienTich: 0.5, thieu: ['hero'] }, nguong: { dienTichMin: 0.04 } }) });
+  dung(goc, txt, mk());
+  const r = await raLoi(EP, { goc, kiemLuat: async () => mk(), ghepAnh: anhGia });
+  assert.equal(r.ma, 1);
+  assert.match(r.goi.lyDo.join(' '), /L10/);
+  fs.rmSync(goc, { recursive: true, force: true });
+});
+
+test('M1: follow/walkBy 1 người zoom vào; có with hoặc nhà zoom ra', () => {
+  const kq = { ok: false, val: 45 };
+  assert.equal(themZoom({ type: 'follow', who: 'hero', cam: { dist: 10 } }, kq).patch.cam.dist2, 7.2);
+  assert.equal(themZoom({ type: 'walkBy', who: 'hero', cam: { dist: 10 } }, kq).patch.cam.dist2, 7.2);
+  assert.equal(themZoom({ type: 'chase', who: 'hero', with: 'crowd1', cam: { dist: 10 } }, kq).patch.cam.dist2, 13);
+});
+
+test('M2: dist2 sau khuếch đại không âm', () => {
+  const r = themZoom({ type: 'closeup', cam: { dist: 10, dist2: 3 } }, { ok: false, val: 45 });
+  assert.ok(r.patch.cam.dist2 >= 3);
+});
+
+test('M3: L10 chủ thể quá nhỏ không lùi camera, vẫn xoay góc', () => {
+  const kq = { ok: false, val: { dienTich: 0.02, thanhPhan: 1 }, nguong: { dienTichMin: 0.04 } };
+  assert.equal(luiCamera({ cam: { dist: 10 } }, kq), null);
+  assert.ok(xoayGoc({ cam: { yaw: 0 } }, kq));
+  assert.ok(luiCamera({ cam: { dist: 10 } }, { ok: false, val: { dienTich: 0.5, thieu: ['hero'] }, nguong: { dienTichMin: 0.04 } }));
 });

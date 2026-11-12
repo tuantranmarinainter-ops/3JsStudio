@@ -34,6 +34,8 @@ export function gopPatch(a, b) {
 // ---- L1, L3, L10: lùi camera (giữ nguyên chiều zoom: nhân cả dist và dist2) ----
 export function luiCamera(sd, kq) {
   if (khongPhai(kq)) return null;
+  // L10: chủ thể quá nhỏ (dienTich thấp, không thiếu/mồ côi thành phần) thì lùi chỉ làm nhỏ thêm
+  if (kq.val && num(kq.val.dienTich) && !kq.val.thieu && !kq.val.moCoi && kq.nguong && num(kq.nguong.dienTichMin) && kq.val.dienTich < kq.nguong.dienTichMin) return null;
   const c = camCua(sd);
   const k = 1.25;
   if (c && num(c.dist) && c.dist > 0) {
@@ -101,11 +103,18 @@ export function doiGocTranhChe(sd, kq, ng) {
 export function doiVatChan() { return null; }
 
 // ---- L4: thêm zoom (1 người -> vào, từ 2 người hoặc vật lớn/nhà -> ra) ----
-const LOAI_RA = new Set(['crowd', 'establish', 'houseFull', 'sinkTilt', 'dialogue', 'overShoulder', 'chase', 'reveal', 'walkBy', 'follow']);
+// hướng zoom theo SỐ NGƯỜI trong khung + có nhà/vật lớn hay không (không theo loại shot):
+// 1 người -> vào; >= 2 người (with, crowd, n) hoặc nhà -> ra
+function zoomRa(sd) {
+  const loai = loaiCua(sd);
+  if (sd.house || loai === 'houseFull' || loai === 'sinkTilt' || loai === 'crowd' || loai === 'establish') return true;
+  const ds = [sd.who, ...(Array.isArray(sd.with) ? sd.with : [sd.with])].filter(Boolean);
+  return new Set(ds).size >= 2 || (num(sd.n) && sd.n >= 2);
+}
 export function themZoom(sd, kq) {
   if (khongPhai(kq) || sd.static === true) return null;
   const loai = loaiCua(sd);
-  const ra = LOAI_RA.has(loai) || Boolean(sd.house) || Boolean(sd.with);
+  const ra = zoomRa(sd);
   const c = camCua(sd);
   if (c && num(c.dist) && c.dist > 0) {
     const huong = ra ? 1 : -1;
@@ -113,7 +122,7 @@ export function themZoom(sd, kq) {
     let dist2;
     if (roi) {
       if (Math.sign(c.dist2 - c.dist) !== huong) return null;      // đã zoom ngược luật: không tự đảo hướng
-      dist2 = c.dist + (c.dist2 - c.dist) * 1.6;
+      dist2 = Math.max(c.dist * 0.3, c.dist + (c.dist2 - c.dist) * 1.6);
     } else dist2 = c.dist * (ra ? 1.3 : 0.72);
     dist2 = r3(dist2);
     return { patch: { cam: { dist2 } }, moTa: `them zoom ${ra ? 'ra' : 'vao'}: dist2 ${c.dist2 ?? '-'} -> ${dist2}` };
