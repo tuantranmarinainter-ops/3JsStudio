@@ -1,4 +1,4 @@
-# HANDOFF — quy trình "một câu luật → phim HTML" (cập nhật 2026-11-12 đêm, cuối phiên 3 lượt 1)
+# HANDOFF — quy trình "một câu luật → phim HTML" (cập nhật 2026-11-12 đêm, cuối phiên 3 lượt 2 (2026-11-13))
 
 Đọc `CLAUDE.md` trước. `HANDOFF.md`, `HANDOFF-canh.md`, `HANDOFF-gop-y.md`, `HANDOFF-ga.md` là của việc khác — không đụng.
 
@@ -22,24 +22,27 @@ Dây chuyền: câu luật → 5 kịch bản mẫu → kịch bản đầy đ�
 - KHÔNG: push, merge, đổi ngưỡng L1, thay skybox chưa rõ giấy phép, duyệt đổi hình ep001, áp bảng "Đề xuất đổi loại" vật liệu.
 - Không Haiku; Sonnet cho code + rà soát; Opus chỉ thiết kế khó / rà cả nhánh; ≤ 3 agent cùng lúc, mỗi agent file riêng. Phiên 3 là controller DUY NHẤT.
 
-## Đã xong, đã rà sạch, đã commit (nhánh `ep1-v2`, CHƯA push; HEAD lúc viết `7d6f424` + commit file này)
-Task 1–12, 13a, 13b, 18 · **Task 14** (`0f9e3de` + `f23a6b8`) · **Task 16** (`c08b97c` + `d9f6e9c`).
-Ảnh duyệt Task 10: `output/ep001/duyet/task10-truoc-sau.jpg`.
+## Đã xong, đã rà sạch, đã commit (nhánh `ep1-v2`, CHƯA push; HEAD lúc viết `c0ae7da` + commit file này)
+**Task 1–19 đều `complete` trong sổ** (13 gồm 13a–13f: thước đo tầng theo từng mesh + `engine/envs/goc-mau.js`; 14 asset-plan; 15 mau-duyet;
+16 shot-gen; 17 ra-loi; 19 lam-phim + skill `lam-phim`). Cả bộ test 249/249 (`node --test tools/tests/*.test.mjs`).
+Kết giai đoạn 3 xong: `episodes/ep001/quy-trinh.json` L8.vatMoiTangMin 0 (ruling), kiem-luat ep001 = 26 shot lỗi, chuẩn `refs/sau-gd3` (không commit),
+`dist/ep001.html` đã gộp (dựng từ cây có `engine/r15.js` + `episodes/ep001/episode.js` sửa dở của phiên Gà). Ảnh duyệt: `output/ep001/duyet/task10-truoc-sau.jpg`, `task20a-troika.jpg`.
 
-## Đã commit nhưng CHƯA xong vòng rà
-- 13c `53d8222`, 13d `bed0b9c`: đã rà → Spec ❌ vì tầng xa chỉ "đủ số đếm" (bbox gộp của group bao cả camera). Ruling: sửa ở gốc bằng 13f.
-- 13e `aebdb19`: CHƯA rà (báo cáo `task-13e-report.md`, ảnh `output/look/t13e-env/`).
-- **13f `7d6f424`** (measure.js đếm theo từng mesh + `engine/envs/goc-mau.js` 2 góc chuẩn/env + test, 17 env vào `DA_GAN`): CHƯA rà. Cả bộ 209 pass/0 fail/0 skip.
-  Báo cáo `task-13f-report.md`, ảnh `output/look/t13f/sheet.jpg`, diff: `git diff 5a94bd5 7d6f424`.
+## Đã commit nhưng CHƯA rà
+- **Task 20a+20b `c0ae7da`**: troika-three-text cho chữ bưu thiếp sau ô `troikaText` (mặc định TẮT); three-mesh-bvh KHÔNG tích hợp (measure ≤ 0,29 s/khung).
+  Báo cáo `task-20ab-report.md`, diff (không gồm vendor) `review-task20ab.diff` trong thư mục sổ.
 
 ## Còn lại (theo thứ tự)
-1. Rà 13f và 13e (2 reviewer Sonnet song song). Reviewer 13f phán luôn I1/I2 của 13c + 13d (tầng sau có THẤY ở 2 góc mẫu không — xem ảnh t13f) → ghi
-   `Task 13c/13d/13e/13f: complete` hoặc vòng sửa env (≤ 4 env/agent). Song song: giao **Task 15** (`tools/mau-duyet.mjs`, brief `task-15-brief.md`; dùng `GOC_MAU`).
-2. Kết giai đoạn 3: ghi `"L8": {"vatMoiTangMin": 0}` vào `episodes/ep001/quy-trinh.json` (ruling: thước mới làm ep001 đỏ L8 94 shot vì tangXa tắt);
-   `node --test tools/tests/*.test.mjs` xanh; chạy lại `kiem-luat` ep001; chụp chuẩn `refs/sau-gd3` (`look.mjs --shots all --pose`); `npm run bundle:ep001`; link `dist/ep001.html`.
-3. Đợt 7: Task 17 (ra-loi + sua.mjs; ruling L12 không tự sửa, cờ `--thu`, không ghi lên ep001) → Task 19 (lam-phim + skill + danh sách giọng).
-4. Task 20 a–d (thay lõi từng cái, A/B, ô FX mặc định TẮT). 5. Rà cả nhánh (Opus) + gộp mọi dòng "minor (deferred)" trong sổ. 6. Mục 11b.3 spec: cập nhật `CLAUDE.md`.
-7. Task 21: báo cáo tổng + commit, rồi ep002 theo kịch bản người dùng (xem mục Quyền).
+1. Rà Task 20a+20b (1 reviewer Sonnet; brief `task-20-brief.md`) → vòng sửa nếu cần. Song song giao **Task 20c+20d** cho 1 implementer Sonnet:
+   20c three.quarks (ruling: mặc định KHÔNG tích hợp vì stateful, trừ khi cấp `t` tất định mà `--det` đạt → ghi lý do `docs/core.md`);
+   20d `postprocessing` (pmndrs) thay dần pass trong `engine/post.js` sau ô FX mặc định TẮT; tiêu chí như 20a (ô tắt 0 lệch, `--ab` PSNR, program không tệ hơn,
+   `--det`, bản gộp 1 file); ảnh A/B `output/ep001/duyet/task20d-*.jpg`. Mỗi cái một commit.
+2. Rà cả nhánh (Opus, `superpowers:requesting-code-review`, gói diff `git merge-base main HEAD`..HEAD) + chỉ cho nó mọi dòng "minor (deferred)" / "parked" trong sổ;
+   MỘT lượt sửa + một lượt rà lại; đổi nhãn ô `tangXa` → "Tầng bổ sung".
+3. Mục 11b.3 spec: cập nhật `CLAUDE.md` (bảng công cụ + skill mới; đây là việc trong spec người dùng đã duyệt).
+4. Báo cáo tổng cho người dùng (việc xong, MỌI `Ruling:` trong sổ kèm giá nếu sai, việc chờ duyệt, link `dist/ep001.html`) + cập nhật file này + commit.
+5. **Task 21**: ep002 theo kịch bản người dùng đã duyệt (xem mục Quyền) bằng skill `lam-phim` → `dist/ep002_xem-thu.html` + link + SendUserFile.
+   Đã biết: nhân vật `bach` (beard=true) làm r15/cast ném `h.replace`; Gà chưa nối `engine/cast.js`; ep002 thiếu 7 env, 2+ đạo cụ, Bắp + 2 gấu.
 
 ## Cảnh báo
 - Phiên khác commit vào CÙNG checkout (góp ý ep001, sky-storm, Gà). Trước mỗi lần giao/commit: `git status` + `git log -5`; chỉ `git add` đúng file của task.
