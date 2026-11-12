@@ -1602,6 +1602,7 @@ export function applyPose(parts, pose) {
   const b = pose.body || {};
   parts.body.position.set(b.x || 0, b.y || 0, b.z || 0);
   parts.body.rotation.set(b.rx || 0, b.ry || 0, b.rz || 0);
+  parts.body.scale.setScalar(Math.max(1 - (b.ds || 0), 0.001));   // ds = Ä‘á»™ co (anim-them.js vanish); khÃ´ng cÃ³ ds â†’ scale 1 nhÆ° cÅ©
 }
 export function mixPose(a, b, w) {
   const out = {};

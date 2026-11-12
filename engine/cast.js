@@ -1,8 +1,12 @@
 // cast.js — Dựng diễn viên R15 từ cấu hình tập (episode.actors), dùng chung cho mọi tập theo mẫu _template.
+//   Cờ diễn viên: ga:1 → Gà (ga-rig.js), bear:1 → gấu bông (bear.js, bow:'#2e86de', fur), còn lại R15. beard:true → màu hairColor.
 //   actors: { hero: { shirt:'#e74c3c', face:'smile', hat:'beanie' }, mom: { shirt:'#8e44ad', hair:'braids' }, crowd: { count: 12 } }
 // Mỗi khoá (trừ crowd) = tuỳ chọn createR15 (engine/r15.js: skin, shirt, pants, hat, hatColor, hair, skirt, scarf…).
 // crowd.count → dân thị trấn crowd1…crowdN, màu áo/quần/mũ chọn theo seed (tất định).
-import { createR15, loadR15Body, loadCharacterTextures } from './r15.js';
+import { createR15, loadR15Body, loadCharacterTextures, loadGaFaces, FACE_PRESETS, GA_FACES, GA_FACE_MAP } from './r15.js';
+// Gà (engine/ga-rig.js) nạp ĐỘNG khi có diễn viên ga:1 — tập không dùng Gà không phụ thuộc file này
+import { createBear } from './bear.js';
+import './anim-them.js';   // đăng ký animation bổ sung (sitUp, climb, drag, vanish, peek, putDown, ringBell, sleepy) vào bảng R15 dùng chung cho R15 + Gà
 import { rng } from './stage.js';
 
 const SHIRTS = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6', '#e67e22', '#1abc9c', '#ecf0f1', '#34495e', '#ff7eb6'];
@@ -16,18 +20,61 @@ export function crowdLook(i, seed = 1) {
   return { skin: p(SKINS), shirt: p(SHIRTS), pants: p(PANTS), hat: p(HATS), hatColor: p(SHIRTS), hair: p(HAIR), face: 'smile' };
 }
 
+// ---- Chuẩn hoá tuỳ chọn diễn viên (hàm THUẦN, test được trong node) ----
+//   ga:1|true → Gà (engine/ga-rig.js createGa)   bear:1|true → gấu bông (engine/bear.js createBear)   còn lại → R15.
+//   beard:true|'true'|'1' → màu râu = hairColor (hoặc xám); beard:false|'0'|'' → không râu. (r15.js dùng beard làm MÀU: true làm ném lỗi.)
+const BOOL_T = new Set(['1', 'true', 'yes', 'on', 'co', 'có']), BOOL_F = new Set(['', '0', 'false', 'no', 'off', 'khong', 'không', 'none', 'null', 'undefined']);
+export const toFlag = (v) => v === true || v === 1 || (typeof v === 'string' && BOOL_T.has(v.trim().toLowerCase()));
+const isFalseish = (v) => v === undefined || v === null || v === false || v === 0 || (typeof v === 'string' && BOOL_F.has(v.trim().toLowerCase()));
+export const BEARD_FALLBACK = '#9e9e9e';
+export function normalizeActorOpts(o = {}) {
+  const { ga, bear, ...rest } = o || {};
+  const kind = toFlag(ga) ? 'ga' : toFlag(bear) ? 'bear' : 'r15';
+  if ('beard' in rest) {
+    const b = rest.beard;
+    if (isFalseish(b)) delete rest.beard;
+    else if (toFlag(b)) rest.beard = typeof rest.hairColor === 'string' && rest.hairColor ? rest.hairColor : BEARD_FALLBACK;
+    else if (typeof b !== 'string') rest.beard = BEARD_FALLBACK;
+  }
+  return { kind, opts: rest };
+}
+// tên biểu cảm lạ → tên gần nhất (R15 và Gà đều hiểu 14 tên chuẩn; tên khác ở đây). Tên không biết → để nguyên (R15 rơi về smile, Gà về binh_thuong, gấu bỏ qua), không ném.
+export const FACE_ALIAS = {
+  shocked: 'surprised', shock: 'surprised', amazed: 'surprised', cry: 'sad', crying: 'sad', tearful: 'sad', upset: 'sad', tired: 'sleepy', exhausted: 'sleepy', drowsy: 'sleepy',
+  excited: 'happy', joy: 'happy', glad: 'happy', cheerful: 'happy', confused: 'worried', thinking: 'worried', anxious: 'worried', nervous: 'worried', embarrassed: 'shy', blush: 'shy',
+  laughing: 'laugh', lol: 'laugh', smirk: 'grin', smug: 'grin', proud: 'grin', mad: 'angry', furious: 'angry', annoyed: 'angry', afraid: 'scared', fear: 'scared', terrified: 'scared',
+  calm: 'neutral', flat: 'neutral', serious: 'neutral', touched: 'moved', grateful: 'moved', relieved: 'moved', asleep: 'sleep', sleeping: 'sleep', freezing: 'cold', smiling: 'smile',
+};
+export const mapFace = (name, known) => (!name || typeof name !== 'string' || name.includes('~') || (known && known(name)) ? name : FACE_ALIAS[name] ?? name);
+function wrapFaces(a, known) {
+  const sf = a.setFace?.bind(a), fa = a.faceAt?.bind(a);
+  if (sf) a.setFace = (e) => sf(mapFace(e, known));
+  if (fa) a.faceAt = (t, n, opt) => fa(t, mapFace(n, known), opt);
+  return a;
+}
+const R15_KNOWN = (n) => !!FACE_PRESETS[n];
+const GA_KNOWN = (n) => !!GA_FACE_MAP[n] || GA_FACES.some(([, k]) => k === n);
+
 export async function buildCast(THREE, actors = {}, { seed = 1 } = {}) {
-  const body = await loadR15Body(THREE);
   const out = {};
-  const make = async (name, o) => {
-    const textures = await loadCharacterTextures(THREE, name);
-    const a = createR15(THREE, { name, face: 'smile', ...o, body, textures });
+  const plan = Object.entries(actors).filter(([n]) => n !== 'crowd').map(([name, o]) => ({ name, ...normalizeActorOpts(o) }));
+  const nCrowd = actors.crowd?.count || 0;
+  const needBody = nCrowd > 0 || plan.some((p) => p.kind === 'r15');
+  const body = needBody ? await loadR15Body(THREE) : null;
+  // Gà cần faceSet (37 mặt), atlas và mũ trùm GLB nạp xong TRƯỚC khi dựng (một lần cho cả tập)
+  let gaRes = null;
+  let createGa = null;
+  if (plan.some((p) => p.kind === 'ga')) { const G = await import('./ga-rig.js'); createGa = G.createGa; const { loadGaAtlas, loadGaHood } = G; gaRes = { faceSet: await loadGaFaces(THREE), atlas: await loadGaAtlas(THREE), hood: await loadGaHood(THREE) }; }
+  const make = async (name, o, kind = 'r15') => {
+    let a;
+    if (kind === 'ga') a = wrapFaces(createGa(THREE, { name, face: 'smile', ...o, ...gaRes }), GA_KNOWN);
+    else if (kind === 'bear') a = wrapFaces(createBear(THREE, { name, ...o }), () => true);
+    else a = wrapFaces(createR15(THREE, { name, face: 'smile', ...o, body, textures: await loadCharacterTextures(THREE, name) }), R15_KNOWN);
     a._defaultFace = o.face || 'smile';
     out[name] = a;
   };
-  for (const [name, o] of Object.entries(actors)) { if (name !== 'crowd') await make(name, o || {}); }
-  const n = actors.crowd?.count || 0;
-  for (let i = 1; i <= n; i++) await make(`crowd${i}`, crowdLook(i, seed));
+  for (const p of plan) await make(p.name, p.opts, p.kind);
+  for (let i = 1; i <= nCrowd; i++) await make(`crowd${i}`, crowdLook(i, seed));
   return out;
 }
 export const crowdNames = (actors = {}) => Array.from({ length: actors.crowd?.count || 0 }, (_, i) => `crowd${i + 1}`);

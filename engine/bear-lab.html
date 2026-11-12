@@ -1,0 +1,53 @@
+<!doctype html>
+<!-- bear-lab — trang thử gấu bông (engine/bear.js): Bắp (nơ xanh) + 2 biến thể (đỏ, vàng).
+     Query: ?anim=idle|walk|run|climb|hug|hold|drag|putDown|vanish|wave|sitUp|lie  &t=0.4  &yaw=0.6  &pitch=0.1  &dist=7  &ty=1.1  &bow=%232e86de  &all=1 (3 gấu cạnh nhau)
+     Bề mặt kiểm: window.__ready, window.renderAt(t), window.__shot({anim,t,yaw,pitch,dist,ty,w,h}) → dataURL JPEG. TẤT ĐỊNH: hình chỉ phụ thuộc (t, anim, góc nhìn). -->
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bear Lab</title>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#cfcad6}#cv{position:fixed;inset:0;width:100%;height:100%;display:block}</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<script type="importmap">{ "imports": { "three": "../vendor/three/three.module.js", "three/addons/": "../vendor/three/addons/" } }</script>
+<script type="module">
+import * as THREE from 'three';
+import { createBear } from './bear.js';
+window.THREE = THREE;
+const q = new URLSearchParams(location.search);
+const cv = document.getElementById('cv');
+const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, preserveDrawingBuffer: true });
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap; renderer.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#d8d3df');
+scene.add(new THREE.HemisphereLight('#ffffff', '#b8b0c4', 1.1));
+const sun = new THREE.DirectionalLight('#fff4e0', 2.1); sun.position.set(4, 8, 6); sun.castShadow = true; sun.shadow.mapSize.set(1024, 1024);
+Object.assign(sun.shadow.camera, { left: -5, right: 5, top: 5, bottom: -3, near: 1, far: 30 }); scene.add(sun);
+const fill = new THREE.DirectionalLight('#dfe6ff', 0.6); fill.position.set(-5, 3, -5); scene.add(fill);
+const floor = new THREE.Mesh(new THREE.CircleGeometry(8, 48), new THREE.MeshStandardMaterial({ color: '#e4dfe9', roughness: 1 }));
+floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+
+const bears = [createBear(THREE, { name: 'bap', bow: '#2e86de' }), createBear(THREE, { name: 'bear2', bow: '#e74c3c' }), createBear(THREE, { name: 'bear3', bow: '#f1c40f' })];
+for (const b of bears) scene.add(b.root);
+const cam = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+const st = { anim: q.get('anim') || 'idle', t: +(q.get('t') || 0), yaw: +(q.get('yaw') || 0.6), pitch: +(q.get('pitch') || 0.1), dist: +(q.get('dist') || 7), ty: +(q.get('ty') || 1.1), all: q.get('all') === '1' };
+if (q.get('bow')) bears[0].setColors({ bow: q.get('bow') });
+function draw(o = {}) {
+  const s = { ...st, ...o }, w = o.w || cv.clientWidth, h = o.h || cv.clientHeight;
+  if (cv.width !== w || cv.height !== h) { renderer.setSize(w, h, false); }
+  cam.aspect = w / h; cam.fov = o.fov || 30; cam.updateProjectionMatrix();
+  bears.forEach((b, i) => { b.root.visible = s.all || i === 0; b.root.position.set(s.all ? (i - 1) * 2.4 : 0, 0, 0); b.animate(s.anim, s.t + i * 0.3, { noFace: true }); });
+  const cy = Math.cos(s.pitch);
+  cam.position.set(s.dist * Math.sin(s.yaw) * cy, s.ty + s.dist * Math.sin(s.pitch), s.dist * Math.cos(s.yaw) * cy);
+  cam.lookAt(0, s.ty, 0);
+  renderer.render(scene, cam);
+}
+window.__lab = { THREE, scene, bears, cam, st };
+window.renderAt = (t) => { st.t = t; draw(); return true; };
+window.__shot = (o) => { draw(o); return cv.toDataURL('image/jpeg', 0.9); };
+draw();
+window.__ready = true;
+</script>
+</body>
+</html>
