@@ -37,7 +37,7 @@ import KITCHEN_ENV, { KITCHEN_FURNISH } from './envs/kitchen.js';
 import BEDROOM_ENV, { BEDROOM_FURNISH } from './envs/bedroom.js';
 import { furnishIds } from './furnish.js';
 
-import { LIGHTS } from './lights.js';
+import { LIGHTS, applyLite } from './lights.js';
 export { LIGHTS };
 
 const hash = (i, s) => { let x = Math.imul(i ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(s + 1, 0xc2b2ae35); x ^= x >>> 13; x = Math.imul(x, 0x27d4eb2f); x ^= x >>> 16; return (x >>> 0) / 4294967296; };
@@ -225,13 +225,30 @@ export function createEnvs(THREE, stage, K0, A = null) {
   // ---------- BIỂN CHUNG: dựng hoàn toàn từ thời tiết (engine/seaweather.js) — shot: { env: 'sea', seaWeather: 'giong' } ----------
   def('sea', 'ocean', (g, e) => OPENSEA_ENV(g, e, H()));   // engine/envs/openSea.js
 
+  // ---------- ĐÈN ĐIỂM DÙNG CHUNG ----------
+  // Một PointLight LUÔN nằm trong scene (số đèn mọi env như nhau → three không dịch lại program khi đổi env). Env nội thất khai
+  // e.pointSpec; env khác → intensity 0 (không chiếu sáng nên hình y hệt). KHÔNG thêm/bớt đèn, KHÔNG đổi visible/castShadow theo t.
+  const pool = new THREE.PointLight('#ffffff', 0, 60, 1.2); pool.name = 'interior_point'; scene.add(pool);
+  function applyPool(e) {
+    const s = e.pointSpec, host = s ? (e.room || e.group) : scene;   // đèn gắn vào phòng đang hiện (xoay/lăn cùng phòng như PointLight cũ); env khác → về gốc scene, cường độ 0
+    if (pool.parent !== host) host.add(pool);
+    if (s) { pool.color.set(s.color); pool.intensity = s.intensity; pool.distance = s.distance; pool.decay = s.decay; pool.position.set(...s.pos); }
+    else pool.intensity = 0;
+  }
+
+  // Trạng thái scene giống lúc chạy ngay từ lúc dựng: có sương + có IBL (nếu ô ibl bật) → lệnh compile() trước khi seek biên dịch đúng biến thể program sẽ dùng
+  if (!scene.fog) scene.fog = new THREE.Fog('#cfeaff', 1e7, 2e7);
+  if (globalThis.__autoFx?.ibl ?? true) { scene.environment = ibl.get('day'); scene.environmentIntensity = ibl.intensity('day'); }
+
   // ---------- áp dụng ----------
-  let current = null;
+  let current = null, liteState = false;
   const wl = { sunDir: new THREE.Vector3(), sunColor: new THREE.Color(), skyTop: new THREE.Color(), skyBottom: new THREE.Color(), amb: new THREE.Color(), flash: 0 };
   function applyLight(L, flash = 0) {
     skyMat.uniforms.top.value.set(L.top); skyMat.uniforms.bottom.value.set(L.bottom); skyMat.uniforms.flash.value = flash;
     scene.background = C(L.bottom);
-    if (L.fog) { if (!scene.fog) scene.fog = new THREE.Fog(L.fog, 100, 500); scene.fog.color.set(L.fog); scene.fog.near = L.fogR[0]; scene.fog.far = L.fogR[1]; } else scene.fog = null;
+    // sương LUÔN có (scene.fog không bao giờ null → cacheKey program không đổi giữa ngoài trời/nội thất): nội thất = sương vô hạn (near rất xa ⇒ hệ số 0, hình y hệt không sương)
+    if (!scene.fog) scene.fog = new THREE.Fog(L.fog || L.bottom, 100, 500);
+    if (L.fog) { scene.fog.color.set(L.fog); scene.fog.near = L.fogR[0]; scene.fog.far = L.fogR[1]; } else { scene.fog.color.set(L.bottom); scene.fog.near = 1e7; scene.fog.far = 2e7; }
     stage.hemi.color.set(L.hemi[0]); stage.hemi.groundColor.set(L.hemi[1]); stage.hemi.intensity = L.hemi[2] + flash * 1.5;
     stage.sun.color.set(L.sun[0]); stage.sun.intensity = L.sun[1] + flash * 3;
     stage.renderer.toneMappingExposure = L.exposure;
@@ -245,6 +262,8 @@ export function createEnvs(THREE, stage, K0, A = null) {
   let last = { env: '', light: 'day', flash: 0 };
   function use(name, t, ctx = {}) {
     const e = activate(name);
+    applyPool(e);
+    { const lite = !!globalThis.__autoFx?.lite; if (lite !== liteState) { applyLite(scene, lite); liteState = lite; } }   // ô 'lite': engine/lights.js
     ctx.flash = 0;
     // lõi biển: t khung cho đồng hồ biển; thời tiết của shot (ctx.seaWeather = W từ engine/seaweather.js) — trả về như dựng rồi áp
     for (const s of e.group.userData.seas || []) s.frame(t);

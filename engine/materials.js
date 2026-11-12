@@ -7,6 +7,8 @@
 //      - gồ ghề (bump) theo vân, tự mờ dần khi vân nhỏ hơn điểm ảnh (không nhiễu lấp lánh)
 //      - vải/lông: viền sáng mềm (sheen); tuyết/cát: hạt lấp lánh; xe: vảy nhũ
 //   Toạ độ vân = toạ độ cục bộ của vật × tỉ lệ thế giới (stud) → vật đi lại vân đi theo, không trôi. Tất định.
+//   3. Shader theo HỌ (MAT_FAMILIES / FAMILIES): mọi loại trong họ dùng chung 1 program (khoá `|mat_<họ>`), khác nhau
+//      chỉ qua uniform (material.userData.matU) → Chrome/ANGLE dịch ít program hơn hẳn lúc mở trang (xem docs/core.md).
 //
 //   import { applyMaterials, MATS } from '/engine/materials.js';
 //   applyMaterials(THREE, stage.scene);          // SAU applyGrunge (vá nối tiếp, không ghi đè)
@@ -138,155 +140,248 @@ vec3 mtAlb; float mtA, mtHgt, mtRv, mtMet, mtSpark, mtMetMix, mtFw;
 float aa(float f) { return 1.0 - smoothstep(0.3, 0.8, mtFw * f); }   // f chu kỳ/stud → tắt khi < ~1–2 px/chu kỳ
 `;
 
-// Vân theo kiểu (chạy 1 lần sau map_fragment). Có sẵn: p (stud × sc), n (pháp tuyến cục bộ), uvp (mặt phẳng trội),
-// aa(f) = 1 → 0 khi vân tần số f (chu kỳ/stud) nhỏ dần dưới cỡ 1 pixel → xa thì vân mịn tự tắt, không nhiễu hạt/moire.
+// VÂN theo kiểu. Phần NẶNG (fbm / noise / voronoi / hash) không viết trong từng kiểu mà là các "Ô NOISE" dùng chung,
+// tính 1 lần trước nhánh, tham số bằng uniform: sF1 sF2 = mtFbm(p·s + o) · sN1..sN4 = mtN3(nền·s + o) · sV = mtVor(uvp·s)
+// · sH = mtH(floor(nền·s) + o). Nền: p | U = vec3(uvp, 0) | W = (dọc thớ, ngang thớ) gỗ | WP = (dọc, y, dọc) gỗ sơn.
+// Nhánh của kiểu chỉ còn phép trộn rẻ → shader 1 họ ≈ cỡ 1 kiểu nặng nhất, không phải tổng mọi kiểu (Chrome/ANGLE
+// dịch nhanh). Phép tính y hệt bản cũ (cùng đối số, cùng thứ tự) → hình giống hệt.
+// Có sẵn trong nhánh: p (stud × sc), n (pháp tuyến cục bộ), uvp (mặt phẳng trội), pW, aa(f) = 1 → 0 khi vân tần số f
+// (chu kỳ/stud) nhỏ dần dưới cỡ 1 pixel → xa thì vân mịn tự tắt, không nhiễu hạt/moire.
 // Biên độ cố ý NHẸ: chất liệu nhận ra nhờ độ nhám/kim loại + vân lớn; vân mịn chỉ thấy khi cận cảnh.
+// Khai báo ô: f: [[s, o?]…] (s, o là số hoặc [x,y,z])  n: [[nền, s, o?]…]  v: s  h: [nền, s, o?]
 const PAT = {
-  NONE: '',
-  MATTE: `mtA = mix(0.95, 1.04, mtFbm(p * 0.9)); mtHgt = mtN3(p * 9.0) * aa(9.0);`,
-  PLASTIC: `mtA = mix(0.985, 1.01, mtFbm(p * 1.2)); mtHgt = 0.5;`,
-  WOOD: `
-    vec3 sz = vGrSz; float along; vec2 acr;
-    if (sz.x >= sz.y && sz.x >= sz.z) { along = p.x; acr = p.yz; } else if (sz.y >= sz.z) { along = p.y; acr = p.xz; } else { along = p.z; acr = p.xy; }
-    float warp = mtN3(vec3(along * 0.12, acr * 0.5)) * 2.2;
+  NONE: { code: '' },
+  MATTE: { f: [[0.9]], n: [['p', 9]], code: `mtA = mix(0.95, 1.04, sF1); mtHgt = sN1 * aa(9.0);` },
+  PLASTIC: { f: [[1.2]], code: `mtA = mix(0.985, 1.01, sF1); mtHgt = 0.5;` },
+  WOOD: { n: [['W', [0.12, 0.5, 0.5]], ['W', [0.22, 11, 11]], ['W', [0.5, 1.2, 1.2], 31]], code: `
+    vec2 acr = pW.yz; float warp = sN1 * 2.2;
     float ring = fract((acr.x * 0.8 + acr.y * 0.5 + warp) * 2.6);
     float g = smoothstep(0.0, 0.3, ring) * smoothstep(1.0, 0.55, ring) * aa(5.0);
-    float streak = mix(0.5, mtN3(vec3(along * 0.22, acr * 11.0)), aa(11.0));
-    float knot = smoothstep(0.86, 0.95, mtN3(vec3(along * 0.5, acr * 1.2) + 31.0));
+    float streak = mix(0.5, sN2, aa(11.0));
+    float knot = smoothstep(0.86, 0.95, sN3);
     mtA = mix(0.8, 1.08, 0.5 * g + 0.5 * streak) * (1.0 - 0.3 * knot);
-    mtHgt = 0.55 * g + 0.45 * streak - knot * 0.5; mtRv = (0.5 - streak) * 0.12;`,
-  WOODPAINT: `
-    vec3 sz = vGrSz; float along = (sz.x >= sz.z) ? p.x : p.z;
-    float streak = mix(0.5, mtN3(vec3(along * 0.25, p.y * 9.0, along * 0.1)), aa(9.0));
-    mtA = mix(0.95, 1.03, mtFbm(p * 1.3)) * mix(0.97, 1.02, streak); mtHgt = streak; mtRv = (0.5 - streak) * 0.08;`,
-  BARK: `
-    float f = 1.0 - abs(mtN3(vec3(p.x * 2.6, p.y * 0.32, p.z * 2.6)) * 2.0 - 1.0); f = f * f * f * aa(2.6);
-    float plate = mtN3(vec3(p.x * 1.1, p.y * 0.5, p.z * 1.1));
-    mtA = mix(1.08, 0.6, f) * mix(0.88, 1.06, plate); mtHgt = 1.0 - f;`,
-  PAPER: `
-    float mot = mtFbm(p * 1.6), fib = mix(0.5, mtN3(p * 30.0), aa(30.0));
-    mtA = mix(0.985, 1.012, mot) * mix(0.992, 1.006, fib); mtHgt = fib * 0.5 + mot * 0.5;`,
-  FABRIC: `
+    mtHgt = 0.55 * g + 0.45 * streak - knot * 0.5; mtRv = (0.5 - streak) * 0.12;` },
+  WOODPAINT: { n: [['WP', [0.25, 9, 0.1]]], f: [[1.3]], code: `
+    float streak = mix(0.5, sN1, aa(9.0));
+    mtA = mix(0.95, 1.03, sF1) * mix(0.97, 1.02, streak); mtHgt = streak; mtRv = (0.5 - streak) * 0.08;` },
+  BARK: { n: [['p', [2.6, 0.32, 2.6]], ['p', [1.1, 0.5, 1.1]]], code: `
+    float f = 1.0 - abs(sN1 * 2.0 - 1.0); f = f * f * f * aa(2.6);
+    float plate = sN2;
+    mtA = mix(1.08, 0.6, f) * mix(0.88, 1.06, plate); mtHgt = 1.0 - f;` },
+  PAPER: { f: [[1.6]], n: [['p', 30]], code: `
+    float mot = sF1, fib = mix(0.5, sN1, aa(30.0));
+    mtA = mix(0.985, 1.012, mot) * mix(0.992, 1.006, fib); mtHgt = fib * 0.5 + mot * 0.5;` },
+  FABRIC: { n: [['p', 14], ['U', [2, 24, 0], [0, 0, 1]]], code: `
     float wf = 28.0; vec2 w = uvp * wf; float wv = 0.5 + 0.5 * sin(w.x * 6.2832) * sin(w.y * 6.2832);
     float k = aa(wf); wv = mix(0.5, wv, k);
-    float fuzz = mix(0.5, mtN3(p * 14.0), aa(14.0)), slub = mtN3(vec3(uvp.x * 2.0, uvp.y * 24.0, 1.0));
-    mtA = mix(0.965, 1.025, wv * 0.3 + fuzz * 0.7) * mix(0.975, 1.02, slub); mtHgt = wv * 0.6 + fuzz * 0.4;`,
-  FUZZ: `float fz = mix(0.5, mtN3(p * 18.0), aa(18.0)); mtA = mix(0.94, 1.04, fz); mtHgt = fz;`,
-  HAIR: `float s = mtN3(vec3(p.x * 30.0, p.y * 1.6, p.z * 30.0)); s = mix(0.5, s, aa(30.0)); mtA = mix(0.86, 1.14, s); mtHgt = s; mtRv = (s - 0.5) * 0.2;`,
-  SKIN: `mtA = mix(0.99, 1.008, mtFbm(p * 2.0)); mtHgt = 0.5;`,
-  FLAKE: `mtSpark = step(0.97, mtH(floor(p * 70.0))) * aa(70.0); mtHgt = 0.5;`,
-  SCRATCH: `
+    float fuzz = mix(0.5, sN1, aa(14.0)), slub = sN2;
+    mtA = mix(0.965, 1.025, wv * 0.3 + fuzz * 0.7) * mix(0.975, 1.02, slub); mtHgt = wv * 0.6 + fuzz * 0.4;` },
+  FUZZ: { n: [['p', 18]], code: `float fz = mix(0.5, sN1, aa(18.0)); mtA = mix(0.94, 1.04, fz); mtHgt = fz;` },
+  HAIR: { n: [['p', [30, 1.6, 30]]], code: `float s = sN1; s = mix(0.5, s, aa(30.0)); mtA = mix(0.86, 1.14, s); mtHgt = s; mtRv = (s - 0.5) * 0.2;` },
+  SKIN: { f: [[2]], code: `mtA = mix(0.99, 1.008, sF1); mtHgt = 0.5;` },
+  FLAKE: { h: ['p', 70], code: `mtSpark = step(0.97, sH) * aa(70.0); mtHgt = 0.5;` },
+  SCRATCH: { n: [['U', [60, 1.2, 0], [0, 0, 7]]], f: [[2]], code: `
     mtAlb = max(mtAlb, vec3(0.78));                                      // kim loại mạ phải sáng (màu gốc tối → đen kịt)
-    float sc = smoothstep(0.93, 0.99, mtN3(vec3(uvp.x * 60.0, uvp.y * 1.2, 7.0))) * aa(60.0);
-    mtA = 1.0 + sc * 0.1; mtRv = sc * 0.2 + (mtFbm(p * 2.0) - 0.5) * 0.12; mtHgt = -sc;`,
-  METALPAINT: `
-    float chipN = mtFbm(p * 1.1 + 7.0);
+    float sc = smoothstep(0.93, 0.99, sN1) * aa(60.0);
+    mtA = 1.0 + sc * 0.1; mtRv = sc * 0.2 + (sF1 - 0.5) * 0.12; mtHgt = -sc;` },
+  METALPAINT: { f: [[1.1, 7], [0.55, 2]], n: [['p', [2, 0.12, 2]], ['p', 6], ['p', 3], ['p', 16]], code: `
+    float chipN = sF1;
     float chip = smoothstep(0.69, 0.72, chipN);
-    float rust = smoothstep(0.55, 0.8, mtFbm(p * 0.55 + 2.0)) * (0.4 + 0.6 * (1.0 - smoothstep(0.0, 0.6, vGrB.y)));
-    float streakR = smoothstep(0.6, 0.85, mtN3(vec3(p.x * 2.0, p.y * 0.12, p.z * 2.0))) * (1.0 - step(0.7, abs(n.y)));
-    vec3 metalC = vec3(0.62, 0.63, 0.66), rustC = vec3(0.42, 0.2, 0.08) * (0.75 + 0.4 * mtN3(p * 6.0));
+    float rust = smoothstep(0.55, 0.8, sF2) * (0.4 + 0.6 * (1.0 - smoothstep(0.0, 0.6, vGrB.y)));
+    float streakR = smoothstep(0.6, 0.85, sN1) * (1.0 - step(0.7, abs(n.y)));
+    vec3 metalC = vec3(0.62, 0.63, 0.66), rustC = vec3(0.42, 0.2, 0.08) * (0.75 + 0.4 * sN2);
     mtAlb = mix(mtAlb, metalC, chip);
     mtAlb = mix(mtAlb, rustC, clamp(rust * 0.5 + streakR * 0.3 + chip * rust, 0.0, 0.8));
-    mtMetMix = chip * (1.0 - rust) * 0.85; mtA = mix(0.96, 1.03, mtN3(p * 3.0));
-    mtHgt = chip * 0.8 + (smoothstep(0.66, 0.69, chipN) - chip) * 0.5 + rust * mix(0.5, mtN3(p * 16.0), aa(16.0)) * 0.6; mtRv = rust * 0.4 - chip * 0.12;`,
-  IRON: `
+    mtMetMix = chip * (1.0 - rust) * 0.85; mtA = mix(0.96, 1.03, sN3);
+    mtHgt = chip * 0.8 + (smoothstep(0.66, 0.69, chipN) - chip) * 0.5 + rust * mix(0.5, sN4, aa(16.0)) * 0.6; mtRv = rust * 0.4 - chip * 0.12;` },
+  IRON: { f: [[0.7, 4]], n: [['p', 4], ['p', 16]], code: `
     mtAlb = max(mtAlb, vec3(0.5));
-    float rust = smoothstep(0.5, 0.78, mtFbm(p * 0.7 + 4.0)); vec3 rustC = vec3(0.4, 0.19, 0.08);
-    mtAlb = mix(mtAlb, rustC, rust * 0.8); mtMetMix = -rust; mtA = mix(0.92, 1.04, mtN3(p * 4.0)); mtHgt = rust * mix(0.5, mtN3(p * 16.0), aa(16.0)); mtRv = rust * 0.45;`,
-  ENAMEL: `mtA = mix(0.99, 1.008, mtFbm(p * 1.5)); mtHgt = mix(0.5, mtN3(p * 11.0), aa(11.0));`,
-  PORES: `vec2 v = mtVor(uvp * 30.0); float d = mix(0.6, smoothstep(0.0, 0.35, v.x), aa(30.0)); mtA = mix(0.93, 1.0, d) * mix(0.96, 1.03, mtFbm(p * 2.0)); mtHgt = d;`,
-  FIBER: `float fb = mix(0.5, mtN3(vec3(p.x * 22.0, p.y * 3.0, p.z * 22.0)), aa(22.0)); mtA = mix(0.76, 1.1, fb); mtHgt = fb;`,
-  SHINGLE: `
+    float rust = smoothstep(0.5, 0.78, sF1); vec3 rustC = vec3(0.4, 0.19, 0.08);
+    mtAlb = mix(mtAlb, rustC, rust * 0.8); mtMetMix = -rust; mtA = mix(0.92, 1.04, sN1); mtHgt = rust * mix(0.5, sN2, aa(16.0)); mtRv = rust * 0.45;` },
+  ENAMEL: { f: [[1.5]], n: [['p', 11]], code: `mtA = mix(0.99, 1.008, sF1); mtHgt = mix(0.5, sN1, aa(11.0));` },
+  PORES: { v: 30, f: [[2]], code: `vec2 v = sV; float d = mix(0.6, smoothstep(0.0, 0.35, v.x), aa(30.0)); mtA = mix(0.93, 1.0, d) * mix(0.96, 1.03, sF1); mtHgt = d;` },
+  FIBER: { n: [['p', [22, 3, 22]]], code: `float fb = mix(0.5, sN1, aa(22.0)); mtA = mix(0.76, 1.1, fb); mtHgt = fb;` },
+  SHINGLE: { f: [[2]], code: `
     vec2 q = uvp * vec2(2.2, 3.4); float row = floor(q.y); q.x += mod(row, 2.0) * 0.5;
     vec2 cell = floor(q), f = fract(q); float k = aa(3.4);
     float edge = smoothstep(0.0, 0.07, f.x) * smoothstep(1.0, 0.93, f.x);
-    mtA = mix(1.0, mix(0.84, 1.07, mtH2(cell + row * 7.0)) * mix(0.75, 1.0, f.y) * mix(0.82, 1.0, edge), k) * mix(0.95, 1.04, mtFbm(p * 2.0));
-    mtHgt = mix(0.5, f.y * edge, k);`,
-  BRICK: `
+    mtA = mix(1.0, mix(0.84, 1.07, mtH2(cell + row * 7.0)) * mix(0.75, 1.0, f.y) * mix(0.82, 1.0, edge), k) * mix(0.95, 1.04, sF1);
+    mtHgt = mix(0.5, f.y * edge, k);` },
+  BRICK: { f: [[2]], code: `
     vec2 q = uvp * vec2(2.0, 4.0); float row = floor(q.y); q.x += mod(row, 2.0) * 0.5;
     vec2 cell = floor(q), f = fract(q); float k = aa(4.0);
     float mortar = (1.0 - smoothstep(0.0, 0.05, min(min(f.x, 1.0 - f.x) * 0.5, min(f.y, 1.0 - f.y)))) * k;
     mtAlb = mix(mtAlb * mix(1.0, mix(0.82, 1.12, mtH2(cell)), k), vec3(0.62, 0.6, 0.56), mortar);
-    mtA = mix(0.93, 1.05, mtFbm(p * 2.0)); mtHgt = 1.0 - mortar;`,
-  PLASTER: `mtA = mix(0.95, 1.03, mtFbm(p * 0.9)); mtHgt = mix(0.5, mtN3(p * 8.0), aa(8.0)) * 0.7 + mtFbm(p * 2.0) * 0.3;`,
-  CONCRETE: `
-    float pore = step(0.95, mtH2(floor(uvp * 40.0))) * aa(40.0);
-    mtA = mix(0.88, 1.05, mtFbm(p * 0.7)) * (1.0 - pore * 0.3) * mix(0.97, 1.02, mix(0.5, mtN3(p * 16.0), aa(16.0)));
-    mtHgt = mix(0.5, mtN3(p * 16.0), aa(16.0)) - pore;`,
-  ASPHALT: `
-    float agg = step(0.85, mtH2(floor(uvp * 30.0))) * aa(30.0);
-    vec2 v = mtVor(uvp * 0.35); float crack = (1.0 - smoothstep(0.0, 0.03, v.y - v.x)) * smoothstep(0.6, 0.75, mtFbm(p * 0.3 + 9.0)) * aa(2.0);
-    mtA = mix(0.84, 1.08, mtFbm(p * 0.5)) * (1.0 + agg * 0.35) * (1.0 - crack * 0.45);
-    mtHgt = mix(0.5, mtN3(p * 20.0), aa(20.0)) + agg * 0.5 - crack; mtRv = -agg * 0.08;`,
-  STONE: `
-    float s1 = mtFbm(p * 0.75), s2 = mix(0.5, mtN3(p * 7.0), aa(7.0)); vec2 v = mtVor(uvp * 1.1);
+    mtA = mix(0.93, 1.05, sF1); mtHgt = 1.0 - mortar;` },
+  PLASTER: { f: [[0.9], [2]], n: [['p', 8]], code: `mtA = mix(0.95, 1.03, sF1); mtHgt = mix(0.5, sN1, aa(8.0)) * 0.7 + sF2 * 0.3;` },
+  CONCRETE: { h: ['U', [40, 40, 0], [0, 0, 1.37]], f: [[0.7]], n: [['p', 16]], code: `
+    float pore = step(0.95, sH) * aa(40.0);
+    mtA = mix(0.88, 1.05, sF1) * (1.0 - pore * 0.3) * mix(0.97, 1.02, mix(0.5, sN1, aa(16.0)));
+    mtHgt = mix(0.5, sN1, aa(16.0)) - pore;` },
+  ASPHALT: { h: ['U', [30, 30, 0], [0, 0, 1.37]], v: 0.35, f: [[0.3, 9], [0.5]], n: [['p', 20]], code: `
+    float agg = step(0.85, sH) * aa(30.0);
+    vec2 v = sV; float crack = (1.0 - smoothstep(0.0, 0.03, v.y - v.x)) * smoothstep(0.6, 0.75, sF1) * aa(2.0);
+    mtA = mix(0.84, 1.08, sF2) * (1.0 + agg * 0.35) * (1.0 - crack * 0.45);
+    mtHgt = mix(0.5, sN1, aa(20.0)) + agg * 0.5 - crack; mtRv = -agg * 0.08;` },
+  STONE: { f: [[0.75]], n: [['p', 7]], v: 1.1, h: ['p', 20], code: `
+    float s1 = sF1, s2 = mix(0.5, sN1, aa(7.0)); vec2 v = sV;
     float crack = (1.0 - smoothstep(0.0, 0.05, v.y - v.x)) * aa(3.0);
-    float speck = step(0.9, mtH(floor(p * 20.0))) * aa(20.0);
+    float speck = step(0.9, sH) * aa(20.0);
     mtA = mix(0.78, 1.1, s1) * mix(0.92, 1.06, s2) * (1.0 - crack * 0.3) * (1.0 + speck * 0.2);
-    mtHgt = s1 * 0.6 + s2 * 0.4 - crack * 0.6; mtRv = (0.5 - s2) * 0.08;`,
-  SAND: `
-    float gr = mix(0.5, mtN3(p * 18.0), aa(18.0)); float rip = 0.5 + 0.5 * sin(p.x * 1.3 + p.z * 0.45 + mtN3(p * 0.25) * 5.0);
-    mtA = mix(0.93, 1.05, gr) * mix(0.96, 1.03, rip) * mix(0.94, 1.04, mtFbm(p * 0.3));
-    mtHgt = gr * 0.5 + rip * 0.5; mtSpark = step(0.988, mtH(floor(p * 26.0))) * aa(26.0);`,
-  SOIL: `
-    float cl = mtFbm(p * 1.2); vec2 v = mtVor(uvp * 9.0); float peb = smoothstep(0.3, 0.18, v.x) * step(0.65, mtH2(floor(uvp * 9.0))) * aa(9.0);
-    mtA = mix(0.8, 1.08, cl) * (1.0 + peb * 0.2); mtHgt = cl * 0.6 + peb * 0.6;`,
-  GRASS: `
-    float bl = mtN3(vec3(uvp * 40.0, 2.0)) * mtN3(vec3(uvp * 12.0, 5.0)); bl = mix(0.3, bl, aa(40.0)); float patchy = mtFbm(p * 0.35);
-    mtA = mix(0.82, 1.1, patchy) * mix(0.9, 1.08, bl); mtHgt = bl;`,
-  LEAF: `float vein = mix(0.5, mtN3(p * 9.0), aa(9.0)); mtA = mix(0.84, 1.1, mtFbm(p * 1.8)) * mix(0.95, 1.03, vein); mtHgt = vein;`,
-  SNOW: `float g = mtFbm(p * 1.3); mtA = mix(0.96, 1.02, g); mtHgt = g + mix(0.5, mtN3(p * 10.0), aa(10.0)) * 0.3; mtSpark = step(0.991, mtH(floor(p * 36.0))) * aa(36.0);`,
-  ICE: `vec2 v = mtVor(uvp * 1.4); float cr = (1.0 - smoothstep(0.0, 0.025, v.y - v.x)) * aa(3.0); mtA = mix(0.94, 1.04, mtFbm(p * 0.8)) * (1.0 + cr * 0.12); mtHgt = -cr; mtRv = cr * 0.3;`,
-  CORAL: `vec2 v = mtVor(uvp * 7.0); float pore = (1.0 - smoothstep(0.0, 0.28, v.x)) * aa(7.0); mtA = mix(0.86, 1.05, mtFbm(p * 1.5)) * (1.0 - pore * 0.16); mtHgt = 1.0 - pore * 0.7;`,
-  SHELL: `float ring = 0.5 + 0.5 * sin(length(uvp) * 22.0 + mtN3(p * 2.0) * 3.0); ring = mix(0.5, ring, aa(4.0)); mtA = mix(0.9, 1.05, ring) * mix(0.94, 1.03, mtFbm(p * 2.0)); mtHgt = ring * 0.5;`,
-  FUR: `float st = mix(0.5, mtN3(vec3(p.x * 20.0, p.y * 5.0, p.z * 20.0)), aa(20.0)); mtA = mix(0.87, 1.08, st) * mix(0.94, 1.04, mtFbm(p * 1.4)); mtHgt = st;`,
-  MOTTLE: `float mo = mtFbm(p * 0.8); mtA = mix(0.86, 1.06, mo); mtHgt = mo * 0.6 + mix(0.5, mtN3(p * 12.0), aa(12.0)) * 0.4;`,
+    mtHgt = s1 * 0.6 + s2 * 0.4 - crack * 0.6; mtRv = (0.5 - s2) * 0.08;` },
+  SAND: { n: [['p', 18], ['p', 0.25]], f: [[0.3]], h: ['p', 26], code: `
+    float gr = mix(0.5, sN1, aa(18.0)); float rip = 0.5 + 0.5 * sin(p.x * 1.3 + p.z * 0.45 + sN2 * 5.0);
+    mtA = mix(0.93, 1.05, gr) * mix(0.96, 1.03, rip) * mix(0.94, 1.04, sF1);
+    mtHgt = gr * 0.5 + rip * 0.5; mtSpark = step(0.988, sH) * aa(26.0);` },
+  SOIL: { f: [[1.2]], v: 9, h: ['U', [9, 9, 0], [0, 0, 1.37]], code: `
+    float cl = sF1; vec2 v = sV; float peb = smoothstep(0.3, 0.18, v.x) * step(0.65, sH) * aa(9.0);
+    mtA = mix(0.8, 1.08, cl) * (1.0 + peb * 0.2); mtHgt = cl * 0.6 + peb * 0.6;` },
+  GRASS: { n: [['U', [40, 40, 0], [0, 0, 2]], ['U', [12, 12, 0], [0, 0, 5]]], f: [[0.35]], code: `
+    float bl = sN1 * sN2; bl = mix(0.3, bl, aa(40.0)); float patchy = sF1;
+    mtA = mix(0.82, 1.1, patchy) * mix(0.9, 1.08, bl); mtHgt = bl;` },
+  LEAF: { n: [['p', 9]], f: [[1.8]], code: `float vein = mix(0.5, sN1, aa(9.0)); mtA = mix(0.84, 1.1, sF1) * mix(0.95, 1.03, vein); mtHgt = vein;` },
+  SNOW: { f: [[1.3]], n: [['p', 10]], h: ['p', 36], code: `float g = sF1; mtA = mix(0.96, 1.02, g); mtHgt = g + mix(0.5, sN1, aa(10.0)) * 0.3; mtSpark = step(0.991, sH) * aa(36.0);` },
+  ICE: { v: 1.4, f: [[0.8]], code: `vec2 v = sV; float cr = (1.0 - smoothstep(0.0, 0.025, v.y - v.x)) * aa(3.0); mtA = mix(0.94, 1.04, sF1) * (1.0 + cr * 0.12); mtHgt = -cr; mtRv = cr * 0.3;` },
+  CORAL: { v: 7, f: [[1.5]], code: `vec2 v = sV; float pore = (1.0 - smoothstep(0.0, 0.28, v.x)) * aa(7.0); mtA = mix(0.86, 1.05, sF1) * (1.0 - pore * 0.16); mtHgt = 1.0 - pore * 0.7;` },
+  SHELL: { n: [['p', 2]], f: [[2]], code: `float ring = 0.5 + 0.5 * sin(length(uvp) * 22.0 + sN1 * 3.0); ring = mix(0.5, ring, aa(4.0)); mtA = mix(0.9, 1.05, ring) * mix(0.94, 1.03, sF1); mtHgt = ring * 0.5;` },
+  FUR: { n: [['p', [20, 5, 20]]], f: [[1.4]], code: `float st = mix(0.5, sN1, aa(20.0)); mtA = mix(0.87, 1.08, st) * mix(0.94, 1.04, sF1); mtHgt = st;` },
+  MOTTLE: { f: [[0.8]], n: [['p', 12]], code: `float mo = sF1; mtA = mix(0.86, 1.06, mo); mtHgt = mo * 0.6 + mix(0.5, sN1, aa(12.0)) * 0.4;` },
 };
 
-const f3 = (v) => (Number.isInteger(v) ? v.toFixed(1) : String(v));
+// HỌ chất liệu: mỗi họ = 1 shader (khoá program `|mat_<họ>`); các loại trong họ chỉ khác nhau qua UNIFORM (r, m, tint,
+// bump, spark, sheen, rmode, kiểu vân uMtPat, tham số ô noise). Trước: mỗi loại 1 program (38 loại × biến thể three)
+// → Chrome/ANGLE dịch ~20 s lúc mở trang. Kiểu vân trong họ chọn bằng `if (uMtPat == i)` (uniform → nhánh đồng nhất).
+// Bảng họ → kiểu vân. Sửa chỗ này để chia họ khác (đo bằng tools/shaders.mjs: tổng ms = số program × ms mỗi program).
+export const MAT_FAMILIES = { all: Object.keys(PAT) };
+const PAT_FAMILY = {}, PAT_ID = {};
+for (const [fam, pats] of Object.entries(MAT_FAMILIES)) pats.forEach((pt, i) => { PAT_FAMILY[pt] = fam; PAT_ID[pt] = i; });
+export const familyOf = (kind) => PAT_FAMILY[MAT_KINDS[kind].pat];
 
-function fragFor(kind) {
-  const K = MAT_KINDS[kind];
-  const tint = K.tint ? `vec3(${K.tint.map(f3).join(',')})` : 'vec3(1.0)';
+const BASE = { p: 0, U: 1, W: 2, WP: 3 };
+const v3 = (x, d = 0) => (x == null ? [d, d, d] : Array.isArray(x) ? x : [x, x, x]);
+
+// số ô noise mỗi họ cần (= nhiều nhất trong các kiểu của họ) → chỉ sinh đúng chừng đó ô
+function slotsOf(fam) {
+  const s = { f: 0, n: 0, v: 0, h: 0 };
+  for (const pt of MAT_FAMILIES[fam]) {
+    const P = PAT[pt];
+    s.f = Math.max(s.f, P.f?.length || 0); s.n = Math.max(s.n, P.n?.length || 0);
+    s.v = Math.max(s.v, P.v != null ? 1 : 0); s.h = Math.max(s.h, P.h ? 1 : 0);
+  }
+  return s;
+}
+
+// fbm: cận vòng lặp là UNIFORM (luôn 4) → trình dịch không trải 4 bậc ra (FXC/ANGLE trải mọi vòng hằng → shader phình).
+// Thứ tự cộng y hệt mtFbm cũ: 0.5·N(p) + 0.27·N(p·2.03+5.1) + 0.15·N(p·4.11+9.7) + 0.08·N(p·8.3+2.3).
+// Voronoi giữ bản trải sẵn mtVor (FRAG_LIB): bản vòng-uniform làm vết nứt đá lệch điểm ảnh (~44 dB), bản trải = ~80 dB.
+const LOOP = { oct: { value: 4 } };
+const FRAG_LOOP = /* glsl */`
+uniform int uMtOct;
+const float mtOW[4] = float[4](0.5, 0.27, 0.15, 0.08), mtOF[4] = float[4](1.0, 2.03, 4.11, 8.3), mtOO[4] = float[4](0.0, 5.1, 9.7, 2.3);
+float mtFbmL(vec3 p) { float s = 0.0; for (int o = 0; o < uMtOct; o++) s += mtOW[o] * mtN3(p * mtOF[o] + mtOO[o]); return s; }`;
+
+function fragFor(fam) {
+  const S = slotsOf(fam); const decl = [], body = [];
+  const needW = MAT_FAMILIES[fam].some((pt) => (PAT[pt].n || []).some((x) => x[0] === 'W' || x[0] === 'WP'));
+  const baseSel = (b) => (needW ? `(${b} == 0 ? p : (${b} == 1 ? vec3(uvp, 0.0) : (${b} == 2 ? pW : pWP)))` : `(${b} == 0 ? p : vec3(uvp, 0.0))`);
+  const pick = (arr, n, v) => Array.from({ length: n }, (_, i) => `${i ? 'else ' : ''}if (i == ${i}) ${arr}${i + 1} = ${v};`).join(' ');
+  if (S.f) {
+    decl.push(`uniform int uMtNF; uniform vec3 uMtFs[${S.f}], uMtFo[${S.f}];`);
+    body.push(`for (int i = 0; i < uMtNF; i++) { float v = mtFbmL(p * uMtFs[i] + uMtFo[i]); ${pick('sF', S.f, 'v')} }`);
+  }
+  if (S.n) {
+    decl.push(`uniform int uMtNN; uniform int uMtNb[${S.n}]; uniform vec3 uMtNs[${S.n}], uMtNo[${S.n}];`);
+    body.push(`for (int i = 0; i < uMtNN; i++) { int b = uMtNb[i]; float v = mtN3(${baseSel('b')} * uMtNs[i] + uMtNo[i]); ${pick('sN', S.n, 'v')} }`);
+  }
+  if (S.v) { decl.push('uniform float uMtVs;'); body.push('if (uMtVs > 0.0) sV = mtVor(uvp * uMtVs);'); }
+  if (S.h) { decl.push('uniform int uMtHb; uniform vec3 uMtHs, uMtHo;'); body.push(`if (uMtHs.x > 0.0) sH = mtH(floor(${baseSel('uMtHb')} * uMtHs) + uMtHo);`); }
+  const vars = [...Array.from({ length: S.f }, (_, i) => `sF${i + 1} = 0.5`), ...Array.from({ length: S.n }, (_, i) => `sN${i + 1} = 0.5`), ...(S.h ? ['sH = 0.0'] : [])];
+  // các nhánh ĐỘC LẬP (không else-if lồng nhau: FXC dịch chuỗi else-if sâu chậm gấp đôi); chỉ 1 nhánh khớp uMtPat
+  const chain = MAT_FAMILIES[fam].map((pt, i) => (PAT[pt].code ? `if (uMtPat == ${i}) { ${PAT[pt].code} }` : '')).filter(Boolean).join('\n  ');
+  const pars = /* glsl */`
+uniform int uMtPat; uniform float uMtSc, uMtR, uMtM, uMtRMax, uMtBump, uMtSpark, uMtSheen; uniform vec3 uMtTint;
+${decl.join('\n')}${FRAG_LOOP}`;
   return {
+    pars,
     color: /* glsl */`
-{ vec3 p = vGrP * ${f3(K.sc)}; vec3 n = normalize(vGrN); vec3 an = abs(n);
+{ vec3 p = vGrP * uMtSc; vec3 n = normalize(vGrN); vec3 an = abs(n);
   vec2 uvp = (an.x > an.y && an.x > an.z) ? p.zy : ((an.y > an.z) ? p.xz : p.xy);
   mtFw = length(fwidth(p));
   mtAlb = diffuseColor.rgb; mtA = 1.0; mtHgt = 0.5; mtRv = 0.0; mtMet = 0.0; mtSpark = 0.0; mtMetMix = 0.0;
-  ${PAT[K.pat] || ''}
-  diffuseColor.rgb = mix(diffuseColor.rgb, clamp(mtAlb * mtA * ${tint}, 0.0, 1.0), uMatOn); }`,
-    rough: K.rmode === 'max'
-      ? `roughnessFactor = mix(roughnessFactor, clamp(max(roughnessFactor, ${f3(K.r)}) + mtRv, 0.04, 1.0), uMatOn);`
-      : `roughnessFactor = mix(roughnessFactor, clamp(${f3(K.r)} + mtRv, 0.04, 1.0), uMatOn);`,
-    metal: `metalnessFactor = mix(metalnessFactor, clamp(${f3(K.m)} + mtMetMix, 0.0, 1.0), uMatOn);`,
-    bump: K.bump ? /* glsl */`
-{ vec3 sp = -vViewPosition; vec3 sx = dFdx(sp), sy = dFdy(sp);
+  ${needW ? `vec3 sz = vGrSz; vec3 pW = (sz.x >= sz.y && sz.x >= sz.z) ? p : ((sz.y >= sz.z) ? p.yxz : p.zxy);
+  float alongP = (sz.x >= sz.z) ? p.x : p.z; vec3 pWP = vec3(alongP, p.y, alongP);` : ''}
+  ${vars.length ? 'float ' + vars.join(', ') + ';' : ''} ${S.v ? 'vec2 sV = vec2(8.0);' : ''}
+  ${body.join('\n  ')}
+  ${chain}
+  diffuseColor.rgb = mix(diffuseColor.rgb, clamp(mtAlb * mtA * uMtTint, 0.0, 1.0), uMatOn); }`,
+    rough: `roughnessFactor = mix(roughnessFactor, clamp((uMtRMax > 0.5 ? max(roughnessFactor, uMtR) : uMtR) + mtRv, 0.04, 1.0), uMatOn);`,
+    metal: `metalnessFactor = mix(metalnessFactor, clamp(uMtM + mtMetMix, 0.0, 1.0), uMatOn);`,
+    bump: /* glsl */`
+if (uMtBump != 0.0) { vec3 sp = -vViewPosition; vec3 sx = dFdx(sp), sy = dFdy(sp);
   vec3 r1 = cross(sy, normal), r2 = cross(normal, sx); float det = dot(sx, r1);
-  vec2 dh = vec2(dFdx(mtHgt), dFdy(mtHgt)) * ${f3(K.bump * 0.06)} * uMatOn;
+  vec2 dh = vec2(dFdx(mtHgt), dFdy(mtHgt)) * uMtBump * uMatOn;
   vec3 gv = sign(det) * (dh.x * r1 + dh.y * r2);
-  normal = normalize(mix(normal, normalize(abs(det) * normal - gv), step(1e-9, abs(det)))); }` : '',
-    spark: K.spark ? `totalEmissiveRadiance += vec3(mtSpark * ${f3(K.spark)} * uMatOn) * 0.6;` : '',
-    sheen: K.sheen ? /* glsl */`
-{ float rim = pow(1.0 - max(dot(normalize(normal), normalize(vViewPosition)), 0.0), 3.0);
-  outgoingLight *= 1.0 + rim * ${f3(K.sheen * 0.55)} * uMatOn; }` : '',
+  normal = normalize(mix(normal, normalize(abs(det) * normal - gv), step(1e-9, abs(det)))); }`,
+    spark: `if (uMtSpark != 0.0) totalEmissiveRadiance += vec3(mtSpark * uMtSpark * uMatOn) * 0.6;`,
+    sheen: /* glsl */`
+if (uMtSheen != 0.0) { float rim = pow(1.0 - max(dot(normalize(normal), normalize(vViewPosition)), 0.0), 3.0);
+  outgoingLight *= 1.0 + rim * uMtSheen * uMatOn; }`,
   };
+}
+// tham số (số thuần, chưa phải uniform) của 1 loại — y như hằng số cũ ghi thẳng vào shader
+function kindParams(kind) {
+  const K = MAT_KINDS[kind], P = PAT[K.pat], S = slotsOf(familyOf(kind));
+  const q = {
+    uMtPat: PAT_ID[K.pat], uMtSc: K.sc, uMtR: K.r, uMtM: K.m, uMtRMax: K.rmode === 'max' ? 1 : 0,
+    uMtBump: K.bump ? K.bump * 0.06 : 0, uMtSpark: K.spark || 0, uMtSheen: K.sheen ? K.sheen * 0.55 : 0,
+    uMtTint: K.tint || [1, 1, 1], uMtNF: P.f?.length || 0, uMtNN: P.n?.length || 0,
+  };
+  if (S.f) { q.uMtFs = Array.from({ length: S.f }, (_, i) => v3(P.f?.[i]?.[0])); q.uMtFo = Array.from({ length: S.f }, (_, i) => v3(P.f?.[i]?.[1])); }
+  if (S.n) {
+    q.uMtNb = Array.from({ length: S.n }, (_, i) => (P.n?.[i] ? BASE[P.n[i][0]] : 0));
+    q.uMtNs = Array.from({ length: S.n }, (_, i) => v3(P.n?.[i]?.[1])); q.uMtNo = Array.from({ length: S.n }, (_, i) => v3(P.n?.[i]?.[2]));
+  }
+  if (S.v) q.uMtVs = P.v || 0;
+  if (S.h) { q.uMtHb = P.h ? BASE[P.h[0]] : 0; q.uMtHs = v3(P.h?.[1]); q.uMtHo = v3(P.h?.[2]); }
+  return q;
+}
+
+// FAMILIES[họ] = { kinds, pats, glsl, params{loại → tham số} } — MỖI HỌ TỰ ĐỦ (GLSL + bảng tham số), patch() chỉ tra
+// từ đây → bước sau tách thành engine/shaders/<họ>.js và mỗi tập chỉ nạp họ nó dùng. glsl dựng lười (lần đầu cần).
+export const FAMILIES = {};
+for (const [fam, pats] of Object.entries(MAT_FAMILIES)) {
+  const kinds = Object.keys(MAT_KINDS).filter((k) => familyOf(k) === fam);
+  let glsl = null;
+  FAMILIES[fam] = { kinds, pats, params: Object.fromEntries(kinds.map((k) => [k, kindParams(k)])), get glsl() { return glsl || (glsl = fragFor(fam)); } };
+}
+
+// tham số → object uniform (mảng 3 số → Vector3; mảng các mảng → mảng Vector3)
+function toUniforms(THREE, q) {
+  const V = (a) => new THREE.Vector3(a[0], a[1], a[2]);
+  const U = { uMtOct: LOOP.oct };
+  for (const [k, v] of Object.entries(q)) U[k] = { value: !Array.isArray(v) ? v : Array.isArray(v[0]) ? v.map(V) : (k === 'uMtNb' ? v.slice() : V(v)) };
+  return U;
 }
 
 function patch(THREE, mat, kind) {
   mat.userData.matKind = kind;
   if (!mat.defaultAttributeValues?.aGrBox) mat.defaultAttributeValues = { ...(mat.defaultAttributeValues || {}), aGrBox: [0.5, 0.5, 0.5], aGrSize: [0, 0, 0] };
-  const F = fragFor(kind);
+  const fam = familyOf(kind), FAM = FAMILIES[fam];
+  const F = FAM.glsl;
+  const U = toUniforms(THREE, FAM.params[kind]);
+  // giữ uniform trong userData (không liệt kê → không vào JSON/clone); MATS.on dùng chung cho cả hệ
+  Object.defineProperty(mat.userData, 'matU', { value: U, enumerable: false, configurable: true, writable: true });
   const prev = mat.onBeforeCompile;
   mat.onBeforeCompile = (sh, r) => {
     prev?.call(mat, sh, r);
     sh.uniforms.uMatOn = MATS.on;
+    Object.assign(sh.uniforms, U);
     if (!sh.vertexShader.includes('vGrP')) {   // chưa được grunge.js vá → tự thêm cùng tên biến
       sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\n' + VERT_PARS)
         .replace('#include <begin_vertex>', '#include <begin_vertex>\n' + VERT_MAIN);
     }
     let fs = sh.fragmentShader;
-    fs = fs.replace('#include <common>', '#include <common>\n' + (fs.includes('varying vec3 vGrP') ? '' : FRAG_VARY) + FRAG_LIB);
+    fs = fs.replace('#include <common>', '#include <common>\n' + (fs.includes('varying vec3 vGrP') ? '' : FRAG_VARY) + FRAG_LIB + F.pars);
     fs = fs.replace('#include <map_fragment>', '#include <map_fragment>\n' + F.color)
       // nhám đặt NGAY TRƯỚC metalness (sau mọi chỉnh nhám của grunge.js) → kim loại/men/kính không bị làm nhám lại
       .replace('#include <metalnessmap_fragment>', F.rough + '\n#include <metalnessmap_fragment>\n' + F.metal)
@@ -296,7 +391,7 @@ function patch(THREE, mat, kind) {
     sh.fragmentShader = fs;
   };
   const key = mat.customProgramCacheKey?.bind(mat);
-  mat.customProgramCacheKey = () => (key ? key() : '') + '|mat_' + kind;
+  mat.customProgramCacheKey = () => (key ? key() : '') + '|mat_' + fam;
   mat.needsUpdate = true;
 }
 

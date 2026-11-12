@@ -33,7 +33,7 @@ import { createAO, createDepthPrepass } from './ao.js';
 import { GRUNGE } from './grunge.js';
 import { MATS } from './materials.js';
 
-export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, seaWx: true };
+export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
@@ -48,6 +48,7 @@ export const FX_LABELS = {
   paint: 'Tranh sơn dầu (Kuwahara)',
   ao: 'Che khuất môi trường: tối dịu góc tường, chân đồ vật (AO, tất định)',
   smaa: 'Khử răng cưa SMAA (cuối chuỗi, nên bật cùng sơn dầu / AO)',
+  lite: 'Bóng đổ nhẹ (tắt bóng kính, vật phát sáng, hạt, vật nhỏ) — mở/xuất nhanh hơn',
 };
 
 // Màu theo preset ánh sáng (engine/envs.js LIGHTS). temp > 0 ấm, < 0 lạnh; sat bão hoà; con tương phản; gain/lift sáng.
@@ -178,7 +179,7 @@ export function createPost(THREE, stage, { actors = [], paint: paintOpts = {}, a
   const _f = new THREE.Vector3();
 
   function render({ t = 0, light = 'day', env = '', focus = null, flash = 0 } = {}) {
-    const AF = (globalThis.__autoFx ||= {}); AF.foot = fx.foot; AF.prints = fx.prints; AF.wind = fx.wind; AF.breath = fx.breath; AF.ibl = fx.ibl; AF.scans = fx.scans;   // engine/shots.js hiệu ứng tự động
+    const AF = (globalThis.__autoFx ||= {}); AF.foot = fx.foot; AF.prints = fx.prints; AF.wind = fx.wind; AF.breath = fx.breath; AF.ibl = fx.ibl; AF.scans = fx.scans; AF.lite = fx.lite;   // engine/shots.js hiệu ứng tự động
     GRUNGE.char.value = fx.worn ? 1 : 0; GRUNGE.build.value = fx.grime ? 1 : 0;   // engine/grunge.js (vân bụi trên vật liệu)
     GRUNGE.aged.value = fx.aged ? 1 : 0;
     MATS.on.value = fx.mats ? 1 : 0;   // engine/materials.js

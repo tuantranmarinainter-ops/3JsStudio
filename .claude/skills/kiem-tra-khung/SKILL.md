@@ -25,3 +25,6 @@ Luôn MỞ ẢNH RA XEM (Read) trước khi kết luận; báo trung thực cái
 
 ## Lỗi theo frame → chỉ chụp phân cảnh đó
 `node tools/look.mjs episodes/<ep>/index.html --frames 676,1262` — tự tìm shot chứa từng frame, chụp frame đó + đầu/giữa/cuối shot. Không chụp cả phim để tìm lỗi; kiểm cả phim (`--shots all --det`) chỉ 1 lần ở cuối.
+
+## Trang mở chậm → đếm shader
+`node tools/shaders.mjs episodes/<ep>/index.html [--film]` (hoặc `dist/<ep>.html`; `doctor.mjs --shaders`) — đo thời gian tới `__ready`, số program (`renderer.info.programs`), top program chậm (kèm cờ mats/grunge/shadow, số đèn) và bảng nhóm theo khoá `customProgramCacheKey` (khoá nào nhân nhiều program nhất). `--film` tua cả phim để thấy program phát sinh thêm. ⚠ khi > 80 program hoặc `__ready` > 10 s. Chạy sau khi sửa materials/grunge/đèn/shadow, trước khi gộp HTML.

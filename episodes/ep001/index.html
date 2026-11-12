@@ -129,19 +129,57 @@
         cap.style.transform = (document.body.classList.contains('peek') ? 'scale(0.5) ' : '') + `scale(${0.82 + 0.18 * (1 - Math.pow(1 - k, 3))})`;
       }
 
+      // BIÊN DỊCH SHADER THEO TỪNG ENV, đúng đường render lúc chiếu (director.render + post.render ở giữa shot đầu tiên dùng env đó),
+      // nên số/loại đèn + vật thể khớp với lúc chiếu → không phát sinh program mới khi tua. Tất định: chỉ làm nóng cache shader,
+      // director.render đặt lại toàn bộ trạng thái ở mỗi khung nên hình không đổi.
+      //  - env của shot đầu tiên: dịch trước __ready (màn tải che);
+      //  - env khác: dịch ĐỒNG BỘ ngay trong lần seek đầu cần tới nó (mọi seek/renderAt/Xuất MP4 đều đúng), hoặc dịch dần ở nền
+      //    (setTimeout từng env một, xong thì vẽ lại khung hiện tại) — bất kể thứ tự nào kết quả hình như nhau.
+      // mỗi env: dịch ở giữa shot đầu tiên + mọi shot có "chữ ký" khác (đèn, cast, props, fx, room, dirt, house…) vì vật thể/đèn khác → program khác
+      const SIG_ONLY = q.get('warmall') === '0';   // mặc định dịch ở giữa MỌI shot của env (rẻ sau khi program đã có; bắt vật chỉ hiện ở vài shot: giọt nước cá voi, cây trong bếp…)
+      const sig = (s) => !SIG_ONLY ? s.id : JSON.stringify([s.env, s.light, s.night, Object.keys(s.cast || {}), Object.keys(s.props || {}), Object.keys(s.fx || {}), s.room && Object.keys(s.room), s.dirt, s.house && (s.house.style || 1), !!s.fn]);
+      // Tranh bưu thiếp = ảnh chụp từ chính cảnh 3D (engine/snap.js) — chụp là phần tốn nhất (dịch shader cho từng cảnh).
+      // Chụp TRỄ: chỉ cần trước khung đầu tiên có dùng thiếp/ảnh dán/cửa sổ (bếp, phòng ngủ, props/fx 'card…'/'mailbox…', room) →
+      // seek tới đó mà chưa chụp thì chụp ĐỒNG BỘ ngay (kết quả y hệt chụp sớm); còn lại chụp ở nền sau cùng. ?snap=eager = chụp sớm như cũ.
+      let snapped = false;
+      const doSnap = () => { if (snapped) return; snapped = true;
+        snapPostcards(THREE, stage, envs, { hide: [...Object.values(actors).map((a) => a.root), ...Object.values(houses).map((h) => h.root)], props }); };
+      const needsSnap = (s) => s.env === 'kitchen' || s.env === 'bedroom' || !!s.room || /card|mailbox|postcard|fridge/i.test(Object.keys(s.props || {}).concat(Object.keys(s.fx || {})).join(' '));
+      Object.defineProperty(window, '__snapped', { get: () => snapped });
+      window.__snapAt = tl.list.find(needsSnap)?.t0;
+      window.__tm = { build: performance.now() };
+      const warmShots = {};   // env -> [shot…]
+      { const seen = new Set(); for (const s of tl.list) { const k = sig(s); if (seen.has(k)) continue; seen.add(k); (warmShots[s.env] ||= []).push(s); } }
+      const warmShot = Object.fromEntries(Object.entries(warmShots).map(([n, l]) => [n, l[0]]));
+      const warmed = new Set(), done = {};   // warmed = env đã dịch ĐỦ mọi chữ ký; done[env] = số shot đã dịch
+      function warmEnv(name, n = Infinity) {
+        const L = warmShots[name]; if (warmed.has(name) || !L) return;
+        const upto = Math.min(L.length, n); if (upto >= L.length) warmed.add(name);
+        for (const s of L.slice(done[name] || 0, upto)) {
+          const local = s.dur * 0.5, T0 = s.t0 + local;
+          const a0 = performance.now(), n0 = stage.renderer.info.programs.length;
+          director.render(s, local, 0.5, T0);
+          post.render({ t: T0, ...envs.last, focus: stage.target });
+          (window.__tm.envs = window.__tm.envs || []).push([s.id, Math.round(performance.now() - a0), stage.renderer.info.programs.length - n0]);
+        }
+        done[name] = Math.max(done[name] || 0, upto);
+      }
+      window.__warm = { warmed, warmEnv, order: Object.keys(warmShot) };
+      let lastT = 0;
       stage.onFrame((t) => {
         const T = Math.min(t, tl.total - 1e-4);
+        lastT = t;
         const { shot, local, k } = tl.at(T);
+        if (!snapped && needsSnap(shot)) doSnap();
+        warmEnv(shot.env);   // lazy: nếu env này chưa dịch (đang chờ nền) thì dịch ngay, rồi vẽ khung thật ngay sau đây
         director.render(shot, local, k, T);
         caption(T);
       });
-      // biên dịch shader của mọi env trước khi seek
-      for (const e of Object.values(envs.envs)) e.group.visible = true;
-      for (const h of Object.values(houses)) h.root.visible = true;
-      stage.renderer.compile(stage.scene, stage.camera);
-      for (const e of Object.values(envs.envs)) e.group.visible = false;
+      warmEnv(tl.at(0).shot.env, 1);   // trước __ready chỉ cần khung đầu; phần còn lại của env này dịch ở nền / khi seek tới
+      window.__tm.warm0 = performance.now();
+      if (q.get('snap') === 'eager') doSnap();
       // tranh bưu thiếp = ảnh chụp từ chính các cảnh 3D (Nam Cực, đại dương, đỉnh núi, đảo)
-      snapPostcards(THREE, stage, envs, { hide: [...Object.values(actors).map((a) => a.root), ...Object.values(houses).map((h) => h.root)], props });
+      window.__tm.snap = performance.now();
       stage.start();
       window.renderAt = (t) => stage.renderAt(t);
       window.__shots = tl;
@@ -164,7 +202,14 @@
         return window.getOptions();
       };
       window.setOptions({}); // cho nút "Xuất MP4" trong bản gộp (đổi độ phân giải renderer)
+      window.__tm.ready = performance.now();
       window.__ready = true;
+      // dịch nền các env còn lại, từng env một (sau khi hiện trình phát); xong thì vẽ lại khung đang xem
+      { const queue = window.__warm.order.filter((n) => !warmed.has(n));
+        const step = () => { while (queue.length && warmed.has(queue[0])) queue.shift();
+          if (!queue.length) { if (!snapped && q.get('snap') !== 'lazy') { doSnap(); stage.renderAt(lastT); } return; }
+          warmEnv(queue.shift()); stage.renderAt(lastT); setTimeout(step, 30); };
+        if (q.get('warm') !== '0') setTimeout(step, 300); }
     </script>
   </body>
 </html>

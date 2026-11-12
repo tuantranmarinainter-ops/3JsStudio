@@ -41,6 +41,6 @@ export default function build(g, e, H) {
   const books5 = place(R, K.books(5), 4, 0, -14); const nstand = K.box(3, 3, 3, '#8a5a36', -2, 1.5, -15, 'nightstand', R); place(R, K.books(3), -2, 3, -15);
   const poster = K.box(4, 3, 0.2, '#8a5a36', 6, 13, -17.8, 'poster', R);
   e.furn = furnish(THREE, R, BEDROOM_FURNISH, { assets: A, walls: { north: -18, south: 20, west: -20, east: 20 }, refs: { bed: e.bed, nightstand: nstand, books5, poster } });
-  e.point = new THREE.PointLight('#aab6ff', 0.8, 60, 1.2); e.point.position.set(14, 14, -6); R.add(e.point);
+  e.pointSpec = { color: '#aab6ff', intensity: 0.8, distance: 60, decay: 1.2, pos: [14, 14, -6] };   // đèn điểm dùng chung (engine/envs.js 'interior_point'): không tạo PointLight riêng → số đèn mọi env như nhau, không dịch lại shader
   return { update() { e.furn.update(globalThis.__autoFx?.scans ?? true); }, setView(kind) { e.window.getObjectByName('window_view').material.map = viewTex(kind); } };
 }

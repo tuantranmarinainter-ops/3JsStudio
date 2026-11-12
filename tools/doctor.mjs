@@ -2,9 +2,10 @@
 // doctor.mjs — kiểm tra sức khoẻ repo cho một tập phim trong một lệnh.
 //
 // Cách dùng:
-//   node tools/doctor.mjs [ep001] [--fix-procs]
+//   node tools/doctor.mjs [ep001] [--fix-procs] [--shaders]
 //     ep001        tên tập (mặc định ep001)
 //     --fix-procs  dừng các tiến trình render/TTS bị treo (mục 7)
+//     --shaders    mục 9: mở trang tập, đếm program shader + thời gian tới __ready (chậm ~1 phút, tools/shaders.mjs)
 // In danh sách ✔ / ⚠ / ✘ theo từng mục; thoát mã 1 nếu có ít nhất một ✘.
 // Không cần npm; chỉ Node + child_process (git, ffprobe, powershell).
 
@@ -16,6 +17,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const FIX_PROCS = args.includes('--fix-procs');
+const DO_SHADERS = args.includes('--shaders');
 const EP = args.find((a) => !a.startsWith('--')) || 'ep001';
 const FPS = 30;
 const EPDIR = path.join(ROOT, 'episodes', EP);
@@ -323,6 +325,24 @@ section('8. Git');
     (st.length ? warn : ok)(`${st.length - untracked} file đã sửa/staged, ${untracked} file chưa theo dõi`);
     const nm = sh('git', ['branch', '-r', '--no-merged', 'HEAD']).out.split('\n').map((s) => s.trim()).filter((s) => s && !s.includes('->'));
     (nm.length ? warn : ok)(nm.length ? `${nm.length} nhánh remote chưa gộp vào HEAD: ${nm.join(', ')} (chi tiết: bash tools/branches.sh)` : 'mọi nhánh remote đã gộp vào HEAD');
+  }
+}
+
+// ---------------------------------------------------------------- 9. Shader (tuỳ chọn --shaders)
+if (DO_SHADERS) {
+  section('9. Shader / thời gian mở trang');
+  const page = path.join(EPDIR, 'index.html');
+  if (!exists(page)) warn('không thấy ' + rel(page));
+  else {
+    const r = spawnSync(process.execPath, [path.join(ROOT, 'tools/shaders.mjs'), page, '--top', '5'], { encoding: 'utf8', maxBuffer: 1 << 26 });
+    const out = (r.stdout || '').split('\n');
+    const line = (re) => out.find((l) => re.test(l)) || '';
+    if (r.status !== 0) warn('shaders.mjs lỗi: ' + (out.find((l) => l.includes('✘')) || r.stderr || r.status));
+    else {
+      info(line(/^Tới __ready/)); info(line(/^Program sau ready/)); info(line(/^Tổng dịch/));
+      const w = out.find((l) => l.startsWith('⚠'));
+      w ? warn(w.replace(/^⚠ /, '') + ' — chi tiết: node tools/shaders.mjs ' + rel(page)) : ok('số program và thời gian mở trang trong ngưỡng');
+    }
   }
 }
 

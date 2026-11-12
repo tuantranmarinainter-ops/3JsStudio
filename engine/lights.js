@@ -13,3 +13,39 @@ export const LIGHTS = {
   ocean:    { top: '#2e8fe0', bottom: '#c3ebff', fog: '#bfe6fa', fogR: [200, 900], hemi: ['#ffffff', '#3a8fb0', 1.15], sun: ['#fff4e0', 2.6], dir: [0.5, 1, 0.5], exposure: 1.0, night: 0 },
   sky:      { top: '#2c7fd6', bottom: '#d8f0ff', fog: '#e8f6ff', fogR: [250, 1000], hemi: ['#ffffff', '#c8d8e8', 1.25], sun: ['#fff6e6', 2.6], dir: [0.5, 1, 0.5], exposure: 1.0, night: 0 },
 };
+
+// ---------- chế độ NHẸ ("lite", ô bật/tắt trong trình phát — globalThis.__autoFx.lite, mặc định TẮT) ----------
+// Chỉ 1 đèn đổ bóng mỗi env (mặt trời 'sun' — đèn duy nhất có castShadow, xem engine/stage.js). Bật lite ⇒ tắt castShadow cho:
+//   kính/trong suốt, vật phát sáng (MeshBasic / emissive), hạt (Points, nhóm fx_*), vật nhỏ trong env (hộp bao thế giới < LITE_SMALL stud).
+// Nhân vật/nhà/đạo cụ KHÔNG bị đụng (trừ kính/phát sáng). Chỉ đổi castShadow (không đổi receiveShadow) ⇒ không làm dịch lại program chính;
+// bóng đổ của kính/vật nhỏ biến mất (đổi hình nhẹ). Tắt lite ⇒ khôi phục đúng giá trị cũ. Gọi mỗi khung từ envs.use (rẻ: chỉ làm khi đổi trạng thái).
+export const LITE_SMALL = 0.8;
+export function applyLite(scene, on) {
+  const _m = [];
+  scene.traverse((o) => {
+    if (!o.isMesh && !o.isPoints) return;
+    const u = o.userData;
+    if (u._liteDrop === undefined) {
+      u._liteCast = !!o.castShadow;
+      let drop = false;
+      if (o.isPoints) drop = true;
+      else {
+        const mats = Array.isArray(o.material) ? o.material : [o.material];
+        const glass = mats.some((m) => m && (m.transparent || m.opacity < 1 || m.transmission > 0));
+        const glow = mats.some((m) => m && (m.isMeshBasicMaterial || (m.emissive && m.emissive.getHex() !== 0 && m.emissiveIntensity > 0)));
+        let inEnv = false, fx = false;
+        for (let p = o; p; p = p.parent) { if (p.name && p.name.startsWith('env_')) inEnv = true; if (p.name && p.name.startsWith('fx_')) fx = true; }
+        let small = false;
+        if (inEnv && o.geometry) {
+          const g = o.geometry; if (!g.boundingBox) g.computeBoundingBox();
+          const b = g.boundingBox; o.updateWorldMatrix(true, false); const e = o.matrixWorld.elements;
+          const sx = Math.hypot(e[0], e[1], e[2]), sy = Math.hypot(e[4], e[5], e[6]), sz = Math.hypot(e[8], e[9], e[10]);
+          small = Math.max((b.max.x - b.min.x) * sx, (b.max.y - b.min.y) * sy, (b.max.z - b.min.z) * sz) < LITE_SMALL;
+        }
+        drop = glass || glow || fx || small;
+      }
+      u._liteDrop = drop;
+    }
+    if (u._liteDrop) o.castShadow = on ? false : u._liteCast;
+  });
+}

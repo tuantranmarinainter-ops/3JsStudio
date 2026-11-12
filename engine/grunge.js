@@ -20,7 +20,8 @@ const VERT_MAIN = /* glsl */`
   vGrP = position * grS; vGrN = normal; vGrB = aGrBox; vGrSz = aGrSize * grS; }`;
 
 const FRAG_PARS = /* glsl */`
-uniform float uGrunge; uniform float uGrAmt; uniform float uGrAged;
+uniform float uGrCh; uniform float uGrBu; uniform float uGrAged;   // dùng chung (ô bật/tắt)
+uniform float uGrKind; uniform float uGrAmt; uniform float uGrAgedOn;   // riêng từng vật liệu (1 họ shader, khác biệt đi qua uniform)
 varying vec3 vGrP; varying vec3 vGrN; varying vec3 vGrB; varying vec3 vGrSz;
 float grH(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
 float grN3(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);
@@ -31,11 +32,11 @@ float grFbm(vec3 p) { return 0.55 * grN3(p) + 0.28 * grN3(p * 2.07 + 3.1) + 0.17
 float grEdge() { vec3 n = abs(normalize(vGrN)); vec3 d = min(vGrB, 1.0 - vGrB) * vGrSz;
   if (dot(vGrSz, vGrSz) < 1e-8) return 99.0;   // vật tạo sau khi vá (không có khung) → không tối mép
   float e = 99.0; if (n.x < 0.7) e = min(e, d.x); if (n.y < 0.7) e = min(e, d.y); if (n.z < 0.7) e = min(e, d.z); return e; }
-float grHeight;`;
+float grHeight; float grK;`;
 
 const FRAG_COLOR = {
   char: /* glsl */`
-{ float k = uGrunge; vec3 p = vGrP;
+{ float k = uGrCh; grK = k; vec3 p = vGrP;
   float blot = grFbm(p * 1.6);                                          // vết bẩn loang
   float fold = grN3(vec3(p.x * 5.0, p.y * 0.9, p.z * 5.0));             // nếp gấp dọc thân/tay
   float fine = grN3(p * 9.0);                                           // hạt vải li ti
@@ -52,7 +53,7 @@ const FRAG_COLOR = {
   diffuseColor.rgb = mix(diffuseColor.rgb, c, k);
   grHeight = fold * k; }`,
   build: /* glsl */`
-{ float k = uGrunge; vec3 p = vGrP;
+{ float k = uGrBu; grK = k; vec3 p = vGrP;
   float stain = grFbm(p * 0.09);                                        // ố loang lớn
   float drip = grN3(vec3(p.x * 0.7, p.y * 0.05, p.z * 0.7));            // vệt chảy dọc
   float grit = grN3(p * 1.4); float fine = grN3(p * 4.5);               // sần
@@ -94,7 +95,7 @@ const FRAG_AGED = /* glsl */`
   diffuseColor.rgb = mix(diffuseColor.rgb, c, ag);
   grHeight += (peelM * 0.7 + rim) * ag; }`;
 
-const FRAG_ROUGH = /* glsl */`roughnessFactor = mix(roughnessFactor, clamp(roughnessFactor + 0.22 + grHeight * 0.1, 0.0, 1.0), uGrunge);   // vải/tường nhám, hết bóng`;
+const FRAG_ROUGH = /* glsl */`roughnessFactor = mix(roughnessFactor, clamp(roughnessFactor + 0.22 + grHeight * 0.1, 0.0, 1.0), grK);   // vải/tường nhám, hết bóng`;
 const FRAG_BUMP = (amp) => /* glsl */`
 { vec3 sp = -vViewPosition; vec3 sx = dFdx(sp), sy = dFdy(sp);
   vec3 r1 = cross(sy, normal), r2 = cross(normal, sx); float det = dot(sx, r1);
@@ -117,25 +118,33 @@ export function ensureBoxAttr(THREE, geo) {
   geo.setAttribute('aGrSize', new THREE.BufferAttribute(size, 3));
 }
 
+// Tối ưu số program: mã shader CỐ ĐỊNH (cả 2 nhánh char/build + nhánh aged), chọn bằng uniform → mọi vật liệu grunge dùng chung 1 họ
+// (customProgramCacheKey không còn chứa kind/aged). Tránh Chrome/ANGLE dịch lại hàng trăm program (300–500 ms/cái).
+const FRAG_BODY = `if (uGrKind > 0.5) {${FRAG_COLOR.char}} else {${FRAG_COLOR.build}}
+if (uGrAgedOn * uGrAged > 0.0) {${FRAG_AGED}}`;
+
 function patch(mat, kind, amount = 1, aged = false) {
   if (mat.userData.grunge) return;
   mat.userData.grunge = kind;
   aged = aged && kind === 'build';
+  const U = { uGrKind: { value: kind === 'char' ? 1 : 0 }, uGrAmt: { value: amount }, uGrAgedOn: { value: aged ? 1 : 0 } };
+  mat.userData.grU = U;   // uniform riêng của vật liệu (đổi giá trị = đổi mức cũ/kiểu, không biên dịch lại)
   // mesh dùng chung vật liệu nhưng tạo sau (chưa có aGrBox) → giá trị cố định, không đọc rác (giữ tất định)
   mat.defaultAttributeValues = { ...(mat.defaultAttributeValues || {}), aGrBox: [0.5, 0.5, 0.5], aGrSize: [0, 0, 0] };
   const prev = mat.onBeforeCompile;
   mat.onBeforeCompile = (sh, r) => {
     prev?.call(mat, sh, r);
-    sh.uniforms.uGrunge = GRUNGE[kind]; sh.uniforms.uGrAmt = { value: amount }; sh.uniforms.uGrAged = GRUNGE.aged;
+    sh.uniforms.uGrCh = GRUNGE.char; sh.uniforms.uGrBu = GRUNGE.build; sh.uniforms.uGrAged = GRUNGE.aged;
+    sh.uniforms.uGrKind = U.uGrKind; sh.uniforms.uGrAmt = U.uGrAmt; sh.uniforms.uGrAgedOn = U.uGrAgedOn;
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\n' + VERT_PARS)
       .replace('#include <begin_vertex>', '#include <begin_vertex>\n' + VERT_MAIN);
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\n' + FRAG_PARS)
-      .replace('#include <map_fragment>', '#include <map_fragment>\n' + FRAG_COLOR[kind] + (aged ? FRAG_AGED : ''))
+      .replace('#include <map_fragment>', '#include <map_fragment>\n' + FRAG_BODY)
       .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n' + FRAG_ROUGH)
       .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\n' + FRAG_BUMP('0.0'));
   };
   const key = mat.customProgramCacheKey?.bind(mat);
-  mat.customProgramCacheKey = () => (key ? key() : '') + '|grunge_' + kind + (aged ? '_aged' : '');
+  mat.customProgramCacheKey = () => (key ? key() : '') + '|grunge';
   mat.needsUpdate = true;
 }
 

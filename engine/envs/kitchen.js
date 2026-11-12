@@ -50,7 +50,7 @@ export default function build(g, e, H) {
   K.box(14, 4, 4, '#f4f1ea', 14, 2, -18, 'counter', R); const counterTop = K.box(14.4, 0.4, 4.4, '#8a5a36', 14, 4.2, -18, 'counter_top', R);
   for (const [x, y] of [[-18, 13], [-12, 15], [2, 14]]) { K.box(3.4, 2.6, 0.2, '#8a5a36', x, y, -19.8, 'frame', R); K.box(2.8, 2, 0.25, ['#5fa8d8', '#e09a5a', '#7fc86a'][Math.abs(x) % 3], x, y, -19.75, 'picture', R); }
   const lamp = K.cyl(1.6, 0.6, 1.2, mat('#fff1c4', { emissive: C('#ffe39a'), emissiveIntensity: 0.8 }), 6, 18, 2, 'lamp', R, 12); K.box(0.1, 3.4, 0.1, '#333', 6, 20.3, 2, 'lamp_cord', R);
-  e.point = new THREE.PointLight('#ffe2b0', 1.2, 70, 1.2); e.point.position.set(6, 17, 2); R.add(e.point);
+  e.pointSpec = { color: '#ffe2b0', intensity: 1.2, distance: 70, decay: 1.2, pos: [6, 17, 2] };   // đèn điểm dùng chung (engine/envs.js 'interior_point')
   // bày đồ theo dữ liệu KITCHEN_FURNISH: bàn + ghế gỗ quét thế đồ dựng tay (vừa khít hộp bao cũ), cây, bình gốm, kệ gỗ, đồ Kenney
   e.furn = furnish(THREE, R, KITCHEN_FURNISH, { assets: A, walls: { north: -20, south: 24, west: -24, east: 24 }, refs: { table: e.table, chair1: chairs[0], chair2: chairs[1], chair3: chairs[2], counter_top: counterTop } });
   e.door = new THREE.Group(); e.door.name = 'kitchen_door'; e.door.position.set(-16, 0, 23.9); R.add(e.door);

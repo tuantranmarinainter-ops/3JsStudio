@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bake Lab</title>
+<style>
+  html,body { margin:0; background:#0e1118; color:#e8eef6; font:13px/1.35 system-ui, sans-serif; }
+  #c { display:block; margin:0 auto; width:1080px; height:1920px; max-width:100vw; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script type="importmap">{ "imports": { "three": "../vendor/three/three.module.js", "three/addons/": "../vendor/three/addons/" } }</script>
+<script type="module">
+// bake-lab — so vân tính TRỰC TIẾP (shader mỗi điểm ảnh, như materials.js) với vân NƯỚNG (engine/bake.js, tra texture).
+//   (mặc định)   lưới: mỗi hàng 1 kiểu vân = [trực tiếp 1 ô | nướng 1 ô | trực tiếp zoom×8 | nướng zoom×8] + thời gian nướng + Δ
+//   ?edge=1      zoom×8 đặt đúng chỗ 4 ô lặp gặp nhau (kiểm không thấy đường nối)
+//   ?view=persp  mặt đất phối cảnh (mip + anisotropy): [trực tiếp | nướng]
+//   ?view=all    cả 34 kiểu vân nướng (kiểm shader từng kiểu)
+//   ?size=1024   cỡ texture (cap 1024; mặc định 1024) · ?seed=7 · ?only=WOOD (một kiểu, 4 ô lớn) · ?shared=1 (một shader chung cả 34 kiểu: dịch ~15 s)
+// Thời gian chỉ để hiển thị (performance.now); hình là hàm thuần của (size, seed): không rAF, không Math.random.
+// window.__bench(size) → nướng cả 34 kiểu, trả ms từng kiểu.
+import * as THREE from 'three';
+import { bakeSurface, makeEval, BAKE_SHADE, PAT_NAMES, seedOffset as seedOff } from './bake.js';
+
+window.THREE = THREE;
+const q = new URLSearchParams(location.search);
+const VIEW = q.get('view') || 'grid', SIZE = Math.min(1024, +(q.get('size') || 1024)), SEED = +(q.get('seed') || 7), ONLY = (q.get('only') || '').toUpperCase();
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false });
+renderer.setPixelRatio(1); renderer.setSize(1080, 1920, false); renderer.autoClear = false;
+const gl = renderer.getContext();
+
+// kiểu thử: màu gốc (tuyến tính), nhám r, kim loại m, gồ bump, tint, lấp lánh spark
+const LAB = [
+  { pat: 'WOOD',       base: [0.42, 0.22, 0.09], r: 0.72, m: 0, bump: 0.9, tint: [1, 1, 1], spark: 0 },
+  { pat: 'PAPER',      base: [0.85, 0.80, 0.68], r: 0.93, m: 0, bump: 0.12, tint: [1, 0.985, 0.95], spark: 0 },
+  { pat: 'FABRIC',     base: [0.45, 0.10, 0.10], r: 0.96, m: 0, bump: 0.2, tint: [1, 1, 1], spark: 0 },
+  { pat: 'STONE',      base: [0.35, 0.34, 0.32], r: 0.9, m: 0, bump: 1.4, tint: [1, 1, 1], spark: 0 },
+  { pat: 'SHINGLE',    base: [0.40, 0.10, 0.08], r: 0.82, m: 0, bump: 1.2, tint: [1, 1, 1], spark: 0 },
+  { pat: 'SAND',       base: [0.70, 0.55, 0.30], r: 0.97, m: 0, bump: 0.6, tint: [1, 1, 1], spark: 0.5 },
+  { pat: 'METALPAINT', base: [0.10, 0.28, 0.45], r: 0.48, m: 0, bump: 0.6, tint: [1, 1, 1], spark: 0 },
+];
+const KIND = Object.fromEntries(LAB.map((k) => [k.pat, k]));
+const NEUTRAL = { base: [0.5, 0.5, 0.5], r: 0.7, m: 0, bump: 1, tint: [1, 1, 1], spark: 0.5 };
+
+// ---- bake (đo thời gian) ----
+const sync = () => { const px = new Uint8Array(4); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); gl.finish(); };
+const nProg = () => (renderer.info.programs ? renderer.info.programs.length : 0);
+const P0 = nProg();
+let t0 = performance.now();
+const SHARED = q.get('shared') === '1';
+const warm = bakeSurface(THREE, renderer, { pat: 'WOOD', size: 16, seed: 1, params: { shared: SHARED } }); sync();
+const compileMs = performance.now() - t0; warm.dispose();
+
+const BAKES = new Map(), MS = new Map();
+function bake(pat, size = SIZE) {
+  const k = pat + size; if (BAKES.has(k)) return BAKES.get(k);
+  const t = performance.now();
+  const b = bakeSurface(THREE, renderer, { pat, size, seed: SEED, params: { bump: (KIND[pat] || NEUTRAL).bump, shared: SHARED } }); sync();
+  MS.set(k, performance.now() - t); BAKES.set(k, b); return b;
+}
+window.__bench = (size = 512) => { const out = []; let tot = 0; for (const p of PAT_NAMES) { const t = performance.now(); const b = bakeSurface(THREE, renderer, { pat: p, size, seed: 3, params: { shared: SHARED } }); sync(); const d = performance.now() - t; tot += d; out.push([p, +d.toFixed(2)]); b.dispose(); } return { size, total: +tot.toFixed(1), compileMs: +compileMs.toFixed(1), programs: nProg(), out }; };
+
+// ---- shader panel ----
+const VERT = `varying vec2 vUv; void main(){ vUv = position.xy*0.5+0.5; gl_Position = vec4(position.xy,0.0,1.0); }`;
+const COMMON = `
+uniform vec4 uRect; uniform int uMode; uniform vec3 uBase, uTint; uniform float uR, uM, uSparkK;
+varying vec2 vUv;
+layout(location = 0) out vec4 outColor;
+vec2 panelUv() {
+  if (uMode == 0) return uRect.xy + vUv * uRect.zw;
+  float d = 0.62 - vUv.y; if (d <= 0.004) return vec2(-1.0e6);
+  float z = 1.8 / d; float x = (vUv.x - 0.5) * z * 1.6; return vec2(x, z) / uL;
+}
+`;
+const sky = `if (uv.x < -1.0e5) { outColor = vec4(mix(vec3(0.75,0.85,0.95), vec3(0.4,0.6,0.85), vUv.y), 1.0); return; }`;
+const directSrc = (pat) => `
+uniform int uPat; uniform float uSize;
+${makeEval([pat])}
+${BAKE_SHADE}
+${COMMON}
+void main() {
+  vec2 uv = panelUv(); ${sky}
+  vec2 fw = fwidth(uv) * uL; gFoot = max(max(fw.x, fw.y), 1.0e-5);
+  float d = 1.0 / uSize;
+  bkEval(uPat, uv);
+  vec3 A = clamp(mtAc * mtA, 0.0, 1.0); float B = mtBw * mtA; float sp = mtSpark, dR = mtRv, dM = mtMetMix, fl = mtFloor;
+  bkEval(uPat, uv + vec2(d, 0.0)); float hx1 = mtHgt; bkEval(uPat, uv - vec2(d, 0.0)); float hx0 = mtHgt;
+  bkEval(uPat, uv + vec2(0.0, d)); float hy1 = mtHgt; bkEval(uPat, uv - vec2(0.0, d)); float hy0 = mtHgt;
+  float k = uBump * 0.06 * uSize / (2.0 * uL);
+  vec3 nT = normalize(vec3(-(hx1 - hx0) * k, -(hy1 - hy0) * k, 1.0));
+  outColor = vec4(bkShade(A, B, fl, sp, dR, dM, nT, uBase, uR, uM, uTint, uSparkK), 1.0);
+}`;
+const bakedSrc = `
+${BAKE_SHADE}
+uniform sampler2D tAlb, tOrm, tNrm; uniform float uL;
+${COMMON}
+void main() {
+  vec2 uv = panelUv(); ${sky}
+  vec4 a = texture2D(tAlb, uv); a.rgb = pow(a.rgb, vec3(2.2));
+  vec4 o = texture2D(tOrm, uv); vec3 nT = normalize(texture2D(tNrm, uv).xyz * 2.0 - 1.0);
+  outColor = vec4(bkShade(a.rgb, a.a * 1.5, o.a, o.r, (o.g - 0.5) * 2.0, (o.b - 0.5) * 2.0, nT, uBase, uR, uM, uTint, uSparkK), 1.0);
+}`;
+// baked: uv của panel theo đơn vị ô (0..1 = 1 tile). direct: cũng 0..1 → nhân uL bên trong bkEval. Mặt phẳng phối cảnh: (x,z)/L → ô.
+const mk = (frag, extra) => new THREE.ShaderMaterial({ glslVersion: THREE.GLSL3, vertexShader: VERT, fragmentShader: frag, depthTest: false, depthWrite: false,
+  uniforms: { uRect: { value: new THREE.Vector4(0, 0, 1, 1) }, uMode: { value: 0 }, uBase: { value: new THREE.Vector3() }, uTint: { value: new THREE.Vector3(1, 1, 1) }, uR: { value: 0.7 }, uM: { value: 0 }, uSparkK: { value: 0 }, ...extra } });
+const directMats = new Map();
+const directFor = (pat) => { if (!directMats.has(pat)) directMats.set(pat, mk(directSrc(pat), { uPat: { value: 0 }, uSize: { value: SIZE }, uL: { value: 8 }, uSeed: { value: new THREE.Vector3() }, uBump: { value: 1 } })); return directMats.get(pat); };
+const bakedMat = mk(bakedSrc, { tAlb: { value: null }, tOrm: { value: null }, tNrm: { value: null }, uL: { value: 8 } });
+const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), bakedMat); quad.frustumCulled = false;
+const scene = new THREE.Scene(); scene.add(quad); const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+// persp: shader baked dùng uv/L; ở chế độ 0 baked nhận uv theo ô
+function setKind(m, k) { m.uniforms.uBase.value.set(...k.base); m.uniforms.uTint.value.set(...k.tint); m.uniforms.uR.value = k.r; m.uniforms.uM.value = k.m; m.uniforms.uSparkK.value = k.spark; }
+function panel(kind, pat, b, x, y, w, h, rect, mode) {   // x,y: góc trên-trái (px canvas)
+  const K = KIND[pat] || NEUTRAL;
+  const m = kind === 'direct' ? directFor(pat) : bakedMat; quad.material = m; setKind(m, K);
+  m.uniforms.uRect.value.set(...rect); m.uniforms.uMode.value = mode; m.uniforms.uL.value = b.tile;
+  if (kind === 'direct') { m.uniforms.uPat.value = PAT_NAMES.indexOf(pat); m.uniforms.uSeed.value.set(...b.seedOff); m.uniforms.uBump.value = K.bump; m.uniforms.uSize.value = b.size; }
+  else { m.uniforms.tAlb.value = b.albedo; m.uniforms.tOrm.value = b.orm; m.uniforms.tNrm.value = b.normal; }
+  renderer.setViewport(x, 1920 - y - h, w, h); renderer.setScissor(x, 1920 - y - h, w, h); renderer.setScissorTest(true);
+  renderer.render(scene, cam);
+}
+function readPanel(x, y, w, h) { const buf = new Uint8Array(w * h * 4); gl.readPixels(x, 1920 - y - h, w, h, gl.RGBA, gl.UNSIGNED_BYTE, buf); return buf; }
+function diff(a, b) { let s = 0, se = 0, n = 0; for (let i = 0; i < a.length; i += 4) for (let c = 0; c < 3; c++) { const d = a[i + c] - b[i + c]; s += Math.abs(d); se += d * d; n++; } const mse = se / n; return { mae: s / n, psnr: mse ? 10 * Math.log10(65025 / mse) : 99 }; }
+
+// ---- HUD (nhãn vẽ thẳng vào khung) ----
+const hc = document.createElement('canvas'); hc.width = 1080; hc.height = 1920; const hg = hc.getContext('2d');
+const hudTex = new THREE.CanvasTexture(hc); hudTex.colorSpace = THREE.SRGBColorSpace;
+const hudScene = new THREE.Scene(); hudScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.MeshBasicMaterial({ map: hudTex, transparent: true, depthTest: false, toneMapped: false })));
+function tag(x, y, text, size = 15) { hg.font = `bold ${size}px system-ui, sans-serif`; const w = hg.measureText(text).width + 8; hg.fillStyle = 'rgba(0,0,0,.62)'; hg.fillRect(x, y, w, size + 8); hg.fillStyle = '#fff'; hg.fillText(text, x + 4, y + size + 1); }
+
+function renderAt() {
+  hg.clearRect(0, 0, 1080, 1920);
+  renderer.setScissorTest(false); renderer.setViewport(0, 0, 1080, 1920); renderer.setClearColor(0x0e1118, 1); renderer.clear();
+  const rows = [];
+  if (VIEW === 'all') {
+    const cols = 5, cw = 216, ch = 274;
+    PAT_NAMES.forEach((p, i) => {
+      const b = bake(p, Math.min(SIZE, 512)); const x = (i % cols) * cw, y = Math.floor(i / cols) * ch;
+      panel('baked', p, b, x + 1, y + 1, cw - 2, cw - 2, [0, 0, 1, 1], 0);
+      tag(x + 4, y + cw + 2, `${p} · ${MS.get(p + Math.min(SIZE, 512)).toFixed(1)} ms · tile ${b.tile}`, 12);
+    });
+  } else if (VIEW === 'persp') {
+    const list = ONLY ? [ONLY] : LAB.map((k) => k.pat), rh = Math.floor(1920 / list.length);
+    list.forEach((p, r) => {
+      const b = bake(p); b.seedOff = seedOff(SEED); const y = r * rh + 2, h = rh - 4;
+      panel('direct', p, b, 0, y, 540, h, [0, 0, 1, 1], 1); const da = readPanel(0, y, 540, h);
+      panel('baked', p, b, 540, y, 540, h, [0, 0, 1, 1], 1); const ba = readPanel(540, y, 540, h);
+      const d = diff(da, ba);
+      tag(4, y + 2, `${p} phối cảnh · trực tiếp`); tag(544, y + 2, `nướng ${b.size}² · Δ ${d.mae.toFixed(1)}/255 · PSNR ${d.psnr.toFixed(1)} dB`);
+    });
+  } else {
+    const list = ONLY ? [ONLY] : LAB.map((k) => k.pat);
+    const big = !!ONLY, rh = big ? 1080 : Math.floor(1920 / list.length), pw = big ? 540 : 270;
+    list.forEach((p, r) => {
+      const b = bake(p); b.seedOff = seedOff(SEED); const y = r * rh + (big ? 0 : 2), s = pw - 2;
+      const zoom = q.get('edge') ? [0.9375, 0.9375, 0.125, 0.125] : [0.31, 0.27, 0.125, 0.125];   // ?edge=1: khung zoom nằm giữa ngã tư 4 ô → kiểm đường nối
+      const set = [['direct', [0, 0, 1, 1]], ['baked', [0, 0, 1, 1]], ['direct', zoom], ['baked', zoom]];
+      const px = [];
+      set.forEach(([kind, rect], k) => {
+        const x = (big ? (k % 2) * 540 : k * 270) + 1, yy = big ? Math.floor(k / 2) * 540 + 1 : y;
+        panel(kind, p, b, x, yy, s, s, rect, 0); px.push(readPanel(x, yy, s, s));
+        rows.push({ x, yy, kind, k });
+      });
+      const d1 = diff(px[0], px[1]), d2 = diff(px[2], px[3]);
+      const ms = MS.get(p + SIZE);
+      const T = (k) => (big ? [(k % 2) * 540 + 4, Math.floor(k / 2) * 540 + 3] : [k * 270 + 4, y + 2]);
+      let q0 = T(0); tag(q0[0], q0[1], `${p} · trực tiếp`);
+      q0 = T(1); tag(q0[0], q0[1], `nướng ${b.size}² ${ms.toFixed(1)} ms · Δ${d1.mae.toFixed(1)}`);
+      q0 = T(2); tag(q0[0], q0[1], 'trực tiếp ×8');
+      q0 = T(3); tag(q0[0], q0[1], `nướng ×8 · Δ${d2.mae.toFixed(1)}`);
+    });
+  }
+  // chân trang
+  if (VIEW !== 'all') tag(4, 1896, `size ${SIZE} · seed ${SEED} · biên dịch+nướng đầu (WOOD 16²) ${compileMs.toFixed(0)} ms · ${SHARED ? 'shader CHUNG' : 'shader riêng từng kiểu'} · tổng chương trình (nướng + hiển thị) ${nProg()}`, 13);
+  hudTex.needsUpdate = true;
+  renderer.setScissorTest(false); renderer.setViewport(0, 0, 1080, 1920); renderer.autoClear = false; renderer.render(hudScene, cam);
+}
+renderAt(); window.__ready = true;
+window.renderAt = () => renderAt();
+</script>
+</body>
+</html>

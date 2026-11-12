@@ -30,6 +30,7 @@ Cảnh 3D dựng bằng three.js, render ra MP4 bằng **HyperFrames**. Claude �
 | Lệnh | Việc |
 |---|---|
 | `node tools/doctor.mjs ep001 [--fix-procs]` | kiểm cả repo: asset/manifest/ghi công, phông, shot liền frame, giọng/phụ đề/nhịp, bản gộp cũ, tiến trình treo, git |
+| `node tools/shaders.mjs <trang> [--film] [--json f] [--top N]` | đo số program shader + giờ dịch của Chrome/ANGLE (trang mở chậm): __ready, top program chậm, nhóm theo khoá mat_*/grunge_*; ⚠ khi > 80 program hoặc > 10 s (cũng có `doctor.mjs --shaders`) |
 | `bash tools/branches.sh [--fetch]` | phiên cloud nào đã push gì, nhánh nào chưa gộp |
 | `node tools/look.mjs <trang> --shots … / --t … / --range a:b:s [--ab trang2] [--det]` | bảng khung có nhãn, so A/B + PSNR, kiểm tất định (skill `kiem-tra-khung`) |
 | `npm run bundle:ep001` | gộp `dist/ep001.html` |

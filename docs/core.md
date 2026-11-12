@@ -104,6 +104,18 @@ obj.userData.matKind = 'wood' | 'none';  MATS.on.value = 0 | 1;
 ```
 Toggle **mats**. Kiểm kê: `node tools/mat-inventory.mjs`.
 
+**Shader theo HỌ, khác biệt qua uniform** (2026-11-12): trước đây mỗi loại 1 program (`|mat_<loại>` × biến thể three ≈ 150
+program → Chrome/ANGLE dịch ~20 s). Nay khoá program là `|mat_<họ>`; r, m, tint, bump, spark, sheen, rmode, kiểu vân
+(`uMtPat`) và tham số noise là uniform riêng từng vật liệu (giữ ở `material.userData.matU`, gắn trong onBeforeCompile).
+- Phần nặng (fbm/noise/voronoi/hash) là "ô noise" chung tính 1 lần trước nhánh (`sF1 sF2`, `sN1..sN4`, `sV`, `sH`), fbm
+  lặp 4 bậc với cận là uniform (`uMtOct`=4) để FXC không trải ra (voronoi giữ bản trải sẵn — bản vòng làm nứt đá lệch điểm ảnh); mỗi kiểu vân trong `PAT` chỉ còn phép trộn rẻ
+  (khai báo ô: `f: [[s, o]]`, `n: [[nền, s, o]]`, `v: s`, `h: [nền, s, o]`; nền `p | U | W | WP`). Nhánh = `if (uMtPat == i)` độc lập (không else-if, không switch).
+- Bảng họ: `MAT_FAMILIES` (hiện 1 họ `all` = 34 kiểu vân — đo xen kẽ trên máy: 1 họ 103 s, 5 họ 143 s, 8 họ 176 s,
+  bản cũ 246 s tổng ms dịch khi máy bận; chia nhỏ họ = thêm program, mỗi program không rẻ hơn bao nhiêu).
+- `FAMILIES[họ] = { kinds, pats, glsl, params }` — mỗi họ tự đủ GLSL + bảng tham số; `patch()` chỉ tra từ đây
+  (chuẩn bị tách `engine/shaders/<họ>.js`, mỗi tập nạp họ nó dùng).
+- Thêm kiểu vân: thêm vào `PAT` (khai báo ô + code trộn) và vào một họ trong `MAT_FAMILIES`. Đo: `node tools/shaders.mjs episodes/ep001/index.html --film`.
+
 ## grunge — `engine/grunge.js`
 Lớp bụi/cũ kiểu Roblox: nếp vải và bẩn trên nhân vật (`char`); ố, rêu, sơn tróc trên nhà (`build`, `aged`).
 ```js
@@ -111,6 +123,7 @@ applyGrunge(THREE, actorRoot, 'char'); applyGrunge(THREE, envGroup, 'build');
 obj.userData.grungeKind = 'none';  GRUNGE.char.value = 0..1;
 ```
 Toggle **worn** (char), **grime** (build), **aged**.
+**Một họ shader duy nhất** (tối ưu số program): mã GLSL cố định, `customProgramCacheKey` chỉ thêm `|grunge`. Kiểu (`char`/`build`), `aged` và `amount` đi qua uniform riêng từng vật liệu — `uGrKind` (1 = char), `uGrAgedOn`, `uGrAmt`, giữ ở `mat.userData.grU` — còn ô bật/tắt dùng uniform chung `uGrCh`/`uGrBu`/`uGrAged` (= `GRUNGE.*`). Nhánh chọn bằng `if (uGrKind > 0.5)` / `if (uGrAgedOn * uGrAged > 0.0)`. Đừng ghi hằng số theo kind/aged/amount vào chuỗi shader hay vào cache key (mỗi program mới ≈ 300–500 ms dịch trên Chrome/ANGLE). Tên `vGrP vGrN vGrB vGrSz` + vị trí chèn giữ nguyên để `materials.js` nối tiếp.
 
 ## scans — `engine/scans.js`
 Mô hình quét Poly Haven (CC0), giữ nguyên vật liệu quét. Không vá materials/grunge lên chúng.
@@ -183,3 +196,19 @@ Khoá một món: `id` · `name` · `at [x,z]|[x,y,z]` (gốc = giữa đáy) ·
 - Asset: `ENV_ASSETS` gồm `...furnishIds(LAYOUT)` (layout xuất `export const KITCHEN_FURNISH/BEDROOM_FURNISH` từ file env, `engine/envs.js` import). Asset thiếu → món bị bỏ, có cảnh báo, phim vẫn render.
 - Phải đứng ở build của env (cha tại gốc toạ độ, chưa xoay) vì đo hộp bao theo toạ độ thế giới.
 Ví dụ dùng thật: `engine/envs/kitchen.js` (`KITCHEN_FURNISH`), `engine/envs/bedroom.js` (`BEDROOM_FURNISH`).
+
+## bake — `engine/bake.js` (nướng vân bề mặt thành texture; CHƯA tích hợp vào tập)
+Vân của `materials.js` (35 kiểu `PAT`) tính bằng noise trong fragment cho từng điểm ảnh. `bake.js` vẽ mỗi bộ vân **một lần** vào texture (MRT albedo/orm/height + pass 2 normal, mipmap, anisotropy); fragment chỉ tra texture (triplanar theo `vGrP/vGrN`). Công thức chép từ `PAT` sang noise **tuần hoàn** (lặp texture không có đường nối; đã kiểm bằng `?edge=1`). Tất định theo `seed`.
+```js
+import { bakeSurface, bakeSurfaceAsync, triplanarChunk, bindBake, PAT_NAMES } from './bake.js';
+const B = bakeSurface(THREE, renderer, { pat: 'WOOD', size: 1024, seed: 7, params: { tile: 8, bump: 0.9 } });
+// B = { albedo, orm, normal, height, size, tile, pat, seed, dispose() }   (texture RepeatWrapping)
+await bakeSurfaceAsync(THREE, renderer, opt)   // như trên nhưng dịch shader song song (không đứng hình)
+bindBake(material.uniforms, B, { scale: K.sc }) // bkAlb/bkOrm/bkNrm/bkInvTile
+triplanarChunk({ prefix: 'bk', oriented: kind === 'wood' })  // GLSL: BkOut o = bkTri(vGrP * sc, normalize(vGrN), vGrSz);
+```
+`params`: `tile` (cạnh ô lặp, stud, chẵn; mặc định 8, `FABRIC/FLAKE/HAIR/SCRATCH` 4, `ASPHALT` 16), `bump`, `aniso` (8), `shared` (xem dưới), `only` (nhóm kiểu).
+**Kênh** (không phải ORM glTF): `albedo.rgb = A` màu tuyệt đối của vân (gamma 1/2,2), `albedo.a = B/1,5` hệ số nhân màu gốc → `màu = clamp((A + B·max(màuGốc, orm.a))·tint)`; `orm.r` = lấp lánh, `orm.g` = 0,5 + Δnhám/2, `orm.b` = 0,5 + Δkim-loại/2, `orm.a` = sàn độ sáng màu gốc (mạ 0,78; sắt 0,5); `normal.rgb` = pháp tuyến tiếp tuyến, `normal.a` = cao độ 8-bit; `height.rg` = cao độ 16-bit (`(r·255+g)/255·2,5−1`, không mipmap).
+**Hiệu năng** (máy thử, Chrome/ANGLE D3D): nướng 1 bộ 1024² ≈ **1 ms** (34 kiểu ≈ 32 ms, sau khi dịch xong); RAM ≈ 21 MB/bộ ở 1024² (5 MB ở 512²). **Dịch shader** là khoản đắt: shader RIÊNG từng kiểu 0,03–0,34 s (cả 34 kiểu ≈ 4 s, tạo lười → cảnh dùng ~8 kiểu ≈ 1 s) — mặc định; `shared: true` = MỘT shader `uniform int uPat` cho cả 34 kiểu: chỉ 1 chương trình nhưng dịch ~**16 s** (lúc đầu 3D noise + `switch` > 100 s) → dùng `bakeSurfaceAsync`. `only: [...]` = shader chung cho nhóm 4–8 kiểu (2–5 s).
+**Khác nhẹ so với bản trực tiếp**: tần số làm tròn về bội 1/tile, bậc fbm 2/4/8, noise lát cắt 2D, vân mịn bị làm mờ theo texel (10–30 chu kỳ/stud cần tile 4), `SHELL` thành sọc chéo, `METALPAINT` gỉ không phụ thuộc độ cao, cát lấy mặt (x,y). Lặp ô: ASPHALT/đá có thể lộ lặp ở tile 8–16 nếu nhìn xa trên diện rộng; cận cảnh > ×8 hơi mờ (texel 1024² / tile 8).
+**Kế hoạch tích hợp** (sau khi `materials.js` gom họ xong): ô bật/tắt mới `matsBake` (mặc định TẮT; hình lệch nhẹ) trong `engine/post.js FX_DEFAULTS`; khi bật, `patch()` thay `K.pat` bằng chunk tra `bkTri` (cùng `rough/metal/bump/sheen/spark`): `diffuseColor = (A + B·max(base, floorB))·tint`, `roughness = r + dRough`, `metal = m + dMetal`, `emissive += spark`, normal = `o.nObj` đổi sang view; mỗi `(pat, seed)` nướng một lần lúc khởi động (`bakeSurfaceAsync` trong `waitUntil` của `hf-seek`), vật nhiều chất liệu chia sẻ texture theo `pat`; `dispose()` khi rời tập. Kiểm bằng `engine/bake-lab.html` (`?view=persp|all`, `?edge=1`, `?shared=1`, `?only=WOOD`, `window.__bench(size)`) và `look.mjs --ab`.
