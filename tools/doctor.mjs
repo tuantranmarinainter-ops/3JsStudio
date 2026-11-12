@@ -13,6 +13,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { kiemPose, docGlbFs } from './kiem/pose.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -343,6 +344,20 @@ if (DO_SHADERS) {
       const w = out.find((l) => l.startsWith('⚠'));
       w ? warn(w.replace(/^⚠ /, '') + ' — chi tiết: node tools/shaders.mjs ' + rel(page)) : ok('số program và thời gian mở trang trong ngưỡng');
     }
+  }
+}
+
+// ---------------------------------------------------------------- 10. Tư thế mô hình
+section('10. Tư thế mô hình');
+{
+  const mp = path.join(ROOT, 'assets/manifest.json');
+  if (!exists(mp)) warn('không thấy assets/manifest.json');
+  else {
+    const r = kiemPose(JSON.parse(read(mp)), docGlbFs(ROOT));
+    r.bad.forEach(bad);
+    r.warn.forEach(warn);
+    if (!r.bad.length && !r.warn.length) ok('mọi mô hình có animation/skeleton đều khai báo pose, anim khớp file');
+    if (r.thieu) info(`${r.thieu} GLB không có trên máy (bỏ qua)`);
   }
 }
 

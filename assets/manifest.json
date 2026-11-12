@@ -11,7 +11,14 @@
    "y": 0.72,
    "z": 0.55
   },
-  "scale": 1
+  "scale": 1,
+  "pose": "standing",
+  "anim": [
+   "Walk",
+   "Idle",
+   "Run",
+   "Swim"
+  ]
  },
  {
   "id": "polyfork/old-lighthouse-48ca6c",
@@ -53,7 +60,14 @@
    "y": 0.5,
    "z": 0.55
   },
-  "scale": 1
+  "scale": 1,
+  "pose": "flying",
+  "anim": [
+   "Idle",
+   "Walk",
+   "Run",
+   "Fly"
+  ]
  },
  {
   "id": "polyfork/driftwood-log-89a68f",
@@ -67,7 +81,11 @@
    "y": 0.82,
    "z": 2.64
   },
-  "scale": 1
+  "scale": 1,
+  "pose": "standing",
+  "anim": [
+   "tick"
+  ]
  },
  {
   "id": "polyfork/marram-grass-tuft-8c7a99",
@@ -81,7 +99,11 @@
    "y": 0.93,
    "z": 1.08
   },
-  "scale": 1
+  "scale": 1,
+  "pose": "standing",
+  "anim": [
+   "tick"
+  ]
  },
  {
   "id": "polyfork/shell-scatter-6d36b7",
@@ -109,7 +131,11 @@
    "y": 1.81,
    "z": 1.84
   },
-  "scale": 1
+  "scale": 1,
+  "pose": "standing",
+  "anim": [
+   "tick"
+  ]
  },
  {
   "id": "polyfork/rowing-dinghy-022673",
@@ -137,7 +163,11 @@
    "y": 6.06,
    "z": 3
   },
-  "scale": 1
+  "scale": 1,
+  "pose": "standing",
+  "anim": [
+   "tick"
+  ]
  },
  {
   "id": "polyfork/windblown-larch-abb99c",
@@ -151,7 +181,11 @@
    "y": 7,
    "z": 3.58
   },
-  "scale": 1
+  "scale": 1,
+  "pose": "standing",
+  "anim": [
+   "tick"
+  ]
  },
  {
   "id": "polyfork/boulder-field-cluster-08e364",
@@ -165,7 +199,11 @@
    "y": 1.45,
    "z": 2
   },
-  "scale": 1
+  "scale": 1,
+  "pose": "standing",
+  "anim": [
+   "tick"
+  ]
  },
  {
   "id": "polyfork/rock-outcrop-158ac3",
@@ -179,7 +217,11 @@
    "y": 2.05,
    "z": 2.5
   },
-  "scale": 1
+  "scale": 1,
+  "pose": "standing",
+  "anim": [
+   "tick"
+  ]
  },
  {
   "id": "polyfork/dwarf-pine-mat-faee77",
@@ -207,7 +249,11 @@
    "y": 5.03,
    "z": 4.3
   },
-  "scale": 1
+  "scale": 1,
+  "pose": "standing",
+  "anim": [
+   "tick"
+  ]
  },
  {
   "id": "characters/r15_body",
@@ -238,7 +284,11 @@
   ],
   "forward": "+z",
   "src": "assets/special/sea/dolphin.glb",
-  "scale": 1
+  "scale": 1,
+  "pose": "swimming",
+  "anim": [
+   "Armature|Swim"
+  ]
  },
  {
   "id": "sea/shark",
@@ -260,7 +310,11 @@
   ],
   "forward": "+z",
   "src": "assets/special/sea/shark.glb",
-  "scale": 1
+  "scale": 1,
+  "pose": "swimming",
+  "anim": [
+   "Armature|Swim"
+  ]
  },
  {
   "id": "sea/manta_ray",
@@ -282,7 +336,11 @@
   ],
   "forward": "+z",
   "src": "assets/special/sea/manta_ray.glb",
-  "scale": 1
+  "scale": 1,
+  "pose": "swimming",
+  "anim": [
+   "Armature|Swim"
+  ]
  },
  {
   "id": "sea/fish1",
@@ -304,7 +362,11 @@
   ],
   "forward": "+z",
   "src": "assets/special/sea/fish1.glb",
-  "scale": 1
+  "scale": 1,
+  "pose": "swimming",
+  "anim": [
+   "Armature|Swim"
+  ]
  },
  {
   "id": "sea/fish2",
@@ -326,7 +388,11 @@
   ],
   "forward": "+z",
   "src": "assets/special/sea/fish2.glb",
-  "scale": 1
+  "scale": 1,
+  "pose": "swimming",
+  "anim": [
+   "Armature|Swim"
+  ]
  },
  {
   "id": "sea/fish3",
@@ -348,7 +414,11 @@
   ],
   "forward": "+z",
   "src": "assets/special/sea/fish3.glb",
-  "scale": 1
+  "scale": 1,
+  "pose": "swimming",
+  "anim": [
+   "Armature|Swim"
+  ]
  },
  {
   "id": "sea/killer_whale",
@@ -370,7 +440,11 @@
   ],
   "forward": "+z",
   "src": "assets/special/sea/killer_whale.glb",
-  "scale": 1
+  "scale": 1,
+  "pose": "swimming",
+  "anim": [
+   "Take 001"
+  ]
  },
  {
   "id": "sea/sperm_whale",
@@ -407,7 +481,23 @@
   "water_y_native": 4.283,
   "note": "Material KHR_materials_unlit. Mặt nước: world y = gốc model + water_y_native × scale. Clip JUMP/JUMPSPLASH/BREATHE cắt mặt nước → dùng engine/splash.js (findSurfaceCrossings + createSplash).",
   "src": "assets/special/sea/sperm_whale.glb",
-  "scale": 1
+  "scale": 1,
+  "pose": "swimming",
+  "anim": [
+   "JUMPSPLASH-delphinidae",
+   "TURNLEFT-delphinidae",
+   "FASTER-delphinidae",
+   "IDLE-delphinidae",
+   "DEATH-delphinidae",
+   "JUMP-delphinidae",
+   "HURT-delphinidae",
+   "EAT-delphinidae",
+   "JUMPSPLASH-delphinidae.001",
+   "BREATHE-delphinidae",
+   "SWIMRIGHT-delphinidae",
+   "SWIM-delphinidae",
+   "ATTACK-delphinidae"
+  ]
  },
  {
   "id": "city-kit-roads/bridge-pillar-wide",
@@ -10075,6 +10165,12 @@
   "nodes": [
    "chest",
    "lid"
+  ],
+  "pose": "standing",
+  "anim": [
+   "open",
+   "close",
+   "open-close"
   ]
  },
  {
