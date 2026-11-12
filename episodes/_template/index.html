@@ -116,7 +116,7 @@
       window.__stage = stage;
       installMeasure({ THREE, stage, shots: tl });   // window.__measure(t) / window.__mask(t) cho tool kiểm luật
       window.__places = places;
-      window.getOptions = () => ({ ...OPTS, vid: {}, voices: [], fx: post.options, fxLabels: FX_LABELS, credits: credits.available ? credits.on : null });
+      window.getOptions = () => ({ ...OPTS, vid: {}, voices: [], fx: post.options, fxLabels: FX_LABELS, credits: credits.on });
       window.setOptions = (o = {}) => {
         if (o.subs !== undefined) OPTS.subs = !!o.subs;
         if (o.credits !== undefined) credits.setOn(o.credits);

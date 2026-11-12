@@ -7,10 +7,11 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const TOOL = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'ghi-cong.mjs');
+const NL = String.fromCharCode(10);
 const w = (root, rel, s) => { const p = path.join(root, rel); fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, typeof s === 'string' ? s : JSON.stringify(s)); };
 
 // "Tập giả" + CREDITS giả + manifest giả, trong thư mục tạm tên có task18
-function taoGoc({ credits = true } = {}) {
+function taoGoc({ credits = true, sky = false, deep = false } = {}) {
   const r = fs.mkdtempSync(path.join(os.tmpdir(), 'task18-'));
   w(r, 'assets/manifest.json', [
     { id: 'polyfork/aaa-model-111', source: 'polyfork.dev/asset/aaa-model-111', license: 'CC BY 4.0 (mesh)', credit: 'AAA Model by Polyfork (https://polyfork.dev/asset/aaa-model-111), CC BY 4.0', title: 'AAA Model' },
@@ -37,9 +38,25 @@ function taoGoc({ credits = true } = {}) {
     w(r, 'assets/sfx/CREDITS.md', '## CC BY 4.0\n\n"Wind Howl Loop" by WindMaker (https://freesound.org/people/WindMaker/sounds/111), licensed under CC BY 4.0\n"Dog Bark Unused" by BarkGuy (https://freesound.org/people/BarkGuy/sounds/222), licensed under CC BY 4.0\n');
     w(r, 'assets/music/CREDITS.md', '- "Song Alpha" by Band Alpha (https://www.jamendo.com/track/1), licensed under BY (https://creativecommons.org/licenses/by/3.0/)\n- "Song Beta Unused" by Band Beta (https://www.jamendo.com/track/2), licensed under BY (https://creativecommons.org/licenses/by/3.0/)\n');
   }
+  if (sky) {
+    fs.appendFileSync(path.join(r, 'episodes/t18/shots.js'), NL + "export const X = { skybox: 'sky-2' };");
+    w(r, 'assets/sky/CREDITS.md', ['# Bầu trời', '', '| Bộ | Nguồn | Ghi chú |', '|---|---|---|',
+      '| `sky-2/` (bk, dn, ft) | Người dùng gửi, từ Roblox Sky | Nguồn/giấy phép do người dùng chịu trách nhiệm. |',
+      '| `sky-3/` (bk, dn, ft) | Người dùng gửi, từ Roblox Sky | Nguồn/giấy phép do người dùng chịu trách nhiệm. |', ''].join(NL));
+  }
+  if (deep) {
+    // env → a.js → b.js → c.js (3 tầng import) mới nhắc tới asset
+    w(r, 'engine/envs/forest.js', ["import { a } from '../a.js';", "const x = pf('env-thing-222', 1);"].join(NL));
+    w(r, 'engine/a.js', ["import { b } from './b.js';", 'export const a = 1;'].join(NL));
+    w(r, 'engine/b.js', ["import { c } from './c.js';", "import './a.js';   // vòng lặp", 'export const b = 1;'].join(NL));
+    w(r, 'engine/c.js', "export const c = pf('deep-thing-444');");
+    const m = JSON.parse(fs.readFileSync(path.join(r, 'assets/manifest.json'), 'utf8'));
+    m.push({ id: 'polyfork/deep-thing-444', source: 'polyfork.dev/asset/deep-thing-444', license: 'CC BY 4.0 (mesh)', credit: 'Deep Thing by Polyfork (https://polyfork.dev/asset/deep-thing-444), CC BY 4.0', title: 'Deep Thing' });
+    w(r, 'assets/manifest.json', m);
+  }
   return r;
 }
-const chay = (goc) => spawnSync(process.execPath, [TOOL, 't18', '--goc', goc], { encoding: 'utf8', timeout: 120000 });
+const chay = (goc, ...more) => spawnSync(process.execPath, [TOOL, 't18', '--goc', goc, ...more], { encoding: 'utf8', timeout: 120000 });
 const rong = (png) => { const b = fs.readFileSync(png); assert.equal(b.toString('latin1', 1, 4), 'PNG'); return [b.readUInt32BE(16), b.readUInt32BE(20)]; };
 
 test('ghi-cong: CC BY của asset được dùng có mặt, asset không dùng vắng, ảnh 1080x1920, chữ >= 28px', () => {
@@ -83,4 +100,48 @@ test('ghi-cong: quá nhiều dòng mà không vừa khung → thoát 1 kèm thô
   const r = chay(g);
   assert.equal(r.status, 1, r.stdout + r.stderr);
   assert.match(r.stdout + r.stderr, /tràn|không vừa/);
+});
+
+test('ghi-cong: sky không ghi giấy phép mà tập dùng → mã 3, chuaRo, khối # cuối .txt, PNG vẫn đủ', () => {
+  const g = taoGoc({ sky: true });
+  const r = chay(g);
+  assert.equal(r.status, 3, r.stdout + r.stderr);
+  assert.match(r.stderr, /⚠ CHƯA RÕ GIẤY PHÉP — cần người dùng xác nhận trước khi đăng/);
+  assert.match(r.stderr, /sky-2/);
+  assert.ok(!/sky-3/.test(r.stderr), 'sky-3 không dùng');
+  const j = JSON.parse(fs.readFileSync(path.join(g, 'episodes/t18/ghi-cong.json'), 'utf8'));
+  assert.equal(j.chuaRo.length, 1);
+  assert.equal(j.chuaRo[0].ten, 'sky-2'); assert.match(j.chuaRo[0].nguon, /sky[\/]CREDITS.md/); assert.ok(j.chuaRo[0].lyDo);
+  const lines = fs.readFileSync(path.join(g, 'episodes/t18/ghi-cong.txt'), 'utf8').split(NL);
+  const hi = lines.findIndex((l) => l.startsWith('# CHƯA RÕ GIẤY PHÉP (xoá khối này khi đã xác nhận; không dán lên YouTube)'));
+  assert.ok(hi > 0, 'thiếu khối chưa rõ');
+  assert.ok(lines.slice(hi).filter((l) => l.trim()).every((l) => l.startsWith('#')));
+  assert.ok(lines.slice(hi).some((l) => l.includes('sky-2')));
+  assert.ok(!lines.slice(0, hi).some((l) => l.includes('sky-2')), 'phần dán được không nhắc sky-2');
+  assert.deepEqual(rong(path.join(g, 'episodes/t18/ghi-cong.png')), [1080, 1920]);
+  const r2 = chay(g, '--cho-phep-chua-ro');
+  assert.equal(r2.status, 0, r2.stdout + r2.stderr);
+  assert.match(r2.stderr, /⚠ CHƯA RÕ GIẤY PHÉP/);
+});
+
+test('ghi-cong: phần dán được chỉ có 1 dòng # chú thích đầu; không chưa rõ → chuaRo rỗng', () => {
+  const g = taoGoc();
+  assert.equal(chay(g).status, 0);
+  const lines = fs.readFileSync(path.join(g, 'episodes/t18/ghi-cong.txt'), 'utf8').split(NL);
+  assert.equal(lines[0], '# Dán toàn bộ phần dưới vào mô tả video (ảnh cuối phim chỉ ghi tác giả + giấy phép).');
+  assert.equal(lines.filter((l) => l.startsWith('#')).length, 1);
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(g, 'episodes/t18/ghi-cong.json'), 'utf8')).chuaRo, []);
+});
+
+test('ghi-cong: asset CC BY nạp qua 3 tầng import (có vòng lặp) vẫn được ghi công', () => {
+  const g = taoGoc({ deep: true });
+  const r = chay(g);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.ok(fs.readFileSync(path.join(g, 'episodes/t18/ghi-cong.txt'), 'utf8').includes('Deep Thing'));
+});
+
+test('ghi-cong --help nêu ý nghĩa mã thoát 3', () => {
+  const r = spawnSync(process.execPath, [TOOL, '--help'], { encoding: 'utf8' });
+  assert.equal(r.status, 0);
+  assert.match(r.stdout, /3/); assert.match(r.stdout, /--cho-phep-chua-ro/);
 });

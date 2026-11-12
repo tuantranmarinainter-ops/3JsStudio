@@ -1,5 +1,5 @@
 // Tự sinh phần GHI CÔNG của một tập từ các file CREDITS + manifest, lọc theo asset TẬP ĐÓ DÙNG.
-//   node tools/ghi-cong.mjs <ep> [--goc <thư mục gốc>] [--khong-anh]
+//   node tools/ghi-cong.mjs <ep> [--goc <thư mục gốc>] [--khong-anh] [--cho-phep-chua-ro]
 // Ra:  episodes/<ep>/ghi-cong.txt   văn bản dán mô tả YouTube (đủ dòng, có URL)
 //      episodes/<ep>/ghi-cong.png   ảnh 1080×1920 hiện 3 giây cuối trong trình phát (tuỳ chọn `credits`, engine/credits.js)
 //      episodes/<ep>/ghi-cong.json  số đo: cỡ chữ nhỏ nhất, mức gom dòng… (tool kiểm lại, test đọc)
@@ -8,6 +8,9 @@
 // CC BY (mọi giấy phép đòi ghi công) của asset dùng → phải có; CC0 → gom 1 dòng theo nguồn; asset không dùng → không có.
 // Ảnh: trang HTML tạm chụp bằng launchBrowser (tools/browser.mjs), phông Be Vietnam Pro cục bộ, chữ ≥ 28 px.
 // Quá nhiều dòng → gom theo tác giả (mức 1, 2); vẫn tràn → thoát 1.
+// Asset ĐANG DÙNG mà CREDITS không ghi giấy phép (vd bộ trời Roblox assets/sky) → 'chưa rõ': cảnh báo stderr, ghi vào ghi-cong.json
+// (khoá chuaRo) và khối '#' cuối ghi-cong.txt, KHÔNG vào ảnh. MÃ THOÁT 3 = xong nhưng có mục chưa rõ (file vẫn ghi đủ);
+// --cho-phep-chua-ro → vẫn cảnh báo nhưng thoát 0. Các mã: 0 ổn, 1 ảnh tràn, 2 sai tham số, 3 chưa rõ giấy phép (xem --help).
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -49,31 +52,69 @@ export function docDong(line) {
   const licSrc = rest.match(/(?:licensed|,)\s*(?:under\s+)?(CC[ -]?BY[^,.()]*|CC0|BY)\b/i);
   return { title, author, urls: urls.filter((u) => !/creativecommons/i.test(u)), license: licSrc ? chuanGiayPhep(licSrc[1], urls.find((u) => /creativecommons/i.test(u)) || '') : lic, raw: t };
 }
-export function docCredits(text) { return String(text || '').split(/\r?\n/).map(docDong).filter(Boolean); }
+// Phân loại: can-ghi-cong (CC BY…), cc0, chua-ro (không thấy tên giấy phép đã biết, hoặc ghi "chịu trách nhiệm"/"chưa rõ"/"unknown")
+export function phanLoai(lic, ghiChu = '') {
+  if (/chịu trách nhiệm|chưa rõ|unknown/i.test(ghiChu)) return 'chua-ro';
+  if (/^CC0$/.test(lic)) return 'cc0';
+  if (/^CC BY/.test(lic)) return 'can-ghi-cong';
+  if (/\b(MIT|OFL|Apache|BSD|ISC|zlib)\b/i.test(lic)) return 'khac-biet';
+  return 'chua-ro';
+}
+export function docCredits(text) { return String(text || '').split(/\r?\n/).map(docDong).filter(Boolean).map((e) => ({ ...e, clazz: phanLoai(e.license) })); }
+// Bảng Markdown (vd assets/sky/CREDITS.md): mỗi hàng `ten/` | nguồn | ghi chú
+export function docBang(text, file = '') {
+  const out = [];
+  for (const line of String(text || '').split(/\r?\n/)) {
+    const t = line.trim(); if (!t.startsWith('|') || /^\|[\s|:-]+$/.test(t)) continue;
+    const cells = t.split('|').slice(1, -1).map((c) => c.trim());
+    const m = cells[0] && cells[0].match(/`([^`]+)`/); if (!m) continue;
+    const lic = (t.match(/CC0|public ?domain|CC[ -]?BY[ -]*(?:SA|NC|ND)?[ -]*\d?\.?\d?|\b(?:MIT|OFL|Apache|BSD|ISC|zlib)\b/i) || [''])[0];
+    const clazz = phanLoai(chuanGiayPhep(lic), t);
+    const ghi = cells.slice(1).join(' | ');
+    out.push({ ten: m[1].replace(/\/+$/, ''), file, nguon: cells[1] || '', license: lic ? chuanGiayPhep(lic) : '', clazz,
+      lyDo: clazz !== 'chua-ro' ? '' : /chịu trách nhiệm|chưa rõ|unknown/i.test(t) ? `CREDITS ghi: ${ghi}` : 'CREDITS không ghi giấy phép nào nhận ra' });
+  }
+  return out;
+}
 
 // ---------- thu thập asset đã dùng ----------
 function gomChuoi(v, out) { if (typeof v === 'string') out.push(v); else if (Array.isArray(v)) v.forEach((x) => gomChuoi(x, out)); else if (v && typeof v === 'object') Object.values(v).forEach((x) => gomChuoi(x, out)); return out; }
 function docThuMuc(dir) { try { return fs.readdirSync(dir); } catch { return []; } }
+
+// Theo chuỗi import tương đối ('./x.js', '../x.js', '/engine/x.js') tới độ sâu 4; bỏ vendor/; `seen` chống vòng lặp.
+const IMPORT_RE = /(?:from|import)\s*\(?\s*['"]([^'"]+)['"]/g;
+function theoImport(goc, file, text, depth, seen) {
+  let out = '';
+  if (depth > 4) return out;
+  for (const m of text.matchAll(IMPORT_RE)) {
+    const spec = m[1];
+    if (!spec.startsWith('.') && !spec.startsWith('/')) continue;
+    const p = spec.startsWith('/') ? path.join(goc, spec) : path.resolve(path.dirname(file), spec);
+    if (/[\\/]vendor[\\/]/.test(p) || !/\.m?js$/.test(p) || seen.has(p)) continue;
+    seen.add(p);
+    const t = rd(p); if (t == null) continue;
+    out += '\n' + t + theoImport(goc, p, t, depth + 1, seen);
+  }
+  return out;
+}
 
 function ngu(goc, ep) {
   const epDir = path.join(goc, 'episodes', ep);
   let corpus = ['shots.js', 'episode.js'].map((f) => rd(path.join(epDir, f)) || '').join('\n');
   // nhân vật R15 dựng từ một thân GLB dùng chung (engine/r15.js) — tập nào có diễn viên R15 thì dùng nó
   if (/createR15|buildCast|actors\s*:/.test(corpus)) corpus += '\ncharacters/r15_body';
-  // env được gọi → thêm mã env và module nó import (1 tầng)
-  const envDir = path.join(goc, 'engine', 'envs');
-  for (const f of docThuMuc(envDir).filter((x) => x.endsWith('.js'))) {
-    const name = f.replace(/\.js$/, '');
-    if (!new RegExp(`['"\`]${esc(name)}['"\`]`).test(corpus)) continue;
-    const src = rd(path.join(envDir, f)) || '';
-    corpus += '\n' + src;
-    for (const m of src.matchAll(/from\s+['"](\.[^'"]+)['"]/g)) corpus += '\n' + (rd(path.resolve(envDir, m[1])) || '');
-  }
+  // env được gọi (+ props.js) → thêm mã của chúng và mọi module chúng import (đệ quy, sâu ≤ 4)
+  const envDir = path.join(goc, 'engine', 'envs'), seen = new Set();
+  const roots = docThuMuc(envDir).filter((x) => x.endsWith('.js') && new RegExp(`['"\`]${esc(x.replace(/\.js$/, ''))}['"\`]`).test(corpus)).map((x) => path.join(envDir, x));
+  roots.push(path.join(goc, 'engine', 'props.js'));
+  for (const f of roots) { const src = rd(f); if (src == null) continue; seen.add(f); corpus += '\n' + src + theoImport(goc, f, src, 1, seen); }
+  // engine/envs.js chỉ dùng để dò trời mặc định (nó liệt kê MỌI asset của MỌI env nên không đưa vào corpus asset)
+  const skyCorpus = corpus + '\n' + (rd(path.join(goc, 'engine', 'envs.js')) || '');
   const sfxStr = []; const sfxDir = path.join(epDir, 'sfx');
   for (const f of docThuMuc(sfxDir).filter((x) => x.endsWith('.json'))) gomChuoi(rdj(path.join(sfxDir, f)), sfxStr);
   const plan = rdj(path.join(epDir, 'music', 'plan.json'));
   const tracks = new Set(((plan && plan.segments) || []).map((s) => s && s.track).filter(Boolean));
-  return { corpus, sfxStr: new Set(sfxStr.map((s) => s.toLowerCase())), tracks };
+  return { corpus, skyCorpus, sfxStr: new Set(sfxStr.map((s) => s.toLowerCase())), tracks };
 }
 const dungTrong = (corpus, id) => {
   const base = id.split('/').pop();
@@ -92,25 +133,25 @@ function nguonNhan(hay) {
   return [d ? d[1] : hay.slice(0, 40), d ? d[1] : ''];
 }
 
-export function thuThap(goc, ep) {
-  const { corpus, sfxStr, tracks } = ngu(goc, ep);
+export function thuThap(goc, ep, du = ngu(goc, ep)) {
+  const { corpus, sfxStr, tracks } = du;
   const recs = [];
   const manifest = rdj(path.join(goc, 'assets', 'manifest.json')) || [];
   for (const e of Array.isArray(manifest) ? manifest : []) {
     if (!e || !e.id || !dungTrong(corpus, e.id)) continue;
     const c = e.credit ? docDong(e.credit.replace(/^["“]?/, '- ')) : null;
-    recs.push({ kind: 'model', title: e.title || (c && c.title) || e.id, author: e.author || (c && c.author) || '', license: chuanGiayPhep(e.license, e.url || ''),
+    recs.push({ kind: 'model', file: 'assets/manifest.json', title: e.title || (c && c.title) || e.id, author: e.author || (c && c.author) || '', license: chuanGiayPhep(e.license, e.url || ''),
       url: e.url || (c && c.urls[0]) || (e.source && /\./.test(e.source) ? e.source : ''), hay: [e.id, e.source, e.url, e.credit].filter(Boolean).join(' ').toLowerCase() });
   }
   const sfx = rdj(path.join(goc, 'assets', 'sfx', 'sfx_manifest.json')) || {};
   for (const [k, e] of Object.entries(sfx)) {
     if (!e || e.missing || !e.license || !sfxStr.has(k.toLowerCase())) continue;
-    recs.push({ kind: 'sfx', title: e.title || k, author: e.creator || '', license: chuanGiayPhep(e.license, e.license_url || ''), url: e.source_url || '', hay: [k, e.source_url].filter(Boolean).join(' ').toLowerCase() });
+    recs.push({ kind: 'sfx', file: 'assets/sfx/sfx_manifest.json', title: e.title || k, author: e.creator || '', license: chuanGiayPhep(e.license, e.license_url || ''), url: e.source_url || '', hay: [k, e.source_url].filter(Boolean).join(' ').toLowerCase() });
   }
   const mus = rdj(path.join(goc, 'assets', 'music', 'music_manifest.json')) || {};
   for (const k of tracks) {
     const e = mus[k]; if (!e) continue;
-    recs.push({ kind: 'music', title: e.title || k, author: e.creator || '', license: chuanGiayPhep(e.license, e.license_url || ''), url: e.source_url || '', hay: [k, e.source_url].filter(Boolean).join(' ').toLowerCase() });
+    recs.push({ kind: 'music', file: 'assets/music/music_manifest.json', title: e.title || k, author: e.creator || '', license: chuanGiayPhep(e.license, e.license_url || ''), url: e.source_url || '', hay: [k, e.source_url].filter(Boolean).join(' ').toLowerCase() });
   }
   return recs;
 }
@@ -123,9 +164,24 @@ const khop = (rec, ent) => { const hay = rec.hay.replace(/https?:\/\/(www\.)?/g,
 
 // ---------- dòng ghi công ----------
 export function dungDong(goc, ep) {
-  const recs = thuThap(goc, ep), ents = docMoiCredits(goc);
-  const by = [], cc0 = new Map(), seen = new Set();
+  const du = ngu(goc, ep), recs = thuThap(goc, ep, du), ents = docMoiCredits(goc);
+  const by = [], cc0 = new Map(), seen = new Set(), chuaRo = [];
+  // Trời (skybox): mục assets/sky/CREDITS.md (bảng) mà tập đang dùng → xếp loại; chưa rõ thì phải báo
+  const skyFile = 'assets/sky/CREDITS.md', skyEnts = docBang(rd(path.join(goc, skyFile)), skyFile);
+  const skyDirs = docThuMuc(path.join(goc, 'assets', 'sky')).filter((n) => { try { return fs.statSync(path.join(goc, 'assets', 'sky', n)).isDirectory(); } catch { return false; } });
+  const tenSky = new Set([...skyDirs, ...skyEnts.map((e) => e.ten), ...[...du.skyCorpus.matchAll(/['"`](sky-\d+)['"`]/g)].map((m) => m[1])]);
+  const skyLines = [];
+  for (const ten of [...tenSky].sort()) {
+    // 'sky-<n>' là tên riêng → khớp chuỗi trích dẫn; tên chung ('moon', 'clear-day'…) phải nằm sau chữ sky/skybox trên cùng dòng (tránh trùng tên object 'moon')
+    const q = `['"\`]${esc(ten)}['"\`]`;
+    if (!new RegExp(/^sky-\d+$/.test(ten) ? q : `sky[^\\n]{0,80}${q}`, 'i').test(du.skyCorpus)) continue;
+    const e = skyEnts.find((x) => x.ten === ten);
+    if (!e) chuaRo.push({ ten, nguon: 'assets/sky/ (không có mục nào trong ' + skyFile + ')', lyDo: 'trời đang dùng nhưng CREDITS không nhắc tới' });
+    else if (e.clazz === 'chua-ro') chuaRo.push({ ten, nguon: e.file, lyDo: e.lyDo });
+    else if (e.clazz === 'can-ghi-cong') skyLines.push({ title: ten, author: e.nguon, license: e.license });
+  }
   for (const r of recs) {
+    if (phanLoai(r.license) === 'chua-ro') { chuaRo.push({ ten: r.title, nguon: r.file, lyDo: `giấy phép không nhận ra: "${r.license || '(trống)'}"` }); continue; }
     const ent = ents.find((e) => khop(r, e));
     const lic = r.license === 'CC0' ? 'CC0' : (ent && ent.license && /CC/.test(ent.license) ? ent.license : r.license);
     const title = (ent && ent.title) || r.title, author = (ent && ent.author) || r.author, url = (ent && ent.urls[0] && (/^https?:/.test(ent.urls[0]) ? ent.urls[0] : 'https://' + ent.urls[0])) || r.url;
@@ -136,10 +192,11 @@ export function dungDong(goc, ep) {
     by.push({ section, title, author, license: lic, url });
   }
   const lines = { model: [], am: [] };
+  for (const b of skyLines) by.push({ section: 'model', ...b, url: '' });
   for (const b of by) lines[b.section].push({ ...b, text: [b.title, b.author, b.license, b.url].filter(Boolean).join(' — '), short: [b.title, b.author, b.license].filter(Boolean).join(' — ') });
   for (const c of cc0.values()) lines[c.section].push({ cc0: true, ten: c.ten, license: 'CC0', author: c.ten, text: `${c.ten} — CC0${c.host ? ' — ' + c.host : ''}`, short: `${c.ten} — CC0` });
   const tools = congCu();
-  return { model: lines.model, am: lines.am, tools };
+  return { model: lines.model, am: lines.am, tools, chuaRo };
 }
 
 function congCu() {
@@ -161,8 +218,13 @@ function congCu() {
 
 const SECTIONS = [['model', 'Mô hình & hình ảnh'], ['am', 'Âm thanh & nhạc'], ['tools', 'Công cụ & phương pháp']];
 export function dungTxt(g) {
-  const out = ['GHI CÔNG / CREDITS', ''];
+  const out = ['# Dán toàn bộ phần dưới vào mô tả video (ảnh cuối phim chỉ ghi tác giả + giấy phép).', '', 'GHI CÔNG / CREDITS', ''];
   for (const [k, ten] of SECTIONS) { out.push(ten); if (!g[k].length) out.push('- (không có)'); for (const l of g[k]) out.push('- ' + l.text); out.push(''); }
+  if (g.chuaRo && g.chuaRo.length) {
+    out.push('# CHƯA RÕ GIẤY PHÉP (xoá khối này khi đã xác nhận; không dán lên YouTube)');
+    for (const c of g.chuaRo) out.push(`# - ${c.ten} — ${c.nguon} — ${c.lyDo}`);
+    out.push('');
+  }
   return out.join('\n').replace(/\n+$/, '\n');
 }
 
@@ -217,12 +279,21 @@ async function veAnh(goc, ep, g, outPng) {
 }
 
 // ---------- chạy ----------
+const HELP = [
+  'Dùng: node tools/ghi-cong.mjs <ep> [--goc <thư mục gốc>] [--khong-anh] [--cho-phep-chua-ro] [--help]',
+  '  --goc <thư mục>      gốc repo giả (mặc định: repo này) — dùng cho test',
+  '  --khong-anh          chỉ ghi ghi-cong.txt, bỏ ảnh PNG',
+  '  --cho-phep-chua-ro   asset ĐANG DÙNG mà không rõ giấy phép: vẫn cảnh báo nhưng thoát 0',
+  'Mã thoát: 0 = xong, không có gì chưa rõ; 1 = ảnh tràn khung; 2 = sai tham số/không có tập;',
+  '          3 = XONG (file đã ghi đủ) nhưng có asset đang dùng CHƯA RÕ GIẤY PHÉP — người dùng phải xác nhận trước khi đăng.',
+].join('\n');
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
+  if (args.includes('--help') || args.includes('-h')) { console.log(HELP); process.exit(0); }
   const ep = args.find((a, i) => !a.startsWith('--') && args[i - 1] !== '--goc');
   const gi = args.indexOf('--goc');
   const goc = gi >= 0 ? path.resolve(args[gi + 1]) : REPO;
-  if (!ep) { console.error('Dùng: node tools/ghi-cong.mjs <ep> [--goc <thư mục>] [--khong-anh]'); process.exit(2); }
+  if (!ep) { console.error(HELP); process.exit(2); }
   const epDir = path.join(goc, 'episodes', ep);
   if (!fs.existsSync(epDir)) { console.error(`Không có ${epDir}`); process.exit(2); }
   for (const f of ['assets/CREDITS.md', 'assets/characters/CREDITS.md', 'assets/music/CREDITS.md', 'assets/polyfork/CREDITS.md', 'assets/polyhaven/CREDITS.md', 'assets/sfx/CREDITS.md', 'assets/sky/CREDITS.md'])
@@ -231,9 +302,17 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   fs.writeFileSync(path.join(epDir, 'ghi-cong.txt'), dungTxt(g));
   const n = g.model.length + g.am.length + g.tools.length;
   console.log(`ghi-cong.txt: ${n} dòng (mô hình ${g.model.length}, âm thanh ${g.am.length}, công cụ ${g.tools.length})`);
-  if (args.includes('--khong-anh')) process.exit(0);
-  const r = await veAnh(goc, ep, g, path.join(epDir, 'ghi-cong.png'));
-  if (!r) { console.error(`✗ Ghi công tràn khung ${W}×${H} dù đã gom theo tác giả và hạ chữ tới ${MIN_FONT} px (${n} dòng) — bớt asset hoặc chỉnh tay.`); process.exit(1); }
-  fs.writeFileSync(path.join(epDir, 'ghi-cong.json'), JSON.stringify({ ...r, txtLines: n }, null, 1) + '\n');
-  console.log(`ghi-cong.png ${r.width}×${r.height}: chữ nhỏ nhất ${r.minFontPx}px (thân ${r.fontPx}px), mức gom ${r.level}, ${r.lines} dòng`);
+  let ma = 0;
+  if (!args.includes('--khong-anh')) {
+    const r = await veAnh(goc, ep, g, path.join(epDir, 'ghi-cong.png'));
+    if (!r) { console.error(`✗ Ghi công tràn khung ${W}×${H} dù đã gom theo tác giả và hạ chữ tới ${MIN_FONT} px (${n} dòng) — bớt asset hoặc chỉnh tay.`); process.exit(1); }
+    fs.writeFileSync(path.join(epDir, 'ghi-cong.json'), JSON.stringify({ ...r, txtLines: n, chuaRo: g.chuaRo }, null, 1) + '\n');
+    console.log(`ghi-cong.png ${r.width}×${r.height}: chữ nhỏ nhất ${r.minFontPx}px (thân ${r.fontPx}px), mức gom ${r.level}, ${r.lines} dòng`);
+  }
+  if (g.chuaRo.length) {
+    console.error('⚠ CHƯA RÕ GIẤY PHÉP — cần người dùng xác nhận trước khi đăng:');
+    for (const c of g.chuaRo) console.error(`  - ${c.ten} (${c.nguon}): ${c.lyDo}`);
+    ma = args.includes('--cho-phep-chua-ro') ? 0 : 3;
+  }
+  process.exit(ma);
 }

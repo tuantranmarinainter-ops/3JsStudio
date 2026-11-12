@@ -1,3 +1,5 @@
+# Dán toàn bộ phần dưới vào mô tả video (ảnh cuối phim chỉ ghi tác giả + giấy phép).
+
 GHI CÔNG / CREDITS
 
 Mô hình & hình ảnh
@@ -53,3 +55,7 @@ Công cụ & phương pháp
 - GSAP 3.15.0 — GreenSock — GSAP Standard License — https://gsap.com/standard-license
 - mp4-muxer 5.2.1 — Vanilagy — MIT — https://github.com/Vanilagy/mp4-muxer
 - Phương pháp hoạt hình, hiệu ứng & dựng cảnh — fwjelaa (FWJ STUDIOS) — phương pháp, chuyển sang three.js
+
+# CHƯA RÕ GIẤY PHÉP (xoá khối này khi đã xác nhận; không dán lên YouTube)
+# - sky-7 — assets/sky/CREDITS.md — CREDITS ghi: Người dùng gửi 2026-11-12, từ Roblox Sky | Nguồn/giấy phép do người dùng chịu trách nhiệm.
+# - sky-9 — assets/sky/CREDITS.md — CREDITS ghi: Người dùng gửi 2026-11-12, từ Roblox Sky | Nguồn/giấy phép do người dùng chịu trách nhiệm.

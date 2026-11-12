@@ -168,6 +168,8 @@ async function init() {
     if ($('xcredrow').style.display !== 'none') o.credits = $('xcred').checked;
     if (ev && ev.target && ev.target.id === 'xvid') o.vid = $('xvid').value;
     window.setOptions(o);
+    // ảnh ghi công chỉ tải khi bật lần đầu: đợi tải xong rồi vẽ lại khung; tải lỗi (không có file) → ô tự bỏ chọn
+    if (window.__credits && o.credits) window.__credits.ready.then(() => { $('xcred').checked = window.__credits.on; show(+$('xseek').value); });
     if (ev && ev.target && ev.target.id === 'xlang') fillVoices();
     audioEl = voiceEl();
     show(+$('xseek').value);
@@ -470,6 +472,7 @@ async function init() {
         }
       };
 
+      if (window.__credits) await window.__credits.ready;   // ảnh ghi công (nếu bật) phải tải xong trước khung đầu tiên
       const tStart = performance.now();
       try {
         for (let i = 0; i < N; i++) {

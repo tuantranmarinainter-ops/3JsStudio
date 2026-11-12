@@ -77,6 +77,12 @@ if (existsSync(vIndex)) {
   }
   console.log(`      + giọng đọc: ${n} file từ voices/index.json`);
 }
+// Ảnh ghi công cuối phim (tools/ghi-cong.mjs): tải lười (chỉ khi người xem bật) nên không có trong lúc init → nhúng riêng
+const gcPng = `/episodes/${ep}/ghi-cong.png`;
+if (!embed[gcPng] && existsSync(join(root, gcPng))) {
+  const buf = readFileSync(join(root, gcPng)); embed[gcPng] = ['image/png', buf.toString('base64')]; embedBytes += buf.length;
+  console.log('      + ảnh ghi công: ghi-cong.png');
+}
 console.log(`      ${Object.keys(embed).length} file nhúng, ${(embedBytes / 1048576).toFixed(1)} MB`);
 
 // ---- 2. Gộp JS ----
