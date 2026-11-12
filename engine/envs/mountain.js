@@ -14,15 +14,15 @@ import { createCamp } from '../castaway.js';
 import { smoothFlash } from '../flash.js';
 
 export default function build(g, e, H) {
-  const { THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
+  const { ganTang, THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
   // Đỉnh chính: lưới noise có mặt bằng tuyết (nhà ở y=0), sườn đá + tuyết theo độ dốc (engine/peaks.js)
-  const summit = createSummit(THREE, { seed: 11, plateauR: 56, radius: 150, depth: 150 }); g.add(summit.object); 
+  const summit = createSummit(THREE, { seed: 11, plateauR: 56, radius: 150, depth: 150 }); g.add(ganTang(summit.object, 'mid'));   // tầng giữa: đỉnh chính + mặt bằng nhà
   // Dãy núi xa nhiều lớp; sương (fog 'sky') làm nhạt dần theo khoảng cách
-  g.add(createRange(THREE, { seed: 21, count: 12, rMin: 420, rMax: 780, base: -50, hMin: 90, hMax: 170, hFar: 60 }).object);
+  g.add(ganTang(createRange(THREE, { seed: 21, count: 12, rMin: 420, rMax: 780, base: -50, hMin: 90, hMax: 170, hFar: 60 }).object, 'back'));   // tầng sau: dãy núi xa
   // Đá rải mép mặt bằng — chỉ phía sau/hai bên, không chắn khung hiên (+z)
   for (let i = 0; i < 6; i++) { const a = Math.PI * (1.15 + (i / 5) * 0.95) + (hash(i, 9) - 0.5) * 0.2, r = 53 + hash(i, 2) * 3;
     const rk = pf(i % 2 ? 'rock-outcrop-158ac3' : 'boulder-field-cluster-08e364', 0.5 + hash(i, 1) * 0.4) || K.rock(2.2 + hash(i, 1) * 2.6, '#6b5f58', i + 40);
-    place(g, rk, Math.cos(a) * r, -0.8, Math.sin(a) * r, hash(i, 3) * 6); }
+    ganTang(place(g, rk, Math.cos(a) * r, -0.8, Math.sin(a) * r, hash(i, 3) * 6), 'front'); }   // tầng trước: đá mép mặt bằng
   // Biển mây: 2 lớp shader fbm (lớp dưới đặc, tối hơn → lỗ hổng thấy mây sâu) + cụm bông sprite
   e.seaLo = createCloudSea(THREE, { y: -36, cover: 0.3, soft: 0.25, shade: '#9fb3cd', lit: '#e6eef8', scale: 0.02, drift: [0.6, 0.2], seed: 5, name: 'cloud_sea_low', solidFar: 1, minAlpha: 1, relief: 4, fogNear: 400, fogFar: 1800 });
   e.sea = createCloudSea(THREE, { y: -20, cover: 0.33, hug: 0.2, bump: 22, hugR: [45, 160], relief: 5, soft: 0.14, scale: 0.032, drift: [1.4, 0.5], seed: 3, shade: '#adc0d8', fogNear: 400, fogFar: 1800 });
