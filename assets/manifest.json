@@ -12043,5 +12043,131 @@
   "nodes": [
    "table_small"
   ]
+ },
+ {
+  "id": "polyhaven-tex/brown_planks_03",
+  "src": "assets/polyhaven-tex/brown_planks_03/512webp/brown_planks_03_diff_512.webp",
+  "maps": {
+   "diffuse": "512webp/brown_planks_03_diff_512.webp",
+   "normal_gl": "512webp/brown_planks_03_nor_gl_512.webp",
+   "arm": "512webp/brown_planks_03_arm_512.webp"
+  },
+  "source": "polyhaven.com/a/brown_planks_03",
+  "license": "CC0",
+  "credit": "brown_planks_03 by Poly Haven (polyhaven.com/a/brown_planks_03), CC0",
+  "kind": "texture-pbr",
+  "use": "gỗ mộc (materials.js MAT_TEX.wood)"
+ },
+ {
+  "id": "polyhaven-tex/blue_painted_planks",
+  "src": "assets/polyhaven-tex/blue_painted_planks/512webp/blue_painted_planks_diff_512.webp",
+  "maps": {
+   "diffuse": "512webp/blue_painted_planks_diff_512.webp",
+   "normal_gl": "512webp/blue_painted_planks_nor_gl_512.webp",
+   "arm": "512webp/blue_painted_planks_arm_512.webp"
+  },
+  "source": "polyhaven.com/a/blue_painted_planks",
+  "license": "CC0",
+  "credit": "blue_painted_planks by Poly Haven (polyhaven.com/a/blue_painted_planks), CC0",
+  "kind": "texture-pbr",
+  "use": "gỗ sơn tường nhà (MAT_TEX.woodpaint)"
+ },
+ {
+  "id": "polyhaven-tex/clay_roof_tiles_02",
+  "src": "assets/polyhaven-tex/clay_roof_tiles_02/512webp/clay_roof_tiles_02_diff_512.webp",
+  "maps": {
+   "diffuse": "512webp/clay_roof_tiles_02_diff_512.webp",
+   "normal_gl": "512webp/clay_roof_tiles_02_nor_gl_512.webp",
+   "arm": "512webp/clay_roof_tiles_02_arm_512.webp"
+  },
+  "source": "polyhaven.com/a/clay_roof_tiles_02",
+  "license": "CC0",
+  "credit": "clay_roof_tiles_02 by Poly Haven (polyhaven.com/a/clay_roof_tiles_02), CC0",
+  "kind": "texture-pbr",
+  "use": "ngói (MAT_TEX.shingle)"
+ },
+ {
+  "id": "polyhaven-tex/gray_rocks",
+  "src": "assets/polyhaven-tex/gray_rocks/512webp/gray_rocks_diff_512.webp",
+  "maps": {
+   "diffuse": "512webp/gray_rocks_diff_512.webp",
+   "normal_gl": "512webp/gray_rocks_nor_gl_512.webp",
+   "arm": "512webp/gray_rocks_arm_512.webp"
+  },
+  "source": "polyhaven.com/a/gray_rocks",
+  "license": "CC0",
+  "credit": "gray_rocks by Poly Haven (polyhaven.com/a/gray_rocks), CC0",
+  "kind": "texture-pbr",
+  "use": "đá (MAT_TEX.stone)"
+ },
+ {
+  "id": "polyhaven-tex/farm_soil",
+  "src": "assets/polyhaven-tex/farm_soil/512webp/farm_soil_diff_512.webp",
+  "maps": {
+   "diffuse": "512webp/farm_soil_diff_512.webp",
+   "normal_gl": "512webp/farm_soil_nor_gl_512.webp",
+   "arm": "512webp/farm_soil_arm_512.webp"
+  },
+  "source": "polyhaven.com/a/farm_soil",
+  "license": "CC0",
+  "credit": "farm_soil by Poly Haven (polyhaven.com/a/farm_soil), CC0",
+  "kind": "texture-pbr",
+  "use": "đất (MAT_TEX.soil)"
+ },
+ {
+  "id": "polyhaven-tex/dense_sand",
+  "src": "assets/polyhaven-tex/dense_sand/512webp/dense_sand_diff_512.webp",
+  "maps": {
+   "diffuse": "512webp/dense_sand_diff_512.webp",
+   "normal_gl": "512webp/dense_sand_nor_gl_512.webp",
+   "arm": "512webp/dense_sand_arm_512.webp"
+  },
+  "source": "polyhaven.com/a/dense_sand",
+  "license": "CC0",
+  "credit": "dense_sand by Poly Haven (polyhaven.com/a/dense_sand), CC0",
+  "kind": "texture-pbr",
+  "use": "cát (MAT_TEX.sand)"
+ },
+ {
+  "id": "polyhaven-tex/fabric_pattern_05",
+  "src": "assets/polyhaven-tex/fabric_pattern_05/512webp/fabric_pattern_05_diff_512.webp",
+  "maps": {
+   "diffuse": "512webp/fabric_pattern_05_diff_512.webp",
+   "normal_gl": "512webp/fabric_pattern_05_nor_gl_512.webp",
+   "arm": "512webp/fabric_pattern_05_arm_512.webp"
+  },
+  "source": "polyhaven.com/a/fabric_pattern_05",
+  "license": "CC0",
+  "credit": "fabric_pattern_05 by Poly Haven (polyhaven.com/a/fabric_pattern_05), CC0",
+  "kind": "texture-pbr",
+  "use": "chỉ trang so mat-lab (vải kẻ ô, đã thay bằng rough_linen)"
+ },
+ {
+  "id": "polyhaven-tex/green_metal_rust",
+  "src": "assets/polyhaven-tex/green_metal_rust/512webp/green_metal_rust_diff_512.webp",
+  "maps": {
+   "diffuse": "512webp/green_metal_rust_diff_512.webp",
+   "normal_gl": "512webp/green_metal_rust_nor_gl_512.webp",
+   "arm": "512webp/green_metal_rust_arm_512.webp"
+  },
+  "source": "polyhaven.com/a/green_metal_rust",
+  "license": "CC0",
+  "credit": "green_metal_rust by Poly Haven (polyhaven.com/a/green_metal_rust), CC0",
+  "kind": "texture-pbr",
+  "use": "chỉ trang so mat-lab (kim loại gỉ giữ shader)"
+ },
+ {
+  "id": "polyhaven-tex/rough_linen",
+  "src": "assets/polyhaven-tex/rough_linen/512webp/rough_linen_diff_512.webp",
+  "maps": {
+   "diffuse": "512webp/rough_linen_diff_512.webp",
+   "normal_gl": "512webp/rough_linen_nor_gl_512.webp",
+   "arm": "512webp/rough_linen_arm_512.webp"
+  },
+  "source": "polyhaven.com/a/rough_linen",
+  "license": "CC0",
+  "credit": "rough_linen by Poly Haven (polyhaven.com/a/rough_linen), CC0",
+  "kind": "texture-pbr",
+  "use": "vải trơn quần áo (MAT_TEX.fabric)"
  }
 ]

@@ -17,7 +17,39 @@
 // Kiểm kê: node tools/mat-inventory.mjs → output/mat-inventory.json (cột kind).
 import { ensureBoxAttr } from './grunge.js';
 
-export const MATS = { on: { value: 1 } };
+export const MATS = { on: { value: 1 }, tex: { value: 1 }, ready: Promise.resolve() };
+
+// ẢNH VÂN CC0 (Poly Haven, assets/polyhaven-tex/<id>/512webp, ghi công assets/CREDITS.md) cho đất/đá/gỗ/ngói/cát/vải.
+// Người dùng chốt 2026-11-12 (so 3 cột engine/mat-lab.html). Ảnh chỉ điều biến ĐỘ SÁNG quanh màu gốc của vật (màu phim giữ nguyên)
+// + pháp tuyến + độ nhám; vẫn CHUNG 1 program với mọi chất liệu (sampler luôn khai báo, loại không có ảnh gắn ảnh 1×1).
+// tile = số stud cho 1 lần lặp ảnh; lum = độ sáng tuyến tính trung bình ảnh diff; rgh = trung bình kênh nhám (arm.g);
+// k = độ đậm vân (1 = như ảnh; gỗ sơn 0,45: cột/lan can trắng không thành vỏ cây bẩn — góp ý xem A/B s134).
+// Bật/tắt: MATS.tex.value (engine/post.js ô "matTex") — tắt thì về vân toán như cũ. Kim loại gỉ giữ shader (không ảnh).
+export const MAT_TEX = {
+  wood:      { id: 'brown_planks_03',     tile: 6,   lum: 0.1400, rgh: 0.516, k: 0.8 },
+  woodpaint: { id: 'blue_painted_planks', tile: 6,   lum: 0.1358, rgh: 0.526, k: 0.45 },
+  shingle:   { id: 'clay_roof_tiles_02',  tile: 5,   lum: 0.1291, rgh: 0.913 },
+  stone:     { id: 'gray_rocks',          tile: 8,   lum: 0.1743, rgh: 0.809 },
+  soil:      { id: 'farm_soil',           tile: 6,   lum: 0.0587, rgh: 0.973 },
+  sand:      { id: 'dense_sand',          tile: 6,   lum: 0.2265, rgh: 0.974 },
+  fabric:    { id: 'rough_linen',         tile: 2.5, lum: 0.3978, rgh: 0.660 },   // vải trơn (thay vải kẻ ô fabric_pattern_05)
+};
+const TEX_URL = (id, m) => `/assets/polyhaven-tex/${id}/512webp/${id}_${m}_512.webp`;
+const texCache = new Map();   // id → { d, n, a, ok: {value} }
+let texWhite = null;
+const texPending = [];
+function texSet(THREE, id) {
+  if (texCache.has(id)) return texCache.get(id);
+  const L = new THREE.TextureLoader();   // DefaultLoadingManager → adapter/bản gộp chờ + nhúng ảnh
+  const rec = { ok: { value: 0 } };
+  const one = (key, m, srgb) => new Promise((res, rej) => { rec[key] = L.load(TEX_URL(id, m), res, undefined, rej); })
+    .then((t) => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4; t.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace; t.needsUpdate = true; });
+  const p = Promise.all([one('d', 'diff', true), one('n', 'nor_gl', false), one('a', 'arm', false)])
+    .then(() => { rec.ok.value = 1; }, (e) => console.warn('[materials] không nạp được ảnh vân', id, e?.message || e));
+  texPending.push(p); MATS.ready = Promise.all(texPending);
+  texCache.set(id, rec);
+  return rec;
+}
 
 // r: độ nhám, m: kim loại, pat: kiểu vân, sc: số vân / stud, bump: độ gồ, sheen: viền sáng vải/lông,
 // spark: hạt lấp lánh, tint: nhân màu, rmode 'max' = chỉ làm nhám thêm (không làm bóng hơn bản gốc)
@@ -139,6 +171,7 @@ vec2 mtVor(vec2 p) { vec2 i = floor(p), f = fract(p); float d1 = 8.0, d2 = 8.0;
     float d = length(g + o - f); if (d < d1) { d2 = d1; d1 = d; } else if (d < d2) d2 = d; }
   return vec2(d1, d2); }
 vec3 mtAlb; float mtA, mtHgt, mtRv, mtMet, mtSpark, mtMetMix, mtFw;
+vec3 txDn; float txOn;
 float aa(float f) { return 1.0 - smoothstep(0.3, 0.8, mtFw * f); }   // f chu kỳ/stud → tắt khi < ~1–2 px/chu kỳ
 `;
 
@@ -308,6 +341,7 @@ function fragFor(fam) {
   const chain = MAT_FAMILIES[fam].map((pt, i) => (PAT[pt].code ? `if (uMtPat == ${i}) { ${PAT[pt].code} }` : '')).filter(Boolean).join('\n  ');
   const pars = /* glsl */`
 uniform int uMtPat; uniform float uMtSc, uMtR, uMtM, uMtRMax, uMtBump, uMtSpark, uMtSheen; uniform vec3 uMtTint;
+uniform sampler2D uTxD, uTxN, uTxA; uniform float uTxUse, uTxInv, uTxLum, uTxRgh, uTxK, uMatTex; varying vec3 vTxX, vTxY, vTxZ;
 ${decl.join('\n')}${FRAG_LOOP}`;
   return {
     pars,
@@ -319,12 +353,27 @@ ${decl.join('\n')}${FRAG_LOOP}`;
   ${needW ? `vec3 sz = vGrSz; vec3 pW = (sz.x >= sz.y && sz.x >= sz.z) ? p : ((sz.y >= sz.z) ? p.yxz : p.zxy);
   float alongP = (sz.x >= sz.z) ? p.x : p.z; vec3 pWP = vec3(alongP, p.y, alongP);` : ''}
   ${vars.length ? 'float ' + vars.join(', ') + ';' : ''} ${S.v ? 'vec2 sV = vec2(8.0);' : ''}
+  txOn = uTxUse * uMatTex; txDn = vec3(0.0);
+  vec3 tq = vGrP * uTxInv, tqx = dFdx(tq), tqy = dFdy(tq);   // đạo hàm NGOÀI nhánh → textureGrad (FXC không trải phẳng 2 nhánh)
+  if (txOn < 0.5) {
   ${body.join('\n  ')}
   ${chain}
+  } else {   // ảnh vân CC0, triplanar theo toạ độ cục bộ (stud) → vật đi lại vân đi theo
+    vec3 tw = pow(an, vec3(4.0)); tw /= (tw.x + tw.y + tw.z);
+    #define TXS(S, a, b) textureGrad(S, vec2(tq.a, tq.b), vec2(tqx.a, tqx.b), vec2(tqy.a, tqy.b))
+    vec3 tc = TXS(uTxD, z, y).rgb * tw.x + TXS(uTxD, x, z).rgb * tw.y + TXS(uTxD, x, y).rgb * tw.z;
+    vec3 ta = TXS(uTxA, z, y).rgb * tw.x + TXS(uTxA, x, z).rgb * tw.y + TXS(uTxA, x, y).rgb * tw.z;
+    vec2 nx = TXS(uTxN, z, y).xy * 2.0 - 1.0, ny = TXS(uTxN, x, z).xy * 2.0 - 1.0, nz = TXS(uTxN, x, y).xy * 2.0 - 1.0;
+    #undef TXS
+    txDn = vec3(0.0, nx.y, nx.x) * tw.x + vec3(ny.x, 0.0, ny.y) * tw.y + vec3(nz.x, nz.y, 0.0) * tw.z;
+    mtA = mix(1.0, clamp(dot(tc, vec3(0.2126, 0.7152, 0.0722)) / uTxLum, 0.35, 2.2), uTxK) * mix(1.0, ta.r, 0.6 * uTxK);
+    mtRv = (ta.g - uTxRgh) * 0.6 * uTxK; txDn *= uTxK;
+  }
   diffuseColor.rgb = mix(diffuseColor.rgb, clamp(mtAlb * mtA * uMtTint, 0.0, 1.0), uMatOn); }`,
     rough: `roughnessFactor = mix(roughnessFactor, clamp((uMtRMax > 0.5 ? max(roughnessFactor, uMtR) : uMtR) + mtRv, 0.04, 1.0), uMatOn);`,
     metal: `metalnessFactor = mix(metalnessFactor, clamp(uMtM + mtMetMix, 0.0, 1.0), uMatOn);`,
     bump: /* glsl */`
+if (txOn > 0.5) normal = normalize(mix(normal, normalize(normal + (txDn.x * vTxX + txDn.y * vTxY + txDn.z * vTxZ) * 0.8), uMatOn));
 if (uMtBump != 0.0) { vec3 sp = -vViewPosition; vec3 sx = dFdx(sp), sy = dFdy(sp);
   vec3 r1 = cross(sy, normal), r2 = cross(normal, sx); float det = dot(sx, r1);
   vec2 dh = vec2(dFdx(mtHgt), dFdy(mtHgt)) * uMtBump * uMatOn;
@@ -378,15 +427,27 @@ function patch(THREE, mat, kind) {
   const F = FAM.glsl;
   const U = toUniforms(THREE, FAM.params[kind]);
   // giữ uniform trong userData (không liệt kê → không vào JSON/clone); MATS.on dùng chung cho cả hệ
+  const T = MAT_TEX[kind];
+  if (!texWhite) { texWhite = new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1); texWhite.needsUpdate = true; }
+  const R = T ? texSet(THREE, T.id) : null;
+  U.uTxUse = R ? R.ok : { value: 0 };
+  U.uTxD = { get value() { return R?.ok.value ? R.d : texWhite; } };
+  U.uTxN = { get value() { return R?.ok.value ? R.n : texWhite; } };
+  U.uTxA = { get value() { return R?.ok.value ? R.a : texWhite; } };
+  U.uTxInv = { value: T ? 1 / T.tile : 1 }; U.uTxLum = { value: T ? T.lum : 1 }; U.uTxRgh = { value: T ? T.rgh : 0.5 }; U.uTxK = { value: T?.k ?? 1 };
   Object.defineProperty(mat.userData, 'matU', { value: U, enumerable: false, configurable: true, writable: true });
   const prev = mat.onBeforeCompile;
   mat.onBeforeCompile = (sh, r) => {
     prev?.call(mat, sh, r);
-    sh.uniforms.uMatOn = MATS.on;
+    sh.uniforms.uMatOn = MATS.on; sh.uniforms.uMatTex = MATS.tex;
     Object.assign(sh.uniforms, U);
     if (!sh.vertexShader.includes('vGrP')) {   // chưa được grunge.js vá → tự thêm cùng tên biến
       sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\n' + VERT_PARS)
         .replace('#include <begin_vertex>', '#include <begin_vertex>\n' + VERT_MAIN);
+    }
+    if (!sh.vertexShader.includes('vTxX')) {   // trục cục bộ → không gian nhìn (pháp tuyến ảnh vân)
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vTxX, vTxY, vTxZ;')
+        .replace('#include <begin_vertex>', '#include <begin_vertex>\nvTxX = normalize(normalMatrix * vec3(1.0, 0.0, 0.0)); vTxY = normalize(normalMatrix * vec3(0.0, 1.0, 0.0)); vTxZ = normalize(normalMatrix * vec3(0.0, 0.0, 1.0));');
     }
     let fs = sh.fragmentShader;
     fs = fs.replace('#include <common>', '#include <common>\n' + (fs.includes('varying vec3 vGrP') ? '' : FRAG_VARY) + FRAG_LIB + F.pars);

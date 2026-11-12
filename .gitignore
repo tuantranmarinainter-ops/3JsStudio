@@ -31,3 +31,7 @@ feedback/*/
 # góp ý từ trình phát (file của người dùng + ảnh kiểm) — chỉ giữ thư mục
 feedback/*
 !feedback/.gitkeep
+
+# ảnh vân Poly Haven: chỉ commit bản 512webp (bản 1k/512 jpg để so ở mat-lab trên máy)
+assets/polyhaven-tex/*/1k/
+assets/polyhaven-tex/*/512/

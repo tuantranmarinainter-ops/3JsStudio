@@ -35,7 +35,7 @@ import { CLOTH } from './cloth.js';
 import { MAST } from './mastbreak.js';
 import { MATS } from './materials.js';
 
-export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true, backdrop: true };
+export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true, backdrop: true, matTex: true };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
@@ -55,6 +55,7 @@ export const FX_LABELS = {
   cloudShade: 'Bóng mây trôi trên mặt đất',
   farwoods: 'Rừng xa (ảnh vẽ, thị trấn)',
   backdrop: 'Núi xa vẽ (thị trấn)',
+  matTex: 'Ảnh vân CC0: gỗ, ngói, đá, đất, cát, vải (tắt = vân toán)',
   lite: 'Bóng đổ nhẹ (tắt bóng kính, vật phát sáng, hạt, vật nhỏ) — mở/xuất nhanh hơn',
 };
 
@@ -192,6 +193,7 @@ export function createPost(THREE, stage, { actors = [], paint: paintOpts = {}, a
     CLOTH.on.value = fx.cloth ? 1 : 0;   // engine/cloth.js
     MAST.on.value = fx.mast ? 1 : 0;     // engine/mastbreak.js
     MATS.on.value = fx.mats ? 1 : 0;   // engine/materials.js
+    MATS.tex.value = fx.matTex ? 1 : 0;   // ảnh vân CC0 (engine/materials.js MAT_TEX)
     for (const a of actors) a.userData.setDetail?.({ folds: fx.folds, hair: fx.hair2 });   // engine/r15.js v2
     renderer.setRenderTarget(null); renderer.render(scene, camera);   // khung gốc (giống hệt khi không hậu kỳ)
     if (!anyOn()) return;

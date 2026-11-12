@@ -11,3 +11,14 @@ Nội thất (engine/furnish.js) — CC0, không bắt buộc ghi, ghi để c�
 - KayKit : Furniture Bits 1.0 by Kay Lousberg (https://www.kaylousberg.com, https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0) — assets/kaykit/furniture/, CC0.
 - Furniture Kit by Kenney (https://kenney.nl/assets/furniture-kit) — assets/kenney/furniture-kit/, CC0.
 - Mô hình quét Poly Haven (polyhaven.com), CC0 — ghi công từng món trong assets/manifest.json (`credit`).
+
+Ảnh vân PBR chất liệu (assets/polyhaven-tex/<id>/512webp, dùng trong engine/materials.js MAT_TEX + trang so engine/mat-lab.html) — Poly Haven (polyhaven.com), CC0, không bắt buộc ghi, ghi để cảm ơn:
+- brown_planks_03 (gỗ (bàn/ván)) — https://polyhaven.com/a/brown_planks_03
+- blue_painted_planks (gỗ sơn (tường nhà)) — https://polyhaven.com/a/blue_painted_planks
+- clay_roof_tiles_02 (ngói đỏ) — https://polyhaven.com/a/clay_roof_tiles_02
+- gray_rocks (đá) — https://polyhaven.com/a/gray_rocks
+- farm_soil (đất) — https://polyhaven.com/a/farm_soil
+- dense_sand (cát) — https://polyhaven.com/a/dense_sand
+- rough_linen (vải trơn (áo)) — https://polyhaven.com/a/rough_linen
+- fabric_pattern_05 (vải kẻ ô — chỉ trang so mat-lab) — https://polyhaven.com/a/fabric_pattern_05
+- green_metal_rust (kim loại sơn gỉ — chỉ trang so mat-lab) — https://polyhaven.com/a/green_metal_rust

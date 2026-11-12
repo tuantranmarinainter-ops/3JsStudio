@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mat Lab</title>
+<style>
+  html,body { margin:0; height:100%; background:#0e1118; color:#e8eef6; font:13px/1.35 system-ui, sans-serif; overflow:hidden; }
+  #c { display:block; margin:0 auto; height:100vh; width:auto; aspect-ratio:9/16; max-width:100vw; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script type="importmap">{ "imports": { "three": "../vendor/three/three.module.js", "three/addons/": "../vendor/three/addons/" } }</script>
+<script type="module">
+// mat-lab — TRANG SO SÁNH 3 CỘT chất liệu (8 hàng × 3 cột), chưa đổi gì trong phim:
+//   cột 1  HIỆN TẠI   engine/materials.js (applyMaterials: shader noise theo toạ độ thế giới, đúng kind)
+//   cột 2  ẢNH CC0    ảnh vân thật Poly Haven (assets/polyhaven-tex) + MỘT material chung (triplanar theo toạ độ thế giới)
+//   cột 3  NƯỚNG      engine/bake.js (bakeSurface lúc mở trang) + bkTri triplanar
+//   ?view=near|far    góc cận (≈ cận cảnh mặt tường) | góc xa (cả khối nhỏ trong khung)      mặc định near
+//   ?tex=1k|512|512webp   bộ ảnh cột 2 (assets/polyhaven-tex/<id>/<tex>/…)                      mặc định 512webp (bản phim; 1k/512 jpg không commit)
+//   ?bake=512|1024    cạnh texture nướng (cột 3)                                                 mặc định 1024
+//   ?cols=1,2,3       chỉ dựng các cột này (để đo số program / thời gian từng cột)
+//   ?base=photo|film  màu gốc của cột 1 và 3: trung bình ảnh CC0 (công bằng, mặc định) | màu tay kiểu phim
+//   ?rows=0,1,..      chỉ các hàng này · ?shadow=0 tắt bóng · ?ibl=0 tắt IBL
+// Đo: window.__stats (ms nạp ảnh, ms nướng, …) · window.__lum[hàng][cột] = độ sáng trung bình (Rec.601, 0–255) của ô.
+// TẤT ĐỊNH: không rAF, không đồng hồ cho hình, không Math.random; thời gian chỉ dùng để ĐO (window.__stats).
+import * as THREE from 'three';
+import { applyMaterials, MAT_KINDS, MATS } from './materials.js';
+import { bakeSurfaceAsync, bindBake, triplanarChunk, PAT_NAMES } from './bake.js';
+import { createIBL, IBL_HEMI_SCALE } from './ibl.js';
+import { LIGHTS } from './lights.js';
+
+window.THREE = THREE;
+const q = new URLSearchParams(location.search);
+const VIEW = q.get('view') === 'far' ? 'far' : 'near';
+const TEX = ['1k', '512', '512webp'].includes(q.get('tex')) ? q.get('tex') : '512webp';
+const BAKE = Math.min(1024, Math.max(64, +(q.get('bake') || 1024)));
+const COLS = (q.get('cols') || '1,2,3').split(',').map(Number).filter((c) => c >= 1 && c <= 3);
+const BASE = q.get('base') === 'film' ? 'film' : 'photo';
+const ROWS_SEL = q.has('rows') ? q.get('rows').split(',').map(Number) : null;
+const SHADOW = q.get('shadow') !== '0', IBL_ON = q.get('ibl') !== '0';
+
+// 8 chất liệu chính của phim. kind = MAT_KINDS (cột 1), pat = PAT_NAMES (cột 3), tex = Poly Haven (cột 2)
+const ROWS = [
+  { kind: 'wood',       pat: 'WOOD',       tex: 'brown_planks_03',    vi: 'Gỗ (bàn/ván)',       tile: 6,   film: '#a8743e' },
+  { kind: 'woodpaint',  pat: 'WOODPAINT',  tex: 'blue_painted_planks', vi: 'Gỗ sơn (tường nhà)', tile: 6,   film: '#d9cfae' },
+  { kind: 'shingle',    pat: 'SHINGLE',    tex: 'clay_roof_tiles_02', vi: 'Ngói đỏ',            tile: 5,   film: '#b5452e' },
+  { kind: 'stone',      pat: 'STONE',      tex: 'gray_rocks',         vi: 'Đá',                 tile: 8,   film: '#8a8d90' },
+  { kind: 'soil',       pat: 'SOIL',       tex: 'farm_soil',          vi: 'Đất',                tile: 6,   film: '#7a5a3a' },
+  { kind: 'sand',       pat: 'SAND',       tex: 'dense_sand',         vi: 'Cát',                tile: 6,   film: '#e0c890' },
+  { kind: 'fabric',     pat: 'FABRIC',     tex: 'rough_linen',        vi: 'Vải (áo)',           tile: 2.5, film: '#d94a3d' },
+  { kind: 'metalpaint', pat: 'METALPAINT', tex: 'green_metal_rust',   vi: 'Kim loại sơn gỉ',    tile: 6,   film: '#3d7a5a' },
+];
+const COLNAME = ['', '1 hiện tại', '2 ảnh CC0', '3 nướng'];
+const stats = (window.__stats = { view: VIEW, tex: TEX, bake: BAKE, base: BASE, cols: COLS, texMs: 0, texBytes: 0, bakeMs: 0, bakeEachMs: {}, bakeRerunMs: 0, cc0First: 0, curFirst: 0, bakeFirst: 0, errors: [] });
+const now = () => performance.now();
+
+// ---- renderer / scene (giống phim: IBL của engine/ibl.js + hemi + nắng 'day') ----
+const W = 1080, H = 1920, GC = 3, GR = 8, CW = W / GC, CH = H / GR;
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H, false); renderer.setPixelRatio(1);
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = SHADOW; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const L = LIGHTS.day;
+scene.background = new THREE.Color('#bcd9f0');
+const hemi = new THREE.HemisphereLight(L.hemi[0], L.hemi[1], L.hemi[2] * (IBL_ON ? IBL_HEMI_SCALE : 1));
+const sun = new THREE.DirectionalLight(L.sun[0], L.sun[1]);
+const SUN_DIR = new THREE.Vector3(...L.dir).normalize();
+sun.castShadow = SHADOW; sun.shadow.mapSize.set(1024, 1024); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03;
+Object.assign(sun.shadow.camera, { left: -18, right: 18, top: 18, bottom: -18, near: 1, far: 140 });
+scene.add(hemi, sun, sun.target);
+if (IBL_ON) { const ibl = createIBL(THREE, renderer, LIGHTS); scene.environment = ibl.get('day'); scene.environmentIntensity = ibl.intensity('day'); }
+renderer.toneMappingExposure = L.exposure;
+
+// ---- tải ảnh CC0 ----
+const loader = new THREE.TextureLoader();
+const EXT = TEX === '512webp' ? 'webp' : 'jpg';
+const SZ = TEX === '1k' ? '1k' : '512';
+const texUrl = (id, m) => `../assets/polyhaven-tex/${id}/${TEX === '512webp' ? '512webp' : TEX}/${id}_${m}_${SZ}.${EXT}`;
+const loadTex = (url, srgb) => new Promise((res, rej) => loader.load(url, (t) => {
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+  t.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace; res(t);
+}, undefined, () => rej(new Error('không nạp được ' + url))));
+function meanColor(tex) {   // màu trung bình tuyến tính của ảnh diffuse
+  const c = document.createElement('canvas'); c.width = c.height = 16; const g = c.getContext('2d'); g.drawImage(tex.image, 0, 0, 16, 16);
+  const d = g.getImageData(0, 0, 16, 16).data; let r = 0, gg = 0, b = 0;
+  const lin = (v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+  for (let i = 0; i < d.length; i += 4) { r += lin(d[i]); gg += lin(d[i + 1]); b += lin(d[i + 2]); }
+  const n = d.length / 4; return new THREE.Color().setRGB(r / n, gg / n, b / n, THREE.LinearSRGBColorSpace);
+}
+async function loadAll() {
+  const t0 = now(); let bytes = 0;
+  const tasks = ROWS.map(async (R) => {
+    const [diff, nor, arm] = await Promise.all([loadTex(texUrl(R.tex, 'diff'), true), loadTex(texUrl(R.tex, 'nor_gl'), false), loadTex(texUrl(R.tex, 'arm'), false)]);
+    R.maps = { diff, nor, arm }; R.mean = meanColor(diff);
+  });
+  await Promise.all(tasks);
+  for (const R of ROWS) for (const t of Object.values(R.maps)) renderer.initTexture(t);   // ép đẩy lên GPU để đo đủ
+  renderer.getContext().finish();
+  stats.texMs = now() - t0;
+  try { const rs = performance.getEntriesByType('resource').filter((e) => e.name.includes('polyhaven-tex')); stats.texBytes = rs.reduce((s, e) => s + (e.encodedBodySize || 0), 0); } catch {}
+}
+
+// ---- cột 2: MỘT material chung, ảnh vân khác nhau qua uniform (triplanar theo toạ độ thế giới) ----
+const CC0_VERT_PARS = 'varying vec3 vTpP; varying vec3 vTpN;';
+const CC0_FRAG_PARS = /* glsl */`
+varying vec3 vTpP; varying vec3 vTpN;
+uniform sampler2D uTpDiff; uniform sampler2D uTpNor; uniform sampler2D uTpArm; uniform float uTpInv; uniform float uTpNorK;
+struct TpOut { vec3 col; float ao; float rough; float metal; vec3 nW; };
+TpOut tpSample(vec3 p, vec3 n) {
+  vec3 w = pow(abs(n), vec3(4.0)); w /= (w.x + w.y + w.z);
+  vec2 uX = vec2(p.z, p.y) * uTpInv, uY = vec2(p.x, p.z) * uTpInv, uZ = vec2(p.x, p.y) * uTpInv;
+  vec3 c = texture2D(uTpDiff, uX).rgb * w.x + texture2D(uTpDiff, uY).rgb * w.y + texture2D(uTpDiff, uZ).rgb * w.z;
+  vec3 a = texture2D(uTpArm, uX).rgb * w.x + texture2D(uTpArm, uY).rgb * w.y + texture2D(uTpArm, uZ).rgb * w.z;
+  vec2 tx = texture2D(uTpNor, uX).xy * 2.0 - 1.0, ty = texture2D(uTpNor, uY).xy * 2.0 - 1.0, tz = texture2D(uTpNor, uZ).xy * 2.0 - 1.0;
+  vec3 dn = vec3(0.0, tx.y, tx.x) * w.x + vec3(ty.x, 0.0, ty.y) * w.y + vec3(tz.x, tz.y, 0.0) * w.z;
+  TpOut o; o.col = c; o.ao = a.r; o.rough = a.g; o.metal = a.b; o.nW = normalize(n + dn * uTpNorK);
+  return o;
+}`;
+function makeCC0Material(R) {
+  const m = new THREE.MeshStandardMaterial({ color: '#ffffff' });
+  const U = { uTpDiff: { value: R.maps.diff }, uTpNor: { value: R.maps.nor }, uTpArm: { value: R.maps.arm }, uTpInv: { value: 1 / R.tile }, uTpNorK: { value: 1 } };
+  m.onBeforeCompile = (sh) => {
+    Object.assign(sh.uniforms, U);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\n' + CC0_VERT_PARS)
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvTpP = (modelMatrix * vec4(position, 1.0)).xyz; vTpN = normalize(mat3(modelMatrix) * normal);');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\n' + CC0_FRAG_PARS)
+      .replace('#include <map_fragment>', '#include <map_fragment>\nTpOut tp = tpSample(vTpP, normalize(vTpN)); diffuseColor.rgb = tp.col * mix(1.0, tp.ao, 0.85);')
+      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = clamp(tp.rough, 0.04, 1.0);')
+      .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\nmetalnessFactor = tp.metal;')
+      .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\nnormal = normalize((viewMatrix * vec4(tp.nW, 0.0)).xyz);');
+  };
+  m.customProgramCacheKey = () => 'matlab_cc0';
+  return m;
+}
+
+// ---- cột 3: vật liệu tra texture nướng (theo kế hoạch tích hợp trong docs/core.md "bake") ----
+const BK_CHUNK = triplanarChunk({ prefix: 'bk', oriented: false });
+function makeBakeMaterial(R, B, base) {
+  const K = MAT_KINDS[R.kind];
+  const m = new THREE.MeshStandardMaterial({ color: base, roughness: K.r, metalness: K.m });
+  const U = { uBkTint: { value: new THREE.Vector3(...(K.tint || [1, 1, 1])) }, uBkR: { value: K.r }, uBkM: { value: K.m }, uBkSpark: { value: K.spark || 0 } };
+  bindBake(U, B, { scale: K.sc });
+  m.onBeforeCompile = (sh) => {
+    Object.assign(sh.uniforms, U);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vBkP; varying vec3 vBkN;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvBkP = (modelMatrix * vec4(position, 1.0)).xyz; vBkN = normalize(mat3(modelMatrix) * normal);');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vBkP; varying vec3 vBkN; uniform vec3 uBkTint; uniform float uBkR, uBkM, uBkSpark;\n' + BK_CHUNK)
+      .replace('#include <map_fragment>', '#include <map_fragment>\nBkOut bo = bkTri(vBkP, normalize(vBkN), vec3(1.0));\ndiffuseColor.rgb = clamp((bo.A + bo.B * max(diffuseColor.rgb, vec3(bo.floorB))) * uBkTint, 0.0, 1.0);')
+      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = clamp(uBkR + bo.dRough, 0.04, 1.0);')
+      .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\nmetalnessFactor = clamp(uBkM + bo.dMetal, 0.0, 1.0);')
+      .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\nnormal = normalize((viewMatrix * vec4(bo.nObj, 0.0)).xyz);')
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += vec3(bo.spark * uBkSpark) * 0.6;');
+  };
+  m.customProgramCacheKey = () => 'matlab_bake';
+  return m;
+}
+
+// ---- dựng 8 × 3 ô: mỗi ô 1 nhóm (khối 8×6×8 trên nền) đặt xa nhau, mỗi lần chỉ ô đang vẽ hiện ----
+const CELLS = [];   // { r, c, group, pos }
+const BLOCK = [8, 6, 8];
+const groundMat = new THREE.MeshStandardMaterial({ color: '#8c8c84', roughness: 0.95 });
+function addCell(r, c, mat, tag) {
+  const g = new THREE.Group(); g.name = `cell_${r}_${c}`; g.visible = false;
+  g.position.set(c * 80, 0, r * 80);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), groundMat); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; ground.userData.matKind = 'none'; ground.name = 'ground';
+  const blk = new THREE.Mesh(new THREE.BoxGeometry(...BLOCK), mat); blk.position.y = BLOCK[1] / 2; blk.castShadow = blk.receiveShadow = SHADOW; blk.name = `block_${tag}`;
+  if (tag === 'cur') blk.userData.matKind = ROWS[r].kind;
+  g.add(ground, blk); scene.add(g); CELLS.push({ r, c, group: g, blk });
+  return blk;
+}
+
+async function build() {
+  await loadAll();
+  const rows = ROWS.map((R, i) => i).filter((i) => !ROWS_SEL || ROWS_SEL.includes(i));
+  const baseOf = (R) => (BASE === 'film' ? new THREE.Color(R.film) : R.mean.clone());
+  // cột 2
+  if (COLS.includes(2)) for (const r of rows) addCell(r, 1, makeCC0Material(ROWS[r]), 'cc0');
+  // cột 1
+  if (COLS.includes(1)) {
+    for (const r of rows) addCell(r, 0, new THREE.MeshStandardMaterial({ color: baseOf(ROWS[r]), roughness: 0.8 }), 'cur');
+    MATS.on.value = 1;
+    for (const cell of CELLS) if (cell.c === 0) applyMaterials(THREE, cell.group);
+    await MATS.ready;   // cột 1 = phim hiện tại: đã gồm ảnh vân CC0 (MAT_TEX) — ?mattex=0 để xem vân toán cũ
+    MATS.tex.value = q.get('mattex') === '0' ? 0 : 1;
+  }
+  // cột 3: nướng 1 lần, đo
+  if (COLS.includes(3)) {
+    const t0 = now(); const bakes = [];
+    for (const r of rows) {
+      const t1 = now(); const R = ROWS[r];
+      const B = await bakeSurfaceAsync(THREE, renderer, { pat: R.pat, size: BAKE, seed: 7, params: { bump: MAT_KINDS[R.kind].bump } });
+      renderer.getContext().finish(); stats.bakeEachMs[R.pat] = +(now() - t1).toFixed(1); bakes.push(B);
+      addCell(r, 2, makeBakeMaterial(R, B, baseOf(R)), 'bake');
+    }
+    stats.bakeMs = now() - t0;
+    // nướng lại lần 2 (shader đã dịch) = chi phí thuần
+    const t2 = now(); for (const r of rows) { const B = await bakeSurfaceAsync(THREE, renderer, { pat: ROWS[r].pat, size: BAKE, seed: 7, params: { bump: MAT_KINDS[ROWS[r].kind].bump } }); B.dispose(); }
+    renderer.getContext().finish(); stats.bakeRerunMs = now() - t2;
+  }
+}
+
+// ---- nhãn vẽ thẳng vào khung ----
+const lc = document.createElement('canvas'); lc.width = W; lc.height = H; const lg = lc.getContext('2d');
+const lt = new THREE.CanvasTexture(lc); lt.colorSpace = THREE.SRGBColorSpace;
+const hud = new THREE.Scene(), hudCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+hud.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.MeshBasicMaterial({ map: lt, transparent: true, depthTest: false, toneMapped: false })));
+function drawLabels() {
+  lg.clearRect(0, 0, W, H); lg.textBaseline = 'middle';
+  for (const cell of CELLS) {
+    const x = cell.c * CW, y = cell.r * CH, R = ROWS[cell.r];
+    lg.fillStyle = 'rgba(0,0,0,.62)'; lg.fillRect(x, y, CW, 34);
+    lg.fillStyle = '#fff'; lg.font = 'bold 21px system-ui, sans-serif'; lg.textAlign = 'left';
+    lg.fillText(`${R.vi} · ${COLNAME[cell.c + 1]}`, x + 8, y + 17);
+    lg.strokeStyle = 'rgba(0,0,0,.8)'; lg.lineWidth = 2; lg.strokeRect(x + 1, y + 1, CW - 2, CH - 2);
+  }
+  lg.font = 'bold 20px system-ui, sans-serif'; lg.textAlign = 'right'; lg.fillStyle = 'rgba(0,0,0,.62)'; lg.fillRect(W - 300, H - 28, 300, 28);
+  lg.fillStyle = '#fff'; lg.fillText(`view=${VIEW} tex=${TEX} bake=${BAKE} base=${BASE}`, W - 8, H - 14);
+  lt.needsUpdate = true;
+}
+
+// ---- 1 khung: hàm thuần của trạng thái (t không dùng) ----
+const camera = new THREE.PerspectiveCamera(34, CW / CH, 0.5, 400);
+const DIST = VIEW === 'near' ? 14 : 40;
+const AZ = 0.62, EL = 0.34;   // camera nhìn góc khối: thấy 2 mặt đứng + mặt trên
+const lum = (window.__lum = []);
+const pix = new Uint8Array(CW * CH * 4);
+function renderAt(/* t */) {
+  renderer.setScissorTest(true); renderer.autoClear = false;
+  renderer.setClearColor('#bcd9f0', 1);
+  const gl = renderer.getContext();
+  lum.length = 0;
+  for (const cell of CELLS) {
+    for (const c of CELLS) c.group.visible = c === cell;
+    const x = cell.c * CW, y = H - (cell.r + 1) * CH;
+    renderer.setViewport(x, y, CW, CH); renderer.setScissor(x, y, CW, CH); renderer.clear(true, true, true);
+    const o = cell.group.position, tgt = new THREE.Vector3(o.x, VIEW === 'near' ? BLOCK[1] * 0.45 : BLOCK[1] * 0.5, o.z);
+    camera.position.set(o.x + Math.sin(AZ) * Math.cos(EL) * DIST, tgt.y + Math.sin(EL) * DIST, o.z + Math.cos(AZ) * Math.cos(EL) * DIST);
+    camera.lookAt(tgt); camera.updateProjectionMatrix();
+    sun.position.copy(o).addScaledVector(SUN_DIR, 60); sun.target.position.set(o.x, 2, o.z); sun.target.updateMatrixWorld();
+    renderer.render(scene, camera);
+    gl.readPixels(x, y, CW, CH, gl.RGBA, gl.UNSIGNED_BYTE, pix);
+    let s = 0; for (let i = 0; i < pix.length; i += 4) s += 0.299 * pix[i] + 0.587 * pix[i + 1] + 0.114 * pix[i + 2];
+    (lum[cell.r] ||= [])[cell.c] = +(s / (pix.length / 4)).toFixed(1);
+  }
+  for (const c of CELLS) c.group.visible = false;
+  renderer.setScissorTest(false);
+  renderer.setViewport(0, 0, W, H); renderer.render(hud, hudCam); renderer.autoClear = true;
+}
+
+window.renderAt = (t) => { renderAt(t); };
+window.__shots = null;
+window.__stage = { renderer };
+try {
+  await build();
+  drawLabels();
+  // dịch/đẩy mọi program lần đầu (đo): lần vẽ đầu mỗi cột
+  const t0 = now(); renderAt(0); renderer.getContext().finish(); stats.firstRenderMs = now() - t0;
+  window.__ready = true;
+} catch (e) { stats.errors.push(String(e && e.stack || e)); console.error(e); window.__ready = true; }
+window.__info = () => ({ programs: renderer.info.programs?.length, ...stats });
+</script>
+</body>
+</html>
