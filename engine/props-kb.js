@@ -36,6 +36,8 @@ function bo(THREE, ten) {
     sub: (nm, x = 0, y = 0, z = 0, p) => { const s = new THREE.Group(); s.name = ten + '_' + nm; s.position.set(x, y, z); (p || g).add(s); return s; },
   };
 }
+// vật CẦN ĐỌC cho luật L2 (engine/measure.js): nhóm con mang userData.vai='doc'; vật liệu khai báo 'none' (giữ nguyên, không vân/grunge đè chữ)
+const lamDoc = (g) => { g.userData.vai = 'doc'; g.traverse((m) => { if (m.isMesh) { m.userData.matKind = 'none'; m.userData.matNguon = 'khai-bao'; } }); return g; };
 const hash = (i, s) => { let x = Math.imul(i ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(s + 1, 0xc2b2ae35); x ^= x >>> 13; x = Math.imul(x, 0x27d4eb2f); x ^= x >>> 16; return (x >>> 0) / 4294967296; };
 const CHU = "'Be Vietnam Pro', sans-serif", TAY = "'Patrick Hand', 'Be Vietnam Pro', sans-serif";
 // vật liệu có chữ vẽ bằng canvas; không có document → null (người gọi dùng màu nền)
@@ -69,6 +71,36 @@ const ke = (K, w, h, d, go, lung, tang) => {   // kệ: 2 vách + lưng + các t
   for (const [i, y] of tang.entries()) K.box(w - 0.4, 0.15, d - 0.1, go, 0, y + 0.075, 0.05, 'tang' + i);
 };
 
+// ảnh trong gương (canvas w×h ≈ 0.42): tường xanh nhạt, sàn gỗ, kệ trắng viền xanh 2 tầng có sách, đồng hồ đỏ 2 chuông trên tầng giữa, mép giường tím, vệt sáng chéo
+function ve_guong(g, w, h) {
+  const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#c9dcf3'); gr.addColorStop(1, '#e6eef8'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  g.fillStyle = '#a98a70'; g.fillRect(0, h * 0.86, w, h * 0.14); g.fillStyle = 'rgba(0,0,0,0.12)'; g.fillRect(0, h * 0.86, w, h * 0.012);
+  const kx = w * 0.12, kw = w * 0.76, kt = h * 0.2, kb = h * 0.86;
+  g.fillStyle = '#5c8ddb'; g.fillRect(kx - w * 0.03, kt, w * 0.03, kb - kt); g.fillRect(kx + kw, kt, w * 0.03, kb - kt);
+  g.fillStyle = '#eceff1'; g.fillRect(kx, kt, kw, kb - kt); g.fillStyle = '#cfd8dc'; g.fillRect(kx + w * 0.02, kt + h * 0.02, kw - w * 0.04, kb - kt - h * 0.02);
+  const tang = [0.86, 0.69, 0.52, 0.35].map((f) => h * f);
+  g.fillStyle = '#eceff1'; for (const y of tang) g.fillRect(kx, y - h * 0.012, kw, h * 0.02);
+  const sach = ['#e57373', '#64b5f6', '#81c784', '#ffd54f']; for (let i = 0; i < 7; i++) { g.fillStyle = sach[i % 4]; g.fillRect(kx + w * (0.04 + i * 0.05), tang[0] - h * (0.08 + (i % 3) * 0.01), w * 0.04, h * (0.08 + (i % 3) * 0.01)); }
+  const cx = w * 0.5, cy = tang[1] - h * 0.07, r = w * 0.1;   // đồng hồ báo thức đỏ (tầng 2)
+  g.fillStyle = '#ffd54f'; for (const dx of [-0.7, 0.7]) { g.beginPath(); g.arc(cx + dx * r, cy - r * 1.05, r * 0.38, 0, 7); g.fill(); }
+  g.fillStyle = '#e53935'; g.beginPath(); g.arc(cx, cy, r, 0, 7); g.fill(); g.fillStyle = '#fffde7'; g.beginPath(); g.arc(cx, cy, r * 0.78, 0, 7); g.fill();
+  g.strokeStyle = '#212121'; g.lineWidth = r * 0.12; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx, cy - r * 0.55); g.moveTo(cx, cy); g.lineTo(cx + r * 0.38, cy + r * 0.12); g.stroke();
+  g.fillStyle = '#7e57c2'; g.fillRect(0, h * 0.74, w * 0.1, h * 0.12);   // mép giường lọt vào mép gương
+  g.fillStyle = 'rgba(255,255,255,0.14)'; g.beginPath(); g.moveTo(w * 0.55, 0); g.lineTo(w * 0.82, 0); g.lineTo(w * 0.2, h); g.lineTo(0, h); g.lineTo(0, h * 0.86); g.closePath(); g.fill();
+}
+// bậc thềm: bậc dưới thấp, bậc trên cao sát cửa (x −3.5..1.5), thảm chùi chân nâu
+function bacThem(K) {
+  K.box(5, 0.5, 3, '#b3aca1', -1, 0.25, 0.5, 'bac1'); K.box(5, 1.0, 2, '#9b948a', -1, 0.5, -0.5, 'bac2');
+  K.box(5.04, 0.04, 0.04, '#d6d0c6', -1, 0.5, 2.0, 'mep1'); K.box(5.04, 0.04, 0.04, '#d6d0c6', -1, 1.0, 0.5, 'mep2');
+  K.box(2.2, 0.04, 1.2, '#6d4c41', -1, 0.52, 0.9, 'tham_chui_chan');
+}
+// đôi dép lê xanh đặt trên nền tại (x, z)
+function dep(K, x, z) {
+  for (const [i, dx] of [-0.35, 0.35].entries()) {
+    K.box(0.55, 0.12, 1.15, '#90caf9', x + dx, 0.06, z, 'dep_de' + i); K.box(0.55, 0.2, 0.35, '#1e88e5', x + dx, 0.2, z + 0.15, 'dep_quai' + i);
+    K.sph(0.08, '#ffffff', x + dx, 0.3, z + 0.22, 'dep_bong' + i);
+  }
+}
 export const PROPS_KB = {
   ke_trong: (THREE) => {   // kệ trống, vết bụi có chỗ sạch hình món đồ vừa mất
     const K = bo(THREE, 'ke_trong'); ke(K, 4, 5, 1.4, '#9c6b3e', '#7a5230', [0, 1.6, 3.25, 4.85]);
@@ -103,7 +135,9 @@ export const PROPS_KB = {
   thung_dau_gau: (THREE) => {   // thùng in dấu đầu gấu (manh mối)
     const K = bo(THREE, 'thung_dau_gau');
     K.box(2.4, 2, 2.4, '#c8a165', 0, 1, 0, 'thung'); K.box(2.42, 0.12, 0.5, '#e8d09a', 0, 2.0, 0, 'bang_keo');
-    dauGau(K, null, 0, 1.0, 1.21, 0.5);
+    dauGau(K, null, 0, 1.0, 1.21, 0.7);
+    const hong = K.sub('in_hong', 1.2, 0, 0); hong.rotation.y = PI / 2; dauGau(K, hong, 0, 1.0, 0.011, 0.7);   // dấu đầu gấu to cả mặt trước lẫn mặt hông
+    K.box(0.06, 2.02, 2.42, '#a9814a', 0, 1.0, 0, 'mep_keo');
     return K.g;
   },
   ke_phong_ga: (THREE) => {   // kệ phòng Gà (cạnh cửa sổ) — 2 tầng giữa là chỗ bày đồ
@@ -129,13 +163,20 @@ export const PROPS_KB = {
     K.box(0.04, 0.22, 0.02, '#212121', 0, 0.58, 0.2, 'kim'); const k2 = K.box(0.04, 0.16, 0.02, '#212121', 0.05, 0.49, 0.2, 'kim2'); k2.rotation.z = 1.2;
     K.sph(0.15, '#ffd54f', -0.25, 0.88, 0, 'chuong', null, { metalness: 0.6, roughness: 0.3 }); K.sph(0.15, '#ffd54f', 0.25, 0.88, 0, 'chuong2', null, { metalness: 0.6, roughness: 0.3 });
     K.cyl(0.05, 0.05, 0.14, '#424242', -0.2, 0.07, 0, 'chan'); K.cyl(0.05, 0.05, 0.14, '#424242', 0.2, 0.07, 0, 'chan2');
+    const vien = K.tor(0.345, 0.035, '#bdbdbd', 0, 0.5, 0.17, 'vien', null, { metalness: 0.7, roughness: 0.3 });   // viền bạc quanh mặt
+    for (const [dx, dy] of [[0, 0.26], [0.26, 0], [0, -0.26], [-0.26, 0]]) K.box(dx ? 0.05 : 0.03, dx ? 0.03 : 0.05, 0.01, '#212121', dx, 0.5 + dy, 0.195, 'vach');   // vạch 12-3-6-9
+    K.box(0.04, 0.1, 0.04, '#424242', 0, 0.94, 0, 'bua'); const b = K.box(0.34, 0.03, 0.03, '#424242', 0, 0.9, 0, 'bua_ngang');
     return K.g;
   },
   guong: (THREE) => {      // gương đứng đối diện giường
     const K = bo(THREE, 'guong');
     K.box(3, 0.3, 0.4, '#6d4c41', 0, 0.15, 0, 'de'); K.box(0.25, 6.7, 0.25, '#8d6e63', -1.375, 3.65, 0, 'tru'); K.box(0.25, 6.7, 0.25, '#8d6e63', 1.375, 3.65, 0, 'tru2');
     K.box(3, 0.25, 0.25, '#8d6e63', 0, 6.875, 0, 'dinh'); K.box(2.5, 0.2, 0.2, '#8d6e63', 0, 1.0, 0, 'day');
-    K.box(2.4, 5.6, 0.06, '#cfe8ff', 0, 3.9, 0.02, 'kinh', null, { metalness: 0.9, roughness: 0.08 });
+    K.box(2.4, 5.6, 0.06, '#bcd6f2', 0, 3.9, 0.02, 'kinh', null, { metalness: 0.1, roughness: 0.3 });
+    // ảnh phản chiếu GIẢ (tĩnh, tất định): kệ phòng Gà + đồng hồ báo thức đỏ + mép giường, vẽ canvas lật gương, sáng đều (MeshBasic) → mặt gương không đen
+    const anh = matChu(THREE, 2.3, 5.5, ve_guong, 384);
+    const ph = K.pla(2.3, 5.5, anh ? new THREE.MeshBasicMaterial({ map: anh.map, color: '#8d98a8', toneMapped: false }) : new THREE.MeshBasicMaterial({ color: '#d4e4f6' }), 0, 3.9, 0.056, 'phan_chieu');
+    ph.userData.matKind = 'none'; ph.userData.matNguon = 'khai-bao';
     return K.g;
   },
   cuon_sach: (THREE) => {  // cuốn sách dựng đứng
@@ -166,18 +207,19 @@ export const PROPS_KB = {
     return K.g;
   },
   ban_do: (THREE) => {     // bản đồ thị trấn treo tường, nhà có gấu đánh dấu đỏ (gốc = đáy sau, áp tường)
-    const K = bo(THREE, 'ban_do');
-    K.box(5, 3.5, 0.1, '#5d4037', 0, 1.75, 0.05, 'khung');
+    const K = bo(THREE, 'ban_do'); const D = K.sub('doc');
+    K.box(5, 3.5, 0.1, '#5d4037', 0, 1.75, 0.05, 'khung', D);
     const giay = matChu(THREE, 4.7, 3.2, (g, w, h) => {
-      g.fillStyle = '#f5e6c8'; g.fillRect(0, 0, w, h); chuGiua(g, 'BẢN ĐỒ THỊ TRẤN', w / 2, h * 0.1, h * 0.09, CHU, '#4e342e', w * 0.9);
+      g.fillStyle = '#f5e6c8'; g.fillRect(0, 0, w, h); chuGiua(g, 'BẢN ĐỒ THỊ TRẤN', w / 2, h * 0.1, h * 0.13, CHU, '#3e2723', w * 0.94);
       g.fillStyle = '#bcaaa4'; g.fillRect(0, h * 0.5, w, h * 0.05); g.fillRect(w * 0.45, h * 0.18, w * 0.05, h * 0.82);
       for (let i = 0; i < 12; i++) { g.fillStyle = '#8d6e63'; g.fillRect(w * (0.06 + (i % 6) * 0.15), h * (i < 6 ? 0.28 : 0.66), w * 0.07, h * 0.1); }
     });
-    K.pla(4.7, 3.2, giay || '#f5e6c8', 0, 1.75, 0.11, 'giay');
-    if (!giay) { K.box(4.6, 0.12, 0.01, '#bcaaa4', 0, 1.75, 0.115, 'duong'); K.box(0.12, 3.0, 0.01, '#bcaaa4', 0.1, 1.75, 0.115, 'duong2'); }
+    K.pla(4.7, 3.2, giay || '#f5e6c8', 0, 1.75, 0.11, 'giay', D);
+    if (!giay) { K.box(4.6, 0.12, 0.01, '#bcaaa4', 0, 1.75, 0.115, 'duong', D); K.box(0.12, 3.0, 0.01, '#bcaaa4', 0.1, 1.75, 0.115, 'duong2', D); }
     for (const [i, [x, y]] of [[-1.7, 2.4], [-0.6, 2.4], [1.2, 2.4], [-1.2, 1.0], [1.8, 1.0]].entries()) {
-      for (const r of [0.7, -0.7]) { const b = K.box(0.42, 0.08, 0.02, '#d32f2f', x, y, 0.13, 'dau_x' + i); b.rotation.z = r; }
+      for (const r of [0.7, -0.7]) { const b = K.box(0.42, 0.08, 0.02, '#d32f2f', x, y, 0.13, 'dau_x' + i, D); b.rotation.z = r; }
     }
+    lamDoc(D);
     return K.g;
   },
   ket_tien: (THREE) => {   // két tiền của chú bán bánh
@@ -185,12 +227,17 @@ export const PROPS_KB = {
     K.box(2.2, 2.2, 2, '#33691e', 0, 1.1, 0, 'than', null, { metalness: 0.4, roughness: 0.5 }); K.box(1.8, 1.8, 0.05, '#558b2f', 0, 1.1, 1.02, 'cua');
     const num = K.cyl(0.3, 0.3, 0.08, '#cfd8dc', 0.3, 1.3, 1.07, 'num', null, { metalness: 0.8, roughness: 0.3 }); num.rotation.x = PI / 2;
     K.box(0.6, 0.1, 0.1, '#bdbdbd', -0.3, 0.8, 1.08, 'tay_nam'); K.box(0.5, 0.25, 0.02, '#fff3e0', -0.4, 1.7, 1.05, 'nhan_dan');
+    const vong = K.tor(0.42, 0.04, '#eceff1', 0.3, 1.3, 1.07, 'vong_so', null, { metalness: 0.8, roughness: 0.3 });   // vòng vạch số quanh núm xoay
+    for (let i = 0; i < 8; i++) { const a = i * PI / 4; K.box(0.05, 0.1, 0.02, '#212121', 0.3 + Math.cos(a) * 0.55, 1.3 + Math.sin(a) * 0.55, 1.07, 'vach' + i); }
+    K.box(0.06, 0.4, 0.06, '#ffffff', 0.3, 1.5, 1.12, 'kim_chi');
     return K.g;
   },
-  day_chuyen: (THREE) => {  // sợi dây chuyền của bà (nằm phẳng)
-    const K = bo(THREE, 'day_chuyen');
-    const d = K.tor(0.3, 0.025, '#ffd54f', 0, 0.025, 0, 'day', null, { metalness: 0.85, roughness: 0.2 }); d.rotation.x = -PI / 2; d.scale.set(1.2, 1, 1);
-    K.cyl(0.05, 0.05, 0.03, '#ffd54f', 0, 0.025, 0.3, 'moc', null, { metalness: 0.85, roughness: 0.2 }); K.sph(0.06, '#e53935', 0, 0.06, 0.33, 'mat_da', null, { roughness: 0.1 });
+  day_chuyen: (THREE) => {  // sợi dây chuyền của bà (nằm phẳng): dây vàng + mặt dây tròn có đá đỏ + tia lấp lánh
+    const K = bo(THREE, 'day_chuyen'); const VANG = { metalness: 0.85, roughness: 0.2, emissive: '#b8860b', emissiveIntensity: 0.45 };
+    const d = K.tor(0.3, 0.032, '#ffd54f', 0, 0.032, 0, 'day', null, VANG); d.rotation.x = -PI / 2; d.scale.set(1.2, 0.8, 1);
+    K.cyl(0.055, 0.055, 0.035, '#ffd54f', 0, 0.035, 0.24, 'moc', null, VANG);
+    K.cyl(0.1, 0.1, 0.04, '#ffd54f', 0, 0.04, 0.3, 'mat_day', null, VANG); K.sph(0.06, '#e53935', 0, 0.075, 0.3, 'mat_da', null, { roughness: 0.1, emissive: '#b71c1c', emissiveIntensity: 0.5 });
+    for (const [i, r] of [0, PI / 4, PI / 2, -PI / 4].entries()) { const t = K.box(0.26, 0.005, 0.012, '#ffffff', 0, 0.11, 0.3, 'lap_lanh' + i, null, { emissive: '#ffffff', emissiveIntensity: 1 }); t.rotation.y = r; }
     return K.g;
   },
   chuong: (THREE) => {     // chuông tay
@@ -200,12 +247,15 @@ export const PROPS_KB = {
     K.cyl(0.05, 0.05, 0.35, '#6d4c41', 0, 0.68, 0, 'can'); K.sph(0.07, '#6d4c41', 0, 0.86, 0, 'nut');
     return K.g;
   },
-  chan_tran: (THREE) => {  // hai bàn chân trần (ống quần xanh của thị trưởng)
-    const K = bo(THREE, 'chan_tran');
-    for (const [i, x] of [-0.42, 0.42].entries()) {
-      K.box(0.55, 0.3, 1.0, '#f0c89a', x, 0.15, 0.05, 'ban_chan' + i);
-      for (let k = 0; k < 5; k++) K.sph(0.07, '#e8b98a', x - 0.2 + k * 0.1, 0.12, 0.56, 'ngon' + i + k);
-      K.cyl(0.22, 0.22, 0.25, '#f0c89a', x, 0.42, -0.25, 'co_chan' + i); K.cyl(0.3, 0.3, 0.2, '#9fc5e8', x, 0.6, -0.25, 'ong_quan' + i);
+  chan_tran: (THREE) => {  // hai bàn chân trần (da) lộ ra dưới gấu quần ngủ xanh nhạt; nhìn từ trên xuống đọc được ngay: 2 bàn chân có ngón + 2 ống quần
+    const K = bo(THREE, 'chan_tran'); const DA = '#f0c89a', NGON = '#e8b98a', QUAN = '#9fc5e8';
+    for (const [i, x] of [-0.45, 0.45].entries()) {
+      const s2 = x < 0 ? 1 : -1;   // ngón cái nằm phía trong
+      const ban = K.sph(1, DA, x, 0.13, 0, 'ban_chan' + i); ban.scale.set(0.27, 0.13, 0.5);
+      for (let k = 0; k < 5; k++) K.sph(0.078 - k * 0.009, NGON, x + s2 * (0.17 - k * 0.085), 0.075, 0.47 - Math.abs(k - 1) * 0.02 + (k === 0 ? 0.04 : 0), 'ngon' + i + k);
+      K.cyl(0.18, 0.2, 0.7, DA, x, 0.35, -0.35, 'co_chan' + i);
+      K.cyl(0.29, 0.34, 0.42, QUAN, x, 0.31, -0.35, 'ong_quan' + i);
+      const mep = K.tor(0.31, 0.04, '#7fa8d4', x, 0.52, -0.35, 'gau_quan' + i); mep.rotation.x = PI / 2;
     }
     return K.g;
   },
@@ -214,31 +264,36 @@ export const PROPS_KB = {
     K.box(2, 2, 1.8, '#546e7a', 0, 1, 0, 'than', null, { metalness: 0.4, roughness: 0.5 }); K.box(1.6, 1.6, 0.05, '#78909c', 0, 1, 0.92, 'cua');
     const num = K.cyl(0.25, 0.25, 0.08, '#eceff1', 0.25, 1.15, 0.97, 'num', null, { metalness: 0.8, roughness: 0.3 }); num.rotation.x = PI / 2;
     K.box(0.5, 0.1, 0.1, '#cfd8dc', -0.3, 0.75, 0.98, 'tay_nam'); K.sph(0.12, '#ffd54f', -0.5, 1.5, 0.95, 'sao');
+    K.tor(0.36, 0.035, '#eceff1', 0.25, 1.15, 0.97, 'vong_so', null, { metalness: 0.8, roughness: 0.3 });
+    for (let i = 0; i < 8; i++) { const a = i * PI / 4; K.box(0.04, 0.09, 0.02, '#212121', 0.25 + Math.cos(a) * 0.47, 1.15 + Math.sin(a) * 0.47, 0.97, 'vach' + i); }
+    K.box(0.05, 0.3, 0.05, '#ffffff', 0.25, 1.32, 1.01, 'kim_chi');
     return K.g;
   },
   bang_tin: (THREE) => {   // bảng tin thị trấn dán kín giấy báo mất
-    const K = bo(THREE, 'bang_tin');
+    const K = bo(THREE, 'bang_tin'); const D = K.sub('doc');
     K.box(0.3, 6, 0.45, '#6d4c41', -2.35, 3, 0, 'cot'); K.box(0.3, 6, 0.45, '#6d4c41', 2.35, 3, 0, 'cot2');
-    K.box(4.4, 3.2, 0.15, '#c19a6b', 0, 4.1, 0, 'bang');
-    const dau = matChu(THREE, 4.4, 0.5, (g, w, h) => { g.fillStyle = '#1565c0'; g.fillRect(0, 0, w, h); chuGiua(g, 'BẢNG TIN', w / 2, h / 2, h * 0.7, CHU, '#ffffff', w * 0.9); });
-    K.box(4.4, 0.5, 0.16, dau || '#1565c0', 0, 5.75, 0, 'dau');
-    const giay = [0, 1].map((k) => matChu(THREE, 0.8, 0.9, (g, w, h) => { g.fillStyle = k ? '#fff59d' : '#fffde7'; g.fillRect(0, 0, w, h); chuGiua(g, 'MẤT ĐỒ!', w / 2, h * 0.28, h * 0.2, TAY, '#c62828', w * 0.9); g.fillStyle = '#9e9e9e'; for (let i = 0; i < 4; i++) g.fillRect(w * 0.12, h * (0.5 + i * 0.11), w * (0.76 - (i % 2) * 0.2), h * 0.03); }, 128));
+    K.box(4.4, 3.2, 0.15, '#c19a6b', 0, 4.1, 0, 'bang', D);
+    const dau = matChu(THREE, 4.4, 0.5, (g, w, h) => { g.fillStyle = '#1565c0'; g.fillRect(0, 0, w, h); chuGiua(g, 'BẢNG TIN', w / 2, h / 2, h * 0.8, CHU, '#ffffff', w * 0.92); });
+    K.box(4.4, 0.5, 0.16, dau || '#1565c0', 0, 5.75, 0, 'dau', D);
+    const giay = [0, 1].map((k) => matChu(THREE, 0.8, 0.9, (g, w, h) => { g.fillStyle = k ? '#fff59d' : '#fffde7'; g.fillRect(0, 0, w, h); chuGiua(g, 'MẤT ĐỒ!', w / 2, h * 0.28, h * 0.27, TAY, '#b71c1c', w * 0.94); g.fillStyle = '#9e9e9e'; for (let i = 0; i < 4; i++) g.fillRect(w * 0.12, h * (0.5 + i * 0.11), w * (0.76 - (i % 2) * 0.2), h * 0.03); }, 128));
     for (let i = 0; i < 12; i++) {
       const x = -1.75 + (i % 5) * 0.875 + (hash(i, 1) - 0.5) * 0.2, y = 3.0 + Math.floor(i / 5) * 1.0 + (hash(i, 2) - 0.5) * 0.2;
-      const p = K.pla(0.8, 0.9, giay[i % 2] || (i % 2 ? '#fff59d' : '#fffde7'), x, y, 0.085 + i * 0.001, 'giay' + i); p.rotation.z = (hash(i, 3) - 0.5) * 0.3;
-      if (!giay[0]) K.box(0.5, 0.08, 0.005, '#c62828', x, y + 0.2, 0.09 + i * 0.001, 'chu' + i);
+      const p = K.pla(0.8, 0.9, giay[i % 2] || (i % 2 ? '#fff59d' : '#fffde7'), x, y, 0.085 + i * 0.001, 'giay' + i, D); p.rotation.z = (hash(i, 3) - 0.5) * 0.3;
+      if (!giay[0]) K.box(0.5, 0.08, 0.005, '#c62828', x, y + 0.2, 0.09 + i * 0.001, 'chu' + i, D);
     }
+    lamDoc(D);
     return K.g;
   },
   thung_tiem_bach: (THREE) => {   // chồng thùng in "Tiệm gấu Bách" + dấu đầu gấu (hàng ông Bách tự giấu)
-    const K = bo(THREE, 'thung_tiem_bach');
-    const nhan = matChu(THREE, 1.3, 0.6, (g, w, h) => { g.fillStyle = '#fffaf0'; g.fillRect(0, 0, w, h); chuGiua(g, 'Tiệm gấu Bách', w / 2, h / 2, h * 0.42, TAY, '#4e342e', w * 0.92); }, 256);
+    const K = bo(THREE, 'thung_tiem_bach'); const D = K.sub('doc');
+    const nhan = matChu(THREE, 1.3, 0.6, (g, w, h) => { g.fillStyle = '#fffaf0'; g.fillRect(0, 0, w, h); chuGiua(g, 'Tiệm gấu Bách', w / 2, h / 2, h * 0.5, TAY, '#3e2723', w * 0.94); }, 256);
     const ch = [[-1.7, 0.75], [0, 0.75], [1.7, 0.75], [-0.85, 2.25], [0.85, 2.25], [0, 3.75]];
     ch.forEach(([x, y], i) => {
       K.box(1.6, 1.5, 2.2, i % 2 ? '#d4a373' : '#c99a66', x, y, 0, 'thung' + i);
-      K.box(1.3, 0.6, 0.02, nhan || '#6d4c41', x, y + 0.3, 1.11, 'nhan' + i);
+      K.box(1.3, 0.6, 0.02, nhan || '#6d4c41', x, y + 0.3, 1.11, 'nhan' + i, D);
       dauGau(K, null, x, y - 0.35, 1.11, 0.22);
     });
+    lamDoc(D);
     return K.g;
   },
   vi: (THREE) => {         // cái ví
@@ -261,6 +316,14 @@ export const PROPS_KB = {
       K.box(0.55, 0.12, 1.15, '#90caf9', x, 0.06, 0, 'de' + i); K.box(0.55, 0.2, 0.35, '#1e88e5', x, 0.2, 0.15, 'quai' + i);
       K.sph(0.08, '#ffffff', x, 0.3, 0.22, 'bong' + i);
     }
+    return K.g;
+  },
+  bac_them_dep: (THREE) => {   // bậc thềm 2 bậc trước cửa nhà thị trưởng + đôi dép lê xanh để cạnh (mặt trước +Z)
+    const K = bo(THREE, 'bac_them_dep'); bacThem(K); dep(K, 2.9, 0.3);
+    return K.g;
+  },
+  bac_them_trong: (THREE) => {   // bậc thềm 2 bậc, KHÔNG có dép (dép đã biến mất)
+    const K = bo(THREE, 'bac_them_trong'); bacThem(K);
     return K.g;
   },
   thung_go: (THREE) => {   // thùng gỗ để đứng lên
@@ -314,6 +377,8 @@ export const PROP_INFO = {
   vi: { size: [0.8, 0.15, 0.6], base: 'surface' },
   tui_tien: { size: [1.2, 1.4, 1.2], base: 'floor' },
   doi_dep: { size: [1.4, 0.35, 1.2], base: 'floor' },
+  bac_them_dep: { size: [7, 1, 3.5], base: 'floor', fixed: true },
+  bac_them_trong: { size: [5, 1, 3.5], base: 'floor', fixed: true },
   thung_go: { size: [2.4, 2, 2.4], base: 'floor', fixed: true, surfaces: [[0, 2, 0]] },
   hang_rao: { size: [8, 3.5, 0.3], base: 'floor', fixed: true },
   ban_bay: { size: [3, 2.6, 2], base: 'floor', fixed: true, surfaces: [[0, 2.6, 0]] },

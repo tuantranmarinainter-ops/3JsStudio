@@ -13,6 +13,7 @@ const frac = (x) => x - Math.floor(x);
 
 export const BEAR_DIMS = { height: 2.2, hipsY: 0.69, seatY: -0.29, headY: 1.67, anchorY: 1.62 };
 export const BEAR_DEFAULTS = { name: 'bear', fur: '#c68a4a', muzzle: '#f2dcb8', belly: '#e9cfa0', bow: '#2e86de', eye: '#1a1210', nose: '#3a2218', blush: '#eb9c92', face: 'smile' };
+export const HOLD_K = 0.5;
 export const BEAR_JOINTS = ['hips', 'torso', 'head', 'rightArm', 'leftArm', 'rightElbow', 'leftElbow', 'rightHand', 'leftHand',
   'rightLeg', 'leftLeg', 'rightKnee', 'leftKnee', 'rightFoot', 'leftFoot'];
 
@@ -250,8 +251,12 @@ export function createBear(THREE, opts = {}) {
     const lo = piv(side + 'LowerArm', 0, -0.34, 0, up);
     blob(lo, 'arm_lower', M.fur, [0.15, 0.2, 0.15], [0, -0.12, 0]);
     const hd = piv(side + 'Hand', 0, -0.26, 0, lo);
-    blob(hd, 'paw', M.fur, [0.14, 0.14, 0.14], [0, -0.03, 0]);
-    blob(hd, 'paw_pad', M.muzzle, [0.07, 0.07, 0.04], [0, -0.03, 0.11]);
+    // bàn tay co HOLD_K: vật gắn vào tay (engine/shots.js holdProp dùng số đo của người R15 cao 5,2) tự nhỏ theo cỡ gấu (cao 2,2) và dịch ngắn lại
+    // → không che mắt/mõm. Bàn chân gấu vẽ trong nhóm nghịch co để giữ nguyên hình.
+    hd.scale.setScalar(HOLD_K);
+    const pawG = piv(side + 'PawMesh', 0, 0, 0, hd); pawG.scale.setScalar(1 / HOLD_K);
+    blob(pawG, 'paw', M.fur, [0.14, 0.14, 0.14], [0, -0.03, 0]);
+    blob(pawG, 'paw_pad', M.muzzle, [0.07, 0.07, 0.04], [0, -0.03, 0.11]);
     arm[side] = { up, lo, hd };
     const th = piv(side + 'UpperLeg', sx * 0.27, -0.05, 0, hips);
     blob(th, 'leg_upper', M.fur, [0.22, 0.26, 0.23], [0, -0.17, 0]);
