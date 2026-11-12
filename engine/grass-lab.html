@@ -78,7 +78,7 @@ const WIND0 = 5;
 const wind = createWind(THREE, { dir: [1, 0], speed: WIND0, gust: 0.8, seed: num('seed', 3), gustSize: num('gsize', 16) });
 const grass = on('grass') ? createGrass(THREE, {
   wind, area: { center: [0, 0], size: 30 }, cell: 0.08, height: 0.38, seed: num('seed', 3), density: num('density', 1),
-  colors: { base: '#3f7d2f', tip: '#9fd36a' }, follow: true,
+  colors: { base: '#3f7d2f', tip: '#9fd36a' }, follow: true, flowers: { density: num('flowers', 0.008) },   // ?flowers=0 tắt hoa
 }) : null;
 if (grass) {
   grass.set({ sunDir: SUN, sunColor: new THREE.Color('#fff0d4').multiplyScalar(1.5), skyColor: new THREE.Color('#9fc4ee') });

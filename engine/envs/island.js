@@ -27,7 +27,7 @@ export default function build(g, e, H) {
   // cỏ instanced + gió chung (engine/grass.js, engine/wind.js) trên mặt bãi cỏ (đỉnh trụ y = 0.7); ô bật/tắt 'grass' trong trình phát
   e.wind = createWind(THREE, { dir: [1, 0.3], speed: 4, gust: 0.75, seed: 5, gustSize: 18 });
   e.meadow = createGrass(THREE, { wind: e.wind, area: { center: [-30, -30], size: 59, round: true }, heightAt: () => 0.7, cell: 0.09, height: 0.34,
-    colors: { base: '#4f9a3e', tip: '#a6dc6e' }, seed: 5, follow: true });
+    colors: { base: '#4f9a3e', tip: '#a6dc6e' }, seed: 5, follow: true, flowers: { density: 0.008 } });   // hoa trong cỏ — ô 'flowers'
   g.add(e.meadow.group);
   // đèn của shot được đặt SAU env.update → lấy ánh sáng ngay lúc vẽ (không dùng đèn của khung trước)
   const _sun = () => (scene.children.find((o) => o.isDirectionalLight && o.name === 'sun')), _hemi = () => scene.children.find((o) => o.isHemisphereLight);
@@ -106,5 +106,5 @@ export default function build(g, e, H) {
   ];
   e.gullBase = perches;
   e.gulls = perches.map((p, i) => { const o = pf('herring-gull-55c3da', 1.3); return o ? place(g, o, p.x, p.y, p.z, p.ry) : null; });
-  return { update(t) { e.wind.update(t); e.cloudShade.group.visible = globalThis.__autoFx?.cloudShade !== false; if (globalThis.__autoFx?.sway !== false) e.sway.update(t); else e.sway.rest(); e.meadow.group.visible = globalThis.__autoFx?.grass !== false; if (e.meadow.group.visible) { e.meadow.setPushers(meadowFeet()); e.meadow.update(t, stage.camera); } e.sea(t); e.crabs.update(t); e.grass.update(t); e.gulls.forEach((gl, i) => { if (gl) gullIdle(gl, e.gullBase[i], i, t); }); } };
+  return { update(t) { e.wind.update(t); e.cloudShade.group.visible = globalThis.__autoFx?.cloudShade !== false; if (globalThis.__autoFx?.sway !== false) e.sway.update(t); else e.sway.rest(); e.meadow.group.visible = globalThis.__autoFx?.grass !== false; e.meadow.set({ flowers: globalThis.__autoFx?.flowers !== false }); if (e.meadow.group.visible) { e.meadow.setPushers(meadowFeet()); e.meadow.update(t, stage.camera); } e.sea(t); e.crabs.update(t); e.grass.update(t); e.gulls.forEach((gl, i) => { if (gl) gullIdle(gl, e.gullBase[i], i, t); }); } };
 }

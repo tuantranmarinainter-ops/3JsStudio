@@ -8,7 +8,11 @@
 //   scene.add(grass.group);
 //   grass.set({ sunDir: v3, sunColor: color, skyColor: color });   // ánh sáng đơn giản (không dùng đèn của three)
 //   mỗi khung:  grass.update(t, camera);     // gọi wind.update(t); nếu follow: 2 vòng gần bám camera (bước = ô lưới → không nhảy cọng)
-//   grass.set({ height, colors:{base,tip}, density(≤ lúc tạo), visible:false }) · grass.dispose()
+//   grass.set({ height, colors:{base,tip}, density(≤ lúc tạo), visible:false, flowers: true|false }) · grass.dispose()
+// HOA trong cỏ (opts.flowers = { density: 0.008, size: 0.04, lift: 1.34, colors: [4 màu cánh], center: '#f3c13a' }):
+//   cùng ô lưới, cùng hash, cùng gió + chân đè, CÙNG program — một phần ô (hash riêng) thành hoa: thân mảnh cao hơn cỏ (lift)
+//   + đầu hoa hình thoi luôn quay về camera (4 màu cánh + nhuỵ vàng). Không thêm đỉnh: dùng lại 4 hàng của lá cỏ.
+//   Mật độ tính theo DIỆN TÍCH (vòng xa ô to → tỉ lệ ô nhân theo) → xa gần thưa như nhau. density 0 = như cũ (hình y hệt).
 // Mỗi cọng: vị trí lệch / cao / xoay / màu = hash SỐ NGUYÊN của (chỉ số ô thế giới, seed) → không mảng CPU theo cọng, không Math.random.
 // Vòng: 'grass_ring_near' (ô = cell) · 'grass_ring_mid' (×2.2) · 'grass_ring_far' (×4.5, phủ cả vùng). Chuyển vòng bằng co chiều cao (không pop).
 // Chiều cao nền: heightAt(x,z) nướng 1 lần vào DataTexture half-float (≤128²); mặc định phẳng 0. mesh.userData.noAO = true.
@@ -17,6 +21,7 @@ import * as THREE_NS from 'three';
 const VERT = /* glsl */`
 uniform vec2 uOrigin;   // chỉ số ô thế giới của góc ô (0,0) trong vòng
 uniform float uCell, uHeight, uSeed, uKeep, uHScale, uWidthK;
+uniform float uFlower, uFlowerK, uFlowerSize, uFlowerLift;   // hoa: tỉ lệ ô (× uFlowerK theo vòng), bán kính đầu (m), cao thân / cao cỏ
 uniform vec2 uRingC;    // tâm vòng (m)
 uniform vec2 uInC;      // tâm vòng trong (cho đoạn "vào")
 uniform vec4 uFade;     // vào(bắt đầu, xong) đo tới tâm vòng trong, ra(bắt đầu, xong) đo tới tâm vòng này — Chebyshev
@@ -26,16 +31,19 @@ uniform vec4 uPushers[6];   // xyz = tâm bàn chân/thân (m, thế giới), w 
 uniform sampler2D tHeight; uniform vec4 uHRect;   // minx, minz, 1/size, 1/size
 attribute vec2 aCell;
 varying float vV; varying float vRand; varying float vGust; varying vec3 vN; varying float vCloud;
+varying float vFlower; varying vec2 vHead; varying float vPick;
 uint ph(uint v) { v = v * 747796405u + 2891336453u; uint w = ((v >> ((v >> 28u) + 4u)) ^ v) * 277803737u; return (w >> 22u) ^ w; }
-void cellRand(vec2 c, out vec4 a, out vec4 b) {
+void cellRand(vec2 c, out vec4 a, out vec4 b, out vec2 fl) {
   uint h = ph(uint(int(c.x)) ^ ph(uint(int(c.y)) ^ ph(uint(int(uSeed)))));
   uint h1 = ph(h), h2 = ph(h1), h3 = ph(h2), h4 = ph(h3), h5 = ph(h4), h6 = ph(h5), h7 = ph(h6);
   a = vec4(float(h & 0xffffu), float(h1 & 0xffffu), float(h2 & 0xffffu), float(h3 & 0xffffu)) / 65535.0;
   b = vec4(float(h4 & 0xffffu), float(h5 & 0xffffu), float(h6 & 0xffffu), float(h7 & 0xffffu)) / 65535.0;
+  uint f0 = ph(h7 ^ 0x68e31da4u), f1 = ph(f0);   // hash riêng cho hoa → bật hoa không đổi cọng cỏ nào
+  fl = vec2(float(f0 & 0xffffu), float(f1 & 0xffffu)) / 65535.0;
 }
 __WIND__
 void main() {
-  vec4 r, q; vec2 wc = uOrigin + aCell; cellRand(wc, r, q);
+  vec4 r, q; vec2 fl; vec2 wc = uOrigin + aCell; cellRand(wc, r, q, fl);
   vec2 p = (wc + 0.1 + 0.8 * r.xy) * uCell;
   float dc = max(abs(p.x - uRingC.x), abs(p.y - uRingC.y));
   float di = max(abs(p.x - uInC.x), abs(p.y - uInC.y));
@@ -48,6 +56,21 @@ void main() {
   float ang = r.z * 6.2831853;
   vec2 right = vec2(cos(ang), sin(ang));
   float wid = uCell * uWidthK * (1.0 - 0.88 * pow(v, 1.4));
+  float isF = step(fl.x, min(1.0, uFlower * uFlowerK));
+  float hv = v;   // phần chiều cao (0..1) của đỉnh này — cỏ: = v
+  float hb = -1.0;   // hoa: phần chiều cao tâm đầu → cả đầu dời cùng 1 lượng gió (không bị kéo xiên)
+  if (isF > 0.5) {   // hoa: hàng 0, .25, .5 = thân; .75 = giữa đầu (rộng); ngọn = đỉnh đầu
+    float hs = h * uFlowerLift, sz = uFlowerSize * (0.8 + 0.4 * fl.y) * fade * keep;
+    float top = hs + sz;
+    float yy = v < 0.6 ? (hs - sz) * v * 2.0 : (v < 0.9 ? hs : top);
+    hv = top > 1e-5 ? yy / top : 0.0;
+    if (v > 0.4) hb = top > 1e-5 ? hs / top : 0.0;
+    wid = v < 0.6 ? uCell * uWidthK * 0.3 : (v < 0.9 ? 2.0 * sz : 0.0);
+    h = top;
+    vec2 dv = p - cameraPosition.xz; float dl = length(dv);   // đầu hoa quay về camera
+    right = dl > 1e-4 ? vec2(-dv.y, dv.x) / dl : right;
+  }
+  vFlower = isF; vPick = fl.y; vHead = vec2(position.x * 2.0, 1.0 - min(1.0, abs(v - 0.75) / 0.25));
   vec2 lean = windBend(p, q.y);
   float na = q.w * 6.2831853;
   lean += vec2(cos(na), sin(na)) * 0.16 * q.x;                // nghiêng tự nhiên
@@ -60,12 +83,13 @@ void main() {
     }
   }
   float ll = length(lean); if (ll > 1.25) lean *= 1.25 / ll;     // chặn: cọng không lật xuống dưới đất
-  float b = v * v;
+  float hl = hb >= 0.0 ? hb : hv;   // phần chiều cao dùng cho cong gió
+  float b = hl * hl;
   vec2 off = lean * h * b + right * side * wid;
   float L2 = min(dot(lean, lean), 1.6);
-  float y = y0 + h * v * (1.0 - 0.38 * L2 * v);
+  float y = y0 + h * (hv - 0.38 * L2 * hl * hl);
   vec4 wp = vec4(p.x + off.x, y, p.y + off.y, 1.0);
-  vec3 axis = normalize(vec3(lean.x * 2.0 * v, 1.0, lean.y * 2.0 * v));
+  vec3 axis = normalize(vec3(lean.x * 2.0 * hv, 1.0, lean.y * 2.0 * hv));
   vN = normalize(cross(vec3(right.x, 0.0, right.y), axis));
   vV = v; vRand = q.x;
   vGust = gustAt(p) * uWind.w;
@@ -75,16 +99,25 @@ void main() {
 `;
 const FRAG = /* glsl */`
 uniform vec3 uBase, uTip, uSunDir, uSunColor, uSkyColor;
+uniform vec3 uPetals[4]; uniform vec3 uPetalC;
 varying float vV; varying float vRand; varying float vGust; varying vec3 vN; varying float vCloud;
+varying float vFlower; varying vec2 vHead; varying float vPick;
 void main() {
   float v = vV;
   vec3 alb = mix(uBase, uTip, pow(v, 1.1));
   alb *= 0.82 + 0.36 * vRand;
   alb = mix(alb, alb * vec3(1.12, 1.0, 0.7), smoothstep(0.7, 1.0, vRand) * 0.5);
-  alb *= mix(0.66, 1.28, vGust);                              // dải gió giật sáng/tối
+  if (vFlower > 0.5) {   // hoa: thân xanh đậm, đầu = màu cánh theo hash + nhuỵ ở giữa
+    int k = int(min(3.0, floor(vPick * 4.0)));
+    vec3 pet = k == 0 ? uPetals[0] : (k == 1 ? uPetals[1] : (k == 2 ? uPetals[2] : uPetals[3]));
+    float head = step(0.52, v);
+    float ctr = smoothstep(0.42, 0.7, vHead.y) * (1.0 - smoothstep(0.26, 0.42, abs(vHead.x)));
+    alb = mix(uBase * 0.62, mix(pet * (0.9 + 0.2 * vRand), uPetalC, ctr), head);
+  }
+  alb *= mix(mix(0.66, 1.28, vGust), 1.0, vFlower * step(0.52, v));   // dải gió giật sáng/tối (đầu hoa giữ màu)
   vec3 n = vN * (gl_FrontFacing ? 1.0 : -1.0);
   vec3 nn = normalize(n + vec3(0.0, 0.9, 0.0));
-  float ao = mix(0.32, 1.0, smoothstep(0.0, 0.55, v));
+  float ao = mix(0.32, 1.0, smoothstep(0.0, 0.55, v)); if (vFlower > 0.5 && v > 0.52) ao = 1.0;
   float diff = max(dot(nn, uSunDir), 0.0);
   float trans = max(dot(-n, uSunDir), 0.0);                   // nắng xuyên qua lá từ phía sau
   vec3 col = alb * (uSkyColor * 0.55 * ao + uSunColor * vCloud * diff * 0.9 * mix(0.55, 1.0, ao)) + uTip * uSunColor * vCloud * trans * 0.4 * v;
@@ -100,6 +133,7 @@ export function createGrass(THREE = THREE_NS, opts = {}) {
   const area = { center: [0, 0], size: 30, ...(opts.area || {}) };
   const P = { cell: 0.08, height: 0.35, seed: 1, density: 1, follow: false, ...opts };
   const colors = { base: '#3f7d2f', tip: '#9fd36a', ...(opts.colors || {}) };
+  const FL = { density: 0, size: 0.04, lift: 1.34, colors: ['#fbf8f0', '#ffd84a', '#f5799c', '#9b78e0'], center: '#f3b62a', ...(opts.flowers || {}) };
   const half = area.size / 2, created = Math.max(0.05, P.density);
   const cellK = 1 / Math.sqrt(created);
 
@@ -134,6 +168,8 @@ export function createGrass(THREE = THREE_NS, opts = {}) {
     tHeight: { value: hTex }, uHRect: { value: hRect },
     uPushers: { value: Array.from({ length: 6 }, () => new THREE.Vector4()) },
     uBase: { value: new THREE.Color(colors.base) }, uTip: { value: new THREE.Color(colors.tip) },
+    uFlower: { value: FL.density }, uFlowerSize: { value: FL.size }, uFlowerLift: { value: FL.lift },
+    uPetals: { value: FL.colors.slice(0, 4).map((c) => new THREE.Color(c)) }, uPetalC: { value: new THREE.Color(FL.center) },
     uSunDir: { value: new THREE.Vector3(0.4, 0.7, 0.3).normalize() }, uSunColor: { value: new THREE.Color('#fff2d8') }, uSkyColor: { value: new THREE.Color('#9db8d8') },
   };
   const vert = VERT.replace('__WIND__', wind.glsl);
@@ -149,7 +185,7 @@ export function createGrass(THREE = THREE_NS, opts = {}) {
     const u = {
       ...wind.uniforms, ...shared,
       uOrigin: { value: new THREE.Vector2() }, uRingC: { value: new THREE.Vector2() }, uInC: { value: k ? rings[k - 1].u.uRingC.value : new THREE.Vector2() }, uCell: { value: cs },
-      uHScale: { value: hMul[Math.min(k, 2)] }, uWidthK: { value: 0.7 },
+      uHScale: { value: hMul[Math.min(k, 2)] }, uWidthK: { value: 0.7 }, uFlowerK: { value: last && k ? 0 : (cs / (P.cell * cellK)) ** 2 },   // vòng xa: không hoa (khỏi lốm đốm chân trời)
       uFade: { value: new THREE.Vector4(k ? prev * 0.55 : -1, k ? prev * 0.8 : 0, last ? 1e6 : hf * 0.8, last ? 2e6 : hf) },
     };
     const mat = new THREE.ShaderMaterial({ uniforms: u, vertexShader: vert, fragmentShader: FRAG, side: THREE.DoubleSide, name: 'grass_mat' });
@@ -190,6 +226,7 @@ export function createGrass(THREE = THREE_NS, opts = {}) {
       if (p.sunColor) shared.uSunColor.value.copy(p.sunColor);
       if (p.skyColor) shared.uSkyColor.value.copy(p.skyColor);
       if (p.visible != null) group.visible = !!p.visible;
+      if (p.flowers != null) shared.uFlower.value = p.flowers === true ? FL.density : p.flowers === false ? 0 : +p.flowers;
     },
     dispose() { for (const r of rings) { r.mesh.geometry.dispose(); r.mesh.material.dispose(); } hTex.dispose(); group.removeFromParent(); },
   };

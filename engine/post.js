@@ -35,7 +35,7 @@ import { CLOTH } from './cloth.js';
 import { MAST } from './mastbreak.js';
 import { MATS } from './materials.js';
 
-export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true, backdrop: true, matTex: true };
+export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true, backdrop: true, matTex: true, flowers: true };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
@@ -55,6 +55,7 @@ export const FX_LABELS = {
   cloudShade: 'Bóng mây trôi trên mặt đất',
   farwoods: 'Rừng xa (ảnh vẽ, thị trấn)',
   backdrop: 'Núi xa vẽ (thị trấn)',
+  flowers: 'Hoa trong cỏ (bãi cỏ đảo)',
   matTex: 'Ảnh vân CC0: gỗ, ngói, đá, đất, cát, vải (tắt = vân toán)',
   lite: 'Bóng đổ nhẹ (tắt bóng kính, vật phát sáng, hạt, vật nhỏ) — mở/xuất nhanh hơn',
 };
@@ -187,7 +188,7 @@ export function createPost(THREE, stage, { actors = [], paint: paintOpts = {}, a
   const _f = new THREE.Vector3();
 
   function render({ t = 0, light = 'day', env = '', focus = null, flash = 0 } = {}) {
-    const AF = (globalThis.__autoFx ||= {}); AF.foot = fx.foot; AF.prints = fx.prints; AF.wind = fx.wind; AF.breath = fx.breath; AF.ibl = fx.ibl; AF.scans = fx.scans; AF.lite = fx.lite; AF.skybox = fx.skybox; AF.stormSky = fx.stormSky; AF.shotSky = fx.shotSky; AF.skyCubic = fx.skyCubic; AF.skyScale = fx.skyScale; AF.grass = fx.grass; AF.sway = fx.sway; AF.cloudShade = fx.cloudShade; AF.farwoods = fx.farwoods; AF.backdrop = fx.backdrop;   // engine/shots.js hiệu ứng tự động
+    const AF = (globalThis.__autoFx ||= {}); AF.foot = fx.foot; AF.prints = fx.prints; AF.wind = fx.wind; AF.breath = fx.breath; AF.ibl = fx.ibl; AF.scans = fx.scans; AF.lite = fx.lite; AF.skybox = fx.skybox; AF.stormSky = fx.stormSky; AF.shotSky = fx.shotSky; AF.skyCubic = fx.skyCubic; AF.skyScale = fx.skyScale; AF.grass = fx.grass; AF.sway = fx.sway; AF.cloudShade = fx.cloudShade; AF.farwoods = fx.farwoods; AF.backdrop = fx.backdrop; AF.flowers = fx.flowers;   // engine/shots.js hiệu ứng tự động
     GRUNGE.char.value = fx.worn ? 1 : 0; GRUNGE.build.value = fx.grime ? 1 : 0;   // engine/grunge.js (vân bụi trên vật liệu)
     GRUNGE.aged.value = fx.aged ? 1 : 0;
     CLOTH.on.value = fx.cloth ? 1 : 0;   // engine/cloth.js
