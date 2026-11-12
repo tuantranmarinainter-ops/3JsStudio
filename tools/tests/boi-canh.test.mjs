@@ -201,10 +201,45 @@ for (const env of ENV17) {
   test(`env ${env}: __measure().tang có cả 3 tầng >= 1`, { ...T, skip: CHUA_GAN.has(env) ? 'chưa gắn tầng (CHUA_GAN)' : false }, async () => {
     const tang = await page.evaluate(async ({ env, tTown }) => {
       const s = window.__shots.list.find((x) => x.env === 'town'); const cu = s.env; s.env = env;
+      const AF = (globalThis.__autoFx ||= {}), af0 = { tangXa: AF.tangXa, seaDecor: AF.seaDecor }; AF.tangXa = true; AF.seaDecor = true;   // ep001 tắt tangXa; ô bật ⇒ đủ 3 tầng
       try { await window.renderAt(tTown); return JSON.parse(JSON.stringify(window.__measure(tTown).tang)); }
-      finally { s.env = cu; await window.renderAt(tTown); }
+      finally { s.env = cu; AF.tangXa = af0.tangXa; AF.seaDecor = af0.seaDecor; await window.renderAt(tTown); }
     }, { env, tTown });
     for (const k of TANG) assert.ok(tang[k] >= 1, `${env}: tầng ${k} = ${tang[k]}`);
+  });
+}
+
+test('tang: vật gắn tầng nằm ngoài camera.far KHÔNG được đếm; vào tầm nhìn thì đếm', T, async () => {
+  const r = await page.evaluate(async (tTown) => {
+    await window.renderAt(tTown);
+    const { ganTang } = await import('/engine/envs/tang.js');
+    const cam = window.__stage.camera;
+    const scene = window.__stage.scene;
+    const THREE_ = window.THREE;
+    const far = cam.far, dir = new THREE_.Vector3(); cam.getWorldDirection(dir);
+    const mk = (d) => { const m = new THREE_.Mesh(new THREE_.BoxGeometry(2, 2, 2), new THREE_.MeshBasicMaterial()); m.position.copy(cam.getWorldPosition(new THREE_.Vector3())).addScaledVector(dir, d); ganTang(m, 'back'); scene.add(m); return m; };
+    const truoc = window.__measure(tTown).tang.back;
+    const xa = mk(far + 300); const a = window.__measure(tTown).tang.back;
+    const gan = mk(far * 0.5); const b = window.__measure(tTown).tang.back;
+    scene.remove(xa); scene.remove(gan);
+    return { far, truoc, a, b };
+  }, tTown);
+  assert.equal(r.a, r.truoc, 'vật ngoài far bị đếm: ' + JSON.stringify(r));
+  assert.equal(r.b, r.truoc + 1, 'vật trong tầm nhìn không được đếm: ' + JSON.stringify(r));
+});
+
+for (const env of ['storm', 'shipStorm']) {
+  test(`env ${env}: tangXa bật ⇒ back >= 1 (vật dưới camera.far); tắt ⇒ back = 0`, T, async () => {
+    const r = await page.evaluate(async ({ env, tTown }) => {
+      const s = window.__shots.list.find((x) => x.env === 'town'); const cu = s.env; s.env = env;
+      const AF = (globalThis.__autoFx ||= {}), t0 = AF.tangXa, out = {};
+      try {
+        for (const on of [true, false]) { AF.tangXa = on; await window.renderAt(tTown); out[on ? 'bat' : 'tat'] = window.__measure(tTown).tang.back; }
+      } finally { s.env = cu; AF.tangXa = t0; await window.renderAt(tTown); }
+      return out;
+    }, { env, tTown });
+    assert.ok(r.bat >= 1, JSON.stringify(r));
+    assert.equal(r.tat, 0, JSON.stringify(r));
   });
 }
 

@@ -118,7 +118,7 @@
       const director = createDirector({ THREE, stage, envs, K, actors, houses, props, fx });
       // Hiệu ứng hình (engine/post.js), mỗi cái bật/tắt riêng: ?fx=grade,bloom  (danh sách bật) hoặc ?fx=none
       const post = createPost(THREE, stage, { actors: Object.values(actors).map((a) => a.root) });
-      post.set({ faceLive: EPISODE.faceLive !== false });   // ep001: EPISODE.faceLive = false ⇒ mặt y hệt bản cũ (ô FX "Mặt sống" vẫn bật lại được)
+      post.set({ faceLive: EPISODE.faceLive !== false, tangXa: EPISODE.tangXa !== false });   // ep001: EPISODE.faceLive = false ⇒ mặt y hệt bản cũ (ô FX "Mặt sống" vẫn bật lại được)
       if (q.get('fx') !== null) { const on = new Set(q.get('fx').split(',')); post.set(Object.fromEntries(Object.keys(FX_DEFAULTS).map((k) => [k, on.has(k)]))); }
       stage.draw = (t) => post.render({ t, ...envs.last, focus: stage.target });
       window.__post = post;

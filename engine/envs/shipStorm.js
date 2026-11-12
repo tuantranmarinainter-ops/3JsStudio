@@ -19,6 +19,7 @@ import { floatPose, wetline, worldGrad } from '../floating.js';
 export default function build(g, e, H) {
   const { ganTang, THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
   e.sea = makeSea(g, { preset: 'storm', y: -1, amp: 2.2, size: 1600, rate: 1.5 });
+  ganTang(e.sea.water.mesh, 'front');   // quy ước mặt nước = tầng trước
   // GIÓ GIẬT quanh lúc gãy cột (36,7–37,6 s): 0 → 1 → 0, hàm thuần của t. Dùng cho sóng, mưa xiên, mây trôi, chớp.
   const ss = (a, b, x) => { const k = Math.min(1, Math.max(0, (x - a) / (b - a))); return k * k * (3 - 2 * k); };
   e.gust = (t) => ss(36.3, 36.85, t) * (1 - ss(37.6, 38.6, t));
@@ -62,14 +63,14 @@ export default function build(g, e, H) {
   };
   e.carry = (t) => { if (!SEA2()) return null; e.shipPose(t); e.ship.updateMatrix(); return e.ship.matrix; };
   e.rain = fxRain(THREE, { count: 1600, area: [70, 50, 70] }); g.add(ganTang(e.rain.obj, 'front'));   // tầng trước: mưa quanh camera
-  // tầng sau: dãy núi đá xa ở ~1300 stud — xa hơn camera.far (1000) nên MỌI khung ep001 không thấy; shot muốn thấy thì kéo e.farRocks lại gần
+  // tầng sau (ô FX tangXa; ep001 tắt): núi mờ trong sương quanh chân trời, 650–800 stud < camera.far 1000; update() ẩn/hiện theo ô
+  const tx = new THREE.Group(); tx.name = 'shipstorm_tangxa'; g.add(tx);
   { const far = new THREE.Group(); far.name = 'shipstorm_far_rocks';
-    for (const [x, z, w, h] of [[-900, -950, 260, 30], [700, -1100, 320, 36], [-150, -1350, 400, 28]]) {
-      const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat('#1b2536', { flatShading: true, roughness: 1 })); m.scale.set(w, h, w * 0.35); m.position.set(x, h * 0.1 - 2, z); far.add(m);
-    }
-    e.farRocks = far; g.add(ganTang(far, 'back')); }
+    for (let i = 0; i < 10; i++) { const a = (i + hash(i, 41) * 0.5) * 0.6283, r = 650 + hash(i, 42) * 150, w = 200 + hash(i, 43) * 120, h = 26 + hash(i, 44) * 16;
+      const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat('#2d3a4e', { flatShading: true, roughness: 1 })); m.scale.set(w, h, w * 0.35); m.position.set(Math.cos(a) * r, h * 0.3, Math.sin(a) * r); m.rotation.y = -a + Math.PI / 2; far.add(m); }
+    e.farRocks = far; tx.add(ganTang(far, 'back')); }
   e.bolt = fxBolt(THREE, { seed: 9 }); e.bolt.position.set(30, 25, -120); e.bolt.scale.setScalar(1.8); g.add(e.bolt);
-  return { suSong: ['song'], update(t, ctx) { const G = e.gust(t); e.rain.slant = [0.25 + 0.9 * G, 0.1 + 0.35 * G];   // gió giật → mưa quất xiên (đặt TRƯỚC rain.update)
+  return { suSong: ['song'], update(t, ctx) { tx.visible = globalThis.__autoFx?.tangXa !== false; const G = e.gust(t); e.rain.slant = [0.25 + 0.9 * G, 0.1 + 0.35 * G];   // gió giật → mưa quất xiên (đặt TRƯỚC rain.update)
     e.sea(t, 2.2); for (const sl of e.sails) sl.userData.update(t); e.mast?.update(t); e.rain.update(t, ctx.focus || [0, 0, 0]); const F = e.shipPose(t);
     if (F) { const gr = worldGrad(F.sx, F.sz, 0); e.wet.set({ x: 0, z: 0, y: F.y, ...gr, t: e.sea.clock(t).t });
       e.sea.setHull({ x: 0, z: 0, hx: HULL.hx, hz: HULL.hz * 0.8, yaw: 0, k: 1, plunge: Math.min(1, Math.max(0, -F.vy / 4)) }); }

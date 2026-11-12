@@ -16,15 +16,19 @@ import { smoothFlash } from '../flash.js';
 export default function build(g, e, H) {
   const { ganTang, THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
   e.sea = makeSea(g, { preset: 'storm', y: 2, amp: 2.4, size: 1600, rate: 1.6 });   // t biển = t·1.6 (engine/sea.js) — vật nổi tự lấy sea.clock
-  ganTang(e.sea.water.mesh, 'mid');   // tầng giữa: biển bão là vật chính của cảnh (shot thêm nhà/tàu qua props)
+  ganTang(e.sea.water.mesh, 'front');   // quy ước mặt nước = tầng trước (như sea/ocean/shipStorm); tầng giữa = đá gần (tangXa) + vật shot thêm qua props
   e.rain = fxRain(THREE, { count: 2200 }); g.add(ganTang(e.rain.obj, 'front'));   // tầng trước: mưa quanh camera
-  // tầng sau: dãy núi đá xa ở ~1300 stud — xa hơn camera.far (1000) nên MỌI khung ep001 không thấy (đã thử ở 780 stud: hiện ở chân trời s031); shot muốn thấy thì kéo e.farRocks lại gần
-  { const far = new THREE.Group(); far.name = 'storm_far_rocks';
-    for (const [x, z, w, h] of [[-900, -950, 260, 30], [700, -1100, 320, 36], [-150, -1350, 400, 28]]) {
-      const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat('#2c3846', { flatShading: true, roughness: 1 })); m.scale.set(w, h, w * 0.35); m.position.set(x, h * 0.1 - 2, z); far.add(m);
-    }
-    e.farRocks = far; g.add(ganTang(far, 'back')); }
+  // ô FX tangXa (engine/post.js; ep001 tắt): nhóm 'storm_tangxa' = đá gần (tầng giữa) + núi mờ trong sương quanh chân trời (tầng sau, 650–800 stud < camera.far 1000). update() ẩn/hiện theo ô.
+  const tx = new THREE.Group(); tx.name = 'storm_tangxa'; g.add(tx);
+  { const reef = new THREE.Group(); reef.name = 'storm_reef_rocks';
+    for (let i = 0; i < 6; i++) { const a = hash(i, 31) * 6.283, r = 90 + hash(i, 32) * 40, s0 = 5 + hash(i, 33) * 6;
+      const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat('#27323f', { flatShading: true, roughness: 1 })); m.scale.set(s0, s0 * 0.8, s0 * 0.9); m.position.set(Math.cos(a) * r, 2 + s0 * 0.1, Math.sin(a) * r); reef.add(m); }
+    tx.add(ganTang(reef, 'mid'));
+    const far = new THREE.Group(); far.name = 'storm_far_rocks';
+    for (let i = 0; i < 10; i++) { const a = (i + hash(i, 41) * 0.5) * 0.6283, r = 650 + hash(i, 42) * 150, w = 200 + hash(i, 43) * 120, h = 26 + hash(i, 44) * 16;
+      const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat('#3a4756', { flatShading: true, roughness: 1 })); m.scale.set(w, h, w * 0.35); m.position.set(Math.cos(a) * r, h * 0.3, Math.sin(a) * r); m.rotation.y = -a + Math.PI / 2; far.add(m); }
+    e.farRocks = far; tx.add(ganTang(far, 'back')); }
   e.bolt = fxBolt(THREE); e.bolt.position.set(-40, 20, -140); e.bolt.scale.setScalar(2); g.add(e.bolt);
   // chớp mượt (engine/flash.js): sáng 1 khung rồi tắt dần — không nhấp nháy từng 2 khung (gây "giật")
-  return { suSong: ['song'], update(t, ctx) { e.sea(t, 2.4); e.rain.update(t, ctx.focus || [0, 0, 0]); const f = smoothFlash(t); e.bolt.visible = f > 0.45; ctx.flash = f; } };
+  return { suSong: ['song'], update(t, ctx) { tx.visible = globalThis.__autoFx?.tangXa !== false; e.sea(t, 2.4); e.rain.update(t, ctx.focus || [0, 0, 0]); const f = smoothFlash(t); e.bolt.visible = f > 0.45; ctx.flash = f; } };
 }

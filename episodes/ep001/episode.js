@@ -1,6 +1,7 @@
 // ep001 — "Ngôi nhà biết đi". Cấu hình chung: diễn viên, nhà, đạo cụ, hiệu ứng.
 // Dựng lại theo tài liệu bàn giao của người dùng (refs/ngoinha/): 5132 frame @30fps, 145 shot.
-import { createR15, loadR15Body, loadCharacterTextures } from '../../engine/r15.js';
+import { createR15, loadR15Body, loadCharacterTextures, loadGaFaces } from '../../engine/r15.js';
+import { HERO_GA } from '../../engine/ga.js';
 import { createHouse } from '../../engine/house.js';
 import { makePostcard, postcardBack } from '../../engine/postcards.js';
 import { fxCards, fxDust } from '../../engine/fx.js';
@@ -11,12 +12,18 @@ export const EPISODE = {
   fps: 30,
   credits: false,   // ep001 đã chốt hình: ảnh ghi công 3 giây cuối (ghi-cong.png) mặc định TẮT; bật bằng ô "Ghi công" trong trình phát hoặc ?credits=1
   faceLive: false,   // ep001 đã chốt hình: mặt sống (engine/r15.js mixFace + chớp 3–5 s + ánh nhìn + đồng tử) TẮT để hình y hệt bản cũ; bật bằng ô "Mặt sống" trong trình phát hoặc ?fx=…,faceLive
+  tangXa: false,   // ep001 đã chốt hình: tầng xa của storm/shipStorm (núi mờ + đá gần, engine/envs) TẮT để hình y hệt bản cũ; bật bằng ô "Tầng xa bối cảnh bão" hoặc ?fx=…,tangXa
   frames: 5132,
   rule: 'Mỗi đêm một ngôi nhà ngẫu nhiên mọc chân, đi tới một nơi trên thế giới rồi đêm sau đi về.',
   weakness: 'Nhà chúng tôi không đi về — cứ đi tiếp mỗi đêm.',
   twist: 'Các nơi nhà dừng chân trùng đúng thứ tự bưu thiếp ba gửi về: nhà đang lần theo dấu ba.',
   solution: 'Theo tấm thiếp cuối (đảo hải đăng), nhà tìm thấy ba và đưa cả nhà về.',
 };
+
+// Nhân vật chính "Gà" (bản DUYỆT, mặc định TẮT). Bật: query ?ga=1 hoặc globalThis.__autoFx.heroGa = true TRƯỚC khi dựng diễn viên (đổi giữa chừng cần nạp lại trang).
+// Khoá bật/tắt cho trình phát: 'heroGa', nhãn "Nhân vật chính Gà". Ảnh mặt: assets/characters/ga/faces (37 biểu cảm, GA_FACE_MAP trong engine/r15.js).
+export { HERO_GA };
+export const heroGaOn = () => { try { return !!(globalThis.__autoFx?.heroGa || new URLSearchParams(globalThis.location?.search || '').get('ga') === '1'); } catch { return false; } };
 
 const SKIN = '#ecc095';      // màu da (trước: vàng khối #f3d27a)
 // Nhân vật R15 (engine/r15.js): thân theo mô hình tham chiếu assets/characters/r15_body.glb; texture Codex nếu có.
@@ -30,9 +37,12 @@ export async function buildCast(THREE) {
   };
   const FACE = { hero: 'smile', mom: 'smile', dad: 'smile', dadIsland: 'worried' };
   const out = {};
+  const ga = heroGaOn();
+  const faceSet = ga ? await loadGaFaces(THREE) : null;
   for (const [name, o] of Object.entries(CAST)) {
-    const textures = await loadCharacterTextures(THREE, name);
-    const a = createR15(THREE, { name, ...o, body, textures, face: FACE[name] });
+    const isGa = ga && name === 'hero';
+    const textures = isGa ? null : await loadCharacterTextures(THREE, name);
+    const a = createR15(THREE, { name, ...(isGa ? HERO_GA : o), body, textures, face: FACE[name], ...(isGa ? { faceSet } : {}) });
     a._defaultFace = FACE[name];
     out[name] = a;
   }
