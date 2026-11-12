@@ -1457,5 +1457,155 @@
     "source_url": "https://freesound.org/people/ecfike/sounds/139952",
     "duration": 4.52,
     "ambience": false
+  },
+  "door lock click": {
+    "file": "assets/sfx/door_lock_click.mp3",
+    "title": "Door_Unlocking.wav",
+    "creator": "IPaddeh",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/IPaddeh/sounds/422852",
+    "duration": 0.39,
+    "ambience": false
+  },
+  "book slide": {
+    "file": "assets/sfx/book_slide.mp3",
+    "title": "sliding book (1).mp3",
+    "creator": "Heyy_Jayy_",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/Heyy_Jayy_/sounds/515002",
+    "duration": 2.7,
+    "ambience": false
+  },
+  "magic poof": {
+    "file": "assets/sfx/magic_poof.mp3",
+    "title": "Small poofs of flux.ogg",
+    "creator": "jobro",
+    "license": "by",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "source_url": "https://freesound.org/people/jobro/sounds/204302",
+    "duration": 72.0,
+    "ambience": false
+  },
+  "window open": {
+    "file": "assets/sfx/window_open.mp3",
+    "title": "Window Opening Squeaks Slide.wav",
+    "creator": "RutgerMuller",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/RutgerMuller/sounds/51047",
+    "duration": 1.4,
+    "ambience": false
+  },
+  "footsteps run": {
+    "file": "assets/sfx/footsteps_run.mp3",
+    "title": "Footsteps, Running On Stairs.wav",
+    "creator": "theplax",
+    "license": "by",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "source_url": "https://freesound.org/people/theplax/sounds/547385",
+    "duration": 5.79,
+    "ambience": false
+  },
+  "conveyor hum": {
+    "file": "assets/sfx/conveyor_hum.mp3",
+    "title": "Noisy Escalator",
+    "creator": "tvilgiat",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/tvilgiat/sounds/516292",
+    "duration": 87.54,
+    "ambience": false
+  },
+  "dramatic sting": {
+    "file": "assets/sfx/dramatic_sting.mp3",
+    "title": "Piano Cord.wav",
+    "creator": "ecfike",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/ecfike/sounds/183500",
+    "duration": 1.75,
+    "ambience": false
+  },
+  "marker squeak": {
+    "file": "assets/sfx/marker_squeak.mp3",
+    "title": "Squeaking.aif",
+    "creator": "esperri",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/esperri/sounds/119153",
+    "duration": 3.34,
+    "ambience": false
+  },
+  "door knock": {
+    "file": "assets/sfx/door_knock.mp3",
+    "title": "Door knocking (Angry).wav",
+    "creator": "Macif",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/Macif/sounds/194365",
+    "duration": 2.01,
+    "ambience": false
+  },
+  "door creak": {
+    "file": "assets/sfx/door_creak.mp3",
+    "title": "Door - Creak 02.wav",
+    "creator": "JarredGibb",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/JarredGibb/sounds/219492",
+    "duration": 1.4,
+    "ambience": false
+  },
+  "small bell ring": {
+    "file": "assets/sfx/small_bell_ring.mp3",
+    "title": "Small bell ringing wildly",
+    "creator": "JakLocke",
+    "license": "by",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "source_url": "https://freesound.org/people/JakLocke/sounds/261391",
+    "duration": 5.54,
+    "ambience": false
+  },
+  "metal door slide": {
+    "file": "assets/sfx/metal_door_slide.mp3",
+    "title": "Wardrobe_Sliding_Door_Slow_001.aif",
+    "creator": "tompallant",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/tompallant/sounds/208721",
+    "duration": 5.18,
+    "ambience": false
+  },
+  "cricket": {
+    "file": "assets/sfx/cricket.mp3",
+    "title": "Cricket",
+    "creator": "Ev-Dawg",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/Ev-Dawg/sounds/337435",
+    "duration": 0.77,
+    "ambience": false
+  },
+  "safe door close": {
+    "file": "assets/sfx/safe_door_close.mp3",
+    "title": "Bank Vault Combination Lock Sound - V6",
+    "creator": "Pixeliota",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/Pixeliota/sounds/678254",
+    "duration": 1.65,
+    "ambience": false
+  },
+  "thud soft": {
+    "file": "assets/sfx/thud_soft.mp3",
+    "title": "ApplesDroppingThudinaForest.wav",
+    "creator": "kvgarlic",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/kvgarlic/sounds/149418",
+    "duration": 3.42,
+    "ambience": false
   }
 }

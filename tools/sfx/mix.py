@@ -70,21 +70,22 @@ def sound(name):
 def hsh(x):  # 0..1 tất định
     return ((int(abs(x) * 1000.0 + 0.5) * 2654435761) & 0xffffffff) % 10007 / 10007.0
 
+_SL = None
+def shot_list():
+    """Danh sách shot dùng chung (cả shots.js kiểu f:[a,b] của ep001 lẫn kiểu dur của tập sinh tự động) — tools/sfx/shot-list.mjs."""
+    global _SL
+    if _SL is None:
+        r = subprocess.run(['node', str(ROOT / 'tools/sfx/shot-list.mjs'), ep], capture_output=True, cwd=str(ROOT))
+        if r.returncode != 0: sys.exit('shot-list.mjs lỗi: ' + r.stderr.decode('utf8', 'replace')[-400:])
+        _SL = json.loads(r.stdout.decode('utf8'))
+    return _SL
+
 def shots():
-    out = []
-    for m in re.finditer(r"\{ id: '([^']+)', f: \[(\d+), (\d+)\](.*?)\},?\s*$", (EPD / 'shots.js').read_text(encoding='utf8'), re.M):
-        env = re.search(r"env: '([^']+)'", m.group(4)); light = re.search(r"light: '([^']+)'", m.group(4))
-        out.append((m.group(1), int(m.group(2)) / 30, (int(m.group(3)) + 1) / 30, env.group(1) if env else '', light.group(1) if light else ''))
-    return out
+    return [(s['id'], s['t0'], s['t1'], s['env'], s['light']) for s in shot_list()['shots']]
 
 def shot_events():
     """{shot_id: (giây bắt đầu, {tên_mốc: giây cục bộ trong shot})} từ trường `events: { tên: giây }` trong shots.js."""
-    out = {}
-    for m in re.finditer(r"\{ id: '([^']+)', f: \[(\d+), (\d+)\](.*?)\},?\s*$", (EPD / 'shots.js').read_text(encoding='utf8'), re.M):
-        ev = re.search(r"events:\s*\{([^}]*)\}", m.group(4))
-        d = {k: float(v) for k, v in re.findall(r"([A-Za-z_]\w*)\s*:\s*(-?[\d.]+)", ev.group(1))} if ev else {}
-        out[m.group(1)] = (int(m.group(2)) / 30, d)
-    return out
+    return {s['id']: (s['t0'], {k: float(v) for k, v in s['events'].items()}) for s in shot_list()['shots']}
 
 def cue_time(x, ev):
     """Giây của cue. `event: 'tên'` (hoặc 'shot.tên') + trường shot → bắt đầu shot + mốc cục bộ (+ `dt` tuỳ chọn);

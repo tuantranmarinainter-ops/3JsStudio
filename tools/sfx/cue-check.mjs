@@ -9,7 +9,8 @@ import { existsSync } from 'fs';
 import { extname, join, resolve, relative } from 'path';
 import { spawnSync } from 'child_process';
 import { launchBrowser } from '../browser.mjs';
-import { parseShotEvents, cueTime, cueIssues } from './cue-time.mjs';
+import { cueTime, cueIssues } from './cue-time.mjs';
+import { loadShotList } from './shot-list.mjs';
 
 const args = process.argv.slice(2);
 const opt = {}; const pos = [];
@@ -39,7 +40,7 @@ if (opt.steps) {
   for (const f of files) for (const c of JSON.parse(await readFile(join(epDir, 'sfx', f), 'utf8'))) cues.push({ ...c, file: f });
 }
 // cue có `event` → giờ tính từ shots.js; c.tCalc = giờ dùng khi trộn (c.t giữ nguyên giá trị khai báo để so sánh)
-const shotEv = parseShotEvents(await readFile(join(epDir, 'shots.js'), 'utf8'));
+const shotEv = Object.fromEntries((await loadShotList(ep)).shots.map((s) => [s.id, { start: s.t0, events: s.events }]));   // cả 2 định dạng shots.js
 for (const c of cues) { if (!c.event) { c.tCalc = Number(c.t); continue; } c.tCalc = cueTime(c, shotEv); }
 cues.forEach((c) => { c.tDecl = c.t; c.t = c.tCalc; });
 if (opt.range) { const [a, b] = opt.range.split(':').map(Number); cues = cues.filter((c) => c.t >= a && c.t <= b); }
