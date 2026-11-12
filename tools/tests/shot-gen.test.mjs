@@ -161,3 +161,13 @@ test('--chi-khop-giong: chỉ co giãn dur; narration.txt/episode.js/sfx giữ n
   fs.rmSync(path.join(epDir, 'shots.js'));
   assert.equal(chay('--chi-khop-giong').status, 1);
 });
+
+test('capNhatMocNarration giữ kiểu xuống dòng CRLF của narration.txt', () => {
+  assert.equal(chay('--force').status, 0);
+  const nar = path.join(epDir, 'narration.txt');
+  fs.writeFileSync(nar, fs.readFileSync(nar, 'utf8').replace(/\r?\n/g, '\r\n'));
+  fs.writeFileSync(path.join(epDir, 'narration.json'), JSON.stringify({ dry: false, total: 17.2, lines: [0, 3, 6.5, 9, 11, 13.5].map((s, i) => ({ line: i + 1, text: 'c', start: s, end: s + 1.5 })) }));
+  assert.equal(chay('--chi-khop-giong').status, 0);
+  const t = fs.readFileSync(nar, 'utf8');
+  assert.ok(t.includes('\r\n') && !/[^\r]\n/.test(t), 'toàn CRLF');
+});

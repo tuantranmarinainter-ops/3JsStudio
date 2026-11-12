@@ -101,6 +101,7 @@ const giongXong = (ep) => !canChay(ep, 'giong', bam(ep, 'giong'));
 
 // ---------- chạy lệnh con (thật / giả) ----------
 function giaTao(c, args) {
+  let ma = 0;
   const k = kiemDir(c.ep); fs.mkdirSync(k, { recursive: true });
   const co = (s) => args.some((a) => String(a).endsWith(s));
   if (co('asset-plan.mjs')) {   // gia-thieu.json (nếu test đặt sẵn) = kết quả giả của asset-plan
@@ -108,19 +109,25 @@ function giaTao(c, args) {
     fs.writeFileSync(path.join(k, 'thieu.json'), fs.existsSync(tay) ? fs.readFileSync(tay) : JSON.stringify({ env: [], prop: [], anim: [], tuDung: [] }));
   }
   if (co('mau-duyet.mjs') && !fs.existsSync(path.join(k, 'mau.json'))) fs.writeFileSync(path.join(k, 'mau.json'), JSON.stringify({ 'nv:hero:thuong': { duyet: true } }));
+  if (co('shot-gen.mjs')) {   // gia-shot-ma (nếu test đặt sẵn) = mã thoát giả; shot-gen thật ghi file trước khi thoát 1
+    fs.mkdirSync(epDir(c.ep), { recursive: true });
+    if (!fs.existsSync(path.join(epDir(c.ep), 'shots.js'))) fs.writeFileSync(path.join(epDir(c.ep), 'shots.js'), 'export const SHOTS = [];\n');
+    const m = path.join(k, 'gia-shot-ma');
+    if (fs.existsSync(m)) ma = Number(fs.readFileSync(m, 'utf8'));
+  }
   if (co('ra-loi.mjs')) {   // gia-ra-loi.json (nếu test đặt sẵn) = kết quả giả của ra-loi
     const tay = path.join(k, 'gia-ra-loi.json');
     fs.writeFileSync(path.join(k, 'ra-loi.json'), fs.existsSync(tay) ? fs.readFileSync(tay) : JSON.stringify({ goi: { can: false, lyDo: [] }, conLai: [], loiKe: [], khongSua: [] }));
   }
   if (co('tts.py') && args.includes('--dry') && !fs.existsSync(path.join(epDir(c.ep), 'narration.json'))) fs.writeFileSync(path.join(epDir(c.ep), 'narration.json'), JSON.stringify({ gia: 'dry' }));
+  return ma;
 }
 function chay(c, buoc, cmd, args, { loiOk = false } = {}) {
   const lenh = [cmd, ...args].join(' ');
   if (c.gia) {
     fs.mkdirSync(kiemDir(c.ep), { recursive: true });
     fs.appendFileSync(path.join(kiemDir(c.ep), 'gia.log'), JSON.stringify({ buoc, lenh }) + '\n');
-    giaTao(c, args);
-    return { status: 0, out: '' };
+    return { status: giaTao(c, args), out: '' };
   }
   log(`> [${buoc}] ${lenh}`);
   const r = spawnSync(cmd, args, { cwd: GOC, env: ENV, encoding: 'utf8', maxBuffer: 256 << 20, windowsHide: true });
@@ -208,6 +215,7 @@ H.shot = async (c) => {
     }
     args = ['--force', ...(coJson ? ['--khop-giong'] : [])];
   }
+  ghiLm(c.ep, { shotSinh: { kb: null } });   // đặt dấu TRƯỚC: shot-gen ghi file rồi mới có thể thoát 1; kb null = sinh dở, lần sau sinh lại
   const r = node(c, 'shot', 'tools/shot-gen.mjs', c.ep, ...args);
   if (r.status === 2) throw new LoiMoiTruong('shot-gen lỗi môi trường: ' + duoi(r.out));
   if (r.status !== 0) return chan({ canAgent: [{ viec: `Sửa kịch bản/lời kể cho shot-gen chạy được (${args.join(' ')}): ${duoi(r.out, 8).replace(/\n/g, ' | ')}`, file: `episodes/${c.ep}/kich-ban.md`, model: 'sonnet' }] });

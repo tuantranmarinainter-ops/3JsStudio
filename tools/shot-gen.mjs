@@ -167,13 +167,14 @@ function capNhatMocNarration(epDir, shots) {
   const t0 = []; let t = 0;
   shots.forEach((s) => { if (s.line && t0[s.line - 1] === undefined) t0[s.line - 1] = t; t += s.dur; });
   let k = 0;
-  const out = fs.readFileSync(f, 'utf8').split(/\r?\n/).map((l) => {
+  const txt0 = fs.readFileSync(f, 'utf8'), eol = txt0.includes('\r\n') ? '\r\n' : '\n';
+  const out = txt0.split(/\r?\n/).map((l) => {
     const m = /^@at\s+[\d.]+\s(.*)$/.exec(l);
     if (!m) return l;
     const at = t0[k++];
     return at === undefined ? l : `@at ${(at + 0.05).toFixed(2)} ${m[1]}`;
   });
-  fs.writeFileSync(f, out.join('\n'), 'utf8');
+  fs.writeFileSync(f, out.join(eol), 'utf8');
 }
 
 function py(args) {

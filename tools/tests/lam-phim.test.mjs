@@ -4,7 +4,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { BUOC } from '../kiem/trang-thai.mjs';
 
 const THU_TU = ['kich-ban', 'giong', 'asset', 'mau-duyet', 'shot', 'ra-loi', 'am-thanh', 'gop'];
 const GOC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -209,4 +208,22 @@ test('I3: giọng khởi chạy nền NGAY sau kich-ban, trước khi asset tr�
   assert.deepEqual(a.json.dangChayNen, ['giong']);
   assert.ok(a.json.giongNen && a.json.giongNen.pid > 0 && a.json.giongNen.batDau && a.json.giongNen.log, JSON.stringify(a.json.giongNen));
   assert.deepEqual(thuTu(giaLog(ep)), ['kich-ban', 'giong', 'asset']);
+});
+
+test('N1: shot-gen thoát 1 sau khi đã ghi file -> canAgent; sửa kịch bản -> tiep lần 2 chạy lại được, không bị từ chối', () => {
+  const ep = tapGia('11');
+  const k = path.join(GOC, 'output', ep, 'kiem');
+  fs.mkdirSync(k, { recursive: true });
+  fs.writeFileSync(path.join(k, 'gia-shot-ma'), '1');
+  const a = lam(ep, 'tiep');
+  assert.equal(a.ma, 0, a.loi);
+  assert.equal(a.json.buocTiep, 'shot');
+  assert.equal(a.json.canAgent.length, 1);
+  assert.ok(fs.existsSync(path.join(GOC, 'episodes', ep, 'shots.js')), 'shot-gen đã ghi shots.js trước khi thoát 1');
+  fs.rmSync(path.join(k, 'gia-shot-ma'));
+  fs.appendFileSync(path.join(GOC, 'episodes', ep, 'kich-ban.md'), 'agent đã sửa\n');
+  const b = lam(ep, 'tiep');
+  assert.equal(b.ma, 0, b.loi);
+  assert.equal(b.json.canNguoiDung, null);
+  assert.ok(b.json.daChay.includes('shot') && b.json.daChay.includes('gop'));
 });
