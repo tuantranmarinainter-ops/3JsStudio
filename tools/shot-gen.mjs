@@ -31,15 +31,17 @@ const slug = (s) => bo(s).replace(/\W+/g, '_').replace(/^_+|_+$/g, '');
 
 export function normId(v) {
   const s = String(v).trim();
-  return /^\d+$/.test(s) ? 's' + String(parseInt(s, 10)).padStart(3, '0') : s.startsWith('s') ? s : 's' + s;
+  const m = /^s?(\d+)(.*)$/i.exec(s);
+  if (m) return 's' + m[1].padStart(3, '0') + m[2];      // 12 / 12a / s12a -> s012 / s012a
+  return s.startsWith('s') ? s : 's' + s;
 }
 
 export function toiThieu(shot, L11) {
-  if (typeof shot.min === 'number') return shot.min;
   const t = shot.type;
-  if (HANH_DONG.includes(t)) return L11.hanhDong;
-  if (typeof L11[t] === 'number' && t !== 'hanhDong' && t !== 'macDinh') return L11[t];
-  return L11.macDinh;
+  let san = L11.macDinh;
+  if (HANH_DONG.includes(t)) san = L11.hanhDong;
+  else if (typeof L11[t] === 'number' && t !== 'hanhDong' && t !== 'macDinh') san = L11[t];
+  return typeof shot.min === 'number' ? Math.max(shot.min, san) : san;      // cột `tối thiểu` không thấp hơn sàn L11
 }
 
 // cột `nhìn`: tên diễn viên | đạo cụ | nhà | máy quay | "x y z"
@@ -104,10 +106,13 @@ export function khopGiong(shots, mins, lines, total) {
   const cuts = [0, ...first, shots.length];       // nhóm 0 = shot đứng trước câu 1 (nếu có)
   const mocs = [0, ...lines.map((l) => l.start), total];
   const out = shots.map((s) => s.dur);
+  let mang = 0;       // khoảng thời gian của nhóm rỗng (vd. câu 1 bắt đầu sau 0 mà không có shot đứng trước) dồn vào nhóm kế tiếp
   for (let g = 0; g + 1 < cuts.length; g++) {
     const a = cuts[g], b = cuts[g + 1];
-    if (a >= b) continue;
-    const seg = fit(shots.slice(a, b).map((s) => s.dur), mins.slice(a, b), Math.max(0, mocs[g + 1] - mocs[g]));
+    const muc = Math.max(0, mocs[g + 1] - mocs[g]);
+    if (a >= b) { mang += muc; continue; }
+    const seg = fit(shots.slice(a, b).map((s) => s.dur), mins.slice(a, b), muc + mang);
+    mang = 0;
     seg.forEach((v, i) => { out[a + i] = v; });
   }
   return out;
@@ -149,6 +154,7 @@ function dungCam(shots, canh, epMeta) {
     if (typeof cam.dist !== 'number') continue;
     const n = Object.keys(ex.cast || {}).length, coNha = !!ex.house;
     const d2 = typeof cam.dist2 === 'number' ? cam.dist2 : cam.dist;
+    if (n === 0 && !coNha) { if (!(d2 < cam.dist)) { s.cam = { ...s.cam, dist2: r3(cam.dist * 0.9) }; canh.in++; } continue; }
     if (n === 1 && !coNha && !(d2 < cam.dist)) { s.cam = { ...s.cam, dist2: r3(cam.dist * 0.75) }; canh.in++; }
     else if ((n >= 2 || coNha) && !(d2 > cam.dist)) { s.cam = { ...s.cam, dist2: r3(cam.dist * 1.3) }; canh.out++; }
   }
@@ -191,6 +197,7 @@ export async function main(argv) {
     return 1;
   }
   const kbById = new Map(kb.shots.map((s) => [normId(s.id), s]));
+  const canMin = [];
 
   const sb = py([path.join('tools', 'storyboard.py'), path.relative(ROOT, epDir), ep, '--force']);
   if (sb.error || sb.status !== 0) { console.error('storyboard.py lỗi: ' + (sb.error?.message || sb.stderr || sb.stdout)); return 2; }
@@ -198,7 +205,12 @@ export async function main(argv) {
   console.log(loc.join('\n').trim());
 
   const { shots: goc, notes, head } = await docShotsJs(shotsFile);
-  const ghep = goc.map((s) => ghepKichBan(s, kbById.get(s.id)));
+  const khongKb = [];
+  const ghep = goc.map((s) => {
+    const id = normId(s.id), k = kbById.get(id);
+    if (!k) khongKb.push(s.id);
+    return ghepKichBan({ ...s, id }, k);
+  });
   const canh = { in: 0, out: 0 };
   let meta = {};
   try { meta = (await import(pathToFileURL(path.join(epDir, 'episode.js')).href + '?t=' + Date.now())).EPISODE || {}; } catch { /* không có episode.js */ }
@@ -206,6 +218,7 @@ export async function main(argv) {
 
   const L11 = nguong(epDir).L11;
   const mins = ghep.map((s) => toiThieu({ type: s.type, min: s._min }, L11));
+  ghep.forEach((s, i) => { if (typeof s._min === 'number' && s._min < mins[i]) canMin.push(`${s.id}: tối thiểu ${s._min} < sàn L11 ${mins[i]} (dùng ${mins[i]})`); });
   let nTang = 0;
   ghep.forEach((s, i) => { if (s.dur < mins[i]) { s.dur = r3(mins[i]); nTang++; } });
   if (khop) {
@@ -225,7 +238,9 @@ export async function main(argv) {
   const tong = ketQua.reduce((a, s) => a + s.dur, 0);
   console.log(`shot-gen ${ep}: ${ketQua.length} shot, ${tong.toFixed(2)} s; camera zoom-in +${canh.in}, zoom-out +${canh.out}; dur nâng lên tối thiểu: ${nTang}${khop ? '; đã khớp giọng' : ''}`);
   for (const l of loi) console.error('  ! ' + l);
-  return loi.length ? 1 : 0;
+  for (const l of canMin) console.error('  ! ' + l);
+  if (khongKb.length) console.error(`shot-gen: ${khongKb.length} shot trong shots.js không có dòng kịch bản (mất time/weather/read/lookAt/min): ${khongKb.join(', ')}`);
+  return loi.length || khongKb.length ? 1 : 0;
 }
 
 if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) {

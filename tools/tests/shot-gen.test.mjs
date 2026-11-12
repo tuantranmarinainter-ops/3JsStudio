@@ -93,6 +93,42 @@ test('--khop-giong: tong = total +-0.1, khong duoi toi thieu; thieu narration.js
   assert.match(fs.readFileSync(path.join(epDir, 'narration.txt'), 'utf8'), /@at 3\.0\d /);
 });
 
+test('I1: id co hau to duoc dem so (12a -> s012a) va van ghep duoc kich ban', async () => {
+  ghiKb(bangKb.replace('| 3 |  | 1.0 |', '| 12a |  | 1.0 |'));
+  const r = chay('--force');
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const s = (await docShots()).find((x) => x.id === 's012a');
+  assert.ok(s, 'phai co s012a');
+  assert.equal(s.weather, 'may');
+  assert.equal(s.time, 'sang');
+  assert.equal(normId('12a'), 's012a');
+  assert.equal(normId('s12a'), 's012a');
+  assert.equal(normId('7'), 's007');
+  ghiKb(bangKb);
+});
+
+test('Minor: cot toi thieu khong thap hon san L11; shot khong nguoi zoom in nhe', async () => {
+  const L11 = nguong(epDir).L11;
+  assert.equal(toiThieu({ type: 'closeup', min: 0.2 }, L11), L11.closeup);
+  assert.equal(toiThieu({ type: 'closeup', min: 3 }, L11), 3);
+  ghiKb(bangKb.replace('| 4 |  | 1.0 | ^ | closeup | hero |  | street | idle | scared |  |  |  | sang | may |  |  |  |', '| 4 |  | 1.0 | ^ | closeup | hero |  | street | idle | scared |  |  |  | sang | may |  |  | 0.2 |'));
+  const r = chay('--force');
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stderr, /s004: tối thiểu 0\.2/);
+  const shots = await docShots();
+  assert.ok(shots.find((x) => x.id === 's004').dur >= L11.closeup);
+  const s1 = shots.find((x) => x.id === 's001');   // establish, 0 nguoi
+  assert.ok(s1.cam && s1.cam.dist2 > 0, 'establish 0 nguoi phai co dist2 (zoom in nhe)');
+  ghiKb(bangKb);
+});
+
+test('I2: cau 1 bat dau sau 0 ma khong co shot dung truoc -> tong van = total', () => {
+  const shots = [{ dur: 1, line: 1 }, { dur: 1, line: 2 }];
+  const out = khopGiong(shots, [0.8, 0.8], [{ start: 2 }, { start: 5 }], 8);
+  assert.ok(Math.abs(out.reduce((a, b) => a + b, 0) - 8) <= 0.1, JSON.stringify(out));
+  assert.deepEqual(out, [5, 3]);
+});
+
 test('ham thuan: fit ghim san, khopGiong, lookAtOf', () => {
   assert.deepEqual(fit([1, 1, 1], [0.8, 0.8, 0.8], 6), [2, 2, 2]);
   assert.ok(fit([1, 1, 1], [0.8, 0.8, 0.8], 2).every((v) => v >= 0.8));
