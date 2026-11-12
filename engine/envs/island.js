@@ -13,6 +13,9 @@ import { createCrabs, createBeachGrass } from '../crabs.js';
 import { createCamp } from '../castaway.js';
 import { smoothFlash } from '../flash.js';
 import { createCoconutPalm, gullIdle } from '../coconut.js';
+import { createWind } from '../wind.js';
+import { createGrass } from '../grass.js';
+import { createSway } from '../sway.js';
 
 const PERCH_ROOF = 0.9, PERCH_RAIL = 0.715;
 export default function build(g, e, H) {
@@ -20,6 +23,23 @@ export default function build(g, e, H) {
   e.sea = makeSea(g, { preset: 'tropical', y: -0.6, amp: 0.4, size: 1600, shore: { circle: [0, 0, 70.6, 5] } });
   const isl = new THREE.Mesh(new THREE.CylinderGeometry(70, 82, 6, 28), mat('#f2d89a')); isl.position.y = -3; isl.receiveShadow = true; isl.name = 'island_sand'; g.add(isl);
   const grass = new THREE.Mesh(new THREE.CylinderGeometry(30, 34, 1.2, 20), mat('#6cbf58')); grass.position.set(-30, 0.1, -30); grass.receiveShadow = true; g.add(grass);
+  // cỏ instanced + gió chung (engine/grass.js, engine/wind.js) trên mặt bãi cỏ (đỉnh trụ y = 0.7); ô bật/tắt 'grass' trong trình phát
+  e.wind = createWind(THREE, { dir: [1, 0.3], speed: 4, gust: 0.75, seed: 5, gustSize: 18 });
+  e.meadow = createGrass(THREE, { wind: e.wind, area: { center: [-30, -30], size: 59, round: true }, heightAt: () => 0.7, cell: 0.09, height: 0.34,
+    colors: { base: '#4f9a3e', tip: '#a6dc6e' }, seed: 5, follow: true });
+  g.add(e.meadow.group);
+  // đèn của shot được đặt SAU env.update → lấy ánh sáng ngay lúc vẽ (không dùng đèn của khung trước)
+  const _sun = () => (scene.children.find((o) => o.isDirectionalLight && o.name === 'sun')), _hemi = () => scene.children.find((o) => o.isHemisphereLight);
+  e.meadow.rings.forEach((r) => { r.mesh.onBeforeRender = () => e.meadow.lightFrom(_sun(), _hemi()); });
+  // cỏ rạp quanh chân: khớp LeftFoot/RightFoot của diễn viên R15 đang hiện (cast đặt trước env.update) → tối đa 6 vật đẩy
+  let feet = null; const _fp = new THREE.Vector3();
+  const shown = (o) => { for (; o; o = o.parent) if (!o.visible) return false; return true; };
+  const meadowFeet = () => {
+    if (!feet?.length) { feet = []; scene.traverse((o) => { if (o.name === 'LeftFoot' || o.name === 'RightFoot') feet.push(o); }); }
+    const out = [];
+    for (const f of feet) { if (out.length >= 6 || !shown(f)) continue; f.getWorldPosition(_fp); if (Math.hypot(_fp.x + 30, _fp.z + 30) < 31) out.push([_fp.x, _fp.y, _fp.z, 0.55]); }
+    return out;
+  };
   // mỏm đá + hải đăng
   // mỏm đá tự nhiên (engine/cliff.js: lưới noise phân lớp, đỉnh phẳng phủ cỏ) thay cụm đá Kenney + bệ trụ xám
   e.cliff = new THREE.Group(); e.cliff.name = 'cliff'; e.cliff.position.set(60, 0, -50); g.add(e.cliff);
@@ -48,6 +68,9 @@ export default function build(g, e, H) {
   let pn = 0; const palm = (x, z, hh) => { if (!palmOK(x, z)) return; const k = pn++; place(g, createCoconutPalm(THREE, { h: hh, lean: 0.14 + hash(k, 8) * 0.18, seed: k + 3 }), x, 0, z, 0); };
   for (let i = 0; i < 8; i++) { palm(-48 + hash(i, 31) * 3, 4 - i * 8.5 + hash(i, 32) * 2, 15 + hash(i, 33) * 4); palm(-31 + hash(i, 34) * 3, 0 - i * 8.5 + hash(i, 35) * 2, 14 + hash(i, 36) * 4); }
   for (let i = 0; i < 18; i++) { const a = i / 18 * Math.PI * 2 + hash(i, 37) * 0.15, r = 55 + hash(i, 38) * 4; palm(Math.cos(a) * r, Math.sin(a) * r, 14 + hash(i, 39) * 5); }
+  // cây dừa đung đưa theo CÙNG gió với cỏ (engine/sway.js: xoay group trên CPU, không thêm shader); ô bật/tắt 'sway'
+  e.sway = createSway(THREE, e.wind, { seed: 5 });
+  g.children.forEach((o) => { if (o.name === 'coconut_palm') e.sway.addPalm(o); });
   for (let i = 0; i < 12; i++) { if (i === 3) continue;   // bỏ tảng đá trước máy quay s103 (góp ý #11)
     const a = i / 12 * Math.PI * 2; place(g, naturalRock(THREE, { seed: i + 80, r: 2 + hash(i, 10) * 2, h: 0.6, strata: 0.7 }), Math.cos(a) * 76, -0.8, Math.sin(a) * 76, hash(i, 11) * 6); }
   place(g, K.cloud(2.4), -100, 110, -320); place(g, K.cloud(2), 120, 130, -380);
@@ -68,5 +91,5 @@ export default function build(g, e, H) {
   ];
   e.gullBase = perches;
   e.gulls = perches.map((p, i) => { const o = pf('herring-gull-55c3da', 1.3); return o ? place(g, o, p.x, p.y, p.z, p.ry) : null; });
-  return { update(t) { e.sea(t); e.crabs.update(t); e.grass.update(t); e.gulls.forEach((gl, i) => { if (gl) gullIdle(gl, e.gullBase[i], i, t); }); } };
+  return { update(t) { e.wind.update(t); if (globalThis.__autoFx?.sway !== false) e.sway.update(t); else e.sway.rest(); e.meadow.group.visible = globalThis.__autoFx?.grass !== false; if (e.meadow.group.visible) { e.meadow.setPushers(meadowFeet()); e.meadow.update(t, stage.camera); } e.sea(t); e.crabs.update(t); e.grass.update(t); e.gulls.forEach((gl, i) => { if (gl) gullIdle(gl, e.gullBase[i], i, t); }); } };
 }
