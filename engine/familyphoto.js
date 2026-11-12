@@ -1,4 +1,4 @@
-// familyphoto.js — Khung ảnh gia đình (góp ý #12): ảnh vẽ bằng canvas, các nhân vật KHỐI R15 của phim (mẹ + bé, đúng màu áo episode.js), khung gỗ.
+// familyphoto.js — Khung ảnh gia đình (góp ý #12): ảnh vẽ bằng canvas, các nhân vật KHỐI R15 của phim (ba + mẹ + bé, đúng màu áo episode.js), khung gỗ.
 //   const fp = createFamilyPhoto(THREE, { w: 4.6, h: 3.6 }); fp.position.set(x, y, z); room.add(fp);   // mặt ảnh nhìn +Z
 // Texture vẽ 1 lần (tất định, không dùng ngẫu nhiên).
 export function familyPhotoTexture(THREE, who = {}) {
@@ -21,6 +21,7 @@ export function familyPhotoTexture(THREE, who = {}) {
     if (o.stripe) { g.fillStyle = o.stripe; for (let x = cx - tw / 2 + 5; x < cx + tw / 2 - 8; x += 15 * s) g.fillRect(x, yTop, 6 * s, th); }
     block(cx - tw / 2 - arm, yTop + 2, arm, ah, o.shirt); block(cx + tw / 2, yTop + 2, arm, ah, o.shirt);
     g.fillStyle = o.skin; g.fillRect(cx - tw / 2 - arm, yTop + ah - 8 * s, arm, 12 * s); g.fillRect(cx + tw / 2, yTop + ah - 8 * s, arm, 12 * s);
+    if (o.zipper) { g.fillStyle = shade(o.shirt, 1.6); g.fillRect(cx - 1.5 * s, yTop + 4 * s, 3 * s, th - 8 * s); }
     if (o.scarf) { g.fillStyle = o.scarf; g.fillRect(cx - tw / 2 + 2, yTop - 4 * s, tw - 4, 12 * s); g.fillRect(cx - 4 * s, yTop, 12 * s, 34 * s); }
     g.fillStyle = o.skin; const hx = cx - head / 2; g.beginPath(); g.roundRect(hx, yHead, head, head, 10 * s); g.fill();
     if (o.hair === 'braids') {
@@ -28,6 +29,7 @@ export function familyPhotoTexture(THREE, who = {}) {
     }
     if (o.hat) { g.fillStyle = o.hat; g.beginPath(); g.roundRect(hx - 2, yHead - 14 * s, head + 4, head * 0.5, 12 * s); g.fill(); g.fillStyle = shade(o.hat, 0.8); g.fillRect(hx - 2, yHead + head * 0.2, head + 4, 6 * s); }
     // mặt cười
+    if (o.brow) { g.fillStyle = '#2a1a10'; const by = yHead + head * 0.36; g.fillRect(cx - head * 0.3, by, head * 0.2, o.brow * 3 * s); g.fillRect(cx + head * 0.1, by, head * 0.2, o.brow * 3 * s); }
     g.fillStyle = '#1b1b1b'; const ey = yHead + head * 0.5; g.beginPath(); g.arc(cx - head * 0.2, ey, 3.4 * s, 0, 7); g.arc(cx + head * 0.2, ey, 3.4 * s, 0, 7); g.fill();
     g.strokeStyle = '#1b1b1b'; g.lineWidth = 2.6 * s; g.lineCap = 'round'; g.beginPath(); g.arc(cx, ey + head * 0.1, head * 0.2, 0.15 * Math.PI, 0.85 * Math.PI); g.stroke();
     if (o.lashes) { g.lineWidth = 2 * s; for (const sx of [-1, 1]) { g.beginPath(); g.moveTo(cx + sx * head * 0.2, ey - 3 * s); g.lineTo(cx + sx * head * 0.2 + sx * 6 * s, ey - 8 * s); g.stroke(); } }
@@ -35,7 +37,8 @@ export function familyPhotoTexture(THREE, who = {}) {
   };
   const mom = { skin: '#f0c89a', shirt: '#9fe0c0', stripe: '#d9f5e8', pants: '#8a6a4a', skirt: '#8a6a4a', scarf: '#d6322b', hair: 'braids', hairColor: '#1b1b1b', lashes: true, ...(who.mom || {}) };
   const kid = { skin: '#f2c8a0', shirt: '#f2c230', pants: '#3f6fb5', hat: '#d6322b', ...(who.hero || {}) };
-  person(300, 440, 1.0, mom); person(430, 440, 0.78, kid);
+  const dad = { skin: '#e2a878', shirt: '#283a66', pants: '#d8cfb8', shoes: '#3b2a1e', hat: '#d6322b', zipper: true, brow: 1.4, ...(who.dad || {}) };
+  person(285, 440, 1.08, dad); person(510, 440, 1.0, mom); person(398, 440, 0.78, kid);   // ba — bé — mẹ (đủ cả nhà)
   // họa tiết: vài bông hoa, vignette nhẹ, góc ảnh cũ
   for (let i = 0; i < 9; i++) { g.fillStyle = i % 2 ? '#fff5b0' : '#ffd0e0'; g.beginPath(); g.arc(30 + i * 71, 455 + (i % 3) * 6, 5, 0, 7); g.fill(); }
   const vg = g.createRadialGradient(W / 2, H / 2, H * 0.35, W / 2, H / 2, H * 0.85); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(60,35,10,0.35)'); g.fillStyle = vg; g.fillRect(0, 0, W, H);
