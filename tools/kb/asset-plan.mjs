@@ -282,7 +282,20 @@ function ungVienThat(syns, ctx) {
 const hopTuThe = (e, pose) => !pose || (Array.isArray(e.pose) ? e.pose : e.pose ? [e.pose] : (pose === 'standing' ? ['standing'] : [])).includes(pose);
 
 // khớp tên đạo cụ với khoá code: bằng nhau -> alias `vat` đầu kịch bản -> lỏng (từ của tên là tiền tố từ của khoá, hoặc ngược lại)
-function khopKhoaCode(c, ctx) {
+// Ngữ cảnh nhận diện DÙNG CHUNG asset-plan + mau-duyet: place, diễn viên gấu/gà, alias `vat`, `co_san`, khoá code (propKit + PROPS_KB)
+export function taoNhanDien(kb, propCo = new Set()) {
+  const meta = (kb && kb.meta) || {};
+  return {
+    propCo: new Set([...propCo].map(chuanKhoa)), propKeys: [...propCo],
+    places: new Set(Object.keys(meta.places || {})),
+    dienVien: new Set(Object.entries(meta.actors || {}).filter(([, v]) => v && (v.bear || v.ga)).map(([k]) => chuanKhoa(k))),
+    alias: new Map(Object.entries(meta.vat || {}).flatMap(([k, ds]) => (Array.isArray(ds) ? ds : [ds]).map((d) => [chuanKhoa(d), k]))),
+    coSan: new Set((Array.isArray(meta.co_san) ? meta.co_san : String(meta.co_san || '').split(',')).map((s) => chuanKhoa(s)).filter(Boolean)),
+  };
+}
+export const laCoSan = (ten, ctx) => ctx.coSan.has(chuanKhoa(ten));
+
+export function khopKhoaCode(c, ctx) {
   const tu = (s) => fold(s).split(' ').filter(Boolean);
   const khoa = [...ctx.propKeys];
   const bang = (w) => khoa.find((k) => chuanKhoa(k) === chuanKhoa(w));
@@ -332,13 +345,7 @@ function xetProp(nhuCau, ctx) {
 
 export function lapKeHoach({ kb, manifest, envCo, animCo, propCo = new Set(), tuStoryboard = { anim: [], noi: [], town: new Set() }, danhMuc = { muc: [], trangThai: {} } }) {
   const nhuCau = gomNhuCau(kb);
-  const meta = kb.meta || {};
-  const places = new Set(Object.keys(meta.places || {}));
-  const dienVien = new Set(Object.entries(meta.actors || {}).filter(([, v]) => v && (v.bear || v.ga)).map(([k]) => chuanKhoa(k)));
-  const ctx = { manifest, envCo, animCo, animTu: tuStoryboard.anim, noi: tuStoryboard.noi, town: tuStoryboard.town, danhMuc,
-    propCo: new Set([...propCo].map(chuanKhoa)), propKeys: [...propCo], places, dienVien,
-    alias: new Map(Object.entries(meta.vat || {}).flatMap(([k, ds]) => (Array.isArray(ds) ? ds : [ds]).map((d) => [chuanKhoa(d), k]))),
-    coSan: new Set((Array.isArray(meta.co_san) ? meta.co_san : String(meta.co_san || '').split(',')).map((s) => chuanKhoa(s)).filter(Boolean)) };
+  const ctx = { manifest, envCo, animCo, animTu: tuStoryboard.anim, noi: tuStoryboard.noi, town: tuStoryboard.town, danhMuc, ...taoNhanDien(kb, propCo) };
   const e = xetEnv(nhuCau, ctx), p = xetProp(nhuCau, ctx), a = xetAnim(nhuCau, ctx);
   return {
     env: e.thieu, prop: p.thieu, anim: a.thieu, tuDung: [...e.tuDung, ...p.tuDung], canhBao: [...e.canhBao, ...p.canhBao],

@@ -143,3 +143,18 @@ test('vòng 1 / minor: kịch bản không đọc được -> mã 1; tìm kịch
     assert.notEqual(r.status, 2, r.stderr);
   } finally { fs.rmSync(bad, { force: true }); fs.rmSync(path.join(root, 'output', EP3), { recursive: true, force: true }); }
 });
+
+test('vòng 3: place/town không thành env riêng; đạo cụ khớp PROPS_KB (chính xác / alias vat / lỏng) có kit, co_san bỏ qua; ga/bear giữ cờ', () => {
+  const kb = {
+    meta: { places: { bakery: {} }, vat: { thung_tiem_bach: ['chồng thùng in tên tiệm'] }, co_san: 'mu_ga', actors: { hero: { ga: 1 }, bap: { bear: 1 } } },
+    can_dung: [{ kind: 'env', name: 'bakery', desc: 'tiệm bánh' }, { kind: 'env', name: 'street', desc: 'phố' }],
+    shots: [{ id: 's1', at: 'bakery', read: 'bảng tin thị trấn' }, { id: 's2', at: 'street', read: 'chồng thùng in tên tiệm' }, { id: 's3', read: 'mu_ga' }, { id: 's4', read: 'kèn lạ' }],
+  };
+  const k = lapMuc(kb, { envCo: new Set(['town']), town: new Set(['street']), manifest: [], propCo: new Set(['bang_tin', 'thung_tiem_bach']) });
+  assert.deepEqual(k.chuaCo, [], JSON.stringify(k.chuaCo));
+  assert.ok(k.muc.some((m) => m.id.startsWith('env:town:')) && !k.muc.some((m) => m.id.startsWith('env:bakery') || m.id.startsWith('env:street')));
+  const p = Object.fromEntries(k.muc.filter((m) => m.loai === 'prop').map((m) => [m.spec.ten, m.spec.kit]));
+  assert.deepEqual(p, { 'bảng tin thị trấn': 'bang_tin', 'chồng thùng in tên tiệm': 'thung_tiem_bach', 'kèn lạ': undefined });
+  assert.equal(k.muc.find((m) => m.id === 'nv:hero:thuong').spec.opts.ga, 1);
+  assert.equal(k.muc.find((m) => m.id === 'nv:bap:thuong').spec.opts.bear, 1);
+});

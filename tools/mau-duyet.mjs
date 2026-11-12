@@ -20,7 +20,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { docKichBan, docEnvCo, docManifest, docTuStoryboard, dichLoai, tachTuThe } from './kb/asset-plan.mjs';
+import { docKichBan, docEnvCo, docManifest, docTuStoryboard, dichLoai, tachTuThe, docPropCo, taoNhanDien, khopKhoaCode, laCoSan } from './kb/asset-plan.mjs';
 import { ungVien } from './kb/chon-mo-hinh.mjs';
 import { fold, tuMoTa } from '../engine/envs/cong-thuc.js';
 import { GOC_MAU } from '../engine/envs/goc-mau.js';
@@ -50,11 +50,11 @@ export function phanGiaiEnv(kb, { envCo, town }) {
     if (cache.has(ten)) return cache.get(ten);
     let r;
     if (envCo.has(ten)) r = { env: ten };
+    else if (town.has(ten) || places.has(ten) || /^house\d+$/.test(ten)) r = { env: 'town' };   // cùng luật asset-plan: tên trùng place/địa điểm town = địa điểm, không phải env riêng
     else if (rieng.has(ten)) {
       const ct = tuMoTa(rieng.get(ten)) ?? tuMoTa(ten);
       r = ct && envCo.has(ct.env) ? { env: ct.env } : { env: null, lyDo: `bối cảnh riêng "${ten}" chưa dựng (không khớp env nào trong engine)` };
-    } else if (town.has(ten) || places.has(ten) || /^house\d+$/.test(ten)) r = { env: 'town' };
-    else {
+    } else {
       const ct = tuMoTa(ten);
       r = ct && envCo.has(ct.env) ? { env: ct.env } : { env: null, lyDo: `địa điểm "${ten}" không khớp env nào trong engine` };
     }
@@ -70,8 +70,8 @@ export function lapMuc(kb, ctx) {
   const actors = { ...(kb.meta?.actors || {}) }; delete actors.crowd;
   if (!Object.keys(actors).length) for (const s of shots) if (s.who && !actors[s.who]) actors[s.who] = {};   // chỉ khi kịch bản không khai actor (cột `ai` còn có thể là thú/đạo cụ như bap, bear2)
   for (const [ten, optsGoc] of Object.entries(actors)) {
-    const opts = { ...optsGoc }; delete opts.ga;   // 'ga' = rig riêng (engine/ga*.js) chưa nối vào cast.js: chụp bằng R15 theo màu khai báo
-    const co = optsGoc.ga ? 'ga chưa nối vào cast.js: chụp bằng R15 mặc định' : null;
+    const opts = { ...optsGoc };   // ga=1 / bear=1 giữ nguyên: mau-lab dựng bằng buildCast thật
+    const co = optsGoc.ga ? 'Gà (ga-rig)' : optsGoc.bear ? 'gấu bông' : null;
     const co1 = opts.face || 'smile';
     const dem = new Map();
     for (const s of shots) if (s.who === ten && s.face && s.face !== co1) dem.set(s.face, (dem.get(s.face) || 0) + 1);
@@ -111,18 +111,22 @@ export function lapMuc(kb, ctx) {
   }
   // --- đạo cụ `vật cần đọc` ---
   const man = ctx.manifest ?? [];
+  const nd = taoNhanDien(kb, ctx.propCo ?? new Set());
   const thay = new Set();
   for (const s of shots) {
     const ten = String(s.read || '').trim();
     if (!ten || thay.has(ten)) continue;
     thay.add(ten);
     const { loai } = tachTuThe(ten);
+    if (laCoSan(ten, nd) || laCoSan(loai, nd)) continue;   // co_san: người làm phim tuyên bố đã có / không dựng
+    const kh = khopKhoaCode({ ten, loai }, nd);   // PROPS_KB / propKit: chính xác, alias `vat`, khớp lỏng — cùng hàm asset-plan
     const syns = dichLoai(loai);
     const glb = [];
     for (const sy of syns) for (const e of ungVien(man, { loai: sy })) if (!glb.includes(e.id)) glb.push(e.id);
     muc.push({
-      id: `prop:${slug(ten)}`, loai: 'prop', spec: { ten, syns, glb: glb.slice(0, 3) },
-      dong1: `đạo cụ: ${ten}`, dong2: `đọc ở shot ${s.id}`, file: ['engine/props.js', 'engine/materials.js', 'assets/manifest.json'],
+      id: `prop:${slug(ten)}`, loai: 'prop', spec: { ten, syns, glb: glb.slice(0, 3), ...(kh ? { kit: kh.khoa } : {}) },
+      dong1: `đạo cụ: ${ten}`, dong2: `đọc ở shot ${s.id}${kh ? ` · kit ${kh.khoa}${kh.long ? ' (khớp lỏng)' : ''}` : ''}`,
+      file: ['engine/props.js', 'engine/props-kb.js', 'engine/materials.js', 'assets/manifest.json'],
     });
   }
   return { muc, chuaCo };
@@ -182,7 +186,7 @@ async function chay(argv) {
   try { kb = docKichBan(fKb); } catch (e) { console.error('Kịch bản lỗi dữ liệu: ' + e.message); return 1; }
   if ((kb.loi_doc || []).length) { console.error('Kịch bản có lỗi dữ liệu:\n  ' + kb.loi_doc.map((x) => (typeof x === 'string' ? x : JSON.stringify(x))).join('\n  ')); return 1; }
 
-  const ctx = { envCo: docEnvCo(GOC), town: docTuStoryboard(GOC).town, manifest: docManifest(GOC) };
+  const ctx = { envCo: docEnvCo(GOC), town: docTuStoryboard(GOC).town, manifest: docManifest(GOC), propCo: docPropCo(GOC) };
   if (Array.isArray(ctx.manifest.assets)) ctx.manifest = ctx.manifest.assets;
   const kq = lapMuc(kb, ctx);
   const dirMau = path.join(GOC, 'output', ep, 'duyet', 'mau');

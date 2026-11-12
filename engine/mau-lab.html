@@ -34,6 +34,7 @@ import { createDirector } from './shots.js';
 import { LIGHTS } from './lights.js';
 import { buildCast } from './cast.js';
 import { propKit } from './props.js';
+import { buildPropsKB, PROPS_KB } from './props-kb.js';
 import { createAssetLib } from './assets.js';
 import { createEnvs, ENV_ASSETS } from './envs.js';
 import { applyMaterials, MAT_DA_DUYET } from './materials.js';
@@ -147,8 +148,11 @@ function tuKinds(root) {
 }
 async function dungProp(spec) {
   const ten = spec.ten || '';
+  if (spec.kit && PROPS_KB[spec.kit]) {   // khoá PROPS_KB do tool nhận diện: dựng đúng như index.html (khoá propKit đi đường cũ bên dưới)
+    try { const o = buildPropsKB(THREE, { [ten]: { kit: spec.kit } }, { K })[ten]; if (o && o.children.length) return { obj: o, nguon: 'kb.' + spec.kit }; } catch (e) { console.warn('[mau-lab] buildPropsKB ' + spec.kit + ': ' + e.message); }
+  }
   const keys = Object.keys(K).filter((k) => typeof K[k] === 'function' && !KHONG_PHAI_DO_CHOI.has(k));
-  const thu = [...new Set([...(spec.syns || []), ten])].map((s) => String(s).toLowerCase());
+  const thu = [...new Set([...(spec.syns || []), ten, ...(spec.kit ? [spec.kit] : [])])].map((s) => String(s).toLowerCase());
   for (const s of thu) {
     const k = keys.find((x) => x.toLowerCase() === s);
     if (k) { try { const o = K[k](); if (o && o.isObject3D) return { obj: o, nguon: 'K.' + k }; } catch (e) { console.warn('[mau-lab] K.' + k + ': ' + e.message); } }
@@ -163,7 +167,7 @@ async function dungProp(spec) {
   return null;
 }
 async function napProp(ten, spec = {}, chiLayObj) {
-  const key = JSON.stringify({ t: spec.ten || ten, s: spec.syns || [], g: spec.glb || [] });
+  const key = JSON.stringify({ t: spec.ten || ten, s: spec.syns || [], g: spec.glb || [], k: spec.kit || '' });
   let e = propCache.get(key);
   if (!e) {
     const r = await dungProp({ ten, ...spec });
