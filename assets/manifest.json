@@ -12,13 +12,20 @@
    "z": 0.55
   },
   "scale": 1,
-  "pose": "standing",
+  "pose": [
+   "standing",
+   "swimming"
+  ],
   "anim": [
    "Walk",
    "Idle",
    "Run",
    "Swim"
-  ]
+  ],
+  "animTheoPose": {
+   "standing": "Idle",
+   "swimming": "Swim"
+  }
  },
  {
   "id": "polyfork/old-lighthouse-48ca6c",
@@ -61,13 +68,20 @@
    "z": 0.55
   },
   "scale": 1,
-  "pose": "flying",
+  "pose": [
+   "standing",
+   "flying"
+  ],
   "anim": [
    "Idle",
    "Walk",
    "Run",
    "Fly"
-  ]
+  ],
+  "animTheoPose": {
+   "standing": "Idle",
+   "flying": "Fly"
+  }
  },
  {
   "id": "polyfork/driftwood-log-89a68f",
@@ -82,7 +96,6 @@
    "z": 2.64
   },
   "scale": 1,
-  "pose": "standing",
   "anim": [
    "tick"
   ]
@@ -100,10 +113,15 @@
    "z": 1.08
   },
   "scale": 1,
-  "pose": "standing",
+  "pose": [
+   "standing"
+  ],
   "anim": [
    "tick"
-  ]
+  ],
+  "animTheoPose": {
+   "standing": "tick"
+  }
  },
  {
   "id": "polyfork/shell-scatter-6d36b7",
@@ -132,10 +150,15 @@
    "z": 1.84
   },
   "scale": 1,
-  "pose": "standing",
+  "pose": [
+   "standing"
+  ],
   "anim": [
    "tick"
-  ]
+  ],
+  "animTheoPose": {
+   "standing": "tick"
+  }
  },
  {
   "id": "polyfork/rowing-dinghy-022673",
@@ -164,7 +187,6 @@
    "z": 3
   },
   "scale": 1,
-  "pose": "standing",
   "anim": [
    "tick"
   ]
@@ -182,7 +204,6 @@
    "z": 3.58
   },
   "scale": 1,
-  "pose": "standing",
   "anim": [
    "tick"
   ]
@@ -200,7 +221,6 @@
    "z": 2
   },
   "scale": 1,
-  "pose": "standing",
   "anim": [
    "tick"
   ]
@@ -218,7 +238,6 @@
    "z": 2.5
   },
   "scale": 1,
-  "pose": "standing",
   "anim": [
    "tick"
   ]
@@ -250,7 +269,6 @@
    "z": 4.3
   },
   "scale": 1,
-  "pose": "standing",
   "anim": [
    "tick"
   ]
@@ -285,10 +303,15 @@
   "forward": "+z",
   "src": "assets/special/sea/dolphin.glb",
   "scale": 1,
-  "pose": "swimming",
+  "pose": [
+   "swimming"
+  ],
   "anim": [
    "Armature|Swim"
-  ]
+  ],
+  "animTheoPose": {
+   "swimming": "Armature|Swim"
+  }
  },
  {
   "id": "sea/shark",
@@ -311,10 +334,15 @@
   "forward": "+z",
   "src": "assets/special/sea/shark.glb",
   "scale": 1,
-  "pose": "swimming",
+  "pose": [
+   "swimming"
+  ],
   "anim": [
    "Armature|Swim"
-  ]
+  ],
+  "animTheoPose": {
+   "swimming": "Armature|Swim"
+  }
  },
  {
   "id": "sea/manta_ray",
@@ -337,10 +365,15 @@
   "forward": "+z",
   "src": "assets/special/sea/manta_ray.glb",
   "scale": 1,
-  "pose": "swimming",
+  "pose": [
+   "swimming"
+  ],
   "anim": [
    "Armature|Swim"
-  ]
+  ],
+  "animTheoPose": {
+   "swimming": "Armature|Swim"
+  }
  },
  {
   "id": "sea/fish1",
@@ -363,10 +396,15 @@
   "forward": "+z",
   "src": "assets/special/sea/fish1.glb",
   "scale": 1,
-  "pose": "swimming",
+  "pose": [
+   "swimming"
+  ],
   "anim": [
    "Armature|Swim"
-  ]
+  ],
+  "animTheoPose": {
+   "swimming": "Armature|Swim"
+  }
  },
  {
   "id": "sea/fish2",
@@ -389,10 +427,15 @@
   "forward": "+z",
   "src": "assets/special/sea/fish2.glb",
   "scale": 1,
-  "pose": "swimming",
+  "pose": [
+   "swimming"
+  ],
   "anim": [
    "Armature|Swim"
-  ]
+  ],
+  "animTheoPose": {
+   "swimming": "Armature|Swim"
+  }
  },
  {
   "id": "sea/fish3",
@@ -415,10 +458,15 @@
   "forward": "+z",
   "src": "assets/special/sea/fish3.glb",
   "scale": 1,
-  "pose": "swimming",
+  "pose": [
+   "swimming"
+  ],
   "anim": [
    "Armature|Swim"
-  ]
+  ],
+  "animTheoPose": {
+   "swimming": "Armature|Swim"
+  }
  },
  {
   "id": "sea/killer_whale",
@@ -441,10 +489,15 @@
   "forward": "+z",
   "src": "assets/special/sea/killer_whale.glb",
   "scale": 1,
-  "pose": "swimming",
+  "pose": [
+   "swimming"
+  ],
   "anim": [
    "Take 001"
-  ]
+  ],
+  "animTheoPose": {
+   "swimming": "Take 001"
+  }
  },
  {
   "id": "sea/sperm_whale",
@@ -482,7 +535,10 @@
   "note": "Material KHR_materials_unlit. Mặt nước: world y = gốc model + water_y_native × scale. Clip JUMP/JUMPSPLASH/BREATHE cắt mặt nước → dùng engine/splash.js (findSurfaceCrossings + createSplash).",
   "src": "assets/special/sea/sperm_whale.glb",
   "scale": 1,
-  "pose": "swimming",
+  "pose": [
+   "standing",
+   "swimming"
+  ],
   "anim": [
    "JUMPSPLASH-delphinidae",
    "TURNLEFT-delphinidae",
@@ -497,7 +553,11 @@
    "SWIMRIGHT-delphinidae",
    "SWIM-delphinidae",
    "ATTACK-delphinidae"
-  ]
+  ],
+  "animTheoPose": {
+   "standing": "IDLE-delphinidae",
+   "swimming": "SWIM-delphinidae"
+  }
  },
  {
   "id": "city-kit-roads/bridge-pillar-wide",
@@ -10166,12 +10226,17 @@
    "chest",
    "lid"
   ],
-  "pose": "standing",
+  "pose": [
+   "standing"
+  ],
   "anim": [
    "open",
    "close",
    "open-close"
-  ]
+  ],
+  "animTheoPose": {
+   "standing": "open"
+  }
  },
  {
   "id": "pirate-kit/crate-bottles",

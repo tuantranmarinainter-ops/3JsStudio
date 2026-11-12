@@ -358,6 +358,7 @@ section('10. Tư thế mô hình');
     r.warn.forEach(warn);
     if (!r.bad.length && !r.warn.length) ok('mọi mô hình có animation/skeleton đều khai báo pose, anim khớp file');
     if (r.thieu) info(`${r.thieu} GLB không có trên máy (bỏ qua)`);
+    if (r.boQua) info(`${r.boQua} entry không phải .glb (gltf/ảnh) — không kiểm`);
   }
 }
 
