@@ -74,8 +74,9 @@ function applyMove(cam, move) {
 const ASPECT = 9 / 16;                         // khung dọc 1080×1920
 // NGUỒN: đo tay, KHÔNG đọc từ engine/house.js (house.js chỉ xuất dims {W,D,WALL,BASE,PORCH,STAND,STRIDE} trên thể hiện nhà, không xuất độ dang chân).
 // ĐO LẠI khi đổi house.js: mở engine/shot-lab.html?type=houseFull, ở khung giữa lấy bbox thế giới của nhà family (legsOut 1, lift 1)
-// (Box3.setFromObject trên root nhà): hiện x ∈ ±29.9, z ∈ −15.4…20.9, cao 0…40.9 → HOUSE = làm tròn lên. Test shottypes (L1 lề ≥ 5%) sẽ đỏ nếu số này sai.
-const HOUSE = { hw: 30.5, hd: 21, top: 41.5 };
+// (Box3.setFromObject trên root nhà): hiện x ∈ ±29.9, z ∈ −15.4…35.5 (cầu thang chạm đất engine/stairs.js dài ra phía trước, bc0076e), cao ≤ 40.9
+// → HOUSE = làm tròn lên (hd = max |z| = nửa độ sâu tới đầu cầu thang). Test shottypes đo lại bbox thật trong shot-lab: lệch > 3% là đỏ ("đo lại HOUSE") + L1 lề ≥ 5%.
+export const HOUSE = { hw: 30.5, hd: 36, top: 41.5 };
 const HOUSE_LOOK_Y = -4;                       // nhìn thấp hơn mốc nhà (thân + 6) ~4 stud cho nhà + chân nằm giữa khung dọc
 const LE = 0.065;                              // lề thiết kế mỗi cạnh (> 5% bắt buộc, chừa dư cho phối cảnh + phình AABB)
 // khoảng cách camera để bbox nhà + chân chiếm ≤ (1 − 2·LE) bề ngang/cao khung, camera xoay tối đa `th` rad quanh nhà (+ `extra` stud bề ngang)

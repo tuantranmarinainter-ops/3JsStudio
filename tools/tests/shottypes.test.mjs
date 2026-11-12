@@ -7,8 +7,10 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { SHOT_TYPE_NAMES, SHOT_TYPES, expandShot } from '../../engine/shottypes.js';
+import http from 'node:http';
+import { SHOT_TYPE_NAMES, SHOT_TYPES, expandShot, HOUSE } from '../../engine/shottypes.js';
 import { kiemShot } from '../kiem/luat.mjs';
+import { launchBrowser } from '../browser.mjs';
 
 const root = path.resolve(import.meta.dirname, '..', '..');
 const MOI = ['insertRead', 'houseFull', 'hug', 'fall', 'sinkTilt'];
@@ -169,6 +171,31 @@ test('trang thử houseFull: đạt L1 và lề ≥ 5% ở MỌI khung, đủ 4 
     });
     assert.equal(luat.shots[id].luat.L4.ok, true, id + ' L4 camera động: ' + JSON.stringify(luat.shots[id].luat.L4));
   }
+});
+
+// HOUSE đặt cứng (engine/shottypes.js) phải khớp bbox nhà thật (Box3 trên house_family, nhà đứng thẳng ry=0, legsOut 1, lift 1) trong shot-lab:
+// nhà đổi kích thước (vd cầu thang chạm đất kéo dài tới z=35) mà HOUSE không đổi -> camera lùi thiếu -> L1 hụt lề.
+test('HOUSE đặt cứng khớp bbox nhà thật trong shot-lab (sai > 3% = đo lại HOUSE)', T, async () => {
+  const mime = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json' };
+  const srv = http.createServer((req, res) => {
+    try { const p = path.join(root, decodeURIComponent(req.url.split('?')[0])); const b = fs.readFileSync(p); res.writeHead(200, { 'content-type': mime[path.extname(p)] || 'application/octet-stream' }); res.end(b); } catch { res.writeHead(404); res.end(); }
+  }).listen(0);
+  const browser = await launchBrowser();
+  try {
+    const page = await browser.newPage({ viewport: { width: 540, height: 960 } });
+    await page.goto(`http://localhost:${srv.address().port}/engine/shot-lab.html?type=houseFull`);
+    await page.waitForFunction(() => window.__ready === true, null, { timeout: 120000 });
+    const b = await page.evaluate(async () => {
+      const T3 = await import('/vendor/three/three.module.js');
+      window.renderAt(0.1);   // shot h1: nhà ry = 0
+      const bb = new T3.Box3().setFromObject(window.__stage.scene.getObjectByName('house_family'));
+      return { hw: Math.max(-bb.min.x, bb.max.x), hd: Math.max(-bb.min.z, bb.max.z), top: bb.max.y };
+    });
+    for (const k of ['hw', 'hd', 'top']) {
+      const sai = Math.abs(HOUSE[k] - b[k]) / b[k];
+      assert.ok(HOUSE[k] >= b[k] && sai <= 0.03, `HOUSE.${k} = ${HOUSE[k]} lệch bbox thật ${b[k].toFixed(2)} (${(sai * 100).toFixed(1)}%) — đo lại HOUSE trong engine/shottypes.js`);
+    }
+  } finally { await browser.close(); srv.close(); }
 });
 
 test('trang thử insertRead: đạt L2 (tâm lệch < 10%), không che', T, () => {
