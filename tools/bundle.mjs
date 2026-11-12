@@ -68,8 +68,8 @@ const vIndex = join(epDir, 'voices', 'index.json');
 if (existsSync(vIndex)) {
   let n = 0;
   for (const v of JSON.parse(readFileSync(vIndex, 'utf8'))) {
-    for (const p of [v.audio, v.caps].filter(Boolean)) {
-      if (embed[p]) continue;
+    for (const p of [v.audio, v.caps, v.audio && v.audio.replace(/\.(ogg|mp3)$/, '.levels.json')].filter(Boolean)) {
+      if (embed[p] || !existsSync(join(root, p))) continue;   // .levels.json (tools/levels.py, nhép miệng) có thể chưa có
       const buf = readFileSync(join(root, p));
       embed[p] = [TYPES[extname(p).toLowerCase()] || (p.endsWith('.ogg') ? 'audio/ogg' : 'application/octet-stream'), buf.toString('base64')];
       embedBytes += buf.length; n++;

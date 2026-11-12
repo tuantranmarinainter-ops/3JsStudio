@@ -549,11 +549,16 @@ function drawCaption(g, cap, s) {
   g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.miterLimit = 2;
   g.lineWidth = stroke; g.strokeStyle = cs.webkitTextStrokeColor || '#15121c'; g.fillStyle = cs.color || '#fff';
   const cx = left + width / 2;
+  const wi = cap.dataset.wi !== undefined && cap.dataset.wi !== '' ? +cap.dataset.wi : undefined; let wordIdx = 0;
   lines.forEach((ln, i) => {
     const y = top + lineH * (i + 0.5) + fontPx * 0.02;
     g.save(); g.shadowColor = 'rgba(0,0,0,0.35)'; g.shadowOffsetY = 6 * k * s; g.shadowBlur = 0;
     g.strokeText(ln, cx, y); g.restore();
-    g.fillText(ln, cx, y);
+    if (wi === undefined) { g.fillText(ln, cx, y); return; }
+    // phụ đề từng chữ (ô FX chuTungChu): chữ thứ wi sáng (trắng), các chữ khác xám nhạt — khớp #cap .w / .w.on trong trang
+    const ws = ln.split(' '), tw = g.measureText(ln).width; let x = cx - tw / 2; g.textAlign = 'left';
+    ws.forEach((w, j) => { const piece = (j ? ' ' : '') + w; g.fillStyle = wordIdx + j === wi ? '#ffffff' : '#c4bfd6'; g.fillText(piece, x, y); x += g.measureText(piece).width; });
+    wordIdx += ws.length; g.textAlign = 'center';
   });
   g.restore();
 }

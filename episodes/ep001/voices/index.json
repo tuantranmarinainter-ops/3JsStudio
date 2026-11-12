@@ -12,7 +12,8 @@
   "lang": "vi",
   "source": "capcut",
   "label": "Giọng Bé",
-  "audio": "/episodes/ep001/voices/vi/BV074_streaming_dsp.ogg"
+  "audio": "/episodes/ep001/voices/vi/BV074_streaming_dsp.ogg",
+  "caps": "/episodes/ep001/voices/vi/BV074_streaming_dsp.caps.json"
  },
  {
   "id": "BV560_streaming",

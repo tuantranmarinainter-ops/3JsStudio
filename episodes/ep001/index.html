@@ -24,6 +24,7 @@
         -webkit-text-stroke: 14px #15121c; paint-order: stroke fill; letter-spacing: 0;
         text-shadow: 0 6px 0 rgba(0,0,0,0.35); transform-origin: 50% 60%;
       }
+      #cap .w { color: #c4bfd6; } #cap .w.on { color: #fff; }   /* ô FX chuTungChu: chữ đang đọc sáng hơn */
       body.peek #stage { width: 540px; height: 960px; }
       body.peek #root { width: 540px; height: 960px; }
       body.peek #cap { transform: scale(0.5); left: -250px; right: -250px; top: 600px; }
@@ -83,12 +84,16 @@
       let VOICES = [];
       try { const r = await fetch('/episodes/ep001/voices/index.json'); if (r.ok) VOICES = await r.json(); } catch (e) {}
       await Promise.all(VOICES.filter((v) => v.caps).map(async (v) => { try { v.capsData = await (await fetch(v.caps)).json(); } catch (e) {} }));
+      // Đường bao âm lượng từng giọng (tools/levels.py → <audio>.levels.json) để nhép miệng; nạp TRƯỚC khi seek (không fetch lúc seek)
+      await Promise.all(VOICES.map(async (v) => { try { const r = await fetch(v.audio.replace(/\.(ogg|mp3)$/, '.levels.json')); if (r.ok) v.levels = (await r.json()).d; } catch (e) {} }));
       for (const lang of ['vi', 'en']) {   // giọng mặc định chưa có → lấy giọng đầu tiên của ngôn ngữ đó
         const has = VOICES.filter((v) => v.lang === lang);
         if (has.length && !has.some((v) => v.id === OPTS.vid[lang])) OPTS.vid[lang] = has[0].id;
       }
       if (q.get('vid')) { const v = VOICES.find((x) => x.id === q.get('vid')); if (v) { OPTS.lang = v.lang; OPTS.vid[v.lang] = v.id; } }
       const curVoice = () => VOICES.find((v) => v.id === OPTS.vid[OPTS.lang] && v.lang === OPTS.lang);
+      // engine/shots.js (shot có `talk`) hỏi mức 0..9 tại t; chỉ khi bật giọng. Ô FX 'nhep' bật/tắt.
+      globalThis.__nhep = { level: (t) => { if (!OPTS.voice) return 0; const d = curVoice()?.levels; return d ? (+d[Math.floor(t * 30 + 1e-6)] || 0) : 0; } };
       setPostcardLang(OPTS.lang);
       if (q.get('peek')) document.body.classList.add('peek');
       const stage = createStage(THREE, { canvas: document.getElementById('stage'), ground: null, fov: 40 });
@@ -129,7 +134,17 @@
       function caption(t) {
         const L = OPTS.subs ? (curVoice()?.capsData || CAPS[OPTS.lang]) : [];   // phụ đề riêng theo giọng (Việt: voices/vi/<id>.caps.json; Giọng Bé = captions.js)
         let i = -1; for (let j = 0; j < L.length; j++) { if (L[j][0] <= t + 1e-4 && t < L[j][1]) { i = j; break; } }
-        if (i !== lastCap) { cap.textContent = i >= 0 ? L[i][2] : ''; lastCap = i; }
+        // cụm có mốc từng chữ (L[i][3], tools/caps_vi.py --whisper): chữ dài thì thu nhỏ phông; ô FX 'chuTungChu' → chữ đang đọc sáng hơn (cap.dataset.wi cho bản xuất MP4)
+        const W = i >= 0 ? L[i][3] : null, kar = !!(W && globalThis.__autoFx?.chuTungChu);
+        let wi = -1; if (kar) for (let j = 0; j < W.length; j++) if (W[j][0] <= t + 1e-4) wi = j;
+        const key = i + ':' + wi + (kar ? 'k' : '');
+        if (key !== lastCap) {
+          const txt = i >= 0 ? L[i][2] : '';
+          if (kar) { cap.innerHTML = ''; txt.split(' ').forEach((w, j) => { const sp = document.createElement('span'); sp.className = j === wi ? 'w on' : 'w'; sp.textContent = (j ? ' ' : '') + w; cap.appendChild(sp); }); cap.dataset.wi = wi; }
+          else { cap.textContent = txt; delete cap.dataset.wi; }
+          cap.style.fontSize = W && txt.length > 22 ? Math.round(Math.max(52, 84 * Math.sqrt(22 / txt.length))) + 'px' : '';
+          lastCap = key;
+        }
         // vị trí theo shot (dữ liệu: shots.js `cap: { y: 520 }` = top của phụ đề, px trong khung 1080×1920) — tránh đè chữ bưu thiếp/tủ lạnh
         const cy = tl.at(Math.min(t, tl.total - 1e-4)).shot.cap?.y;
         const top = cy == null ? '' : (document.body.classList.contains('peek') ? cy / 2 : cy) + 'px';

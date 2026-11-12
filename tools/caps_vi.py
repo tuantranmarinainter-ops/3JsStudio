@@ -8,6 +8,7 @@ trong khoảng [start, end] của câu → ghi voices/vi/<id>.caps.json, định
 
   python tools/caps_vi.py ep001            # mọi giọng Việt trong voices/index.json (hoặc mọi voices/vi/*.json)
   python tools/caps_vi.py ep001 <id> ...   # chỉ các giọng này
+  python tools/caps_vi.py ep001 --whisper [--model large-v3] [<id> ...]   # mốc từng chữ bằng faster-whisper (xem tools/caps_whisper.py); mặc định vẫn là tỉ lệ ký tự
 Giọng mặc định (Giọng Bé) giữ mốc gốc của captions.js → không tạo caps.json (xoá file cũ nếu có).
 """
 import io, json, re, sys, unicodedata
@@ -58,6 +59,11 @@ def build(caps, lines):
 
 def main():
     a = sys.argv[1:]
+    if '--whisper' in a:
+        a.remove('--whisper'); model = None
+        if '--model' in a: k = a.index('--model'); model = a[k + 1]; del a[k:k + 2]
+        sys.path.insert(0, str(Path(__file__).resolve().parent)); import caps_whisper
+        return caps_whisper.run(a[0] if a else 'ep001', set(a[1:]), model)
     ep = a[0] if a else 'ep001'; only = set(a[1:])
     epd = ROOT / 'episodes' / ep; vd = epd / 'voices' / 'vi'
     caps = load_captions(epd)
