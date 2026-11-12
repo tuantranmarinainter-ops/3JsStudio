@@ -31,6 +31,7 @@ export function setPostcardLang(lang) {
   LANG = lang; CARD_TEXT = CARD_TEXT_L[lang];
   for (const tex of cache.values()) if (tex.userData.redraw) { tex.userData.redraw(); tex.needsUpdate = true; }
   for (const cb of listeners) cb('island');
+  troikaResyncAll();   // chữ troika (nếu đã dựng) đổi ngôn ngữ ngay; khung kế tiếp chờ xong qua postcardsTroikaSettled()
 }
 
 const W = 512, H = 360;
@@ -203,19 +204,36 @@ export function makePostcard(THREE, kind, opts = {}) {
 let TK = null;   // module engine/troika-text.js (null nếu trang không có importmap troika)
 const TK_P = import('./troika-text.js').then((m) => { TK = m; }, () => { TK = null; });   // thiếu importmap → import lỗi → giữ chữ canvas
 const TK_PENDING = [];
+const TK_RECS = new Set();
+const TK_SETTLING = new Set();   // resync (đổi Việt/Anh) đang chạy
 const troikaOn = () => globalThis.__post?.options?.troikaText === true;
 export function postcardsTroikaReady() { return TK_P.then(() => Promise.all(TK_PENDING)); }
+// Promise nếu đang có chữ troika chưa xong (sau setPostcardLang), null nếu không. Nối vào stage.onFrame: renderAt chờ promise này trước khi vẽ
+// → khung xuất MP4 ngay sau khi đổi ngôn ngữ luôn thấy chữ đúng (tất định). Ô TẮT / chưa nạp troika: luôn null.
+export function postcardsTroikaSettled() { troikaResyncAll(); return TK_SETTLING.size ? Promise.all([...TK_SETTLING]) : null; }
 function troikaAttach(THREE, g, front, back, kind, opts, w, h) {
   const rec = { THREE, front, back, kind, opts, w, h, items: [], texFront: front.material.map, texBack: back.material.map, applied: false, built: false };
-  TK_P.then(() => { if (TK) troikaBuild(rec); });
+  TK_P.then(() => { if (TK) { try { troikaBuild(rec); TK_RECS.add(rec); } catch (e) { console.warn('troika: bỏ qua chữ SDF của thiếp', kind, e?.message); } } });
   const upd = g.updateMatrixWorld;
+  // Lưu ý: clone() của Group không sao chép hook này (thiếp nhân bản mất đồng bộ cờ FX, giữ chữ canvas) — hiện không có nơi nào clone thiếp.
   g.updateMatrixWorld = function (force) { troikaApply(rec); upd.call(this, force); };   // mỗi lần render: đồng bộ với cờ FX
 }
+function troikaResync(rec) {   // đưa nội dung Text khớp ngôn ngữ hiện tại (lười: chỉ khi ô BẬT, bỏ qua Text đã failed)
+  if (!rec.built || !troikaOn()) return;
+  for (const it of rec.items) {
+    if (!it.L.ok()) continue;
+    const src = it.slot === 'front' ? (rec.opts.lines || CARD_TEXT[rec.kind]) : backLines(rec.backLines);
+    if (src[it.i] !== undefined && src[it.i] !== it.L.obj.text) {
+      const p = it.L.resync(src[it.i]); TK_SETTLING.add(p); p.then(() => TK_SETTLING.delete(p));
+    }
+  }
+}
+function troikaResyncAll() { for (const rec of TK_RECS) troikaResync(rec); }
 function troikaBuild(rec) {
   const { THREE, front, back, kind, opts, w } = rec, u = w / W, px = (cx) => (cx - W / 2) * u, py = (cy) => (H / 2 - cy) * u;
   const add = (mesh, lines, cx, cy0, size, color, lh, slot) => {
     lines.forEach((l, i) => {
-      const L = TK.makeLine(THREE, { text: l, font: 'hand', size: Math.round(size * 1.12) * u, color, x: px(cx), y: py(cy0 + i * size * lh) + Math.round(size * 1.12) * u * 0.13, name: `troika_${slot}_${i}` });
+      const L = TK.makeLine(THREE, { text: l, font: 'hand', size: Math.round(size * 1.12) * u, color, x: px(cx), y: py(cy0 + i * size * lh) + Math.round(size * 1.12) * u * 0.13, name: `troika_${slot}_${i}`, timeoutMs: globalThis.__troikaTimeoutMs });   // __troikaTimeoutMs: chỉ test tiêm; mặc định (undefined) = 15 s
       mesh.add(L.obj); rec.items.push({ slot, i, L }); TK_PENDING.push(L.done);
     });
   };
@@ -229,10 +247,7 @@ function troikaBuild(rec) {
 function troikaApply(rec) {
   if (!rec.built) return;
   const on = troikaOn() && rec.items.every((it) => it.L.ok()), { THREE } = rec;   // chữ nào chưa dựng được (phông lỗi) → giữ chữ canvas
-  for (const it of rec.items) {   // đổi ngôn ngữ Việt/Anh sau khi dựng → cập nhật nội dung chữ
-    const src = it.slot === 'front' ? (rec.opts.lines || CARD_TEXT[rec.kind]) : backLines(rec.backLines);
-    if (src[it.i] !== undefined && src[it.i] !== it.L.obj.text) it.L.resync(src[it.i]);
-  }
+  troikaResync(rec);   // đổi ngôn ngữ Việt/Anh / bật ô lại sau khi dựng → cập nhật nội dung chữ (thường đã chạy ở setPostcardLang)
   if (rec.applied !== on) {
     rec.applied = on;
     if (on) {
