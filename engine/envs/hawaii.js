@@ -17,7 +17,49 @@ import { createCoconutPalm } from '../coconut.js';
 export default function build(g, e, H) {
   const { THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
   // cát rộng tới tận chân trời (góp ý 2026-11-11 #3: hở mép cát ở s011); mép biển vẫn ở z≈70
-  const sand = plane(2400, 1200, mat('#f1d79a'), 0, 'sand'); sand.position.z = 70 - 600; g.add(sand);
+  // góp ý 2026-11-12 #2 (s003): cát thật hơn — hạt mịn, gợn gió, cát ướt sẫm gần mép nước, vân không lặp ô, màu dịu bớt vàng.
+  // Shader thủ tục theo toạ độ THẾ GIỚI (tĩnh, tất định); bỏ vân SAND chung của materials.js (matKind 'none') để khỏi chồng 2 lớp.
+  const sandMat = mat('#e3cc9c', { roughness: 0.97 });
+  sandMat.onBeforeCompile = (sh) => {
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vSW;')
+      .replace('#include <project_vertex>', '#include <project_vertex>\nvSW =(modelMatrix * vec4(transformed, 1.0)).xyz;');
+    const FN = `
+      varying vec3 vSW;
+      float sdH(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float sdN(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+        return mix(mix(sdH(i), sdH(i + vec2(1.0, 0.0)), f.x), mix(sdH(i + vec2(0.0, 1.0)), sdH(i + vec2(1.0, 1.0)), f.x), f.y); }
+      float sdF(vec2 p){ return sdN(p) * 0.5 + sdN(p * 2.03 + 7.1) * 0.25 + sdN(p * 4.1 + 3.7) * 0.125 + sdN(p * 8.3 + 1.3) * 0.0625; }
+      float sdRip(vec2 p){
+        float dirN = sdN(p * 0.012) * 1.2;                           // hướng gợn đổi chậm theo vùng
+        vec2 d = vec2(cos(0.5 + dirN), sin(0.5 + dirN));
+        float w = sdF(p * 0.05) * 9.0 + sdN(p * 0.33) * 2.6;           // uốn lượn
+        float r = sin(dot(p, d) * 1.7 + w);
+        float amp = smoothstep(0.25, 0.7, sdN(p * 0.025 + 11.0));     // chỗ có gợn, chỗ phẳng
+        return (r * 0.5 + 0.5) * amp;
+      }
+      float sdHgt(vec2 p){ return sdRip(p) * 0.6 + sdF(p * 1.7) * 0.4; }`;
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>' + FN)
+      .replace('#include <color_fragment>', `#include <color_fragment>
+        vec2 sp = vSW.xz;
+        float wetF = smoothstep(44.0, 66.0, vSW.z + (sdN(sp * 0.18) - 0.5) * 7.0);        // cát ướt dần về phía biển (mép nước z≈70)
+        float big = sdF(sp * 0.035), mid = sdF(sp * 0.35), grain = sdN(sp * 14.0) * 0.6 + sdN(sp * 38.0) * 0.4;
+        float rip = sdRip(sp);
+        vec3 sandLo = vec3(0.50, 0.39, 0.25), sandHi = vec3(0.74, 0.62, 0.43);
+        vec3 sc = mix(sandLo, sandHi, 0.35 + 0.65 * big);
+        sc *= mix(0.9, 1.07, mid) * mix(0.9, 1.08, grain) * mix(0.96, 1.04, rip);
+        sc = mix(sc, sc * vec3(0.52, 0.48, 0.45), wetF * 0.9);                               // ướt: sẫm, hơi lạnh
+        sc += vec3(0.07, 0.07, 0.06) * step(0.985, sdH(floor(sp * 30.0))) * (1.0 - wetF);    // lấp lánh hạt thạch anh
+        diffuseColor.rgb = sc;`)
+      .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
+        roughnessFactor = mix(0.97, 0.38, wetF);`)
+      .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
+        { float e0 = 0.12, h0 = sdHgt(sp), hx = sdHgt(sp + vec2(e0, 0.0)), hz = sdHgt(sp + vec2(0.0, e0));
+          float k = mix(0.3, 0.1, wetF);
+          vec3 gw = vec3(-(hx - h0) / e0 * k, 0.0, -(hz - h0) / e0 * k);
+          normal = normalize(normal + (viewMatrix * vec4(gw, 0.0)).xyz); }`);
+  };
+  sandMat.customProgramCacheKey = () => 'hawaiiSand1';
+  const sand = plane(2400, 1200, sandMat, 0, 'sand'); sand.userData.matKind = 'none'; sand.position.z = 70 - 600; g.add(sand);
   e.sea = makeSea(g, { preset: 'tropical', y: 1.5, amp: 0.6, size: 1400, center: [0, -380], shore: { line: [0, 1, 54, 5] } }); g.children[g.children.length - 1].position.z = 380;
   // cua khối chạy trên cát ướt gần mép sóng (nhìn từ trên cao)
   e.crabs = createCrabs(THREE, [

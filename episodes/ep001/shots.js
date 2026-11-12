@@ -28,7 +28,7 @@ export const SHOTS = [
   // ===== 02 · Chân gỗ thức giấc =====
   { id: 's005', f: [145, 189], env: 'town', line: 2, house: ILL({ legsOut: 0, lift: 0 }), cam: orb('house', 0, 74, 2, { look: [0, 4, 0], dist2: 84, fov: 52 }),
     fn: ({ env }) => { const m = env.group.getObjectByName('moon_town'); } },
-  { id: 's006', f: [190, 257], env: 'town', line: 2, house: ILL({ legsOut: [0, 1], lift: 0, win: [0.2, 0.62] }), fx: { dust: [{ at: [24, 0, 14], t0: 1.4 }, { at: [-24, 0, 14], t0: 1.45 }, { at: [24, 0, -14], t0: 1.5 }] },
+  { id: 's006', f: [190, 257], env: 'town', line: 2, house: ILL({ legsOut: [0, 1], lift: 0, win: [0.2, 0.62] }), fx: { dust: [{ at: [24, 0, 14], t0: 1.4, tone: 0.5 }, { at: [-24, 0, 14], t0: 1.45, tone: 0.5 }, { at: [24, 0, -14], t0: 1.5, tone: 0.5 }] },
     // máy quay cũ (x=40) lọt vào nhà hàng xóm x≈46 (thị trấn dày thêm) → chỉ thấy tường; dời ra phía sân trước, thấp, nhìn chân trước-phải trồi lên (góp ý f243)
     cam: { p: [29, 2.8, 21], l: [19, 6, -4], p2: [30, 3.2, 21.3], fov: 58 } },
   { id: 's007', f: [258, 285], env: 'town', line: 3, house: ILL({ legsOut: 1, lift: [0, 1] }), cam: orb('house', 0.4, 90, 6, { look: [0, -2, 0], dist2: 104, fov: 52 }) },
@@ -36,15 +36,15 @@ export const SHOTS = [
   { id: 's009', f: [314, 329], env: 'town', line: 3, house: ILL({ at: [0, 0], to: [0, 14], legsOut: 1, lift: 1 }), cam: orb([0, 18, 10], 0.05, 110, 2, { dist2: 128, fov: 52 }) },
   { id: 's010', f: [330, 385], env: 'bedroom', line: 3, light: 'bedNight',
     cast: { mom: R(-11.05, 3.6, -6.6, { lie: true, anim: 'lie' }), hero: R(-8.95, 3.6, -6.6, { lie: true, anim: 'lie', s: 0.9 }) },   // giữa giường x=−10 (góp ý f374)
-    cam: { p: [-10, 17, -1], l: [-10, 3, -9], p2: [-10, 16, -1.6], fov: 50, fov2: 58 } },
+    cam: { p: [-10, 17, -1], l: [-10, 3, -5.5], p2: [-10, 16, -1.6], l2: [-10, 3, -5.8], fov: 50, fov2: 58 } },   // mặt lên cao trong khung (góp ý f346)
 
   // ===== 03 · Các điểm đến và lời hứa trở về =====
-  { id: 's011', f: [386, 441], env: 'hawaii', line: 4, house: ILL({ at: [0, 16], ry: 1.2, legsOut: 1, lift: 0.75 }), cam: orb('house', 1.3, 96, 62, { look: [0, -8, 6], yaw2: 1.7, dist2: 120, h2: 78, fov: 52 }) },
-  { id: 's012', f: [442, 469], env: 'hawaii', line: 4, house: ILL({ at: [0, 16], ry: 1.5, lift: 0.4 }), cam: orb('house', 1.5, 108, 72, { look: [0, -8, 6], dist2: 128, h2: 88, fov: 52 }) },
+  { id: 's011', f: [386, 441], env: 'hawaii', line: 4, house: ILL({ at: [0, -28], ry: 1.2, legsOut: 1, lift: 0.75 }), cam: orb('house', 1.3, 96, 62, { look: [0, -8, 6], yaw2: 1.7, dist2: 120, h2: 78, fov: 52 }) },
+  { id: 's012', f: [442, 469], env: 'hawaii', line: 4, house: ILL({ at: [0, -28], ry: 1.5, lift: 0.4 }), cam: orb('house', 1.5, 108, 72, { look: [0, -8, 6], dist2: 128, h2: 88, fov: 52 }) },
   { id: 's013', f: [470, 501], env: 'brazil', line: 4, house: ILL({ lift: 0.3 }), cam: orb('house', -0.15, 72, -2, { look: [0, -2, 0], dist2: 82, fov: 52 }) },
   { id: 's014', f: [502, 551], env: 'sahara', line: 4, house: ILL({ ry: -0.4, lift: 0.35 }), cam: orb('house', -0.6, 80, 42, { look: [0, -8, 0], yaw2: -0.45, dist2: 94, fov: 52 }) },
   { id: 's015', f: [552, 582], env: 'hawaii', line: 5, house: ILL({ lift: 0 }), cast: { hero: P(-1.5, 13.5, { anim: 'cheer', ry: 0 }), mom: P(3, 12, { anim: 'idle', face: 'happy', ry: -0.3 }) },
-    cam: orb('hero', 0.15, 19, 0, { look: [1.5, -1, 0], fov: 42, dist2: 23 }) },
+    cam: orb('hero', 0.15, 19, 0, { look: [1.5, -1, 0], fov: 42, dist2: 23, ease: 'linear' }) },   // linear: smooth chậm dần cuối shot → khựng (góp ý f576)
   { id: 's016', f: [583, 617], env: 'town', line: 5, house: ILL(walkX(160, 150, { ry: -PI / 2, walk0: 0 })), cam: orb([150, 20, 36], -0.25, 96, 6, { fov: 52, yaw2: -0.3, dist2: 110 }) },
   { id: 's017', f: [618, 673], env: 'town', line: 5, house: ILL({ at: [40, 36], to: [16, 36], ry: -PI / 2 }), cam: orb([20, 20, 36], -0.55, 92, -2, { fov: 52, yaw2: -0.7, dist2: 106 }) },
   { id: 's018', f: [674, 703], env: 'town', light: 'day', line: 6, house: FAM({ legsOut: 0, lift: 0 }), cam: { p: [-76, 92, 116], l: [4, 0, 0], p2: [-98, 114, 142], fov: 40 } },
@@ -66,8 +66,10 @@ export const SHOTS = [
   { id: 's028', f: [1034, 1048], env: 'town', light: 'day', line: 11, house: FAM({ legsOut: 0, lift: 0 }), props: { mailboxTown: { parent: 'house', at: [10, 0, 14.5], ry: 0 } },
     cam: { p: [2, 12.5, 29], l: [10, 7.0, 15], p2: [5.5, 11, 23.5], fov: 42, shadow: false } },
   { id: 's029', f: [1049, 1072], env: 'kitchen', line: 11, cam: { p: [-9.5, 7, -10], l: [-8, 7, -15.3], p2: [-7, 6, -10], fov: 40 } },
-  { id: 's030', f: [1073, 1095], env: 'town', light: 'day', line: 11, house: FAM({ legsOut: 0, lift: 0 }), props: { mailboxTown: { parent: 'house', at: [10, 0, 14.5] } },
-    cast: { hero: P(4, 13, { anim: 'sit', face: 'sad', ry: 0.4, s: 0.92 }) }, cam: { p: [19, 9.5, 34], l: [5, 5, 13], p2: [14, 8, 26], fov: 44 } },
+  { id: 's030', f: [1073, 1095], env: 'town', light: 'day', line: 11, house: FAM({ legsOut: 0, lift: 0 }), props: { mailboxTown: { parent: 'house', at: [2.9, 0, 12.9] } },
+    // bé ngồi GHẾ ở khoảng trống cầu thang (không lan can) để thấy rõ mặt; hòm thư dời sát lại; camera zoom IN tuyến tính (góp ý f1086)
+    fn: ({ env, house, THREE }) => { const v = house.body.localToWorld(new THREE.Vector3(-1.4, 0, 11.3)); env.seat.position.copy(v); env.seat.rotation.y = 0.25; env.seat.userData.want = true; },
+    cast: { hero: P(-1.4, 11.3, { anim: 'sit', face: 'sad', ry: 0.25, s: 0.92, at: [-1.4, 2.4, 11.3], parent: 'house' }) }, cam: { p: [3.5, 9, 30], l: [0.6, 6, 12], p2: [1.2, 8, 20], l2: [-0.6, 6.4, 11.5], fov: 42, ease: 'linear' } },
   // bão: bỏ rung tần số cao (shake ~4–5 Hz gây giật) → lắc lư chậm bằng roll + quỹ đạo mượt; camera luôn cao hơn đỉnh sóng (sóng bão tới ~y+7)
   { id: 's031', f: [1096, 1110], env: 'shipStorm', line: 12, cam: { p: [-28, 9, 38], l: [0, 6, 0], p2: [-33, 10, 44], fov: 44, roll: [0.03, -0.02], ease: 'linear' } },
   { id: 's032', f: [1111, 1128], env: 'shipStorm', line: 12, cam: { p: [34, 7.5, 27], l: [0, 10, 0], p2: [40, 8.5, 33], fov: 42, roll: [-0.04, 0.03], ease: 'linear' } },
@@ -96,7 +98,7 @@ export const SHOTS = [
   { id: 's045', f: [1575, 1609], env: 'antarctica', props: { mailboxTown: { parent: 'house', at: [9.5, 0, 12.8], ry: 0 } }, line: 18, house: FAM({ lift: 0.25, door: [0, 0.15], win: [0.6, 1] }), cam: { p: [0, 9.6, 25], l: [0, 9.6, 10], p2: [0, 10.4, 36], fov: 46, shadow: false } },
   { id: 's046', f: [1610, 1670], env: 'antarctica', props: { mailboxTown: { parent: 'house', at: [9.5, 0, 12.8], ry: 0 } }, line: 18, wind: 1.6, house: FAM({ lift: 0.25, door: 1 }), cast: { hero: P(0, 10.8, { anim: 'shiver', s: 0.92 }) },
     cam: orb('face:hero', 0, 3.4, 0.2, { fov: 40, look: [0, -0.3, 0], rel: true, dist2: 3.0 }) },
-  { id: 's047', skySun: { x: 0.28, y: 0.2 }, f: [1671, 1703], env: 'antarctica', props: { mailboxTown: { parent: 'house', at: [9.5, 0, 12.8], ry: 0 } }, line: 19, house: FAM({ lift: 0.25 }), cam: orb('house', 0.35, 78, 6, { look: [0, -6, 10], fov: 52, dist2: 98 }) },
+  { id: 's047', skySun: { x: 0.28, y: 0.2 }, f: [1671, 1703], env: 'antarctica', props: { mailboxTown: { parent: 'house', at: [9.5, -0.25, 15.6], ry: 0 } }, line: 19, house: FAM({ lift: 0.25 }), cam: orb('house', 0.35, 78, 6, { look: [0, -6, 10], fov: 52, dist2: 98 }) },
   { id: 's048', f: [1704, 1744], env: 'antarctica', props: { mailboxTown: { parent: 'house', at: [9.5, 0, 12.8], ry: 0 } }, line: 19, house: FAM({ lift: 0.25 }), cam: { p: [20, 1.6, 52], l: [8, 4, 34], p2: [27, 2.6, 66], l2: [9, 5, 33], fov: 46 } },
   { id: 's049', f: [1745, 1761], env: 'antarctica', props: { mailboxTown: { parent: 'house', at: [9.5, 0, 12.8], ry: 0 } }, line: 20, house: FAM({ lift: 0.25, door: 1 }), cast: { hero: P(-1.8, 13.5, { anim: 'shiver', ry: 0.4, s: 0.92 }), mom: P(1.8, 13, { anim: 'idle', face: 'surprised', ry: 0.3 }) },
     cam: orb('hero', 0.9, 11, 0.5, { look: [1.6, -0.8, 0], fov: 40 }) },
@@ -111,7 +113,7 @@ export const SHOTS = [
   { id: 's056', f: [1956, 2007], env: 'ocean', line: 23, house: FAM({ ry: 0.3 }), cam: { p: [124, 16, 95.5], l: [18, 24, 1.5], p2: [140, 16, 112], fov: 50 } },
   { id: 's057', f: [2008, 2036], env: 'mountain', line: 24, house: FAM({ lift: 0.2, door: 1 }), cast: { hero: P(0, 10.8, { anim: 'idle', face: 'happy', s: 0.92 }) }, cam: orb('hero', 0, 13, 1, { look: [0, -1, 0], fov: 42, dist2: 11 }) },
   { id: 's058', skySun: { x: 0.28, y: 0.2 }, f: [2037, 2073], env: 'mountain', line: 24, house: FAM({ lift: 0.2 }), cam: orb('house', 0.75, 120, 30, { look: [0, -16, 0], fov: 52, yaw2: 0.6, dist2: 134 }) },
-  { id: 's059', f: [2074, 2123], env: 'mountain', line: 24, house: FAM({ lift: 0.2 }), cast: { hero: P(-6, 14.5, { anim: 'idle', face: 'happy', ry: 0, s: 0.92 }) }, cam: { p: [-6, 17, 48], l: [-6, 7, 20], p2: [-6, 14, 40], fov: 42 } },
+  { id: 's059', f: [2074, 2123], env: 'mountain', line: 24, house: FAM({ lift: 0.2 }), cast: { hero: P(-6, 14.5, { anim: 'idle', face: 'happy', ry: 0, s: 0.92 }) }, cam: { p: [-6, 17, 48], l: [-6, 7, 20], p2: [-6, 26, 175], l2: [-6, -2, 20], fov: 42, fov2: 50 } },
   { id: 's060', f: [2124, 2159], env: 'kitchen', line: 25, room: { view: 'mountain' }, cast: { mom: R(10, 0, -14, { anim: 'panic', ry: 0.2 }) }, cam: orb('mom', 0.15, 9.5, -0.3, { look: [0, -1.2, 0], dist2: 8, fov: 40 }) },
   { id: 's061', f: [2160, 2206], env: 'kitchen', line: 26, room: { view: 'mountain' }, cast: { mom: R(10, 0, -14, { anim: 'panic', ry: -0.15, face: 'scared' }) }, cam: orb('mom', -0.25, 8, 0, { look: [0, -0.8, 0], fov: 40, dist2: 7 }) },
 
@@ -122,7 +124,7 @@ export const SHOTS = [
   { id: 's065', f: [2275, 2324], env: 'kitchen', line: 28, cast: { hero: R(-6, 0, -9, { anim: 'idle', ry: PI, s: 0.92 }) }, cam: { p: [-3, 6, -2], l: [-8, 6, -15.4], p2: [-5, 6.5, -5], fov: 46 } },
   { id: 's066', f: [2325, 2411], cap: { y: 260 }, env: 'kitchen', line: 29, cam: card('penguin', 3.8, { dist2: 3.2 }) },
   { id: 's067', f: [2412, 2443], cap: { y: 260 }, env: 'kitchen', line: 30, cam: card('whale', 4.4, { dist2: 4.0 }) },
-  { id: 's068', f: [2444, 2532], cap: { y: 260 }, env: 'kitchen', line: 30, cam: card('whale', 3.4, { dist2: 3.0 }) },
+  { id: 's068', f: [2444, 2532], cap: { y: 260 }, env: 'kitchen', line: 30, cam: card('whale', 3.9, { dist2: 3.5 }) },
   { id: 's069', f: [2533, 2584], cap: { y: 260 }, env: 'kitchen', line: 32, cam: card('mountain', 4.2, { dist2: 3.8 }) },
   { id: 's070', f: [2585, 2668], cap: { y: 260 }, env: 'kitchen', line: 33, cam: card('mountain', 3.3, { dist2: 3.0, look: [0, -0.3, 0] }) },
   { id: 's071', f: [2669, 2700], env: 'kitchen', line: 34, cast: { hero: R(-6, 0, -9, { anim: 'idle', face: 'surprised', ry: 0.1, s: 0.92 }) }, cam: orb('face:hero', 0, 4.2, -0.2, { rel: true, fov: 40, dist2: 3.8, look: [0, -0.3, 0] }) },
@@ -135,7 +137,7 @@ export const SHOTS = [
   { id: 's077', f: [2808, 2840], env: 'kitchen', line: 38, cam: card('whale', 4.6, { look: [-0.8, -0.5, 0], yaw: 0.1, dist2: 4.2 }) },
   { id: 's078', f: [2841, 2885], env: 'kitchen', line: 39, cast: { mom: R(-3, 0, -12, { anim: 'idle', face: 'surprised', ry: 0.5 }) }, cam: { p: [1, 7, -3], l: [-5, 5.5, -13], p2: [-0.5, 6.8, -5], fov: 44 } },
   { id: 's079', f: [2886, 2917], env: 'kitchen', line: 39, cam: { p: [-8, 6.8, -9], l: [-8, 6.6, -15.4], p2: [-7, 7.6, -3.5], fov: 44 } },
-  { id: 's080', f: [2918, 2961], env: 'snowNight', light: 'snow', line: 40, house: FAM({ lift: 0.5 }), cam: orb('house', 0.3, 70, 0, { look: [0, -6, 0], fov: 52, dist2: 90 }) },
+  { id: 's080', skySun: { x: 0.28, y: 0.2 }, f: [2918, 2961], env: 'snowNight', light: 'snow', line: 40, house: FAM({ lift: 0.5 }), cam: orb('house', 0.3, 70, 0, { look: [0, -6, 0], fov: 52, dist2: 90 }) },
   { id: 's081', f: [2962, 3001], env: 'antarctica', props: { mailboxTown: { parent: 'house', at: [9.5, 0, 12.8], ry: 0 } }, line: 41, house: FAM({ at: [0, 0], to: [-6, -14], ry: PI + 0.4 }), cam: orb([-3, 14, -6], 0.1, 90, 8, { fov: 52, look: [0, -4, 0], dist2: 108 }) },
 
   // ===== 09 · Tấm thiếp cuối =====
@@ -145,7 +147,7 @@ export const SHOTS = [
     cast: { mom: R(-4.2, 0, -13.4, { anim: 'point', ry: -2.17, pose: { rightArm: { x: [-1.4, -1.0] } } }) }, cam: { p: [-7.8, 5.6, -10.6], l: [-6.8, 5, -15.2], fov: 46 } },
   { id: 's085', f: [3125, 3172], env: 'kitchen', line: 44, cast: { mom: R(-4, 0, -10, { anim: 'hold', face: 'worried', ry: 0, pose: { rightArm: { x: -0.75 }, leftArm: { x: -0.75 } }, holdR: { name: 'cardIsland', at: [2.9, -2.1, 0.9], rot: [0.95, 0, 0], s: 0.72 } }) },
     cam: orb('mom', 0, 7.5, 0.4, { look: [0, -1.4, 0], fov: 42 }) },
-  { id: 's086', f: [3173, 3211], env: 'shipStorm', line: 45, cast: { dad: { at: [4, 3.6, 1], ry: 0.4, anim: 'scared' } }, cam: orb('dad', 0.6, 8, -1.5, { look: [0, 0, 0], fov: 46, shake: 0.6 }) },
+  { id: 's086', f: [3173, 3211], env: 'shipStorm', line: 45, cast: { dad: { at: [4, 3.6, 2.2], ry: 0.4, anim: 'scared' } }, cam: orb('dad', 0.6, 8, -1.5, { look: [0, 0, 0], fov: 46, shake: 0.6 }) },
   { id: 's087', f: [3212, 3233], cap: { y: 260 }, env: 'kitchen', line: 46, props: { cardIsland: { parent: 'room', at: [6, 3.8, 4.2], rx: -0.5 } }, cam: { p: [6, 6.4, 7.4], l: [6, 3.8, 4.2], fov: 40 } },
   { id: 's088', f: [3234, 3266], env: 'island', line: 46, cam: { p: [86, 12, 26], l: [60, 18, -50], p2: [82, 12, 20], fov: 40 } },
   { id: 's089', f: [3267, 3270], cap: { y: 260 }, env: 'kitchen', line: 46, props: { cardIsland: { parent: 'room', at: [6, 3.8, 4.2], rx: -0.5 } }, cam: { p: [6, 6.2, 7.2], l: [6, 3.8, 4.2], fov: 40 } },
@@ -164,8 +166,8 @@ export const SHOTS = [
   { id: 's099', f: [3583, 3597], env: 'island', line: 52, house: FAM({ ...ISL, lift: 0.85 }), cam: orb([-10, 14, 0], 2.0, 62, -6, { fov: 52, dist2: 74, look: [0, 4, 0] }) },
   { id: 's100', f: [3598, 3619], env: 'island', line: 52, house: FAM({ ...ISL, lift: 0.85, door: 1 }), cast: { hero: P(0, 10.6, { anim: 'idle', face: 'surprised', s: 0.92 }) }, cam: orb('hero', 0, 12, 1, { rel: true, look: [0, -1, 0], fov: 42, dist2: 9 }) },
   { id: 's101', f: [3620, 3634], env: 'island', line: 52, house: FAM({ ...ISL, lift: 0.85 }), cam: { p: [porchW(18, 22)[0], 3, porchW(18, 22)[2]], p2: [porchW(20, 26)[0], 3.4, porchW(20, 26)[2]], l: [porchW(17, 15)[0], 4, porchW(17, 15)[2]], fov: 50, fov2: 54 } },
-  { id: 's102', skySun: 'frame', f: [3635, 3667], env: 'island', line: 52, cam: { p: [-40, 4, 40], l: [-30, 18, -10], p2: [-38, 4, 36], fov: 50 } },
-  { id: 's103', f: [3668, 3683], env: 'island', line: 52, cam: { p: [0, 3, 95], l: [0, 0.6, 66], p2: [-1, 2.6, 85], fov: 50 } },
+  { id: 's102', skySun: 'frame', f: [3635, 3667], env: 'island', line: 52, cam: { p: [-39, 5.5, 58], l: [-39, 9, -20], p2: [-39, 5, 46], fov: 62 } },
+  { id: 's103', f: [3668, 3683], env: 'island', line: 52, cam: { p: [0, 4.5, 108], l: [0, 0.4, 66], p2: [-1, 7, 128], fov: 50 } },
   { id: 's104', f: [3684, 3719], env: 'island', line: 52, cam: { p: [36, 22, -8], l: [60, 26, -50], p2: [34, 20, -10], fov: 40 } },
   { id: 's105', f: [3720, 3768], env: 'island', line: 52, house: FAM({ ...ISL, lift: 0.85 }), cam: { p: [-130, 110, 150], l: [0, 0, -10], p2: [-142, 122, 162], fov: 40 } },
 
@@ -175,7 +177,7 @@ export const SHOTS = [
     cam: { p: [28, 12, -8], l: [60, 34, -50], l2: [44, 4, -28], fov: 46 } },
   { id: 's108', f: [3853, 3881], env: 'island', line: 54, cast: { dadIsland: { at: DADSEAT, ry: -0.9, anim: 'sitHold' } }, props: { cardStack: { at: [43.0, 3.5, -27.2], ry: -0.9, s: 0.7 } }, cam: orb('dadIsland', -0.9, 9, 3, { look: [0, -2, 0], fov: 42, dist2: 7.5 }) },
   { id: 's109', f: [3882, 3900], env: 'island', line: 54, cast: { dadIsland: { at: DADSEAT, ry: -0.9, anim: 'sitHold', face: 'worried' } }, cam: orb('face:dadIsland', -0.9, 3.2, 0, { fov: 40, dist2: 2.8 }) },
-  { id: 's110', f: [3901, 3928], env: 'island', line: 55, cast: { dadIsland: { at: DADSEAT, ry: -0.9, anim: 'sitHold' } }, props: { cardStack: { at: [43.0, 3.5, -27.2], ry: -0.9, s: 0.7 } }, cam: orb('dadIsland', -0.9, 4.5, 0, { look: [0, -1.6, 0], fov: 40, dist2: 3.8 }) },
+  { id: 's110', f: [3901, 3928], env: 'island', line: 55, cast: { dadIsland: { at: DADSEAT, ry: -0.9, anim: 'sitHold' } }, props: { cardStack: { at: [43.0, 3.5, -27.2], ry: -0.9, s: 0.7 } }, cam: orb('dadIsland', -0.9 + 0.2, 4.5, 0, { look: [0, -1.6, 0], fov: 40, dist2: 3.8 }) },
   { id: 's111', f: [3929, 3955], env: 'island', line: 55, cast: { dadIsland: { at: DADSEAT, ry: -0.9, anim: 'sitHold' } }, props: { cardStack: { at: [43.0, 3.5, -27.2], ry: -0.9, s: 0.7 } }, cam: { p: [40.8, 6.6, -25.0], l: [43.0, 3.7, -27.2], p2: [41.3, 6.0, -25.5], fov: 40 } },
   { id: 's112', f: [3956, 3992], env: 'island', line: 55, cast: { dadIsland: { at: DADSEAT, ry: -0.9, anim: 'sitHold' } }, props: { cardStack: { at: [43.0, 3.5, -27.2], ry: -0.9, s: 0.7 } }, cam: { p: [41.6, 5.8, -25.6], l: [43.0, 3.7, -27.2], p2: [41.8, 5.5, -25.9], fov: 40 } },
   { id: 's113', f: [3993, 4016], env: 'island', line: 56, cast: { dadIsland: { at: DADSEAT, ry: -0.9, anim: 'sitHold', face: 'surprised', pose: { head: { x: -0.4 } } } }, cam: orb('face:dadIsland', -0.9, 3.4, -0.6, { fov: 40, look: [0, 0.2, 0], dist2: 3.0 }) },
@@ -185,7 +187,7 @@ export const SHOTS = [
   { id: 's115', f: [4056, 4091], env: 'island', line: 56, house: FAM({ ...ISL, lift: 0.85 }), cast: { dadIsland: { at: DADSEAT, ry: -1.3, anim: 'sitHold', pose: { head: { x: -0.4 } } } }, cam: { p: [55, 11, -33], l: [-8, 12, 0], p2: [70, 16, -40], l2: [-9, 9, 0], fov: 58, fov2: 64 } },
   { id: 's116', f: [4092, 4103], env: 'island', line: 57, cast: { dadIsland: { at: DADSEAT, ry: -0.9, anim: 'sitHold', face: 'surprised' } }, props: { cardStack: { at: [43.0, 3.5, -27.2], ry: -0.9, s: 0.7 } }, cam: orb('dadIsland', -0.9, 7, 1.5, { look: [0, -1, 0], fov: 42, dist2: 6 }) },
   { id: 's117', f: [4104, 4136], env: 'island', line: 57, cast: { dadIsland: { at: DADSEAT, ry: -0.9, anim: 'idle', face: 'surprised', pose: { rightArm: { x: -1.2 }, leftArm: { x: -1.2 } } } },
-    fx: { cards: { at: [43.0, 4.0, -27.2], t0: 0.1, up: 7, out: 5, ground: 2.6 } }, cam: orb('dadIsland', -0.9, 9, 1, { look: [0, -1, 0], fov: 44, dist2: 7.5 }) },
+    fx: { cards: { at: [43.0, 4.0, -27.2], t0: 0.1, up: 7, out: 5, ground: 2.6, soft: 1 } }, cam: orb('dadIsland', -0.9, 9, 1, { look: [0, -1, 0], fov: 44, dist2: 7.5 }) },
   { id: 's118', f: [4137, 4151], env: 'island', line: 58, house: FAM({ ...ISL, lift: 0.85, door: 1 }), cast: { hero: P(0, 10.8, { anim: 'idle', face: 'surprised', s: 0.92 }) }, cam: orb('face:hero', 0, 3.6, -0.3, { rel: true, fov: 42, dist2: 3.0 }) },
   // s119: chạy xuống 4 bậc thềm (house.js: bậc i mặt trên y=-0.3-0.75i, z 16+1.2i…17.2+1.2i) — fn đặt y theo bậc dưới chân, không lún vào thềm
   { id: 's119', f: [4152, 4172], env: 'island', line: 59, house: FAM({ ...ISL, lift: 0.85, door: 1 }), cast: { hero: P(0, 11, { to: [0, 0, 20.4], anim: 'run', face: 'happy', s: 0.92 }) }, cam: orb('hero', 0, 11, 2, { rel: true, fov: 44, dist2: 9.5 }),
@@ -224,8 +226,10 @@ export const SHOTS = [
   { id: 's134', f: [4647, 4696], env: 'island', line: 66, house: FAM({ ...ISL, lift: 0.85, kneel: 1 }), cast: { dadIsland: P(0, 21, { at: [0, -3, 21], to: [0, 0, 13.5], anim: 'walk', ry: PI, face: 'moved' }), mom: P(-3, 12.5, { anim: 'idle', face: 'happy', ry: 0.2 }) },
     cam: orb('dadIsland', PI + 0.3, 12, 3, { rel: false, look: [0, -0.5, 0], fov: 42, dist2: 15 }) },
   { id: 's135', f: [4697, 4723], env: 'iceSea', light: 'night', line: 66, house: FAM({ at: [8, 0], to: [-4, 0], ry: -PI / 2 }), cam: orb([2, 16, 0], 0.35, 96, 2, { fov: 52 }) },
-  { id: 's136', f: [4724, 4749], env: 'town', line: 66, house: FAM({ legsOut: 1, lift: 0.5 }), cast: { hero: P(-9.6, 10.9, { anim: 'idle', face: 'happy', s: 0.92 }), dadIsland: P(-11.4, 10.9, { anim: 'idle', face: 'happy' }), mom: P(-7.6, 10.9, { anim: 'idle', face: 'happy' }) },
-    cam: { p: [-9.6, 15, 30], l: [-9.6, 14.5, 10], fov: 44 } },
+  { id: 's136', f: [4724, 4749], env: 'town', line: 66, house: FAM({ legsOut: 1, lift: 0.5 }), lightOverride: { exposure: 1.5, hemi: ['#a9b8ff', '#4a5a90', 1.5] },
+    // ba người đứng giữa khoảng trống cầu thang (2 cột ±3.6 không che), camera chính diện + zoom OUT, sáng hơn (góp ý f4739)
+    cast: { hero: P(0, 10.9, { anim: 'idle', face: 'happy', s: 0.92 }), dadIsland: P(-2.1, 10.9, { anim: 'idle', face: 'happy' }), mom: P(2.1, 10.9, { anim: 'idle', face: 'happy' }) },
+    cam: { p: [0, 15.5, 27], l: [0, 14.5, 10.9], p2: [0, 16, 35], fov: 44, ease: 'linear' } },
 
   // ===== 15 · Tủ lạnh đầy thư nhớ nhà =====
   { id: 's137', f: [4750, 4813], env: 'town', line: 67, house: FAM(walkX(-40, -10)), cam: orb([-25, 16, 36], -0.6, 90, 0, { fov: 52, yaw2: -0.4 }) },

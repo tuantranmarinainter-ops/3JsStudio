@@ -27,7 +27,8 @@ export default function build(g, e, H) {
     PEN.push({ o, sz, hx: 14 + col * 3.1 + (hash(i, 42) - 0.5) * 1.6 + (row % 2) * 1.2, hz: 27 + row * 3.6 + (hash(i, 43) - 0.5) * 1.8, face: hash(i, 44) * 1.4 - 0.2, ph: hash(i, 45) * 6, lag: hash(i, 46) * 0.9 });
   }
   e.penguins = PEN.map((p) => p.o);
-  for (let i = 0; i < 14; i++) { const o = pf(['boulder-field-cluster-08e364', 'rock-outcrop-158ac3', 'dwarf-pine-mat-faee77'][i % 3], 1.4 + hash(i, 9)); if (o) place(g, o, (hash(i, 1) - 0.5) * 220, 0, -30 - hash(i, 2) * 120 + (i % 3 === 0 ? 100 : 0), hash(i, 3) * 6); }
+  // góp ý #28: bỏ 'dwarf-pine-mat' (vật xanh lạ trên tuyết)
+  for (let i = 0; i < 14; i++) { const o = i % 3 === 2 ? null : pf(['boulder-field-cluster-08e364', 'rock-outcrop-158ac3'][i % 3], 1.4 + hash(i, 9));  const ox = (hash(i, 1) - 0.5) * 220, oz = -30 - hash(i, 2) * 120 + (i % 3 === 0 ? 100 : 0); if (o && !(ox > 0 && ox < 70 && oz > 5 && oz < 60)) place(g, o, ox, 0, oz, hash(i, 3) * 6); }
   e.snow = fxSnow(THREE, { count: 900, area: [120, 60, 120], speed: 3, size: 0.45, wind: [3, 0] }); g.add(e.snow.obj);
   // Dòng thời gian cánh cụt: t<TA đứng thành đàn (ảnh bưu thiếp, cảnh bố); TA..PT0 ẩn; PT0 đi vào từ TRÁI (s047), tụ trước nhà (s048),
   // TL (sau s049, ngoài khung) quay đi bước ra bên phải rồi biến mất → s081/s082 KHÔNG còn cánh cụt đứng chết.

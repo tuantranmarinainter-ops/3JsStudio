@@ -15,13 +15,61 @@ import { smoothFlash } from '../flash.js';
 
 export default function build(g, e, H) {
   const { THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
-  g.add(plane(900, 900, mat('#5f9d4e'), 0, 'lawn'));
-  const road = plane(900, 18, mat('#3d4049', { roughness: 0.9 }), 0.05, 'road'); road.position.z = 36; g.add(road);
+  // --- chất liệu đất/cỏ/nhựa (góp ý 2026-11-12 #1 #4): texture nhiễu lát được, tất định (hash), có bumpMap; hố đất mép gồ ghề + cục đất ---
+  const noiseCanvas = (seed, contrast, cells, speck = 0) => {
+    const S = 256, cv = document.createElement('canvas'); cv.width = cv.height = S; const cx = cv.getContext('2d'), img = cx.createImageData(S, S);
+    const lat = (i, j, c, o) => hash((((i % c) + c) % c) * 131 + (((j % c) + c) % c), seed + o);
+    const vn = (x, y, c, o) => { const i = Math.floor(x), j = Math.floor(y), fx = x - i, fy = y - j, u = fx * fx * (3 - 2 * fx), v = fy * fy * (3 - 2 * fy);
+      return (lat(i, j, c, o) * (1 - u) + lat(i + 1, j, c, o) * u) * (1 - v) + (lat(i, j + 1, c, o) * (1 - u) + lat(i + 1, j + 1, c, o) * u) * v; };
+    for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+      const n = 0.5 * vn(x / S * cells, y / S * cells, cells, 0) + 0.3 * vn(x / S * cells * 2, y / S * cells * 2, cells * 2, 1) + 0.2 * vn(x / S * cells * 4, y / S * cells * 4, cells * 4, 2);
+      let k = 1 + (n - 0.5) * contrast; if (speck && hash(y * S + x, seed + 9) > 1 - speck) k *= 0.6;
+      const o = (y * S + x) * 4; img.data[o] = img.data[o + 1] = img.data[o + 2] = Math.min(255, 235 * k); img.data[o + 3] = 255;
+    }
+    cx.putImageData(img, 0, 0); return cv;
+  };
+  const tiled = (cv, rx, ry = rx, srgb = true) => { const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = 4; if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; };
+  const grassCv = noiseCanvas(11, 0.55, 8, 0.03), asphCv = noiseCanvas(12, 0.4, 10, 0.06), dirtCv = noiseCanvas(13, 0.9, 8, 0.05);
+  g.add(plane(900, 900, mat('#6aa957', { map: tiled(grassCv, 90), bumpMap: tiled(grassCv, 90, 90, false), bumpScale: 0.6 }), 0, 'lawn'));
+  const road = plane(900, 18, mat('#464a54', { roughness: 0.9, map: tiled(asphCv, 90, 2), bumpMap: tiled(asphCv, 90, 2, false), bumpScale: 0.4 }), 0.05, 'road'); road.position.z = 36; g.add(road);
   for (const z of [26, 46]) { const sw = plane(900, 3, mat('#b9b6ad'), 0.08, 'sidewalk'); sw.position.z = z; g.add(sw); }
   for (let i = -40; i < 40; i++) { const s = plane(5, 0.5, mat('#f4f1e1'), 0.1, 'stripe'); s.position.set(i * 11, 0.1, 36); g.add(s); }
   for (const x of [-60, 70]) for (let i = 0; i < 7; i++) { const s = plane(1.4, 14, mat('#f4f1e1'), 0.1, 'crosswalk'); s.position.set(x + i * 2.6, 0.11, 36); g.add(s); }
-  const dirt = plane(36, 30, mat('#5a4330'), 0.06, 'dirt_lot'); dirt.name = 'dirt_lot'; dirt.visible = false; g.add(dirt);
-  const hole = plane(26, 20, mat('#2e2219'), 0.07, 'lot_hole'); hole.visible = false; g.add(hole);
+  // blob: lưới cực (vòng × cung), biên lệch theo nhiễu 1D có seed (mép gồ ghề, không vuông); hf(u,θ)→cao độ, cf(u,θ,out)→màu đỉnh
+  const blob = (rx, rz, seed, name, hf, cf, rings = 14, segs = 72) => {
+    const pos = [], col = [], uv = [], idx = [], c = new THREE.Color();
+    const edge = (a) => { let r = 1; for (let o = 1; o <= 4; o++) r += (hash(o * 7, seed) - 0.5) * 0.5 / o * Math.sin(a * (o * 2 + 1) + hash(o, seed + 3) * 6.28) + (hash(o * 5, seed + 1) - 0.5) * 0.16 / o * Math.sin(a * (o * 5 + 3) + hash(o, seed + 5) * 6.28); return r; };
+    for (let ri = 0; ri <= rings; ri++) for (let si = 0; si < segs; si++) {
+      const u = ri / rings, a = si / segs * Math.PI * 2, R = edge(a) * Math.pow(u, 0.9); const x = Math.cos(a) * rx * R, z = Math.sin(a) * rz * R;
+      pos.push(x, hf(u, a), z); cf(u, a, c); col.push(c.r, c.g, c.b); uv.push(x / 9, z / 9);
+    }
+    for (let ri = 0; ri < rings; ri++) for (let si = 0; si < segs; si++) { const a = ri * segs + si, b = ri * segs + (si + 1) % segs, d = (ri + 1) * segs + si, e = (ri + 1) * segs + (si + 1) % segs; idx.push(a, b, d, b, e, d); }
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    geo.setIndex(idx); geo.computeVertexNormals();
+    const m = new THREE.Mesh(geo, mat('#ffffff', { vertexColors: true, emissive: '#2a1a0e', emissiveMap: tiled(dirtCv, 1), map: tiled(dirtCv, 1), bumpMap: tiled(dirtCv, 1, 1, false), bumpScale: 1.6, roughness: 0.96 })); m.name = name; m.receiveShadow = true; m.castShadow = true; return { m, edge };
+  };
+  const clods = (cnt, rx, rz, u0, u1, seed, edge, s0, s1, base) => {   // cục đất vỡ rải quanh mép (InstancedMesh, tất định)
+    const im = new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1, 0), mat('#ffffff', { flatShading: true, roughness: 1 }), cnt); const mx = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), cc = new THREE.Color();
+    for (let i = 0; i < cnt; i++) {
+      const a = hash(i, seed) * 6.283, u = u0 + hash(i, seed + 1) * (u1 - u0), R = edge(a) * u, s = s0 + Math.pow(hash(i, seed + 2), 2.2) * (s1 - s0);
+      e.set(hash(i, seed + 3) * 6, hash(i, seed + 4) * 6, hash(i, seed + 5) * 6); q.setFromEuler(e);
+      mx.compose(new THREE.Vector3(Math.cos(a) * rx * R, s * 0.3, Math.sin(a) * rz * R), q, new THREE.Vector3(s * (1 + hash(i, seed + 6) * 0.5), s * 0.7, s * (1 + hash(i, seed + 7) * 0.4))); im.setMatrixAt(i, mx);
+      im.setColorAt(i, cc.set(base).multiplyScalar(0.6 + hash(i, seed + 8) * 0.7));
+    }
+    im.name = 'dirt_clods'; im.castShadow = true; im.receiveShadow = true; return im;
+  };
+  // bãi đất trống: biên lượn, rìa chuyển dần sang cỏ (màu đỉnh xanh nâu ở ngoài rìa), nhấp nhô nhẹ
+  const tmpC = new THREE.Color(), mix = (c, a, b, t) => c.set(a).lerp(tmpC.set(b), Math.min(1, Math.max(0, t)));
+  const dirtB = blob(25, 20, 41, 'dirt_lot', (u, a) => 0.06 + 0.04 * Math.sin(a * 3 + u * 5) * u, (u, a, c) => { mix(c, '#b08455', '#5d6f38', (u - 0.88) / 0.12); c.multiplyScalar(0.85 + 0.3 * hash(Math.floor(u * 9) * 31 + Math.floor(a * 8), 3)); });
+  const dirt = new THREE.Group(); dirt.name = 'dirt_lot'; dirt.add(dirtB.m); dirt.add(clods(40, 25, 20, 0.6, 1.0, 51, dirtB.edge, 0.25, 0.8, '#8a6642')); dirt.visible = false; g.add(dirt);
+  // hố: sàn tối ẩm (y 0.07), thành hố dốc đi lên tới vành đất đùn (cao ~1.3) rồi thoải ra ngoài; vành xen cục đất to
+  const holeH = (u) => { if (u < 0.62) return 0.2; if (u < 0.86) { const w = (u - 0.62) / 0.24; return 0.2 + 1.15 * (0.5 - 0.5 * Math.cos(w * Math.PI)); } return 0.07 + 1.28 * Math.max(0, 1 - (u - 0.86) / 0.14); };
+  const holeB = blob(13, 10, 61, 'lot_hole_mesh', holeH, (u, a, c) => {
+    if (u < 0.62) c.set('#4a3524').multiplyScalar(0.8 + 0.5 * hash(Math.floor(u * 9) * 17 + Math.floor(a * 7), 8));
+    else if (u < 0.86) mix(c, '#3a2a1c', '#6a4c32', Math.pow((u - 0.62) / 0.24, 0.8));
+    else mix(c, '#9a7448', '#5d6f38', Math.pow((u - 0.86) / 0.14, 2));
+  }, 16, 80);
+  const hole = new THREE.Group(); hole.name = 'lot_hole'; hole.add(holeB.m); hole.add(clods(70, 13, 10, 0.78, 1.1, 71, holeB.edge, 0.3, 1.1, '#8a6642')); hole.visible = false; g.add(hole);
   const cols = [['#e3d5b8', '#5b6f8f'], ['#9fc5e8', '#3b4a6b'], ['#f2c6a0', '#7a3b2e'], ['#c8e0b0', '#4a5a3a'], ['#f4f1ea', '#2f6f6a'], ['#e8b4b8', '#5b3b4b']];
   let k = 0;
   for (const x of [-120, 120, 178, -178, 236, -236]) { const [c, r] = cols[k++ % cols.length]; const kh = kenneyHouse(k * 3); if (kh) place(g, kh, x, 0, 0, 0); else { const h = place(g, nbHouse(c, r, k), x, 0, 0, 0, 1.1); nbWins.push(h.userData.win); } }
@@ -114,6 +162,9 @@ export default function build(g, e, H) {
   place(g, K.bush(2.5), -18, 0, 16); place(g, K.bush(2.2), 19, 0, 17);
   for (let i = 0; i < 24; i++) { const f = pickFit(['nature-kit/flower_redA', 'nature-kit/flower_yellowB', 'nature-kit/flower_purpleA'], i, 1.2); if (f) place(g, f, -24 + (i % 12) * 4.2 + hash(i, 2), 0, 18 + Math.floor(i / 12) * 2.5, hash(i, 3) * 6); }
   const moon = place(g, K.moon(34), -170, 170, -420); moon.name = 'moon_town';
-  return { setNight(n) { nbWins.forEach((w) => { w.emissiveIntensity = n * 1.4; }); moon.visible = n > 0.5; }, dirt, hole,
-    update(t, ctx) { const L = LIGHTS[ctx.light || 'night']; life.update(t, !L.night); } };
+  // ghế ngồi hiên (s030: bé ngồi chờ thư). Shot gọi env.seat.userData.want = true + đặt position/rotation (toạ độ thế giới) trong fn mỗi khung;
+  // update() đọc cờ rồi xoá → mọi shot khác không thấy ghế (hàm thuần của shot, tua tới/lui như nhau)
+  const seat = K.chair(); seat.name = 'porch_chair'; seat.scale.setScalar(1.8); seat.visible = false; g.add(seat);
+  return { setNight(n) { nbWins.forEach((w) => { w.emissiveIntensity = n * 1.4; }); moon.visible = n > 0.5; }, dirt, hole, seat,
+    update(t, ctx) { const L = LIGHTS[ctx.light || 'night']; life.update(t, !L.night); seat.visible = !!seat.userData.want; seat.userData.want = false; } };
 }

@@ -35,11 +35,11 @@ import { CLOTH } from './cloth.js';
 import { MAST } from './mastbreak.js';
 import { MATS } from './materials.js';
 
-export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true };
+export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
-  worn: 'Quần áo cũ, bụi (nhân vật)', cloth: 'Vải mềm: buồm + chăn (gió lay, xuyên sáng, vân dệt)', mast: 'Gãy cột buồm trong bão (thử)', skybox: 'Bầu trời xanh vẽ tay (6 ảnh) cho cảnh trời đẹp', stormSky: 'Bầu trời bão nhiều lớp: mây cuộn, trăng viền bạc, chớp trong mây', shotSky: 'Mặt trời/trăng đặt theo từng shot (skySun/skyMoon)', grime: 'Vân sần, bụi (nhà, đường, cảnh)',
+  worn: 'Quần áo cũ, bụi (nhân vật)', cloth: 'Vải mềm: buồm + chăn (gió lay, xuyên sáng, vân dệt)', mast: 'Gãy cột buồm trong bão (thử)', skybox: 'Bầu trời xanh vẽ tay (6 ảnh) cho cảnh trời đẹp', stormSky: 'Bầu trời bão nhiều lớp: mây cuộn, trăng viền bạc, chớp trong mây', shotSky: 'Mặt trời/trăng đặt theo từng shot (skySun/skyMoon)', skyCubic: 'Trời 6 ảnh lọc mượt (bicubic) — hết vỡ ô khi phóng to', skyScale: 'Trời 6 ảnh thu nhỏ ×2 quanh hướng nhìn (đỡ vỡ nét)', grime: 'Vân sần, bụi (nhà, đường, cảnh)',
   foot: 'Bụi / tuyết bốc ở chân nhà', prints: 'Dấu chân trên tuyết', wind: 'Gió tuyết thổi vào mặt', breath: 'Hơi thở trắng (cảnh lạnh)',
   folds: 'Nếp vải vẽ sẵn trên áo quần (v2)', hair2: 'Tóc cụm lởm chởm (v2)', aged: 'Nhà cũ bán thực: sơn tróc, ố, rêu (v2)',
   mats: 'Chất liệu thật: gỗ, giấy, sắt, vải, đá, cát… (v3)',
@@ -50,6 +50,8 @@ export const FX_LABELS = {
   paint: 'Tranh sơn dầu (Kuwahara)',
   ao: 'Che khuất môi trường: tối dịu góc tường, chân đồ vật (AO, tất định)',
   smaa: 'Khử răng cưa SMAA (cuối chuỗi, nên bật cùng sơn dầu / AO)',
+  grass: 'Cỏ mọc + gió thổi (bãi cỏ đảo)',
+  sway: 'Cây dừa đung đưa theo gió',
   lite: 'Bóng đổ nhẹ (tắt bóng kính, vật phát sáng, hạt, vật nhỏ) — mở/xuất nhanh hơn',
 };
 
@@ -181,7 +183,7 @@ export function createPost(THREE, stage, { actors = [], paint: paintOpts = {}, a
   const _f = new THREE.Vector3();
 
   function render({ t = 0, light = 'day', env = '', focus = null, flash = 0 } = {}) {
-    const AF = (globalThis.__autoFx ||= {}); AF.foot = fx.foot; AF.prints = fx.prints; AF.wind = fx.wind; AF.breath = fx.breath; AF.ibl = fx.ibl; AF.scans = fx.scans; AF.lite = fx.lite; AF.skybox = fx.skybox; AF.stormSky = fx.stormSky; AF.shotSky = fx.shotSky;   // engine/shots.js hiệu ứng tự động
+    const AF = (globalThis.__autoFx ||= {}); AF.foot = fx.foot; AF.prints = fx.prints; AF.wind = fx.wind; AF.breath = fx.breath; AF.ibl = fx.ibl; AF.scans = fx.scans; AF.lite = fx.lite; AF.skybox = fx.skybox; AF.stormSky = fx.stormSky; AF.shotSky = fx.shotSky; AF.skyCubic = fx.skyCubic; AF.skyScale = fx.skyScale; AF.grass = fx.grass; AF.sway = fx.sway;   // engine/shots.js hiệu ứng tự động
     GRUNGE.char.value = fx.worn ? 1 : 0; GRUNGE.build.value = fx.grime ? 1 : 0;   // engine/grunge.js (vân bụi trên vật liệu)
     GRUNGE.aged.value = fx.aged ? 1 : 0;
     CLOTH.on.value = fx.cloth ? 1 : 0;   // engine/cloth.js
@@ -230,7 +232,7 @@ export function createPost(THREE, stage, { actors = [], paint: paintOpts = {}, a
     get paintDepth() { return paintDepth; }, set paintDepth(v) { paintDepth = ['own', 'ao', 'flat'].includes(v) ? v : 'own'; },
     get smaaReady() { return smaaReady; },
     get options() { return { ...fx }; },
-    set(o = {}) { for (const k of Object.keys(FX_DEFAULTS)) if (o[k] !== undefined) fx[k] = !!o[k]; CLOTH.on.value = fx.cloth ? 1 : 0; MAST.on.value = fx.mast ? 1 : 0; const AF = (globalThis.__autoFx ||= {}); for (const k of ['foot', 'prints', 'wind', 'breath', 'ibl', 'scans', 'sea2', 'skybox', 'stormSky', 'shotSky']) AF[k] = fx[k]; return { ...fx }; },
+    set(o = {}) { for (const k of Object.keys(FX_DEFAULTS)) if (o[k] !== undefined) fx[k] = !!o[k]; CLOTH.on.value = fx.cloth ? 1 : 0; MAST.on.value = fx.mast ? 1 : 0; const AF = (globalThis.__autoFx ||= {}); for (const k of ['foot', 'prints', 'wind', 'breath', 'ibl', 'scans', 'sea2', 'skybox', 'stormSky', 'shotSky', 'skyCubic', 'skyScale', 'grass', 'sway']) AF[k] = fx[k]; return { ...fx }; },
     render, resize,
   };
 }

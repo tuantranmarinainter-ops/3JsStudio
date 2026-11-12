@@ -63,6 +63,10 @@ export default function build(g, e, H) {
   if (e.life) g.add(e.life.group);
   else e.whales = [0, 1, 2].map(() => place(g, K.whale(), 0, 0, 0, 0, 1));
   place(g, K.cloud(2.5), -120, 120, -300); place(g, K.cloud(2), 150, 100, -350);
+  // mây nền lớn (góp ý #20): vành khối mây to quanh chân trời, nhiều lớp — sau nhà/cá voi từ mọi hướng camera. Tất định theo hash.
+  { const list = []; for (let i = 0; i < 26; i++) { const a = (i / 26) * Math.PI * 2 + (hash(i, 31) - 0.5) * 0.25, r = 520 + hash(i, 32) * 260, big = i % 3 === 0;
+      list.push({ x: Math.cos(a) * r, z: Math.sin(a) * r, y: (big ? 90 : 55) + hash(i, 33) * 90, s: big ? 330 + hash(i, 34) * 160 : 170 + hash(i, 35) * 110, ar: 1.7, seed: i, k: 0 }); }
+    e.bgClouds = createCloudPuffs(THREE, { list, seed: 7, drift: [0, 0], name: 'ocean_bg_clouds' }); g.add(e.bgClouds.object); }
 
   // --- bảng màu sea2 ↔ màu cũ: đặt thẳng uniform mỗi khung (water.update không ghi đè các uniform này) ---
   const W = e.sea.water, U = W?.uniforms;

@@ -293,7 +293,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     if (shot.type && resolveType) shot = resolveType(shot);
     held.clear();
     for (const obj of Object.values(props)) if (obj.parent && obj.parent.type !== 'Scene' && obj.parent.name && /Arm$/.test(obj.parent.name)) { obj.visible = false; }
-    const ctx = { focus: [0, 0, 0], light: shot.light, lightOverride: shot.lightOverride, skySun: shot.skySun, skyMoon: shot.skyMoon };
+    const ctx = { focus: [0, 0, 0], light: shot.light, lightOverride: shot.lightOverride, skySun: shot.skySun, skyMoon: shot.skyMoon, skyScale: shot.skyScale };
     const W = prepareSea(shot, k, t);   // lõi biển: đồng hồ/thời tiết/sự kiện TRƯỚC khi đặt vật nổi
     if (W) { ctx.seaWeather = W; ctx.shotLight = shot.light; ctx.shotLightOverride = shot.lightOverride; }
     // env trước (để biết đêm/ngày), camera sau cùng (cần vị trí diễn viên)

@@ -343,7 +343,14 @@ export function propKit(THREE) {
       const red = M('#c0392b');
       box(2.5, n * 0.05 + 0.1, 0.18, red, 0, n * 0.025, 0, 'ribbon_x', g);
       box(0.18, n * 0.05 + 0.1, 1.8, red, 0, n * 0.025, 0, 'ribbon_z', g);
-      for (const s of [-1, 1]) { const b = box(0.6, 0.1, 0.35, red, s * 0.35, n * 0.05 + 0.08, 0, 'bow', g); b.rotation.y = s * 0.6; }
+      // nơ đỏ thật: 2 vòng cánh nơ (xuyến dẹt) + nút giữa + 2 tà nơ (góp ý #37)
+      const bow = group('bow'); bow.position.set(0, n * 0.05 + 0.12, 0); g.add(bow);
+      for (const s of [-1, 1]) {
+        const loop = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.085, 8, 18), red); loop.name = 'bow_loop_' + (s < 0 ? 'L' : 'R');
+        loop.scale.set(1.15, 0.8, 0.7); loop.position.set(s * 0.34, 0.06, 0); loop.rotation.x = Math.PI / 2 - 0.25; loop.rotation.z = s * 0.35; loop.castShadow = true; bow.add(loop);
+        const tail = box(0.16, 0.04, 0.62, red, s * 0.2, 0.02, 0.42, 'bow_tail_' + (s < 0 ? 'L' : 'R'), bow); tail.rotation.y = -s * 0.4;
+      }
+      const knot = new THREE.Mesh(new THREE.SphereGeometry(0.17, 12, 10), red); knot.name = 'bow_knot'; knot.scale.set(1, 0.75, 1); knot.position.y = 0.08; bow.add(knot);
       return g;
     },
   };

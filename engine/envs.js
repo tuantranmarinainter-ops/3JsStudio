@@ -332,7 +332,9 @@ export function createEnvs(THREE, stage, K0, A = null) {
     for (const m of Object.values(skyboxes)) m.visible = m === box;
     for (const en of Object.values(envs)) if (en.stormMesh) en.stormMesh.visible = en.stormMesh === sto;
     if (box) {
-      box.position.copy(stage.camera.position);
+      box.position.copy(stage.camera.position); box.userData.setCubic?.(AFX.skyCubic ?? true);   // ô 'skyCubic': lọc mượt ảnh trời
+      { stage.camera.getWorldDirection(_sf); const k = (AFX.skyScale ?? true) ? (ctx.skyScale ?? e.skyScale ?? box.userData.def.scale ?? 2) : 1;   // ô 'skyScale': trời nhỏ lại (shot.skyScale / e.skyScale / def.scale)
+        box.userData.setScale?.(k, Math.atan2(_sf.x, _sf.z)); }
       const d = L.dir;   // ngày: mặt trời = hướng nắng (khớp bóng), trăng phía đối diện; đêm: trăng = hướng ánh trăng, mặt trời dưới chân trời
       // mặt trời/trăng thấp ~18° trên chân trời (cùng phương vị với hướng nắng) → lọt vào khung dọc; env có trăng riêng (K.moon) thì giấu trăng của trời
       const az = Math.hypot(d[0], d[2]) || 1, low = (sx, sz) => [sx * d[0] / az, 0.42, sz * d[2] / az];

@@ -62,6 +62,7 @@ export const MAT_KINDS = {
   whale:       { r: 0.3, m: 0, pat: 'MOTTLE', sc: 1.0, bump: 0.3, label: 'Da ướt (cá voi)' },
   organic:     { r: 0.7, m: 0, pat: 'MOTTLE', sc: 1.0, bump: 0.4, label: 'Hữu cơ (nấm)' },
   matte:       { r: 0.82, m: 0, pat: 'MATTE', sc: 1.0, bump: 0.3, rmode: 'max', label: 'Mờ chung (mặc định)' },
+  leather:     { r: 0.4, m: 0, pat: 'LEATHER', sc: 1.0, bump: 0.6, sheen: 0.35, label: 'Da thuộc (găng, ủng)' },
 };
 
 // Luật phân loại: [regex trên "đường-dẫn-object [tên-vật-liệu]" viết thường, chất liệu]. Luật đầu khớp thắng; null = bỏ qua.
@@ -81,6 +82,7 @@ export const MAT_RULES = [
   [/\/sail\d*\s\[|curtain|blanket|mattress|pillow|\brug\b|scarf|skirt|\bhood\b|hoodie|(torso|leg)_mesh\b/, 'fabric'],
   [/beanie|\/hat\b/, 'knit'],
   [/hair|braid|beard/, 'hair'],
+  [/dadisland.*(right|left)(hand|foot)/, 'leather'],   // găng + ủng da của bố ở đảo (góp ý #35)
   [/(upper|lower)(torso|arm|leg)|(right|left)(hand|foot)/, 'fabric'],
   [/windshield|headlight|taillight|gable_window|window_front|glass\/glass/, 'glass'],
   [/fridge|bowl/, 'enamel'],
@@ -246,6 +248,12 @@ const PAT = {
   SHELL: { n: [['p', 2]], f: [[2]], code: `float ring = 0.5 + 0.5 * sin(length(uvp) * 22.0 + sN1 * 3.0); ring = mix(0.5, ring, aa(4.0)); mtA = mix(0.9, 1.05, ring) * mix(0.94, 1.03, sF1); mtHgt = ring * 0.5;` },
   FUR: { n: [['p', [20, 5, 20]]], f: [[1.4]], code: `float st = mix(0.5, sN1, aa(20.0)); mtA = mix(0.87, 1.08, st) * mix(0.94, 1.04, sF1); mtHgt = st;` },
   MOTTLE: { f: [[0.8]], n: [['p', 12]], code: `float mo = sF1; mtA = mix(0.86, 1.06, mo); mtHgt = mo * 0.6 + mix(0.5, sN1, aa(12.0)) * 0.4;` },
+  // DA THUỘC (thêm cuối bảng → id các kiểu cũ không đổi): hạt da (voronoi, viền ô tối) + nếp nhăn (đường noise mảnh) + bóng nhẹ nhờ r thấp
+  LEATHER: { v: 34, f: [[1.1, 3]], n: [['p', [2.2, 5.5, 2.2]]], code: `
+    vec2 v = sV; float gk = aa(34.0); float gr = mix(0.6, smoothstep(0.0, 0.22, v.y - v.x), gk);
+    float cr = (1.0 - smoothstep(0.0, 0.07, abs(sN1 * 2.0 - 1.0))) * aa(2.5);
+    mtA = mix(0.8, 1.08, sF1) * mix(0.9, 1.0, gr) * (1.0 - cr * 0.4);
+    mtHgt = gr * 0.3 + 0.35 - cr * 0.9; mtRv = cr * 0.18 - (sF1 - 0.5) * 0.12;` },
 };
 
 // HỌ chất liệu: mỗi họ = 1 shader (khoá program `|mat_<họ>`); các loại trong họ chỉ khác nhau qua UNIFORM (r, m, tint,
