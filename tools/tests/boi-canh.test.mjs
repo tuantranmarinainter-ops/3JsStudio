@@ -219,6 +219,23 @@ for (const env of ENV17) {
   });
 }
 
+test('sea: không vật seaDecor nào có tâm trong bán kính tối thiểu quanh gốc (phao, đá, đảo, bọt)', T, async () => {
+  const r = await page.evaluate(async ({ tTown }) => {
+    const s = window.__shots.list.find((x) => x.env === 'town'); const cu = s.env; s.env = 'sea';
+    const AF = (globalThis.__autoFx ||= {}), a0 = AF.seaDecor; AF.seaDecor = true;
+    try {
+      await window.renderAt(tTown);
+      const dec = window.__stage.scene.getObjectByName('env_sea').getObjectByName('open_sea_decor');
+      const min = dec.userData.banKinhToiThieu, TH = window.THREE, bad = [], vat = [];
+      for (const c of dec.children) { if (c.name === 'open_sea_buoys') vat.push(...c.children); else vat.push(c); }
+      for (const o of vat) { const b = new TH.Box3().setFromObject(o), c = b.getCenter(new TH.Vector3()); const d = Math.hypot(c.x, c.z); if (d < min) bad.push(o.name + ':' + d.toFixed(1)); }
+      return { min, n: vat.length, bad };
+    } finally { s.env = cu; AF.seaDecor = a0; await window.renderAt(tTown); }
+  }, { tTown });
+  assert.ok(r.min >= 30 && r.n >= 15, JSON.stringify(r));
+  assert.deepEqual(r.bad, [], 'vật decor quá gần gốc: ' + r.bad);
+});
+
 test('tang: vật gắn tầng nằm ngoài camera.far KHÔNG được đếm; vào tầm nhìn thì đếm', T, async () => {
   const r = await page.evaluate(async (tTown) => {
     await window.renderAt(tTown);

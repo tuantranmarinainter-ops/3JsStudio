@@ -18,10 +18,10 @@ export default function build(g, e, H) {
   let dec = null;
   {
     const cone = new THREE.ConeGeometry(0.9, 2.2, 10), bar = new THREE.CylinderGeometry(0.12, 0.12, 2.4, 6), cap = new THREE.SphereGeometry(0.28, 8, 6);
-    dec = new THREE.Group(); dec.name = 'open_sea_decor'; g.add(dec);
+    dec = new THREE.Group(); dec.name = 'open_sea_decor'; dec.userData.banKinhToiThieu = 30; g.add(dec);   // test: tâm mọi vật decor cách gốc >= 30 stud (không đè chỗ nhà/nhân vật)
     const phaos = new THREE.Group(); phaos.name = 'open_sea_buoys';
     for (let i = 0; i < 4; i++) {
-      const a = hash(i, 11) * 6.283, r = 26 + hash(i, 12) * 22, b = new THREE.Group(); b.name = 'buoy_' + i;
+      const a = hash(i, 11) * 6.283, r = 32 + hash(i, 12) * 16, b = new THREE.Group(); b.name = 'buoy_' + i;
       const body = new THREE.Mesh(cone, mat(i % 2 ? '#e8e4d8' : '#d6452f')); body.position.y = 0.5; b.add(body);
       const mast = new THREE.Mesh(bar, mat('#444a52')); mast.position.y = 2.4; b.add(mast);
       const top = new THREE.Mesh(cap, mat('#ffd34e', { emissive: '#ffb020', emissiveIntensity: 0.2 })); top.position.y = 3.7; b.add(top);
@@ -36,14 +36,19 @@ export default function build(g, e, H) {
         const s = i === 0 ? 7 : 2.5 + hash(i + 5 * k, 21) * 3; m.scale.set(s, s * (0.8 + hash(i + 5 * k, 22) * 0.5), s * 0.9); m.position.set(i === 0 ? 0 : (hash(i + 5 * k, 23) - 0.5) * 14, s * 0.35, i === 0 ? 0 : (hash(i + 5 * k, 24) - 0.5) * 9);
         m.castShadow = true; rock.add(m);
       }
-      const a = (k + 0.1 + hash(k, 25) * 0.9) * 1.5708, r = 48 + hash(k, 26) * 22;   // lệch góc + bán kính lớn để không thành vòng đều rock.position.set(Math.sin(a) * r, -1.2, -Math.cos(a) * r);
+      const a = (k + 0.1 + hash(k, 25) * 0.9) * 1.5708, r = 48 + hash(k, 26) * 22;   // lệch góc + bán kính lớn để không thành vòng đều
+      rock.position.set(Math.sin(a) * r, -2.4, -Math.cos(a) * r);   // chân chìm sâu dưới nước
+      // vành bọt phẳng quanh chân đá (tất định, cố định theo mặt nước y=0) để đá không lơ lửng
+      const foam = new THREE.Mesh(new THREE.RingGeometry(5.5, 10.5, 28), new THREE.MeshBasicMaterial({ color: '#f2f6f8', transparent: true, opacity: 0.5, depthWrite: false, side: THREE.DoubleSide }));
+      foam.name = 'open_sea_foam'; foam.rotation.x = -Math.PI / 2; foam.position.set(0, 2.4 + 0.25, 0); foam.scale.set(1.15, 1, 0.9); foam.renderOrder = 2; rock.add(foam);
       dec.add(ganTang(rock, 'mid'));
     }
     for (let k = 0; k < 8; k++) {
       const isl = new THREE.Group(); isl.name = 'open_sea_islet_' + k;
-      const w = 12 + hash(k, 27) * 8, h = 9 + hash(k, 28) * 6;
+      const w = 7 + hash(k, 27) * 5, h = 5 + hash(k, 28) * 4;   // bán kính đảo (Dodecahedron(1) co giãn theo bán kính)
       const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat(['#5f7a62', '#6b8470', '#56705c'][k % 3], { flatShading: true, roughness: 1 })); m.scale.set(w, h, w * 0.8); m.position.y = h * 0.25; isl.add(m);
-      const a = (k + (hash(k, 29) - 0.5) * 1.3) * 0.7854 + 0.2, r = 62 + hash(k, 30) * 34; isl.position.set(Math.sin(a) * r, -1, -Math.cos(a) * r);
+      const a = ([28, 70, 110, 150, 205, 250, 300, 345][k] + (hash(k, 29) - 0.5) * 24) * 0.017453, r = (k ? 62 : 50) + hash(k, 30) * (k ? 30 : 12);   // góc lệch khỏi -z (độ) rải không đều; đảo 0 gần hơn để lọt khung camera cao nhìn xuống
+      isl.position.set(Math.sin(a) * r, -1, -Math.cos(a) * r);
       dec.add(ganTang(isl, 'back'));
     }
     const far = new THREE.Group(); far.name = 'open_sea_far';
