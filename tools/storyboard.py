@@ -50,6 +50,7 @@ COLS = {
     'camera': ['camera', 'may', 'may quay', 'goc may', 'ghi chu may'], 'text': ['text', 'chu', 'chu noi', 'chu tren hinh', 'on-screen'],
     'sfx': ['sfx', 'am thanh', 'tieng dong', 'tieng'], 'env': ['env'], 'light': ['light', 'anh sang'], 'notes': ['notes', 'ghi chu', 'note'],
     'withAnim': ['withanim', 'dong tac 2', 'hanh dong 2'], 'withFace': ['withface', 'mat 2', 'bieu cam 2'],
+    'read': ['read', 'vat can doc'], 'stance': ['stance', 'tu the'],
 }
 COL_OF = {a: k for k, al in COLS.items() for a in al}
 
@@ -74,8 +75,90 @@ FACE_WORDS = [('ngac nhien', 'surprised'), ('bat ngo', 'surprised'), ('so', 'sca
 PLACE_WORDS = [('quang truong', 'square'), ('nha toi', 'home'), ('nha', 'home'), ('san', 'yard'), ('cua hang', 'shop'), ('tiem', 'shop'),
                ('pho', 'street'), ('duong', 'street'), ('nga tu', 'crossroad'), ('cong vien', 'park'), ('giua', 'center')]
 TOWN_PLACES = {'square', 'home', 'yard', 'shop', 'street', 'crossroad', 'park', 'center'}
-ENVS = {'town', 'forest', 'hawaii', 'brazil', 'sahara', 'antarctica', 'ocean', 'mountain', 'snowNight', 'iceSea', 'storm', 'shipStorm',
-        'island', 'reef', 'kitchen', 'bedroom', 'kenneyTown'}
+ENVS_CU = {'town', 'forest', 'hawaii', 'brazil', 'sahara', 'antarctica', 'ocean', 'mountain', 'snowNight', 'iceSea', 'storm', 'shipStorm',
+           'island', 'reef', 'kitchen', 'bedroom', 'kenneyTown'}
+
+
+def envs_tren_dia():
+    """mọi engine/envs/<tên>.js có `export default` (= bộ dựng env; bỏ tệp phụ tang.js, gio-thoi-tiet.js, goc-mau.js…)."""
+    d = ROOT / 'engine' / 'envs'
+    if not d.is_dir(): return set()
+    return {f.stem for f in d.glob('*.js') if re.search(r'^export default\b', f.read_text(encoding='utf-8', errors='ignore'), re.M)}
+
+
+# tên env = danh sách cũ + file env có trên đĩa (env mới chỉ cần thả file engine/envs/<tên>.js). Tên vừa là `place` vừa là env → env thắng.
+ENVS = ENVS_CU | envs_tren_dia()
+
+
+def them_env(names):
+    """thêm tên env (cờ --env a,b: env sắp có mà file chưa dựng)."""
+    ENVS.update(n for n in names if n)
+
+
+# vị trí đứng của diễn viên bên trong env riêng (place '<env>_in', toạ độ của env, env dựng tại gốc). Không có → [0,0,0].
+ENV_CHO_DUNG = {'bedroom': ([4, 0, 3], 0), 'kitchen': ([0, 0, 4], 0), 'factory': ([0, 0, 3], 0)}
+
+# ---- đạo cụ theo kịch bản (engine/props-kb.js) ----
+# cụm từ (đã bỏ dấu) → tên gốc ascii. Tên gốc khớp tên đạo cụ đã có trong tập theo tiền tố (nhan → nhan_moi; ket → ket_ga/ket_tien,
+# ưu tiên cùng nơi). Thêm/ghi đè cho từng tập bằng dòng đầu kịch bản `vat <tên_ascii>: <tên Việt>[, <tên Việt 2>]`.
+VAT_ALIAS = [
+    ('bang tin', 'bang_tin'), ('ban do', 'ban_do'), ('dong ho', 'dong_ho'), ('day chuyen', 'day_chuyen'), ('tui tien', 'tui_tien'),
+    ('ket tien', 'ket_tien'), ('ket', 'ket'), ('nhan', 'nhan'), ('vi', 'vi'), ('doi dep', 'doi_dep'), ('dep', 'doi_dep'),
+    ('cuon sach', 'cuon_sach'), ('sach', 'cuon_sach'), ('guong', 'guong'), ('chuong', 'chuong'), ('bang chuyen', 'bang_chuyen'),
+    ('hop nhan', 'hop_nhan'), ('o khoa', 'o_khoa'), ('anh ba', 'anh_ba'), ('buu thiep', 'postcard'), ('tam thiep', 'postcard'),
+    ('hang rao', 'hang_rao'), ('thung go', 'thung_go'), ('ke', 'ke'),
+]
+KHONG_CAM = {'ke', 'guong', 'bang_chuyen', 'ban_do', 'bang_tin', 'hang_rao', 'o_khoa'}   # đồ cố định: không gắn vào tay
+HANH_DONG_CAM = {'hold', 'hug', 'drag', 'putDown', 'sitHold'}
+OBJ_RE = re.compile(r'obj:([A-Za-z_]\w*)')
+
+
+def obj_of(notes):
+    m = OBJ_RE.search(str(notes or ''))
+    return m.group(1) if m else None
+
+
+def _alias_bang(meta):
+    """[(cụm bỏ dấu, tên)] — dòng `vat` của kịch bản trước, cụm dài trước."""
+    bang = [(fold(a), k) for k, al in (meta.get('vat') or {}).items() for a in al] + VAT_ALIAS
+    return sorted(bang, key=lambda x: -len(x[0]))
+
+
+def _khop_ten(base, known, loc_of=None, loc=None, header=False):
+    """tên gốc → tên đạo cụ đã có (bằng nhau hoặc tiền tố base_), ưu tiên cùng nơi; không có thì chính base."""
+    if header or base in known: return base
+    cands = [k for k in known if k.startswith(base + '_')]
+    if loc_of and loc is not None:
+        same = [k for k in cands if loc_of.get(k) == loc]
+        if same: return same[0]
+    return cands[0] if cands else base
+
+
+def tim_vat(text, meta, known, loc_of=None, loc=None, bo_qua=(), chi_cam=False):
+    """mọi vật nêu trong câu (theo thứ tự xuất hiện) → [tên]."""
+    t = ' ' + re.sub(r'[^a-z0-9]+', ' ', fold(text)) + ' '
+    hits, used = [], [False] * len(t)
+    hdr = {k for k in (meta.get('vat') or {})}
+    for w, base in _alias_bang(meta):
+        for m in re.finditer(r'(?<= )' + re.escape(w) + r'(?= )', t):
+            if any(used[m.start():m.end()]): continue
+            for i in range(m.start(), m.end()): used[i] = True
+            if chi_cam and base in KHONG_CAM: continue
+            ten = _khop_ten(base, known, loc_of, loc, header=base in hdr)
+            if ten not in bo_qua: hits.append((m.start(), ten))
+    return [n for _, n in sorted(hits)]
+
+
+def vat_id(text, meta, known, loc_of=None, loc=None):
+    """`vật cần đọc` (tiếng Việt) → tên ascii: tên mã giữ nguyên; dòng `vat` / alias dựng sẵn; không thì slug 3 chữ đầu."""
+    s = str(text or '').strip()
+    if IDENT.fullmatch(s): return s
+    f = fold(s)
+    for k, al in (meta.get('vat') or {}).items():
+        if any(fold(a) == f for a in al): return k
+    v = tim_vat(s, meta, known, loc_of, loc)
+    if v: return v[0]
+    return '_'.join(re.sub(r'[^a-z0-9]+', ' ', f).split()[:3])
 WHO_WORDS = [('ba noi', 'grandma'), ('ba ngoai', 'grandma'), ('toi', 'hero'), ('be', 'hero'), ('me', 'mom'), ('ba', 'dad'), ('bo', 'dad'),
              ('dan', 'crowd1')]
 MOVE_WORDS = [('day vao', 'push'), ('dolly in', 'push'), ('push', 'push'), ('zoom in', 'push'), ('keo ra', 'pull'), ('lui ra', 'pull'),
@@ -119,6 +202,10 @@ def parse_meta_lines(lines):
             name = k.split(None, 1)[1].strip()
             actors[name] = {kk: _num(vv) for kk, vv in re.findall(r'(\w+)=([^\s,]+)', v)}
         elif fk in ('crowd', 'dam dong', 'dan'): actors['crowd'] = {'count': int(re.findall(r'\d+', v)[0])}
+        elif fk.startswith('vat '):     # vat <tên_ascii>: <tên Việt>[, <tên Việt 2>]   (bảng ánh xạ "vật cần đọc"/vật cầm → đạo cụ)
+            meta.setdefault('vat', {})[k.split(None, 1)[1].strip()] = [x.strip() for x in v.split(',') if x.strip()]
+        elif fk.startswith('nhom '):    # nhom <tên>: a, b, c   (cột "ai" = <tên> → who a, with [b, c])
+            meta.setdefault('nhom', {})[k.split(None, 1)[1].strip()] = [x.strip() for x in v.split(',') if x.strip()]
         elif fk.startswith('place ') or fk.startswith('dia diem '):
             nums = [float(x) for x in re.findall(r'-?\d+(?:\.\d+)?', v)]
             if nums: places[k.split(None, 1)[1].strip()] = {'pos': [nums[0], 0, nums[1] if len(nums) > 1 else 0], 'ry': nums[2] if len(nums) > 2 else 0}
@@ -166,9 +253,24 @@ def read_board(src: Path):
 
 
 # ---------- dựng shot ----------
+def nhom_of(meta):
+    """nhóm diễn viên: dòng `nhom` của kịch bản + mặc định `bears` = mọi actor bear=1 theo thứ tự khai."""
+    g = dict(meta.get('nhom') or {})
+    gau = [n for n, o in (meta.get('actors') or {}).items() if isinstance(o, dict) and o.get('bear')]
+    if gau and 'bears' not in g: g['bears'] = gau
+    return g
+
+
+def town_env(meta):
+    return meta.get('env', 'kenneyTown')
+
+
 def build(meta, rows, src: Path):
     shots, lines, warn = [], [], []
     cur_line = 0
+    groups = nhom_of(meta)
+    TOWN = town_env(meta)
+    cur_env = TOWN
     for i, r in enumerate(rows):
         sid = str(r.get('id') or i + 1)
         sid = f's{int(sid):03d}' if sid.isdigit() else (sid if sid.startswith('s') else 's' + sid)
@@ -194,13 +296,24 @@ def build(meta, rows, src: Path):
                 names = [x.strip() if IDENT.fullmatch(x.strip()) else (match(WHO_WORDS, x) or re.sub(r'\W+', '_', fold(x)).strip('_'))
                          for x in re.split(r'[,+&]| và ', v) if x.strip()]
                 s[key] = names[0] if len(names) == 1 else names
-        # địa điểm / bối cảnh
+        # nhóm (bears) → who = con đầu, with = các con còn lại (+ with cũ), group = tên nhóm
+        if isinstance(s.get('who'), str) and s['who'] in groups:
+            mem = groups[s['who']]
+            s['group'] = s['who']; s['who'] = mem[0]
+            old = s.get('with'); old = old if isinstance(old, list) else [old] if old else []
+            s['with'] = [m for m in mem[1:] if m not in old] + old
+        # địa điểm / bối cảnh: env riêng → env + place '<env>_in' (chỗ đứng trong env); địa điểm thị trấn sau env riêng → ghi lại env thị trấn
         at = r.get('at')
         if at:
-            if at in ENVS: s['env'] = at
+            if at in ENVS and at != TOWN:
+                s['env'] = at; s['at'] = f'{at}_in'
             else:
                 s['at'] = at if IDENT.fullmatch(at) else (match(PLACE_WORDS, at) or re.sub(r'\W+', '_', fold(at)).strip('_'))
+                if cur_env != TOWN: s['env'] = TOWN
         if r.get('env'): s['env'] = r['env']
+        cur_env = s.get('env', cur_env)
+        if r.get('stance'): s['stance'] = r['stance']
+        if r.get('read'): s['_read'] = r['read']
         if r.get('light'): s['light'] = r['light']
         # động tác + biểu cảm
         anim = r.get('anim') if r.get('anim') in ANIMS else (match(ANIM_WORDS, r.get('anim') or r.get('action', '')) if (r.get('anim') or r.get('action')) else None)
@@ -221,7 +334,10 @@ def build(meta, rows, src: Path):
         s['_note'] = '; '.join(x for x in [f"máy: {cam}" if cam else '', f"diễn: {r['action']}" if r.get('action') else '', r.get('notes', '')] if x)
         s['_sfx'] = r.get('sfx', '')
         s['_frame'] = r.get('frame', '')
-        if s['type'] == 'insert' and 'obj' not in s and r.get('notes', '').startswith('obj:'): s['obj'] = r['notes'][4:].strip()
+        o = obj_of(r.get('notes'))
+        if o: s['obj'] = o
+        s['_notes'] = r.get('notes', '')
+        s['_action'] = str(r.get('anim') or r.get('action') or '')
         shots.append(s)
 
     # ---- thời lượng: câu kể ước lượng CPS; shot cùng câu chia phần còn lại ----
@@ -249,6 +365,55 @@ def build(meta, rows, src: Path):
     return shots, lines, total, warn
 
 
+def loc_cua(shots, meta):
+    """nơi của từng shot (nối tiếp như expandShot): env riêng → tên env; thị trấn → tên địa điểm."""
+    TOWN, env, at, out = town_env(meta), town_env(meta), None, []
+    for s in shots:
+        env = s.get('env', env); at = s.get('at', at)
+        out.append(env if env != TOWN else at)
+    return out
+
+
+def ke_dao_cu(shots, meta, lines):
+    """đạo cụ của tập → (props {tên: {kit, at, on?, hold?}}, cảnh báo). Ghi thêm vào shot: read (tên ascii), cast.<ai>.hold.
+    Thứ tự props = lần dùng đầu; `at` = nơi của lần dùng đầu (obj/read; vật chỉ được cầm: nơi lần cầm đầu, hold: True)."""
+    locs, warn, props = loc_cua(shots, meta), [], {}
+    loc_of = {}
+    for s, L in zip(shots, locs):
+        if s.get('obj'): loc_of.setdefault(s['obj'], L)
+    known = set(loc_of) | set(meta.get('vat') or {})
+    hdr = set(meta.get('vat') or {})
+
+    def them(name, L, **kw):
+        if name not in props: props[name] = {'kit': name, 'at': L, **kw}; loc_of.setdefault(name, L)
+        elif props[name].get('hold') and not kw.get('hold'): props[name].pop('hold', None); props[name]['at'] = L
+
+    for s, L in zip(shots, locs):
+        if s.get('obj'):
+            them(s['obj'], L)
+            m = re.search(r'\btren\s+(.+)$', fold(s.get('_notes', '').split('obj:' + s['obj'], 1)[-1]))
+            if m:
+                hit = tim_vat(m.group(1), meta, set())
+                if hit:
+                    base = hit[0]
+                    same = [k for k in known if (k == base or k.startswith(base + '_')) and loc_of.get(k) == L and k != s['obj']]
+                    props[s['obj']].setdefault('on', base if base in hdr else (same[0] if same else base))
+        if s.get('_read'):
+            s['read'] = vat_id(s['_read'], meta, known, loc_of, L)
+            them(s['read'], L)
+        who = s.get('who')
+        if isinstance(who, str) and (s.get('anim') in HANH_DONG_CAM or s.get('_action') in HANH_DONG_CAM):
+            text = s.get('_notes', '') + ' . ' + (re.sub(r'^\[\w+\]\s*', '', lines[s['line'] - 1]['text']) if s.get('line') else '')
+            hit = tim_vat(text, meta, known, loc_of, L, chi_cam=True)
+            if hit:
+                s['cast'] = {**(s.get('cast') or {}), who: {**((s.get('cast') or {}).get(who) or {}), 'hold': hit[0]}}
+                them(hit[0], L, hold=True); known.add(hit[0])
+    for s in shots:
+        if s.get('type') == 'insert' and not s.get('obj') and not s.get('who') and not s.get('read'):
+            warn.append(f"{s['id']}: insert không có obj:<tên> trong ghi chú, không có ai — camera nhắm điểm giữa địa điểm")
+    return props, warn
+
+
 def js(v):
     return json.dumps(v, ensure_ascii=False)
 
@@ -258,21 +423,25 @@ def js_obj(d, order=None):
     return '{ ' + ', '.join(f"{k}: {js(d[k])}" for k in keys if not k.startswith('_')) + ' }'
 
 
-SHOT_ORDER = ['id', 'dur', 'type', 'who', 'with', 'at', 'env', 'light', 'anim', 'face', 'withAnim', 'withFace', 'move', 'side', 'obj', 'text', 'line']
+SHOT_ORDER = ['id', 'dur', 'type', 'who', 'with', 'group', 'at', 'env', 'light', 'anim', 'face', 'withAnim', 'withFace', 'stance', 'move', 'side',
+              'obj', 'read', 'cast', 'text', 'line']
 
 
-def write_episode(ep, meta, shots, lines, total, src, board_file, frames, force):
-    out = ROOT / 'episodes' / ep
+def write_episode(ep, meta, shots, lines, total, src, board_file, frames, force, out=None, props=None, ghi_narration=False):
+    out = Path(out) if out else ROOT / 'episodes' / ep
     if out.exists() and any(out.iterdir()) and not force:
         sys.exit(f'{out} đã có — thêm --force để ghi đè (file khác trong thư mục được giữ nguyên)')
     (out / 'sfx').mkdir(parents=True, exist_ok=True)
     (out / 'storyboard').mkdir(exist_ok=True)
 
-    # địa điểm dùng trong shot mà thị trấn không có → thêm khung vào places
+    # địa điểm dùng trong shot mà thị trấn không có → thêm khung vào places; env riêng → place '<env>_in' (chỗ đứng trong env)
     places = dict(meta.get('places', {}))
     for s in shots:
         a = s.get('at')
-        if isinstance(a, str) and a not in TOWN_PLACES and a not in places and not re.fullmatch(r'house\d+', a):
+        if isinstance(a, str) and a.endswith('_in') and a[:-3] in ENVS and a not in places:
+            pos, ry = ENV_CHO_DUNG.get(a[:-3], ([0, 0, 0], 0))
+            places[a] = {'pos': pos, 'ry': ry}
+        elif isinstance(a, str) and a not in TOWN_PLACES and a not in places and not re.fullmatch(r'house\d+', a):
             places[a] = 'town:center'
     actors = meta.get('actors') or {}
     who_all = set()
@@ -294,12 +463,14 @@ def write_episode(ep, meta, shots, lines, total, src, board_file, frames, force)
         'rule': meta.get('rule', meta.get('luat', '')), 'weakness': meta.get('weakness', meta.get('diem yeu', '')),
         'twist': meta.get('twist', ''), 'solution': meta.get('solution', meta.get('loi giai', '')),
         'env': meta.get('env', 'kenneyTown'), 'light': meta.get('light', 'day'), 'town': meta.get('town', {'blocks': 3}),
-        'actors': actors, 'places': places,
+        'actors': actors, 'places': places, 'props': props or {},
     }
     body = ',\n'.join(f'  {k}: {js(v)}' for k, v in E.items())
     (out / 'episode.js').write_text(
         f"// {ep} — {title}. Sinh bởi tools/storyboard.py từ {board_file.name} (sửa tay tiếp: diễn viên, địa điểm 'town:center' = chưa đặt).\n"
-        f"// Địa điểm thị trấn có sẵn: square, home, yard, shop, street, crossroad, park, center, house1… (engine/town.js)\n"
+        f"// Địa điểm thị trấn có sẵn: square, home, yard, shop, street, crossroad, park, center, house1… (engine/town.js); '<env>_in' = chỗ đứng trong env riêng.\n"
+        f"// props: {{ <tên>: {{ kit: <khoá PROPS_KB (engine/props-kb.js) | hàm propKit>, at: <địa điểm | env>, on?: <đạo cụ đỡ>, hold?: chỉ được cầm,\n"
+        f"//          pos?: [x,y,z], ry? }} }} — không ghi pos: engine/props-kb.js datDaoCu() đặt theo quy tắc (docs/kich-ban-vao.md).\n"
         f"export const EPISODE = {{\n{body},\n}};\n", encoding='utf-8')
 
     # shots.js
@@ -316,10 +487,18 @@ def write_episode(ep, meta, shots, lines, total, src, board_file, frames, force)
     nl = [f'# {title} — lời kể từ storyboard ({board_file.name}). @at = giây shot đầu tiên của câu bắt đầu (tools/tts.py canh đúng mốc).',
           f"@source {meta.get('voice_source', 'capcut')}", f"@narrator {meta.get('narrator', 'BV075_streaming')}"]
     roles = sorted({m.group(1) for L in lines for m in [re.match(r'^\[(\w+)\]', L['text'])] if m})
-    for r in roles: nl.append(f'@voice {r} multi_female_yangguangnv_uranus_bigtts' + ('   # TODO: chọn giọng cho vai' if r not in ('me', 'mom') else ''))
+    for r in roles:
+        if r not in ('me', 'mom'): nl.append(f'# TODO: chọn giọng cho vai {r}')   # chú thích dòng riêng (không đặt sau lệnh @voice)
+        nl.append(f'@voice {r} multi_female_yangguangnv_uranus_bigtts')
     nl.append('')
     for L in lines: nl.append(f"@at {L['at']:.2f} {L['text']}")
-    (out / 'narration.txt').write_text('\n'.join(nl) + '\n', encoding='utf-8')
+    nf = out / 'narration.txt'
+    if nf.exists() and not ghi_narration:   # đã có (có thể đã chỉnh giọng vai tay) → giữ; tools/shot-gen.mjs chỉ cập nhật mốc @at
+        n_cu = sum(1 for l in nf.read_text(encoding='utf-8').splitlines() if l.startswith('@at '))
+        print(f'  · giữ narration.txt đã có ({n_cu} câu @at; kịch bản {len(lines)} câu) — ghi lại: --ghi-narration')
+        if n_cu != len(lines): print(f'  ! narration.txt có {n_cu} câu nhưng kịch bản {len(lines)} câu — kiểm lại hoặc chạy --ghi-narration')
+    else:
+        nf.write_text('\n'.join(nl) + '\n', encoding='utf-8')
 
     # captions.js ước lượng: cụm ~3 chữ chia theo độ dài
     caps = []
@@ -413,7 +592,11 @@ def main():
     ap.add_argument('--force', action='store_true', help='ghi đè tập đã có')
     ap.add_argument('--sheet', action='store_true', help='chụp bảng so khung storyboard | bản dựng (look.mjs)')
     ap.add_argument('--title')
+    ap.add_argument('--out', help='thư mục ra thay cho episodes/<ep> (chạy khô / thử)')
+    ap.add_argument('--env', default='', help='tên env thêm, cách bằng dấu phẩy (env sắp dựng mà engine/envs/<tên>.js chưa có)')
+    ap.add_argument('--ghi-narration', action='store_true', help='ghi đè narration.txt đã có (mặc định giữ: có thể đã chỉnh giọng vai tay)')
     a = ap.parse_args()
+    them_env(a.env.split(','))
     src = Path(a.src).resolve()
     if not src.is_dir(): sys.exit(f'Không thấy thư mục {src}')
     if not re.fullmatch(r'[\w\-]+', a.ep): sys.exit('Tên tập chỉ gồm chữ/số/_/-  (vd ep002)')
@@ -421,12 +604,17 @@ def main():
     if a.title: meta['title'] = a.title
     if not rows: sys.exit(f'{board.name}: không đọc được shot nào (xem docs/kich-ban-vao.md)')
     shots, lines, total, warn = build(meta, rows, src)
+    props, w2 = ke_dao_cu(shots, meta, lines)
+    warn += w2
     # khung: cột frame ghi tên file, không thì shot_<số thứ tự>.png
     frames = find_frames(src, len(shots))
     for k, s in enumerate(shots):
         if s['_frame'] and (src / s['_frame']).exists(): frames[k] = src / s['_frame']
-    out = write_episode(a.ep, meta, shots, lines, total, src, board, frames, a.force)
-    print(f'✓ {out.relative_to(ROOT)}: {len(shots)} shot, {len(lines)} câu kể, {total:.2f} s, {len(frames)} khung storyboard')
+    out = write_episode(a.ep, meta, shots, lines, total, src, board, frames, a.force, out=a.out and Path(a.out).resolve(), props=props,
+                        ghi_narration=a.ghi_narration)
+    try: shown = out.relative_to(ROOT)
+    except ValueError: shown = out
+    print(f'✓ {shown}: {len(shots)} shot, {len(lines)} câu kể, {total:.2f} s, {len(frames)} khung storyboard, {len(props)} đạo cụ')
     for w in warn: print('  ! ' + w)
     print(f'  Xem:  node tools/look.mjs episodes/{a.ep}/index.html --shots all')
     if a.sheet:

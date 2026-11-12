@@ -12,12 +12,18 @@
 //    - time / weather / lookAt (cột `nhìn`) / face / anim ghi ở TỪNG shot (không thừa kế)
 //    - dur >= tối thiểu: cột `tối thiểu` hoặc nguong(epDir).L11 theo loại (không ghi cứng)
 //    - --khop-giong: co giãn dur theo start/end từng câu của narration.json, không dưới tối thiểu
+//    - đạo cụ / diễn viên không phải người (fix C): giữ obj / read (tên ascii do storyboard.py ánh xạ) / stance / group / cast.<ai>.hold;
+//      gấu (actor bear=1) ngồi + idle → anim 'sit'; insert có ai là gấu mà không có obj → camera ngắm mặt gấu ('face:<ai>');
+//      kiểm: insertRead thiếu read, obj/read không có trong EPISODE.props → mã 1 (liệt kê hết, không dừng giữa chừng)
+//    --chi-kiem: chỉ kiểm shots.js + episode.js hiện có (không dựng lại)
+//    --dir=<thư mục>: kịch bản + đầu ra ở thư mục khác (chạy khô), --env=a,b: env sắp có (chuyển cho storyboard.py)
 // Thoát: 0 đạt, 1 lỗi dữ liệu (kịch bản, tập đã có mà thiếu --force, loại shot không dựng được), 2 lỗi môi trường (python, file).
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { SHOT_TYPE_NAMES, expandShot } from '../engine/shottypes.js';
+import { PROPS_KB } from '../engine/props-kb.js';
 import { nguong } from './kiem/luat.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -125,7 +131,8 @@ function ghepKichBan(sh, kb) {
   const ty = kb.read ? 'insertRead' : kb.type;
   if (ty && SHOT_TYPE_NAMES.includes(ty)) o.type = ty;
   if (!kb.read && (o.type === 'establish' || !kb.type) && CO_CHAN.test(bo([kb.narration, kb.notes, kb.camera, kb.action].filter((x) => x && x !== '^').join(' ')))) o.type = 'houseFull';
-  if (kb.read) o.read = ident(kb.read) ? kb.read : slug(kb.read);
+  if (kb.read) o.read = sh.read ?? (ident(kb.read) ? kb.read : slug(kb.read));   // storyboard.py đã ánh xạ tên Việt → tên ascii (bảng alias)
+  if (!o.stance && kb.pose) o.stance = kb.pose;
   if (kb.time) o.time = kb.time;
   if (kb.weather) o.weather = kb.weather;
   if (kb.lookAt) o.lookAt = lookAtOf(kb.lookAt);
@@ -135,7 +142,33 @@ function ghepKichBan(sh, kb) {
   if (hopLe('withAnim')) o.withAnim = kb.withAnim;
   if (hopLe('withFace')) o.withFace = kb.withFace;
   if (typeof kb.min === 'number') o._min = kb.min;
+  if (o.stance === 'sitting' && (!o.anim || o.anim === 'idle')) o.anim = 'sit';
   return o;
+}
+
+// gấu / diễn viên không phải người: insert có ai là gấu mà không có obj (hoặc gấu đang cầm chính obj) → camera ngắm mặt gấu, đẩy vào
+const laGau = (meta, who) => typeof who === 'string' && !!meta.actors?.[who]?.bear;
+export function camGau(s, meta) {
+  if (s.type !== 'insert' || !laGau(meta, s.who) || s.cam?.at !== undefined) return s;
+  const cam = s.cast?.[s.who]?.hold;
+  if (s.obj && cam !== s.obj) return s;   // vật nằm trong cảnh: engine/props-kb.js ganDaoCu() đặt gấu cạnh/trước vật + khung cả hai (cần vị trí lúc chạy)
+  // gấu đang cầm/ôm vật → nhắm vật trên tay (gần mặt gấu, thấy cả hai); không cầm gì → nhắm mặt gấu
+  const c = cam ? { at: 'obj:' + cam, look: [0, 0, 0], dist: 7, dist2: 5.04, h: 0.8 } : { at: 'face:' + s.who, look: [0, -0.6, 0], dist: 5.5, dist2: 3.96, h: 0.5 };
+  return { ...s, cam: { ...c, ...(s.cam || {}) } };
+}
+
+// kiểm đạo cụ: insertRead thiếu read; obj/read/hold không có trong EPISODE.props; kit không có trong PROPS_KB (chỉ cảnh báo: có thể là propKit)
+export function kiemDaoCu(shots, meta) {
+  const loi = [], canh = [], props = meta.props || {};
+  const thieu = new Map();
+  for (const s of shots) {
+    if (s.type === 'insertRead' && !(typeof s.read === 'string' && s.read)) loi.push(`${s.id}: insertRead thiếu "vật cần đọc" (read)`);
+    const ten = [s.obj, s.read, ...Object.values(s.cast || {}).flatMap((c) => [c?.hold, c?.holdL, c?.holdR])].filter((x) => typeof x === 'string' && x);
+    for (const n of ten) if (!props[n]) { if (!thieu.has(n)) thieu.set(n, []); thieu.get(n).push(s.id); }
+  }
+  for (const [n, ids] of thieu) loi.push(`đạo cụ "${n}" không có trong EPISODE.props (shot ${ids.join(', ')})`);
+  for (const [n, p] of Object.entries(props)) { const kit = p?.kit || n; if (!PROPS_KB[kit]) canh.push(`đạo cụ "${n}": kit "${kit}" chưa có trong engine/props-kb.js (PROPS_KB) — propKit hoặc khối giữ chỗ`); }
+  return { loi, canh };
 }
 
 // luật camera dồn dập: sửa cam.dist2 (chỉ ghi đè khoá cần thiết)
@@ -148,6 +181,7 @@ function dungCam(shots, canh, epMeta) {
   const loi = [];
   for (const s of shots) {
     let ex;
+    if (s.type === 'insertRead' && !s.read) continue;      // báo ở kiemDaoCu (một dòng/shot, không ném)
     try { ex = expandShot(s, ctx, state); } catch (e) { loi.push(`${s.id}: ${e.message}`); continue; }
     if (KHONG_DUNG_CAM.has(s.type) || ex.static || s.move === 'static' || s.cam?.dist2 !== undefined) continue;
     const cam = ex.cam || {};
@@ -206,12 +240,23 @@ async function chiKhopGiong(ep, epDir, shotsFile) {
 
 export async function main(argv) {
   const args = argv.filter((a) => !a.startsWith('--'));
-  const force = argv.includes('--force'), khop = argv.includes('--khop-giong'), chiKhop = argv.includes('--chi-khop-giong');
+  const force = argv.includes('--force'), khop = argv.includes('--khop-giong'), chiKhop = argv.includes('--chi-khop-giong'), chiKiem = argv.includes('--chi-kiem');
+  const opt = (k) => { const a = argv.find((x) => x.startsWith(`--${k}=`)); return a ? a.slice(k.length + 3) : null; };
   const ep = args[0];
-  if (!ep || !/^[\w-]+$/.test(ep)) { console.error('Dùng: node tools/shot-gen.mjs <ep> [--force] [--khop-giong]'); return 1; }
-  const epDir = path.join(ROOT, 'episodes', ep), kbFile = path.join(epDir, 'kich-ban.md'), shotsFile = path.join(epDir, 'shots.js');
+  if (!ep || !/^[\w-]+$/.test(ep)) { console.error('Dùng: node tools/shot-gen.mjs <ep> [--force] [--khop-giong] [--chi-kiem] [--dir=<thư mục>] [--env=a,b]'); return 1; }
+  const epDir = opt('dir') ? path.resolve(ROOT, opt('dir')) : path.join(ROOT, 'episodes', ep), kbFile = path.join(epDir, 'kich-ban.md'), shotsFile = path.join(epDir, 'shots.js');
   if (!fs.existsSync(kbFile)) { console.error(`Không thấy ${path.relative(ROOT, kbFile)}`); return 1; }
   if (chiKhop) return chiKhopGiong(ep, epDir, shotsFile);
+  if (chiKiem) {
+    if (!fs.existsSync(shotsFile)) { console.error(`--chi-kiem: chưa có ${path.relative(ROOT, shotsFile)}`); return 1; }
+    const { shots } = await docShotsJs(shotsFile);
+    const meta = (await import(pathToFileURL(path.join(epDir, 'episode.js')).href + '?t=' + Date.now())).EPISODE || {};
+    const { loi, canh } = kiemDaoCu(shots, meta);
+    for (const l of canh) console.log('  · ' + l);
+    for (const l of loi) console.error('  ! ' + l);
+    console.log(`shot-gen ${ep} --chi-kiem: ${shots.length} shot, ${Object.keys(meta.props || {}).length} đạo cụ, ${loi.length} lỗi`);
+    return loi.length ? 1 : 0;
+  }
   if (fs.existsSync(shotsFile) && !force) { console.error(`${path.relative(ROOT, shotsFile)} đã có — thêm --force để dựng lại (ghi đè shots.js, narration.txt, episode.js…)`); return 1; }
 
   const jr = py([path.join('tools', 'kb', 'kichban.py'), kbFile, '--json']);
@@ -224,7 +269,8 @@ export async function main(argv) {
   const kbById = new Map(kb.shots.map((s) => [normId(s.id), s]));
   const canMin = [];
 
-  const sb = py([path.join('tools', 'storyboard.py'), path.relative(ROOT, epDir), ep, '--force']);
+  const sb = py([path.join('tools', 'storyboard.py'), path.relative(ROOT, epDir), ep, '--force',
+    ...(opt('dir') ? ['--out', epDir] : []), ...(opt('env') ? ['--env', opt('env')] : [])]);
   if (sb.error || sb.status !== 0) { console.error('storyboard.py lỗi: ' + (sb.error?.message || sb.stderr || sb.stdout)); return 2; }
   const loc = (sb.stdout.split(/\r?\n/)).filter((l) => !/^\s+! .*loại ".*" không rõ/.test(l));
   console.log(loc.join('\n').trim());
@@ -239,7 +285,10 @@ export async function main(argv) {
   const canh = { in: 0, out: 0 };
   let meta = {};
   try { meta = (await import(pathToFileURL(path.join(epDir, 'episode.js')).href + '?t=' + Date.now())).EPISODE || {}; } catch { /* không có episode.js */ }
+  ghep.forEach((s, i) => { ghep[i] = camGau(s, meta); });
   const loi = dungCam(ghep, canh, meta);
+  const dc = kiemDaoCu(ghep, meta);
+  loi.push(...dc.loi);
 
   const L11 = nguong(epDir).L11;
   const mins = ghep.map((s) => toiThieu({ type: s.type, min: s._min }, L11));
@@ -262,6 +311,9 @@ export async function main(argv) {
 
   const tong = ketQua.reduce((a, s) => a + s.dur, 0);
   console.log(`shot-gen ${ep}: ${ketQua.length} shot, ${tong.toFixed(2)} s; camera zoom-in +${canh.in}, zoom-out +${canh.out}; dur nâng lên tối thiểu: ${nTang}${khop ? '; đã khớp giọng' : ''}`);
+  const nObj = ketQua.filter((s) => s.obj).length, nRead = ketQua.filter((s) => s.read).length, nCam = ketQua.filter((s) => Object.values(s.cast || {}).some((c) => c?.hold)).length;
+  console.log(`  đạo cụ: ${Object.keys(meta.props || {}).length} (shot có obj ${nObj}, read ${nRead}, cầm ${nCam})`);
+  for (const l of dc.canh) console.log('  · ' + l);
   for (const l of loi) console.error('  ! ' + l);
   for (const l of canMin) console.error('  ! ' + l);
   if (khongKb.length) console.error(`shot-gen: ${khongKb.length} shot trong shots.js không có dòng kịch bản (mất time/weather/read/lookAt/min): ${khongKb.join(', ')}`);

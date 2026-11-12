@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / 'tools'))
-from storyboard import fold, match, COL_OF, parse_meta_lines  # noqa: E402,F401
+from storyboard import fold, match, COL_OF, parse_meta_lines, obj_of  # noqa: E402,F401
 
 # cột chỉ có ở kich-ban.md (khoá đã bỏ dấu → khoá shot)
 EXTRA_COLS = {'gio': 'time', 'thoi tiet': 'weather', 'vat can doc': 'read', 'tu the': 'pose', 'toi thieu': 'min', 'nhin': 'lookAt'}
@@ -95,6 +95,8 @@ def doc(path):
             if k in sh:
                 try: sh[k] = _num(sh[k])
                 except ValueError: err(n, f'ô "{k}" không phải số: {sh[k]!r}'); del sh[k]
+        o = obj_of(sh.get('notes'))      # `obj:<tên>` trong ghi chú → đạo cụ của shot (engine/props-kb.js)
+        if o: sh['obj'] = o
         out['shots'].append(sh)
     if head is None: err(1, 'không có bảng shot')
 

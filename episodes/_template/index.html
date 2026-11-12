@@ -13,6 +13,7 @@
     <script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
     <style>
       @font-face { font-family: 'Be Vietnam Pro'; font-weight: 900; font-style: normal; src: url('/assets/fonts/BeVietnamPro-Black.ttf') format('truetype'); }
+      @font-face { font-family: 'Patrick Hand'; font-style: normal; src: url('/assets/fonts/PatrickHand-Regular.ttf') format('truetype'); }
       * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
       #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
@@ -45,6 +46,7 @@
       import { createStage } from '/engine/stage.js';
       import { propKit } from '/engine/props.js';
       import { createEnvs, ENV_ASSETS } from '/engine/envs.js';
+      import { buildPropsKB, datDaoCu, ganDaoCu, noiNhom, PROP_SLOTS } from '/engine/props-kb.js';
       import { createAssetLib } from '/engine/assets.js';
       import { buildTimeline } from '/engine/timeline.js';
       import { createDirector } from '/engine/shots.js';
@@ -59,8 +61,10 @@
       import { CAPTIONS } from '/episodes/_template/captions.js';
 
       await document.fonts.load("900 84px 'Be Vietnam Pro'", 'Việt ữ ầ ặ').catch(() => {});
+      await document.fonts.load("40px 'Patrick Hand'", 'Tiệm gấu').catch(() => {});   // chữ viết tay trên đạo cụ (engine/props-kb.js)
       const q = new URLSearchParams(location.search);
-      const OPTS = { lang: 'vi', subs: q.get('subs') !== '0', voice: q.get('voice') !== '0' };
+      // propsKb: đạo cụ theo kịch bản (EPISODE.props) — tắt: ?props=0 hoặc setOptions({ propsKb: false })
+      const OPTS = { lang: 'vi', subs: q.get('subs') !== '0', voice: q.get('voice') !== '0', propsKb: q.get('props') !== '0' };
       const FPS = EPISODE.fps || 30;
       const stage = createStage(THREE, { canvas: document.getElementById('stage'), ground: null, fov: 40 });
       const K = propKit(THREE);
@@ -69,18 +73,36 @@
       const envs = createEnvs(THREE, stage, K, A);
       const town = buildTown(THREE, A, { seed: EPISODE.seed ?? 1, ...(EPISODE.town || {}) });
       registerTownEnv(envs, stage, town, { name: 'kenneyTown', light: EPISODE.light || 'day' });
+      const townEnv = EPISODE.env || 'kenneyTown';
+      // env riêng của tập (shot.env): env chưa có trong engine/envs.js (import tĩnh) → nạp động engine/envs/<tên>.js (export default bộ dựng,
+      //   tuỳ chọn LIGHT, ASSETS, PROP_SLOTS). Chưa có file → env tạm (sàn trống) + cảnh báo, phim vẫn chạy.
+      const slots = { ...PROP_SLOTS };
+      for (const n of [...new Set(SHOTS.map((s) => s.env).filter(Boolean))]) {
+        if (n === townEnv || n === 'kenneyTown') continue;
+        let m = null;
+        try { m = await import(`/engine/envs/${n}.js`); } catch (e) { if (!envs.envs[n]) console.warn(`[env] chưa có engine/envs/${n}.js → env tạm (sàn trống):`, e?.message || e); }
+        if (m?.PROP_SLOTS) slots[n] = { ...(slots[n] || {}), ...m.PROP_SLOTS };
+        if (envs.envs[n]) continue;
+        if (m?.ASSETS?.length) await A.load(m.ASSETS);
+        envs.define(n, m?.LIGHT || 'day', m?.default || ((g, e, H) => { g.add(H.plane(80, 80, H.mat('#8d8a84'), 0, n + '_san_tam')); }));
+      }
       const places = resolvePlaces(EPISODE.places, town.places);
       const actors = await buildCast(THREE, EPISODE.actors, { seed: EPISODE.seed ?? 1 });
       for (const a of Object.values(actors)) stage.scene.add(a.root);
-      // shot ngắn theo loại → cam/cast đầy đủ (liên tục địa điểm + vị trí diễn viên giữa các shot)
-      const shots = expandShots(SHOTS, { places, crowd: crowdNames(EPISODE.actors), env: EPISODE.env || 'kenneyTown', light: EPISODE.light, fps: FPS });
+      // ĐẠO CỤ theo kịch bản (engine/props-kb.js): đặt (datDaoCu) → dựng (buildPropsKB: PROPS_KB rồi propKit) → gắn vào shot (ganDaoCu)
+      const dat = datDaoCu(EPISODE.props || {}, places, { townEnv, envs: Object.keys(envs.envs), slots });
+      const props = buildPropsKB(THREE, EPISODE.props || {}, { K, dat });
+      for (const p of Object.values(props)) stage.scene.add(p);
+      const SHOTS2 = ganDaoCu(SHOTS, { props: EPISODE.props || {}, dat, actors: EPISODE.actors || {}, townEnv });
+      // shot ngắn theo loại → cam/cast đầy đủ (liên tục địa điểm + vị trí diễn viên giữa các shot); noiNhom: nhóm (bears) chạy cùng, stance, camera trong phòng
+      const shots = noiNhom(expandShots(SHOTS2, { places, crowd: crowdNames(EPISODE.actors), env: townEnv, light: EPISODE.light, fps: FPS }), { slots });
       const tl = buildTimeline(shots, FPS);
       // GHI CÔNG cuối phim (engine/credits.js): ảnh episodes/<ep>/ghi-cong.png (tools/ghi-cong.mjs) phủ lên 3 giây cuối, tắt được (?credits=0|1 hoặc setOptions({ credits })).
       // Mặc định bật khi EPISODE.credits !== false và có file ảnh.
       const credits = await createCredits({ root: document.getElementById('root'), src: '/episodes/_template/ghi-cong.png', total: tl.total,
         on: q.get('credits') !== null ? q.get('credits') !== '0' : EPISODE.credits !== false });
       window.__credits = credits;   // tools/export-ui.js vẽ ảnh này vào khung xuất MP4
-      const director = createDirector({ THREE, stage, envs, K, actors, houses: {}, props: {}, fx: {}, episode: EPISODE });
+      const director = createDirector({ THREE, stage, envs, K, actors, houses: {}, props, fx: {}, episode: EPISODE });
       const post = createPost(THREE, stage, { actors: Object.values(actors).map((a) => a.root) });
       if (q.get('fx') !== null) { const on = new Set(q.get('fx').split(',')); post.set(Object.fromEntries(Object.keys(FX_DEFAULTS).map((k) => [k, on.has(k)]))); }
       stage.draw = (t) => post.render({ t, ...envs.last, focus: stage.target });
@@ -104,6 +126,7 @@
         const T = Math.min(t, tl.total - 1e-4);
         const { shot, local, k, prev } = tl.at(T);
         director.render(shot, local, k, T, prev);   // prev = shot trước (mặt sống chuyển biểu cảm mềm)
+        if (!OPTS.propsKb) for (const p of Object.values(props)) p.visible = false;
         overlay(T, shot, local);
         credits.update(T);
       });
@@ -116,9 +139,11 @@
       window.__stage = stage;
       installMeasure({ THREE, stage, shots: tl });   // window.__measure(t) / window.__mask(t) cho tool kiểm luật
       window.__places = places;
+      window.__props = props; window.__datDaoCu = dat;   // tool kiểm / test: vị trí đạo cụ đã đặt
       window.getOptions = () => ({ ...OPTS, vid: {}, voices: [], fx: post.options, fxLabels: FX_LABELS, credits: credits.on });
       window.setOptions = (o = {}) => {
         if (o.subs !== undefined) OPTS.subs = !!o.subs;
+        if (o.propsKb !== undefined) OPTS.propsKb = !!o.propsKb;
         if (o.credits !== undefined) credits.setOn(o.credits);
         if (o.voice !== undefined) OPTS.voice = !!o.voice;
         if (o.fx) post.set(o.fx);
