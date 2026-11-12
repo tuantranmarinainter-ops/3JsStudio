@@ -227,3 +227,12 @@ triplanarChunk({ prefix: 'bk', oriented: kind === 'wood' })  // GLSL: BkOut o = 
 
 ## Núi xa vẽ 1 lần
 - `engine/backdrop.js` `createBackdrop(THREE,{seed, radius, base, height, ranges, snow, palette})`: 3 dãy núi (đồi có cây, dãy chính tuyết, dãy xa nhạt) vẽ 1 lần (~430 ms) vào dải tranh 4096×512 (R sáng, G tuyết/cây, B không khí, A mặt nạ); ống trụ ghim mặt phẳng xa theo camera, 1 program; `lightFrom`/`fogFrom` trong onBeforeRender → ngày/đêm không vẽ lại. Ô FX `backdrop`. Đang dùng: town. Trang thử `engine/backdrop-lab.html?light=day|dusk|night`.
+
+## Task 20a — chữ troika SDF cho bưu thiếp (`engine/troika-text.js`, `vendor/troika/`) — TÍCH HỢP, ô `troikaText` mặc định TẮT
+- Thư viện: `troika-three-text@0.53.1` (+ utils 0.53.1, worker-utils 0.53.0, webgl-sdf-generator 1.1.1, bidi-js 1.0.3; MIT) lấy bằng `npm pack`, chép bản `dist/*.esm.js` vào `vendor/troika/` kèm LICENSE; nối qua importmap của `episodes/ep001/index.html` (bản gộp tự resolve, vẫn 1 file). Không script cài đặt nào được chạy.
+- Cách dùng: `engine/postcards.js` `makePostcard` tạo sẵn các dòng Text (mặt trước + lời nhắn mặt sau) bằng `import('./troika-text.js')` ĐỘNG — trang không có importmap troika thì import lỗi và giữ nguyên chữ canvas. Ô TẮT: Text ẩn, texture có chữ canvas như cũ. Ô BẬT: mặt thiếp đổi sang texture `plain` (cùng bố cục, không vẽ chữ) + hiện Text. Đổi Việt/Anh cập nhật chữ.
+- Phông CỤC BỘ (`assets/fonts/PatrickHand-Regular.ttf`), `useWorker:false` (không Worker/blob/mạng), mọi chữ có trong phông nên bộ phông dự phòng CDN không chạy (đã kiểm: 0 request ra ngoài). Mọi Text `sync()` xong trước `__ready` (`await postcardsTroikaReady()` trong index.html) → bật/tắt tức thời, tất định.
+- Tập mới: thêm `"troika-three-text"`, `"troika-three-utils"`, `"troika-worker-utils"`, `"webgl-sdf-generator"`, `"bidi-js"` vào importmap + `await postcardsTroikaReady()` trước `__ready`.
+
+## Task 20b — three-mesh-bvh cho raycast `engine/measure.js` — KHÔNG CẦN (không tích hợp)
+Đo `window.__measure(t)` trên 10 shot ep001 rải đều (3 lần/shot, ms): s008 15–18, s022 131–135, s037 63–69, s051 154–158, s066 9–10, s080 284–293, s095 8–9, s109 24–26, s124 9–11, s138 8–9. Tối đa 0,29 s, trung bình ≈ 0,07 s/khung — dưới ngưỡng 1 s của brief nên không thêm `three-mesh-bvh`. Xét lại nếu một tập mới có measure > 1 s/khung (khi đó mới BVH cho `Raycaster` ở measure.js:86; lưu ý đang bỏ qua mesh > 60000 chỉ số).

@@ -23,3 +23,5 @@ Nội thất (engine/furnish.js) — CC0, không bắt buộc ghi, ghi để c�
 - rough_linen (vải trơn (áo)) — https://polyhaven.com/a/rough_linen
 - fabric_pattern_05 (vải kẻ ô — chỉ trang so mat-lab) — https://polyhaven.com/a/fabric_pattern_05
 - green_metal_rust (kim loại sơn gỉ — chỉ trang so mat-lab) — https://polyhaven.com/a/green_metal_rust
+
+Thư viện chữ (vendor/troika/, MIT — chép nguyên bản build ESM đã ghim, kèm LICENSE): troika-three-text 0.53.1, troika-three-utils 0.53.1, troika-worker-utils 0.53.0 (ProtectWise / Jason Johnston, https://github.com/protectwise/troika), webgl-sdf-generator 1.1.1, bidi-js 1.0.3 (Jason Johnston). Dùng cho chữ bưu thiếp (engine/troika-text.js). Typr.ts (MIT), woff2otf (Apache-2.0) và fflate (MIT) nằm sẵn trong troika-three-text.esm.js.

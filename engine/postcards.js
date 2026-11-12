@@ -23,6 +23,7 @@ const BACK_EN = {
   'Đã tìm thấy một thứ|tuyệt vời.|Sẽ sớm về nhà thôi.|Yêu cả hai mẹ con.': ['Found something', 'amazing.', 'Home soon.', 'Love you both.'],
 };
 let LANG = 'vi';
+const backLines = (lines) => (LANG === 'en' && BACK_EN[lines.join('|')]) || lines;
 export let CARD_TEXT = CARD_TEXT_L.vi;
 // Đổi ngôn ngữ chữ trên mọi bưu thiếp (vẽ lại texture có sẵn). Gọi lúc init hoặc khi người xem đổi Việt/Anh.
 export function setPostcardLang(lang) {
@@ -133,7 +134,7 @@ export function setPostcardArt(kind, img) {
 }
 const RES = 2;   // canvas 1024×720 (vẽ theo toạ độ 512×360 rồi nhân 2) → sắc nét ở cảnh cận
 export function postcardTexture(THREE, kind, opts = {}) {
-  const key = `front:${kind}:${opts.variant || 0}:${opts.text === false}`;
+  const key = `front:${kind}:${opts.variant || 0}:${opts.text === false}:${!!opts.plain}`;
   if (cache.has(key)) return cache.get(key);
   const cv = document.createElement('canvas'); cv.width = W * RES; cv.height = H * RES; const g = cv.getContext('2d');
   const draw = () => {
@@ -155,7 +156,7 @@ export function postcardTexture(THREE, kind, opts = {}) {
     g.restore();
     g.strokeStyle = '#fff'; g.lineWidth = 6; g.strokeRect(28, 28, W - 56, ah);
     stamp(g, W - 100, 40, kind === 'island' ? '#d9413a' : ['#d9413a', '#2f8f6b', '#e09a2a'][(opts.variant || 0) % 3]);
-    if (text) hand(g, text, W / 2, 28 + ah + 34, text.length > 2 ? 26 : 30);
+    if (text && !opts.plain) hand(g, text, W / 2, 28 + ah + 34, text.length > 2 ? 26 : 30);   // plain: chừa chỗ cho chữ nhưng không vẽ (chữ troika vẽ thay)
   };
   draw();
   const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
@@ -163,8 +164,8 @@ export function postcardTexture(THREE, kind, opts = {}) {
   cache.set(key, tex); return tex;
 }
 
-export function postcardBack(THREE, lines) {
-  const key = 'back:' + lines.join('|');
+export function postcardBack(THREE, lines, opts = {}) {
+  const key = 'back:' + lines.join('|') + (opts.plain ? ':plain' : '');
   if (cache.has(key)) return cache.get(key);
   const cv = document.createElement('canvas'); cv.width = W * RES; cv.height = H * RES; const g = cv.getContext('2d');
   const draw = () => {
@@ -173,11 +174,11 @@ export function postcardBack(THREE, lines) {
     g.strokeStyle = '#cdbb98'; g.lineWidth = 2; g.beginPath(); g.moveTo(W * 0.62, 40); g.lineTo(W * 0.62, H - 40); g.stroke();
     for (let i = 0; i < 4; i++) { g.beginPath(); g.moveTo(W * 0.66, 170 + i * 36); g.lineTo(W - 40, 170 + i * 36); g.stroke(); }
     stamp(g, W - 100, 40);
-    hand(g, (LANG === 'en' && BACK_EN[lines.join('|')]) || lines, W * 0.32, 110, 30, '#3a3226', 1.6);
+    if (!opts.plain) hand(g, backLines(lines), W * 0.32, 110, 30, '#3a3226', 1.6);
   };
   draw();
   const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
-  tex.userData.redraw = draw;
+  tex.userData.redraw = draw; tex.userData.lines = lines;
   cache.set(key, tex); return tex;
 }
 
@@ -192,7 +193,54 @@ export function makePostcard(THREE, kind, opts = {}) {
   front.castShadow = back.castShadow = true;
   g.userData.vai = 'doc';   // vật cần đọc (engine/measure.js)
   for (const f of [front, back]) { f.userData.matKind = 'paper'; f.userData.matNguon = 'khai-bao'; }   // giấy: khai báo (engine/materials.js), không đoán từ tên
+  troikaAttach(THREE, g, front, back, kind, opts, w, h);
   return g;
+}
+
+// ---- Chữ troika (SDF) thay chữ canvas — ô FX `troikaText` (engine/post.js, mặc định TẮT) ----
+// Khi TẮT: không đổi gì (texture có chữ như cũ, các Text ẩn). Khi BẬT: mặt thiếp đổi sang texture "plain" (cùng bố cục, không vẽ chữ)
+// + hiện Text troika. Text được tạo + sync() xong lúc init (postcardsTroikaReady() phải được await trước __ready) → bật/tắt tức thời, tất định.
+let TK = null;   // module engine/troika-text.js (null nếu trang không có importmap troika)
+const TK_P = import('./troika-text.js').then((m) => { TK = m; }, () => { TK = null; });   // thiếu importmap → import lỗi → giữ chữ canvas
+const TK_PENDING = [];
+const troikaOn = () => globalThis.__post?.options?.troikaText === true;
+export function postcardsTroikaReady() { return TK_P.then(() => Promise.all(TK_PENDING)); }
+function troikaAttach(THREE, g, front, back, kind, opts, w, h) {
+  const rec = { THREE, front, back, kind, opts, w, h, items: [], texFront: front.material.map, texBack: back.material.map, applied: false, built: false };
+  TK_P.then(() => { if (TK) troikaBuild(rec); });
+  const upd = g.updateMatrixWorld;
+  g.updateMatrixWorld = function (force) { troikaApply(rec); upd.call(this, force); };   // mỗi lần render: đồng bộ với cờ FX
+}
+function troikaBuild(rec) {
+  const { THREE, front, back, kind, opts, w } = rec, u = w / W, px = (cx) => (cx - W / 2) * u, py = (cy) => (H / 2 - cy) * u;
+  const add = (mesh, lines, cx, cy0, size, color, lh, slot) => {
+    lines.forEach((l, i) => {
+      const L = TK.makeLine(THREE, { text: l, font: 'hand', size: Math.round(size * 1.12) * u, color, x: px(cx), y: py(cy0 + i * size * lh) + Math.round(size * 1.12) * u * 0.13, name: `troika_${slot}_${i}` });
+      mesh.add(L.obj); rec.items.push({ slot, i, L }); TK_PENDING.push(L.done);
+    });
+  };
+  const text = opts.text === false ? null : (opts.lines || CARD_TEXT[kind]);
+  rec.hasFront = !!text;
+  if (text) add(front, text, W / 2, 28 + H * 0.6 + 34, text.length > 2 ? 26 : 30, '#4a3b2a', 1.25, 'front');
+  const bl = rec.texBack.userData.lines;
+  if (bl && bl.join('') !== '') { rec.backLines = bl; add(back, backLines(bl), W * 0.32, 110, 30, '#3a3226', 1.6, 'back'); }
+  rec.built = true;
+}
+function troikaApply(rec) {
+  if (!rec.built) return;
+  const on = troikaOn() && rec.items.every((it) => it.L.ok()), { THREE } = rec;   // chữ nào chưa dựng được (phông lỗi) → giữ chữ canvas
+  for (const it of rec.items) {   // đổi ngôn ngữ Việt/Anh sau khi dựng → cập nhật nội dung chữ
+    const src = it.slot === 'front' ? (rec.opts.lines || CARD_TEXT[rec.kind]) : backLines(rec.backLines);
+    if (src[it.i] !== undefined && src[it.i] !== it.L.obj.text) it.L.resync(src[it.i]);
+  }
+  if (rec.applied !== on) {
+    rec.applied = on;
+    if (on) {
+      if (rec.hasFront) rec.front.material.map = rec.plainF ||= postcardTexture(THREE, rec.kind, { ...rec.opts, plain: true });
+      if (rec.backLines) rec.back.material.map = rec.plainB ||= postcardBack(THREE, rec.backLines, { plain: true });
+    } else { rec.front.material.map = rec.texFront; rec.back.material.map = rec.texBack; }
+  }
+  for (const it of rec.items) it.L.obj.visible = on;
 }
 
 export const POSTCARD_ASPECT = H / W;

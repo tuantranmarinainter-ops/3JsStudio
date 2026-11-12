@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=1080, height=1920" />
     <title>ep001-ngoi-nha-biet-di</title>
     <script src="/vendor/gsap/gsap.min.js"></script>
-    <script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
+    <script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/", "troika-three-text": "/vendor/troika/troika-three-text.esm.js", "troika-three-utils": "/vendor/troika/troika-three-utils.esm.js", "troika-worker-utils": "/vendor/troika/troika-worker-utils.esm.js", "webgl-sdf-generator": "/vendor/troika/webgl-sdf-generator.mjs", "bidi-js": "/vendor/troika/bidi.mjs" } }</script>
     <style>
       /* Phông hỗ trợ đầy đủ tiếng Việt (Google Fonts, OFL — assets/fonts/*-OFL.txt): phụ đề + chữ bưu thiếp */
       @font-face { font-family: 'Be Vietnam Pro'; font-weight: 900; font-style: normal; src: url('/assets/fonts/BeVietnamPro-Black.ttf') format('truetype'); }
@@ -69,7 +69,7 @@
       import { SHOTS } from '/episodes/ep001/shots.js';
       import { CAPTIONS } from '/episodes/ep001/captions.js';
       import { CAPTIONS_EN } from '/episodes/ep001/captions_en.js';
-      import { setPostcardLang } from '/engine/postcards.js';
+      import { setPostcardLang, postcardsTroikaReady } from '/engine/postcards.js';
 
       // nạp phông TRƯỚC khi vẽ bưu thiếp (canvas) và phụ đề — không thì chữ dùng phông thay thế
       await Promise.all([document.fonts.load("900 84px 'Be Vietnam Pro'", 'Việt ữ ầ ặ'), document.fonts.load("30px 'Patrick Hand'", 'Việt ữ ầ ặ')]).catch(() => {});
@@ -229,6 +229,7 @@
         return window.getOptions();
       };
       window.setOptions({}); // cho nút "Xuất MP4" trong bản gộp (đổi độ phân giải renderer)
+      await postcardsTroikaReady();   // chữ troika (ô FX troikaText) dựng + sync xong trước khi báo sẵn sàng
       window.__tm.ready = performance.now();
       window.__ready = true;
       // dịch nền các env còn lại, từng env một (sau khi hiện trình phát); xong thì vẽ lại khung đang xem

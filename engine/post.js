@@ -35,7 +35,7 @@ import { CLOTH } from './cloth.js';
 import { MAST } from './mastbreak.js';
 import { MATS } from './materials.js';
 
-export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true, backdrop: true, matTex: true, flowers: true, traffic: true, villagers: true, pvTrees: true, familyPhoto: true, realWindow: true, houseStairs: true, raft: true, wreckSplit: true, faceLive: true, gioThoiTiet: true, tangXa: true, seaDecor: true, nhep: true, chuTungChu: false };
+export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true, backdrop: true, matTex: true, flowers: true, traffic: true, villagers: true, pvTrees: true, familyPhoto: true, realWindow: true, houseStairs: true, raft: true, wreckSplit: true, faceLive: true, gioThoiTiet: true, tangXa: true, seaDecor: true, nhep: true, chuTungChu: false, troikaText: false };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
@@ -64,7 +64,7 @@ export const FX_LABELS = {
   houseStairs: 'Cầu thang nhà chạm đất',
   raft: 'Bè gỗ thay thuyền (đảo)',
   wreckSplit: 'Xác tàu đứt đôi (rạn san hô)',
-  nhep: 'Nhép miệng theo giọng đọc (shot có talk)', chuTungChu: 'Phụ đề từng chữ (chữ đang đọc sáng hơn)',
+  nhep: 'Nhép miệng theo giọng đọc (shot có talk)', chuTungChu: 'Phụ đề từng chữ (chữ đang đọc sáng hơn)', troikaText: 'Chữ bưu thiếp sắc nét (troika SDF thay chữ canvas)',
   faceLive: 'Mặt sống: đổi biểu cảm mềm, chớp mắt, ánh nhìn, đồng tử theo ánh sáng',
   gioThoiTiet: 'Giờ + thời tiết theo shot (time / weather)',
   tangXa: 'Tầng xa bối cảnh bão: núi mờ trong sương + đá gần (storm, shipStorm)',
