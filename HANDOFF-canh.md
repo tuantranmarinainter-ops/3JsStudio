@@ -17,17 +17,15 @@ mọi vật dùng chung 1 khối uniform gió/nắng/sương, noise làm sẵn t
 - Ô FX mới (engine/post.js): `grass`, `sway`, `cloudShade`, `farwoods`, `backdrop`.
 - Trang thử (gộp 1 file mở bằng file://: `node tools/lab1file.mjs engine/<x>-lab.html dist/<x>-lab.html`):
   `grass-lab`, `sway-lab`, `farwoods-lab`, `backdrop-lab` (`?light=day|dusk|night`).
-- Bản xem thử mới nhất: `dist/ep1_v6.html`.
+- 075d07e: ảnh vân CC0 Poly Haven 512 WebP cho gỗ/gỗ sơn/ngói/đá/đất/cát/vải trơn (`MAT_TEX` trong materials.js, ô `matTex`), vẫn 1 program.
+- Bản xem thử mới nhất: `dist/ep1_v7.html`.
 
 ## Việc còn lại (theo thứ tự)
-1. **Chốt hướng chất liệu đất/đá/gỗ**: người dùng chưa trả lời. Trang so 3 cột `engine/mat-lab.html` (hiện tại | ảnh CC0 Poly Haven | nướng vân),
-   ảnh `output/look/matlab/{near,far}/`. Đề xuất: ảnh CC0 512 WebP cho đá, đất, gỗ, ngói, cát (8 bộ ≈ 1,2 MB); giữ shader cho kim loại gỉ;
-   thay bộ vải kẻ ô `fabric_pattern_05` bằng vải trơn. `assets/polyhaven-tex/`, manifest, CREDITS **chưa commit**.
-2. Hoa trong cỏ (mở rộng grass.js, cùng hash ô + gió).
-3. Gắn rừng xa / núi xa / cỏ cho bối cảnh khác (forest, brazil, mountain…) nếu người dùng muốn.
-4. Dãy núi xa còn phẳng màu; vạch sáng mảnh ở chân trời (sương mặt đất).
-5. Kiểm cả phim 1 lần: `node tools/look.mjs episodes/ep001/index.html --shots all --det`.
-6. Tồn từ trước: Xuất MP4 chậm (5m27 so với 1m17); `tools/shaders.mjs` cho cả phim; tách `materials.js` thành `engine/shaders/<họ>.js`
+1. Hoa trong cỏ (mở rộng grass.js, cùng hash ô + gió).
+2. Gắn rừng xa / núi xa / cỏ cho bối cảnh khác (forest, brazil, mountain…) nếu người dùng muốn.
+3. Dãy núi xa còn phẳng màu; vạch sáng mảnh ở chân trời (sương mặt đất).
+4. Kiểm cả phim 1 lần: `node tools/look.mjs episodes/ep001/index.html --shots all --det`.
+5. Tồn từ trước: Xuất MP4 chậm (5m27 so với 1m17); `tools/shaders.mjs` cho cả phim; tách `materials.js` thành `engine/shaders/<họ>.js`
    + `episodes/<ep>/shaders.json` để mỗi tập chỉ nạp họ nó dùng (`engine/shaders/registry.js`, `docs/shaders.md`).
 
 ## Lưu ý
