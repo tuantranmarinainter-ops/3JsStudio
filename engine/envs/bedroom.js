@@ -42,5 +42,5 @@ export default function build(g, e, H) {
   const poster = K.box(4, 3, 0.2, '#8a5a36', 6, 13, -17.8, 'poster', R);
   e.furn = furnish(THREE, R, BEDROOM_FURNISH, { assets: A, walls: { north: -18, south: 20, west: -20, east: 20 }, refs: { bed: e.bed, nightstand: nstand, books5, poster } });
   e.pointSpec = { color: '#aab6ff', intensity: 0.8, distance: 60, decay: 1.2, pos: [14, 14, -6] };   // đèn điểm dùng chung (engine/envs.js 'interior_point'): không tạo PointLight riêng → số đèn mọi env như nhau, không dịch lại shader
-  return { update() { e.furn.update(globalThis.__autoFx?.scans ?? true); }, setView(kind) { e.window.getObjectByName('window_view').material.map = viewTex(kind); } };
+  return { update(t) { e.furn.update(globalThis.__autoFx?.scans ?? true); e.bed.userData.update?.(t); }, setView(kind) { e.window.getObjectByName('window_view').material.map = viewTex(kind); } };
 }

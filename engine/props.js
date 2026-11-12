@@ -1,4 +1,5 @@
 // props.js — Đạo cụ dựng bằng code (phong cách khối). Mỗi hàm trả Group có tên rõ; mặt trước nhìn +Z; đơn vị stud.
+import { createBlanket } from './cloth.js';
 import { postcardTexture, makePostcard, postcardBack, seededKinds, POSTCARD_ASPECT, onPostcardArt } from './postcards.js';
 
 export function propKit(THREE) {
@@ -15,6 +16,7 @@ export function propKit(THREE) {
   const box = (w, h, d, mat, x, y, z, name, parent) => mesh(new THREE.BoxGeometry(w, h, d), mat, x, y, z, name, parent);
   const cyl = (r0, r1, h, mat, x, y, z, name, parent, seg = 16) => mesh(new THREE.CylinderGeometry(r1, r0, h, seg), mat, x, y, z, name, parent);
   const sph = (r, mat, x, y, z, name, parent, seg = 16) => mesh(new THREE.SphereGeometry(r, seg, Math.max(6, seg >> 1)), mat, x, y, z, name, parent);
+  let moonTex = null;
   const group = (name) => { const g = new THREE.Group(); g.name = name; return g; };
   let seed = 11; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
   const rs = (s) => { seed = s; };
@@ -25,7 +27,7 @@ export function propKit(THREE) {
     // ---------- Bếp / nội thất ----------
     fridge({ cards = ['penguin', 'whale', 'mountain', 'island'], extra = 26, dense = false } = {}) {
       const g = group('fridge');
-      const body = M('#9fe0c9', { roughness: 0.35 });
+      const body = M('#9fe0c9', { roughness: 0.22, metalness: 0.35 });   // tôn sơn tĩnh điện bóng (không phải giấy)
       box(5.4, 11, 4.4, body, 0, 5.5, 0, 'fridge_body', g);
       box(5.5, 0.12, 4.5, '#7cc2ac', 0, 7.6, 0.01, 'fridge_split', g);
       box(0.3, 2.6, 0.4, M('#d8dde2', { metalness: 0.6, roughness: 0.3 }), -2.2, 8.9, 2.35, 'handle_top', g);
@@ -65,6 +67,8 @@ export function propKit(THREE) {
           sph(0.09, '#d9413a', x, y + POSTCARD_ASPECT * 0.92, 0.14, `magnet_${k}`, front, 12).scale.z = 0.35;
         });
       }
+      // vỏ tủ + tay nắm = KIM LOẠI: bỏ lớp bụi sần (grunge.js) và vân chất liệu (materials.js) → mặt sơn bóng phản chiếu mịn
+      for (const o of g.children) if (/^(fridge_body|fridge_split|handle_)/.test(o.name)) { o.userData.grungeKind = 'none'; o.userData.matKind = 'none'; }
       return g;
     },
 
@@ -114,8 +118,9 @@ export function propKit(THREE) {
       box(7, 1.6, 11, '#8a5a36', 0, 0.8, 0, 'bed_frame', g);
       box(6.8, 1.0, 10.6, '#f2ede4', 0, 2.1, 0, 'mattress', g);
       // chăn dày trùm kín người nằm (tay/thân không lòi ra — góp ý 2026-11-11 #2): mặt chăn y≈4,7, tới sát cổ (z −2,1), đầu vẫn lộ
-      box(7.9, 2.2, 7.5, '#c0392b', 0, 3.6, 1.65, 'blanket', g);
-      box(8.0, 1.4, 7.6, '#a93226', 0, 3.0, 1.65, 'blanket_fold', g);
+      // vải mềm (engine/cloth.js, 2026-11-12): rủ qua mép đệm, nếp nhăn, gồ theo 2 người nằm (x = ±1,05) và thở nhẹ
+      const bl = createBlanket(THREE, { color: '#c0392b', top: 4.7, edgeY: 1.9, z0: -2.1, z1: 5.4, lumps: [[-1.05, 1.3, 0.95, 0.38], [1.05, 1.5, 0.85, 0.34]] });
+      g.add(bl); g.userData.update = bl.userData.update;
       box(5, 0.9, 2.4, '#ffffff', 0, 3.0, -4, 'pillow', g);
       box(7.2, 4, 0.6, '#8a5a36', 0, 2.8, -5.6, 'headboard', g);
       return g;
@@ -302,10 +307,11 @@ export function propKit(THREE) {
       for (const [x, y, z, r] of [[0, 0, 0, 3], [3, 0.6, 0.5, 3.6], [6.5, 0, 0, 2.8], [3, -0.5, -1.5, 2.6], [-2.5, -0.6, 0.6, 2.2]]) { const q = sph(r * s, m, x * s, y * s, z * s, 'puff', g, 12); q.castShadow = false; }
       return g;
     },
-    moon(r = 10) {
+    moon(r = 10) {   // mặt trăng = ảnh trăng thật (assets/sky/sky-7/moon.png, Roblox MoonTexture) trên sprite luôn quay về camera
       const g = group('moon');
-      const m = sph(r, new THREE.MeshBasicMaterial({ color: '#f3f0dc', fog: false }), 0, 0, 0, 'moon', g, 24); m.castShadow = false;
-      for (const [x, y, rr] of [[-3, 2, 2], [3, -1, 1.6], [0, -4, 1.2], [4, 4, 1]]) { const c = sph(rr, new THREE.MeshBasicMaterial({ color: '#d9d4bd', fog: false }), x * r / 10, y * r / 10, r * 0.92, 'crater', g, 10); c.scale.z = 0.2; c.castShadow = false; }
+      if (!moonTex) { moonTex = new THREE.TextureLoader().load('/assets/sky/sky-7/moon.png'); moonTex.colorSpace = THREE.SRGBColorSpace; }
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: moonTex, fog: false, toneMapped: false, depthWrite: false, color: '#fffaf0' }));
+      sp.name = 'moon'; sp.scale.set(r * 2.05, r * 2.05, 1); sp.userData.matKind = 'none'; sp.userData.grungeKind = 'none'; g.add(sp);
       return g;
     },
     iceberg(h = 20, color = '#eaf6fb') {

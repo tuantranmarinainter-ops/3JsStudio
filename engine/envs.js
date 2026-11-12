@@ -18,6 +18,8 @@ import { createCliff, naturalRock, coralRock } from './cliff.js';
 import { createCrabs, createBeachGrass } from './crabs.js';
 import { createCamp } from './castaway.js';
 import { smoothFlash } from './flash.js';
+import { createSkybox } from './skybox.js';
+import { createStormSky } from './stormsky.js';
 import TOWN_ENV from './envs/town.js';
 import FOREST_ENV from './envs/forest.js';
 import OPENSEA_ENV from './envs/openSea.js';
@@ -128,7 +130,20 @@ export function createEnvs(THREE, stage, K0, A = null) {
   const plane = (w, d, mat, y = 0, name = 'plane', seg = 1) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d, seg, seg), mat); m.rotation.x = -Math.PI / 2; m.position.y = y; m.receiveShadow = true; m.name = name; return m; };
   const mat = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.95, ...o });
   const place = (g, obj, x, y, z, ry = 0, s = 1) => { obj.position.set(x, y, z); obj.rotation.y = ry; obj.scale.setScalar(s); g.add(obj); return obj; };
-  const def = (name, light, build) => { const g = new THREE.Group(); g.name = `env_${name}`; g.visible = false; scene.add(g); const e = { name, light, group: g, update: null }; Object.assign(e, build(g, e) || {}); envs[name] = e; return e; };
+  const skyboxes = {};
+  const SKY_DAY = 'sky-7', SKY_NIGHT = 'sky-9';   // trời anime ban ngày (có mặt trời + trăng) / đêm xanh có sao (engine/skies.js)
+  const NO_SKY = new Set(['kitchen', 'bedroom', 'reef', 'storm', 'shipStorm']);   // nội thất, dưới nước, bão (trời bão riêng)
+  const def = (name, light, build) => { const g = new THREE.Group(); g.name = `env_${name}`; g.visible = false; scene.add(g); const e = { name, light, group: g, update: null }; Object.assign(e, build(g, e) || {}); 
+    // bầu trời 6 ảnh (engine/skybox.js): mọi env NGOÀI TRỜI mặc định trời ngày SKY_DAY + trời đêm SKY_NIGHT;
+    //   env ghi đè: e.skybox = '<tên>' | null (tắt), e.skyboxNight = '<tên>' | null, e.skyFog / e.skyFogNight (màu sương chân trời).
+    //   Chỉ tải ảnh của trời có env dùng; 1 mesh/trời.
+    const sb = (n) => (n ? skyboxes[n] ||= (() => { const m = createSkybox(THREE, n); m.visible = false; scene.add(m); return m; })() : null);
+    const outdoor = !NO_SKY.has(name);
+    e.skyMesh = sb(e.skybox !== undefined ? e.skybox : outdoor ? SKY_DAY : null);
+    e.skyMeshNight = sb(e.skyboxNight !== undefined ? e.skyboxNight : outdoor ? SKY_NIGHT : null);
+    // trời bão nhiều lớp (engine/stormsky.js): env khai báo e.stormSky = { …tham số }
+    if (e.stormSky) { e.stormMesh = createStormSky(THREE, e.stormSky); e.stormMesh.visible = false; scene.add(e.stormMesh); }
+    envs[name] = e; return e; };
 
   // biển: engine/sea.js createSea (đồng hồ, sự kiện, nhìn) + thêm vào group của env. Ánh sáng/bầu trời được nạp mỗi khung trong use().
   //   e.sea = makeSea(g, { preset, y, amp, size, rate, …ghi đè nhìn });  update(t) { e.sea(t); }   ← t TOÀN CỤC, rate tự nhân
@@ -283,7 +298,34 @@ export function createEnvs(THREE, stage, K0, A = null) {
       wl.amb.copy(stage.hemi.color).multiplyScalar(stage.hemi.intensity); wl.flash = ctx.flash || 0;
       for (const w of e.group.userData.waters) w.update(w.t || 0, stage.camera, wl, w.ampNow);
     }
-    skyDome.visible = !(name === 'kitchen' || name === 'bedroom');
+    const indoor = name === 'kitchen' || name === 'bedroom';
+    const AFX = globalThis.__autoFx || {};
+    const lk = ctx.light || e.light, storm = lk === 'storm', night = !!L.night;   // trời 6 ảnh: ngày/đêm theo preset ánh sáng; bão → trời bão
+    let box = null;
+    if (!indoor && !storm && (AFX.skybox ?? true)) {   // ô 'skybox'
+      for (const m of night ? [e.skyMeshNight, e.skyMesh] : [e.skyMesh, e.skyMeshNight]) {
+        const w = m?.userData.def.when || 'day';
+        if (m && (w === 'any' || (w === 'night') === night)) { box = m; break; }
+      }
+    }
+    const sto = !indoor && storm && e.stormMesh && (AFX.stormSky ?? true) ? e.stormMesh : null; // ô 'stormSky'
+    for (const m of Object.values(skyboxes)) m.visible = m === box;
+    for (const en of Object.values(envs)) if (en.stormMesh) en.stormMesh.visible = en.stormMesh === sto;
+    if (box) {
+      box.position.copy(stage.camera.position);
+      const d = L.dir;   // ngày: mặt trời = hướng nắng (khớp bóng), trăng phía đối diện; đêm: trăng = hướng ánh trăng, mặt trời dưới chân trời
+      // mặt trời/trăng thấp ~18° trên chân trời (cùng phương vị với hướng nắng) → lọt vào khung dọc; env có trăng riêng (K.moon) thì giấu trăng của trời
+      const az = Math.hypot(d[0], d[2]) || 1, low = (sx, sz) => [sx * d[0] / az, 0.42, sz * d[2] / az];
+      const ownMoon = e.ownMoon ??= !!e.group.getObjectByName('moon') || !!e.group.getObjectByName('moon_town');
+      //   đặt ở phương vị NGƯỢC hướng nắng: camera thường quay lưng về nắng (nhân vật được chiếu mặt) → mặt trời/trăng nằm trong khung (ngược sáng kiểu anime)
+      //   ngày: chỉ mặt trời (giấu trăng); đêm: trăng (env có trăng riêng thì giấu)
+      if (night) { box.userData.setSun([0, -1, 0]); box.userData.setMoon(ownMoon ? [0, -1, 0] : e.skyMoon || low(-1, -1)); }
+      else { box.userData.setSun(e.skySun || low(-1, -1)); box.userData.setMoon(e.skyMoon || [0, -1, 0]); }
+      const fog = (night ? e.skyFogNight : e.skyFog) || box.userData.def.fog;   // sương xa = màu chân trời của ảnh → biển/đất tan vào trời
+      if (fog && scene.fog.near < 1e6) scene.fog.color.set(fog);
+    }
+    if (sto) { sto.position.copy(stage.camera.position); sto.userData.update(t, ctx.flash || 0, ctx.stormK ?? 1, stage.camera.position); }
+    skyDome.visible = !indoor && !box && !sto;
     skyDome.position.copy(stage.camera.position);
     return { env: e, light: L };
   }

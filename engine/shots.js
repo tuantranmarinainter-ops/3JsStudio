@@ -140,7 +140,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     if (W) {   // đồng hồ + biên độ theo thời tiết (hàm thuần của t toàn cục → tiến độ shot)
       const kOf = (tg) => clamp01((tg - shot.t0) / (shot.dur || 1));
       sea.setDrive((tg) => ({ amp: seaWeatherAmp(spec, kOf(tg)), rate: W.speed }), { response: W.float });
-    }
+    } else if (e.seaDrive) sea.setDrive(e.seaDrive);   // env tự khai biên độ theo t (vd. shipStorm: sóng dâng lúc gãy cột) — thuần, vật nổi thấy cùng biên độ
     seaNow = { e, sea, clock: W ? sea.clock : e.seaClock || sea.clock };
     if (SEA2()) {
       // sự kiện của env khai báo thuần (e.seaEvents(t)) → vật nổi thấy ngay khung này; không khai ⇒ xoá (không dùng của khung trước)

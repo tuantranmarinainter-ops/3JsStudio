@@ -1417,5 +1417,45 @@
     "source_url": "https://freesound.org/people/Rudmer_Rotteveel/sounds/502507",
     "duration": 5.82,
     "ambience": false
+  },
+  "wood cracking creak": {
+    "file": "assets/sfx/wood_cracking_creak.mp3",
+    "title": "sfx-creaks-1.wav",
+    "creator": "davilca",
+    "license": "by",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "source_url": "https://freesound.org/people/davilca/sounds/158199",
+    "duration": 5.67,
+    "ambience": false
+  },
+  "tree branch snap": {
+    "file": "assets/sfx/tree_branch_snap.mp3",
+    "title": "Crack_of_branch_2.wav",
+    "creator": "deleted_user_2104797",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/deleted_user_2104797/sounds/144945",
+    "duration": 1.21,
+    "ambience": false
+  },
+  "wood plank break": {
+    "file": "assets/sfx/wood_plank_break.mp3",
+    "title": "Breaking wooden plank",
+    "creator": "jorickhoofd",
+    "license": "by",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "source_url": "https://freesound.org/people/jorickhoofd/sounds/178593",
+    "duration": 0.77,
+    "ambience": false
+  },
+  "tree falling crash": {
+    "file": "assets/sfx/tree_falling_crash.mp3",
+    "title": "A Tree Falling Down.wav",
+    "creator": "ecfike",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/ecfike/sounds/139952",
+    "duration": 4.52,
+    "ambience": false
   }
 }

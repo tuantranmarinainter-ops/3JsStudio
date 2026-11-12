@@ -174,12 +174,46 @@
   "why": "tàu của ba trong bão"
  },
  {
+  "t": 36.7,
+  "name": "wood cracking creak",
+  "vol": 0.4,
+  "dur": 0.35,
+  "shot": "s031",
+  "why": "cột buồm rung, gỗ bắt đầu nứt (mastbreak.js t0)"
+ },
+ {
+  "t": 36.95,
+  "name": "tree branch snap",
+  "vol": 0.6,
+  "dur": 0.6,
+  "align": "peak",
+  "shot": "s031",
+  "why": "RẮC — cột buồm gãy (mastbreak.js tBreak)"
+ },
+ {
   "t": 37.05,
   "name": "thunder crack close",
-  "vol": 0.55,
+  "vol": 0.45,
   "dur": 2,
   "shot": "s032",
   "why": "sét đánh, tàu không về nữa"
+ },
+ {
+  "t": 37.08,
+  "name": "wood plank break",
+  "vol": 0.45,
+  "dur": 0.5,
+  "shot": "s032",
+  "why": "rắc rắc — gỗ toác tiếp khi cột đổ"
+ },
+ {
+  "t": 37.5,
+  "name": "tree falling crash",
+  "vol": 0.55,
+  "dur": 1.0,
+  "align": "peak",
+  "shot": "s032",
+  "why": "cột buồm đập xuống mạn tàu (mastbreak.js tLand)"
  },
  {
   "t": 37.65,

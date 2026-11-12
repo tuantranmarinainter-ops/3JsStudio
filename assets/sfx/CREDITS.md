@@ -35,6 +35,8 @@ Sounds found via Openverse (Freesound). Paste the CC BY lines into the video des
 "waves small close 02 190515_1380.wav" by klankbeeld (https://freesound.org/people/klankbeeld/sounds/470757), licensed under CC BY 4.0
 "woman_scream.wav" by themfish (https://freesound.org/people/themfish/sounds/367307), licensed under CC BY 4.0
 "Branch Snap.aif" by JasonElrod (https://freesound.org/people/JasonElrod/sounds/85433), licensed under CC BY 4.0
+"sfx-creaks-1.wav" by davilca (https://freesound.org/people/davilca/sounds/158199), licensed under CC BY 4.0
+"Breaking wooden plank" by jorickhoofd (https://freesound.org/people/jorickhoofd/sounds/178593), licensed under CC BY 4.0
 
 ## CC0 (no attribution required; thanks to:)
 
@@ -112,6 +114,8 @@ Sounds found via Openverse (Freesound). Paste the CC BY lines into the video des
 "Swishes_11_gentle.wav" by videofueralle (https://freesound.org/people/videofueralle/sounds/614153), CC0
 "Chattering Teeth" by danlucaz (https://freesound.org/people/danlucaz/sounds/517676), CC0
 "Thunderclap" by Fission9 (https://freesound.org/people/Fission9/sounds/534023), CC0
+"Crack_of_branch_2.wav" by deleted_user_2104797 (https://freesound.org/people/deleted_user_2104797/sounds/144945), CC0
+"A Tree Falling Down.wav" by ecfike (https://freesound.org/people/ecfike/sounds/139952), CC0
 "Water Drip 01.wav" by erkanozan (https://freesound.org/people/erkanozan/sounds/51754), CC0
 "Heavy Rain Short" by presidentevil4zombie (https://freesound.org/people/presidentevil4zombie/sounds/241195), CC0
 "8 Bit Beach Wave" by Jofae (https://freesound.org/people/Jofae/sounds/360634), CC0

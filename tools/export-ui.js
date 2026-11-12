@@ -132,7 +132,8 @@ async function init() {
     wrap.style.width = `${W0 * k}px`; wrap.style.height = `${H0 * k}px`;
   }
   addEventListener('resize', fit); fit();
-  document.getElementById('xpre')?.remove();   // gỡ lớp che của bản gộp (tools/bundle.mjs) — giờ khung đã thu vừa cửa sổ
+  const xload = (m) => document.documentElement.setAttribute('data-xload', m);   // chữ trên lớp che của bản gộp (tools/bundle.mjs)
+  xload('Đang tải cảnh…');
 
   // chờ cảnh sẵn sàng
   $('xstat').textContent = 'Đang tải cảnh…';
@@ -231,6 +232,8 @@ async function init() {
       sfxLayers[i].on = e.target.checked; if (playing) { pause(); play(); }
     };
   }
+  // trình phát đã đủ mục (giọng, tiếng động, hiệu ứng hình) và đã vẽ khung đầu → mới gỡ lớp che: không lộ bảng điều khiển dở dang
+  document.getElementById('xpre')?.remove(); document.documentElement.removeAttribute('data-xload');
   function play() {
     if (busy) return; playing = true; $('xplay').textContent = '❚❚ Dừng';
     t0 = +$('xseek').value; if (t0 >= DUR - 0.05) t0 = 0; wall0 = performance.now();

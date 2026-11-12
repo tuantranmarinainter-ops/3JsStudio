@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Sky lab</title>
+<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js" } }</script></head>
+<body style="margin:0;background:#111"><canvas id="c" width="1600" height="800"></canvas>
+<script type="module">
+// Trang thử thư viện bầu trời: 8 hướng ngang (0..315°) hàng trên, nhìn chếch lên 50° hàng dưới → soi mối nối 6 mặt
+import * as THREE from 'three';
+import { createSkybox } from './skybox.js';
+const name = new URLSearchParams(location.search).get('sky') || 'anime-day';
+const r = new THREE.WebGLRenderer({ canvas: document.getElementById('c'), preserveDrawingBuffer: true });
+r.outputColorSpace = THREE.SRGBColorSpace; r.setScissorTest(true);
+const scene = new THREE.Scene(), sky = createSkybox(THREE, name); scene.add(sky);
+// mặt trời ở hướng 0° (ô đầu), mặt trăng ở 180° (ô thứ 5) — đều cao 20° để thấy ở hàng trên
+sky.userData.setSun?.([0, 0.36, -1]); sky.userData.setMoon?.([0, 0.36, 1]);
+// FOV ngang đúng 45° = bước quay → các ô nối tiếp liền nhau (mép ô = cùng một tia), lệch ở mép ô = lỗi ghép mặt
+const cam = new THREE.PerspectiveCamera(2 * Math.atan(Math.tan(Math.PI / 8) / 0.5) * 180 / Math.PI, 0.5, 0.1, 100);
+THREE.DefaultLoadingManager.onLoad = () => {
+  for (let row = 0; row < 2; row++) for (let i = 0; i < 8; i++) {
+    const yaw = i * Math.PI / 4, pitch = row ? 0.87 : 0;
+    cam.position.set(0, 0, 0); cam.rotation.set(0, 0, 0, 'YXZ'); cam.rotation.order = 'YXZ'; cam.rotation.y = -yaw; cam.rotation.x = pitch; cam.updateMatrixWorld();
+    r.setViewport(i * 200, (1 - row) * 400, 200, 400); r.setScissor(i * 200, (1 - row) * 400, 200, 400); cam.aspect = 0.5; cam.updateProjectionMatrix();
+    r.render(scene, cam);
+  }
+  window.__done = true;
+};
+</script></body></html>

@@ -1,5 +1,7 @@
 // Bối cảnh 'shipStorm' (preset ánh sáng mặc định: storm). Sửa bối cảnh này CHỈ trong file này.
 // Được engine/envs.js gọi: build(g, e, H) — g = Group của env, e = đối tượng env, H = bộ công cụ chung (xem envs.js).
+import { createSail } from '../cloth.js';
+import { createMastBreak } from '../mastbreak.js';
 import { fxSnow, fxRain, lightning, fxBolt } from '../fx.js';
 import { createWater } from '../water.js';
 import { createOceanLife, OCEAN_LIFE_ASSETS } from '../whales.js';
@@ -16,8 +18,34 @@ import { floatPose, wetline, worldGrad } from '../floating.js';
 
 export default function build(g, e, H) {
   const { THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
-  e.sea = makeSea(g, { preset: 'storm', y: -1, amp: 2.2, size: 1600, rate: 1.5 });   // t biển = t·1.5 (engine/sea.js) — vật nổi tự lấy sea.clock
+  e.sea = makeSea(g, { preset: 'storm', y: -1, amp: 2.2, size: 1600, rate: 1.5 });
+  // GIÓ GIẬT quanh lúc gãy cột (36,7–37,6 s): 0 → 1 → 0, hàm thuần của t. Dùng cho sóng, mưa xiên, mây trôi, chớp.
+  const ss = (a, b, x) => { const k = Math.min(1, Math.max(0, (x - a) / (b - a))); return k * k * (3 - 2 * k); };
+  e.gust = (t) => ss(36.3, 36.85, t) * (1 - ss(37.6, 38.6, t));
+  e.seaDrive = (tg) => ({ amp: 2.2 * (1 + 0.15 * e.gust(tg)), rate: 1.5 });   // engine/shots.js prepareSea → biển dâng nhẹ (dâng mạnh hơn làm mũi sóng phẳng sát ống kính s032)
+  // sóng lớn: vòng sóng toả từ mạn phải lúc cột rung + lúc RẮC (sự kiện biển, engine/sea.js; t0 theo t toàn cục)
+  e.seaEvents = (t) => (t > 36 && t < 41 ? [{ x: 7, z: 2, t0: 36.7, strength: 2.2, radius: 14 }, { x: 6, z: -4, t0: 36.95, strength: 2.8, radius: 16 }] : null);
+  // trời bão nhiều lớp (engine/stormsky.js, ô 'stormSky'): trăng sau lưng cột buồm ở góc s032, loé theo tia sét
+  e.stormSky = { moon: [-0.72, 0.3, -0.62], bolt: [30 * 1, 25 + 20, -120], gust: e.gust, cover: 0.64, speed: 1.2 };   // t biển = t·1.5 (engine/sea.js) — vật nổi tự lấy sea.clock
   e.ship = place(g, K.ship(), 0, 0, 0, 0, 1);
+  // buồm VẢI MỀM (engine/cloth.js, 2026-11-12, học cảm giác buồm Tidewright): thay 2 buồm khối của Kenney bằng lưới vải
+  //   cùng chỗ/cùng cỡ — phồng–xẹp theo gió giật bão, gợn chạy ngang tấm, mép dưới phần phật, xuyên sáng khi chớp/đèn sau lưng
+  e.sails = [];
+  for (const [nm, H, B, sd] of [['sail-a', 4.72, 1.5, 1], ['sail-b', 3.63, 1.2, 2]]) {
+    const old = e.ship.getObjectByName(nm); if (!old) continue;
+    const sl = createSail(THREE, { w: 4.4, h: H, belly: B, wind: 1.7, seed: sd, color: '#ebe1ca', spars: true, name: nm + '_cloth' });
+    sl.position.copy(old.position); sl.quaternion.copy(old.quaternion); sl.scale.copy(old.scale);
+    sl.position.y += H * old.scale.y;
+    old.parent.add(sl); old.visible = false; e.sails.push(sl);
+  }
+  // GÃY CỘT BUỒM (thử, engine/mastbreak.js): cột chính rung–rắc ở s031 rồi đổ qua mạn phải cùng buồm + cờ ở s032, nằm luôn tới s086
+  let hullMesh = null; e.ship.traverse((o) => { if (o.isMesh && !o.name.includes('_cloth') && (!hullMesh || o.geometry.attributes.position.count > hullMesh.geometry.attributes.position.count)) hullMesh = o; });   // thân tàu = mesh nhiều đỉnh nhất
+  e.mast = null;
+  if (hullMesh && hullMesh.isMesh) {
+    g.updateMatrixWorld(true);
+    e.mast = createMastBreak(THREE, hullMesh, { hinge: [0, 3.4, -0.35], box: [0.55, 0.62], t0: 36.7, angle: 1.1,
+      parts: [e.ship.getObjectByName('sail-a_cloth'), e.ship.getObjectByName('flag-b')] });
+  }
   // sea2: tàu cưỡi sóng thật (engine/floating.js) — đáy hộp bao lấy làm mặt lọc sóng; DRAFT = độ chìm thêm so với bản cũ
   const bb = new THREE.Box3().setFromObject(e.ship), bsz = bb.getSize(new THREE.Vector3());
   const HULL = { hx: bsz.x / 2 * 0.8, hz: bsz.z / 2 * 0.8 }, DRAFT = 1.6, SEA_Y = -1;
@@ -35,9 +63,12 @@ export default function build(g, e, H) {
   e.carry = (t) => { if (!SEA2()) return null; e.shipPose(t); e.ship.updateMatrix(); return e.ship.matrix; };
   e.rain = fxRain(THREE, { count: 1600, area: [70, 50, 70] }); g.add(e.rain.obj);
   e.bolt = fxBolt(THREE, { seed: 9 }); e.bolt.position.set(30, 25, -120); e.bolt.scale.setScalar(1.8); g.add(e.bolt);
-  return { update(t, ctx) { e.sea(t, 2.2); e.rain.update(t, ctx.focus || [0, 0, 0]); const F = e.shipPose(t);
+  return { update(t, ctx) { const G = e.gust(t); e.rain.slant = [0.25 + 0.9 * G, 0.1 + 0.35 * G];   // gió giật → mưa quất xiên (đặt TRƯỚC rain.update)
+    e.sea(t, 2.2); for (const sl of e.sails) sl.userData.update(t); e.mast?.update(t); e.rain.update(t, ctx.focus || [0, 0, 0]); const F = e.shipPose(t);
     if (F) { const gr = worldGrad(F.sx, F.sz, 0); e.wet.set({ x: 0, z: 0, y: F.y, ...gr, t: e.sea.clock(t).t });
       e.sea.setHull({ x: 0, z: 0, hx: HULL.hx, hz: HULL.hz * 0.8, yaw: 0, k: 1, plunge: Math.min(1, Math.max(0, -F.vy / 4)) }); }
     else { e.wet.off(); e.sea.setHull(null); }
-     const f = smoothFlash(t, { every: 2.4, seed: 8 }); e.bolt.visible = f > 0.45; ctx.flash = f; } };
+     // sét đánh đúng nhịp RẮC (36,95) + dư chấn 37,08
+     const pk = (c, w) => Math.max(0, 1 - Math.abs(t - c) / w);
+     const f = Math.max(smoothFlash(t, { every: 2.4, seed: 8 }), pk(36.93, 0.07), pk(37.08, 0.05) * 0.75); e.bolt.visible = f > 0.45; ctx.flash = f; } };
 }

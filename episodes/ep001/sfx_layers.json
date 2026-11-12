@@ -366,7 +366,7 @@
   "label": "Tiếng động theo cảnh",
   "gain": 1.0,
   "src": "sfx_khoanh-khac.ogg",
-  "count": 115,
+  "count": 119,
   "missing": [],
   "items": [
    [
@@ -475,8 +475,28 @@
     "s031"
    ],
    [
+    36.7,
+    "wood cracking creak",
+    "s031"
+   ],
+   [
+    36.95,
+    "tree branch snap",
+    "s031"
+   ],
+   [
     37.05,
     "thunder crack close",
+    "s032"
+   ],
+   [
+    37.08,
+    "wood plank break",
+    "s032"
+   ],
+   [
+    37.5,
+    "tree falling crash",
     "s032"
    ],
    [
