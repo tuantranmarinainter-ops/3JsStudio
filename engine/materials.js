@@ -47,7 +47,7 @@ export const MAT_DE_XUAT = [
   { vat: 'tàu props (K.ship, không dùng trong ep001): hull, hull_stripe / cabin / mast, mast2', hienTai: 'metalpaint / wood / matte', deXuat: 'woodpaint / woodpaint / wood', shot: '' },
   { vat: 'chồng thiếp: bow_loop, bow_tail, bow_knot (nơ)', hienTai: 'paper', deXuat: 'fabric', shot: 's107 s108 s110 s111 s112 s116' },
   { vat: 'nhà: cụm window_front (khung, thanh giữa, bậu, cánh chớp)', hienTai: 'glass', deXuat: 'woodpaint', shot: 's001 s003 s004 s005 s007 s008 s009 s011 s012 s013 s014 s015 s016 s017 s018 s019 s020 s028 s030 s035 s036 s039 s040 s041 s042 s043 s044 s045 s047 s048 s049 s050 s051 s053 s054 s055 s056 s058 s059 s080 s081 s082 s092 s093 s094 s095 s096 s097 s098 s099 s105 s114 s115 s119 s130 s131 s132 s133 s134 s135 s136 s137' },
-  { vat: 'nhà: kính cửa sổ bên/sau + kính ô cửa tròn của cửa', hienTai: 'woodpaint', deXuat: 'glass', shot: 's001 s003 s004 s005 s006 s007 s008 s009 s011 s012 s013 s014 s015 s016 s017 s018 s019 s020 s030 s035 s036 s039 s040 s041 s042 s043 s044 s045 s047 s048 s050 s051 s053 s054 s055 s056 s058 s059 s080 s081 s082 s092 s093 s094 s095 s096 s097 s098 s099 s105 s114 s115 s130 s131 s132 s133 s135 s137' },
+  { vat: 'nhà: kính cửa sổ bên/sau + kính ô cửa tròn của cửa (đổi sang glass thì các kính này sẽ SÁNG đèn đêm; hiện luôn tối)', hienTai: 'woodpaint', deXuat: 'glass', shot: 's001 s003 s004 s005 s006 s007 s008 s009 s011 s012 s013 s014 s015 s016 s017 s018 s019 s020 s030 s035 s036 s039 s040 s041 s042 s043 s044 s045 s047 s048 s050 s051 s053 s054 s055 s056 s058 s059 s080 s081 s082 s092 s093 s094 s095 s096 s097 s098 s099 s105 s114 s115 s130 s131 s132 s133 s135 s137' },
 ];
 export function khaiBaoMat(mat, kind) {
   if (!kind) return mat;

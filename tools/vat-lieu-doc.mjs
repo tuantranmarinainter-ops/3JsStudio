@@ -16,7 +16,7 @@ export function sinhMarkdown() {
     '# Bảng vật liệu (sinh ra từ `engine/materials.js` — đừng sửa tay)',
     '',
     'Sinh lại: `node tools/vat-lieu-doc.mjs`. Đạo cụ **khai báo** loại vật liệu của nó (xem dưới) thay vì để `classifyMaterial` đoán từ màu/tên.',
-    'Bộ kiểm luật L9 chỉ đo vật có vai gần nhất là `vat-chinh` / `nha` / `chan-nha` / `doc` và đòi `nguon = khai-bao`; loại ở cột "grunge" = *không* thì lớp bụi/cũ (`engine/grunge.js`) không phủ lên.',
+    'Bộ kiểm luật L9 chỉ đo vật có vai gần nhất là `vat-chinh` / `vat-phu` / `nha` / `chan-nha` / `doc` và đòi `nguon = khai-bao`; loại ở cột "grunge" = *không* thì lớp bụi/cũ (`engine/grunge.js`) không phủ lên.',
     '',
     '| kind | tên | họ shader | grunge | trạng thái |',
     '|---|---|---|---|---|',

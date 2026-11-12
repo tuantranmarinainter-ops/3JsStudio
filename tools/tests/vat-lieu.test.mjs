@@ -148,36 +148,74 @@ test('mesh MeshStandardMaterial trơn gắn vai vat-chinh: nguon doan và L9 đ�
   assert.ok(r.val.loi.some((s) => s.startsWith('hop_tron:')));
 });
 
-test('khai báo đạo cụ chính trùng loại luật đoán cũ (không đổi loại ngoài chủ đích)', T, async () => {
+// Loại HIỆU LỰC của luật cũ (trước Task 10) cho một mesh: tag tay cũ (props.js dòng 71 cũ: vỏ/tay nắm tủ lạnh = 'none') > classifyMaterial không khai báo
+// (tag/matDecl bị bỏ) > bỏ qua vật liệu trong suốt không phải kính (applyMaterials không vá → 'none'). Danh sách ngoại lệ RỖNG.
+test('MÁY: khai báo của mọi mesh đạo cụ chính (tủ lạnh, hộp thư, hải đăng, tàu, thiếp, nhà) == luật đoán cũ, ngoại lệ rỗng', T, async () => {
   const diff = await page.evaluate(async () => {
     const THREE = window.THREE;
-    const { MAT_RULES } = await import('/engine/materials.js');
+    const { classifyMaterial } = await import('/engine/materials.js');
     const { propKit } = await import('/engine/props.js');
     const { createHouse } = await import('/engine/house.js');
-    const K = propKit(THREE);
-    const guess = (m, p) => { const s = `${p} [${(m.name || '').toLowerCase()}]`; for (const [re, k] of MAT_RULES) if (re.test(s)) return k; return 'matte'; };
-    const out = [];
-    const run = (label, root) => {
-      const walk = (o, path) => {
-        const p = o.name ? (path ? path + '/' + o.name.toLowerCase() : o.name.toLowerCase()) : path;
-        if (o.isMesh) {
-          const m = Array.isArray(o.material) ? o.material[0] : o.material;
-          const decl = o.userData.matKind || m.userData.matDecl, g = guess(m, p);
-          if (!decl) out.push(`${label}/${o.name}: chưa khai báo`);
-          else if (decl !== g && !(decl === 'none' && (m.transparent || /^(fridge_|handle_)/.test(o.name)))) out.push(`${label}/${o.name}: ${decl} != ${g}`);
-        }
-        o.children.forEach((c) => walk(c, p));
-      };
-      walk(root, '');
+    const cu = (o, m, path) => {
+      if (/^(fridge_body|fridge_split|handle_)/.test(o.name) && ('/' + path + '/').includes('/fridge/')) return 'none';   // tag tay cũ (props.js cũ dòng 71)
+      const k = classifyMaterial({ userData: {} }, { name: m.name, userData: {} }, path);
+      if (!k) return 'none';
+      return (m.transparent && k !== 'glass') ? 'none' : k;
     };
-    run('fridge', K.fridge()); run('mailbox', K.mailbox()); run('lighthouse', K.lighthouse()); run('ship', K.ship()); run('cardStack', K.cardStack());
-    run('house', createHouse(THREE, { style: 'family', name: 'house' }).root);
+    const K = propKit(THREE), out = [];
+    const walk = (o, path, label) => {
+      const p = o.name ? (path ? path + '/' + o.name.toLowerCase() : o.name.toLowerCase()) : path;
+      if (o.isMesh) {
+        const m = Array.isArray(o.material) ? o.material[0] : o.material;
+        const decl = o.userData.matKind || m.userData.matDecl, old = cu(o, m, p);
+        if (!decl) out.push(`${label}/${o.name}: chưa khai báo`);
+        else if (decl !== old) out.push(`${label}/${o.name}: khai báo ${decl} != cũ ${old}`);
+      }
+      o.children.forEach((c) => walk(c, p, label));
+    };
+    const run = (label, root) => walk(root, '', label);
+    run('fridge', K.fridge()); run('fridge-dense', K.fridge({ dense: true })); run('mailbox', K.mailbox()); run('lighthouse', K.lighthouse());
+    run('ship', K.ship()); run('cardStack', K.cardStack());
+    run('house', createHouse(THREE, { style: 'family', name: 'house' }).root); run('house-ill', createHouse(THREE, { style: 'illustration', name: 'house' }).root);
+    // cảnh thật của ep001 (đường dẫn đầy đủ từ scene): mọi mesh có vai vat-chinh/nha/chan-nha/doc gần nhất
+    const sc = window.__stage.scene, VAI = new Set(['vat-chinh', 'nha', 'chan-nha', 'doc']);
+    const vaiGan = (o) => { for (let p = o; p; p = p.parent) if (p.userData && p.userData.vai) return p.userData.vai; return null; };
+    const walkS = (o, path) => {
+      const p = o.name ? (path ? path + '/' + o.name.toLowerCase() : o.name.toLowerCase()) : path;
+      // tay nắm tủ bếp: engine/envs/kitchen.js đặt tay 'chrome' SAU khi K.fridge() dựng (có từ trước Task 10, không thuộc DECL) → bỏ khỏi so sánh cảnh
+      if (o.isMesh && !o.isInstancedMesh && VAI.has(vaiGan(o)) && !/env_kitchen\/.*fridge\/handle_/.test(p)) {
+        const m = Array.isArray(o.material) ? o.material[0] : o.material;
+        if (m && m.isMeshStandardMaterial) {
+          const decl = o.userData.matKind || m.userData.matDecl, old = cu(o, m, p);
+          if (!decl) out.push(`scene/${p}: chưa khai báo`); else if (decl !== old) out.push(`scene/${p}: khai báo ${decl} != cũ ${old}`);
+        }
+      }
+      o.children.forEach((c) => walkS(c, p));
+    };
+    walkS(sc, '');
     return [...new Set(out)];
   });
   assert.deepEqual(diff, []);
 });
 
-test('hải đăng GLB của ep001 là vật chính và khai-bao', T, async () => {
+test('matDecl none ở mức vật liệu: nguon khai-bao (không bị báo chua-va)', T, async () => {
+  const t = await page.evaluate(() => window.__shots.list[3].t0 + 0.1);
+  const m = await page.evaluate(async (t) => {
+    await window.renderAt(t);
+    const sc = window.__stage.scene, cam = window.__stage.camera, THREE = window.THREE;
+    const { khaiBaoMat, applyMaterials } = await import('/engine/materials.js');
+    const g = new THREE.Group(); g.name = 'thu_none'; g.userData.vai = 'vat-chinh';
+    const mm = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), khaiBaoMat(new THREE.MeshStandardMaterial({ color: '#88aaff' }), 'none'));
+    mm.name = 'hop_none'; g.add(mm);
+    const d = new THREE.Vector3(); cam.getWorldDirection(d); g.position.copy(cam.position).addScaledVector(d, 10);
+    sc.add(g); applyMaterials(THREE, g);
+    const r = JSON.parse(JSON.stringify(window.__measure(t))); sc.remove(g); return r;
+  }, t);
+  const v = (m.vatLieu || []).find((x) => x.ten === 'hop_none');
+  assert.ok(v); assert.equal(v.nguon, 'khai-bao'); assert.equal(v.kind, 'none');
+});
+
+test('hải đăng GLB của ep001 (vai vat-phu: L9 đo, L10 không đòi) khai-bao', T, async () => {
   const t = await page.evaluate(() => { const s = window.__shots.list.find((x) => x.id === 's107'); return s.t0 + s.dur / 2; });
   const m = await measureAt(t);
   const lh = (m.vatLieu || []).filter((v) => /lighthouse|door-mesh|lifebuoy/.test(v.ten));

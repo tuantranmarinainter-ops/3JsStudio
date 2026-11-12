@@ -7,7 +7,7 @@
 //                            window.__mask(null) khôi phục (sau đó gọi renderAt(t) để vẽ lại ảnh thường).
 //     window.__maskAnh(t, w=135, h=240) -> { w, h, data:number[] RGBA } — như __mask nhưng vẽ vào WebGLRenderTarget w×h và ĐỌC THẲNG pixel trong cùng tác vụ
 //                            (không qua screenshot), rồi tự khôi phục; canvas không bị đụng.
-//   Vai gắn ở nơi tạo vật: userData.vai = 'hero'|'nguoi'|'nha'|'chan-nha'|'doc'|'vat-chinh'|'tay'|'chan-nguoi';
+//   Vai gắn ở nơi tạo vật: userData.vai = 'hero'|'nguoi'|'nha'|'chan-nha'|'doc'|'vat-chinh'|'vat-phu'|'tay'|'chan-nguoi';
 //   userData.tang = 'front'|'mid'|'back'; userData.hat = 'bui'|'tuyet'|'mua' + userData.soHat() (+ tuỳ chọn hatViTri()).
 //   Vai của một vật = vai gần nhất khi đi ngược lên cây cha.
 //   KHÔNG có import: file này được tiêm nguyên văn vào bản gộp cũ (THREE nhận qua tham số).
@@ -22,7 +22,7 @@ export function installMeasure({ THREE, stage, shots }) {
   const vaiOf = (o) => { for (let p = o; p; p = p.parent) if (p.userData && p.userData.vai) return p.userData.vai; return null; };
   // giữ mesh nếu BẤT KỲ tổ tiên (kể cả chính nó) có vai trong MASK_VAI — tay/chân lồng trong hero vẫn được vẽ
   const coVaiMask = (o) => { for (let p = o; p; p = p.parent) if (p.userData && MASK_VAI.has(p.userData.vai)) return true; return false; };
-  const VAI_VL = new Set(['vat-chinh', 'nha', 'chan-nha', 'doc']);   // vật liệu phải KHAI BÁO (tools/kiem/luat.mjs L9)
+  const VAI_VL = new Set(['vat-chinh', 'nha', 'chan-nha', 'doc', 'vat-phu']);   // vật liệu phải KHAI BÁO (tools/kiem/luat.mjs L9)
   const coVaiVL = (o) => { for (let p = o; p; p = p.parent) if (p.userData && p.userData.vai) return VAI_VL.has(p.userData.vai); return false; };   // vai GẦN NHẤT (người trong nhà không tính)
   const vaiNode = (o) => { for (let p = o; p; p = p.parent) if (p.userData && p.userData.vai) return p; return null; };
 
@@ -202,7 +202,7 @@ export function installMeasure({ THREE, stage, shots }) {
       let chuaVa = false;   // có vai nhưng vật liệu chưa được vá (trong suốt, không phải MeshStandard…): KHÔNG bỏ qua, báo nguon 'chua-va' để L9 thấy
       if (!kind) {
         const kd = (o.userData && o.userData.matKind) || (m && m.userData && m.userData.matDecl) || null;
-        if (o.userData && o.userData.matKind === 'none' && o.userData.matNguon === 'khai-bao') kind = 'none';   // khai báo "giữ vật liệu gốc"
+        if ((o.userData && o.userData.matKind === 'none' && o.userData.matNguon === 'khai-bao') || (m && m.userData && m.userData.matDecl === 'none')) kind = 'none';   // khai báo "giữ vật liệu gốc" (ở mesh hoặc ở vật liệu)
         else { kind = kd; chuaVa = true; }
       }
       if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere();

@@ -68,11 +68,11 @@ export function createHouse(THREE, opts = {}) {
   const accent = M('accent', c.accent, { roughness: 0.5, metalness: 0.2 });
   const glass = M('glass', c.glass, { emissive: new THREE.Color('#ffd27a'), emissiveIntensity: 0, roughness: 0.3 });
   // khai báo loại cho RIÊNG mesh này (khác loại khai báo của vật liệu): nhân bản vật liệu theo loại để grunge/vân không lan sang mesh khác dùng chung;
-  // bản sao của `glass` vẫn sáng đèn đêm (setNight cập nhật cả glassCopies)
+  // bản sao loại glass vẫn sáng đèn đêm (setNight cập nhật cả glassCopies)
   const copies = new Map(), glassCopies = [];
   const tagOwn = (m, kind) => {
     const ck = m.material.uuid + '|' + kind;
-    if (!copies.has(ck)) { const c = khaiBaoMat(m.material.clone(), kind); copies.set(ck, c); if (m.material === glass) glassCopies.push(c); }
+    if (!copies.has(ck)) { const c = khaiBaoMat(m.material.clone(), kind); copies.set(ck, c); if (m.material === glass && kind === 'glass') glassCopies.push(c); }   // chỉ bản sao loại glass sáng đèn đêm (như cũ: kính cửa sổ bên/sau là bản sao woodpaint không bao giờ sáng)
     m.material = copies.get(ck); m.userData.matKind = kind; m.userData.matNguon = 'khai-bao';
   };
   const baseMat = M('base', c.base, { roughness: 1 }), porchMat = M('porch', c.porch), stepMat = M('step', c.porch), capMat = M('cap', c.trim);

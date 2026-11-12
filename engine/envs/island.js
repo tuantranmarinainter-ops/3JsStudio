@@ -62,8 +62,8 @@ export default function build(g, e, H) {
   e.cliff = new THREE.Group(); e.cliff.name = 'cliff'; e.cliff.position.set(60, 0, -50); g.add(e.cliff);
   e.cliff.add(createCliff(THREE, { seed: 7, top: 4.6, topR: 12 }));
   const pfl = pf('old-lighthouse-48ca6c', 0.8, (h) => (h.s > 0.35 && (h.h < 0.06 || h.h > 0.94) ? '#2f8f6b' : (h.l > 0.75 && h.s > 0.2 ? '#f4f4ef' : null)));
-  if (pfl) { pfl.userData.vai = 'vat-chinh'; khaiBao(pfl, [[/./, 'metalpaint']]); }   // GLB hải đăng: vật chính + khai báo loại đang hiển thị (nhánh K.lighthouse() tự khai báo trong props.js)
-  e.lighthouse = pfl || K.lighthouse(); e.lighthouse.position.y = 4.5; e.cliff.add(e.lighthouse);
+  if (pfl) khaiBao(pfl, [[/./, 'metalpaint']]);   // GLB hải đăng: khai báo loại đang hiển thị (nhánh K.lighthouse() tự khai báo trong props.js)
+  e.lighthouse = pfl || K.lighthouse(); e.lighthouse.userData.vai = 'vat-phu'; e.lighthouse.position.y = 4.5; e.cliff.add(e.lighthouse);   // 'vat-phu' = cảnh vật phụ: L9 đo vật liệu, nhưng KHÔNG vào mặt nạ/L10 (hải đăng thường chỉ ló một mép khung, vd s122)
   e.seat = new THREE.Vector3(44, 2.4, -28);   // chỗ cha ngồi (tảng đá dưới chân hải đăng)
   place(g, naturalRock(THREE, { seed: 77, r: 2.8, h: 0.9, top: 1.9, strata: 0.8 }), 44, 0, -28.6, 0.4);
   // chỗ ở ba năm của cha: ván khắc vạch đếm ngày + đống bưu thiếp đã viết (engine/castaway.js)
