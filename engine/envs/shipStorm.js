@@ -66,8 +66,8 @@ export default function build(g, e, H) {
   // tầng sau (ô FX tangXa; ep001 tắt): núi mờ trong sương quanh chân trời, 650–800 stud < camera.far 1000; update() ẩn/hiện theo ô
   const tx = new THREE.Group(); tx.name = 'shipstorm_tangxa'; g.add(tx);
   { const far = new THREE.Group(); far.name = 'shipstorm_far_rocks';
-    for (let i = 0; i < 10; i++) { const a = (i + hash(i, 41) * 0.5) * 0.6283, r = 650 + hash(i, 42) * 150, w = 200 + hash(i, 43) * 120, h = 26 + hash(i, 44) * 16;
-      const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat('#2d3a4e', { flatShading: true, roughness: 1 })); m.scale.set(w, h, w * 0.35); m.position.set(Math.cos(a) * r, h * 0.3, Math.sin(a) * r); m.rotation.y = -a + Math.PI / 2; far.add(m); }
+    for (let i = 0; i < 10; i++) { const a = (i + hash(i, 41) * 0.5) * 0.6283, r = 520 + hash(i, 42) * 100, w = 220 + hash(i, 43) * 120, h = 110 + hash(i, 44) * 60;   // bóng núi cao ~12–16° ở chân trời, màu sáng hơn mây bão để đọc được
+      const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat('#7388b0', { flatShading: true, roughness: 1 })); m.scale.set(w, h, w * 0.35); m.position.set(Math.cos(a) * r, h * 0.15, Math.sin(a) * r); m.rotation.y = -a + Math.PI / 2; far.add(m); }
     e.farRocks = far; tx.add(ganTang(far, 'back')); }
   e.bolt = fxBolt(THREE, { seed: 9 }); e.bolt.position.set(30, 25, -120); e.bolt.scale.setScalar(1.8); g.add(e.bolt);
   return { suSong: ['song'], update(t, ctx) { tx.visible = globalThis.__autoFx?.tangXa !== false; const G = e.gust(t); e.rain.slant = [0.25 + 0.9 * G, 0.1 + 0.35 * G];   // gió giật → mưa quất xiên (đặt TRƯỚC rain.update)

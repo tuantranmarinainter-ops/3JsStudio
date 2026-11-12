@@ -30,4 +30,14 @@ export default function build(g, e, H) {
     tn++; place(Math.hypot(x, z) > 150 ? pinesFar : pinesMid, K.pine(12 + hash(i, 3) * 20 + Math.min(10, Math.abs(z) / 14), false), x, 0, z, hash(i, 4) * 6, 0.9 + hash(i, 6) * 0.35);
   }
   for (let i = 0; i < 90; i++) { const x = (hash(i, 11) - 0.5) * 300, z = (hash(i, 12) < 0.5 ? -1 : 1) * (20 + hash(i, 13) * 90); if (!clear(x, z, 24)) place(bushes, K.bush(1.8 + hash(i, 14) * 1.6, '#2a5a30'), x, 0, z, hash(i, 15) * 6); }
+  // ô FX tangXa (engine/post.js; ep001 tắt): dải đồi bóng xa (ánh trăng/sương) nhô khỏi ngọn thông = tầng sau. Vật thêm mới, r 480–540 stud, update() ẩn/hiện theo ô.
+  const tx = new THREE.Group(); tx.name = 'forest_tangxa'; g.add(tx);
+  { const far = new THREE.Group(); far.name = 'forest_far_hills';
+    for (let i = 0; i < 12; i++) {
+      const a = (i + hash(i, 71) * 0.5) * 0.5236, r = 480 + hash(i, 72) * 60, w = 220 + hash(i, 73) * 80, h = 230 + hash(i, 74) * 90;
+      const m = new THREE.Mesh(new THREE.SphereGeometry(1, 14, 8), mat('#5b6fa0', { flatShading: true, roughness: 1 }));
+      m.scale.set(w, h, w * 0.6); m.position.set(Math.cos(a) * r, -20, Math.sin(a) * r); m.rotation.y = -a + Math.PI / 2; far.add(m);
+    }
+    tx.add(ganTang(far, 'back')); }
+  return { suSong: [], update() { tx.visible = globalThis.__autoFx?.tangXa !== false; } };
 }

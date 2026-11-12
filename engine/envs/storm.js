@@ -25,8 +25,8 @@ export default function build(g, e, H) {
       const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat('#27323f', { flatShading: true, roughness: 1 })); m.scale.set(s0, s0 * 0.8, s0 * 0.9); m.position.set(Math.cos(a) * r, 2 + s0 * 0.1, Math.sin(a) * r); reef.add(m); }
     tx.add(ganTang(reef, 'mid'));
     const far = new THREE.Group(); far.name = 'storm_far_rocks';
-    for (let i = 0; i < 10; i++) { const a = (i + hash(i, 41) * 0.5) * 0.6283, r = 650 + hash(i, 42) * 150, w = 200 + hash(i, 43) * 120, h = 26 + hash(i, 44) * 16;
-      const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat('#3a4756', { flatShading: true, roughness: 1 })); m.scale.set(w, h, w * 0.35); m.position.set(Math.cos(a) * r, h * 0.3, Math.sin(a) * r); m.rotation.y = -a + Math.PI / 2; far.add(m); }
+    for (let i = 0; i < 10; i++) { const a = (i + hash(i, 41) * 0.5) * 0.6283, r = 520 + hash(i, 42) * 100, w = 220 + hash(i, 43) * 120, h = 110 + hash(i, 44) * 60;   // bóng núi cao ~12–16° ở chân trời, màu sáng hơn mây bão để đọc được
+      const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat('#7388b0', { flatShading: true, roughness: 1 })); m.scale.set(w, h, w * 0.35); m.position.set(Math.cos(a) * r, h * 0.15, Math.sin(a) * r); m.rotation.y = -a + Math.PI / 2; far.add(m); }
     e.farRocks = far; tx.add(ganTang(far, 'back')); }
   e.bolt = fxBolt(THREE); e.bolt.position.set(-40, 20, -140); e.bolt.scale.setScalar(2); g.add(e.bolt);
   // chớp mượt (engine/flash.js): sáng 1 khung rồi tắt dần — không nhấp nháy từng 2 khung (gây "giật")
