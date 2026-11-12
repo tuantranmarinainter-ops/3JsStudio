@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { lapKeHoach, tachTuThe, dichLoai, docDanhMuc, docKichBan, docEnvCo, docAnimCo, docTuStoryboard, docManifest } from '../kb/asset-plan.mjs';
+import { chay, lapKeHoach, tachTuThe, dichLoai, docDanhMuc, docKichBan, docEnvCo, docAnimCo, docTuStoryboard, docManifest } from '../kb/asset-plan.mjs';
 
 const root = path.resolve(import.meta.dirname, '..', '..');
 const kbChim = path.join(root, 'tools', 'tests', 'data', 'asset-plan-chim-bay.md');
@@ -144,4 +144,57 @@ test('đọc repo thật: envCo/animCo/storyboard/manifest/kịch bản mẫu', 
   const r = lapKeHoach({ kb: k, manifest: docManifest(root), envCo: docEnvCo(root), animCo: docAnimCo(root), tuStoryboard: sb });
   assert.deepEqual(r.anim, ['kneel']);
   assert.deepEqual(r.env, []);
+});
+
+test('"cửa" không bị khớp thành "cua" (cua = crab)', () => {
+  assert.deepEqual(dichLoai('cửa'), ['door']);
+  assert.deepEqual(dichLoai('cửa sổ'), ['window']);
+  assert.deepEqual(dichLoai('cua'), ['crab']);
+  assert.deepEqual(dichLoai('con cua biển'), ['crab']);
+});
+
+test('ep001 dựng lại (manifest giả): đúng 5 thứ phải dựng tay', () => {
+  const k = docKichBan(path.join(root, 'tools', 'tests', 'data', 'asset-plan-ep001.md'), root);
+  const man = [
+    ent('polyfork/penguin-base', ['standing', 'swimming'], { title: 'Penguin' }), ent('sea/killer_whale', ['swimming'], { title: 'Cá voi sát thủ' }),
+    ent('sea/sperm_whale', ['standing', 'swimming'], { title: 'Whale' }), ent('polyfork/herring-gull', ['standing', 'flying'], { title: 'Herring Gull' }),
+    ent('polyfork/old-lighthouse', undefined, { title: 'Old Lighthouse' }), ent('polyfork/curbside-mailbox', undefined, { title: 'Curbside Mailbox' }),
+    ent('pirate-kit/boat-row-large', undefined), ent('pirate-kit/palm-bend', undefined),
+  ];
+  const r = lapKeHoach({ kb: k, manifest: man, envCo: new Set(['town', 'hawaii', 'kitchen', 'island', 'antarctica', 'sahara']),
+    animCo: new Set(['idle', 'hug', 'shiver', 'tumble']), tuStoryboard: TOWN });
+  assert.deepEqual(r.prop.map((p) => p.ten).sort(), ['buồm', 'cua', 'kim tự tháp', 'lạc đà', 'san hô']);
+  assert.deepEqual(r.tuDung.map((t) => t.ten).sort(), ['buồm', 'cua', 'kim tự tháp', 'lạc đà', 'san hô']);
+  assert.deepEqual(r.env, []);
+  assert.deepEqual(r.anim, []);
+});
+
+test('bộ nhớ đệm mất hiệu lực khi env / GLB / catalog / công thức đổi', () => {
+  const g = tmp();
+  const cp = (rel) => { fs.mkdirSync(path.dirname(path.join(g, rel)), { recursive: true }); fs.copyFileSync(path.join(root, rel), path.join(g, rel)); };
+  for (const f of ['tools/kb/kichban.py', 'tools/storyboard.py', 'engine/r15.js', 'engine/shottypes.js', 'engine/envs.js', 'engine/envs/cong-thuc.js', 'engine/envs/town.js']) cp(f);
+  fs.mkdirSync(path.join(g, 'assets'), { recursive: true });
+  fs.writeFileSync(path.join(g, 'assets', 'manifest.json'), '[]');
+  const kbf = path.join(g, 'kb.md'), ra = path.join(g, 'thieu.json');
+  fs.copyFileSync(kbChim, kbf);
+  const chayLai = () => {
+    const log = []; const cu = console.log; console.log = (...a) => log.push(a.join(' '));
+    try { const ma = chay('ep-cache', { kichBan: kbf, ra, goc: g }); assert.equal(ma, 0); } finally { console.log = cu; }
+    return log.join('\n');
+  };
+  assert.doesNotMatch(chayLai(), /dùng lại/);
+  assert.match(chayLai(), /dùng lại/);
+  fs.writeFileSync(path.join(g, 'engine', 'envs', 'moi.js'), 'export default 1;\n');
+  assert.doesNotMatch(chayLai(), /dùng lại/, 'env mới');
+  assert.match(chayLai(), /dùng lại/);
+  fs.mkdirSync(path.join(g, 'assets', 'kenney'), { recursive: true });
+  fs.writeFileSync(path.join(g, 'assets', 'kenney', 'bird.glb'), '');
+  assert.doesNotMatch(chayLai(), /dùng lại/, 'GLB mới');
+  assert.match(chayLai(), /dùng lại/);
+  fs.mkdirSync(path.join(g, 'assets', 'catalogs'), { recursive: true });
+  fs.writeFileSync(path.join(g, 'assets', 'catalogs', 'polyfork.json'), '[]');
+  assert.doesNotMatch(chayLai(), /dùng lại/, 'catalog mới');
+  assert.match(chayLai(), /dùng lại/);
+  fs.appendFileSync(path.join(g, 'engine', 'envs', 'cong-thuc.js'), '\n// đổi\n');
+  assert.doesNotMatch(chayLai(), /dùng lại/, 'công thức đổi');
 });

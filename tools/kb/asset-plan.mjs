@@ -14,6 +14,7 @@
 // cột "vật cần đọc" (+ tư thế của shot), và ghi chú `obj:<tên>`.
 // Mã thoát: 0 xong, 1 kịch bản có lỗi dữ liệu (loi_doc), 2 lỗi môi trường (không chạy được python/kichban).
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -60,7 +61,7 @@ export function tachTuThe(ten, moTa = '') {
 
 // "tàu đắm" -> ['shipwreck','wreck']; không có trong từ điển -> chính cụm (coi là tiếng Anh).
 // "cọ" (palm) và "cỏ" (grass) trùng nhau sau khi bỏ dấu -> xét trên chữ gốc trước.
-const THEO_DAU = [[/(^|\s)cọ(\s|$)/, ['palm']], [/(^|\s)cỏ(\s|$)/, ['grass']]];
+const THEO_DAU = [[/(^|\s)cửa sổ(\s|$)/, ['window']], [/(^|\s)cửa(\s|$)/, ['door']], [/(^|\s)cọ(\s|$)/, ['palm']], [/(^|\s)cỏ(\s|$)/, ['grass']]];
 export function dichLoai(loai) {
   const tho = String(loai).normalize('NFC').toLowerCase();
   for (const [re, kw] of THEO_DAU) if (re.test(tho)) return kw;
@@ -265,12 +266,17 @@ export function chay(ep, { kichBan, ra, force = false, goc = GOC } = {}) {
   const file = ung.find((f) => fs.existsSync(f));
   if (!file) { console.error(`[asset-plan] không thấy kịch bản (thử: ${ung.join(', ')})`); return 2; }
   const dinhRa = ra ?? path.join(thuMucKiem(ep, { goc }), 'thieu.json');
-  const hash = hashVao([file, path.join(goc, 'assets', 'manifest.json')], { goc });
-  if (!force && fs.existsSync(dinhRa) && !canChay(ep, 'asset', hash, { goc })) { console.log(`[asset-plan] ${ep}: kịch bản + manifest không đổi, dùng lại ${dinhRa}`); return 0; }
+  const envCo = docEnvCo(goc), animCo = docAnimCo(goc), tuStoryboard = docTuStoryboard(goc), manifest = docManifest(goc);
+  const danhMuc = docDanhMuc(goc, manifest);
+  // băm: kịch bản + manifest + MỌI thứ kết quả phụ thuộc (tên env, tên anim, từ điển storyboard, danh sách GLB/catalog chưa vào manifest, công thức)
+  const phuThuoc = JSON.stringify({ env: [...envCo].sort(), anim: [...animCo].sort(), sb: [tuStoryboard.anim, tuStoryboard.noi, [...tuStoryboard.town].sort()], dm: danhMuc,
+    ct: hashVao([path.join(goc, 'engine', 'envs', 'cong-thuc.js')], { goc }) });
+  const hash = crypto.createHash('sha1').update(hashVao([file, path.join(goc, 'assets', 'manifest.json')], { goc })).update(phuThuoc).digest('hex');
+  if (!force && fs.existsSync(dinhRa) && !canChay(ep, 'asset', hash, { goc })) { console.log(`[asset-plan] ${ep}: đầu vào không đổi, dùng lại ${dinhRa}`); return 0; }
   let kb;
   try { kb = docKichBan(file, goc); } catch (e) { console.error(`[asset-plan] ${e.message}`); return 2; }
   batDau(ep, 'asset', { goc });
-  const kq = lapKeHoach({ kb, manifest: docManifest(goc), envCo: docEnvCo(goc), animCo: docAnimCo(goc), tuStoryboard: docTuStoryboard(goc), danhMuc: docDanhMuc(goc, docManifest(goc)) });
+  const kq = lapKeHoach({ kb, manifest, envCo, animCo, tuStoryboard, danhMuc });
   fs.mkdirSync(path.dirname(dinhRa), { recursive: true });
   fs.writeFileSync(dinhRa, JSON.stringify(kq, null, 2) + '\n');
   const loi = (kb.loi_doc || []).length;
