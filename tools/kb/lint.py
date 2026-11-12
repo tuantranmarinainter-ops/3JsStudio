@@ -11,20 +11,11 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 sys.path.insert(0, str(HERE))
 import kichban  # noqa: E402
-from kichban import fold, CONT  # noqa: E402
+from kichban import fold, CONT, vocab, hint  # noqa: E402
 
-EXTRA_TYPES = {'insertRead', 'houseFull', 'hug', 'fall', 'sinkTilt'}
 ACTION_TYPES = {'chase', 'fall', 'hug', 'walkBy', 'follow', 'sinkTilt'}
 TOTAL_RANGE = (120, 180)
 MAX_SHOTS_PER_LINE = 3
-
-
-def js_keys(file, const):
-    """khoá cấp 1 (thụt 2 ô) của `export const <const> = { … };`"""
-    text = (ROOT / 'engine' / file).read_text(encoding='utf-8')
-    m = re.search(r'export const ' + const + r'\s*=\s*\{\n(.*?)\n\};', text, re.S)
-    if not m: raise RuntimeError(f'không đọc được {const} trong engine/{file}')
-    return set(re.findall(r'^  ([A-Za-z_]\w*)\s*:', m.group(1), re.M))
 
 
 def min_dur(shot):
@@ -45,10 +36,9 @@ def banned_names():
 
 def lint(path):
     d = kichban.doc(path)
-    anims = js_keys('r15.js', 'R15_ANIMATIONS')
-    faces = js_keys('r15.js', 'FACE_PRESETS')
-    types = js_keys('shottypes.js', 'SHOT_TYPES') | EXTRA_TYPES
-    custom_anims = {c['name'] for c in d['can_dung'] if c['kind'] == 'anim'}
+    v = vocab()
+    anims = v['anims'] | {c['name'] for c in d['can_dung'] if c['kind'] == 'anim'}
+    faces, types = v['faces'], v['types']
     banned = [(b, fold(b)) for b in banned_names()]
     errs = [(e['dong'], e['ma'], e['msg']) for e in d['loi_doc']]
     add = lambda n, c, m: errs.append((n, c, m))
@@ -59,17 +49,17 @@ def lint(path):
     for s in d['shots']:
         n = s['_dong']
         sid = s.get('id', '?')
-        if not (s.get('at') or s.get('env')): add(n, 'K01', f'shot {sid}: thiếu bối cảnh (cột "ở đâu" hoặc "env")')
+        if not (s.get('at_hd') or s.get('env_hd')): add(n, 'K01', f'shot {sid}: thiếu bối cảnh (cột "ở đâu"/"env" trống; shot trước và header cũng không có)')
         t = s.get('type')
-        if t not in types: add(n, 'K02', f'shot {sid}: loại "{t or ""}" không có (cho phép: {", ".join(sorted(types))})')
+        if t not in types: add(n, 'K02', f'shot {sid}: loại "{t or ""}" không có (cho phép: {", ".join(sorted(types))}){hint(s.get("_goi_y_type"))}')
         if s.get('read') and t != 'insertRead': add(n, 'K03', f'shot {sid}: có "vật cần đọc" nhưng loại là "{t}", phải là insertRead')
         for key in ('action', 'withAnim'):
             a = s.get(key)
-            if a and a not in anims and a not in custom_anims:
-                add(n, 'K04', f'shot {sid}: animation "{a}" không có trong R15_ANIMATIONS và không nằm trong "Cần dựng"')
+            if a and a not in anims:
+                add(n, 'K04', f'shot {sid}: animation "{a}" không có trong R15_ANIMATIONS và không nằm trong "Cần dựng"{hint(s.get("_goi_y_" + key))}')
         for key in ('face', 'withFace'):
             f = s.get(key)
-            if f and f not in faces: add(n, 'K08', f'shot {sid}: mặt "{f}" không thuộc FACE_PRESETS')
+            if f and f not in faces: add(n, 'K08', f'shot {sid}: mặt "{f}" không thuộc FACE_PRESETS{hint(s.get("_goi_y_" + key))}')
         if 'dur' in s:
             total += s['dur']; known = True
             if s['dur'] < min_dur(s): add(n, 'K05', f'shot {sid}: {s["dur"]} s < tối thiểu {min_dur(s)} s cho loại "{t}"')
@@ -96,11 +86,14 @@ def lint(path):
 
 def main(argv):
     if hasattr(sys.stdout, 'reconfigure'): sys.stdout.reconfigure(encoding='utf-8')
+    if hasattr(sys.stderr, 'reconfigure'): sys.stderr.reconfigure(encoding='utf-8')
     args = [a for a in argv if not a.startswith('--')]
     if not args:
         print(__doc__); return 2
     p = Path(args[0])
-    errs = lint(p)
+    try: errs = lint(p)
+    except OSError:
+        print(f'{args[0]}: K00 không đọc được file', file=sys.stderr); return 2
     if '--json' in argv:
         print(json.dumps([{'dong': n, 'ma': c, 'msg': m} for n, c, m in errs], ensure_ascii=False, indent=2))
     else:

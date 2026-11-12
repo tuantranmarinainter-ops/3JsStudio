@@ -5,7 +5,7 @@
 doc(path) -> {"meta", "shots", "can_dung", "loi_doc"}; mỗi shot có `_dong` (số dòng 1-based).
 Lỗi dữ liệu không ném ngoại lệ: thành mục trong loi_doc {"dong", "ma": "K00", "msg"}.
 """
-import json, re, sys
+import difflib, json, re, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
@@ -23,6 +23,33 @@ TIME_OK = {'sang', 'trua', 'chieu', 'hoang-hon', 'dem'}
 WEATHER_OK = {'nang', 'may', 'mua', 'giong', 'bao', 'tuyet', 'suong'}
 POSE_OK = {'standing', 'flying', 'sitting', 'swimming'}
 NUM_KEYS = ('dur', 'min')
+EXTRA_TYPES = {'insertRead', 'houseFull', 'hug', 'fall', 'sinkTilt'}
+
+
+def js_keys(file, const):
+    """khoá cấp 1 (thụt 2 ô) của `export const <const> = { … };`"""
+    text = (ROOT / 'engine' / file).read_text(encoding='utf-8')
+    m = re.search(r'export const ' + const + r'\s*=\s*\{\n(.*?)\n\};', text, re.S)
+    if not m: raise RuntimeError(f'không đọc được {const} trong engine/{file}')
+    return set(re.findall(r'^  ([A-Za-z_]\w*)\s*:', m.group(1), re.M))
+
+
+def vocab():
+    return {'anims': js_keys('r15.js', 'R15_ANIMATIONS'), 'faces': js_keys('r15.js', 'FACE_PRESETS'),
+            'types': js_keys('shottypes.js', 'SHOT_TYPES') | EXTRA_TYPES}
+
+
+def canon(value, names):
+    """(tên canonical không phân biệt hoa thường | None, gợi ý gần nhất | None)"""
+    low = {n.lower(): n for n in names}
+    v = str(value).lower()
+    if v in low: return low[v], None
+    near = difflib.get_close_matches(v, list(low), n=1, cutoff=0.5)
+    return None, (low[near[0]] if near else None)
+
+
+def hint(h):
+    return f' (gần nhất: {h})' if h else ''
 
 
 def _num(s):
@@ -66,18 +93,37 @@ def doc(path):
             if k in sh:
                 try: sh[k] = _num(sh[k])
                 except ValueError: err(n, f'ô "{k}" không phải số: {sh[k]!r}'); del sh[k]
-        for k, ok, label in (('time', TIME_OK, 'giờ'), ('weather', WEATHER_OK, 'thời tiết'), ('pose', POSE_OK, 'tư thế')):
-            if k in sh and sh[k] not in ok: err(n, f'{label} "{sh[k]}" không hợp lệ (cho phép: {", ".join(sorted(ok))})')
         out['shots'].append(sh)
+    if head is None: err(1, 'không có bảng shot')
+
+    v = vocab()
+    anims = v['anims'] | {c['name'] for c in out['can_dung'] if c['kind'] == 'anim'}
+    sets = {'type': v['types'], 'action': anims, 'withAnim': anims, 'face': v['faces'], 'withFace': v['faces'],
+            'time': TIME_OK, 'weather': WEATHER_OK, 'pose': POSE_OK}
+    labels = {'time': 'giờ', 'weather': 'thời tiết', 'pose': 'tư thế'}
+    cur_at, cur_env = None, out['meta'].get('env')
+    for sh in out['shots']:
+        for k, names in sets.items():
+            if k in sh:
+                c, h = canon(sh[k], names)
+                if c: sh[k] = c
+                elif k in labels: err(sh['_dong'], f'{labels[k]} "{sh[k]}" không hợp lệ (cho phép: {", ".join(sorted(names))}){hint(h)}')
+                else: sh['_goi_y_' + k] = h
+        cur_at = sh.get('at') or cur_at
+        cur_env = sh.get('env') or cur_env
+        sh['at_hd'], sh['env_hd'] = cur_at, cur_env
     return out
 
 
 def main(argv):
     if hasattr(sys.stdout, 'reconfigure'): sys.stdout.reconfigure(encoding='utf-8')
+    if hasattr(sys.stderr, 'reconfigure'): sys.stderr.reconfigure(encoding='utf-8')
     args = [a for a in argv if not a.startswith('--')]
     if not args:
         print(__doc__); return 2
-    d = doc(args[0])
+    try: d = doc(args[0])
+    except OSError:
+        print(f'{args[0]}: K00 không đọc được file', file=sys.stderr); return 2
     print(json.dumps(d, ensure_ascii=False, indent=2) if '--json' in argv else f'{len(d["shots"])} shot, {len(d["loi_doc"])} lỗi đọc')
     return 0
 
