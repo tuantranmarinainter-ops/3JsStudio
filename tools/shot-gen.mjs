@@ -180,13 +180,37 @@ function py(args) {
   return spawnSync('python', ['-X', 'utf8', ...args], { cwd: ROOT, encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: 'utf-8' }, maxBuffer: 64 << 20 });
 }
 
+// --chi-khop-giong: shots.js đã có -> CHỈ co giãn dur theo narration.json (giữ nguyên mọi thứ khác: episode.js, narration.txt trừ @at, sfx/, captions.js).
+async function chiKhopGiong(ep, epDir, shotsFile) {
+  const nf = path.join(epDir, 'narration.json');
+  if (!fs.existsSync(shotsFile)) { console.error(`--chi-khop-giong: chưa có ${path.relative(ROOT, shotsFile)}`); return 1; }
+  if (!fs.existsSync(nf)) { console.error('--chi-khop-giong: chưa có narration.json (tạo giọng trước: tools/tts.py)'); return 1; }
+  const jr = py([path.join('tools', 'kb', 'kichban.py'), path.join(epDir, 'kich-ban.md'), '--json']);
+  const minKb = new Map();
+  if (!jr.error && jr.status === 0) for (const k of JSON.parse(jr.stdout).shots || []) if (typeof k.min === 'number') minKb.set(normId(k.id), k.min);
+  const { shots, notes, head } = await docShotsJs(shotsFile);
+  const L11 = nguong(epDir).L11;
+  const mins = shots.map((s) => toiThieu({ type: s.type, min: minKb.get(normId(s.id)) }, L11));
+  const nj = JSON.parse(fs.readFileSync(nf, 'utf8'));
+  const total = nj.total ?? Math.max(...nj.lines.map((l) => l.end));
+  try {
+    const nd = khopGiong(shots, mins, nj.lines, total);
+    shots.forEach((s, i) => { s.dur = nd[i]; });
+  } catch (e) { console.error('--chi-khop-giong: ' + e.message); return 1; }
+  ghiShotsJs(shotsFile, head, shots, notes);
+  capNhatMocNarration(epDir, shots);
+  console.log(`shot-gen ${ep}: chỉ khớp giọng, ${shots.length} shot, ${shots.reduce((a, s) => a + s.dur, 0).toFixed(2)} s`);
+  return 0;
+}
+
 export async function main(argv) {
   const args = argv.filter((a) => !a.startsWith('--'));
-  const force = argv.includes('--force'), khop = argv.includes('--khop-giong');
+  const force = argv.includes('--force'), khop = argv.includes('--khop-giong'), chiKhop = argv.includes('--chi-khop-giong');
   const ep = args[0];
   if (!ep || !/^[\w-]+$/.test(ep)) { console.error('Dùng: node tools/shot-gen.mjs <ep> [--force] [--khop-giong]'); return 1; }
   const epDir = path.join(ROOT, 'episodes', ep), kbFile = path.join(epDir, 'kich-ban.md'), shotsFile = path.join(epDir, 'shots.js');
   if (!fs.existsSync(kbFile)) { console.error(`Không thấy ${path.relative(ROOT, kbFile)}`); return 1; }
+  if (chiKhop) return chiKhopGiong(ep, epDir, shotsFile);
   if (fs.existsSync(shotsFile) && !force) { console.error(`${path.relative(ROOT, shotsFile)} đã có — thêm --force để dựng lại (ghi đè shots.js, narration.txt, episode.js…)`); return 1; }
 
   const jr = py([path.join('tools', 'kb', 'kichban.py'), kbFile, '--json']);

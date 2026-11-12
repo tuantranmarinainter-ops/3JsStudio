@@ -140,3 +140,24 @@ test('ham thuan: fit ghim san, khopGiong, lookAtOf', () => {
   assert.deepEqual(khopGiong([{ dur: 1, line: 1 }, { dur: 1, line: 2 }], [0.8, 0.8], [{ start: 0 }, { start: 3 }], 5), [3, 2]);
   assert.throws(() => khopGiong([{ dur: 1, line: 1 }], [0.8], [{ start: 0 }, { start: 3 }], 5));
 });
+
+test('--chi-khop-giong: chỉ co giãn dur; narration.txt/episode.js/sfx giữ nguyên; thiếu shots.js hoặc narration.json -> mã 1', async () => {
+  assert.equal(chay('--force').status, 0);
+  const nar = path.join(epDir, 'narration.txt'), ep = path.join(epDir, 'episode.js'), lay = path.join(epDir, 'sfx', 'layers.json');
+  fs.appendFileSync(nar, '# CHINH-TAY\n'); fs.appendFileSync(ep, '// CHINH-TAY\n');
+  fs.mkdirSync(path.dirname(lay), { recursive: true }); fs.writeFileSync(lay, '{"tay":1}');
+  fs.rmSync(path.join(epDir, 'narration.json'), { force: true });
+  assert.equal(chay('--chi-khop-giong').status, 1);
+  const starts = [0, 3.0, 6.5, 9.0, 11.0, 13.5], total = 17.2;
+  const lines = starts.map((s, i) => ({ line: i + 1, text: 'cau ' + i, start: s, end: s + 1.5 }));
+  fs.writeFileSync(path.join(epDir, 'narration.json'), JSON.stringify({ dry: false, total, lines }));
+  const r = chay('--chi-khop-giong');
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const shots = await docShots();
+  assert.ok(Math.abs(shots.reduce((a, s) => a + s.dur, 0) - total) <= 0.1);
+  assert.match(fs.readFileSync(nar, 'utf8'), /# CHINH-TAY/);
+  assert.match(fs.readFileSync(ep, 'utf8'), /CHINH-TAY/);
+  assert.equal(fs.readFileSync(lay, 'utf8'), '{"tay":1}');
+  fs.rmSync(path.join(epDir, 'shots.js'));
+  assert.equal(chay('--chi-khop-giong').status, 1);
+});

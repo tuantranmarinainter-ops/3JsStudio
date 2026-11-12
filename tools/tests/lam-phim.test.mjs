@@ -6,6 +6,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { BUOC } from '../kiem/trang-thai.mjs';
 
+const THU_TU = ['kich-ban', 'giong', 'asset', 'mau-duyet', 'shot', 'ra-loi', 'am-thanh', 'gop'];
 const GOC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const TEN = [];
 function tapGia(hau, { kb = true } = {}) {
@@ -38,11 +39,11 @@ test('tiep: đi đủ 8 bước đúng thứ tự, rồi chạy lại không bư
   const ep = tapGia('1');
   const a = lam(ep, 'tiep');
   assert.equal(a.ma, 0, a.loi);
-  assert.deepEqual(a.json.daChay, BUOC);
+  assert.deepEqual(a.json.daChay, THU_TU);
   assert.equal(a.json.buocTiep, null);
   assert.equal(a.json.canNguoiDung, null);
   assert.deepEqual(a.json.canAgent, []);
-  assert.deepEqual(thuTu(giaLog(ep)), ['kich-ban', 'asset', 'giong', 'mau-duyet', 'shot', 'ra-loi', 'am-thanh', 'gop']);
+  assert.deepEqual(thuTu(giaLog(ep)), THU_TU);
   assert.ok(a.json.lien.phim.file.startsWith('file:///') && a.json.lien.phim.duongDan.endsWith(`${ep}.html`), 'link phim cuối');
   assert.ok(a.json.lien.theoDoi.duongDan.endsWith(`${ep}_theo-doi.html`));
   // giọng: --dry trước, rồi chạy nền
@@ -53,7 +54,7 @@ test('tiep: đi đủ 8 bước đúng thứ tự, rồi chạy lại không bư
   const b = lam(ep, 'tiep');
   assert.equal(b.ma, 0, b.loi);
   assert.deepEqual(b.json.daChay, []);
-  assert.deepEqual(b.json.daBo, BUOC);
+  assert.deepEqual(b.json.daBo, THU_TU);
   assert.equal(giaLog(ep).length, n, 'không lệnh con nào chạy lại');
 });
 
@@ -67,7 +68,8 @@ test('đổi 1 file đầu vào của bước shot -> chỉ shot, ra-loi, am-tha
   assert.deepEqual(r.json.daChay, ['shot', 'ra-loi', 'am-thanh', 'gop']);
   assert.deepEqual(thuTu(giaLog(ep).slice(n)), ['shot', 'ra-loi', 'am-thanh', 'gop']);
   const sh = giaLog(ep).slice(n).find((d) => d.buoc === 'shot');
-  assert.ok(sh.lenh.includes('--khop-giong'), sh.lenh);
+  assert.ok(sh.lenh.includes('--chi-khop-giong') && !sh.lenh.includes('--force'), sh.lenh);
+  assert.ok(!fs.existsSync(path.join(GOC, 'output', ep, 'kiem', 'sao-luu')));
 });
 
 test('đổi kịch bản -> chạy lại từ đầu; lời kể không đổi thì giọng không tạo lại', () => {
@@ -76,8 +78,15 @@ test('đổi kịch bản -> chạy lại từ đầu; lời kể không đổi 
   const n = giaLog(ep).length;
   fs.appendFileSync(path.join(GOC, 'episodes', ep, 'kich-ban.md'), 'thêm dòng\n');
   const r = lam(ep, 'tiep');
-  assert.deepEqual(r.json.daChay, BUOC.filter((b) => b !== 'giong'));
+  assert.deepEqual(r.json.daChay, THU_TU.filter((b) => b !== 'giong'));
+  const sh = giaLog(ep).slice(n).find((d) => d.buoc === 'shot');
+  assert.ok(sh.lenh.includes('--force'), sh.lenh);
+  const sl = path.join(GOC, 'output', ep, 'kiem', 'sao-luu');
+  const bak = fs.readdirSync(sl);
+  assert.ok(bak.length >= 1);
+  assert.ok(bak.every((b) => fs.existsSync(path.join(sl, b, 'narration.txt'))), 'sao lưu narration.txt trước khi sinh lại');
   assert.ok(!giaLog(ep).slice(n).some((d) => d.buoc === 'giong'));
+  assert.equal(r.json.daChay.includes('giong'), false);
 });
 
 test('MỐC DUYỆT 2: mẫu chưa duyệt -> canNguoiDung kèm 00_mau.jpg, mã 1; duyệt xong thì đi tiếp', () => {
@@ -92,7 +101,7 @@ test('MỐC DUYỆT 2: mẫu chưa duyệt -> canNguoiDung kèm 00_mau.jpg, mã 
   assert.equal(a.json.buocTiep, 'mau-duyet');
   assert.match(a.json.canNguoiDung.lyDo, /MOC DUYET 2/);
   assert.deepEqual(a.json.canNguoiDung.anh, [`output/${ep}/duyet/00_mau.jpg`]);
-  assert.deepEqual(a.json.daChay, ['kich-ban', 'asset', 'giong']);
+  assert.deepEqual(a.json.daChay, ['kich-ban', 'giong', 'asset']);
   assert.ok(!giaLog(ep).some((d) => d.buoc === 'shot'), 'chưa dựng shot khi chưa duyệt');
   fs.writeFileSync(path.join(k, 'mau.json'), JSON.stringify({ 'nv:hero:thuong': { duyet: true } }));
   const b = lam(ep, 'tiep');
@@ -159,4 +168,45 @@ test('danh sách giọng: bỏ sisi/daqi/kiwi; Anh đủ 6 giọng mới; nghe t
   assert.ok(d.en.some((v) => v.startsWith('en-AU-William')));
   assert.deepEqual(d.nghe_thu.vi, ['BV075_streaming']);
   assert.deepEqual(d.nghe_thu.en, ['en-US-AndrewMultilingualNeural', 'en-US-AndrewNeural']);
+});
+
+test('I1: shots.js/episode.js có sẵn mà lam-phim chưa từng sinh -> từ chối (mã 1), không gọi shot-gen', () => {
+  const ep = tapGia('8');
+  fs.writeFileSync(path.join(GOC, 'episodes', ep, 'shots.js'), 'export const SHOTS = [];\n');
+  const a = lam(ep, 'tiep');
+  assert.equal(a.ma, 1, a.loi);
+  assert.equal(a.json.buocTiep, 'shot');
+  assert.match(a.json.canNguoiDung.lyDo, /Từ chối ghi đè/);
+  assert.ok(!giaLog(ep).some((d) => d.buoc === 'shot'));
+  assert.equal(fs.readFileSync(path.join(GOC, 'episodes', ep, 'shots.js'), 'utf8'), 'export const SHOTS = [];\n');
+});
+
+test('I2: lời kể do lam-phim tạo có @source/@narrator/@voice (kịch bản có [vai]) (đủ cho tts.py)', () => {
+  const ep = tapGia('9', { kb: false });
+  const mau = fs.readFileSync(path.join(GOC, 'tools', 'kb', 'tests', 'data', 'kb_tot.md'), 'utf8').replace('| Trừ tôi. |', '| [mom] Trừ tôi. |');
+  fs.writeFileSync(path.join(GOC, 'episodes', ep, 'kich-ban.md'), mau);
+  const a = lam(ep, 'giong');
+  assert.equal(a.ma, 0, a.loi);
+  const nar = fs.readFileSync(path.join(GOC, 'episodes', ep, 'narration.txt'), 'utf8');
+  assert.match(nar, /^@source /m);
+  assert.match(nar, /^@narrator /m);
+  assert.match(nar, /^@voice mom /m);
+  assert.match(nar, /^@at [\d.]+ \[mom\] Trừ tôi\./m);
+  assert.ok(!fs.existsSync(path.join(GOC, 'episodes', `_lamphim_tmp_${ep}`)), 'tập tạm đã dọn');
+  assert.ok(!fs.existsSync(path.join(GOC, 'output', '_tmp', `lam-phim-${ep}`)));
+});
+
+test('I3: giọng khởi chạy nền NGAY sau kich-ban, trước khi asset trả canAgent; JSON có giongNen', () => {
+  const ep = tapGia('10');
+  const k = path.join(GOC, 'output', ep, 'kiem');
+  fs.mkdirSync(k, { recursive: true });
+  fs.writeFileSync(path.join(k, 'gia-giong-nen'), '1');
+  fs.writeFileSync(path.join(k, 'gia-thieu.json'), JSON.stringify({ env: [{ ten: 'kitchen', moTa: 'bếp' }], prop: [], anim: [], tuDung: [] }));
+  const a = lam(ep, 'tiep');
+  assert.equal(a.ma, 0, a.loi);
+  assert.equal(a.json.buocTiep, 'asset');
+  assert.equal(a.json.canAgent.length, 1);
+  assert.deepEqual(a.json.dangChayNen, ['giong']);
+  assert.ok(a.json.giongNen && a.json.giongNen.pid > 0 && a.json.giongNen.batDau && a.json.giongNen.log, JSON.stringify(a.json.giongNen));
+  assert.deepEqual(thuTu(giaLog(ep)), ['kich-ban', 'giong', 'asset']);
 });

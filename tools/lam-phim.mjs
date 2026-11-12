@@ -11,6 +11,8 @@
 //   shot <- kịch bản + narration.json; ra-loi <- shot + shots.js; am-thanh <- ra-loi + sfx/music; gop <- am-thanh + (giọng thật xong?).
 // Giọng: --dry trước (có nhịp), rồi python tools/tts.py chạy NỀN (không chặn); CapCut lỗi / log không đổi quá
 //   goi.phutKhongTien phút -> canNguoiDung (KHÔNG tự đổi sang Edge). Bước khác treo quá ngưỡng đó (batDau cũ, nhật ký không đổi) -> canNguoiDung.
+// Giọng nền khởi chạy NGAY sau kich-ban (trước asset): thứ tự chạy kich-ban, giong, asset, mau-duyet, ...; JSON có `giongNen:{pid,batDau,log}`.
+// Biến LAM_PHIM_PY_CAPCUT = python có miniaudio/requests cho CapCut.
 // LAM_PHIM_GIA=1: mọi lệnh con thay bằng lệnh giả (ghi output/<ep>/kiem/gia.log, tạo vài file kết quả tối thiểu) — dùng cho test.
 // Mã thoát: 0 chạy được (kể cả đang chờ agent / giọng nền), 1 cần người dùng, 2 lỗi môi trường / tham số.
 import fs from 'node:fs';
@@ -27,6 +29,7 @@ const ENV = { ...process.env, PYTHONIOENCODING: 'utf8', PYTHONDONTWRITEBYTECODE:
 const CONT = new Set(['^', '〃', '"', '""', '…cont', '+']);   // cùng tập ký hiệu "nối câu trước" với kichban.py
 const DEP = { 'ra-loi': 'shot', 'am-thanh': 'ra-loi', gop: 'am-thanh' };   // bước sau băm kèm hash bước trước
 const TOI_DA_AGENT = 3;
+const THU_TU = ['kich-ban', 'giong', 'asset', 'mau-duyet', 'shot', 'ra-loi', 'am-thanh', 'gop'];   // giọng nền chạy NGAY khi kịch bản đạt, trước khi asset chặn
 
 class LoiMoiTruong extends Error {}
 
@@ -53,6 +56,17 @@ function ghiLm(ep, patch) {
   const d = { ...docLm(ep), ...patch };
   fs.mkdirSync(kiemDir(ep), { recursive: true });
   fs.writeFileSync(fLm(ep), JSON.stringify(d, null, 1) + '\n');
+}
+
+function saoLuu(ep, rels) {
+  const d = path.join(kiemDir(ep), 'sao-luu', new Date().toISOString().replace(/[:.]/g, '-'));
+  for (const r of rels) {
+    const src = path.join(epDir(ep), r);
+    if (!fs.existsSync(src)) continue;
+    fs.mkdirSync(path.dirname(path.join(d, r)), { recursive: true });
+    fs.cpSync(src, path.join(d, r), { recursive: true });
+  }
+  return d;
 }
 
 // ---------- lời kể ----------
@@ -89,7 +103,10 @@ const giongXong = (ep) => !canChay(ep, 'giong', bam(ep, 'giong'));
 function giaTao(c, args) {
   const k = kiemDir(c.ep); fs.mkdirSync(k, { recursive: true });
   const co = (s) => args.some((a) => String(a).endsWith(s));
-  if (co('asset-plan.mjs')) fs.writeFileSync(path.join(k, 'thieu.json'), JSON.stringify({ env: [], prop: [], anim: [], tuDung: [] }));
+  if (co('asset-plan.mjs')) {   // gia-thieu.json (nếu test đặt sẵn) = kết quả giả của asset-plan
+    const tay = path.join(k, 'gia-thieu.json');
+    fs.writeFileSync(path.join(k, 'thieu.json'), fs.existsSync(tay) ? fs.readFileSync(tay) : JSON.stringify({ env: [], prop: [], anim: [], tuDung: [] }));
+  }
   if (co('mau-duyet.mjs') && !fs.existsSync(path.join(k, 'mau.json'))) fs.writeFileSync(path.join(k, 'mau.json'), JSON.stringify({ 'nv:hero:thuong': { duyet: true } }));
   if (co('ra-loi.mjs')) {   // gia-ra-loi.json (nếu test đặt sẵn) = kết quả giả của ra-loi
     const tay = path.join(k, 'gia-ra-loi.json');
@@ -106,7 +123,7 @@ function chay(c, buoc, cmd, args, { loiOk = false } = {}) {
     return { status: 0, out: '' };
   }
   log(`> [${buoc}] ${lenh}`);
-  const r = spawnSync(cmd, args, { cwd: GOC, env: ENV, encoding: 'utf8', maxBuffer: 256 << 20 });
+  const r = spawnSync(cmd, args, { cwd: GOC, env: ENV, encoding: 'utf8', maxBuffer: 256 << 20, windowsHide: true });
   const out = (r.stdout || '') + (r.stderr || '');
   if (out) process.stderr.write(out.endsWith('\n') ? out : out + '\n');
   if (r.error) { if (loiOk) return { status: 2, out }; throw new LoiMoiTruong(`${cmd}: ${r.error.message}`); }
@@ -169,15 +186,32 @@ H['mau-duyet'] = async (c) => {
 };
 
 H.shot = async (c) => {
-  const dich = path.join(epDir(c.ep), 'kich-ban.md');
   const nguon = kbFile(c.ep);
   if (!nguon) return chan({ canNguoiDung: { lyDo: 'Chưa có kịch bản.', anh: [] } });
+  const shotsF = path.join(epDir(c.ep), 'shots.js'), epJs = path.join(epDir(c.ep), 'episode.js');
+  const lm = docLm(c.ep), k = kbSha(c.ep);
+  const coTay = fs.existsSync(shotsF) || fs.existsSync(epJs);
+  if (coTay && !lm.shotSinh) {
+    return chan({ canNguoiDung: { lyDo: `episodes/${c.ep} đã có shots.js/episode.js nhưng lam-phim chưa từng sinh chúng (tập làm tay?). Từ chối ghi đè. Muốn dựng lại: sao lưu rồi tự dọn shots.js + episode.js, hoặc chạy tay node tools/shot-gen.mjs ${c.ep} --force.`, anh: [] } });
+  }
+  const dich = path.join(epDir(c.ep), 'kich-ban.md');
   if (path.resolve(nguon) !== path.resolve(dich)) { fs.mkdirSync(epDir(c.ep), { recursive: true }); fs.copyFileSync(nguon, dich); }
-  const khop = fs.existsSync(path.join(epDir(c.ep), 'narration.json'));
-  const r = node(c, 'shot', 'tools/shot-gen.mjs', c.ep, '--force', ...(khop ? ['--khop-giong'] : []));
+  const coJson = fs.existsSync(path.join(epDir(c.ep), 'narration.json'));
+  let args;
+  if (lm.shotSinh && lm.shotSinh.kb === k) {
+    if (!coJson) return {};   // kịch bản không đổi, chưa có giọng: không có gì để co giãn
+    args = ['--chi-khop-giong'];   // chỉ co giãn dur; không đụng narration.txt, sfx/, episode.js, captions.js
+  } else {
+    if (lm.shotSinh) {   // kịch bản đổi: sinh lại, sao lưu những gì sắp bị ghi đè
+      const d = saoLuu(c.ep, ['shots.js', 'episode.js', 'narration.txt', 'captions.js', 'sfx']);
+      c.kq.canhBao.push(`kịch bản đổi: sinh lại shot; đã sao lưu file cũ vào ${path.relative(GOC, d).split(path.sep).join('/')}`);
+    }
+    args = ['--force', ...(coJson ? ['--khop-giong'] : [])];
+  }
+  const r = node(c, 'shot', 'tools/shot-gen.mjs', c.ep, ...args);
   if (r.status === 2) throw new LoiMoiTruong('shot-gen lỗi môi trường: ' + duoi(r.out));
-  if (r.status !== 0) return chan({ canAgent: [{ viec: `Sửa kịch bản/lời kể cho shot-gen chạy được${khop ? ' (có --khop-giong: số câu narration.json phải khớp kịch bản)' : ''}: ${duoi(r.out, 8).replace(/\n/g, ' | ')}`, file: `episodes/${c.ep}/kich-ban.md`, model: 'sonnet' }] });
-  ghiLm(c.ep, { vongRaLoi: 0 });
+  if (r.status !== 0) return chan({ canAgent: [{ viec: `Sửa kịch bản/lời kể cho shot-gen chạy được (${args.join(' ')}): ${duoi(r.out, 8).replace(/\n/g, ' | ')}`, file: `episodes/${c.ep}/kich-ban.md`, model: 'sonnet' }] });
+  ghiLm(c.ep, { vongRaLoi: 0, shotSinh: { kb: k } });
   return {};
 };
 
@@ -254,29 +288,35 @@ H.gop = async (c) => {
 };
 
 // ---------- giọng (nền) ----------
+// Một nguồn sự thật: để tools/storyboard.py (chính hàm shot-gen dùng) sinh narration.txt trong tập tạm rồi lấy file đó
+// (@source/@narrator/@voice y như shot-gen sẽ ghi sau này).
 function suyNarration(c) {
-  if (c.gia) return '# gia\n@source capcut\n@narrator BV075_streaming\n\n@at 0.00 xin chao\n';
   const f = kbFile(c.ep);
-  if (!f) throw new LoiMoiTruong('không có kịch bản để suy lời kể');
-  const r = spawnSync(PY, ['-X', 'utf8', 'tools/kb/kichban.py', f, '--json'], { cwd: GOC, env: ENV, encoding: 'utf8', maxBuffer: 64 << 20 });
-  if (r.error || r.status !== 0) throw new LoiMoiTruong('kichban.py lỗi: ' + (r.error?.message || duoi(r.stderr || r.stdout)));
-  const d = JSON.parse(r.stdout);
-  let t = 0; const lines = [];
-  for (const sh of d.shots) {
-    const nar = sh.narration || '';
-    if (!CONT.has(nar) && nar) lines.push(`@at ${t.toFixed(2)} ${nar}`);
-    t += sh.dur || 0;
-  }
-  const m = d.meta || {};
-  return [`# ${m.title || c.ep} — lời kể sinh từ kich-ban.md bởi lam-phim. @at = ước lượng (~14 ký tự/giây); tools/tts.py canh đúng mốc.`,
-    `@source ${m.voice_source || 'capcut'}`, `@narrator ${m.narrator || 'BV075_streaming'}`, '', ...lines, ''].join('\n');
+  const stub = '# gia\n@source capcut\n@narrator BV075_streaming\n\n@at 0.00 xin chao\n';
+  if (!f) { if (c.gia) return stub; throw new LoiMoiTruong('không có kịch bản để suy lời kể'); }
+  const tmpEp = `_lamphim_tmp_${c.ep}`, src = path.join(GOC, 'output', '_tmp', `lam-phim-${c.ep}`), out = epDir(tmpEp);
+  const don = () => { fs.rmSync(src, { recursive: true, force: true }); fs.rmSync(out, { recursive: true, force: true }); };
+  don();
+  try {
+    fs.mkdirSync(src, { recursive: true });
+    fs.copyFileSync(f, path.join(src, 'kich-ban.md'));
+    const r = spawnSync(PY, ['-X', 'utf8', 'tools/storyboard.py', path.relative(GOC, src), tmpEp, '--force'], { cwd: GOC, env: ENV, encoding: 'utf8', maxBuffer: 64 << 20, windowsHide: true });
+    const nf = path.join(out, 'narration.txt');
+    if (r.error || r.status !== 0 || !fs.existsSync(nf)) {
+      if (c.gia) return stub;
+      throw new LoiMoiTruong('storyboard.py không sinh được lời kể: ' + (r.error?.message || duoi(r.stderr || r.stdout)));
+    }
+    return fs.readFileSync(nf, 'utf8');
+  } finally { don(); }
 }
 function damBaoNarration(c) {
   const f = path.join(epDir(c.ep), 'narration.txt');
   const lm = docLm(c.ep), k = kbSha(c.ep);
   if (fs.existsSync(f) && !(lm.narrationKb && lm.narrationKb !== k)) return;
   fs.mkdirSync(epDir(c.ep), { recursive: true });
-  fs.writeFileSync(f, suyNarration(c));
+  const moi = suyNarration(c);
+  if (fs.existsSync(f)) saoLuu(c.ep, ['narration.txt']);   // kịch bản đổi: giữ bản cũ (có thể có chỉnh tay)
+  fs.writeFileSync(f, moi);
   ghiLm(c.ep, { narrationKb: k });
   log(`lam-phim: ghi ${rel('episodes', c.ep, 'narration.txt')} từ kịch bản`);
 }
@@ -310,11 +350,12 @@ function khoiChayGiong(c, h) {
   const tt = { hash: h, pid: 0, batDau: new Date().toISOString() };
   if (c.gia) {
     fs.appendFileSync(path.join(kiemDir(c.ep), 'gia.log'), JSON.stringify({ buoc: 'giong', lenh: `python tools/tts.py ${narr} --workers 2 (nền)` }) + '\n');
-    fs.writeFileSync(ma, '0');
+    if (fs.existsSync(path.join(kiemDir(c.ep), 'gia-giong-nen'))) tt.pid = process.pid;   // giả lập "đang chạy nền"
+    else fs.writeFileSync(ma, '0');
   } else {
     const code = `const {spawnSync}=require('child_process');const fs=require('fs');const [py,cwd,log,ma,...a]=JSON.parse(process.argv[1]);`
       + `const fd=fs.openSync(log,'a');const r=spawnSync(py,a,{cwd,stdio:['ignore',fd,fd],env:{...process.env,PYTHONIOENCODING:'utf8'}});fs.writeFileSync(ma,String(r.status===null?'killed':r.status));`;
-    const ch = spawn(process.execPath, ['-e', code, JSON.stringify([pyCapcut(), GOC, lg, ma, 'tools/tts.py', narr, '--workers', '2'])], { cwd: GOC, detached: true, stdio: 'ignore' });
+    const ch = spawn(process.execPath, ['-e', code, JSON.stringify([pyCapcut(), GOC, lg, ma, 'tools/tts.py', narr, '--workers', '2'])], { cwd: GOC, detached: true, stdio: 'ignore', windowsHide: true });
     ch.unref();
     tt.pid = ch.pid;
     log(`lam-phim: giọng chạy nền (pid ${ch.pid}), log ${path.relative(GOC, lg)}`);
@@ -374,8 +415,8 @@ async function chayBuoc(c, b) {
   return { chay: true };
 }
 
-async function tiep(ep, { chi = null, force = false, gia = false } = {}) {
-  const kq = { ep, buocTiep: null, canAgent: [], canNguoiDung: null, daChay: [], daBo: [], dangChayNen: [], canhBao: [], lien: null, toiDaSongSong: TOI_DA_AGENT };
+async function tiepTrong(ep, { chi = null, force = false, gia = false } = {}) {
+  const kq = { ep, buocTiep: null, canAgent: [], canNguoiDung: null, daChay: [], daBo: [], dangChayNen: [], giongNen: null, canhBao: [], lien: null, toiDaSongSong: TOI_DA_AGENT };
   const c = { ep, kq, force, gia };
   const treo = quaHan(c);
   if (treo) {
@@ -383,13 +424,20 @@ async function tiep(ep, { chi = null, force = false, gia = false } = {}) {
     kq.canNguoiDung = { lyDo: `Bước ${treo.b} đã chạy quá ${treo.phut} phút mà nhật ký không tiến (có thể treo). Đã đặt lại để chạy lại ở lần sau.`, anh: [] };
     return kq;
   }
-  for (const b of chi ? [chi] : BUOC) {
+  for (const b of chi ? [chi] : THU_TU) {
     const r = await chayBuoc(c, b);
     if (r.daBo) { kq.daBo.push(b); continue; }
     if (r.chan) { kq.buocTiep = b; kq.canAgent = r.chan.canAgent; kq.canNguoiDung = r.chan.canNguoiDung; return kq; }
     if (r.chay) kq.daChay.push(b);
   }
   if (!chi && kq.dangChayNen.includes('giong')) kq.buocTiep = 'giong';   // còn chờ giọng thật để ra bản cuối
+  return kq;
+}
+
+async function tiep(ep, o) {
+  const kq = await tiepTrong(ep, o);
+  const tt = readJson(path.join(giongDir(ep), 'tt.json'), null);
+  kq.giongNen = tt && kq.dangChayNen.includes('giong') ? { pid: tt.pid, batDau: tt.batDau, log: rel('output', ep, 'kiem', 'giong', 'tts.log') } : null;
   return kq;
 }
 

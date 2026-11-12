@@ -35,7 +35,7 @@ if only is None and args.what == 'index' and _chot.exists():
 # Danh sách giọng DÙNG (người dùng chốt 2026-11-12). Không sửa tools/voice_studio/ — chỉ lọc ở đây.
 VI_BO = {'multi_female_sisi_uranus_bigtts', 'multi_female_daqi_uranus_bigtts', 'multi_female_kiwi_uranus_bigtts'}
 EN_DUNG = ['en-US-AndrewMultilingualNeural', 'en-US-AndrewNeural', 'en-US-AvaMultilingualNeural', 'en-US-EmmaNeural',
-           'en-US-BrianNeural', 'en-US-SteffanNeural', 'en-GB-SoniaNeural', 'en-AU-WilliamMultilingualNeural', 'en-AU-WilliamNeural']
+           'en-US-BrianNeural', 'en-US-SteffanNeural', 'en-GB-SoniaNeural', 'en-AU-WilliamMultilingualNeural']
 # trang nghe thử (sample): chỉ Thanh Niên Tự Tin + Andrew (Multilingual + Neural)
 NGHE_THU_VI = ['BV075_streaming']
 NGHE_THU_EN = ['en-US-AndrewMultilingualNeural', 'en-US-AndrewNeural']
