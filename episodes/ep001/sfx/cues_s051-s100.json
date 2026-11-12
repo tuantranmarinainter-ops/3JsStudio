@@ -9,6 +9,7 @@
  },
  {
   "t": 62.15,
+  "event": "doorOpen",
   "name": "wooden door creak",
   "vol": 0.45,
   "dur": 1.5,
@@ -347,6 +348,7 @@
  },
  {
   "t": 119.95,
+  "event": "doorOpen",
   "name": "wooden door creak",
   "vol": 0.45,
   "dur": 1.5,

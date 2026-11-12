@@ -160,16 +160,16 @@ test('L11', () => {
   assert.equal(LUAT.L11(ctx({ shot: { id: 's', type: 'khac', dur: 0.8 } }), ng).nguong, 0.8);
 });
 
-test('kiemShot trả đủ 11 mã', () => {
+test('kiemShot trả đủ 12 mã', () => {
   const r = kiemShot(ctx(), ng);
-  assert.deepEqual(Object.keys(r), ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8', 'L9', 'L10', 'L11']);
+  assert.deepEqual(Object.keys(r), ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8', 'L9', 'L10', 'L11', 'L12']);
 });
 
 // ---- Vòng sửa 1 ----
 test('kiemShot bắt lỗi từng luật', () => {
   const r = kiemShot(ctx({ anh: [anhMot(0), anhMot(0), tao(16, 16, () => 0)] }), ng);
   assert.equal(r.L4.ok, false); assert.equal(r.L4.skip, 'loi'); assert.match(r.L4.ghiChu, /^loi: /);
-  assert.equal(r.L11.ok, true); assert.equal(Object.keys(r).length, 11);
+  assert.equal(r.L11.ok, true); assert.equal(Object.keys(r).length, 12);
 });
 
 test('m có phần tử null / trường thiếu không ném lỗi', () => {
@@ -353,4 +353,43 @@ test('L3: cận cảnh (bbox hero lớn hơn khung) miễn trongKhung, vẫn xé
   assert.equal(gan.ok, true); assert.match(gan.ghiChu, /can-canh/);
   assert.equal(LUAT.L3(ctx({ m: bo3(hero([-1, -1, 2, 2], 0.1, 0.5)) }), ng).ok, false);
   assert.equal(LUAT.L3(ctx({ m: bo3(hero([0.5, 0.2, 1.3, 0.8], 0.1)) }), ng).ok, false);   // chỉ 10% trong khung, không phải cận cảnh
+});
+
+// L12 đứng yên: cửa sổ camera đóng băng, đếm điểm ảnh đổi > nguong
+import { diemDoi, cuaSoDong } from '../kiem/anh.mjs';
+test('diemDoi: đếm điểm chênh > ngưỡng, báo khác cỡ', () => {
+  const a = anhMot(100);
+  assert.equal(diemDoi(a, anhMot(100)), 0);
+  assert.equal(diemDoi(a, anhMot(112)), 0);          // đúng 12: chưa vượt
+  assert.equal(diemDoi(a, anhMot(113)), 32 * 32);
+  const b = tao(32, 32, (x, y) => (x < 3 && y < 3 ? 200 : 100));
+  assert.equal(diemDoi(a, b), 9);
+  assert.throws(() => diemDoi(a, tao(16, 16, () => 0)), /kích thước/);
+});
+test('cuaSoDong: bước 1 s, dài 2.25 s, kẹp trong shot', () => {
+  assert.deepEqual(cuaSoDong(10, 12, 2.25, 1), []);
+  const w = cuaSoDong(10, 13.5, 2.25, 1);              // bắt đầu 10, 11 (11+2.25=13.25 ≤ 13.5), không có 12
+  assert.equal(w.length, 2);
+  assert.ok(Math.abs(w[0][0] - (10 + 1 / 30)) < 1e-9);  // kẹp khung đầu shot
+  assert.ok(Math.abs(w[1][1] - 12.125) < 1e-9 && Math.abs(w[1][2] - 13.25) < 1e-9);
+  assert.equal(cuaSoDong(0, 2.25, 2.25, 1).length, 1);
+  assert.ok(cuaSoDong(0, 2.25, 2.25, 1)[0][2] <= 2.25 - 1 / 30 + 1e-9);
+});
+test('L12', () => {
+  const dai = { id: 's', type: 'establish', dur: 4 };
+  const dong = (...cap) => cap.map((c, i) => ({ t: i, anh: c }));
+  const doi = [anhMot(100), anhMot(100), tao(32, 32, (x) => (x < 4 ? 200 : 100))];   // 32*4=128 điểm đổi (đầu-cuối)
+  const yen = [anhMot(100), anhMot(100), anhMot(100)];
+  assert.equal(LUAT.L12(ctx({ shot: dai, dong: dong(doi, doi) }), ng).ok, true);
+  const r = LUAT.L12(ctx({ shot: dai, dong: dong(doi, yen) }), ng);
+  assert.equal(r.ok, false); assert.equal(r.val.diemItNhat, 0); assert.equal(r.val.cuaSoXauNhat, 1);
+  const it = [anhMot(100), anhMot(100), tao(32, 32, (x, y) => (x < 2 && y < 3 ? 200 : 100))];   // 6 < 8 điểm
+  assert.equal(LUAT.L12(ctx({ shot: dai, dong: dong(it) }), ng).ok, false);
+  const giuaDoi = [anhMot(100), tao(32, 32, (x) => (x < 4 ? 200 : 100)), anhMot(100)];            // đi rồi quay lại vẫn tính
+  assert.equal(LUAT.L12(ctx({ shot: dai, dong: dong(giuaDoi) }), ng).ok, true);
+  assert.ok(LUAT.L12(ctx({ shot: { id: 's', dur: 2 }, dong: [] }), ng).skip);                      // ngắn hơn cửa sổ
+  assert.ok(LUAT.L12(ctx({ shot: dai }), ng).skip);                                                 // không có dữ liệu cửa sổ
+  assert.equal(LUAT.L12(ctx({ shot: { ...dai, static: true }, dong: dong(yen) }), ng).ok, true);   // shot tĩnh được miễn
+  const t = kiemShot(ctx({ shot: dai, dong: dong(yen) }), { ...ng, L12: { ...ng.L12, tat: true } });
+  assert.equal(t.L12.skip, 'tat');
 });

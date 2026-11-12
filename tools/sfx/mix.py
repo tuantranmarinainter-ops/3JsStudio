@@ -13,6 +13,8 @@ Ra: episodes/<ep>/sfx_<lớp>.ogg (Opus mono) + sfx_layers.json (danh sách trac
 import json, re, subprocess, sys
 from pathlib import Path
 import numpy as np
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from anchor import file_anchor
 
 ROOT = Path(__file__).resolve().parents[2]
 SR = 48000
@@ -75,9 +77,27 @@ def shots():
         out.append((m.group(1), int(m.group(2)) / 30, (int(m.group(3)) + 1) / 30, env.group(1) if env else '', light.group(1) if light else ''))
     return out
 
+def shot_events():
+    """{shot_id: (giây bắt đầu, {tên_mốc: giây cục bộ trong shot})} từ trường `events: { tên: giây }` trong shots.js."""
+    out = {}
+    for m in re.finditer(r"\{ id: '([^']+)', f: \[(\d+), (\d+)\](.*?)\},?\s*$", (EPD / 'shots.js').read_text(encoding='utf8'), re.M):
+        ev = re.search(r"events:\s*\{([^}]*)\}", m.group(4))
+        d = {k: float(v) for k, v in re.findall(r"([A-Za-z_]\w*)\s*:\s*(-?[\d.]+)", ev.group(1))} if ev else {}
+        out[m.group(1)] = (int(m.group(2)) / 30, d)
+    return out
+
+def cue_time(x, ev):
+    """Giây của cue. `event: 'tên'` (hoặc 'shot.tên') + trường shot → bắt đầu shot + mốc cục bộ (+ `dt` tuỳ chọn);
+    không có event → `t` tuyệt đối như cũ."""
+    e = x.get('event')
+    if not e: return x['t']
+    sid, _, nm = e.rpartition('.'); sid = sid or x.get('shot')
+    if sid not in ev or nm not in ev[sid][1]: raise SystemExit(f"cue event '{e}' (shot {sid}) không có trong shots.js:events")
+    return round(ev[sid][0] + ev[sid][1][nm] + float(x.get('dt', 0) or 0), 3)   # tròn ms
+
 SH = shots(); TOTAL = SH[-1][2]; N = int(TOTAL * SR)
 
-def place(buf, sig, t, vol, dur=None, fade=0.08, rate=1.0, offset=0.0, align=None):
+def place(buf, sig, t, vol, dur=None, fade=0.08, rate=1.0, offset=0.0, align=None, anchor=None):
     """Đặt tiếng vào lớp. offset = bỏ qua bao nhiêu giây đầu file; align='peak' = đỉnh lớn nhất của tiếng rơi đúng t
     (cho tiếng va chạm: rầm, nước văng, sập, đổ) — tự tìm đỉnh trong 8 s đầu, bắt đầu trước đỉnh 0,06 s."""
     if sig is None: return
@@ -86,6 +106,9 @@ def place(buf, sig, t, vol, dur=None, fade=0.08, rate=1.0, offset=0.0, align=Non
     if align == 'peak':
         win = np.abs(sig[: int(8 * SR)]); pk = int(np.argmax(win)) if len(win) else 0
         pre = int(0.06 * SR); offset = max(0, pk - pre) / SR; t = t - min(pk, pre) / SR
+    if anchor is not None and align != 'peak':      # neo: đỉnh va chạm (giây từ đầu file) rơi đúng t
+        lead = anchor - offset
+        if lead >= 0: t -= lead
     if offset: sig = sig[int(offset * SR):]
     sig = (sig[: int(dur * SR)] if dur else sig).copy()
     nf = min(len(sig), int(fade * SR))
@@ -127,7 +150,9 @@ def layer_buoc_chan(buf, rep):
 
 def layer_khoanh_khac(buf, rep):
     c = CFG['khoanh-khac']
-    allc = sorted((x for f in sorted((EPD / 'sfx').glob('cues_*.json')) for x in json.loads(f.read_text(encoding='utf8'))), key=lambda x: float(x['t']))
+    ev = shot_events()
+    allc = [dict(x, t=cue_time(x, ev)) for f in sorted((EPD / 'sfx').glob('cues_*.json')) for x in json.loads(f.read_text(encoding='utf8'))]
+    allc.sort(key=lambda x: float(x['t']))
     seen = {}; key = lambda n: re.sub(r'\b(open|soft|short|long|heavy)\b', '', n).strip()
     for x in allc:
         k = key(x['name'])
@@ -135,7 +160,10 @@ def layer_khoanh_khac(buf, rep):
         seen[k] = float(x['t'])
         sig, used = sound(x['name'])
         if sig is None: rep['missing'].append(x['name']); continue
-        place(buf, sig, float(x['t']), float(x.get('vol', 0.5)), dur=x.get('dur'), offset=float(x.get('offset', 0) or 0), align=x.get('align'))
+        an = x.get('anchor')
+        if an == 'auto' or an is True: an = file_anchor(man[used]['file'])
+        place(buf, sig, float(x['t']), float(x.get('vol', 0.5)), dur=x.get('dur'), offset=float(x.get('offset', 0) or 0), align=x.get('align'),
+              anchor=None if an is None else float(an))
         rep['items'].append([x['t'], x['name'] if used == x['name'] else f"{x['name']} → {used}", x.get('shot')])
 
 FN = {'nen': layer_nen, 'buoc-chan': layer_buoc_chan, 'khoanh-khac': layer_khoanh_khac}

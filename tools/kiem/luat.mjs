@@ -1,8 +1,8 @@
-// 11 luật kiểm khung hình: hàm thuần (ctx, ng) -> { ok, val, nguong, skip?, ghiChu? }.
+// 12 luật kiểm khung hình: hàm thuần (ctx, ng) -> { ok, val, nguong, skip?, ghiChu? }.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { psnr, tyLeToi, diemSang, oPhang, thanhPhan } from './anh.mjs';
+import { psnr, tyLeToi, diemSang, oPhang, thanhPhan, diemDoi } from './anh.mjs';
 
 // Đơn vị: m.vat[].nghieng = độ; m.vat[].chim = stud (1 stud = 1 đơn vị three.js).
 // Mặt nạ L10 vẽ các vai hero, vat-chinh, nha (đã chốt với phần viết __measure) nên số thành phần đếm theo đúng ba vai đó.
@@ -225,6 +225,23 @@ export const LUAT = {
     else if (type !== 'hanhDong' && type !== 'macDinh' && typeof t[type] === 'number') min = t[type];
     else min = t.macDinh;
     return { ok: ctx.shot.dur >= min, val: ctx.shot.dur, nguong: min };
+  },
+
+  // L12: "đứng yên" — diễn viên/đạo cụ phải đổi thấy được trong MỌI cửa sổ cuaSo giây. ctx.dong = [{ t, anh: [đầu, giữa, cuối] }]
+  // chụp với camera ĐÓNG BĂNG ở tư thế đầu cửa sổ (tools/kiem-luat.mjs), nên chênh ảnh chỉ do vật/diễn viên (và hiệu ứng nền như nước, tuyết).
+  // Mỗi cửa sổ lấy max số điểm đổi qua ba cặp (đầu-giữa, giữa-cuối, đầu-cuối); cửa sổ nào < diemMin thì lỗi.
+  L12(ctx, ng) {
+    const t = ng.L12;
+    if (ctx.shot.static) return mien('shot-tinh: bo qua', t);
+    if (!(ctx.shot.dur > t.cuaSo)) return { ok: true, val: null, nguong: t, skip: 'ngan-hon-cua-so' };
+    if (!Array.isArray(ctx.dong) || !ctx.dong.length) return { ok: true, val: null, nguong: t, skip: 'khong-co-cua-so' };
+    let min = Infinity, viTri = null;
+    for (const w of ctx.dong) {
+      const [a, b, c] = w.anh;
+      const n = Math.max(diemDoi(a, b, t.nguong), diemDoi(b, c, t.nguong), diemDoi(a, c, t.nguong));
+      if (n < min) { min = n; viTri = w.t; }
+    }
+    return { ok: min >= t.diemMin, val: { diemItNhat: min, cuaSoXauNhat: viTri === null ? null : r3(viTri), soCuaSo: ctx.dong.length }, nguong: t };
   },
 };
 

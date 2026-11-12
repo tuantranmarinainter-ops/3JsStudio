@@ -53,7 +53,7 @@ test('luat.json đúng khoá', T, () => {
     const s = j.shots[id];
     for (const k of ['type', 'dur', 'khung', 'luat', 'loi']) assert.ok(k in s, id + '.' + k);
     assert.equal(s.khung.length, 3);
-    assert.deepEqual(Object.keys(s.luat), ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8', 'L9', 'L10', 'L11']);
+    assert.deepEqual(Object.keys(s.luat), ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8', 'L9', 'L10', 'L11', 'L12']);
     assert.ok(Array.isArray(s.loi));
   }
   assert.equal(j.tong.soShot, 3);

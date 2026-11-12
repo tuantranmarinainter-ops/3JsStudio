@@ -7,17 +7,19 @@ import { createServer } from 'http';
 import { readFile, writeFile, mkdir, readdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { extname, join, resolve, relative } from 'path';
+import { spawnSync } from 'child_process';
 import { launchBrowser } from '../browser.mjs';
+import { parseShotEvents, cueTime, cueIssues } from './cue-time.mjs';
 
 const args = process.argv.slice(2);
 const opt = {}; const pos = [];
 for (let i = 0; i < args.length; i++) {
   const a = args[i];
-  if (a.startsWith('--')) { const k = a.slice(2); if (k === 'steps') opt[k] = true; else opt[k] = args[++i]; } else pos.push(a);
+  if (a.startsWith('--')) { const k = a.slice(2); if (k === 'steps' || k === 'khong-anh') opt[k] = true; else opt[k] = args[++i]; } else pos.push(a);
 }
 const ep = pos[0];
 if (!ep) {
-  console.error('Dùng: node tools/sfx/cue-check.mjs <tập, vd ep001> [--range a:b] [--shots s054,s056] [--name chuỗi] [--steps] [--around 0.3] [--step 0.1] [--out thư mục]');
+  console.error('Dùng: node tools/sfx/cue-check.mjs <tập, vd ep001> [--range a:b] [--shots s054,s056] [--name chuỗi] [--steps] [--khong-anh] [--around 0.3] [--step 0.1] [--out thư mục]');
   process.exit(1);
 }
 const root = process.cwd();
@@ -36,12 +38,37 @@ if (opt.steps) {
   const files = (await readdir(join(epDir, 'sfx'))).filter((f) => /^cues_.*\.json$/.test(f)).sort();
   for (const f of files) for (const c of JSON.parse(await readFile(join(epDir, 'sfx', f), 'utf8'))) cues.push({ ...c, file: f });
 }
+// cue có `event` → giờ tính từ shots.js; c.tCalc = giờ dùng khi trộn (c.t giữ nguyên giá trị khai báo để so sánh)
+const shotEv = parseShotEvents(await readFile(join(epDir, 'shots.js'), 'utf8'));
+for (const c of cues) { if (!c.event) { c.tCalc = Number(c.t); continue; } c.tCalc = cueTime(c, shotEv); }
+cues.forEach((c) => { c.tDecl = c.t; c.t = c.tCalc; });
 if (opt.range) { const [a, b] = opt.range.split(':').map(Number); cues = cues.filter((c) => c.t >= a && c.t <= b); }
 if (opt.shots) { const set = new Set(opt.shots.split(',')); cues = cues.filter((c) => set.has(c.shot)); }
 if (opt.name) { const n = opt.name.toLowerCase(); cues = cues.filter((c) => String(c.name).toLowerCase().includes(n)); }
 cues.sort((a, b) => a.t - b.t);
 if (!cues.length) { console.error('Không có cue nào khớp bộ lọc.'); process.exit(1); }
 console.log(`Chọn ${cues.length} cue, ${Math.ceil(cues.length / PER_SHEET)} bảng.`);
+
+// ---- neo (anchor) + cue theo mốc event ----
+{
+  const names = [...new Set(cues.filter((c) => c.anchor != null || c.event).map((c) => c.name))];
+  let meas = {};
+  if (names.length) {
+    const r = spawnSync(process.platform === 'win32' ? 'python' : 'python3', ['tools/sfx/anchor.py', '--json', ...names], { cwd: root, encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: 'utf8' } });
+    try { meas = JSON.parse(r.stdout); } catch { console.log('  (không đo được neo: ' + (r.stderr || '').slice(0, 120) + ')'); }
+  }
+  const evs = cues.filter((c) => c.event), anc = cues.filter((c) => c.anchor != null);
+  console.log(`Cue theo event: ${evs.length}; cue có anchor: ${anc.length}`);
+  for (const c of evs) console.log(`  event ${c.event} @ ${c.shot}: t=${c.tCalc.toFixed(3)}s${c.tDecl != null ? ` (t khai báo ${c.tDecl})` : ''} ${c.name}`);
+  let bad = 0;
+  for (const c of cues) {
+    const m = c.anchor === 'auto' || c.anchor === true ? null : meas[c.name];
+    c.issues = cueIssues({ ...c, t: c.tDecl, anchor: c.anchor }, m);
+    for (const w of c.issues) { bad++; console.log(`  ⚠ ${c.tCalc.toFixed(2)}s ${c.name} (${c.shot}): ${w}`); }
+  }
+  console.log(bad ? `${bad} cảnh báo lệch.` : 'Không có cue lệch neo/event.');
+}
+if (opt['khong-anh']) process.exit(0);
 
 // ---- máy chủ tĩnh ----
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.glb': 'model/gltf-binary', '.mp3': 'audio/mpeg', '.ogg': 'audio/ogg', '.wav': 'audio/wav', '.ttf': 'font/ttf', '.otf': 'font/otf', '.woff': 'font/woff', '.woff2': 'font/woff2', '.css': 'text/css', '.svg': 'image/svg+xml', '.wasm': 'application/wasm' };

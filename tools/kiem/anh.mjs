@@ -78,3 +78,29 @@ export function thanhPhan(mask, { nguongDen = 0.5, cumMin = 0.001 } = {}) {
     .filter((c) => c.dienTich >= cumMin)
     .sort((a, b) => b.dienTich - a.dienTich);
 }
+
+// L12: số điểm ảnh khác nhau giữa hai ảnh cùng cỡ: max kênh RGB chênh > nguong (thang 0..255).
+export function diemDoi(a, b, nguong = 12) {
+  if (a.w !== b.w || a.h !== b.h) throw new Error(`diemDoi: khác kích thước ${a.w}x${a.h} vs ${b.w}x${b.h}`);
+  let n = 0;
+  const m = a.w * a.h;
+  for (let p = 0; p < m; p++) {
+    const i = p * 4;
+    const d = Math.max(Math.abs(a.data[i] - b.data[i]), Math.abs(a.data[i + 1] - b.data[i + 1]), Math.abs(a.data[i + 2] - b.data[i + 2]));
+    if (d > nguong) n++;
+  }
+  return n;
+}
+
+// L12: các cửa sổ [đầu, giữa, cuối] (giây) cho shot [t0, t1]: bắt đầu mỗi `buoc` s, dài `cuaSo` s; kẹp trong khung đầu/cuối shot.
+// Shot ngắn hơn cuaSo -> [] (không áp dụng).
+export function cuaSoDong(t0, t1, cuaSo, buoc, fps = 30) {
+  const out = [];
+  if (!(buoc > 0) || !(cuaSo > 0)) return out;
+  const lo = t0 + 1 / fps, hi = t1 - 1 / fps;
+  for (let k = 0; t0 + k * buoc + cuaSo <= t1 + 1e-9; k++) {
+    const s = t0 + k * buoc;
+    out.push([Math.max(lo, s), Math.min(hi, s + cuaSo / 2), Math.min(hi, s + cuaSo)]);
+  }
+  return out;
+}

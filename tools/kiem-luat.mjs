@@ -1,4 +1,4 @@
-// Đo 11 luật kiểm khung hình bằng SỐ trên một trang tập phim; ghi luat.json + thư mục ảnh duyệt có nhãn.
+// Đo 12 luật kiểm khung hình bằng SỐ trên một trang tập phim; ghi luat.json + thư mục ảnh duyệt có nhãn.
 //   node tools/kiem-luat.mjs <trang> [--ep ep001] [--shots s001,s002|all] [--out output/<ep>/kiem]
 //        [--duyet output/<ep>/duyet] [--jobs 4] [--cho 120] [--khong-anh]
 //   Mỗi shot đo 3 khung: đầu (start+1/30), giữa, cuối (end-1/30). Mã thoát: 0 không lỗi, 1 có lỗi, 2 môi trường.
@@ -11,13 +11,14 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { launchBrowser } from './browser.mjs';
 import { kiemShot, nguong as docNguong, LUAT } from './kiem/luat.mjs';
+import { cuaSoDong } from './kiem/anh.mjs';
 import { docAnh, ganNhan, luoiAnh } from './kiem/nhan.mjs';
 import { loaiEnv } from './kiem/env-loai.mjs';
 
 const FPS = 30;
 const TEN_LUAT = {
   L1: 'nha-du-chan-trong-khung', L2: 'vat-doc-o-giua', L3: 'hero-trong-khung', L4: 'camera-dong', L5: 'nha-nghieng-chim',
-  L6: 'hat-bui-tuyet-mua', L7: 'dem-khong-toi-den', L8: 'khung-khong-trong', L9: 'vat-lieu-grunge', L10: 'bong-dang', L11: 'thoi-luong-toi-thieu',
+  L6: 'hat-bui-tuyet-mua', L7: 'dem-khong-toi-den', L8: 'khung-khong-trong', L9: 'vat-lieu-grunge', L10: 'bong-dang', L11: 'thoi-luong-toi-thieu', L12: 'dung-yen',
 };
 
 // ---- tham số ----
@@ -174,10 +175,27 @@ async function doShotTrong(tab, s, ng, dur) {
         mask = { w: r.w, h: r.h, data: Uint8ClampedArray.from(r.data) };
       } catch { mask = null; }
     }
+    // L12: shot dài hơn cuaSo -> chụp từng cửa sổ [đầu, giữa, cuối] với camera ĐÓNG BĂNG ở tư thế đầu cửa sổ
+    const dong = [];
+    const t12 = ng.L12;
+    if (t12 && !t12.tat && !s.static && dur > t12.cuaSo) {
+      for (const [a, g, c] of cuaSoDong(s.t0, s.t1, t12.cuaSo, t12.buoc, FPS)) {
+        const anhW = [];
+        try {
+          await seek(page, a);                     // camera thật của khung đầu cửa sổ
+          await page.evaluate(() => { const st = window.__stage; if (st && !st.__setCamGoc) { st.__setCamGoc = st.setCamera; st.setCamera = () => {}; } });
+          anhW.push(await docAnh(C, await chup(page), 135, 240));
+          for (const t of [g, c]) { await seek(page, t); anhW.push(await docAnh(C, await chup(page), 135, 240)); }
+        } finally {
+          await page.evaluate(() => { const st = window.__stage; if (st && st.__setCamGoc) { st.setCamera = st.__setCamGoc; delete st.__setCamGoc; } });
+        }
+        dong.push({ t: a, anh: anhW });
+      }
+    }
     const e = loaiEnv(s);
     const ctx = {
       shot: { id: s.id, type: s.type ?? s.shotType, dur, static: s.static, frame: s.frame, read: s.read },
-      m: m.some(Boolean) ? m : null, anh, mask, env: { dem: e.dem, tuyet: e.tuyet, mua: e.mua },
+      m: m.some(Boolean) ? m : null, anh, mask, dong, env: { dem: e.dem, tuyet: e.tuyet, mua: e.mua },
     };
     if (opt['luu-ctx']) {   // đổ dữ liệu vào để phát lại luật offline khi hiệu chỉnh ngưỡng (ảnh -> xám 8 bit, base64)
       const xam = (im) => im ? Buffer.from(Uint8Array.from({ length: im.w * im.h }, (_, i) => Math.round(0.2126 * im.data[i * 4] + 0.7152 * im.data[i * 4 + 1] + 0.0722 * im.data[i * 4 + 2]))).toString('base64') : null;
