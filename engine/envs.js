@@ -289,6 +289,7 @@ export function createEnvs(THREE, stage, K0, A = null) {
     const cam = stage.camera; cam.updateMatrixWorld(); cam.updateProjectionMatrix();
     if (s.x !== undefined || s.y !== undefined) {
       _sv.set((s.x ?? 0.5) * 2 - 1, 1 - (s.y ?? 0.25) * 2, 0.5).unproject(cam).sub(cam.position).normalize();
+      if (_sv.y < 0.05) { const hz = Math.hypot(_sv.x, _sv.z) || 1; _sv.set(_sv.x / hz * 0.9987, 0.05, _sv.z / hz * 0.9987); }   // không vẽ mặt trời dưới chân trời
       return [_sv.x, _sv.y, _sv.z];
     }
     cam.getWorldDirection(_sf); const yaw = Math.atan2(_sf.x, _sf.z) - (s.az ?? 0) * Math.PI / 180, el = (s.el ?? 20) * Math.PI / 180;
