@@ -106,9 +106,11 @@ Bản mở rộng của `storyboard.md` cho quy trình "một câu luật → ph
 | tư thế | `standing`, `flying`, `sitting`, `swimming` (cho mô hình không phải người) |
 | tối thiểu | giây; trống = theo loại (insertRead 1.5, closeup 0.8, chase/fall/hug/walkBy/follow/sinkTilt 1.0, establish 1.2, còn lại 0.8) |
 
+**Đánh dấu twist:** ghi chữ `twist` vào cột `ghi chú` của shot ĐẦU TIÊN của câu twist; `kichban.py --tom-tat` in vị trí twist + số câu mỗi phần, lint K11 kiểm.
+
 **Khối `## Cần dựng`** (cuối file): `- env: <tên>: <mô tả>`, `- prop: …`, `- anim: …`. Tên `anim` khai ở đây được chấp nhận trong cột `hành động`.
 
-**Mã lỗi của lint:** K00 lỗi đọc · K01 thiếu bối cảnh (`ở đâu`/`env`) · K02 `loại` không thuộc `SHOT_TYPE_NAMES` ∪ {insertRead, houseFull, hug, fall, sinkTilt} · K03 có `vật cần đọc` nhưng loại ≠ insertRead · K04 `hành động` không có trong `R15_ANIMATIONS` và không trong `Cần dựng` · K05 `giây` < tối thiểu · K06 lời kể chứa tên kênh khác (`tools/kb/ten-cam.txt`) · K07 câu lời kể đầu không bắt đầu bằng "Ở thị trấn này" · K08 `mặt` không thuộc `FACE_PRESETS` · K09 tổng giây ngoài 120–180 · K10 một câu lời kể trải > 3 shot. Cột `giây` để trống thì không tính vào K05/K09.
+**Mã lỗi của lint:** K00 lỗi đọc · K01 thiếu bối cảnh (`ở đâu`/`env`) · K02 `loại` không thuộc `SHOT_TYPE_NAMES` ∪ {insertRead, houseFull, hug, fall, sinkTilt} · K03 có `vật cần đọc` nhưng loại ≠ insertRead · K04 `hành động` không có trong `R15_ANIMATIONS` và không trong `Cần dựng` · K05 `giây` < tối thiểu · K06 lời kể chứa tên kênh khác (`tools/kb/ten-cam.txt`) · K07 câu lời kể đầu không bắt đầu bằng "Ở thị trấn này" · K08 `mặt` không thuộc `FACE_PRESETS` · K09 tổng giây ngoài 120–180 · K10 một câu lời kể trải > 3 shot · K11 không có shot nào ghi `twist` ở cột `ghi chú`, hoặc twist ngoài 40–85% thời lượng (bỏ qua khi `kiem_tong: off`). Cột `giây` để trống thì không tính vào K05/K09.
 
 Ví dụ (3 hàng; header rút gọn, cột thiếu coi như trống):
 ```
@@ -118,4 +120,4 @@ Ví dụ (3 hàng; header rút gọn, cột thiếu coi như trống):
 | 2 | 1.0 | ^ | crowd | square | dance | happy | sang | nang | |
 | 3 | 2 | Mẹ đưa tôi một tấm thiếp. | insertRead | home | hold | | chieu | mua | tấm thiếp |
 ```
-Ví dụ đầy đủ 18 cột: `tools/kb/tests/data/kb_tot.md`.
+Ví dụ đầy đủ 19 cột (thêm `ghi chú` cuối): `tools/kb/tests/data/kb_tot.md`.

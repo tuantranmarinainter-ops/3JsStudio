@@ -117,23 +117,58 @@ def doc(path):
     return out
 
 
-def so_cau(d):
-    """số câu lời kể, gom như K10: ô có chữ mở câu mới; `^`… thuộc câu trước; ô trống = không lời."""
-    n, open_ = 0, False
+def cac_cau(d):
+    """danh sách câu lời kể, gom như K10: ô có chữ mở câu mới; `^`… thuộc câu trước; ô trống = không lời.
+    Mỗi câu: {"shot": shot đầu, "t0": giây bắt đầu (tổng dur các shot trước)}."""
+    cau, t, open_ = [], 0.0, False
     for sh in d['shots']:
         nar = sh.get('narration', '')
-        if nar in CONT:
-            continue
-        open_ = bool(nar)
-        n += open_
-    return n
+        if nar not in CONT:
+            open_ = bool(nar)
+            if open_: cau.append({'shot': sh, 't0': t})
+        t += sh.get('dur', 0.0)
+    return cau
+
+
+def so_cau(d):
+    return len(cac_cau(d))
+
+
+def tong_giay(d):
+    return sum(s.get('dur', 0.0) for s in d['shots'])
+
+
+def twist_info(d):
+    """None nếu không shot nào có `twist` trong cột ghi chú; không thì {"cau": thứ tự câu 1-based, "dong", "rel": 0..1}.
+    Quy ước: đánh dấu `twist` ở shot ĐẦU của câu twist; nằm trong shot không lời/nối tiếp thì tính câu gần nhất trước nó."""
+    tot = tong_giay(d)
+    if not tot: return None
+    t = 0.0
+    for sh in d['shots']:
+        if re.search(r'(?<!\w)twist(?!\w)', sh.get('notes', '').lower()):
+            n = sum(1 for c in cac_cau(d) if c['t0'] <= t) or 1
+            return {'cau': n, 'dong': sh['_dong'], 'rel': t / tot}
+        t += sh.get('dur', 0.0)
+    return None
+
+
+def phan_cau(d, tw):
+    """số câu mỗi phần theo ranh_phan của docs/nhip-kich-ban.json (như tools/kb/nhip.py)."""
+    tot, dem = tong_giay(d), {'hook': 0, 'leo thang': 0, 'twist': 0, 'giải quyết': 0}
+    for c in cac_cau(d):
+        rel = c['t0'] / tot
+        if rel < 0.10: k = 'hook'
+        elif rel < tw['rel']: k = 'leo thang'
+        elif rel < tw['rel'] + (1 - tw['rel']) / 2: k = 'twist'
+        else: k = 'giải quyết'
+        dem[k] += 1
+    return dem
 
 
 def tom_tat(d):
     shots = d['shots']
     durs = [s for s in shots if 'dur' in s]
-    out = [f'số câu: {so_cau(d)}', f'số shot: {len(shots)}',
-           f'tổng giây: {round(sum(s["dur"] for s in durs), 1):g}']
+    out = [f'số câu: {so_cau(d)}', f'số shot: {len(shots)}', f'tổng giây: {round(tong_giay(d), 1):g}']
     kinds = {}
     for c in d['can_dung']: kinds[c['kind']] = kinds.get(c['kind'], 0) + 1
     out.append(f'cần dựng: {len(d["can_dung"])} (' + ', '.join(f'{k} {v}' for k, v in sorted(kinds.items())) + ')')
@@ -141,6 +176,13 @@ def tom_tat(d):
         hi, lo = max(durs, key=lambda s: s['dur']), min(durs, key=lambda s: s['dur'])
         out.append(f'shot dài nhất: {hi.get("id", "?")} ({hi["dur"]:g} s)')
         out.append(f'shot ngắn nhất: {lo.get("id", "?")} ({lo["dur"]:g} s)')
+    tw = twist_info(d)
+    if tw:
+        out.append(f'twist: câu {tw["cau"]}/{so_cau(d)} ở {tw["rel"] * 100:.0f}% thời lượng')
+        out.append('số câu mỗi phần: ' + ' | '.join(f'{k} {v}' for k, v in phan_cau(d, tw).items()))
+    else:
+        out.append('twist: chưa đánh dấu')
+    if d['loi_doc']: out.append(f'lỗi đọc: {len(d["loi_doc"])}')
     return '\n'.join(out)
 
 

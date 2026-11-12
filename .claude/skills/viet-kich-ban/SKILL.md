@@ -13,23 +13,30 @@ Chuẩn kênh: `CLAUDE.md` (mục "Format Ở thị trấn này", "Cấu trúc p
 - Nhân vật R15. Không dùng logo/tên/asset Roblox.
 
 ## Bước 1 — 5 kịch bản mẫu (CHƯA tạo file, CHƯA dựng gì)
-1. Luật phải giống **cơ chế game** (thanh máu, %, con số, đếm ngược…), nói được trong **1 câu**. Được phép bổ sung vào câu luật 2 chi tiết để dựng được: "tụt/đổi do gì" và "về 0 thì sao". Đã bổ sung thì báo người dùng bản luật rút gọn.
+1. Luật phải giống **cơ chế game** (thanh máu, %, con số, đếm ngược…), nói được trong **1 câu**. Được phép bổ sung vào câu luật 2 chi tiết để dựng được: "tụt/đổi do gì" và "về 0 thì sao"; đã bổ sung thì báo người dùng bản luật rút gọn. Câu luật quá mơ hồ/không phải cơ chế game → đề xuất 1 bản luật chỉnh, nêu rõ ở đầu câu trả lời, và vẫn ra 5 mẫu trên bản đó.
 2. Luật GIỮ NGUYÊN giữa 5 mẫu; chỉ điểm yếu / twist / lời giải khác nhau.
 3. Viết đúng **5 mẫu** theo `mau-5-kich-ban.md`; mỗi mẫu ≤ 8 dòng, **tính cả dòng tiêu đề**.
-4. 5 kiểu twist KHÁC NHAU, mỗi mẫu một kiểu: **bí mật người lớn**, **kẽ hở luật**, **nguyên nhân ẩn**, **điểm yếu thành lời giải**, **đảo vai**. Twist là bí mật/kẽ hở/nguyên nhân nằm SẴN trong luật, không phải sự kiện ngoài ập tới (quái vật, bão, cúp điện).
+4. 5 kiểu twist KHÁC NHAU, mỗi mẫu một kiểu. Twist là bí mật/kẽ hở/nguyên nhân nằm SẴN trong luật, không phải sự kiện ngoài ập tới (quái vật, bão, cúp điện).
+   - **bí mật người lớn**: người lớn biết rõ luật và giấu đứa trẻ.
+   - **kẽ hở luật**: câu chữ của luật cho phép một điều không ai nghĩ tới.
+   - **nguyên nhân ẩn**: luật tồn tại vì một lý do bị che giấu.
+   - **điểm yếu thành lời giải**: CHÍNH twist là phát hiện điểm yếu thật ra là năng lực (các kiểu khác vẫn kết bằng điểm yếu giúp giải, nhưng twist nằm chỗ khác).
+   - **đảo vai**: người tưởng mạnh/được bảo vệ hoá ra là người cần cứu, hoặc ngược lại.
 5. Mọi mẫu: nhân vật chính có điểm yếu do luật gây ra; kết = điểm yếu thành lời giải; cảnh cuối gợi lại cảnh đầu.
 6. **DỪNG**, hỏi đúng 1 câu chọn số. Không tạo file, không chạy tool.
 
 ## Bước 2 — kịch bản đầy đủ (sau khi người dùng chọn số N, có thể kèm chỉnh)
-1. Chọn `epNNN` kế tiếp: liệt kê `episodes/` (bỏ `_template`, `_demo*`), số lớn nhất + 1. Tạo `episodes/<ep>/kich-ban.md`.
+1. Chọn `epNNN` kế tiếp: liệt kê `episodes/`, bỏ MỌI thư mục bắt đầu bằng `_`, lấy số lớn nhất + 1. `<ep>` phải chưa tồn tại. Tạo `episodes/<ep>/kich-ban.md`.
 2. Giá trị hợp lệ: chạy `python tools/kb/kichban.py --danh-sach` (loại, hành động, mặt, giờ, thời tiết, tư thế). Không chép cứng, không đoán. Cần tên ngoài danh sách → ghi vào `## Cần dựng` (`- anim: …`).
-3. Header (cú pháp: `docs/kich-ban-vao.md`): `title`, `seed`, `rule`, `weakness`, `twist`, `solution`, `ep: <ep>`, `luat_goc: <câu người dùng>`. Diễn viên mặc định có sẵn: `hero`, `mom` (+ `crowd: n`); vai khác phải khai `actor <tên>: k=v …`. `ở đâu` phải là địa điểm có sẵn của thị trấn — `square, home, yard, shop, street, crossroad, park, center, house1…` (kiểm lại trong `engine/town.js` nếu nghi ngờ) — hoặc `place <tên>: x, z` khai ở header. Bảng 18 cột đúng thứ tự như `vi-du-kich-ban.md`, cột `khung` trống.
+3. Header (cú pháp: `docs/kich-ban-vao.md`): `title`, `seed`, `rule`, `weakness`, `twist`, `solution`, `ep: <ep>`, `luat_goc: <câu người dùng>`. Diễn viên mặc định có sẵn: `hero`, `mom` (+ `crowd: n`); vai khác phải khai `actor <tên>: k=v …`. `ở đâu` phải là địa điểm có sẵn của thị trấn — `square, home, yard, shop, street, crossroad, park, center, house1…` (kiểm lại trong `engine/town.js` nếu nghi ngờ) — hoặc `place <tên>: x, z` khai ở header. Cột `env` (nếu dùng) nhận env có sẵn (xem tên file: `ls engine/envs/*.js`, không chép cứng) hoặc env mới ghi vào `## Cần dựng`. Dùng `crowd1`… thì header phải có `crowd: n`. Bảng 19 cột đúng thứ tự như `vi-du-kich-ban.md`, cột `khung` trống.
+   - `tư thế` (standing/flying/sitting/swimming): CHỈ cho mô hình không phải người (chim, cá…); người để trống.
+   - `tối thiểu`: ghi đè mức tối thiểu của loại shot (vd closeup cần 2 s thì ghi 2); trống = theo loại.
 4. Cột `máy quay` và `tiếng động` là văn bản tự do ngắn (gợi ý), để trống được. `máy quay` dùng từ khoá trong docs (đẩy vào, kéo ra, lia, xoay quanh, rung…). `tiếng động` nếu ghi: `tên tiếng Anh@giây*âm lượng`.
 5. **Quy mô**: **60–80 câu** lời kể, mỗi câu **1–3 shot** (hàng nối ghi `^`), tổng ~**140 shot**, tổng giây **120–180**, nhắm ~**150–165 s** (đừng đặt `kiem_tong: off`).
 6. **Độ dài câu**: lời kể tiếng Việt mỗi câu ≤ ~35 ký tự (nhịp đọc ~14 ký tự/giây). Số "ký tự mỗi câu" trong `nhip-kich-ban.json` là của tiếng Anh, KHÔNG áp dụng.
 7. **Nhịp** — đọc `docs/nhip-kich-ban.json`, mục `chi_tieu` và `canh_bao`:
-   - Số câu hook và leo thang: trong p25–p75 của `cau_moi_phan.hook` / `leo_thang`.
-   - Câu twist đầu tiên ở 55–80% thời lượng (`vi_tri_twist_pct`).
+   - Số câu hook, leo thang, twist: trong p25–p75 của `cau_moi_phan.hook` / `leo_thang` / `twist`.
+   - Câu twist đầu tiên ở 55–80% thời lượng (`vi_tri_twist_pct`; lint chỉ bắt buộc 40–85%). Đánh dấu bằng chữ `twist` trong cột `ghi chú` của shot ĐẦU của câu twist.
    - Phần giải quyết KHÔNG theo số liệu: dùng khung dự án, ~25% phim, điểm yếu thành lời giải, cảnh cuối gợi lại cảnh đầu.
    - Câu đầu phim bắt đầu bằng "Ở thị trấn này"; 3 giây đầu có hình minh hoạ luật.
 8. **Giây** = max(tối thiểu theo loại, số ký tự câu / 14 / số shot của câu). Tối thiểu: insertRead **1,5**; closeup **0,8**; chase/fall/hug/walkBy/follow/sinkTilt **1,0**; establish **1,2**; còn lại 0,8.
@@ -39,5 +46,5 @@ Chuẩn kênh: `CLAUDE.md` (mục "Format Ở thị trấn này", "Cấu trúc p
 ## Bước 3 — tự kiểm, lint, giao (MỐC DUYỆT 1b)
 1. Tự kiểm nội dung (sửa nếu trượt): (a) luật hiện hình trong 3 giây đầu; (b) điểm yếu xuất hiện ở hook; (c) twist được cài trước ≥ 2 lần ở phần leo thang; (d) lời giải dùng đúng điểm yếu; (e) cảnh cuối gợi lại cảnh đầu.
 2. `python tools/kb/lint.py episodes/<ep>/kich-ban.md` → sửa đúng dòng báo (Kxx) → chạy lại tới **0 lỗi**. Kẹt cùng một lỗi sau 3 lần → dừng, báo người dùng.
-3. `python tools/kb/kichban.py episodes/<ep>/kich-ban.md --tom-tat` (không đếm tay).
-4. Trả lời: đường dẫn file + bảng tóm tắt (số câu, số shot, tổng giây, số mục cần dựng, vị trí twist %). Hỏi duyệt rồi DỪNG; chưa chạy `storyboard.py`, chưa dựng.
+3. `python tools/kb/kichban.py episodes/<ep>/kich-ban.md --tom-tat` (không đếm tay): in số câu/shot/giây, mục cần dựng, shot dài/ngắn nhất, vị trí twist, số câu mỗi phần.
+4. Trả lời: đường dẫn file + bảng tóm tắt từ đầu ra trên (số câu, số shot, tổng giây, số mục cần dựng, vị trí twist %, số câu mỗi phần). Hỏi duyệt rồi DỪNG; chưa chạy `storyboard.py`, chưa dựng.

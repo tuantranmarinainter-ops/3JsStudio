@@ -1,4 +1,4 @@
-"""Kiểm kich-ban.md (10 mã lỗi K00–K10).
+"""Kiểm kich-ban.md (11 mã lỗi K00–K11).
 
   python tools/kb/lint.py <kich-ban.md> [--json]     in `kich-ban.md:<dòng>: <MÃ> <thông báo>`; thoát 0 = sạch, 1 = có lỗi.
 
@@ -15,6 +15,7 @@ from kichban import fold, CONT, vocab, hint  # noqa: E402
 
 ACTION_TYPES = {'chase', 'fall', 'hug', 'walkBy', 'follow', 'sinkTilt'}
 TOTAL_RANGE = (120, 180)
+TWIST_RANGE = (40, 85)
 MAX_SHOTS_PER_LINE = 3
 
 
@@ -80,6 +81,11 @@ def lint(path):
         add(group[0], 'K10', f'một câu lời kể trải {group[1]} shot (> {MAX_SHOTS_PER_LINE})')
     if known and str(d['meta'].get('kiem_tong', '')).lower() != 'off' and not TOTAL_RANGE[0] <= total <= TOTAL_RANGE[1]:
         add(1, 'K09', f'tổng {total:.1f} s ngoài {TOTAL_RANGE[0]}–{TOTAL_RANGE[1]} s')
+    if str(d['meta'].get('kiem_tong', '')).lower() != 'off' and known:
+        tw = kichban.twist_info(d)
+        if not tw: add(1, 'K11', 'chưa đánh dấu twist (ghi "twist" vào cột ghi chú của shot đầu câu twist)')
+        elif not TWIST_RANGE[0] <= tw['rel'] * 100 <= TWIST_RANGE[1]:
+            add(tw['dong'], 'K11', f'twist ở {tw["rel"] * 100:.0f}% thời lượng, ngoài {TWIST_RANGE[0]}–{TWIST_RANGE[1]}%')
     errs.sort(key=lambda e: (e[0], e[1]))
     return errs
 

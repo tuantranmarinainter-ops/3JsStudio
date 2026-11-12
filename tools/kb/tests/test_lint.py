@@ -131,6 +131,38 @@ class TestLint(unittest.TestCase):
         self.assertIn('cần dựng: 2 (anim 1, env 1)', out)
         self.assertIn('shot dài nhất: 5 (2 s)', out)
         self.assertIn('shot ngắn nhất: 2 (1 s)', out)
+        self.assertIn('twist: câu 3/6 ở 44% thời lượng', out)
+        self.assertIn('số câu mỗi phần: hook 1 | leo thang 1 | twist 2 | giải quyết 2', out)
+        self.assertNotIn('lỗi đọc', out)
+
+    def test_tom_tat_chua_danh_dau_va_loi_doc(self):
+        p = tmp_md(HEAD_NGAN + '| 1 | 1.5 | Ở thị trấn này. | establish | square | |\n| 2 | abc | x | closeup | square | |\n')
+        rc, out = self.run_kb(str(p), '--tom-tat')
+        self.assertIn('twist: chưa đánh dấu', out)
+        self.assertNotIn('số câu mỗi phần', out)
+        self.assertIn('lỗi đọc: 1', out)
+
+    def test_k11(self):
+        src = (DATA / 'kb_tot.md').read_text(encoding='utf-8')
+        on = src.replace('kiem_tong: off\n', '')
+        codes = lambda txt: {c for _, c, _ in lint.lint(self.write(txt))}
+        self.assertNotIn('K11', codes(on))                                   # twist ở 44%
+        self.assertNotIn('K11', codes(src.replace('| twist |', '|  |')))     # kiem_tong off: bỏ qua
+        self.assertIn('K11', codes(on.replace('| twist |', '|  |')))         # chưa đánh dấu
+        moved = on.replace('| twist |', '|  |').replace('| Tôi sợ.', '| Tôi sợ.')
+        lines = moved.split('\n')
+        i = next(k for k, l in enumerate(lines) if l.startswith('| 2 '))
+        lines[i] = lines[i].rstrip()[:-1] + ' twist |'                        # ở 15%
+        self.assertIn('K11', codes('\n'.join(lines)))
+        lines[i] = lines[i].replace(' twist |', '  |')
+        i = next(k for k, l in enumerate(lines) if l.startswith('| 8 '))
+        lines[i] = lines[i].rstrip()[:-1] + ' twist |'                        # ở 90%
+        self.assertIn('K11', codes('\n'.join(lines)))
+
+    def write(self, txt):
+        p = Path(tempfile.mkdtemp()) / 'kich-ban.md'
+        p.write_text(txt, encoding='utf-8')
+        return p
 
 
 if __name__ == '__main__':
