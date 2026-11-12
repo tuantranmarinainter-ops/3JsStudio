@@ -5,10 +5,10 @@
   "L4": { "psnrMax": 30 },
   "L5": { "nghiengMin": 5, "chimMin": 0.5 },
   "L6": { "hatMin": 1 },
-  "L7": { "toiMax": 0.55, "diemSangMin": 3 },
-  "L8": { "oPhangMax": 0.30, "vatMoiTangMin": 1 },
+  "L7": { "toiMax": 0.55, "diemSangMin": 3, "nguongToi": 0.10, "nguongSang": 0.8, "dienTichSangMin": 4 },
+  "L8": { "oPhangMax": 0.30, "vatMoiTangMin": 1, "luoi": 4, "doLech": 6 },
   "L9": { "camGrunge": ["chrome", "metalpaint", "iron", "glass", "enamel", "skin", "carpaint"] },
-  "L10": { "dienTichMin": 0.08 },
+  "L10": { "dienTichMin": 0.08, "nguongDen": 0.5, "cumMin": 0.001 },
   "L11": { "insertRead": 1.5, "closeup": 0.8, "hanhDong": 1.0, "establish": 1.2, "macDinh": 0.8 },
   "goi": { "shotLoiMax": 10, "tyLeLuatMax": 0.15, "phutKhongTien": 30, "vongMax": 2 }
 }

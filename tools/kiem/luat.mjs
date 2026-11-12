@@ -4,11 +4,16 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { psnr, tyLeToi, diemSang, oPhang, thanhPhan } from './anh.mjs';
 
+// Đơn vị: m.vat[].nghieng = độ; m.vat[].chim = stud (1 stud = 1 đơn vị three.js).
+// Mặt nạ L10 vẽ các vai hero, vat-chinh, nha (đã chốt với phần viết __measure) nên số thành phần đếm theo đúng ba vai đó.
 const HANH_DONG = ['chase', 'fall', 'hug', 'walkBy', 'follow', 'sinkTilt'];
 const HANH_DONG_TACH = ['chase', 'fall', 'hug', 'walkBy', 'follow'];
 const KHONG_MEASURE = { ok: true, val: null, nguong: null, skip: 'khong-co-measure' };
 const mien = (ghiChu, nguong = null) => ({ ok: true, val: null, nguong, ghiChu });
-const ms = (ctx) => (ctx.m || []).filter(Boolean);
+const ms = (ctx) => (Array.isArray(ctx.m) ? ctx.m : []).filter(Boolean);
+const coM = (ctx) => ms(ctx).length > 0;
+// khung giữa; nếu hỏng thì lấy khung không-null gần nhất (đầu rồi cuối)
+const giua = (ctx) => ctx.m[1] || ctx.m[0] || ctx.m[2];
 const vaiCua = (m, vai) => (m.vat || []).filter((v) => v.vai === vai);
 const hop = (bs) => [Math.min(...bs.map((b) => b[0])), Math.min(...bs.map((b) => b[1])), Math.max(...bs.map((b) => b[2])), Math.max(...bs.map((b) => b[3]))];
 const giao = (a, b) => a[0] < b[2] && b[0] < a[2] && a[1] < b[3] && b[1] < a[3];
@@ -19,52 +24,58 @@ export const LUAT = {
   L1(ctx, ng) {
     const t = ng.L1;
     if (ctx.shot.frame === 'close') return mien('frame-close: bo qua', t);
-    if (!ctx.m) return { ...KHONG_MEASURE, nguong: t };
-    let leMin = Infinity, chanMin = Infinity, coNha = false;
+    if (!coM(ctx)) return { ...KHONG_MEASURE, nguong: t };
+    let leMin = Infinity, canhMin = 'trai', chanMin = Infinity, coNha = false;
     for (const m of ms(ctx)) {
       const nha = vaiCua(m, 'nha');
       if (!nha.length) continue;
       coNha = true;
       const chan = vaiCua(m, 'chan-nha');
       const b = hop([...nha, ...chan].map((v) => v.bbox));
-      leMin = Math.min(leMin, b[0], b[1], 1 - b[2], 1 - b[3]);
+      for (const [ten, le] of [['trai', b[0]], ['tren', b[1]], ['phai', 1 - b[2]], ['duoi', 1 - b[3]]]) {
+        if (le < leMin) { leMin = le; canhMin = ten; }
+      }
       chanMin = Math.min(chanMin, chan.length);
     }
     if (!coNha) return mien('khong-co-nha-trong-khung', t);
-    return { ok: leMin >= t.le && chanMin >= t.soChan, val: { le: r3(leMin), soChan: chanMin }, nguong: t };
+    return { ok: leMin >= t.le && chanMin >= t.soChan, val: { le: r3(leMin), canh: canhMin, soChan: chanMin }, nguong: t };
   },
 
   // L2: vật cần đọc (insertRead) ở giữa, không che, không tràn.
   L2(ctx, ng) {
     const t = ng.L2;
     if (ctx.shot.type !== 'insertRead') return mien('khong-phai-insertRead', t);
-    if (!ctx.m) return { ...KHONG_MEASURE, nguong: t };
-    let lech = 0, che = 0, rong = 0, thieu = false;
+    if (!coM(ctx)) return { ...KHONG_MEASURE, nguong: t };
+    let lech = 0, dx = 0, dy = 0, che = 0, rong = 0, thay = false;
     for (const m of ms(ctx)) {
       const d = vaiCua(m, 'doc')[0];
-      if (!d) { thieu = true; continue; }
-      const cx = (d.bbox[0] + d.bbox[2]) / 2, cy = (d.bbox[1] + d.bbox[3]) / 2;
-      lech = Math.max(lech, Math.hypot(cx - 0.5, cy - 0.5));
+      if (!d) continue;
+      thay = true;
+      const cx = (d.bbox[0] + d.bbox[2]) / 2 - 0.5, cy = (d.bbox[1] + d.bbox[3]) / 2 - 0.5;
+      if (Math.hypot(cx, cy) >= lech) { lech = Math.hypot(cx, cy); dx = cx; dy = cy; }
       che = Math.max(che, d.che || 0);
       rong = Math.max(rong, d.bbox[2] - d.bbox[0]);
     }
-    const val = { lech: r3(lech), che: r3(che), rong: r3(rong) };
-    if (thieu) return { ok: false, val, nguong: t, ghiChu: 'khong-thay-vat-doc' };
+    const val = { lech: r3(lech), dx: r3(dx), dy: r3(dy), che: r3(che), rong: r3(rong) };
+    if (!thay) return { ok: false, val, nguong: t, ghiChu: 'khong-thay-vat-doc' };
     return { ok: lech < t.lechTam && che < t.cheMax && rong <= t.rongMax, val, nguong: t };
   },
 
   // L3: nhân vật chính nằm trọn khung, mặt không bị che.
   L3(ctx, ng) {
     const t = ng.L3;
-    if (!ctx.m) return { ...KHONG_MEASURE, nguong: t };
-    let tk = Infinity, che = 0, thay = false;
+    if (!coM(ctx)) return { ...KHONG_MEASURE, nguong: t };
+    let tk = Infinity, che = 0, thay = false, thieuTk = false;
     for (const m of ms(ctx)) for (const h of vaiCua(m, 'hero')) {
       thay = true;
-      tk = Math.min(tk, h.trongKhung);
+      if (!Number.isFinite(h.trongKhung)) thieuTk = true;
+      tk = Math.min(tk, Number.isFinite(h.trongKhung) ? h.trongKhung : 0);
       che = Math.max(che, h.mat?.che || 0);
     }
     if (!thay) return mien('khong-co-hero', t);
-    return { ok: tk >= t.trongKhungMin && che <= t.cheMatMax, val: { trongKhung: r3(tk), cheMat: r3(che) }, nguong: t };
+    const r = { ok: tk >= t.trongKhungMin && che <= t.cheMatMax, val: { trongKhung: r3(tk), cheMat: r3(che) }, nguong: t };
+    if (thieuTk) r.ghiChu = 'thieu-trongKhung: coi nhu 0';
+    return r;
   },
 
   // L4: camera dồn dập, ảnh đầu và cuối phải khác nhau.
@@ -72,15 +83,16 @@ export const LUAT = {
     const t = ng.L4;
     if (ctx.shot.static === true) return mien('shot-tinh: bo qua', t);
     const p = psnr(ctx.anh[0], ctx.anh[2]);
-    return { ok: p < t.psnrMax, val: p, nguong: t };
+    const val = Math.min(p, 100); // Infinity không serialize được
+    return { ok: p < t.psnrMax, val, nguong: t };
   },
 
   // L5: nhà nghiêng / chìm ở khung giữa (chỉ sinkTilt).
   L5(ctx, ng) {
     const t = ng.L5;
     if (ctx.shot.type !== 'sinkTilt') return mien('khong-phai-sinkTilt', t);
-    if (!ctx.m) return { ...KHONG_MEASURE, nguong: t };
-    const g = ctx.m[1];
+    if (!coM(ctx)) return { ...KHONG_MEASURE, nguong: t };
+    const g = giua(ctx);
     const vat = g.vat || [];
     const v = vaiCua(g, 'nha')[0] || vat.find((x) => x.nghieng !== undefined || x.chim !== undefined);
     if (!v) return { ok: false, val: null, nguong: t, ghiChu: 'khong-thay-vat-nghieng' };
@@ -91,10 +103,10 @@ export const LUAT = {
   // L6: hạt bụi ở chân chạm đất; tuyết/mưa có hạt.
   L6(ctx, ng) {
     const t = ng.L6;
-    if (!ctx.m) return { ...KHONG_MEASURE, nguong: t };
+    if (!coM(ctx)) return { ...KHONG_MEASURE, nguong: t };
     const thieuHat = [];
     for (const m of ms(ctx)) for (const c of m.chan || []) if (c.chamDat && !(c.hatGan >= t.hatMin)) thieuHat.push(c.ten);
-    const hat = ctx.m[1].hat || {};
+    const hat = giua(ctx).hat || {};
     const loi = [...new Set(thieuHat)];
     if (ctx.env.tuyet && !(hat.tuyet > 0)) loi.push('hat.tuyet');
     if (ctx.env.mua && !(hat.mua > 0)) loi.push('hat.mua');
@@ -105,18 +117,18 @@ export const LUAT = {
   L7(ctx, ng) {
     const t = ng.L7;
     if (!ctx.env.dem) return mien('khong-phai-canh-dem', t);
-    const toi = tyLeToi(ctx.anh[1]);
-    const ds = diemSang(ctx.anh[1]);
+    const toi = tyLeToi(ctx.anh[1], t.nguongToi);
+    const ds = diemSang(ctx.anh[1], { nguong: t.nguongSang, dienTichMin: t.dienTichSangMin });
     return { ok: toi < t.toiMax && ds >= t.diemSangMin, val: { tyLeToi: r3(toi), diemSang: ds }, nguong: t };
   },
 
   // L8: không trống — ô phẳng ít, mỗi tầng có vật.
   L8(ctx, ng) {
     const t = ng.L8;
-    const op = oPhang(ctx.anh[1]);
+    const op = oPhang(ctx.anh[1], { luoi: t.luoi, doLech: t.doLech });
     let okTang = true, tang = null, ghiChu;
-    if (ctx.m) {
-      tang = ctx.m[1].tang || {};
+    if (coM(ctx)) {
+      tang = giua(ctx).tang || {};
       okTang = ['front', 'mid', 'back'].every((k) => (tang[k] ?? 0) >= t.vatMoiTangMin);
     } else ghiChu = 'khong-co-measure: chi kiem anh';
     const r = { ok: op < t.oPhangMax && okTang, val: { oPhang: r3(op), tang }, nguong: t };
@@ -127,7 +139,7 @@ export const LUAT = {
   // L9: vật liệu phải khai báo, kind cấm grunge không được grunge.
   L9(ctx, ng) {
     const t = ng.L9;
-    if (!ctx.m) return { ...KHONG_MEASURE, nguong: t };
+    if (!coM(ctx)) return { ...KHONG_MEASURE, nguong: t };
     const loi = [];
     for (const m of ms(ctx)) for (const v of m.vatLieu || []) {
       if (v.nguon !== 'khai-bao') loi.push(`${v.ten}:nguon=${v.nguon}`);
@@ -140,19 +152,19 @@ export const LUAT = {
   L10(ctx, ng) {
     const t = ng.L10;
     if (!ctx.mask) return { ok: true, val: null, nguong: t, skip: 'khong-co-mask' };
-    const tp = thanhPhan(ctx.mask);
+    const tp = thanhPhan(ctx.mask, { nguongDen: t.nguongDen, cumMin: t.cumMin });
     const dt = tp.length ? tp[0].dienTich : 0;
     const val = { dienTich: r3(dt), thanhPhan: tp.length };
     const ghi = [];
     let ok = dt >= t.dienTichMin;
-    if (ctx.m) {
-      const mg = ctx.m[1];
+    if (coM(ctx)) {
+      const mg = giua(ctx);
       const can = (mg.vat || []).filter((v) => ['hero', 'vat-chinh', 'nha'].includes(v.vai) && !(v.trongKhung <= 0));
       val.canCo = can.length;
       if (can.length && tp.length !== can.length) ok = false;
     } else ghi.push('khong-co-measure: khong kiem so thanh phan');
     if (HANH_DONG_TACH.includes(ctx.shot.type) && tp.length < 2) {
-      const mg = ctx.m?.[1];
+      const mg = coM(ctx) ? giua(ctx) : null;
       const than = mg ? vaiCua(mg, 'hero')[0] : null;
       const chi = mg ? (mg.vat || []).filter((v) => v.vai === 'tay' || v.vai === 'chan-nguoi') : [];
       if (than && chi.length) {
@@ -170,17 +182,21 @@ export const LUAT = {
   L11(ctx, ng) {
     const t = ng.L11;
     const type = ctx.shot.type;
-    let nguong;
-    if (HANH_DONG.includes(type)) nguong = t.hanhDong;
-    else if (type !== 'hanhDong' && type !== 'macDinh' && typeof t[type] === 'number') nguong = t[type];
-    else nguong = t.macDinh;
-    return { ok: ctx.shot.dur >= nguong, val: ctx.shot.dur, nguong };
+    let min;
+    if (HANH_DONG.includes(type)) min = t.hanhDong;
+    else if (type !== 'hanhDong' && type !== 'macDinh' && typeof t[type] === 'number') min = t[type];
+    else min = t.macDinh;
+    return { ok: ctx.shot.dur >= min, val: ctx.shot.dur, nguong: min };
   },
 };
 
 export function kiemShot(ctx, ng) {
   const kq = {};
-  for (const ma of Object.keys(LUAT)) kq[ma] = LUAT[ma](ctx, ng);
+  for (const ma of Object.keys(LUAT)) {
+    try { kq[ma] = LUAT[ma](ctx, ng); } catch (e) {
+      kq[ma] = { ok: false, val: null, nguong: null, skip: 'loi', ghiChu: 'loi: ' + e.message };
+    }
+  }
   return kq;
 }
 

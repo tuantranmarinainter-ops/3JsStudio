@@ -68,13 +68,13 @@ export function oPhang(img, { luoi = 4, doLech = 6 } = {}) {
   return phang / (luoi * luoi);
 }
 
-// Mặt nạ: đen (độ sáng < 0.5) là vật. Trả về thành phần liên thông, lớn trước; dienTich 0..1, bbox chuẩn hoá 0..1.
-export function thanhPhan(mask) {
+// Mặt nạ: đen (độ sáng < nguongDen) là vật; bỏ cụm < cumMin (tỷ lệ diện tích). Trả về thành phần liên thông, lớn trước; dienTich 0..1, bbox chuẩn hoá 0..1.
+export function thanhPhan(mask, { nguongDen = 0.5, cumMin = 0.001 } = {}) {
   const { w, h } = mask;
   const bat = new Uint8Array(w * h);
-  for (let p = 0; p < bat.length; p++) bat[p] = sang(mask.data, p * 4) < 0.5 ? 1 : 0;
+  for (let p = 0; p < bat.length; p++) bat[p] = sang(mask.data, p * 4) < nguongDen ? 1 : 0;
   return thanhPhanLienThong(w, h, bat)
     .map((c) => ({ dienTich: c.dt / (w * h), bbox: [c.x0 / w, c.y0 / h, (c.x1 + 1) / w, (c.y1 + 1) / h] }))
-    .filter((c) => c.dienTich >= 0.001)
+    .filter((c) => c.dienTich >= cumMin)
     .sort((a, b) => b.dienTich - a.dienTich);
 }

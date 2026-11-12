@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { LUAT, kiemShot, nguong } from '../kiem/luat.mjs';
-import { tao } from './anh.test.mjs';
+import { tao } from './_ham.mjs';
 
 const ng = nguong(path.join(os.tmpdir(), 'khong-co-ep-nao'));
 const env0 = { dem: false, tuyet: false, mua: false };
@@ -135,4 +135,77 @@ test('L11', () => {
 test('kiemShot trả đủ 11 mã', () => {
   const r = kiemShot(ctx(), ng);
   assert.deepEqual(Object.keys(r), ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8', 'L9', 'L10', 'L11']);
+});
+
+// ---- Vòng sửa 1 ----
+test('kiemShot bắt lỗi từng luật', () => {
+  const r = kiemShot(ctx({ anh: [anhMot(0), anhMot(0), tao(16, 16, () => 0)] }), ng);
+  assert.equal(r.L4.ok, false); assert.equal(r.L4.skip, 'loi'); assert.match(r.L4.ghiChu, /^loi: /);
+  assert.equal(r.L11.ok, true); assert.equal(Object.keys(r).length, 11);
+});
+
+test('m có phần tử null / trường thiếu không ném lỗi', () => {
+  const dayDu = mk([{ ten: 'nha', vai: 'nha', bbox: [0.1, 0.1, 0.9, 0.9], trongKhung: 1, che: 0, nghieng: 9 }], { chan: [{ ten: 'c', chamDat: true, hatGan: 2 }] });
+  const phong = nhieuAnh();
+  const base = { anh: [phong, phong, phong], mask: tao(50, 50, (x, y) => (x < 20 && y < 30) ? 0 : 255), env: { dem: true, tuyet: true, mua: false } };
+  for (const m of [[dayDu, null, dayDu], [null, null, dayDu], [dayDu, null, null], [null, null, null]]) {
+    for (const type of ['sinkTilt', 'insertRead', 'chase', 'establish']) {
+      const r = kiemShot(ctx({ ...base, shot: { id: 's', type, dur: 2 }, m }), ng);
+      for (const [ma, v] of Object.entries(r)) assert.notEqual(v.skip, 'loi', ma + ' loi: ' + v.ghiChu);
+    }
+  }
+  // khung giữa null -> dùng khung gần nhất
+  const sh = { id: 's', type: 'sinkTilt', dur: 2 };
+  assert.equal(LUAT.L5(ctx({ shot: sh, m: [dayDu, null, null] }), ng).ok, true);
+  // cả 3 null -> như m === null
+  assert.ok(LUAT.L5(ctx({ shot: sh, m: [null, null, null] }), ng).skip);
+  assert.ok(LUAT.L6(ctx({ m: [null, null, null] }), ng).skip);
+  assert.ok(LUAT.L9(ctx({ m: [null, null, null] }), ng).skip);
+  // trường thiếu hoàn toàn
+  const trong = { t: 0 };
+  for (const ma of ['L1', 'L3', 'L5', 'L6', 'L8', 'L9', 'L10']) {
+    const r = LUAT[ma](ctx({ shot: sh, m: [trong, trong, trong], mask: base.mask, anh: base.anh }), ng);
+    assert.notEqual(r.skip, 'loi');
+  }
+  assert.equal(LUAT.L8(ctx({ anh: base.anh, m: [trong, trong, trong] }), ng).ok, false); // tầng thiếu = 0
+  assert.equal(LUAT.L10(ctx({ mask: base.mask, m: [null, dayDu, null] }), ng).ok, true); // 1 nha, 1 thành phần
+});
+
+test('val serialize được (JSON) và hữu hạn', () => {
+  const g = anhMot(50);
+  const hero = mk([{ ten: 'h', vai: 'hero', bbox: [0.3, 0.2, 0.6, 0.8], che: 0 }]); // thiếu trongKhung
+  const r4 = LUAT.L4(ctx({ anh: [g, g, g] }), ng);
+  assert.equal(r4.val, 100); assert.equal(r4.ok, false);
+  const r3 = LUAT.L3(ctx({ m: bo3(hero) }), ng);
+  assert.equal(r3.val.trongKhung, 0); assert.ok(r3.ghiChu); assert.equal(r3.ok, false);
+  const kq = kiemShot(ctx({ anh: [g, g, g], m: bo3(hero), mask: tao(20, 20, () => 255) }), ng);
+  assert.deepEqual(JSON.parse(JSON.stringify(kq)), kq);
+  const so = (o) => { for (const v of Object.values(o ?? {})) { if (typeof v === 'number') assert.ok(Number.isFinite(v)); else if (v && typeof v === 'object') so(v); } };
+  for (const v of Object.values(kq)) { if (typeof v.val === 'number') assert.ok(Number.isFinite(v.val)); else so(v.val); }
+});
+
+test('ngưỡng ảnh lấy từ ng', () => {
+  const sang = tao(32, 32, (x, y) => ((x % 10 < 2) && (y % 10 < 2)) ? 255 : 90);
+  const dem = { ...env0, dem: true };
+  assert.equal(LUAT.L7(ctx({ env: dem, anh: [sang, sang, sang] }), ng).ok, true);
+  const ng2 = { ...ng, L7: { ...ng.L7, nguongSang: 1.1 } }; // không điểm nào đủ sáng
+  assert.equal(LUAT.L7(ctx({ env: dem, anh: [sang, sang, sang] }), ng2).ok, false);
+  const ng3 = { ...ng, L10: { ...ng.L10, cumMin: 0.9 } };
+  assert.equal(LUAT.L10(ctx({ mask: tao(50, 50, (x, y) => (x < 20 && y < 30) ? 0 : 255) }), ng3).ok, false);
+  const ng4 = { ...ng, L8: { ...ng.L8, doLech: 0.5 } }; // ảnh một màu vẫn phẳng; ảnh nhẹ lệch không còn phẳng
+  const nhe = tao(32, 32, (x) => 100 + (x & 1) * 10);
+  assert.equal(LUAT.L8(ctx({ anh: [nhe, nhe, nhe] }), ng).ok, false);
+  assert.equal(LUAT.L8(ctx({ anh: [nhe, nhe, nhe] }), ng4).ok, true);
+});
+
+test('L2 không thấy vật doc; dx dy; L1 canh + soChan', () => {
+  const sh = { id: 's', type: 'insertRead', dur: 2 };
+  assert.equal(LUAT.L2(ctx({ shot: sh, m: bo3(mk([])) }), ng).ghiChu, 'khong-thay-vat-doc');
+  assert.equal(LUAT.L2(ctx({ shot: sh, m: bo3(mk([])) }), ng).ok, false);
+  const d = mk([{ ten: 't', vai: 'doc', bbox: [0.5, 0.4, 0.7, 0.6], trongKhung: 1, che: 0 }]);
+  const r = LUAT.L2(ctx({ shot: sh, m: bo3(d) }), ng);
+  assert.ok(Math.abs(r.val.dx - 0.1) < 1e-9 && Math.abs(r.val.dy) < 1e-9);
+  const l1 = LUAT.L1(ctx({ m: bo3(mk(nha([0.02, 0.1, 0.9, 0.9]))) }), ng);
+  assert.equal(l1.val.canh, 'trai'); assert.equal(l1.val.soChan, 4);
+  assert.equal(LUAT.L1(ctx({ m: bo3(mk(nha([0.1, 0.1, 0.9, 0.98]))) }), ng).val.canh, 'duoi');
 });

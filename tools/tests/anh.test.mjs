@@ -1,15 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { tao } from './_ham.mjs';
 import { psnr, tyLeToi, diemSang, oPhang, thanhPhan } from '../kiem/anh.mjs';
 
-export function tao(w, h, fn) {
-  const data = new Uint8ClampedArray(w * h * 4);
-  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
-    const v = fn(x, y), i = (y * w + x) * 4;
-    data[i] = data[i + 1] = data[i + 2] = v; data[i + 3] = 255;
-  }
-  return { w, h, data };
-}
 const den = () => tao(64, 64, () => 0);
 const trang = () => tao(64, 64, () => 255);
 
@@ -32,6 +25,12 @@ test('diemSang: 3 chấm rời = 3, ảnh đen = 0, chấm quá nhỏ bị bỏ'
 test('oPhang: một màu = 1, bàn cờ = 0', () => {
   assert.equal(oPhang(tao(64, 64, () => 128)), 1);
   assert.equal(oPhang(tao(64, 64, (x, y) => ((x + y) & 1) ? 255 : 0)), 0);
+});
+test('thanhPhan nhận ngưỡng tuỳ chỉnh', () => {
+  const m = tao(20, 20, (x, y) => (x < 4 && y < 4) ? 100 : 255);
+  assert.equal(thanhPhan(m).length, 1);
+  assert.equal(thanhPhan(m, { nguongDen: 0.3 }).length, 0);
+  assert.equal(thanhPhan(m, { cumMin: 0.5 }).length, 0);
 });
 test('thanhPhan: 2 khối đen rời = 2, bỏ cụm < 0,1%', () => {
   const mask = tao(64, 64, (x, y) => ((x < 10 && y < 10) || (x >= 40 && x < 55 && y >= 40 && y < 55)) ? 0 : 255);
