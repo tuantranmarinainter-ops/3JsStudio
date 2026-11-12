@@ -191,6 +191,7 @@ export function makePostcard(THREE, kind, opts = {}) {
   back.rotation.y = Math.PI; back.position.z = -0.011; back.name = 'back'; g.add(back);
   front.castShadow = back.castShadow = true;
   g.userData.vai = 'doc';   // vật cần đọc (engine/measure.js)
+  for (const f of [front, back]) { f.userData.matKind = 'paper'; f.userData.matNguon = 'khai-bao'; }   // giấy: khai báo (engine/materials.js), không đoán từ tên
   return g;
 }
 

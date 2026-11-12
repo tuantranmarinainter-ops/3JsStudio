@@ -12,6 +12,7 @@
 //   walk    d   : quãng đường đã đi (stud) → pha bước; root phải được dời đúng d dọc hướng +Z cục bộ
 //   kneel   0→1 : khuỵu chân hạ hiên xuống (thân hạ thấp, đầu gối gập cao)
 
+import { khaiBaoMat } from './materials.js';
 import { createStairs } from './stairs.js';
 
 export const HOUSE_STYLES = {
@@ -45,7 +46,9 @@ export function createHouse(THREE, opts = {}) {
   const shell = new THREE.Group(); shell.name = 'house_shell'; body.add(shell);
 
   const mats = {};
-  const M = (key, color, extra = {}) => (mats[key] ||= new THREE.MeshStandardMaterial({ color, roughness: 0.8, ...extra }));
+  // chất liệu KHAI BÁO theo từng vật liệu (engine/materials.js khaiBaoMat; bảng loại: docs/vat-lieu.md) — không để classifyMaterial đoán
+  const KIND = { trim: 'woodpaint', roof: 'shingle', roofDark: 'woodpaint', accent: 'woodpaint', glass: 'glass', base: 'woodpaint', porch: 'wood', step: 'woodpaint', cap: 'brick', door: 'woodpaint', chimney: 'brick' };   // step/cap: cùng màu với porch/trim nhưng khác loại (bậc thềm sơn, mũ ống khói gạch) → vật liệu riêng
+  const M = (key, color, extra = {}) => (mats[key] ||= khaiBaoMat(new THREE.MeshStandardMaterial({ color, roughness: 0.8, ...extra }), KIND[key]));
   const add = (geo, mat, x, y, z, name, parent = shell) => {
     const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.name = name;
     m.castShadow = m.receiveShadow = true; parent.add(m); return m;
@@ -60,11 +63,11 @@ export function createHouse(THREE, opts = {}) {
     const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
     t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(4, 2); return t;
   })();
-  const wallMat = new THREE.MeshStandardMaterial({ map: plankTex, roughness: 0.85 });
+  const wallMat = khaiBaoMat(new THREE.MeshStandardMaterial({ map: plankTex, roughness: 0.85 }), 'woodpaint');
   const trim = M('trim', c.trim), roof = M('roof', c.roof, { roughness: 0.6 }), roofDark = M('roofDark', c.roofDark);
   const accent = M('accent', c.accent, { roughness: 0.5, metalness: 0.2 });
   const glass = M('glass', c.glass, { emissive: new THREE.Color('#ffd27a'), emissiveIntensity: 0, roughness: 0.3 });
-  const baseMat = M('base', c.base, { roughness: 1 }), porchMat = M('porch', c.porch);
+  const baseMat = M('base', c.base, { roughness: 1 }), porchMat = M('porch', c.porch), stepMat = M('step', c.porch), capMat = M('cap', c.trim);
   const doorMat = M('door', c.door, { roughness: 0.6 });
 
   // --- tầng hầm + tường ---
@@ -94,7 +97,7 @@ export function createHouse(THREE, opts = {}) {
   add(new THREE.SphereGeometry(0.5, 12, 8), accent, 0, WALL + 10.4, D / 2 + 1, 'finial');
   // ống khói
   add(B(2.2, 6, 2.2), M('chimney', c.chimney), -W / 2 + 5, WALL + 7, -2, 'chimney');
-  add(B(2.8, 0.6, 2.8), trim, -W / 2 + 5, WALL + 10.2, -2, 'chimney_cap');
+  add(B(2.8, 0.6, 2.8), capMat, -W / 2 + 5, WALL + 10.2, -2, 'chimney_cap');
 
   // --- cửa vòm đôi + cửa sổ ---
   const door = new THREE.Group(); door.name = 'door'; door.position.set(0, 0, D / 2 + 0.05); shell.add(door);
@@ -154,17 +157,17 @@ export function createHouse(THREE, opts = {}) {
     for (let i = 0; i <= len; i += 1.1) add(B(0.22, 2.2, 0.22), trim, x0 + side * i, 1.5, D / 2 + PORCH - 0.5, 'baluster');
   }
   for (let i = 0; i < 4; i++) {
-    add(B(7, 0.6, 1.2), porchMat, 0, -0.6 - i * 0.75, D / 2 + PORCH + 0.6 + i * 1.2, 'stair');
+    add(B(7, 0.6, 1.2), stepMat, 0, -0.6 - i * 0.75, D / 2 + PORCH + 0.6 + i * 1.2, 'stair');
     add(B(7, 0.3, 1.25), trim, 0, -0.35 - i * 0.75, D / 2 + PORCH + 0.6 + i * 1.2, 'stair_nose');
   }
   const stairRail = [-3.8, 3.8].map((x) => add(B(0.35, 0.35, 5.2), trim, x, 0.2, D / 2 + PORCH + 2.6, 'stair_rail'));
   stairRail.forEach((r) => { r.rotation.x = 0.55; });
-  const stairsGround = createStairs(THREE, { shell, trim, porchMat, z0: D / 2 + PORCH });   // cầu thang chạm đất theo độ cao nhà (engine/stairs.js)
+  const stairsGround = createStairs(THREE, { shell, trim, porchMat: stepMat, z0: D / 2 + PORCH });   // cầu thang chạm đất theo độ cao nhà (engine/stairs.js)
 
   // --- 4 chân ---
-  const wood = new THREE.MeshStandardMaterial({ color: '#6b4226', roughness: 0.9 });
-  const woodDark = new THREE.MeshStandardMaterial({ color: '#4e2f1a', roughness: 0.9 });
-  const gold = new THREE.MeshStandardMaterial({ color: '#d9a53a', roughness: 0.45, metalness: 0.35 });
+  const wood = khaiBaoMat(new THREE.MeshStandardMaterial({ color: '#6b4226', roughness: 0.9 }), 'wood');
+  const woodDark = khaiBaoMat(new THREE.MeshStandardMaterial({ color: '#4e2f1a', roughness: 0.9 }), 'wood');
+  const gold = khaiBaoMat(new THREE.MeshStandardMaterial({ color: '#d9a53a', roughness: 0.45, metalness: 0.35 }), 'wood');   // khớp chân mạ vàng: sơn gỗ (không phải kim loại thật)
   const legs = HIPS.map(([hx, hz], i) => {
     const g = new THREE.Group(); g.name = ['leg_FL', 'leg_FR', 'leg_BL', 'leg_BR'][i]; g.userData.vai = 'chan-nha'; root.add(g);
     const seg = (r0, r1, mat, name) => {

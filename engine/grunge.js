@@ -8,6 +8,8 @@
 // build (nhà, đường, đá, cỏ…): vết ố loang lớn, vệt bẩn chảy dọc, chân tường bám đất, hạt sần + gồ ghề.
 // Toạ độ nhiễu = toạ độ cục bộ của vật × tỉ lệ thế giới (đơn vị stud) → nhân vật/nhà đi lại thì vân đi theo, không trôi.
 
+import { KHONG_GRUNGE } from './materials.js';
+
 export const GRUNGE = { char: { value: 1 }, build: { value: 1 }, aged: { value: 1 } };
 // aged (v2, chỉ loại build): nhà "bán thực" — sơn tróc lộ gỗ bạc, sơn phai nắng, ố dưới mái, rêu/đất chân tường.
 // Chỉ ăn vào bề mặt SƠN MÀU (độ bão hoà cao) → đường, đá, cỏ xám gần như không đổi.
@@ -153,7 +155,9 @@ export function applyGrunge(THREE, root, kind = 'build', { amount = 1, aged = fa
     k = o.userData.grungeKind || k;
     if (o.isMesh && k !== 'none' && !o.isInstancedMesh) {
       const mats = Array.isArray(o.material) ? o.material : [o.material];
-      const ok = mats.filter((m) => m && m.isMeshStandardMaterial && !m.transparent && !m.userData.noGrunge && (k !== 'char' || m.map));   // nhân vật: chỉ quần áo/mũ (có texture), da/mặt giữ trơn
+      const tagMesh = o.userData.matKind;   // vật liệu KHAI BÁO loại cấm grunge (engine/materials.js KHONG_GRUNGE: kim loại, kính, men…) thì bỏ qua
+      const ok = mats.filter((m) => m && m.isMeshStandardMaterial && !m.transparent && !m.userData.noGrunge && (k !== 'char' || m.map)
+        && !KHONG_GRUNGE.includes(tagMesh || m.userData.matDecl));   // nhân vật: chỉ quần áo/mũ (có texture), da/mặt giữ trơn
       if (ok.length) { ensureBoxAttr(THREE, o.geometry); ok.forEach((m) => patch(m, k, amount, aged)); }
     }
     for (const c of o.children) walk(c, k);

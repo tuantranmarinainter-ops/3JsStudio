@@ -22,6 +22,8 @@ export function installMeasure({ THREE, stage, shots }) {
   const vaiOf = (o) => { for (let p = o; p; p = p.parent) if (p.userData && p.userData.vai) return p.userData.vai; return null; };
   // giữ mesh nếu BẤT KỲ tổ tiên (kể cả chính nó) có vai trong MASK_VAI — tay/chân lồng trong hero vẫn được vẽ
   const coVaiMask = (o) => { for (let p = o; p; p = p.parent) if (p.userData && MASK_VAI.has(p.userData.vai)) return true; return false; };
+  const VAI_VL = new Set(['vat-chinh', 'nha', 'chan-nha', 'doc']);   // vật liệu phải KHAI BÁO (tools/kiem/luat.mjs L9)
+  const coVaiVL = (o) => { for (let p = o; p; p = p.parent) if (p.userData && p.userData.vai) return VAI_VL.has(p.userData.vai); return false; };   // vai GẦN NHẤT (người trong nhà không tính)
   const vaiNode = (o) => { for (let p = o; p; p = p.parent) if (p.userData && p.userData.vai) return p; return null; };
 
   // bbox thế giới của các mesh nhìn thấy dưới `obj` (bỏ cây con thoả `skip`)
@@ -192,7 +194,10 @@ export function installMeasure({ THREE, stage, shots }) {
     const vl = new Map(), sph = new THREE.Sphere();
     scene.traverseVisible((o) => {
       if (!o.isMesh || !o.geometry || faint(o)) return;
-      const m = matsOf(o)[0]; const kind = m && m.userData && m.userData.matKind; if (!kind || kind === 'none') return;
+      if (!coVaiVL(o)) return;   // chỉ vật chính / nhà / vật cần đọc (luật L9); đất, cây, người… không khai báo từng mesh
+      const m = matsOf(o)[0]; let kind = m && m.userData && m.userData.matKind;
+      if (!kind && o.userData && o.userData.matKind === 'none' && o.userData.matNguon === 'khai-bao') kind = 'none';   // khai báo "giữ vật liệu gốc"
+      if (!kind) return;
       if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere();
       sph.copy(o.geometry.boundingSphere).applyMatrix4(o.matrixWorld);
       if (!fr.intersectsSphere(sph)) return;

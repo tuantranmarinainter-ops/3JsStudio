@@ -1,12 +1,19 @@
 // props.js — Đạo cụ dựng bằng code (phong cách khối). Mỗi hàm trả Group có tên rõ; mặt trước nhìn +Z; đơn vị stud.
 import { createBlanket } from './cloth.js';
+import { khaiBao, khaiBaoMat } from './materials.js';
 import { postcardTexture, makePostcard, postcardBack, seededKinds, POSTCARD_ASPECT, onPostcardArt } from './postcards.js';
 
 export function propKit(THREE) {
   const mats = new Map();
+  // M(color, { kind: 'chrome' }): `kind` = tên trong MAT_KINDS → KHAI BÁO chất liệu (userData.matDecl + matNguon 'khai-bao'),
+  // không đoán từ màu; các tuỳ chọn khác chuyển thẳng cho MeshStandardMaterial.
   const M = (color, o = {}) => {
     const k = color + JSON.stringify(o);
-    if (!mats.has(k)) mats.set(k, new THREE.MeshStandardMaterial({ color, roughness: 0.8, ...o }));
+    if (!mats.has(k)) {
+      const { kind, ...rest } = o;
+      const mt = new THREE.MeshStandardMaterial({ color, roughness: 0.8, ...rest });
+      mats.set(k, kind ? khaiBaoMat(mt, kind) : mt);
+    }
     return mats.get(k);
   };
   const mesh = (geo, mat, x = 0, y = 0, z = 0, name = '', parent) => {
@@ -356,6 +363,16 @@ export function propKit(THREE) {
   };
   // vai cho engine/measure.js: vật chính của cảnh / vật dọc (chỉ userData, không đổi hình)
   const VAI = { fridge: 'vat-chinh', mailbox: 'vat-chinh', lighthouse: 'vat-chinh', ship: 'vat-chinh', cardStack: 'doc' };   // 'doc' = vật CẦN ĐỌC (có chữ/số): bưu thiếp, chồng thiếp
-  for (const [fn, vai] of Object.entries(VAI)) { const f = K[fn]; K[fn] = (...a) => { const g = f.apply(K, a); if (g && g.userData) g.userData.vai = vai; return g; }; }
+  // KHAI BÁO chất liệu (tên mesh → kind trong MAT_KINDS; luật đầu khớp thắng). 'none' = giữ vật liệu gốc. docs/vat-lieu.md.
+  // Bưu thiếp (makePostcard) tự khai báo 'paper'. Test tools/tests/vat-lieu.test.mjs kiểm vật chính trong ep001 không còn 'doan'.
+  const DECL = {
+    fridge: [[/^(fridge_body|fridge_split|handle_)/, 'none'], [/^(front|back|card_collage)$/, 'paper'], [/^magnet/, 'plastic']],   // vỏ tủ: tôn sơn bóng, giữ nguyên vật liệu gốc (không vân, không grunge)
+    mailbox: [[/^(box_rib|door_handle|door_hinge|flag_pin)$/, 'chrome'], [/^house_number$/, 'enamel'], [/^(box_|door_leaf|door_inner|flag_)/, 'metalpaint'],
+      [/^(post|post_foot|post_arm|post_brace)$/, 'wood'], [/^letter/, 'paper'], [/^(front|back)$/, 'paper']],
+    lighthouse: [[/^(band_|gallery|rail|cap)/, 'metalpaint'], [/^lantern$/, 'none'], [/^door$/, 'wood'], [/^window$/, 'matte']],
+    ship: [[/^(hull|hull_stripe|cabin)$/, 'woodpaint'], [/^(deck|mast|mast2)$/, 'wood'], [/^sail/, 'fabric']],
+    cardStack: [[/^(ribbon_|bow_)/, 'fabric'], [/^(front|back)$/, 'paper']],
+  };
+  for (const [fn, vai] of Object.entries(VAI)) { const f = K[fn]; K[fn] = (...a) => { const g = f.apply(K, a); if (g && g.userData) { g.userData.vai = vai; if (DECL[fn]) khaiBao(g, DECL[fn]); } return g; }; }
   return K;
 }

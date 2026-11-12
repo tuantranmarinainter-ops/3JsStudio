@@ -19,6 +19,45 @@ import { ensureBoxAttr } from './grunge.js';
 
 export const MATS = { on: { value: 1 }, tex: { value: 1 }, ready: Promise.resolve() };
 
+// KHAI BÁO vật liệu (Task 10): đạo cụ nói thẳng nó là chất liệu gì thay vì để classifyMaterial ĐOÁN từ màu/tên.
+//   Theo vật liệu: khaiBaoMat(mat, 'chrome')  (props.js: M(color, { kind: 'chrome' }))  → mat.userData.matDecl + matNguon = 'khai-bao'
+//   Theo mesh:     khaiBao(root, [[/tên mesh/, 'wood'], …])  → mesh.userData.matKind + matNguon; trả về mesh CHƯA khai báo
+// Ưu tiên: tag trên mesh > khai báo trên vật liệu > luật đoán MAT_RULES (matNguon = 'doan'). Sau applyMaterials,
+// engine/measure.js đọc matNguon vào __measure().vatLieu và luật L9 đòi 'khai-bao' cho vật chính.
+// Danh sách loại CẤM lớp bụi/cũ (grunge.js bỏ qua): nguồn duy nhất — tools/kiem/mac-dinh.json L9.camGrunge phải khớp (có test).
+export const KHONG_GRUNGE = ['chrome', 'metalpaint', 'iron', 'glass', 'enamel', 'skin', 'carpaint'];
+// Loại đang dùng trong ep001 (kiểm kê tools/mat-inventory.mjs 2026-11-12) = da-duyet; chưa dùng (fruit, whale) = chua-duyet.
+// Chỉ để tools/vat-lieu-doc.mjs ghi cột trạng thái.
+export const MAT_DA_DUYET = [
+  'asphalt', 'bark', 'brick', 'cactus', 'carpaint', 'chrome', 'coconut', 'concrete',
+  'coral', 'enamel', 'fabric', 'feather', 'foliage', 'fur', 'glass', 'grassground',
+  'hair', 'ice', 'iron', 'knit', 'leather', 'matte', 'metalpaint', 'organic',
+  'paper', 'plaster', 'plastic', 'roadpaint', 'rubber', 'sand', 'shell', 'shingle',
+  'skin', 'snow', 'soil', 'stone', 'tile', 'wood', 'woodpaint',
+];
+export function khaiBaoMat(mat, kind) {
+  if (!kind) return mat;
+  if (!mat.userData) mat.userData = {};
+  mat.userData.matDecl = kind; mat.userData.matNguon = 'khai-bao';
+  return mat;
+}
+export function khaiBao(root, bang) {
+  const chua = [], rieng = new Map();   // vật liệu dùng chung giữa các loại khác nhau → mỗi (vật liệu, loại) một bản sao, nếu không loại này kéo grunge/vân sang loại kia
+  root.traverse((o) => {
+    if (!o.isMesh) return;
+    const hit = bang.find(([re]) => re.test(o.name));
+    if (hit) {
+      o.userData.matKind = hit[1]; o.userData.matNguon = 'khai-bao';
+      if (o.material && !Array.isArray(o.material) && hit[1] !== 'none') {
+        const m = o.material, ck = m.uuid + '|' + hit[1];
+        if (!rieng.has(ck)) rieng.set(ck, m.clone());
+        o.material = rieng.get(ck);
+      }
+    } else if (!o.userData.matKind && !(o.material && !Array.isArray(o.material) && o.material.userData?.matDecl)) chua.push(o);
+  });
+  return chua;
+}
+
 // ẢNH VÂN CC0 (Poly Haven, assets/polyhaven-tex/<id>/512webp, ghi công assets/CREDITS.md) cho đất/đá/gỗ/ngói/cát/vải.
 // Người dùng chốt 2026-11-12 (so 3 cột engine/mat-lab.html). Ảnh chỉ điều biến ĐỘ SÁNG quanh màu gốc của vật (màu phim giữ nguyên)
 // + pháp tuyến + độ nhám; vẫn CHUNG 1 program với mọi chất liệu (sampler luôn khai báo, loại không có ảnh gắn ảnh 1×1).
@@ -467,6 +506,8 @@ function patch(THREE, mat, kind) {
 export function classifyMaterial(obj, mat, path) {
   const tag = obj.userData.matKind;
   if (tag) return tag === 'none' ? null : tag;
+  const decl = mat.userData && mat.userData.matDecl;
+  if (decl) return decl === 'none' ? null : decl;
   const s = `${path} [${(mat.name || '').toLowerCase()}]`;
   for (const [re, kind] of MAT_RULES) if (re.test(s)) return kind;
   return 'matte';
@@ -483,8 +524,10 @@ export function applyMaterials(THREE, root, { log = false } = {}) {
       const next = arr.map((m) => {
         if (!m || !m.isMeshStandardMaterial) return m;
         const kind = classifyMaterial(o, m, p);
+        const khaiBaoRoi = !!(o.userData.matKind || m.userData.matDecl);   // mesh hoặc vật liệu đã khai báo (kể cả chỉnh tay cũ)
+        if (khaiBaoRoi && !o.userData.matNguon) o.userData.matNguon = 'khai-bao';
         if (!kind || (m.transparent && kind !== 'glass')) return m;
-        if (m.userData.matKind === kind) return m;
+        if (m.userData.matKind === kind) { if (!khaiBaoRoi && m.userData.matNguon !== 'khai-bao') m.userData.matNguon = 'doan'; return m; }
         let target = m;
         if (m.userData.matKind && m.userData.matKind !== kind) {   // đã là chất liệu khác → bản sao riêng
           const ck = m.uuid + '|' + kind;
@@ -499,6 +542,7 @@ export function applyMaterials(THREE, root, { log = false } = {}) {
           m.userData.__baseOBC = m.onBeforeCompile; m.userData.__baseKey = m.customProgramCacheKey;
           patch(THREE, m, kind);
         }
+        target.userData.matNguon = khaiBaoRoi ? 'khai-bao' : 'doan';
         stats[kind] = (stats[kind] || 0) + 1;
         return target;
       });
