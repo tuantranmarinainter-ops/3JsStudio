@@ -22,7 +22,7 @@ import { khaiBao } from '../materials.js';
 
 const PERCH_ROOF = 0.9, PERCH_RAIL = 0.715;
 export default function build(g, e, H) {
-  const { THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
+  const { ganTang, THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
   e.sea = makeSea(g, { preset: 'tropical', y: -0.6, amp: 0.4, size: 1600, shore: { circle: [0, 0, 70.6, 5] } });
   const isl = new THREE.Mesh(new THREE.CylinderGeometry(70, 82, 6, 28), mat('#f2d89a')); isl.position.y = -3; isl.receiveShadow = true; isl.name = 'island_sand'; g.add(isl);
   const grass = new THREE.Mesh(new THREE.CylinderGeometry(30, 34, 1.2, 20), mat('#6cbf58')); grass.position.set(-30, 0.1, -30); grass.receiveShadow = true; g.add(grass);
@@ -91,7 +91,8 @@ export default function build(g, e, H) {
   g.children.forEach((o) => { if (o.name === 'coconut_palm') e.sway.addPalm(o); });
   for (let i = 0; i < 12; i++) { if (i === 3) continue;   // bỏ tảng đá trước máy quay s103 (góp ý #11)
     const a = i / 12 * Math.PI * 2; place(g, naturalRock(THREE, { seed: i + 80, r: 2 + hash(i, 10) * 2, h: 0.6, strata: 0.7 }), Math.cos(a) * 76, -0.8, Math.sin(a) * 76, hash(i, 11) * 6); }
-  place(g, K.cloud(2.4), -100, 110, -320); place(g, K.cloud(2), 120, 130, -380);
+  const cloudA = place(g, K.cloud(2.4), -100, 110, -320);
+  const cloudB = place(g, K.cloud(2), 120, 130, -380);
   // chi tiết bãi biển Polyfork: gỗ trôi, cỏ biển, vỏ sò, bụi, thuyền chèo, mòng biển
   for (let i = 0; i < 40; i++) { const a = hash(i, 21) * Math.PI * 2, r = 20 + hash(i, 22) * 52, x = Math.cos(a) * r - 10, z = Math.sin(a) * r - 20;
     if (Math.hypot(x + 10, z) < 30 || Math.hypot(x - 42, z + 26) < 9) continue;
@@ -110,5 +111,25 @@ export default function build(g, e, H) {
   ];
   e.gullBase = perches;
   e.gulls = perches.map((p, i) => { const o = pf('herring-gull-55c3da', 1.3); return o ? place(g, o, p.x, p.y, p.z, p.ry) : null; });
-  return { update(t) { e.wind.update(t); e.cloudShade.group.visible = globalThis.__autoFx?.cloudShade !== false; if (globalThis.__autoFx?.sway !== false) e.sway.update(t); else e.sway.rest(); e.meadow.group.visible = globalThis.__autoFx?.grass !== false; e.meadow.set({ flowers: globalThis.__autoFx?.flowers !== false }); if (e.meadow.group.visible) { e.meadow.setPushers(meadowFeet()); e.meadow.update(t, stage.camera); } e.sea(t); { const rOn = e.raft.update(t); if (e.dinghy) e.dinghy.visible = !rOn; } e.crabs.update(t); e.grass.update(t); e.gulls.forEach((gl, i) => { if (gl) gullIdle(gl, e.gullBase[i], i, t); }); } };
+  // --- 3 tầng (docs/boi-canh-tang.md): front = mặt nước + cỏ bãi + cua · mid = mỏm đá + hải đăng + trại · back = mây xa + đảo xa (tangXa) ---
+  ganTang(e.sea.water.mesh, 'front');
+  ganTang(e.grass.group, 'front');
+  ganTang(e.crabs.group, 'front');
+  ganTang(e.cliff, 'mid');
+  g.children.forEach((o) => { if (o.name === 'coconut_palm') ganTang(o, 'mid'); });
+  ganTang(e.camp, 'mid');
+  ganTang(cloudA, 'back');
+  ganTang(cloudB, 'back');
+  const tx = new THREE.Group(); tx.name = 'island_tangxa'; tx.userData.banKinhToiThieu = 30; g.add(tx);
+  { const far = new THREE.Group(); far.name = 'island_far_isles';
+    for (let i = 0; i < 10; i++) {
+      const a = (i + hash(i, 71) * 0.6) * 0.6283, r = 430 + hash(i, 72) * 250, w = 80 + hash(i, 73) * 90, h = 14 + hash(i, 74) * 20;
+      const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat(i % 2 ? '#4f8a62' : '#5e9a6d', { flatShading: true, roughness: 1 }));
+      m.scale.set(w, h, w * 0.5);
+      m.position.set(Math.cos(a) * r, h * 0.2 - 0.5, Math.sin(a) * r);
+      m.rotation.y = -a + Math.PI / 2;
+      far.add(m);
+    }
+    tx.add(ganTang(far, 'back')); }
+  return { suSong: ['chim', 'co-gio', 'song'], update(t) { tx.visible = globalThis.__autoFx?.tangXa !== false; e.wind.update(t); e.cloudShade.group.visible = globalThis.__autoFx?.cloudShade !== false; if (globalThis.__autoFx?.sway !== false) e.sway.update(t); else e.sway.rest(); e.meadow.group.visible = globalThis.__autoFx?.grass !== false; e.meadow.set({ flowers: globalThis.__autoFx?.flowers !== false }); if (e.meadow.group.visible) { e.meadow.setPushers(meadowFeet()); e.meadow.update(t, stage.camera); } e.sea(t); { const rOn = e.raft.update(t); if (e.dinghy) e.dinghy.visible = !rOn; } e.crabs.update(t); e.grass.update(t); e.gulls.forEach((gl, i) => { if (gl) gullIdle(gl, e.gullBase[i], i, t); }); } };
 }

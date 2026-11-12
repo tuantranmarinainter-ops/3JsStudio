@@ -15,7 +15,7 @@ import { smoothFlash } from '../flash.js';
 import { createCoconutPalm } from '../coconut.js';
 
 export default function build(g, e, H) {
-  const { THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
+  const { ganTang, THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
   // cát rộng tới tận chân trời (góp ý 2026-11-11 #3: hở mép cát ở s011); mép biển vẫn ở z≈70
   // góp ý 2026-11-12 #2 (s003): cát thật hơn — hạt mịn, gợn gió, cát ướt sẫm gần mép nước, vân không lặp ô, màu dịu bớt vàng.
   // Shader thủ tục theo toạ độ THẾ GIỚI (tĩnh, tất định); bỏ vân SAND chung của materials.js (matKind 'none') để khỏi chồng 2 lớp.
@@ -76,7 +76,26 @@ export default function build(g, e, H) {
     if (Math.abs(x) < 48 && z > -110) continue;
     place(g, createCoconutPalm(THREE, { h: 15 + hash(i, 23) * 10, lean: 0.1 + hash(i, 24) * 0.25, seed: i + 40 }), x, 0, z, hash(i, 25) * 6.28);
   }
-  for (let i = 0; i < 6; i++) place(g, K.rock(2 + hash(i, 9) * 2, '#9a8a7a', i), -60 + i * 25, 0, 40 + hash(i, 4) * 10);
-  place(g, K.cloud(2.2), -80, 90, -260); place(g, K.cloud(1.8), 90, 110, -300);
-  return { update(t) { e.sea(t); e.crabs.update(t); } };
+  const rocks = new THREE.Group(); rocks.name = 'hawaii_beach_rocks'; g.add(rocks);
+  for (let i = 0; i < 6; i++) place(rocks, K.rock(2 + hash(i, 9) * 2, '#9a8a7a', i), -60 + i * 25, 0, 40 + hash(i, 4) * 10);
+  const cloudA = place(g, K.cloud(2.2), -80, 90, -260);
+  const cloudB = place(g, K.cloud(1.8), 90, 110, -300);
+  // --- 3 tầng (docs/boi-canh-tang.md): front = mặt nước + cua + đá bãi · mid = dừa (hàng bãi + trong đảo) · back = mây xa + dãy núi xa (tangXa) ---
+  ganTang(e.sea.water.mesh, 'front');
+  ganTang(e.crabs.group, 'front');
+  ganTang(rocks, 'front');
+  g.children.forEach((o) => { if (o.name === 'coconut_palm') ganTang(o, 'mid'); });
+  ganTang(cloudA, 'back');
+  ganTang(cloudB, 'back');
+  const tx = new THREE.Group(); tx.name = 'hawaii_tangxa'; tx.userData.banKinhToiThieu = 30; g.add(tx);
+  { const far = new THREE.Group(); far.name = 'hawaii_far_hills';
+    for (let i = 0; i < 8; i++) {
+      const x = -700 + i * 200 + (hash(i, 81) - 0.5) * 80, z = -620 - hash(i, 82) * 160, w = 180 + hash(i, 83) * 120, h = 40 + hash(i, 84) * 50;
+      const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat(i % 2 ? '#587a5e' : '#4c6e54', { flatShading: true, roughness: 1 }));
+      m.scale.set(w, h, w * 0.5);
+      m.position.set(x, h * 0.25 - 1, z);
+      far.add(m);
+    }
+    tx.add(ganTang(far, 'back')); }
+  return { suSong: ['song'], update(t) { tx.visible = globalThis.__autoFx?.tangXa !== false; e.sea(t); e.crabs.update(t); } };
 }
