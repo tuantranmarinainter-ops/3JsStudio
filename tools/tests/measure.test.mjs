@@ -156,3 +156,43 @@ test('measure.js tiêm được: không import, new Function dùng được', ()
   const fn = new Function(src.replace(/\bexport\s+function\b/, 'function') + '; return installMeasure')();
   assert.equal(typeof fn, 'function');
 });
+
+// ---- Task 8: __maskAnh + soTheHat ----
+const demToi = (r) => { let n = 0; for (let i = 0; i < r.data.length; i += 4) if (r.data[i] < 128) n++; return n / (r.w * r.h); };
+const maskAnh = (t) => page.evaluate(async (t) => { const r = await window.__maskAnh(t); return { w: r.w, h: r.h, data: r.data }; }, t);
+
+test('__maskAnh: ổn định, khôi phục, tỉ lệ đen khớp', T, async () => {
+  const t = await shotHero();
+  await page.evaluate((t) => window.renderAt(t), t);
+  const shot = () => page.locator('canvas').first().screenshot();
+  const truoc = await shot();
+  const a = await maskAnh(t);
+  const sau = await shot();
+  assert.ok(truoc.equals(sau), 'canvas bị đổi sau __maskAnh');
+  assert.equal(a.data.length, 135 * 240 * 4);
+  const b = await maskAnh(t);
+  assert.deepEqual(a.data, b.data);
+  await page.evaluate(() => window.renderAt(10)); await page.evaluate((t) => window.renderAt(t), t);
+  const c = await maskAnh(t);
+  assert.deepEqual(a.data, c.data);
+  const tl = demToi(a);
+  assert.ok(tl > 0.005 && tl < 0.9, 'tỉ lệ đen ' + tl);
+  const noMask = await page.evaluate(() => { const sc = window.__stage.scene; let n = 0; sc.traverse((o) => { if (o.visible && o.isMesh) n++; }); return n; });
+  await page.evaluate((t) => window.renderAt(t), t);
+  const demSau = await page.evaluate(() => { const sc = window.__stage.scene; let n = 0; sc.traverse((o) => { if (o.visible && o.isMesh) n++; }); return n; });
+  assert.equal(demSau, noMask);
+});
+
+test('__maskAnh s010: hai lần đo cách nhau renderAt khác -> tỉ lệ đen ±0.01', T, async () => {
+  const t = await page.evaluate(() => { const s = window.__shots.list.find((x) => x.id === 's010'); return (s.t0 + s.t1) / 2; });
+  const a = demToi(await maskAnh(t));
+  await page.evaluate(() => window.renderAt(100)); await page.evaluate((t) => window.renderAt(t), t);
+  const b = demToi(await maskAnh(t));
+  assert.ok(Math.abs(a - b) <= 0.01, `${a} vs ${b}`);
+  assert.ok(a < 0.9);
+});
+
+test('measure có soTheHat số nguyên', T, async () => {
+  const m = await measureAt(41);
+  assert.ok(Number.isInteger(m.soTheHat) && m.soTheHat >= 0);
+});

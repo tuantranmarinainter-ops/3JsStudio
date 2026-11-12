@@ -1,10 +1,12 @@
 // measure.js — đo khung hình bằng SỐ cho tool kiểm luật (tools/kiem/*) và vẽ mặt nạ bóng dáng.
 //   installMeasure({ THREE, stage, shots }) đặt:
 //     window.__measure(t)  — gọi SAU renderAt(t); chỉ đọc cảnh, không đổi gì. Trả
-//        { t, shot, cam:{fov,pos}, vat:[{ten,vai,bbox:[x0,y0,x1,y1],trongKhung,che,mat?,nghieng?,chim?}],
+//        { t, shot, cam:{fov,pos}, soTheHat, vat:[{ten,vai,bbox:[x0,y0,x1,y1],trongKhung,che,mat?,nghieng?,chim?}],
 //          chan:[{ten,chamDat,hatGan}], hat:{bui,tuyet,mua}, tang:{front,mid,back}, vatLieu:[{ten,kind,nguon,grunge}] }
 //     window.__mask(t)     — vẽ lại khung: vật vai hero/vat-chinh/nha (cả con cháu) đen phẳng, còn lại ẩn, nền trắng, không hậu kỳ.
 //                            window.__mask(null) khôi phục (sau đó gọi renderAt(t) để vẽ lại ảnh thường).
+//     window.__maskAnh(t, w=135, h=240) -> { w, h, data:number[] RGBA } — như __mask nhưng vẽ vào WebGLRenderTarget w×h và ĐỌC THẲNG pixel trong cùng tác vụ
+//                            (không qua screenshot), rồi tự khôi phục; canvas không bị đụng.
 //   Vai gắn ở nơi tạo vật: userData.vai = 'hero'|'nguoi'|'nha'|'chan-nha'|'doc'|'vat-chinh'|'tay'|'chan-nguoi';
 //   userData.tang = 'front'|'mid'|'back'; userData.hat = 'bui'|'tuyet'|'mua' + userData.soHat() (+ tuỳ chọn hatViTri()).
 //   Vai của một vật = vai gần nhất khi đi ngược lên cây cha.
@@ -140,8 +142,10 @@ export function installMeasure({ THREE, stage, shots }) {
     const camPos = new THREE.Vector3().setFromMatrixPosition(camera.matrixWorld);
     const matDat = stage.ground && stage.ground.visible ? stage.ground.position.y : 0;   // env không khai báo thì mặt đất ở y = 0
     const hats = [];
+    let soTheHat = 0;
     scene.traverse((o) => {
       const u = o.userData; if (!u) return;
+      if (u.hat) soTheHat++;
       if (u.tang && tang[u.tang] !== undefined && chainVisible(o)) tang[u.tang]++;
       if (u.hat && seenHat[u.hat] !== undefined && chainVisible(o)) { seenHat[u.hat] += typeof u.soHat === 'function' ? u.soHat() : 0; if (typeof u.hatViTri === 'function') hats.push(u); }
     });
@@ -199,43 +203,74 @@ export function installMeasure({ THREE, stage, shots }) {
     });
     return {
       t, shot: info && info.shot ? info.shot.id : null,
-      cam: { fov: R4(camera.fov), pos: [R4(camPos.x), R4(camPos.y), R4(camPos.z)] },
+      cam: { fov: R4(camera.fov), pos: [R4(camPos.x), R4(camPos.y), R4(camPos.z)] }, soTheHat,
       vat, chan, hat: seenHat, tang, vatLieu: [...vl.values()],
     };
   }
 
   // ---- mặt nạ ----
   let saved = null;
+  function restore() {
+    if (!saved) return;
+    for (const [o, v] of saved.vis) o.visible = v;
+    scene.overrideMaterial = saved.over; scene.background = saved.bg; scene.fog = saved.fog;
+    renderer.setClearColor(saved.cc, saved.ca); renderer.autoClear = saved.auto; renderer.shadowMap.autoUpdate = saved.sh;
+    saved.basic.dispose(); saved = null;
+  }
+  // đặt cảnh sang chế độ mặt nạ (vật vai hero/vat-chinh/nha đen phẳng, còn lại ẩn, nền trắng); khôi phục bằng restore()
+  function begin() {
+    scene.updateMatrixWorld(true);
+    const cc = new THREE.Color(); renderer.getClearColor(cc);
+    saved = { vis: [], over: scene.overrideMaterial, bg: scene.background, fog: scene.fog, cc, ca: renderer.getClearAlpha(), auto: renderer.autoClear,
+      sh: renderer.shadowMap.autoUpdate, basic: new THREE.MeshBasicMaterial({ color: 0x000000 }) };
+    scene.traverse((o) => {
+      if ((o.isMesh || o.isPoints || o.isLine || o.isSprite) && o.visible && !coVaiMask(o)) { saved.vis.push([o, o.visible]); o.visible = false; }
+    });
+    scene.overrideMaterial = saved.basic; scene.background = new THREE.Color(0xffffff); scene.fog = null;
+    renderer.setClearColor(0xffffff, 1); renderer.autoClear = true; renderer.shadowMap.autoUpdate = false;
+  }
   function mask(t) {
-    if (t === null || t === undefined) {   // khôi phục
-      if (!saved) return;
-      for (const [o, v] of saved.vis) o.visible = v;
-      scene.overrideMaterial = saved.over; scene.background = saved.bg; scene.fog = saved.fog;
-      renderer.setClearColor(saved.cc, saved.ca); renderer.autoClear = saved.auto; renderer.shadowMap.autoUpdate = saved.sh;
-      saved.basic.dispose(); saved = null; return;
-    }
-    if (saved) mask(null);
+    if (t === null || t === undefined) { restore(); return; }   // khôi phục (sau đó gọi renderAt(t) để vẽ lại ảnh thường)
+    if (saved) restore();
     const go = () => {
-      scene.updateMatrixWorld(true);
-      const cc = new THREE.Color(); renderer.getClearColor(cc);
-      saved = { vis: [], over: scene.overrideMaterial, bg: scene.background, fog: scene.fog, cc, ca: renderer.getClearAlpha(), auto: renderer.autoClear,
-        sh: renderer.shadowMap.autoUpdate, basic: new THREE.MeshBasicMaterial({ color: 0x000000 }) };
-      scene.traverse((o) => {
-        if ((o.isMesh || o.isPoints || o.isLine || o.isSprite) && o.visible && !coVaiMask(o)) { saved.vis.push([o, o.visible]); o.visible = false; }
-      });
-      scene.overrideMaterial = saved.basic; scene.background = new THREE.Color(0xffffff); scene.fog = null;
-      renderer.setClearColor(0xffffff, 1); renderer.autoClear = true; renderer.shadowMap.autoUpdate = false;
+      begin();
       let xong = false;
       try {
         renderer.setRenderTarget(null);
         renderer.render(scene, camera);   // thẳng ra canvas, không qua hậu kỳ
         xong = true;
-      } finally { if (!xong) mask(null); }   // render ném lỗi → luôn khôi phục cảnh
+      } finally { if (!xong) restore(); }   // render ném lỗi → luôn khôi phục cảnh
     };
     const p = stage.renderAt(t);   // đưa cảnh về đúng khung t (thường đồng bộ)
+    return p && p.then ? p.then(go) : go();
+  }
+  // mặt nạ cỡ w×h đọc thẳng từ renderer ngay sau lệnh vẽ (cùng một tác vụ): ổn định hơn screenshot canvas
+  function maskAnh(t, w = 135, h = 240) {
+    if (saved) restore();
+    const go = () => {
+      const prevRT = renderer.getRenderTarget();
+      const rt = new THREE.WebGLRenderTarget(w, h);
+      let out = null;
+      try {
+        begin();
+        renderer.setRenderTarget(rt);
+        renderer.render(scene, camera);
+        const buf = new Uint8Array(w * h * 4);
+        renderer.readRenderTargetPixels(rt, 0, 0, w, h, buf);
+        const data = new Array(w * h * 4);
+        for (let y = 0; y < h; y++) {   // hàng 0 của buffer là đáy ảnh -> lật y
+          const src = (h - 1 - y) * w * 4, dst = y * w * 4;
+          for (let i = 0; i < w * 4; i++) data[dst + i] = buf[src + i];
+        }
+        out = { w, h, data };
+      } finally { renderer.setRenderTarget(prevRT); rt.dispose(); restore(); }
+      return out;
+    };
+    const p = stage.renderAt(t);
     return p && p.then ? p.then(go) : go();
   }
 
   window.__measure = measure;
   window.__mask = mask;
+  window.__maskAnh = maskAnh;
 }

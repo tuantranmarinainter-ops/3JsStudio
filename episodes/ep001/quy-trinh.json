@@ -1,0 +1,16 @@
+{
+  "ghiChu": "Hiệu chỉnh ngưỡng cho ep001 (task 8); số liệu và lý do từng dòng: docs/kiem-luat-hieu-chinh.md. Tập mới dùng tools/kiem/mac-dinh.json.",
+  "L1": { "le": -0.4, "leSat": -0.6 },
+  "L3": { "trongKhungMin": 0.3 },
+  "L7": { "toiMax": 0.63, "diemSangMin": 0 },
+  "L8": { "oPhangMax": 0.2 },
+  "L9": { "tat": true },
+  "L10": { "dienTichMin": 0.04 },
+  "L11": { "macDinh": 0.13 },
+  "rieng": {
+    "s087": { "L4": { "tat": true } },
+    "s089": { "L4": { "tat": true } },
+    "s139": { "L4": { "tat": true } },
+    "s142": { "L4": { "tat": true } }
+  }
+}

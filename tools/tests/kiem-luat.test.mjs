@@ -187,3 +187,11 @@ test('gộp: shot đổi dur được đo lại; shot bị xoá mất bản ghi 
   assert.ok(!j.shots.s003);
   for (const dir of ['01_shots', '02_loi']) assert.deepEqual(fs.readdirSync(path.join(du, dir)).filter((f) => f.startsWith('s003_')), []);
 });
+
+test('ẩn #cap lúc đo: ảnh đo/ảnh duyệt không có phụ đề đen, DOM được khôi phục', T, () => {
+  const d = tmp(); const out = path.join(d, 'k');
+  const r = chay([path.join(root, 'tools', 'tests', 'data', 'trang-co-phu-de.html'), '--shots', 's001', '--jobs', '1', '--out', out, '--duyet', path.join(d, 'd')]);
+  assert.ok(r.status === 0 || r.status === 1, r.stdout + r.stderr);
+  const s = doc(path.join(out, 'luat.json')).shots.s001.luat;
+  assert.ok(s.L7.val.tyLeToi < 0.05, 'tyLeToi ' + s.L7.val.tyLeToi + ' (khối đen #cap lọt vào ảnh đo)');
+});

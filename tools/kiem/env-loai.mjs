@@ -8,7 +8,7 @@ export const ANH_SANG_MAC_DINH = {
   mountain: 'sky', snowNight: 'snowNight', iceSea: 'snowNight', storm: 'storm', shipStorm: 'storm', island: 'beach',
   reef: 'beach', kitchen: 'interior', bedroom: 'bedNight', sea: 'ocean',
 };
-export const ENV_TUYET = new Set(['antarctica', 'snowNight', 'iceSea', 'mountain']);
+export const ENV_TUYET = new Set(['antarctica', 'snowNight', 'iceSea']);   // 'mountain' (núi mây) có tuyết phủ nhưng KHÔNG có hạt tuyết rơi
 export const ENV_MUA = new Set(['storm', 'shipStorm']);
 
 // shot: phần tử window.__shots.list (cần env, light?, fx?). Trả { dem, tuyet, mua, ghiChu? }

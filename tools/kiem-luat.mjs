@@ -125,6 +125,7 @@ const khungSo = (t) => Math.round(t * FPS);
 const lam4 = (x) => Math.round(x * 1e4) / 1e4;
 const thuTu = (a, b) => a.index - b.index;
 
+const dumpCtx = {};
 // shot ném lỗi: mọi luật = lỗi, skip 'loi'
 function ketQuaLoi(msg) {
   const luat = {};
@@ -132,10 +133,29 @@ function ketQuaLoi(msg) {
   return luat;
 }
 
+// ẩn mọi lớp chữ phủ ngoài canvas (phụ đề #cap…) trong lúc chụp ảnh đo; ảnh duyệt cũng không phụ đề
+const AN_CHU_CSS = '#root > :not(canvas):not(audio) { visibility: hidden !important; }';
 async function doShot(tab, s, ng) {
   const { page, C, coMeasure } = tab;
   const dur = lam4(Math.round((s.t1 - s.t0) * FPS) / FPS);
   try {
+    await page.evaluate((css) => { const st = document.createElement('style'); st.id = 'kiem-an-chu'; st.textContent = css; document.head.appendChild(st); }, AN_CHU_CSS);
+    try {
+      return await doShotTrong(tab, s, ng, dur);
+    } finally {
+      await page.evaluate(() => { const st = document.getElementById('kiem-an-chu'); if (st) st.remove(); }).catch(() => {});
+    }
+  } catch (err) {
+    try { await page.evaluate(() => { try { if (window.__mask) window.__mask(null); } catch { /* bỏ */ } }); } catch { /* bỏ */ }
+    const msg = String((err && err.message) || err).split(/\r?\n/)[0].slice(0, 200);
+    const t = [s.t0 + 1 / FPS, (s.t0 + s.t1) / 2, s.t1 - 1 / FPS];
+    return { id: s.id, index: s.index, loiMsg: msg, jpgs: [], rec: { type: s.type ?? null, dur, khung: t.map(khungSo), luat: ketQuaLoi(msg), loi: ['loi'], coMeasureShot: false, coVaiShot: false } };
+  }
+}
+
+async function doShotTrong(tab, s, ng, dur) {
+  const { page, C, coMeasure } = tab;
+  {
     const ts = [s.t0 + 1 / FPS, (s.t0 + s.t1) / 2, s.t1 - 1 / FPS];
     const pngs = [], anh = [], m = [];
     for (const t of ts) {
@@ -148,20 +168,22 @@ async function doShot(tab, s, ng) {
     // coVai của shot = __measure khung giữa có vật gắn vai đang hiện
     const coVaiShot = !!(m[1] && Array.isArray(m[1].vat) && m[1].vat.length > 0);
     let mask = null;
-    if (coVaiShot && await page.evaluate(() => typeof window.__mask === 'function')) {
+    if (coVaiShot && await page.evaluate(() => typeof window.__maskAnh === 'function')) {
       try {
-        await page.evaluate(async (t) => { await window.__mask(t); }, ts[1]);
-        mask = await docAnh(C, await chup(page), 135, 240);
+        const r = await page.evaluate(async (t) => { const x = await window.__maskAnh(t); return { w: x.w, h: x.h, data: x.data }; }, ts[1]);
+        mask = { w: r.w, h: r.h, data: Uint8ClampedArray.from(r.data) };
       } catch { mask = null; }
-      finally { await page.evaluate(() => { try { window.__mask(null); } catch { /* bỏ */ } }); }
     }
     const e = loaiEnv(s);
     const ctx = {
       shot: { id: s.id, type: s.type, dur, static: s.static, frame: s.frame, read: s.read },
       m: m.some(Boolean) ? m : null, anh, mask, env: { dem: e.dem, tuyet: e.tuyet, mua: e.mua },
     };
-    const luat = kiemShot(ctx, ng);
-    if (e.ghiChu) luat.L7 = { ...luat.L7, ghiChu: [luat.L7.ghiChu, e.ghiChu].filter(Boolean).join('; ') };
+    if (opt['luu-ctx']) {   // đổ dữ liệu vào để phát lại luật offline khi hiệu chỉnh ngưỡng (ảnh -> xám 8 bit, base64)
+      const xam = (im) => im ? Buffer.from(Uint8Array.from({ length: im.w * im.h }, (_, i) => Math.round(0.2126 * im.data[i * 4] + 0.7152 * im.data[i * 4 + 1] + 0.0722 * im.data[i * 4 + 2]))).toString('base64') : null;
+      dumpCtx[s.id] = { shot: ctx.shot, m: ctx.m, env: ctx.env, anh: anh.map(xam), mask: xam(mask), w: 135, h: 240 };
+    }
+    const luat = kiemShot(ctx, ng);    if (e.ghiChu) luat.L7 = { ...luat.L7, ghiChu: [luat.L7.ghiChu, e.ghiChu].filter(Boolean).join('; ') };
     const loi = Object.keys(luat).filter((k) => luat[k].ok === false && !luat[k].skip);
     const khung = ts.map(khungSo);
     const jpgs = [];
@@ -170,11 +192,6 @@ async function doShot(tab, s, ng) {
       for (let i = 0; i < 3; i++) jpgs.push(await ganNhan(C, pngs[i], `${s.id} f${khung[i]} t=${ts[i].toFixed(2)}s`, dong2));
     }
     return { id: s.id, index: s.index, rec: { type: s.type ?? null, dur, khung, luat, loi, coMeasureShot: !!ctx.m, coVaiShot }, jpgs };
-  } catch (err) {
-    try { await page.evaluate(() => { try { if (window.__mask) window.__mask(null); } catch { /* bỏ */ } }); } catch { /* bỏ */ }
-    const msg = String((err && err.message) || err).split('\n')[0].slice(0, 200);
-    const t = [s.t0 + 1 / FPS, (s.t0 + s.t1) / 2, s.t1 - 1 / FPS];
-    return { id: s.id, index: s.index, loiMsg: msg, jpgs: [], rec: { type: s.type ?? null, dur, khung: t.map(khungSo), luat: ketQuaLoi(msg), loi: ['loi'], coMeasureShot: false, coVaiShot: false } };
   }
 }
 
@@ -311,6 +328,7 @@ try {
   fs.writeFileSync(fJson + '.tmp', JSON.stringify(lam(luatJson), null, 1) + '\n');
   fs.renameSync(fJson + '.tmp', fJson);
 
+  if (opt['luu-ctx']) fs.writeFileSync(path.resolve(opt['luu-ctx']), JSON.stringify(dumpCtx));
   // nhật ký (chỉ khi biết tập)
   const giay = Math.round((Date.now() - t0) / 1000);
   if (ep) {
