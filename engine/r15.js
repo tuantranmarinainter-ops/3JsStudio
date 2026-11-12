@@ -775,7 +775,7 @@ function drawEyesCell(g, kind, q, P) {
 }
 const BROWS = { neutral: [38, 39, -5], raised: [22, 26, -10], worried: [25, 43, 2], angry: [52, 30, 3], low: [45, 45, -3] };
 function drawBrowsCell(g, kind, P) {
-  const s = BROWS[kind] || BROWS.neutral, T = 9 * (P.browThickness || 1);
+  const s = Array.isArray(kind) ? kind : BROWS[kind] || BROWS.neutral, T = 9 * (P.browThickness || 1);
   g.strokeStyle = P.browColor || INK; g.lineCap = 'round'; g.lineWidth = T;
   for (const side of [-1, 1]) {
     const cx = 128 + side * 52, xi = cx - side * 21, xo = cx + side * 23;
@@ -878,6 +878,53 @@ function saccade(t, seed) {
   if (hash01(k, seed + 11) < 0.45) return [0, 0];
   const q = (v) => Math.round(v * 10) / 10;
   return [q((hash01(k, seed + 13) - 0.5) * 0.7), q((hash01(k, seed + 17) - 0.5) * 0.3)];
+}
+
+// ---------- MẶT SỐNG (faceLive): chuyển biểu cảm mềm, chớp 3–5 s, đồng tử theo ánh sáng. Hàm thuần của t / tham số. ----------
+const clamp01f = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+export const smoothstep = (x) => { x = clamp01f(x); return x * x * (3 - 2 * x); };
+const lerpN = (a, b, k) => a + (b - a) * k;
+const STROKE_EYES = new Set(['closed', 'happy', 'squint']);
+const presetOf = (name) => FACE_PRESETS[name] || FACE_PRESETS.smile;
+// Tham số số của miệng (để nội suy / đo độ mềm): curve + = cười, − = méo; open 0..1 độ há; width bề rộng (px ô sprite)
+export const MOUTH_PARAMS = {
+  smile: { curve: 1, open: 0, width: 60 }, smallsmile: { curve: 0.5, open: 0, width: 36 }, frown: { curve: -1, open: 0, width: 52 },
+  flat: { curve: 0, open: 0, width: 40 }, pout: { curve: -0.4, open: 0, width: 32 }, wobble: { curve: 0, open: 0, width: 60 },
+  grin: { curve: 1, open: 0.6, width: 68 }, open: { curve: 0.4, open: 0.7, width: 56 }, laugh: { curve: 1, open: 1, width: 80 },
+  o: { curve: 0, open: 0.8, width: 26 }, scream: { curve: -0.2, open: 1, width: 56 }, teeth_clench: { curve: 0, open: 0.3, width: 60 },
+};
+const mouthParams = (kind, ms = 1) => { const m = MOUTH_PARAMS[kind] || MOUTH_PARAMS.smile; return { curve: m.curve, open: m.open, width: m.width * ms }; };
+function eyeNumbers(pr) { return { es: 1, lid: [0, 0], ps: 1, ...(EYE_KIND[pr.eyes] || {}), ...(pr.eyesQ || {}) }; }
+// mixFace(a, b, k): nội suy hai biểu cảm (tên trong FACE_PRESETS) → tham số mặt cùng dạng FACE_PRESETS + trường mới.
+//   số (mí [trong,ngoài], cỡ mắt, đồng tử, ánh nhìn, lông mày [yTrong,yNgoài,độCong], cỡ miệng, browDy, tham số miệng): tuyến tính theo k
+//   rời rạc (kiểu mắt khác loại nét vẽ, bộ phụ, saccade): theo biểu cảm GẦN HƠN (đổi tại k = 0,5)
+//   miệng: vẽ chồng mờ 2 hình (mouthA→mouthB, trọng số wB = k), kèm tham số số `mp` để đo.
+export function mixFace(a, b, k) {
+  const A = presetOf(a), B = presetOf(b), w = clamp01f(k), near = w < 0.5 ? A : B;
+  const out = { brows: near.brows, eyes: near.eyes, mouth: near.mouth, extras: [...(near.extras || [])], saccade: near.saccade,
+    ms: lerpN(A.ms || 1, B.ms || 1, w), browDy: lerpN(A.browDy || 0, B.browDy || 0, w), k: w };
+  const ba = BROWS[A.brows] || BROWS.neutral, bb = BROWS[B.brows] || BROWS.neutral;
+  out.browsP = ba.map((v, i) => lerpN(v, bb[i], w));
+  const ma = mouthParams(A.mouth, A.ms || 1), mb = mouthParams(B.mouth, B.ms || 1);
+  out.mp = { curve: lerpN(ma.curve, mb.curve, w), open: lerpN(ma.open, mb.open, w), width: lerpN(ma.width, mb.width, w) };
+  out.mouthA = A.mouth; out.mouthB = B.mouth; out.wB = w;
+  if (STROKE_EYES.has(A.eyes) || STROKE_EYES.has(B.eyes)) out.eyesQ = { ...(near.eyesQ || {}) };
+  else {
+    const ea = eyeNumbers(A), eb = eyeNumbers(B), nq = near.eyesQ || {};
+    out.eyesQ = { es: lerpN(ea.es, eb.es, w), lid: [lerpN(ea.lid[0], eb.lid[0], w), lerpN(ea.lid[1], eb.lid[1], w)], ps: lerpN(ea.ps, eb.ps, w) };
+    if (A.eyesQ?.gaze || B.eyesQ?.gaze) { const ga = A.eyesQ?.gaze || [0, 0], gb = B.eyesQ?.gaze || [0, 0]; out.eyesQ.gaze = [lerpN(ga[0], gb[0], w), lerpN(ga[1], gb[1], w)]; }
+    if (nq.shine) out.eyesQ.shine = true;
+  }
+  return out;
+}
+// Chớp mắt sống: ô 4 s, mỗi ô 1 lần chớp ở 0,5 + 1,0·hash s ⇒ hai lần chớp liền nhau cách nhau trong (3 s, 5 s). Không chớp kép.
+export const LIVE_BLINK = { period: 4, base: 0.5, jitter: 1.0, dur: 0.14 };
+export function liveBlinkStart(n, seed) { return n * LIVE_BLINK.period + LIVE_BLINK.base + hash01(n, seed + 29) * LIVE_BLINK.jitter; }
+export function liveBlinkTimes(seed, tMax) { const out = []; for (let n = 0; ; n++) { const s = liveBlinkStart(n, seed); if (s > tMax) return out; out.push(s); } }
+function liveBlinkPhase(t, seed) {
+  const n = Math.floor(t / LIVE_BLINK.period), d = t - liveBlinkStart(n, seed);
+  if (d >= 0 && d < LIVE_BLINK.dur) return d < 0.035 || d > 0.105 ? 1 : 2;
+  return 0;
 }
 
 // ---------- Khung xương & dựng nhân vật ----------
@@ -983,15 +1030,43 @@ export function createR15(THREE, opts = {}) {
     const extras = st.extras;
     const under = extras.filter((e) => e === 'blush' || e === 'cold_cheeks' || e === 'freckles' || e === 'nose');
     for (const e of under) { layer(e); if (!sprite('extra.' + e)) drawExtraCell(fg, e, FP); }
-    layer('brows', 1, st.browDy); if (!sprite('brows.' + st.brows)) drawBrowsCell(fg, st.brows, FP);
+    layer('brows', 1, st.browDy); if (st.browsP) drawBrowsCell(fg, st.browsP, FP); else if (!sprite('brows.' + st.brows)) drawBrowsCell(fg, st.brows, FP);
     layer('eyes'); if (!faceImg || !sprite('eyes.' + st.eyes)) drawEyesCell(fg, st.eyes, st.eyesQ, FP);
     else if (FP.lashes && st.eyes !== 'closed') { layer('eyelashes'); sprite('extra.eyelashes'); }
-    layer('mouth', st.ms * 1.12); if (!sprite('mouth.' + st.mouth)) drawMouthCell(fg, st.mouth);
+    layer('mouth', st.ms * 1.12);
+    const mouthOne = (m) => { if (!sprite('mouth.' + m)) drawMouthCell(fg, m); };
+    if (st.mouthB && st.mouthA !== st.mouthB && st.wB > 0.02 && st.wB < 0.98) { fg.globalAlpha = 1 - st.wB; mouthOne(st.mouthA); fg.globalAlpha = st.wB; mouthOne(st.mouthB); fg.globalAlpha = 1; }
+    else mouthOne(st.mouthB && st.wB >= 0.98 ? st.mouthB : st.mouth);
     for (const e of extras) if (!under.includes(e)) { layer(e); if (!sprite('extra.' + e)) drawExtraCell(fg, e, FP); }
     fg.setTransform(1, 0, 0, 1, 0, 0);
     faceTex.needsUpdate = true;
   }
-  function faceAt(t, name = o.face, { blink = o.blink, gaze } = {}) {
+  // mặt sống: faceAtLive (opt.live) — mọi đường mã mới nằm ở đây; tắt thì chạy đúng mã cũ bên dưới
+  function faceAtLive(t, name, { blink = o.blink, gaze, from, mix = 1, pupil = 1 } = {}) {
+    const mixed = !!from && from !== name && mix < 1;
+    const pr = mixed ? mixFace(from, name, mix) : presetOf(name);
+    const eyesQ = { ...(pr.eyesQ || {}) };
+    let eyes = pr.eyes;
+    const q = (v) => Math.round(v * 20) / 20;
+    let gz = gaze || eyesQ.gaze || (pr.saccade === false ? [0, 0] : saccade(t, seed));
+    if (eyes === 'look_up') gz = [gz[0], -1];
+    eyesQ.gaze = [q(gz[0]), q(gz[1])];
+    if (!STROKE_EYES.has(eyes) && pupil !== 1) eyesQ.ps = Math.min(1.3, Math.max(0.4, (eyesQ.ps ?? EYE_KIND[eyes]?.ps ?? 1) * pupil));
+    if (blink && OPENISH.has(eyes)) { const b = liveBlinkPhase(t, seed); if (b === 2) eyes = 'closed'; else if (b === 1) { eyes = 'half'; eyesQ.lid = [0.62, 0.62]; } }
+    const extras = [...(pr.extras || [])]; if (o.freckles) extras.unshift('freckles');
+    const wq = mixed ? Math.round(pr.k * 16) / 16 : 1;
+    const st = { brows: pr.brows, eyes, mouth: pr.mouth, extras, eyesQ, ms: pr.ms || 1, browDy: pr.browDy || 0 };
+    if (mixed) { st.browsP = pr.browsP.map((v) => Math.round(v * 2) / 2); st.mouthA = pr.mouthA; st.mouthB = pr.mouthB; st.wB = wq; st.mp = pr.mp; }
+    st.mp = st.mp || mouthParams(pr.mouth, pr.ms || 1);
+    st.mixK = mixed ? pr.k : 1;
+    const key = `L|${st.brows}|${st.browsP || ''}|${eyes}|${st.mouth}|${st.mouthA || ''}|${st.mouthB || ''}|${wq}|${extras.join(',')}|${JSON.stringify(eyesQ)}|${st.ms}`;
+    if (key !== faceKey) { faceKey = key; drawFaceState(st); }
+    char.lastFace = st;
+    return st;
+  }
+  function faceAt(t, name = o.face, opt = {}) {
+    if (opt.live) return faceAtLive(t, name, opt);
+    const { blink = o.blink, gaze } = opt;
     const pr = FACE_PRESETS[name] || FACE_PRESETS[{ sleepy: 'sleepy', panic: 'panic' }[name]] || FACE_PRESETS.smile;
     const eyesQ = { ...(pr.eyesQ || {}) };
     let eyes = pr.eyes;
@@ -1015,6 +1090,7 @@ export function createR15(THREE, opts = {}) {
     handGrip: [0, -0.3, 0.12],
     setFace(expr) { o.face = expr; faceAt(lastT, expr); },
     faceAt,
+    sampleFace(anim, t = 0, opt = {}) { try { return fullPose(anim, t, opt).face; } catch { return undefined; } },   // biểu cảm animation `anim` tự đặt (mặt sống cần biết mặt shot trước)
     attach(part, obj, pos) {
       const p = parts[part] || parts.rightHand;
       const isHand = p === parts.rightHand || p === parts.leftHand;
@@ -1043,7 +1119,9 @@ export function createR15(THREE, opts = {}) {
       applyPose(parts, pose);
       if (acc.dynamic) acc.update(pose, fullPose(name, t - 0.07, opt), fullPose(name, t - 0.16, opt), name);
       if (pose.face !== lastPoseFace) { lastPoseFace = pose.face; if (pose.face) o.face = pose.face; }
-      faceAt(t, o.face, { gaze: pose.gaze });
+      if (opt.faceFrom !== undefined) { pose.faceFrom = opt.faceFrom; pose.faceMix = opt.faceMix; }   // mặt sống: pose mang theo biểu cảm trước + tiến độ (đã smoothstep)
+      char.lastPose = pose;
+      if (!opt.noFace) faceAt(t, o.face, opt.live ? { gaze: opt.gaze || pose.gaze, live: true, from: opt.faceFrom, mix: opt.faceMix, pupil: opt.pupil } : { gaze: pose.gaze });   // noFace: director vẽ mặt sau khi biết máy quay / đối tượng nhìn
       return pose;
     },
   };

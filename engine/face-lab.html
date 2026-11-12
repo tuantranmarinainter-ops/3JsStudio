@@ -1,0 +1,85 @@
+<!doctype html>
+<!-- face-lab — trang thử MẶT SỐNG (engine/r15.js mixFace / chớp / ánh nhìn / đồng tử + engine/shots.js liveFacePass), không cần tập phim.
+       engine/face-lab.html?a=smile&b=scared&c=sad            3 biểu cảm liền nhau (mỗi shot 1,2 s) → 2 ranh chuyển
+       &live=0                                                 tắt faceLive (đường mã cũ, để so sánh)
+     Shot: f1,f2,f3 = mặt a,b,c (cận mặt hero); l1 = hero nhìn mom ở +X; l2 = hero nhìn mom ở −X; l3 = hero nhìn máy quay;
+           d1 (ban ngày) / d2 (ban đêm, light 'night') = cùng mặt 'smile' để so cỡ đồng tử.
+     Bề mặt kiểm: window.__ready, renderAt(t), __shots, __face(t) → { st: trạng thái mặt đã vẽ của hero, pose: pose JSON, blink… }.
+       node tools/look.mjs "engine/face-lab.html?a=smile&b=scared&c=sad" --range 1.0:1.6:0.05
+     TẤT ĐỊNH: thời gian chỉ từ window.renderAt(t); không rAF, không đồng hồ, không Math.random. -->
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, height=1920">
+<title>Face Lab</title>
+<style>
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+  #root { position: relative; width: 1080px; height: 1920px; }
+  #stage { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+</style>
+</head>
+<body>
+<div id="root"><canvas id="stage" width="1080" height="1920"></canvas></div>
+<script type="importmap">{ "imports": { "three": "../vendor/three/three.module.js", "three/addons/": "../vendor/three/addons/" } }</script>
+<script type="module">
+import * as THREE from 'three';
+import { createStage } from './stage.js';
+import { buildTimeline } from './timeline.js';
+import { createDirector } from './shots.js';
+import { LIGHTS } from './lights.js';
+import { buildCast } from './cast.js';
+
+window.THREE = THREE;
+const q = new URLSearchParams(location.search);
+const FA = q.get('a') || 'smile', FB = q.get('b') || 'scared', FC = q.get('c') || 'sad';
+const LIVE = q.get('live') !== '0';
+const FPS = 30;
+(globalThis.__autoFx ||= {}).faceLive = LIVE;
+
+const stage = createStage(THREE, { canvas: document.getElementById('stage'), ground: null, fov: 30 });
+stage.scene.background = new THREE.Color('#9fd3f5');
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshStandardMaterial({ color: '#7fae5c', roughness: 1 }));
+floor.name = 'lab_ground'; floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; stage.scene.add(floor);
+const lab = { group: new THREE.Group(), light: 'day' }; lab.group.name = 'lab_env'; stage.scene.add(lab.group);
+const envObj = { group: lab.group, ground: { kind: 'dirt', y: 0.05 } };
+const envs = { LIGHTS, envs: { lab }, current: envObj, last: {}, activate: () => envObj, use() {} };
+
+const actors = await buildCast(THREE, { hero: { shirt: '#e74c3c', face: 'smile' }, mom: { shirt: '#8e44ad', skirt: '#5d4037', hair: 'braids' } });
+for (const a of Object.values(actors)) stage.scene.add(a.root);
+
+const near = { at: 'face:hero', dist: 4.2, h: 0, yaw: 0, fov: 24 };       // cận mặt
+const mid = { at: 'face:hero', dist: 9, h: 0, yaw: 0, fov: 30 };          // thấy cả hero + mom
+const hero = (face, extra = {}) => ({ hero: { at: [0, 0, 0], anim: 'idle', face, ...extra } });
+const SHOTS = [
+  { id: 'f1', dur: 1.2, env: 'lab', cam: near, cast: hero(FA) },
+  { id: 'f2', dur: 1.2, env: 'lab', cam: near, cast: hero(FB) },
+  { id: 'f3', dur: 1.2, env: 'lab', cam: near, cast: hero(FC) },
+  { id: 'l1', dur: 1.2, env: 'lab', cam: mid, lookAt: 'mom', cast: { ...hero('smile'), mom: { at: [8, 0, 0], anim: 'idle', face: 'smile', ry: -Math.PI / 2 } } },
+  { id: 'l2', dur: 1.2, env: 'lab', cam: mid, lookAt: 'mom', cast: { ...hero('smile'), mom: { at: [-8, 0, 0], anim: 'idle', face: 'smile', ry: Math.PI / 2 } } },
+  { id: 'l3', dur: 1.2, env: 'lab', cam: near, lookAt: 'cam', cast: hero('smile') },
+  { id: 'd1', dur: 1.2, env: 'lab', cam: near, light: 'day', cast: hero('smile') },
+  { id: 'd2', dur: 1.2, env: 'lab', cam: near, light: 'night', cast: hero('smile') },
+];
+const tl = buildTimeline(SHOTS, FPS);
+const director = createDirector({ THREE, stage, envs, K: {}, actors, houses: {}, props: {}, fx: {} });
+director.setTimeline(tl);
+stage.onFrame((t) => {
+  const T = Math.min(t, tl.total - 1e-4);
+  const { shot, local, k, prev } = tl.at(T);
+  director.render(shot, local, k, T, prev);
+});
+stage.renderer.compile(stage.scene, stage.camera);
+stage.start();
+window.renderAt = (t) => stage.renderAt(t);
+window.__shots = tl;
+window.__stage = stage;
+// Trạng thái mặt hero tại t (sau khi vẽ khung t): chỉ số/chuỗi, JSON được
+window.__face = (t) => {
+  stage.renderAt(t);
+  const h = actors.hero, st = h.lastFace || {};
+  return { t, st: JSON.parse(JSON.stringify(st)), pose: JSON.parse(JSON.stringify(h.lastPose || {})), face: h.options.face };
+};
+window.__ready = true;
+</script>
+</body>
+</html>

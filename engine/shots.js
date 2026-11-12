@@ -23,6 +23,7 @@
 // Giá trị số dạng [a, b] = nội suy a→b theo tiến độ shot (ease mặc định smooth, đi bộ thì tuyến tính).
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const smoothstep = (x) => { x = clamp01(x); return x * x * (3 - 2 * x); };
 const EASE = {
   linear: (k) => k,
   smooth: (k) => k * k * (3 - 2 * k),
@@ -51,6 +52,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
   const AUTO = (globalThis.__autoFx ||= { foot: true, prints: true, breath: true, wind: true });
   const auto = { puffs: fxPuffs(THREE, { maxEvents: 40 }), prints: fxPrints(THREE), wind: fxWind(THREE), breath: fxPuffs(THREE, { maxEvents: 12, per: 8, seed: 31 }) };
   for (const f of Object.values(auto)) { f.obj.visible = false; scene.add(f.obj); }
+  const FACE_LIVE = () => AUTO.faceLive ?? true;   // ô FX faceLive (engine/post.js)
   const camBasis = { pos: new THREE.Vector3(), fwd: new THREE.Vector3(), right: new THREE.Vector3(), up: new THREE.Vector3() };
   const GROUND = { hawaii: 'sand', island: 'sand', reef: 'sand', sahara: 'sand', town: 'dirt', brazil: 'grass', forest: 'grass' };
   const FOOT_PHASE = [0, 0.5, 0.5, 0];          // = PHASE trong house.js (FL, FR, BL, BR)
@@ -246,12 +248,46 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
       if (s.float) floatObj(a.root, s.float, p, ry || 0, ke, t);
       const at = (s.tOff || 0) + (s.animFromShot ? k * (s.animDur || 1) : t);
       const opt = { speed: s.speed, amp: s.amp, from: s.from, mix: s.from ? ease('smooth', clamp01(sub(k, s.mixWin || [0, 0.3]))) : undefined };
+      if (FACE_LIVE()) { opt.live = true; opt.noFace = true; }   // mặt sống: mặt vẽ ở liveFacePass (sau khi có máy quay) — tắt thì không thêm khoá nào, hình y hệt cũ
       const pose = a.animate(anim, at, opt);
       const want = s.face || pose.face || a._defaultFace;
       if (want && a.options.face !== want) { a.setFace(want); a.animate(anim, at, opt); }   // đổi mặt xong dựng lại pose → hướng mắt không phụ thuộc shot trước (tất định)
       if (s.pose) applyExtra(a, s.pose, ke);
       // vật cầm tay
       for (const side of ['holdR', 'holdL', 'hold']) if (s[side]) holdProp(a, s[side], side);
+    }
+  }
+  // ---------- MẶT SỐNG (ô FX faceLive; globalThis.__autoFx.faceLive, mặc định bật, ep001 tắt) ----------
+  //   mặt tại t = mixFace(mặt shot trước của cùng nhân vật, mặt shot này, smoothstep(local / 0.25)); ánh nhìn theo shot.lookAt (hoặc cast[x].lookAt);
+  //   đồng tử to hơn khi tối (night của ánh sáng THẬT của shot); chớp 3–5 s. Ánh nhìn đã có sẵn (cast[x].gaze, pose.gaze của animation) thì giữ nguyên.
+  //   Kịch bản: cột `mặt` → cast[<vai>].face của shot (shot.face của kịch bản đã được sinh vào đó).
+  const FACE_MIX_SEC = 0.25;
+  let timeline = null;
+  const _gp = new THREE.Vector3();
+  function gazeToward(a, tgt) {
+    if (tgt === 'cam') camera.getWorldPosition(_gp);
+    else if (Array.isArray(tgt)) _gp.set(tgt[0], tgt[1], tgt[2]);
+    else if (actors[tgt]) { actors[tgt].parts.head.getWorldPosition(_gp); }
+    else if (tgt === 'house' && activeHouse) { activeHouse.body.getWorldPosition(_gp); _gp.y += 6; }
+    else if (props[tgt]) props[tgt].getWorldPosition(_gp);
+    else return undefined;
+    const head = a.parts.head; head.updateWorldMatrix(true, false);
+    const d = head.worldToLocal(_gp).sub(_v.set(0, 0.6, 0));   // hệ đầu: +Z = hướng mặt, +X = phía u tăng của ảnh mặt
+    const yaw = Math.atan2(d.x, d.z), pitch = Math.atan2(d.y, Math.hypot(d.x, d.z));
+    const cl = (v, m) => Math.max(-m, Math.min(m, v));
+    return [cl(yaw / 0.8, 0.85), cl(-pitch / 0.7, 0.7)];
+  }
+  function liveFacePass(shot, prev, local, t, night) {
+    let P = prev;
+    if (P && P.type && resolveType) { try { P = resolveType(P); } catch { P = null; } }
+    const mixK = smoothstep(local / FACE_MIX_SEC);
+    for (const [name, a] of Object.entries(actors)) {
+      const s = shot.cast?.[name]; if (!s || !a.root.visible) continue;
+      const pc = P?.cast?.[name];
+      const from = pc ? (pc.face || a.sampleFace?.(pc.anim || 'idle', 0) || a._defaultFace) : null;
+      let gaze = s.gaze || a.lastPose?.gaze;
+      if (!gaze) { const tgt = s.lookAt ?? shot.lookAt; if (tgt && tgt !== name) gaze = gazeToward(a, tgt); }
+      a.faceAt(t, a.options.face, { live: true, from, mix: from ? mixK : 1, gaze, pupil: 1 + 0.25 * (night || 0) });
     }
   }
   const R6_FACE_ANIMS = new Set(['shiver', 'panic', 'lie', 'tumble', 'fall', 'scared', 'cower', 'faint', 'cheer', 'dance', 'wave', 'hug', 'lookAround']);
@@ -291,7 +327,8 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     }
   }
 
-  function render(shot, local, k, t) {
+  function render(shot, local, k, t, prev) {
+    prev = prev ?? timeline?.list?.[shot.index - 1];   // shot trước (mặt sống): tham số thứ 5, hoặc director.setTimeline(tl)
     if (shot.type && resolveType) shot = resolveType(shot);
     const time = shot.time ?? episode.time, weather = shot.weather ?? episode.weather;   // shot ghi thì thắng; KHÔNG thừa kế sang shot sau
     if ((time || weather) && (AUTO.gioThoiTiet ?? true)) {   // giờ / thời tiết theo shot (engine/envs/gio-thoi-tiet.js); không ghi gì ⇒ không chạm shot
@@ -337,7 +374,8 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     ctx.focus = [camera.position.x, Math.max(0, camera.position.y - 20), camera.position.z];
     envs.use(shot.env, t, ctx);
     applyAutoFx(shot, envObj, k, t, night);
+    if (FACE_LIVE()) liveFacePass(shot, prev, local, t, night);
   }
 
-  return { render, anchorOf, get house() { return activeHouse; } };
+  return { render, anchorOf, setTimeline(tl) { timeline = tl; }, get house() { return activeHouse; } };
 }
