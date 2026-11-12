@@ -1,6 +1,6 @@
 // Bối cảnh 'antarctica' (preset ánh sáng mặc định: snow). Sửa bối cảnh này CHỈ trong file này.
 // Được engine/envs.js gọi: build(g, e, H) — g = Group của env, e = đối tượng env, H = bộ công cụ chung (xem envs.js).
-import { fxSnow, fxRain, lightning, fxBolt } from '../fx.js';
+import { fxSnow, fxRain, lightning, fxBolt, fxBlizzard } from '../fx.js';
 import { createWater } from '../water.js';
 import { createOceanLife, OCEAN_LIFE_ASSETS } from '../whales.js';
 import { townLife } from '../townlife.js';
@@ -30,10 +30,15 @@ export default function build(g, e, H) {
   // góp ý #28: bỏ 'dwarf-pine-mat' (vật xanh lạ trên tuyết)
   for (let i = 0; i < 14; i++) { const o = i % 3 === 2 ? null : pf(['boulder-field-cluster-08e364', 'rock-outcrop-158ac3'][i % 3], 1.4 + hash(i, 9));  const ox = (hash(i, 1) - 0.5) * 220, oz = -30 - hash(i, 2) * 120 + (i % 3 === 0 ? 100 : 0); if (o && !(ox > 0 && ox < 70 && oz > 5 && oz < 60)) place(g, o, ox, 0, oz, hash(i, 3) * 6); }
   e.snow = fxSnow(THREE, { count: 900, area: [120, 60, 120], speed: 3, size: 0.45, wind: [3, 0] }); g.add(e.snow.obj);
+  // Bão tuyết theo shot (góp ý #16): shot ghi snowStorm:{k,wind} + fn đặt globalThis.__snowStorm (dùng 1 lần mỗi khung). Mặc định tắt.
+  e.blizzard = fxBlizzard(THREE); g.add(e.blizzard.obj);
   // Dòng thời gian cánh cụt: t<TA đứng thành đàn (ảnh bưu thiếp, cảnh bố); TA..PT0 ẩn; PT0 đi vào từ TRÁI (s047), tụ trước nhà (s048),
   // TL (sau s049, ngoài khung) quay đi bước ra bên phải rồi biến mất → s081/s082 KHÔNG còn cánh cụt đứng chết.
   const TA = 50, PT0 = 55.7, PV = 5, TL = 60.5, TEND = TL + 7;
-  return { ground: { kind: 'snow', y: 0.1 }, update(t, ctx) { e.snow.update(t, ctx.focus || [0, 0, 0]); PEN.forEach((P, i) => {
+  return { ground: { kind: 'snow', y: 0.1 }, update(t, ctx) { e.snow.update(t, ctx.focus || [0, 0, 0]);
+    { const S = globalThis.__snowStorm; globalThis.__snowStorm = null; const WK = globalThis.__autoFx?.wind === false ? 0.3 : 1;
+      e.blizzard.update(t, ctx.focus || [0, 0, 0], S ? { k: (S.k ?? 1) * WK, wind: S.wind ?? 18, ground: 0.1 } : { k: 0 }); }
+    PEN.forEach((P, i) => {
     const p = P.o, tx = P.hx, x0 = tx - 9 - (i % 6) * 1.1 - Math.floor(i / 6) * 0.6, t0 = PT0 + P.lag;
     let x = tx, ry = Math.PI / 2 - P.face, walking = false, vis = true;
     if (t >= TA && t < PT0) vis = false;

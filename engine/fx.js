@@ -50,6 +50,61 @@ export function fxSnow(THREE, { count = 1500, area = [80, 50, 80], speed = 4, dr
   };
 }
 
+// Bão tuyết (góp ý 2026-11-12 #16): rất nhiều hạt, rơi XIÊN mạnh theo gió, 3 lớp (mịn xa / vừa / bông mềm sát ống kính),
+// vệt mờ chuyển động cho hạt gần (LineSegments) + làn tuyết cuộn sát đất. Tất định: vị trí = hàm thuần của (seed, i, t).
+//   const b = fxBlizzard(THREE); b.update(t, center, { k: 1, wind: 18 })   // k = 0..1 mật độ (0 → ẩn)
+export function fxBlizzard(THREE, { area = [44, 26, 44], seed = 5, fall = 6 } = {}) {
+  const flake = flakeTex(THREE), [ax, ay, az] = area;
+  const mk = (n, size, op, sp, sd, h0 = 0, h1 = 1) => {
+    const geo = new THREE.BufferGeometry(), pos = new Float32Array(n * 3); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const o = new THREE.Points(geo, new THREE.PointsMaterial({ size, map: flake, transparent: true, opacity: op, depthWrite: false, color: '#ffffff', sizeAttenuation: true }));
+    o.frustumCulled = false; return { n, pos, geo, o, sp, sd, h0, h1 };
+  };
+  const pts = [mk(16000, 0.3, 0.95, 1.0, seed), mk(7000, 0.62, 0.8, 1.15, seed + 20), mk(1400, 1.7, 0.32, 1.3, seed + 40)];
+  const ground = mk(1600, 2.4, 0.22, 0.85, seed + 60);
+  const NS = 2600, sGeo = new THREE.BufferGeometry(), sPos = new Float32Array(NS * 6); sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
+  const streaks = new THREE.LineSegments(sGeo, new THREE.LineBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.75, depthWrite: false })); streaks.frustumCulled = false;
+  const obj = new THREE.Group(); obj.name = 'fx_blizzard'; for (const L of [...pts, ground]) obj.add(L.o); obj.add(streaks); obj.visible = false;
+  const wrap = (v, m) => ((v % m) + m) % m;
+  return {
+    obj,
+    update(t, c = [0, 0, 0], { k = 1, wind = 18, ground: gy = 0.1 } = {}) {
+      obj.visible = k > 0; if (!(k > 0)) return;
+      const kk = Math.min(1, k), G = t - 0.4 * Math.cos(0.7 * t) / 0.7, gust = 1 + 0.4 * Math.sin(0.7 * t), wz = wind * 0.3;
+      for (const L of pts) {
+        const n = Math.floor(L.n * kk), pos = L.pos, sd = L.sd; L.geo.setDrawRange(0, n);
+        for (let i = 0; i < n; i++) {
+          const s = L.sp * (0.8 + hash(i, sd + 3) * 0.4), ph = hash(i, sd + 4) * 6.283;
+          const x = wrap((hash(i, sd + 1) - 0.5) * ax + wind * s * G + Math.sin(t * 2.3 + ph) * 0.6, ax) - ax / 2;
+          const z = wrap((hash(i, sd + 2) - 0.5) * az + wz * s * G + Math.cos(t * 1.9 + ph) * 0.6, az) - az / 2;
+          const y = ay - wrap(hash(i, sd) * ay + fall * s * t, ay) + Math.sin(t * 3.1 + ph) * 0.4;
+          pos[i * 3] = c[0] + x; pos[i * 3 + 1] = c[1] + y; pos[i * 3 + 2] = c[2] + z;
+        }
+        L.geo.attributes.position.needsUpdate = true;
+      }
+      const nS = Math.floor(NS * kk), sd = seed + 80; sGeo.setDrawRange(0, nS * 2);
+      const tail = 0.075;
+      for (let i = 0; i < nS; i++) {   // vệt: hạt gần hơn (nửa hộp phía camera) kéo đuôi ngược chiều vận tốc
+        const s = 1.3 * (0.8 + hash(i, sd + 3) * 0.4), ph = hash(i, sd + 4) * 6.283;
+        const x = wrap((hash(i, sd + 1) - 0.5) * ax * 0.6 + wind * s * G, ax * 0.6) - ax * 0.3;
+        const z = wrap((hash(i, sd + 2) - 0.5) * az * 0.6 + wz * s * G + Math.cos(t * 1.9 + ph) * 0.6, az * 0.6) - az * 0.3 + az * 0.15;
+        const y = ay - wrap(hash(i, sd) * ay + fall * s * t, ay);
+        const vx = wind * s * gust, vy = -fall * s, vz = wz * s;
+        sPos.set([c[0] + x, c[1] + y, c[2] + z, c[0] + x - vx * tail, c[1] + y - vy * tail, c[2] + z - vz * tail], i * 6);
+      }
+      sGeo.attributes.position.needsUpdate = true;
+      { const n = Math.floor(ground.n * kk), pos = ground.pos, sd2 = ground.sd; ground.geo.setDrawRange(0, n);   // làn tuyết cuộn sát đất
+        for (let i = 0; i < n; i++) {
+          const s = ground.sp * (0.7 + hash(i, sd2 + 3) * 0.6), ph = hash(i, sd2 + 4) * 6.283;
+          pos[i * 3] = c[0] + wrap((hash(i, sd2 + 1) - 0.5) * ax + wind * s * G, ax) - ax / 2;
+          pos[i * 3 + 2] = c[2] + wrap((hash(i, sd2 + 2) - 0.5) * az + wz * s * G, az) - az / 2;
+          pos[i * 3 + 1] = gy + 0.3 + hash(i, sd2) * 2.6 + Math.sin(t * 1.7 + ph) * 0.5;
+        }
+        ground.geo.attributes.position.needsUpdate = true; }
+    },
+  };
+}
+
 function flakeTex(THREE) {
   const cv = document.createElement('canvas'); cv.width = cv.height = 64; const g = cv.getContext('2d');
   const gr = g.createRadialGradient(32, 32, 0, 32, 32, 30);
@@ -225,7 +280,7 @@ const PUFF_KINDS = {
 };
 
 export function fxPuffs(THREE, { maxEvents = 36, per = 22, seed = 11 } = {}) {
-  const N = maxEvents * per;
+  const PER3 = per * 3, N = maxEvents * PER3;   // bộ đệm gấp 3 để hơi thở có thể dày hơn (globalThis.__breathK > 1)
   const geo = new THREE.BufferGeometry();
   const pos = new Float32Array(N * 3), aA = new Float32Array(N), aS = new Float32Array(N), aC = new Float32Array(N * 3);
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
@@ -245,6 +300,9 @@ export function fxPuffs(THREE, { maxEvents = 36, per = 22, seed = 11 } = {}) {
     // events: [{ at:[x,y,z], t0, kind, dir?:[x,y,z] }]; scale = renderer.height/2; light = hệ số sáng (đêm < 1)
     update(t, events = [], { scale = 960, light = 1 } = {}) {
       mat.uniforms.uScale.value = scale;
+      // độ dày hơi thở theo shot (góp ý #17): shot đặt globalThis.__breathK (1 = cũ); đọc 1 lần rồi trả về 1
+      const bk = events.some((q) => q.kind === 'breath') ? Math.max(1, globalThis.__breathK || 1) : 1; if (bk > 1) globalThis.__breathK = 1;
+      const bt = Math.min(1, (bk - 1) / 2);
       const ev = events.length > maxEvents ? events.slice(events.length - maxEvents) : events;
       let vis = 0;
       for (let e = 0; e < maxEvents; e++) {
@@ -253,13 +311,14 @@ export function fxPuffs(THREE, { maxEvents = 36, per = 22, seed = 11 } = {}) {
         const live = !!E && k >= 0 && k <= 1;
         let cr = 1, cg = 1, cb = 1;
         if (live) { col.set(K.color); cr = col.r * light; cg = col.g * light; cb = col.b * light; vis++; }
-        for (let j = 0; j < per; j++) {
-          const i = e * per + j, s = seed + (e * 13) % 7;
-          if (!live) { aA[i] = 0; aS[i] = 0; pos[i * 3 + 1] = -999; continue; }
+        const jn = K && K.cone ? Math.round(per * (1 + 2 * bt)) : per;
+        for (let j = 0; j < PER3; j++) {
+          const i = e * PER3 + j, s = seed + (e * 13) % 7;
+          if (!live || j >= jn) { aA[i] = 0; aS[i] = 0; pos[i * 3 + 1] = -999; continue; }
           const h0 = hash(j, s), h1 = hash(j, s + 1), h2 = hash(j, s + 2), h3 = hash(j, s + 3);
           const eo = 1 - Math.pow(1 - k, 3);
           if (K.cone) {
-            const d = E.dir || [0, 0, 1], r = K.spread * eo * (0.45 + h0 * 0.7);
+            const d = E.dir || [0, 0, 1], r = K.spread * (1 + 0.5 * bt) * eo * (0.45 + h0 * 0.7);
             pos[i * 3] = E.at[0] + d[0] * r + (h1 - 0.5) * 0.5 * eo;
             pos[i * 3 + 1] = E.at[1] + d[1] * r + K.rise * k * (0.3 + h2) + (h3 - 0.5) * 0.3;
             pos[i * 3 + 2] = E.at[2] + d[2] * r + (h2 - 0.5) * 0.5 * eo;
@@ -268,8 +327,9 @@ export function fxPuffs(THREE, { maxEvents = 36, per = 22, seed = 11 } = {}) {
             pos[i * 3] = E.at[0] + Math.cos(a) * r; pos[i * 3 + 2] = E.at[2] + Math.sin(a) * r;
             pos[i * 3 + 1] = E.at[1] + 0.5 + h2 * K.rise * Math.sin(Math.min(1, k * 1.15) * Math.PI * 0.75) + k * 1.2;
           }
-          aS[i] = K.size * (0.45 + 0.9 * k) * (0.6 + h3 * 0.8);
-          aA[i] = K.op * Math.pow(1 - k, 1.4) * Math.min(1, age / 0.05);
+          const dense = K.cone ? 1 + 0.15 * bt : 1;
+          aS[i] = K.size * dense * (0.45 + 0.9 * k) * (0.6 + h3 * 0.8);
+          aA[i] = K.op * (K.cone ? 1 - 0.3 * bt : 1) * Math.pow(1 - k, 1.4) * Math.min(1, age / 0.05);
           aC[i * 3] = cr; aC[i * 3 + 1] = cg; aC[i * 3 + 2] = cb;
         }
       }

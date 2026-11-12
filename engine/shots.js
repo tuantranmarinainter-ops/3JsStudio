@@ -324,6 +324,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     for (const f of Object.values(fx)) if (f.obj) f.obj.visible = false;
     if (shot.fx?.cards && fx.cards) { fx.cards.obj.visible = true; fx.cards.update(t, { ...shot.fx.cards, t0: shot.t0 + (shot.fx.cards.t0 || 0) }); }
     if (shot.fx?.dust && fx.dust) { fx.dust.obj.visible = true; fx.dust.update(t, shot.fx.dust.map((b) => ({ ...b, t0: shot.t0 + b.t0 }))); }
+    globalThis.__breathK = 1; globalThis.__snowStorm = null;   // biến theo shot (s045 bão tuyết, s046 hơi thở dày) — đặt lại mỗi khung để không sót sang shot khác khi tua
     shot.fn?.(fxCtx);
     placeCamera(shot.cam || { at: 'house', dist: 90, h: 10 }, k, t);
     ctx.focus = [camera.position.x, Math.max(0, camera.position.y - 20), camera.position.z];

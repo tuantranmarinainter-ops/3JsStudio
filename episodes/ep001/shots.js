@@ -95,8 +95,8 @@ export const SHOTS = [
   { id: 's044', f: [1530, 1574], env: 'forest', line: 17, house: FAM({ at: [0, 0], to: [20, 0], ry: PI / 2 }), lightOverride: { exposure: 0.8 }, cam: orb([10, 18, 0], -0.4, 88, 4, { fov: 52, dist2: 112 }) },
 
   // ===== 06 · Nam Cực =====
-  { id: 's045', f: [1575, 1609], env: 'antarctica', props: { mailboxTown: { parent: 'house', at: [9.5, 0, 12.8], ry: 0 } }, line: 18, house: FAM({ lift: 0.25, door: [0, 0.15], win: [0.6, 1] }), cam: { p: [0, 9.6, 25], l: [0, 9.6, 10], p2: [0, 10.4, 36], fov: 46, shadow: false } },
-  { id: 's046', f: [1610, 1670], env: 'antarctica', props: { mailboxTown: { parent: 'house', at: [9.5, 0, 12.8], ry: 0 } }, line: 18, wind: 1.6, house: FAM({ lift: 0.25, door: 1 }), cast: { hero: P(0, 10.8, { anim: 'shiver', s: 0.92 }) },
+  { id: 's045', f: [1575, 1609], env: 'antarctica', props: { mailboxTown: { parent: 'house', at: [9.5, 0, 12.8], ry: 0 } }, line: 18, snowStorm: { k: 1, wind: 20 }, fn: ({ shot }) => { globalThis.__snowStorm = shot.snowStorm; }, house: FAM({ lift: 0.25, door: [0, 0.15], win: [0.6, 1] }), cam: { p: [0, 9.6, 25], l: [0, 9.6, 10], p2: [0, 10.4, 36], fov: 46, shadow: false } },
+  { id: 's046', f: [1610, 1670], env: 'antarctica', props: { mailboxTown: { parent: 'house', at: [9.5, 0, 12.8], ry: 0 } }, line: 18, wind: 1.6, breathK: 3, fn: ({ shot }) => { globalThis.__breathK = shot.breathK; }, house: FAM({ lift: 0.25, door: 1 }), cast: { hero: P(0, 10.8, { anim: 'shiver', s: 0.92 }) },
     cam: orb('face:hero', 0, 3.4, 0.2, { fov: 40, look: [0, -0.3, 0], rel: true, dist2: 3.0 }) },
   { id: 's047', skySun: { x: 0.28, y: 0.2 }, f: [1671, 1703], env: 'antarctica', props: { mailboxTown: { parent: 'house', at: [9.5, -0.25, 15.6], ry: 0 } }, line: 19, house: FAM({ lift: 0.25 }), cam: orb('house', 0.35, 78, 6, { look: [0, -6, 10], fov: 52, dist2: 98 }) },
   { id: 's048', f: [1704, 1744], env: 'antarctica', props: { mailboxTown: { parent: 'house', at: [9.5, 0, 12.8], ry: 0 } }, line: 19, house: FAM({ lift: 0.25 }), cam: { p: [20, 1.6, 52], l: [8, 4, 34], p2: [27, 2.6, 66], l2: [9, 5, 33], fov: 46 } },

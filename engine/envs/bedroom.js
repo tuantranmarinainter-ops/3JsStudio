@@ -14,6 +14,7 @@ import { createCamp } from '../castaway.js';
 import { smoothFlash } from '../flash.js';
 
 import { furnish } from '../furnish.js';
+import { createPuffy, createFold } from '../cloth.js';
 
 // BÀY ĐỒ bằng dữ liệu (engine/furnish.js). 'nightstand', 'books5', 'poster', 'bed' là vật dựng tay (refs) mà món mới thế chỗ / đặt lên.
 export const BEDROOM_FURNISH = [
@@ -37,6 +38,10 @@ export default function build(g, e, H) {
   const rug = plane(14, 10, mat('#f2c14e'), 0.05, 'rug'); rug.position.set(6, 0.05, 6); R.add(rug);
   for (const [x, z, ry] of [[0, -18, 0], [-20, 0, Math.PI / 2], [20, 0, -Math.PI / 2], [0, 20, Math.PI]]) { const w = new THREE.Mesh(new THREE.PlaneGeometry(50, 22), wall); w.position.set(x, 11, z); w.rotation.y = ry; w.receiveShadow = true; R.add(w); }
   e.bed = place(R, K.bed(), -10, 0, -8);
+  // gối + nếp gấp ga bằng vải liền mềm (engine/cloth.js) thay hộp 'pillow' và cuộn trụ 'blanket_cuff' (góp ý 2026-11-12 #6 #13)
+  for (const nm of ['pillow', 'blanket_cuff']) { const o = e.bed.getObjectByName(nm); if (o) o.parent.remove(o); }
+  for (const [px, ry, sd] of [[-1.55, 0.05, 1], [1.5, -0.04, 2]]) { const pl = createPuffy(THREE, { a: 1.4, b: 0.62, c: 1.15, ex: 0.6, dent: 0.2, pinch: 0.5, seed: sd, name: 'pillow_soft' }); pl.position.set(px, 3.05, -4.0); pl.rotation.y = ry; e.bed.add(pl); }
+  e.bed.add(createFold(THREE, { w: 6.4, top: 4.7, z0: -2.1 }));
   e.window = K.window({ w: 7, h: 8, curtains: '#c8c0ff', view: viewTex('night') }); e.window.position.set(19.8, 11, -6); e.window.rotation.y = -Math.PI / 2; R.add(e.window);
   const books5 = place(R, K.books(5), 4, 0, -14); const nstand = K.box(3, 3, 3, '#8a5a36', -2, 1.5, -15, 'nightstand', R); place(R, K.books(3), -2, 3, -15);
   const poster = K.box(4, 3, 0.2, '#8a5a36', 6, 13, -17.8, 'poster', R);

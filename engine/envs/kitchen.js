@@ -43,6 +43,14 @@ export default function build(g, e, H) {
   for (let i = -2; i <= 2; i++) K.box(1.2, 1.2, 60, '#7a4a2c', i * 10, 21.4, 0, 'beam', R);
   e.fridge = K.fridge(); e.fridge.position.set(-8, 0, -17.6); R.add(e.fridge);
   e.fridgeDense = K.fridge({ dense: true }); e.fridgeDense.position.set(-8, 0, -17.6); e.fridgeDense.visible = false; R.add(e.fridgeDense);
+  // tay nắm tủ lạnh = thép mạ (góp ý #29): chrome (m 0.9, r 0.25, vân xước) + phản chiếu môi trường mạnh
+  for (const fr of [e.fridge, e.fridgeDense]) fr.traverse((o) => {
+    if (o.isMesh && /^handle_/.test(o.name)) {
+      o.userData.matKind = 'chrome'; o.userData.grungeKind = 'none';
+      const hh = o.geometry.parameters?.height; if (hh) { o.geometry = new THREE.CylinderGeometry(0.17, 0.17, hh, 20); o.geometry.userData = {}; }   // thanh tròn: có dải sáng/tối chạy dọc → đọc ra kim loại
+      o.material = o.material.clone(); o.material.color.set('#f2f5f8'); o.material.metalness = 1; o.material.roughness = 0.14; o.material.envMapIntensity = 3.2; o.material.emissive.set('#3a4048');
+    }
+  });
   e.table = place(R, K.table(), 6, 0, 2); const chairs = [place(R, K.chair(), 0, 0, 2, Math.PI / 2), place(R, K.chair(), 12, 0, 2, -Math.PI / 2), place(R, K.chair(), 6, 0, -3.5, 0)];
   place(R, K.fruitBowl(), 6, 2.82, 2);
   e.window = K.window({ w: 7, h: 8, view: viewTex('day') }); e.window.position.set(10, 11, -19.8); R.add(e.window);

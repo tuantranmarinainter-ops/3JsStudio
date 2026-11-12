@@ -169,6 +169,59 @@ export function createSail(THREE, o = {}) {
   return mesh;
 }
 
+// ---------------------------------------------------------------- GỐI / ĐỆM phồng mềm (lưới siêu-elip bo tròn, không khối hộp)
+// o: { a, b, c: nửa kích thước x,y,z; ex: độ vuông (1 = bầu dục, nhỏ = vuông hơn); dent: độ lõm giữa mặt trên; pinch: mép nén mỏng; color; seed }
+// Gốc = tâm gối. Tĩnh (hàm thuần, không phụ thuộc t).
+export function createPuffy(THREE, o = {}) {
+  const a = o.a ?? 1.3, b = o.b ?? 0.55, c = o.c ?? 1.2, ex = o.ex ?? 0.62, dent = o.dent ?? 0.22, pinch = o.pinch ?? 0.45, seed = o.seed ?? 1;
+  const g = new THREE.SphereGeometry(1, 44, 28);
+  const p = g.attributes.position.array, sg = (v) => (v < 0 ? -1 : 1), pw = (v, e) => sg(v) * Math.pow(Math.abs(v), e);
+  for (let i = 0; i < p.length; i += 3) {
+    const dx = p[i], dy = p[i + 1], dz = p[i + 2];
+    let nx = pw(dx, ex), nz = pw(dz, ex), ny = pw(dy, 0.9);
+    const e = Math.max(Math.abs(nx), Math.abs(nz));                       // 0 giữa → 1 ở mép
+    ny *= 1 - pinch * Math.pow(e, 3);                                      // mép nén mỏng như gối thật
+    const r2 = nx * nx + nz * nz;
+    if (ny > 0) ny -= dent * Math.exp(-r2 * 2.6) * (0.5 + 0.5 * ny);       // lõm nhẹ ở giữa mặt trên
+    let x = nx * a, y = ny * b, z = nz * c;
+    y += 0.035 * b * Math.sin(x * 3.1 + seed) * Math.sin(z * 2.7 + seed * 1.7) * (ny > 0 ? 1 : 0.3);   // gợn vải mịn
+    x += 0.04 * a * Math.sin(z * 2.3 + seed * 2.2) * Math.abs(ny) * 0.3;
+    p[i] = x; p[i + 1] = y; p[i + 2] = z;
+  }
+  g.computeVertexNormals();
+  // làm mượt pháp tuyến qua đường nối UV (đỉnh trùng vị trí)
+  const n = g.attributes.normal.array, map = new Map();
+  for (let i = 0; i < p.length; i += 3) { const k = Math.round(p[i] * 1e3) + ',' + Math.round(p[i + 1] * 1e3) + ',' + Math.round(p[i + 2] * 1e3); let m = map.get(k); if (!m) map.set(k, m = [0, 0, 0, []]); m[0] += n[i]; m[1] += n[i + 1]; m[2] += n[i + 2]; m[3].push(i); }
+  for (const m of map.values()) { const l = Math.hypot(m[0], m[1], m[2]) || 1; for (const i of m[3]) { n[i] = m[0] / l; n[i + 1] = m[1] / l; n[i + 2] = m[2] / l; } }
+  g.computeBoundingSphere();
+  const uv = g.attributes.uv.array; for (let i = 0; i < uv.length; i += 2) { uv[i] *= a * 2; uv[i + 1] *= c * 2; }
+  const mat = clothMaterial(THREE, { color: o.color || '#f4f1ea', trans: 0.2, sheen: 0.45, weave: 0.8, weaveScale: o.weaveScale ?? 10, seams: [0, 0], name: o.name || 'cloth_puffy' });
+  const m = tagMesh(new THREE.Mesh(g, mat)); m.name = o.name || 'puffy';
+  return m;
+}
+
+// ---------------------------------------------------------------- NẾP GẤP GA ở cổ chăn (thay cuộn trụ cứng): dải vải liền bo tròn quanh mép chăn
+// o: { w, top, z0, color }  — w = bề rộng dải. Tĩnh.
+export function createFold(THREE, o = {}) {
+  const w = o.w ?? 6.4, top = o.top ?? 4.7, z0 = o.z0 ?? -2.1, seed = o.seed ?? 5;
+  // mặt cắt (dz, dy) so với mép chăn: nằm lên mặt chăn rồi cuộn vòng qua mép và rủ xuống phía cổ
+  const P = [[1.2, 0.2], [0.85, 0.24], [0.5, 0.29], [0.15, 0.33], [-0.12, 0.28], [-0.27, 0.12], [-0.28, -0.08], [-0.12, -0.25], [0.2, -0.33], [0.65, -0.3]];
+  const cr = (t) => { const n = P.length - 1, f = t * n, i = Math.min(n - 1, Math.floor(f)), u = f - i;
+    const p0 = P[Math.max(0, i - 1)], p1 = P[i], p2 = P[i + 1], p3 = P[Math.min(n, i + 2)];
+    const q = (k) => 0.5 * ((2 * p1[k]) + (-p0[k] + p2[k]) * u + (2 * p0[k] - 5 * p1[k] + 4 * p2[k] - p3[k]) * u * u + (-p0[k] + 3 * p1[k] - 3 * p2[k] + p3[k]) * u * u * u);
+    return [q(0), q(1)]; };
+  const NU = 40, NV = 26;
+  const geo = grid(THREE, NU, NV, (u, v) => {
+    const x = (u - 0.5) * w, k = Math.abs(x) / (w / 2), f = Math.sqrt(Math.max(0, 1 - Math.pow(k, 6)));   // 2 đầu dải khép lại
+    const [dz, dy] = cr(v);
+    const wob = 0.07 * Math.sin(x * 1.9 + seed + v * 2.0) + 0.05 * Math.sin(x * 4.6 + seed * 2.0);
+    return [x, top + dy * (0.25 + 0.75 * f) + (dy > -0.05 ? 0.02 : 0) + wob * f * 0.5 - (1 - f) * 0.1, z0 + dz * (0.5 + 0.5 * f) + wob * 0.3 * f - (1 - f) * 0.05];
+  }, [w, 3.2]);
+  const mat = clothMaterial(THREE, { color: o.color || '#f1ebe0', trans: 0.2, sheen: 0.5, weaveScale: 14, seams: [0, 0], name: 'cloth_fold' });
+  const m = tagMesh(new THREE.Mesh(geo, mat)); m.name = 'blanket_fold';
+  return m;
+}
+
 // ---------------------------------------------------------------- CHĂN trùm người nằm
 // Gốc = tâm giường ở mặt sàn giường cũ (toạ độ cục bộ của prop bed). Chăn phủ từ z0 (cổ) tới z1 (chân giường),
 // mặt trên cao `top`, rủ xuống hai bên + cuối giường tới edgeY, nếp nhăn mềm, gồ lên theo người nằm (lumps) và thở nhẹ.
@@ -202,7 +255,9 @@ export function createBlanket(THREE, o = {}) {
     // nếp nhăn mềm: dọc thân (giữa 2 người lõm nhẹ) + gợn chéo
     const wr = 0.10 * Math.sin(x * 2.1 + z * 0.7 + seed) + 0.06 * Math.sin(x * 4.3 - z * 1.9 + seed * 2.0) + 0.08 * Math.sin(z * 1.3 + x * 0.4 + seed * 3.0)
       + 0.12 * Math.pow(Math.max(0, Math.sin(x * 1.6 - z * 0.9 + seed * 1.3)), 6.0);   // vài nếp gấp sắc
-    y += wr * (0.4 + 0.6 * onTop);
+    const neck = o.fold !== false ?Math.min(1, Math.max(0, (sz - 0.2) / 2.2)) : 1;   // gần cổ chăn phẳng hơn (để nếp gấp ga nằm êm lên trên)
+    y += wr * (0.4 + 0.6 * onTop) * neck * neck * (3 - 2 * neck);
+    if (o.fold !== false) y -= 0.12 * (1 - neck) * onTop;   // chăn hạ nhẹ dưới nếp gấp ga
     // mép rủ có sóng vải (nếp dọc khi chăn buông xuống)
     const hang = 1 - onTop;
     if (hang > 0) { const f = Math.sin(z * 2.4 + seed) * 0.12 + Math.sin(x * 2.4 + seed) * 0.12; x += Math.sign(x) * f * hang * (ax > half ? 1 : 0); z += (sz > zlen ? f * hang : 0); }
