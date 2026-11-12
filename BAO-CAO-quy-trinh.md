@@ -4,7 +4,7 @@ Nhánh `ep1-v2`, CHƯA push, CHƯA merge. Sổ đầy đủ: `.superpowers/sdd/2
 
 ## Sản phẩm
 - Bản nháp ep002: `dist/ep002_xem-thu.html` (55 MB) — 114 shot, 2:56, giọng CapCut thật 83 câu, phụ đề, tiếng động (nền + 21 mốc), nhạc, ghi công. Thử nút Xuất MP4 đoạn 58–64 s: đạt (h264 1440×2560 + aac). Tất định cả phim: OK.
-- Bảng mẫu (MỐC DUYỆT 2, tôi tự duyệt thay để ra nháp): `output/ep002/duyet/00_mau.jpg`. Bảng cả phim: `output/look/ep002-cuoi/sheet.jpg`. Gấu Bắp: `output/ep002/duyet/bap.jpg`. Nhà máy: `output/ep002/duyet/factory/sheet.jpg`.
+- Bảng mẫu (MỐC DUYỆT 2, tôi tự duyệt thay để ra nháp): `output/ep002/duyet/mau/00_mau.jpg` (+ `00_mau_2.jpg`). Bảng cả phim: `output/look/ep002-cuoi/sheet.jpg`. Gấu Bắp: `output/ep002/duyet/bap.jpg`. Nhà máy: `output/ep002/duyet/factory/sheet.jpg`.
 - ep001: `dist/ep001.html` (không đổi trong phiên này).
 
 ## Việc xong
@@ -22,7 +22,7 @@ Nhánh `ep1-v2`, CHƯA push, CHƯA merge. Sổ đầy đủ: `.superpowers/sdd/2
 
 ## Chờ bạn quyết
 1. Trời `sky-7`/`sky-9` (bạn gửi, nguồn Roblox Sky, "người dùng chịu trách nhiệm"): dây chuyền chặn bản CUỐI. Tôi không tự xác nhận. Đồng ý chịu trách nhiệm → `node tools/lam-phim.mjs ep002 tiep --cho-phep-troi`; không thì thay trời.
-2. Duyệt bảng mẫu ep002 (`00_mau.jpg`): Gà, Bắp, ông Bách, nhà máy, đạo cụ.
+2. Duyệt bảng mẫu ep002 (`output/ep002/duyet/mau/00_mau.jpg`): Gà, Bắp, ông Bách, nhà máy, đạo cụ.
 3. Các tiệm: giữ là mặt phố hay dựng nội thất riêng (5 bối cảnh nữa).
 4. Cập nhật `CLAUDE.md` (mục 11b.3 của thiết kế) — tôi KHÔNG tự sửa vì lệnh đến qua phiên khác. Đề xuất thêm: nhân vật R15 cho mọi tập (+ `ga:1`, `bear:1` trong `episode.actors`); skill `viet-kich-ban`, `lam-phim`; thư mục duyệt `output/<ep>/duyet/`; bảng công cụ thêm `lam-phim.mjs`, `kiem-luat.mjs`, `asset-plan.mjs`, `mau-duyet.mjs`, `shot-gen.mjs`, `ra-loi.mjs`, `theo-doi.mjs`; đạo cụ theo kịch bản ở `engine/props-kb.js`.
 5. Commit hộ file Gà (`engine/ga-rig.js`, `ga-dims.js`, `ga-atlas.js`, `assets/characters/ga/`) — đang untracked của phiên Gà; HEAD không tự dựng lại được ep002 nếu thiếu chúng.
