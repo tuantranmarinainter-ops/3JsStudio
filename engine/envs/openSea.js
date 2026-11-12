@@ -28,16 +28,23 @@ export default function build(g, e, H) {
       b.position.set(Math.cos(a) * r, 0, Math.sin(a) * r); b.userData.fase = hash(i, 13) * 6.283; b.userData.yaw = hash(i, 14) * 6.283; phaos.add(b); e.phao.push(b);
     }
     dec.add(ganTang(phaos, 'front'));
-    // 4 cụm đá cách 120–150 stud, mỗi cụm tự là 1 vật tầng giữa (measure đếm theo tầm nhìn nên rải quanh để khung nào cũng có)
+    // 4 cụm đá cách ~55 stud quanh gốc, mỗi cụm tự là 1 vật tầng giữa; 8 đảo thấp ở ~70 stud (tầng sau, mỗi đảo 1 vật): measure đếm theo tầm nhìn nên rải đều mọi hướng để cả góc camera cao nhìn xuống cũng có
     for (let k = 0; k < 4; k++) {
       const rock = new THREE.Group(); rock.name = 'open_sea_rock' + (k ? '_' + k : '');
       for (let i = 0; i < 5; i++) {
         const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat(['#6f6a62', '#7d776d', '#5d5953'][i % 3], { flatShading: true, roughness: 1 }));
-        const s = i === 0 ? 11 : 4 + hash(i + 5 * k, 21) * 5; m.scale.set(s, s * (0.8 + hash(i + 5 * k, 22) * 0.5), s * 0.9); m.position.set(i === 0 ? 0 : (hash(i + 5 * k, 23) - 0.5) * 22, s * 0.35, i === 0 ? 0 : (hash(i + 5 * k, 24) - 0.5) * 14);
+        const s = i === 0 ? 7 : 2.5 + hash(i + 5 * k, 21) * 3; m.scale.set(s, s * (0.8 + hash(i + 5 * k, 22) * 0.5), s * 0.9); m.position.set(i === 0 ? 0 : (hash(i + 5 * k, 23) - 0.5) * 14, s * 0.35, i === 0 ? 0 : (hash(i + 5 * k, 24) - 0.5) * 9);
         m.castShadow = true; rock.add(m);
       }
-      const a = [-0.14, 0.38, -0.55, 1.0][k], r = [120, 135, 150, 150][k]; rock.position.set(Math.sin(a) * r, -1.5, -Math.cos(a) * r);
-      dec.add(ganTang(rock, 'mid'));   // a = góc lệch khỏi hướng -z (hướng nhìn thường gặp)
+      const a = (k + 0.3 + hash(k, 25) * 0.4) * 1.5708, r = 52 + hash(k, 26) * 8; rock.position.set(Math.sin(a) * r, -1.2, -Math.cos(a) * r);
+      dec.add(ganTang(rock, 'mid'));
+    }
+    for (let k = 0; k < 8; k++) {
+      const isl = new THREE.Group(); isl.name = 'open_sea_islet_' + k;
+      const w = 12 + hash(k, 27) * 8, h = 9 + hash(k, 28) * 6;
+      const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat(['#5f7a62', '#6b8470', '#56705c'][k % 3], { flatShading: true, roughness: 1 })); m.scale.set(w, h, w * 0.8); m.position.y = h * 0.25; isl.add(m);
+      const a = (k + hash(k, 29) * 0.5) * 0.7854, r = 68 + hash(k, 30) * 12; isl.position.set(Math.sin(a) * r, -1, -Math.cos(a) * r);
+      dec.add(ganTang(isl, 'back'));
     }
     const far = new THREE.Group(); far.name = 'open_sea_far';
     for (const [x, z, w, h, c] of [[-420, -760, 190, 24, '#6d8da3'], [-300, -790, 120, 16, '#7a98ad'], [520, -700, 170, 20, '#6f8fa6']]) {

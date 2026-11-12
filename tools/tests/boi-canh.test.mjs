@@ -166,7 +166,7 @@ test('ganTang / layersOf', () => {
 
 // ---------------------------------------------------------------- phần 2: trình duyệt (ep001)
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.glb': 'model/gltf-binary', '.mp3': 'audio/mpeg', '.ogg': 'audio/ogg', '.ttf': 'font/ttf', '.woff2': 'font/woff2', '.css': 'text/css', '.svg': 'image/svg+xml' };
-let srv, browser, page, tTown;
+let srv, browser, page, tTown, tTown2;
 const T = { timeout: 180000 };
 
 before(async () => {
@@ -185,6 +185,7 @@ before(async () => {
   await page.goto(`http://localhost:${srv.address().port}/episodes/ep001/index.html`);
   await page.waitForFunction(() => window.__ready === true, null, { timeout: 170000 });
   tTown = await page.evaluate(() => { const s = window.__shots.list.find((x) => x.env === 'town'); return s.t0 + s.dur / 2; });
+  tTown2 = await page.evaluate(() => { const L = window.__shots.list.filter((x) => x.env === 'town'); const s = L[1] || L[0]; return s.t0 + s.dur / 2; });   // góc 2: shot town thứ hai (camera cao nhìn xuống)
 }, { timeout: 180000 });
 
 after(async () => { await browser?.close(); srv?.close(); });
@@ -198,14 +199,14 @@ const voiShot = (patch, fn) => page.evaluate(async ({ patch, tTown, fn }) => {
 }, { patch, tTown, fn: fn.toString() });
 
 for (const env of ENV17) {
-  test(`env ${env}: __measure().tang có cả 3 tầng >= 1`, { ...T, skip: CHUA_GAN.has(env) ? 'chưa gắn tầng (CHUA_GAN)' : false }, async () => {
-    const tang = await page.evaluate(async ({ env, tTown }) => {
+  test(`env ${env}: __measure().tang có cả 3 tầng >= 1 ở CẢ 2 góc mặc định`, { ...T, skip: CHUA_GAN.has(env) ? 'chưa gắn tầng (CHUA_GAN)' : false }, async () => {
+    const tang = await page.evaluate(async ({ env, tTown, tTown2 }) => {
       const s = window.__shots.list.find((x) => x.env === 'town'); const cu = s.env; s.env = env;
       const AF = (globalThis.__autoFx ||= {}), af0 = { tangXa: AF.tangXa, seaDecor: AF.seaDecor }; AF.tangXa = true; AF.seaDecor = true;   // ep001 tắt tangXa; ô bật ⇒ đủ 3 tầng
-      try { await window.renderAt(tTown); return JSON.parse(JSON.stringify(window.__measure(tTown).tang)); }
+      try { const o = []; for (const t of [tTown, tTown2]) { s.env = env; await window.renderAt(t); o.push(JSON.parse(JSON.stringify(window.__measure(t).tang))); } return o; }
       finally { s.env = cu; AF.tangXa = af0.tangXa; AF.seaDecor = af0.seaDecor; await window.renderAt(tTown); }
-    }, { env, tTown });
-    for (const k of TANG) assert.ok(tang[k] >= 1, `${env}: tầng ${k} = ${tang[k]}`);
+    }, { env, tTown, tTown2 });
+    tang.forEach((tg, g) => { for (const k of TANG) assert.ok(tg[k] >= 1, `${env}: góc ${g + 1}: tầng ${k} = ${tg[k]}`); });
   });
 }
 

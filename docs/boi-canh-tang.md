@@ -18,6 +18,7 @@ ganTang(woods.group, 'back');                          // tầng sau: xa (núi, 
 Tầng giữa = vật chính của cảnh (nhà, tàu, cây lớn, đồ nội thất). Gắn lên Group cha là đủ (con không đếm riêng).
 Mỗi tầng ≥ 1 vật **đang hiện** (`measure.js` bỏ vật có tổ tiên `visible = false`). Mẫu chạy được: `engine/envs/town.js`.
 Không gắn `userData.vai` vào vật tầng (vai dành cho nhân vật/nhà chính).
+Định nghĩa tầng theo khoảng cách tới camera có MỘT ngoại lệ: mặt nước luôn là `front` dù rộng tới chân trời; `storm`/`shipStorm` chỉ đủ 3 tầng khi ô `tangXa` bật (ep001 tắt nên thiếu tầng ở hai env đó). Test `boi-canh` đo 2 góc mặc định (shot town thứ nhất và thứ hai) cho mọi env đã gắn.
 **Quy ước mặt nước (env biển) = tầng `front`** (sea, ocean, storm, shipStorm). `__measure().tang` chỉ đếm vật giao frustum camera (trong near..far) — vật ngoài tầm nhìn không tính; tầng xa của storm/shipStorm + đá gần của storm nằm sau ô FX `tangXa` (ep001 tắt), decor của `sea` sau ô `seaDecor`.
 
 ## 2. Giờ và thời tiết theo shot
