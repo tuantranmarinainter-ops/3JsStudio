@@ -13,6 +13,8 @@
 //         (at[1] = độ cao khi biển lặng; hx/hz = nửa dài thân theo X/Z cục bộ, stud; draft = chìm thêm; k 0..1 hoặc [a,b])
 //     seaEvents: [{ at:[x,z], t: giây cục bộ của shot, strength = 1.5, radius = 10 }]   vòng sóng/hố/bọt (≤ 8 cùng lúc)
 //     seaWeather: 'nang' | { from, to, ease, win } | { base, …ghi đè }   thời tiết biển (engine/seaweather.js, ô FX seaWx)
+//     skySun / skyMoon: 'frame' | { x, y } (vị trí trong khung 0..1) | { az, el } (độ, so với hướng camera) | [x,y,z] | false
+//         đặt mặt trời/trăng của trời 6 ảnh theo shot (engine/envs.js skyDir, ô FX shotSky); không ghi = theo hướng nắng như cũ
 //     room:  { tilt, roll, view, dense },  fn(ctx) }
 // Shot ngắn theo LOẠI ({ type:'closeup', who:'hero', at:'square', … }) → engine/shottypes.js điền cam/cast mặc định:
 //   index.html gọi expandShots(SHOTS, ctx) trước buildTimeline (có liên tục giữa shot), hoặc truyền
@@ -291,7 +293,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     if (shot.type && resolveType) shot = resolveType(shot);
     held.clear();
     for (const obj of Object.values(props)) if (obj.parent && obj.parent.type !== 'Scene' && obj.parent.name && /Arm$/.test(obj.parent.name)) { obj.visible = false; }
-    const ctx = { focus: [0, 0, 0], light: shot.light, lightOverride: shot.lightOverride };
+    const ctx = { focus: [0, 0, 0], light: shot.light, lightOverride: shot.lightOverride, skySun: shot.skySun, skyMoon: shot.skyMoon };
     const W = prepareSea(shot, k, t);   // lõi biển: đồng hồ/thời tiết/sự kiện TRƯỚC khi đặt vật nổi
     if (W) { ctx.seaWeather = W; ctx.shotLight = shot.light; ctx.shotLightOverride = shot.lightOverride; }
     // env trước (để biết đêm/ngày), camera sau cùng (cần vị trí diễn viên)

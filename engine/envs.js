@@ -275,6 +275,25 @@ export function createEnvs(THREE, stage, K0, A = null) {
     return e;
   }
   let last = { env: '', light: 'day', flash: 0 };
+  // hướng mặt trời/trăng theo shot:
+  //   false/null        → giấu (dưới chân trời)
+  //   [x,y,z]           → hướng thế giới
+  //   'frame'           → góc trên phải khung (= { x: 0.72, y: 0.2 })
+  //   { x, y }          → vị trí trong khung (0..1, trái→phải, trên→dưới) theo camera của khung đang vẽ (khoá theo khung khi zoom)
+  //   { az, el }        → độ: az lệch so với hướng camera nhìn (+ = phải), el = cao trên chân trời
+  const _sv = new THREE.Vector3(), _sf = new THREE.Vector3();
+  function skyDir(s) {
+    if (!s) return [0, -1, 0];
+    if (Array.isArray(s)) return s;
+    if (s === 'frame') s = { x: 0.72, y: 0.2 };
+    const cam = stage.camera; cam.updateMatrixWorld(); cam.updateProjectionMatrix();
+    if (s.x !== undefined || s.y !== undefined) {
+      _sv.set((s.x ?? 0.5) * 2 - 1, 1 - (s.y ?? 0.25) * 2, 0.5).unproject(cam).sub(cam.position).normalize();
+      return [_sv.x, _sv.y, _sv.z];
+    }
+    cam.getWorldDirection(_sf); const yaw = Math.atan2(_sf.x, _sf.z) - (s.az ?? 0) * Math.PI / 180, el = (s.el ?? 20) * Math.PI / 180;
+    return [Math.sin(yaw) * Math.cos(el), Math.sin(el), Math.cos(yaw) * Math.cos(el)];
+  }
   function use(name, t, ctx = {}) {
     const e = activate(name);
     applyPool(e);
@@ -321,6 +340,11 @@ export function createEnvs(THREE, stage, K0, A = null) {
       //   ngày: chỉ mặt trời (giấu trăng); đêm: trăng (env có trăng riêng thì giấu)
       if (night) { box.userData.setSun([0, -1, 0]); box.userData.setMoon(ownMoon ? [0, -1, 0] : e.skyMoon || low(-1, -1)); }
       else { box.userData.setSun(e.skySun || low(-1, -1)); box.userData.setMoon(e.skyMoon || [0, -1, 0]); }
+      // ghi đè THEO SHOT (shot.skySun / shot.skyMoon, ô FX 'shotSky'): đặt mặt trời/trăng đúng chỗ trong khung
+      if (AFX.shotSky ?? true) {
+        if (ctx.skySun !== undefined && !night) box.userData.setSun(skyDir(ctx.skySun));
+        if (ctx.skyMoon !== undefined) box.userData.setMoon(skyDir(ctx.skyMoon));
+      }
       const fog = (night ? e.skyFogNight : e.skyFog) || box.userData.def.fog;   // sương xa = màu chân trời của ảnh → biển/đất tan vào trời
       if (fog && scene.fog.near < 1e6) scene.fog.color.set(fog);
     }

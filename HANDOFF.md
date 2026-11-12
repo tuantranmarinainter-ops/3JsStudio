@@ -29,7 +29,7 @@ bản xem thử `dist/ep001_xem-thu.html` → người dùng duyệt → bản c
 - Lỗi tất định từng gặp: `rain.slant` phải đặt TRƯỚC `rain.update` (đọc trạng thái khung trước).
 
 ## Còn lại
-1. Mặt trời chỉ hiện ở shot camera nhìn về phía đó; người dùng có thể muốn chỉ định theo shot (thêm `skySun` vào shot?).
+1. ✅ Đã có `skySun`/`skyMoon` theo shot (ô FX `shotSky`, `engine/envs.js` skyDir) — chờ người dùng chọn shot nào dùng (thử: s003 `skySun: 'frame'` đạt).
 2. Bóng đổ vẫn theo hướng nắng cũ, chưa khớp vị trí mặt trời trên trời.
 3. s032 vẫn có mũi sóng sáng nhỏ ở tiền cảnh — chờ người dùng góp ý.
 4. Chưa kiểm cả phim 1 lần với trời mới: `node tools/look.mjs episodes/ep001/index.html --shots all --det`.
