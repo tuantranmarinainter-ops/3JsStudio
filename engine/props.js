@@ -354,5 +354,8 @@ export function propKit(THREE) {
       return g;
     },
   };
+  // vai cho engine/measure.js: vật chính của cảnh / vật dọc (chỉ userData, không đổi hình)
+  const VAI = { fridge: 'vat-chinh', mailbox: 'vat-chinh', lighthouse: 'vat-chinh', ship: 'vat-chinh', cardStack: 'vat-chinh', streetLamp: 'doc' };
+  for (const [fn, vai] of Object.entries(VAI)) { const f = K[fn]; K[fn] = (...a) => { const g = f.apply(K, a); if (g && g.userData) g.userData.vai = vai; return g; }; }
   return K;
 }

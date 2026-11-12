@@ -38,7 +38,7 @@ const PHASE = [0, 0.5, 0.5, 0];                 // cặp chéo FL+BR, FR+BL
 export function createHouse(THREE, opts = {}) {
   const style = opts.style || 'family';
   const c = { ...HOUSE_STYLES[style], ...(opts.colors || {}) };
-  const root = new THREE.Group(); root.name = opts.name || `house_${style}`;
+  const root = new THREE.Group(); root.name = opts.name || `house_${style}`; root.userData.vai = 'nha';
   const body = new THREE.Group(); body.name = 'house_body'; root.add(body);
   const shell = new THREE.Group(); shell.name = 'house_shell'; body.add(shell);
 
@@ -163,7 +163,7 @@ export function createHouse(THREE, opts = {}) {
   const woodDark = new THREE.MeshStandardMaterial({ color: '#4e2f1a', roughness: 0.9 });
   const gold = new THREE.MeshStandardMaterial({ color: '#d9a53a', roughness: 0.45, metalness: 0.35 });
   const legs = HIPS.map(([hx, hz], i) => {
-    const g = new THREE.Group(); g.name = ['leg_FL', 'leg_FR', 'leg_BL', 'leg_BR'][i]; root.add(g);
+    const g = new THREE.Group(); g.name = ['leg_FL', 'leg_FR', 'leg_BL', 'leg_BR'][i]; g.userData.vai = 'chan-nha'; root.add(g);
     const seg = (r0, r1, mat, name) => {
       const holder = new THREE.Group(); holder.name = name; g.add(holder);
       const m = new THREE.Mesh(new THREE.CylinderGeometry(r1, r0, 1, 10), mat); m.position.y = 0.5;

@@ -25,6 +25,7 @@ export function fxSnow(THREE, { count = 1500, area = [80, 50, 80], speed = 4, dr
     L.geo = geo; L.obj = new THREE.Points(geo, m); L.obj.frustumCulled = false; return L;
   });
   const obj = new THREE.Group(); obj.name = 'fx_snow'; layers.forEach((L) => obj.add(L.obj));
+  obj.userData.hat = 'tuyet'; obj.userData.soHat = () => layers.reduce((s, L) => s + L.n, 0);   // vai cho engine/measure.js
   return {
     obj,
     update(t, c = [0, 0, 0]) {
@@ -118,6 +119,7 @@ export function fxRain(THREE, { count = 1800, area = [90, 60, 90], speed = 55, l
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   const obj = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.55 }));
   obj.name = 'fx_rain'; obj.frustumCulled = false;
+  obj.userData.hat = 'mua'; obj.userData.soHat = () => count;   // vai cho engine/measure.js
   const R = {
     obj,
     slant: null,   // ghi đè độ xiên [x, z] (gió — engine/seaweather.js); null ⇒ slant lúc tạo
@@ -165,6 +167,9 @@ export function fxDust(THREE, { count = 160, color = '#a89677', seed = 5, life =
     transparent: true, depthWrite: false,
   });
   const obj = new THREE.Points(geo, mat); obj.name = 'fx_dust'; obj.frustumCulled = false; obj.renderOrder = 5;
+  // vai cho engine/measure.js: số hạt đang sống + vị trí của chúng (phẳng x,y,z)
+  obj.userData.hat = 'bui'; obj.userData.soHat = () => { let n = 0; for (let i = 0; i < N; i++) if (aA[i] > 0) n++; return n; };
+  obj.userData.hatViTri = () => { const r = []; for (let i = 0; i < N; i++) if (aA[i] > 0) r.push(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]); return r; };
   const c0 = new THREE.Color(color), cDark = new THREE.Color('#6d604b'), cl = new THREE.Color();
   return {
     obj,
@@ -294,6 +299,8 @@ export function fxPuffs(THREE, { maxEvents = 36, per = 22, seed = 11 } = {}) {
     transparent: true, depthWrite: false,
   });
   const obj = new THREE.Points(geo, mat); obj.name = 'fx_puffs'; obj.frustumCulled = false; obj.renderOrder = 5;
+  obj.userData.hat = 'bui'; obj.userData.soHat = () => { let n = 0; for (let i = 0; i < N; i++) if (aA[i] > 0) n++; return n; };   // vai cho engine/measure.js
+  obj.userData.hatViTri = () => { const r = []; for (let i = 0; i < N; i++) if (aA[i] > 0) r.push(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]); return r; };
   const col = new THREE.Color();
   return {
     obj,

@@ -58,6 +58,7 @@
       import { createAssetLib } from '/engine/assets.js';
       import { buildTimeline } from '/engine/timeline.js';
       import { createDirector } from '/engine/shots.js';
+      import { installMeasure } from '/engine/measure.js';
       import { createPost, FX_DEFAULTS, FX_LABELS } from '/engine/post.js';
       import { snapPostcards } from '/engine/snap.js';
       import { applyGrunge } from '/engine/grunge.js';
@@ -185,6 +186,7 @@
       window.renderAt = (t) => stage.renderAt(t);
       window.__shots = tl;
       window.__stage = stage;
+      installMeasure({ THREE, stage, shots: tl });   // window.__measure(t) / window.__mask(t) cho tool kiểm luật
       window.getOptions = () => ({ ...OPTS, vid: { ...OPTS.vid }, voices: VOICES.map(({ id, lang, label, source }) => ({ id, lang, label, source })),
         fx: window.__post ? window.__post.options : null, fxLabels: FX_LABELS });
       window.setOptions = (o = {}) => {

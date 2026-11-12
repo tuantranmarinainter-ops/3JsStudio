@@ -963,6 +963,11 @@ export function createR15(THREE, opts = {}) {
     RightUpperLeg: leg.Right.th, RightLowerLeg: leg.Right.kn, RightFoot: leg.Right.ft, LeftUpperLeg: leg.Left.th, LeftLowerLeg: leg.Left.kn, LeftFoot: leg.Left.ft,
   };
 
+  // vai cho engine/measure.js (tool kiểm luật): hero / nguoi; 2 tay, 2 chân là vai riêng (chỉ userData, không đổi hình)
+  root.userData.vai = o.name === 'hero' ? 'hero' : 'nguoi';
+  for (const k of ['rightArm', 'leftArm']) parts[k].userData.vai = 'tay';
+  for (const k of ['rightLeg', 'leftLeg']) parts[k].userData.vai = 'chan-nguoi';
+
   const detail = { folds: false, hair: false };
   // --- phụ kiện ---
   const acc = buildAccessories(THREE, { o, head, torso, hips, parts, addMesh, mat, seed });
