@@ -1,0 +1,240 @@
+<!doctype html>
+<!-- mau-lab — trang chụp MẪU để người dùng duyệt TRƯỚC khi dựng shot (tools/mau-duyet.mjs). Một khung / một "mục".
+       engine/mau-lab.html?ep=ep002&muc=nv:hero:sad          nhân vật (R15, mặt sống) cận mặt
+       engine/mau-lab.html?muc=env:town:rong:sang            bối cảnh: góc GOC_MAU (rong|can) × giờ (sang|trua|chieu|hoang-hon|dem)
+       engine/mau-lab.html?muc=prop:bed                      đạo cụ (tên tiếng Anh trong propKit, hoặc spec từ tool)
+       engine/mau-lab.html?muc=mat:fruit                     mẫu vật liệu (cầu + khối) — cần spec { tu: <đạo cụ> } từ tool
+     Tool gọi  await window.__datMuc(muc, spec)  → { ok, lyDo?, ghiChu?, kinds? }  (đặt khung rồi vẽ); sau đó chụp màn hình.
+       spec nv:   { ten, opts (tuỳ chọn createR15), face, seed }
+       spec env:  không cần
+       spec prop: { ten, syns:[tiếng Anh…], glb:[id manifest…] }
+       spec mat:  { kind, tu:<tên đạo cụ>, prop:{…spec prop…} }
+     Bề mặt kiểm: window.__ready, renderAt(t), __shots (timeline 1 shot của mục hiện tại), __muc.
+     Bối cảnh THẬT (createEnvs) và asset chỉ nạp khi mục đầu tiên cần tới → mục nhân vật/đạo cụ mở trang rất nhanh.
+     TẤT ĐỊNH: thời gian chỉ từ renderAt(t); không rAF, không đồng hồ, không Math.random. -->
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, height=1920">
+<title>Mau Lab</title>
+<style>
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+  #root { position: relative; width: 1080px; height: 1920px; }
+  #stage { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+</style>
+</head>
+<body>
+<div id="root"><canvas id="stage" width="1080" height="1920"></canvas></div>
+<script type="importmap">{ "imports": { "three": "../vendor/three/three.module.js", "three/addons/": "../vendor/three/addons/" } }</script>
+<script type="module">
+import * as THREE from 'three';
+import { createStage } from './stage.js';
+import { buildTimeline } from './timeline.js';
+import { createDirector } from './shots.js';
+import { LIGHTS } from './lights.js';
+import { buildCast } from './cast.js';
+import { propKit } from './props.js';
+import { createAssetLib } from './assets.js';
+import { createEnvs, ENV_ASSETS } from './envs.js';
+import { applyMaterials, MAT_DA_DUYET } from './materials.js';
+import { GOC_MAU } from './envs/goc-mau.js';
+import { GIO } from './envs/gio-thoi-tiet.js';
+
+window.THREE = THREE;
+const FPS = 30;
+const q = new URLSearchParams(location.search);
+const KHONG_PHAI_DO_CHOI = new Set(['M', 'mesh', 'box', 'cyl', 'sph', 'group']);
+
+const stage = createStage(THREE, { canvas: document.getElementById('stage'), ground: null, fov: 40 });
+const DEF = { sky: '#9fd3f5', hemi: ['#ffffff', '#6b8f5a'], sun: '#fff4e0' };
+stage.scene.background = new THREE.Color(DEF.sky);
+const chk = document.createElement('canvas'); chk.width = chk.height = 64;
+{ const g = chk.getContext('2d'); g.fillStyle = '#7fae5c'; g.fillRect(0, 0, 64, 64); g.fillStyle = '#5f8f45'; g.fillRect(0, 0, 32, 32); g.fillRect(32, 32, 32, 32); }
+const chkTex = new THREE.CanvasTexture(chk); chkTex.colorSpace = THREE.SRGBColorSpace; chkTex.wrapS = chkTex.wrapT = THREE.RepeatWrapping; chkTex.repeat.set(400 / 32, 400 / 32); chkTex.magFilter = THREE.NearestFilter;
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshStandardMaterial({ map: chkTex, roughness: 1 }));
+floor.name = 'lab_ground'; floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; stage.scene.add(floor);
+const lab = { group: new THREE.Group(), light: 'day' }; lab.group.name = 'lab_env'; stage.scene.add(lab.group);
+const labEnvObj = { group: lab.group, ground: { kind: 'dirt', y: 0.05 } };
+const labEnvs = { LIGHTS, envs: { lab }, current: labEnvObj, last: {}, activate: () => labEnvObj, use() {} };
+
+const K = propKit(THREE);
+const actors = {};                // tên → actor R15 (nạp dần)
+let A = null, realEnvs = null, dirChar = null, dirEnv = null;
+const propCache = new Map();      // khoá spec → { obj, kinds }
+let cur = null;                   // { kind:'nv'|'env'|'prop'|'mat', tl, director, shot, T, obj }
+
+const an = (o, v) => { if (o) o.visible = v; };
+function datCheDo(mode) {
+  const envMode = mode === 'env';
+  an(floor, !envMode); an(lab.group, !envMode);
+  if (realEnvs) for (const e of Object.values(realEnvs.envs)) if (!envMode) e.group.visible = false;
+  for (const a of Object.values(actors)) a.root.visible = false;
+  for (const o of propCache.values()) o.obj.visible = false;
+  if (!envMode) {   // nếu env thật từng chạy: trả nền/sương/ánh sáng về mặc định của stage
+    stage.scene.fog = null; stage.scene.background = new THREE.Color(DEF.sky);
+    stage.hemi.color.set(DEF.hemi[0]); stage.hemi.groundColor.set(DEF.hemi[1]); stage.hemi.intensity = stage.options.hemiIntensity;
+    stage.sun.color.set(DEF.sun); stage.sun.intensity = stage.options.sunIntensity;
+    stage.renderer.toneMappingExposure = stage.options.exposure;
+  }
+}
+
+async function nap(muc, spec) {
+  const p = muc.split(':');
+  if (p[0] === 'nv') return napNv(p[1], spec.face || p[2] || 'smile', spec);
+  if (p[0] === 'env') return napEnv(p[1], p[2], p[3]);
+  if (p[0] === 'prop') return napProp(p[1], spec, false);
+  if (p[0] === 'mat') return napMat(p[1], spec);
+  return { ok: false, lyDo: 'mục lạ: ' + muc };
+}
+
+// ---- nhân vật ----
+async function napNv(ten, face, spec = {}) {
+  const key = spec.ten || ten;
+  if (!actors[key]) {
+    const opts = { face: 'smile', ...(spec.opts || {}) };
+    const got = await buildCast(THREE, { [key]: opts }, { seed: spec.seed ?? 1 });
+    actors[key] = got[key]; stage.scene.add(got[key].root);
+    try { applyMaterials(THREE, got[key].root); } catch (e) { console.warn('[mau-lab] applyMaterials nv:', e.message); }
+  }
+  datCheDo('nv');
+  (globalThis.__autoFx ||= {}).faceLive = true;
+  if (!dirChar) dirChar = createDirector({ THREE, stage, envs: labEnvs, K, actors, houses: {}, props: {}, fx: {}, episode: {} });
+  const shot = { id: 'nv', dur: 3, env: 'lab', cam: { at: `face:${key}`, dist: 4.2, h: 0, yaw: 0, fov: 24 }, cast: { [key]: { at: [0, 0, 0], anim: 'idle', face } } };
+  cur = { kind: 'nv', tl: buildTimeline([shot], FPS), director: dirChar, T: 2.5 };   // 2,5 s: sau mọi cú chớp mắt (chớp sống rơi trong 0,5–1,64 s của ô 4 s)
+  return { ok: true };
+}
+
+// ---- bối cảnh thật ----
+async function ensureEnvs() {
+  if (realEnvs) return;
+  A = A || createAssetLib(THREE);
+  await A.load(ENV_ASSETS);
+  realEnvs = createEnvs(THREE, stage, K, A);
+  for (const e of Object.values(realEnvs.envs)) { try { applyMaterials(THREE, e.group); } catch (err) { console.warn('[mau-lab] applyMaterials env:', err.message); } }
+  for (const e of Object.values(realEnvs.envs)) e.group.visible = true;
+  stage.renderer.compile(stage.scene, stage.camera);
+  for (const e of Object.values(realEnvs.envs)) e.group.visible = false;
+  dirEnv = createDirector({ THREE, stage, envs: realEnvs, K, actors, houses: {}, props: {}, fx: {}, episode: {} });
+}
+async function napEnv(env, goc, gio) {
+  const g = GOC_MAU[env] && GOC_MAU[env][goc];
+  if (!g) return { ok: false, lyDo: `GOC_MAU không có ${env}/${goc}` };
+  if (!GIO.includes(gio)) return { ok: false, lyDo: 'giờ lạ: ' + gio };
+  await ensureEnvs();
+  if (!realEnvs.envs[env]) return { ok: false, lyDo: `engine chưa có env "${env}"` };
+  datCheDo('env');
+  const AF = (globalThis.__autoFx ||= {}); AF.tangXa = true; AF.seaDecor = true; AF.faceLive = false;
+  const shot = { id: 'env', dur: 2, env, time: gio, cam: { p: g.p, l: g.look, fov: g.fov } };
+  cur = { kind: 'env', tl: buildTimeline([shot], FPS), director: dirEnv, T: 1 };
+  return { ok: true };
+}
+
+// ---- đạo cụ ----
+function tuKinds(root) {
+  const m = new Map();
+  root.traverse((o) => {
+    if (!o.isMesh) return;
+    for (const mt of [].concat(o.material)) {
+      if (!mt) continue;
+      const kind = o.userData.matKind || (mt.userData && (mt.userData.matKind || mt.userData.matDecl)) || null;
+      const nguon = (o.userData && o.userData.matNguon) || (mt.userData && mt.userData.matNguon) || null;
+      const chuaVa = kind == null && nguon == null && !!mt.transparent;
+      const k = kind || (chuaVa ? 'chua-va' : 'matte');
+      if (!m.has(k)) m.set(k, { kind: k, nguon, duyet: k === 'chua-va' ? false : MAT_DA_DUYET.includes(k), mat: mt });
+    }
+  });
+  return m;
+}
+async function dungProp(spec) {
+  const ten = spec.ten || '';
+  const keys = Object.keys(K).filter((k) => typeof K[k] === 'function' && !KHONG_PHAI_DO_CHOI.has(k));
+  const thu = [...new Set([...(spec.syns || []), ten])].map((s) => String(s).toLowerCase());
+  for (const s of thu) {
+    const k = keys.find((x) => x.toLowerCase() === s);
+    if (k) { try { const o = K[k](); if (o && o.isObject3D) return { obj: o, nguon: 'K.' + k }; } catch (e) { console.warn('[mau-lab] K.' + k + ': ' + e.message); } }
+  }
+  if ((spec.glb || []).length) {
+    A = A || createAssetLib(THREE);
+    await A.load(spec.glb);
+    const id = spec.glb[0];
+    const o = A.instance(id);
+    if (o.children.length) return { obj: o, nguon: 'glb:' + id };
+  }
+  return null;
+}
+async function napProp(ten, spec = {}, chiLayObj) {
+  const key = JSON.stringify({ t: spec.ten || ten, s: spec.syns || [], g: spec.glb || [] });
+  let e = propCache.get(key);
+  if (!e) {
+    const r = await dungProp({ ten, ...spec });
+    if (!r) return { ok: false, lyDo: 'không có mô hình để chụp (propKit lẫn manifest đều không có)' };
+    r.obj.name = 'mau_prop';
+    const box0 = new THREE.Box3().setFromObject(r.obj);
+    r.obj.position.y -= box0.min.y;   // đáy chạm đất
+    const holder = new THREE.Group(); holder.name = 'mau_prop_holder'; holder.add(r.obj); stage.scene.add(holder);
+    try { applyMaterials(THREE, holder); } catch (err) { console.warn('[mau-lab] applyMaterials prop:', err.message); }
+    e = { obj: holder, nguon: r.nguon, kinds: tuKinds(holder), key };
+    propCache.set(key, e);
+  }
+  if (chiLayObj) return { ok: true, e };
+  datCheDo('prop');
+  e.obj.visible = true;
+  cur = { kind: 'prop', obj: e.obj, T: 0 };
+  return { ok: true, ghiChu: e.nguon, kinds: [...e.kinds.values()].map(({ kind, nguon, duyet }) => ({ kind, nguon, duyet })) };
+}
+
+// ---- mẫu vật liệu ----
+let swatch = null;
+async function napMat(kind, spec = {}) {
+  const r = await napProp(spec.tu || kind, spec.prop || {}, true);
+  if (!r.ok) return r;
+  const k = r.e.kinds.get(kind);
+  if (!k) return { ok: false, lyDo: `đạo cụ "${spec.tu}" không có vật liệu ${kind}` };
+  datCheDo('prop');
+  if (swatch) { stage.scene.remove(swatch); }
+  swatch = new THREE.Group(); swatch.name = 'mau_swatch';
+  const s = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 24), k.mat); s.position.set(-1.25, 1, 0);
+  const b = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.8, 1.8), k.mat); b.position.set(1.25, 0.9, 0);
+  swatch.add(s, b); stage.scene.add(swatch);
+  cur = { kind: 'mat', obj: swatch, T: 0 };
+  return { ok: true };
+}
+
+function datCameraProp(obj) {
+  const box = new THREE.Box3().setFromObject(obj), c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3());
+  const r = Math.max(0.5, sz.length() / 2), fov = 35;
+  const half = Math.min(THREE.MathUtils.degToRad(fov) / 2, Math.atan(Math.tan(THREE.MathUtils.degToRad(fov) / 2) * (1080 / 1920)));
+  const d = (r / Math.sin(half)) * 1.1, dir = new THREE.Vector3(0.6, 0.35, 1).normalize();
+  stage.setCamera([c.x + dir.x * d, c.y + dir.y * d, c.z + dir.z * d], [c.x, c.y, c.z], { fov });
+}
+
+stage.onFrame((t) => {
+  if (!cur) return;
+  if (cur.tl) {
+    const T = Math.min(cur.tl.total - 1e-4, cur.T ?? t);
+    const { shot, local, k, prev } = cur.tl.at(T);
+    cur.director.render(shot, local, k, T, prev);
+  } else {
+    cur.obj.visible = true;
+    if (cur.kind === 'mat') { stage.setCamera([0, 3.2, 15], [0, 1, 0], { fov: 35 }); }
+    else datCameraProp(cur.obj);
+  }
+});
+stage.renderer.compile(stage.scene, stage.camera);
+stage.start();
+
+window.renderAt = (t) => stage.renderAt(t);
+window.__stage = stage;
+window.__muc = null;
+window.__datMuc = async (muc, spec) => {
+  const r = await nap(muc, spec || {});
+  if (r.ok) { window.__muc = muc; window.__shots = cur.tl || { list: [], total: 0 }; for (let i = 0; i < 2; i++) { const p = stage.renderAt(0); if (p && p.then) await p; }
+    if (cur.kind === 'env' && !window.__envOnDinh) { await new Promise((ok) => setTimeout(ok, 800)); window.__envOnDinh = true; const p = stage.renderAt(0); if (p && p.then) await p; } }   // 2 lần: khung đầu của env mới nạp chưa có trời/sương
+  return r;
+};
+const muc0 = q.get('muc');
+if (muc0) { const r = await window.__datMuc(muc0, {}); if (!r.ok) console.error('[mau-lab] ' + r.lyDo); }
+window.__ready = true;
+</script>
+</body>
+</html>
