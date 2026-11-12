@@ -20,7 +20,8 @@
     "branches": "bash tools/branches.sh --fetch",
     "look": "node tools/look.mjs",
     "export-test": "node tools/export-test.mjs dist/ep001.html",
-    "voices:sample": "python tools/voices_build.py ep001 sample"
+    "voices:sample": "python tools/voices_build.py ep001 sample",
+    "test": "python -m unittest discover -s tools/kb/tests && node --test tools/tests/*.test.mjs"
   },
   "hyperframes": "0.9.30",
   "vendored": {

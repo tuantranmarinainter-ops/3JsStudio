@@ -91,3 +91,31 @@ Khoá thông tin tập: `title, seed, rule, weakness, twist, solution, env, ligh
 - Bố cục từ khung ảnh **không** được đọc tự động (chưa nhận dạng ảnh): camera/bố trí lấy từ loại shot + từ khoá. Khung chỉ để so trên bảng `--sheet`; chỉnh tay `cam`/`cast` trong `shots.js` cho khớp.
 - Thời lượng ước lượng theo số ký tự; tạo giọng thật xong, chỉnh `dur` theo `narration.json`.
 - Địa điểm/diễn viên lạ được thêm khung (`'town:center'`, màu áo mặc định) — cần sửa tay trong `episode.js`.
+
+## Kịch bản đầy đủ (kich-ban.md)
+Bản mở rộng của `storyboard.md` cho quy trình "một câu luật → phim": giữ nguyên header `khoá: giá trị` và bảng ở trên (`storyboard.py` vẫn đọc được, bỏ qua cột lạ), cột `khung` được để trống. Bộ đọc: `tools/kb/kichban.py <file> --json`; kiểm: `python tools/kb/lint.py <file> [--json]` (in `kich-ban.md:<dòng>: <MÃ> <thông báo>`, thoát 1 nếu có lỗi). Ô số nhận cả dấu phẩy (`1,5` = 1.5). Hàng thiếu/thừa ô hoặc ô số sai → lỗi `K00` có số dòng.
+
+**Header thêm:** `ep: epNNN`, `luat_goc: <câu người dùng>`, `kiem_tong: off` (tắt kiểm tổng giây, dùng cho file thử).
+
+**5 cột thêm:**
+| Cột | Giá trị cho phép |
+|---|---|
+| giờ | `sang`, `trua`, `chieu`, `hoang-hon`, `dem` |
+| thời tiết | `nang`, `may`, `mua`, `giong`, `bao`, `tuyet`, `suong` |
+| vật cần đọc | tên đạo cụ có chữ/số; trống nếu không. Chỉ dùng với loại `insertRead` |
+| tư thế | `standing`, `flying`, `sitting`, `swimming` (cho mô hình không phải người) |
+| tối thiểu | giây; trống = theo loại (insertRead 1.5, closeup 0.8, chase/fall/hug/walkBy/follow/sinkTilt 1.0, establish 1.2, còn lại 0.8) |
+
+**Khối `## Cần dựng`** (cuối file): `- env: <tên>: <mô tả>`, `- prop: …`, `- anim: …`. Tên `anim` khai ở đây được chấp nhận trong cột `hành động`.
+
+**Mã lỗi của lint:** K00 lỗi đọc · K01 thiếu bối cảnh (`ở đâu`/`env`) · K02 `loại` không thuộc `SHOT_TYPE_NAMES` ∪ {insertRead, houseFull, hug, fall, sinkTilt} · K03 có `vật cần đọc` nhưng loại ≠ insertRead · K04 `hành động` không có trong `R15_ANIMATIONS` và không trong `Cần dựng` · K05 `giây` < tối thiểu · K06 lời kể chứa tên kênh khác (`tools/kb/ten-cam.txt`) · K07 câu lời kể đầu không bắt đầu bằng "Ở thị trấn này" · K08 `mặt` không thuộc `FACE_PRESETS` · K09 tổng giây ngoài 120–180 · K10 một câu lời kể trải > 3 shot. Cột `giây` để trống thì không tính vào K05/K09.
+
+Ví dụ (3 hàng; header rút gọn, cột thiếu coi như trống):
+```
+| id | giây | lời kể | loại | ở đâu | hành động | mặt | giờ | thời tiết | vật cần đọc |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 1,5 | Ở thị trấn này, ai đi bộ cũng phải nhảy. | establish | square | | | sang | nang | |
+| 2 | 1.0 | ^ | crowd | square | dance | happy | sang | nang | |
+| 3 | 2 | Mẹ đưa tôi một tấm thiếp. | insertRead | home | hold | | chieu | mua | tấm thiếp |
+```
+Ví dụ đầy đủ 18 cột: `tools/kb/tests/data/kb_tot.md`.
