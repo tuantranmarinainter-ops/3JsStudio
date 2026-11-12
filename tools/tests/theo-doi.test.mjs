@@ -26,6 +26,7 @@ function dung({ luat = true } = {}) {
     },
     tong: { soShot: 3, shotLoi: 1, theoLuat: { L4: { loi: 1, tyLe: 0.33, skip: 0 } } }, goi: { can: false, lyDo: [] },
   });
+  for (const r of ['01_shots/s002_f0052.jpg', '03_truoc-sau/s002_L4_v1.jpg']) ghi(path.join(goc, 'output/ep9/duyet', r), 'x');
   datBuoc('ep9', 'shot', { hash: 'h', xong: true, goi: 2 }, { goc });
   ghiNhatKy('ep9', { buoc: 'ra-loi', shot: 's002', luat: 'L4', hanh_dong: 'sua' }, { goc });
   return goc;
@@ -51,13 +52,16 @@ test('--json đủ 4 khoá, token từ transcript', () => {
   const tr = path.join(goc, 'phien');
   const u = (ts, i, o) => JSON.stringify({ timestamp: ts, message: { usage: { input_tokens: i, output_tokens: o, cache_read_input_tokens: 10, cache_creation_input_tokens: 5 } } });
   ghi(path.join(tr, 'a.jsonl'), u('2026-11-12T08:10:00Z', 1, 2) + '\n' + u('2026-11-12T08:50:00Z', 3, 4) + '\n{hong');
+  const lap = JSON.stringify({ timestamp: '2026-11-12T10:00:00Z', requestId: 'r1', message: { id: 'm1', usage: { input_tokens: 100, output_tokens: 0 } } });
+  ghi(path.join(tr, 'c.jsonl'), lap + '\n' + lap + '\n' + lap + '\n');
   ghi(path.join(tr, 'subagents/b.jsonl'), u('2026-11-12T09:00:00Z', 5, 6) + '\n');
   const r = chay(goc, '--json', '--transcript', tr); assert.equal(r.status, 0, r.stderr);
   const j = JSON.parse(r.stdout);
   assert.deepEqual(Object.keys(j).sort(), ['buoc', 'loi', 'tap', 'token']);
   assert.equal(j.tap.soBuoc, 8); assert.equal(j.tap.soShot, 3); assert.equal(j.tap.shotQua, 2); assert.equal(j.tap.loiCon, 1); assert.equal(j.tap.soLanGoi, 2);
-  assert.equal(j.token.length, 2);
-  assert.equal(j.token[0].token, (1 + 2 + 15) + (3 + 4 + 15));
+  assert.equal(j.token.length, 3);
+  assert.equal(j.token.find((t) => t.gio.startsWith('2026-11-12T10')).token, 100);
+  assert.equal(j.token.find((t) => t.gio.startsWith('2026-11-12T08')).token, (1 + 2 + 15) + (3 + 4 + 15));
   assert.deepEqual(j.loi, [{ ep: 'ep9', luat: 'L4', loi: 1, tyLe: 0.33 }]);
   assert.equal(j.buoc.find((b) => b.buoc === 'shot').xong, true);
   assert.deepEqual(JSON.parse(chay(goc, '--json').stdout).token, []);
@@ -68,4 +72,26 @@ test('thiếu luat.json vẫn ra trang, mã 0', () => {
   const r = chay(goc); assert.equal(r.status, 0, r.stderr);
   const h = fs.readFileSync(path.join(goc, 'dist/ep9_theo-doi.html'), 'utf8');
   assert.equal((h.match(/<tr class="shot[ "]/g) || []).length, 3);
+});
+
+test('ảnh thiếu → ô "·", không link; href mã hoá', () => {
+  const goc = dung();
+  const h = (chay(goc), fs.readFileSync(path.join(goc, 'dist/ep9_theo-doi.html'), 'utf8'));
+  assert.ok(!h.includes('s001_f0000.jpg'));
+  assert.ok(!h.includes('s003_f0090.jpg'));
+});
+
+test('ep không tồn tại → mã 2, stderr, không ghi file', () => {
+  const goc = fs.mkdtempSync(path.join(os.tmpdir(), 'task7-td-'));
+  const r = chay(goc);
+  assert.equal(r.status, 2); assert.ok(r.stderr.includes('ep9'));
+  assert.ok(!fs.existsSync(path.join(goc, 'dist/ep9_theo-doi.html')));
+});
+
+test('shots.js hỏng → cảnh báo stderr, vẫn ra trang, mã 0', () => {
+  const goc = dung();
+  ghi(path.join(goc, 'episodes/ep9/shots.js'), 'export const SHOTS = [ {{{');
+  const r = chay(goc); assert.equal(r.status, 0);
+  assert.ok(/shots\.js/.test(r.stderr));
+  assert.ok(fs.existsSync(path.join(goc, 'dist/ep9_theo-doi.html')));
 });

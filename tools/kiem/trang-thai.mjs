@@ -25,58 +25,77 @@ export function docTrangThai(ep, o = {}) {
   }
 }
 
+// ghi nguyên tử: file tạm cùng thư mục rồi đổi tên
 function ghiTrangThai(ep, d, o) {
   const f = fTrangThai(ep, o);
   fs.mkdirSync(path.dirname(f), { recursive: true });
-  fs.writeFileSync(f, JSON.stringify(d, null, 2) + '\n');
+  const tmp = `${f}.tmp-${process.pid}`;
+  fs.writeFileSync(tmp, JSON.stringify(d, null, 2) + '\n');
+  fs.renameSync(tmp, f);
 }
 
-export function hashVao(paths) {
+function* duyetFile(p) {
+  let st; try { st = fs.statSync(p); } catch { yield null; return; }
+  if (st.isDirectory()) {
+    for (const n of fs.readdirSync(p).sort()) yield* duyetFile(path.join(p, n));
+  } else yield p;
+}
+
+// băm theo đường dẫn tương đối (chuẩn hoá /) so với goc → tuyệt đối hay tương đối đều ra cùng hash
+export function hashVao(paths, { goc = GOC } = {}) {
   const h = crypto.createHash('sha1');
-  for (const p of [...paths].sort()) {
-    h.update(p + '\0');
-    try { h.update(fs.readFileSync(p)); } catch { h.update('<thiếu>'); }
-    h.update('\0');
+  const ds = paths.map((p) => path.resolve(goc, p)).sort();
+  for (const g of ds) {
+    for (const f of duyetFile(g)) {
+      const ten = f ?? g;
+      h.update(path.relative(goc, ten).split(path.sep).join('/') + '\0');
+      if (f) h.update(fs.readFileSync(f)); else h.update('<thiếu>');
+      h.update('\0');
+    }
   }
   return h.digest('hex');
 }
 
 export function canChay(ep, buoc, hash, o = {}) {
+  if (typeof hash !== 'string' || !hash) return true;
   const b = docTrangThai(ep, o).buoc[buoc];
   return !(b && b.xong && b.hash === hash);
 }
 
-const dangChay = new Map();
 export function batDau(ep, buoc, o = {}) {
-  dangChay.set(`${o.goc || GOC}|${ep}|${buoc}`, Date.now());
+  const d = docTrangThai(ep, o);
+  d.ep = ep;
+  d.buoc[buoc] = { ...(d.buoc[buoc] || {}), xong: false, bat_dau: new Date().toISOString() };
+  ghiTrangThai(ep, d, o);
 }
 
 export function datBuoc(ep, buoc, { hash, xong = true, goi } = {}, o = {}) {
   const d = docTrangThai(ep, o);
   d.ep = ep;
-  const k = `${o.goc || GOC}|${ep}|${buoc}`;
-  const t0 = dangChay.get(k);
-  dangChay.delete(k);
-  const cu = d.buoc[buoc] || {};
-  const phut = t0 ? Math.round((Date.now() - t0) / 600) / 100 : (cu.phut ?? 0);
+  const { bat_dau, ...cu } = d.buoc[buoc] || {};
+  let phut = cu.phut ?? null;
+  const t0 = bat_dau ? Date.parse(bat_dau) : NaN;
+  if (Number.isFinite(t0)) phut = Math.round(Math.max(0, Date.now() - t0) / 600) / 100;
   d.buoc[buoc] = { hash, xong: !!xong, luc: new Date().toISOString(), phut, goi: goi ?? cu.goi ?? 0 };
   ghiTrangThai(ep, d, o);
   return d.buoc[buoc];
 }
 
+// chỉ append; nếu file không kết thúc bằng \n (dòng dở) thì thêm \n trước dòng mới, giữ nguyên dòng dở
 export function ghiNhatKy(ep, dong, o = {}) {
   const f = fNhatKy(ep, o);
   fs.mkdirSync(path.dirname(f), { recursive: true });
   let tien = '';
   if (fs.existsSync(f)) {
-    const s = fs.readFileSync(f, 'utf8');
-    if (s.length && !s.endsWith('\n')) {
-      // dòng cuối cắt dở: nếu còn parse được thì giữ, không thì cắt bỏ để file sạch
-      const i = s.lastIndexOf('\n');
-      const cuoi = s.slice(i + 1);
-      let ok = true; try { JSON.parse(cuoi); } catch { ok = false; }
-      if (ok) tien = '\n'; else fs.writeFileSync(f, s.slice(0, i + 1));
-    }
+    const fd = fs.openSync(f, 'r');
+    try {
+      const n = fs.fstatSync(fd).size;
+      if (n > 0) {
+        const b = Buffer.alloc(1);
+        fs.readSync(fd, b, 0, 1, n - 1);
+        if (b[0] !== 0x0a) tien = '\n';
+      }
+    } finally { fs.closeSync(fd); }
   }
   const d = { ts: new Date().toISOString(), ep, ...dong };
   fs.appendFileSync(f, tien + JSON.stringify(d) + '\n');

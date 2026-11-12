@@ -8,6 +8,7 @@
 //   loi:   [{ ep, luat, loi, tyLe }]
 //   token: [{ ep, gio, token }]
 import fs from 'node:fs';
+import readline from 'node:readline';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { BUOC, docTrangThai, docNhatKy, thuMucKiem } from './kiem/trang-thai.mjs';
@@ -23,7 +24,7 @@ const pad = (n, k) => String(n).padStart(k, '0');
 async function docShots(goc, ep) {
   const f = path.join(goc, 'episodes', ep, 'shots.js');
   if (!fs.existsSync(f)) return [];
-  try { return (await import(pathToFileURL(f).href + '?t=' + Date.now())).SHOTS || []; } catch { return []; }
+  try { return (await import(pathToFileURL(f).href + '?t=' + Date.now())).SHOTS || []; } catch (e) { console.error(`cảnh báo: không đọc được ${f}: ${e.message}`); return []; }
 }
 async function docLuat(goc, ep) {
   const f = path.join(goc, 'episodes', ep, 'episode.js');
@@ -32,8 +33,9 @@ async function docLuat(goc, ep) {
 }
 const giayCua = (s) => (Array.isArray(s.f) ? (s.f[1] - s.f[0] + 1) / FPS : s.dur ?? null);
 
-// token theo giờ: cộng 4 loại token của object usage trong mỗi dòng, như hook session_guard.py
-export function docToken(ep, dir) {
+// token theo giờ: cộng 4 loại token của object usage, như hook session_guard.py.
+// Đọc từng dòng qua stream; cùng message.id (+ requestId) chỉ cộng một lần.
+export async function docToken(ep, dir) {
   if (!dir || !fs.existsSync(dir)) return [];
   const files = [];
   const quet = (d, sau) => {
@@ -45,12 +47,20 @@ export function docToken(ep, dir) {
   };
   quet(dir, 0);
   const theoGio = new Map();
+  const daThay = new Set();
   for (const f of files) {
-    for (const l of fs.readFileSync(f, 'utf8').split('\n')) {
+    const rl = readline.createInterface({ input: fs.createReadStream(f, { encoding: 'utf8' }), crlfDelay: Infinity });
+    for await (const l of rl) {
       if (!l.includes('"usage"')) continue;
       let o; try { o = JSON.parse(l); } catch { continue; }
       const u = o?.message?.usage || o?.usage; if (!u) continue;
       const ts = o.timestamp || o?.message?.timestamp; if (!ts) continue;
+      const mid = o?.message?.id;
+      if (mid) {
+        const k = mid + '|' + (o.requestId || '');
+        if (daThay.has(k)) continue;
+        daThay.add(k);
+      }
       const gio = String(ts).slice(0, 13) + ':00';
       const n = (u.input_tokens || 0) + (u.output_tokens || 0) + (u.cache_read_input_tokens || 0) + (u.cache_creation_input_tokens || 0);
       theoGio.set(gio, (theoGio.get(gio) || 0) + n);
@@ -61,6 +71,7 @@ export function docToken(ep, dir) {
 
 export async function tinh(ep, { goc = GOC, transcript } = {}) {
   const o = { goc };
+  if (!fs.existsSync(path.join(goc, 'episodes', ep))) throw Object.assign(new Error(`không có thư mục episodes/${ep}/`), { thoat: 2 });
   const tt = docTrangThai(ep, o);
   const nk = docNhatKy(ep, o);
   const luat = doc(path.join(thuMucKiem(ep, o), 'luat.json'));
@@ -73,7 +84,7 @@ export async function tinh(ep, { goc = GOC, transcript } = {}) {
     return { ep, buoc: b, xong: !!x.xong, phut: x.phut ?? 0, luc: x.luc ?? null };
   });
   const loi = Object.entries(luat?.tong?.theoLuat || {}).map(([l, v]) => ({ ep, luat: l, loi: v.loi ?? 0, tyLe: v.tyLe ?? 0 }));
-  const token = docToken(ep, transcript);
+  const token = await docToken(ep, transcript);
   const soShot = luat?.tong?.soShot ?? shots.length;
   const loiCon = luat?.tong?.shotLoi ?? 0;
   const tap = {
@@ -83,7 +94,13 @@ export async function tinh(ep, { goc = GOC, transcript } = {}) {
     token: token.reduce((s, t) => s + t.token, 0), chiPhi: null,
     capNhat: new Date().toISOString(), choBan: null,
   };
-  return { tap, buoc, loi, token, _nk: nk, _luat: luat, _shots: shots, _cau: cau };
+  return { tap, buoc, loi, token, _goc: goc, _nk: nk, _luat: luat, _shots: shots, _cau: cau };
+}
+
+// ô ảnh chỉ là link khi file ảnh có thật
+function lienKet(d, rel, nhan, lop = '') {
+  if (!fs.existsSync(path.join(d._goc, 'output', d.tap.ep, 'duyet', rel))) return '<span class="mu">·</span>';
+  return `<a${lop ? ` class="${lop}"` : ''} href="${esc(encodeURI(`../output/${d.tap.ep}/duyet/${rel}`))}">${esc(nhan)}</a>`;
 }
 
 function oBuoc(b, s, d) {
@@ -91,9 +108,9 @@ function oBuoc(b, s, d) {
   const kq = d._luat?.shots?.[s.id];
   let nd = '';
   if (b === 'shot' && kq?.khung) {
-    nd = kq.khung.map((f, i) => `<a href="../output/${d.tap.ep}/duyet/01_shots/${s.id}_f${pad(f, 4)}.jpg">${['đ', 'g', 'c'][i] || i}</a>`).join('');
+    nd = kq.khung.map((f, i) => lienKet(d, `01_shots/${s.id}_f${pad(f, 4)}.jpg`, ['đ', 'g', 'c'][i] || i)).join('');
   } else if (b === 'ra-loi' && kq) {
-    nd = (kq.loi || []).map((l) => `<a class="bad" href="../output/${d.tap.ep}/duyet/03_truoc-sau/${s.id}_${l}_v1.jpg">${esc(l)}</a>`).join('');
+    nd = (kq.loi || []).map((l) => lienKet(d, `03_truoc-sau/${s.id}_${l}_v1.jpg`, l, 'bad')).join('');
     if (!nd) nd = '<span class="ok">✓</span>';
   } else if (kq && b === 'mau-duyet') {
     nd = kq.loi?.length ? '<span class="bad">!</span>' : '<span class="ok">✓</span>';
@@ -140,4 +157,6 @@ async function main() {
   console.log('file:///' + out.replace(/\\/g, '/').replace(/ /g, '%20'));
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((e) => { console.error(`lỗi: ${e.message}`); process.exit(e.thoat || 2); });
+}
