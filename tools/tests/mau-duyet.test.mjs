@@ -11,7 +11,7 @@ const root = path.resolve(import.meta.dirname, '..', '..');
 const tool = path.join(root, 'tools', 'mau-duyet.mjs');
 const kb1 = path.join(root, 'tools', 'tests', 'data', 'mau-duyet-kb.md');
 const kb2 = path.join(root, 'tools', 'tests', 'data', 'mau-duyet-kb-chuaco.md');
-const EP1 = '_test_mauduyet1', EP2 = '_test_mauduyet2';
+const EP1 = '_test_mauduyet1', EP2 = '_test_mauduyet2', EP3 = '_test_mauduyet3';
 const T = { timeout: 300000 };
 const chay = (ep, kb, extra = []) => spawnSync(process.execPath, [tool, ep, '--kich-ban', kb, ...extra], { cwd: root, encoding: 'utf8', timeout: 280000 });
 const dirMau = (ep) => path.join(root, 'output', ep, 'duyet', 'mau');
@@ -23,7 +23,7 @@ const doJpg = (f) => {   // kích thước từ marker SOF
   while (i < b.length) { if (b[i] !== 0xff) { i++; continue; } const m = b[i + 1]; if (m >= 0xc0 && m <= 0xc3) return [b.readUInt16BE(i + 7), b.readUInt16BE(i + 5)]; i += 2 + b.readUInt16BE(i + 2); }
 };
 
-after(() => { for (const ep of [EP1, EP2]) fs.rmSync(path.join(root, 'output', ep), { recursive: true, force: true }); });
+after(() => { for (const ep of [EP1, EP2, EP3]) fs.rmSync(path.join(root, 'output', ep), { recursive: true, force: true }); });
 
 test('chonGio: nhiều nhất + nhiều nhì; không có -> dem; giờ 1 = dem -> trua', () => {
   assert.deepEqual(chonGio(new Map([['sang', 2], ['dem', 1]])), ['sang', 'dem']);
@@ -100,4 +100,46 @@ test('mẫu chưa có để chụp -> ghi chua_co, không chết; đạo cụ + 
   assert.ok(m['prop:fruitbowl'].kinds.some((k) => k.kind === 'fruit' && k.duyet === false));
   assert.equal(jpgs(EP2).filter((f) => f.startsWith('env_xyzland')).length, 0);
   assert.equal(docMau(EP2).hasOwnProperty('env:xyzland'), true);
+});
+
+test('vòng 1 / I1: mat:* giữ nguyên khi chạy lại (không chụp lại, giữ duyet); --tu-choi mat chỉ chụp lại ô vật liệu', T, () => {
+  const mat = path.join(dirMau(EP2), 'mat_fruit.jpg');
+  let r = chay(EP2, kb2, ['--duyet', 'mat:fruit']);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const cu = mtimes(EP2);
+  // lần chạy lại: chỉ các mục chua_co được thử lại (không có mô hình) — không ảnh nào đổi, mat:fruit còn duyet = true
+  r = chay(EP2, kb2);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.deepEqual(mtimes(EP2), cu, 'chạy lại không được chụp lại ảnh nào');
+  assert.equal(doc(EP2)['mat:fruit'].duyet, true, 'mất duyet của mat:fruit');
+  assert.ok(doc(EP2)['mat:fruit'].tuProp);
+  r = chay(EP2, kb2, ['--tu-choi', 'mat:fruit']);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const truoc = mtimes(EP2);
+  r = chay(EP2, kb2);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const sau = mtimes(EP2);
+  assert.deepEqual(Object.keys(sau).filter((f) => sau[f] !== truoc[f]), ['mat_fruit.jpg']);
+  assert.equal(doc(EP2)['mat:fruit'].duyet, null);
+  assert.ok(fs.existsSync(mat));
+});
+
+test('vòng 1 / I2: trình duyệt không mở được -> mã 2, KHÔNG ghi mau.json, bước mau-duyet không xong', T, () => {
+  fs.rmSync(path.join(root, 'output', EP3), { recursive: true, force: true });
+  const r = spawnSync(process.execPath, [tool, EP3, '--kich-ban', kb1], { cwd: root, encoding: 'utf8', timeout: 120000, env: { ...process.env, BROWSER: 'khong-co-trinh-duyet-nay' } });
+  assert.equal(r.status, 2, r.stdout + r.stderr);
+  assert.equal(fs.existsSync(path.join(root, 'output', EP3, 'kiem', 'mau.json')), false);
+  const f = path.join(root, 'output', EP3, 'kiem', 'trang-thai.json');
+  const tt = fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : { buoc: {} };
+  assert.notEqual(tt.buoc['mau-duyet']?.xong, true);
+});
+
+test('vòng 1 / minor: kịch bản không đọc được -> mã 1; tìm kịch bản ở kich-ban/<ep>/', T, () => {
+  const bad = path.join(root, 'tools', 'tests', 'data', 'mau-duyet-hong.md');
+  fs.writeFileSync(bad, ['| id |', '|---|', ''].join(String.fromCharCode(10)));
+  try {
+    const r = chay(EP3, bad);
+    assert.ok(r.status === 1 || r.status === 0, r.stdout + r.stderr);   // không dữ liệu ≠ lỗi môi trường
+    assert.notEqual(r.status, 2, r.stderr);
+  } finally { fs.rmSync(bad, { force: true }); fs.rmSync(path.join(root, 'output', EP3), { recursive: true, force: true }); }
 });

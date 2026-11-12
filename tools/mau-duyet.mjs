@@ -175,10 +175,11 @@ async function chay(argv) {
     if (lo.length) { console.error('Không có mẫu: ' + lo.join(', ')); return 1; }
     console.log('Đã cập nhật ' + fMau(ep, {})); return 0;
   }
-  const fKb = path.resolve(opt['kich-ban'] || path.join(GOC, 'episodes', ep, 'kich-ban.md'));
-  if (!fs.existsSync(fKb)) { console.error('Không thấy kịch bản: ' + fKb); return 2; }
+  const ung = opt['kich-ban'] ? [path.resolve(opt['kich-ban'])] : [path.join(GOC, 'episodes', ep, 'kich-ban.md'), path.join(GOC, 'kich-ban', ep, 'kich-ban.md')];
+  const fKb = ung.find((f) => fs.existsSync(f));
+  if (!fKb) { console.error('Không thấy kịch bản: ' + ung.join(' | ')); return 2; }
   let kb;
-  try { kb = docKichBan(fKb); } catch (e) { console.error(e.message); return 2; }
+  try { kb = docKichBan(fKb); } catch (e) { console.error('Kịch bản lỗi dữ liệu: ' + e.message); return 1; }
   if ((kb.loi_doc || []).length) { console.error('Kịch bản có lỗi dữ liệu:\n  ' + kb.loi_doc.map((x) => (typeof x === 'string' ? x : JSON.stringify(x))).join('\n  ')); return 1; }
 
   const ctx = { envCo: docEnvCo(GOC), town: docTuStoryboard(GOC).town, manifest: docManifest(GOC) };
@@ -191,7 +192,7 @@ async function chay(argv) {
 
   // bỏ mục không còn trong kế hoạch (file ảnh cũ giữ nguyên); mat:* giữ nếu đạo cụ gốc còn
   const idHienCo = new Set([...kq.muc.map((m) => m.id), ...kq.chuaCo.map((c) => c.id)]);
-  const matGoc = (k, v) => k.startsWith('mat:') && v.tu && idHienCo.has(v.tu);
+  const matGoc = (k, v) => k.startsWith('mat:') && v.tu && idHienCo.has(v.tuProp);
   for (const k of Object.keys(mau)) if (!idHienCo.has(k) && !matGoc(k, mau[k])) delete mau[k];
   // mat:* đã biết từ lần chụp đạo cụ trước
   const matDaBiet = [];
@@ -235,7 +236,7 @@ async function chay(argv) {
   const { launchBrowser } = await import('./browser.mjs');
   const { ganNhan, luoiAnh } = await import('./kiem/nhan.mjs');
   const srv = await phucVu(GOC);
-  let browser, daChup = 0;
+  let browser, daChup = 0, hoanTat = false;
   const cho = Math.max(1, Number(opt.cho || 120)) * 1000;
   try {
     try { browser = await launchBrowser(); } catch (e) { console.error(e.message); return 2; }
@@ -279,7 +280,7 @@ async function chay(argv) {
           }
         }
       }
-      if (m.loai === 'mat') e.tu = m.spec.tu;
+      if (m.loai === 'mat') { e.tu = m.spec.tu; e.tuProp = m.tuProp; }
       mau[m.id] = e; daChup++;
       console.log(`  + ${m.id}`);
     }
@@ -290,8 +291,9 @@ async function chay(argv) {
       const g = await luoiAnh(C, co.slice(i, i + 32).map((m) => fs.readFileSync(path.join(dirMau, tenFile(m.id)))), { cot: 4, rong: 1600 });
       if (g) fs.writeFileSync(path.join(dirMau, n === 1 ? '00_mau.jpg' : `00_mau_${n}.jpg`), g);
     }
+    hoanTat = true;
   } finally {
-    ghiXong(daChup);
+    if (hoanTat) ghiXong(daChup); else if (daChup > 0) ghiMau(ep, mau);   // thoát sớm (return 2 / lỗi): không đánh dấu bước xong
     await browser?.close().catch(() => {});
     srv.close();
   }
