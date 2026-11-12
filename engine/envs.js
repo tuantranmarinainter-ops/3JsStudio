@@ -39,6 +39,7 @@ import KITCHEN_ENV, { KITCHEN_FURNISH } from './envs/kitchen.js';
 import BEDROOM_ENV, { BEDROOM_FURNISH } from './envs/bedroom.js';
 import { furnishIds } from './furnish.js';
 import { ganTang, layersOf, TANG } from './envs/tang.js';
+import { CAR_ASSETS } from './townlife.js';
 import { taoHatThoiTiet } from './envs/gio-thoi-tiet.js';
 
 import { LIGHTS, applyLite } from './lights.js';
@@ -56,6 +57,7 @@ export const ENV_ASSETS = [
   ...'abcdefghijklmnopqrstu'.split('').map((c) => `city-kit-suburban/building-type-${c}`),
   'city-kit-suburban/tree-large', 'city-kit-suburban/tree-small', 'city-kit-suburban/fence-1x4', 'city-kit-suburban/planter',
   'city-kit-roads/light-square', 'city-kit-roads/light-curved',
+  ...CAR_ASSETS,   // xe Kenney Car Kit (CC0) chạy/đậu ở thị trấn — engine/townlife.js
   ...['A', 'B', 'C', 'D'].map((c) => `nature-kit/tree_pineTall${c}_detailed`), ...['A', 'B', 'C', 'D', 'E', 'F'].map((c) => `nature-kit/tree_pineRound${c}`),
   'nature-kit/tree_palmTall', 'nature-kit/tree_palmDetailedTall', 'nature-kit/tree_palmBend', 'nature-kit/tree_palmDetailedShort',
   'nature-kit/tree_oak', 'nature-kit/tree_detailed', 'nature-kit/tree_fat', 'nature-kit/tree_default', 'nature-kit/tree_tall',

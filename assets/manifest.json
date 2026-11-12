@@ -12330,5 +12330,165 @@
   "credit": "rough_linen by Poly Haven (polyhaven.com/a/rough_linen), CC0",
   "kind": "texture-pbr",
   "use": "vải trơn quần áo (MAT_TEX.fabric)"
+ },
+ {
+  "id": "car-kit/sedan",
+  "src": "assets/kenney/car-kit/sedan.glb",
+  "source": "kenney.nl/assets/car-kit",
+  "license": "CC0",
+  "credit": "Car Kit by Kenney (https://kenney.nl/assets/car-kit), CC0",
+  "scale": 1,
+  "bbox": [
+   1.5,
+   1.3,
+   2.55
+  ],
+  "nodes": [
+   "body",
+   "wheel-front-left",
+   "wheel-front-right",
+   "wheel-back-left",
+   "wheel-back-right"
+  ]
+ },
+ {
+  "id": "car-kit/sedan-sports",
+  "src": "assets/kenney/car-kit/sedan-sports.glb",
+  "source": "kenney.nl/assets/car-kit",
+  "license": "CC0",
+  "credit": "Car Kit by Kenney (https://kenney.nl/assets/car-kit), CC0",
+  "scale": 1,
+  "bbox": [
+   1.3,
+   1.1,
+   2.55
+  ],
+  "nodes": [
+   "body",
+   "wheel-front-left",
+   "wheel-front-right",
+   "wheel-back-left",
+   "wheel-back-right"
+  ]
+ },
+ {
+  "id": "car-kit/taxi",
+  "src": "assets/kenney/car-kit/taxi.glb",
+  "source": "kenney.nl/assets/car-kit",
+  "license": "CC0",
+  "credit": "Car Kit by Kenney (https://kenney.nl/assets/car-kit), CC0",
+  "scale": 1,
+  "bbox": [
+   1.5,
+   1.5,
+   2.75
+  ],
+  "nodes": [
+   "body",
+   "wheel-front-left",
+   "wheel-front-right",
+   "wheel-back-left",
+   "wheel-back-right"
+  ]
+ },
+ {
+  "id": "car-kit/van",
+  "src": "assets/kenney/car-kit/van.glb",
+  "source": "kenney.nl/assets/car-kit",
+  "license": "CC0",
+  "credit": "Car Kit by Kenney (https://kenney.nl/assets/car-kit), CC0",
+  "scale": 1,
+  "bbox": [
+   1.5,
+   1.35,
+   2.75
+  ],
+  "nodes": [
+   "body",
+   "wheel-front-left",
+   "wheel-front-right",
+   "wheel-back-left",
+   "wheel-back-right"
+  ]
+ },
+ {
+  "id": "car-kit/suv",
+  "src": "assets/kenney/car-kit/suv.glb",
+  "source": "kenney.nl/assets/car-kit",
+  "license": "CC0",
+  "credit": "Car Kit by Kenney (https://kenney.nl/assets/car-kit), CC0",
+  "scale": 1,
+  "bbox": [
+   1.5,
+   1.3,
+   2.7
+  ],
+  "nodes": [
+   "body",
+   "wheel-front-left",
+   "wheel-front-right",
+   "wheel-back-left",
+   "wheel-back-right"
+  ]
+ },
+ {
+  "id": "car-kit/hatchback-sports",
+  "src": "assets/kenney/car-kit/hatchback-sports.glb",
+  "source": "kenney.nl/assets/car-kit",
+  "license": "CC0",
+  "credit": "Car Kit by Kenney (https://kenney.nl/assets/car-kit), CC0",
+  "scale": 1,
+  "bbox": [
+   1.3,
+   1.1,
+   2.85
+  ],
+  "nodes": [
+   "body",
+   "wheel-front-left",
+   "wheel-front-right",
+   "wheel-back-left",
+   "wheel-back-right"
+  ]
+ },
+ {
+  "id": "car-kit/delivery",
+  "src": "assets/kenney/car-kit/delivery.glb",
+  "source": "kenney.nl/assets/car-kit",
+  "license": "CC0",
+  "credit": "Car Kit by Kenney (https://kenney.nl/assets/car-kit), CC0",
+  "scale": 1,
+  "bbox": [
+   1.5,
+   1.65,
+   3.25
+  ],
+  "nodes": [
+   "body",
+   "wheel-front-left",
+   "wheel-front-right",
+   "wheel-back-left",
+   "wheel-back-right"
+  ]
+ },
+ {
+  "id": "car-kit/truck",
+  "src": "assets/kenney/car-kit/truck.glb",
+  "source": "kenney.nl/assets/car-kit",
+  "license": "CC0",
+  "credit": "Car Kit by Kenney (https://kenney.nl/assets/car-kit), CC0",
+  "scale": 1,
+  "bbox": [
+   1.5,
+   1.3,
+   2.95
+  ],
+  "nodes": [
+   "body",
+   "wheel-front-left",
+   "wheel-front-right",
+   "wheel-back-left",
+   "wheel-back-right"
+  ]
  }
 ]

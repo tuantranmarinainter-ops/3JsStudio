@@ -17,6 +17,7 @@ import { createWind } from '../wind.js';
 import { createGrass } from '../grass.js';
 import { createSway } from '../sway.js';
 import { createCloudShade } from '../cloudshade.js';
+import { createRaft } from '../raft.js';
 
 const PERCH_ROOF = 0.9, PERCH_RAIL = 0.715;
 export default function build(g, e, H) {
@@ -94,6 +95,7 @@ export default function build(g, e, H) {
     if (Math.hypot(x + 10, z) < 30 || Math.hypot(x - 42, z + 26) < 9) continue;
     const o = pf(['marram-grass-tuft-8c7a99', 'marram-grass-tuft-8c7a99', 'shell-scatter-6d36b7', 'tamarisk-bush-ba4337', 'driftwood-log-89a68f'][i % 5], 1 + hash(i, 23) * 0.5); if (o) place(g, o, x, 0, z, hash(i, 24) * 6); }
   const dinghy = pf('rowing-dinghy-022673', 1.1); if (dinghy) place(g, dinghy, -40, 0, 62, 0.8);
+  e.raft = createRaft(THREE, e.sea, { x: -37, z: 70, y: -0.6, yaw: 0.5, length: 13, beam: 7 }); g.add(e.raft.root); e.dinghy = dinghy;   // bè gỗ nổi thay thuyền chèo (khoá 'raft')
   // mòng biển ĐỨNG yên (model Polyfork dáng đứng, không có cánh vỗ) — đậu trên lan can / mái hải đăng, đá, cát; chỉ quay đầu + nhún nhẹ
   g.updateMatrixWorld(true);
   const lb = new THREE.Box3().setFromObject(e.lighthouse), lc = lb.getCenter(new THREE.Vector3()), lw = (lb.max.x - lb.min.x) / 2, lh = lb.max.y - lb.min.y;
@@ -106,5 +108,5 @@ export default function build(g, e, H) {
   ];
   e.gullBase = perches;
   e.gulls = perches.map((p, i) => { const o = pf('herring-gull-55c3da', 1.3); return o ? place(g, o, p.x, p.y, p.z, p.ry) : null; });
-  return { update(t) { e.wind.update(t); e.cloudShade.group.visible = globalThis.__autoFx?.cloudShade !== false; if (globalThis.__autoFx?.sway !== false) e.sway.update(t); else e.sway.rest(); e.meadow.group.visible = globalThis.__autoFx?.grass !== false; e.meadow.set({ flowers: globalThis.__autoFx?.flowers !== false }); if (e.meadow.group.visible) { e.meadow.setPushers(meadowFeet()); e.meadow.update(t, stage.camera); } e.sea(t); e.crabs.update(t); e.grass.update(t); e.gulls.forEach((gl, i) => { if (gl) gullIdle(gl, e.gullBase[i], i, t); }); } };
+  return { update(t) { e.wind.update(t); e.cloudShade.group.visible = globalThis.__autoFx?.cloudShade !== false; if (globalThis.__autoFx?.sway !== false) e.sway.update(t); else e.sway.rest(); e.meadow.group.visible = globalThis.__autoFx?.grass !== false; e.meadow.set({ flowers: globalThis.__autoFx?.flowers !== false }); if (e.meadow.group.visible) { e.meadow.setPushers(meadowFeet()); e.meadow.update(t, stage.camera); } e.sea(t); { const rOn = e.raft.update(t); if (e.dinghy) e.dinghy.visible = !rOn; } e.crabs.update(t); e.grass.update(t); e.gulls.forEach((gl, i) => { if (gl) gullIdle(gl, e.gullBase[i], i, t); }); } };
 }

@@ -12,6 +12,8 @@
 //   walk    d   : quãng đường đã đi (stud) → pha bước; root phải được dời đúng d dọc hướng +Z cục bộ
 //   kneel   0→1 : khuỵu chân hạ hiên xuống (thân hạ thấp, đầu gối gập cao)
 
+import { createStairs } from './stairs.js';
+
 export const HOUSE_STYLES = {
   family: {
     wall: '#b23a32', plank: '#8f2a25', trim: '#f4f1ea', roof: '#d92b22', roofDark: '#9e1c16',   // mái ĐỎ (người dùng chốt: khác mái xanh của xóm)
@@ -157,6 +159,7 @@ export function createHouse(THREE, opts = {}) {
   }
   const stairRail = [-3.8, 3.8].map((x) => add(B(0.35, 0.35, 5.2), trim, x, 0.2, D / 2 + PORCH + 2.6, 'stair_rail'));
   stairRail.forEach((r) => { r.rotation.x = 0.55; });
+  const stairsGround = createStairs(THREE, { shell, trim, porchMat, z0: D / 2 + PORCH });   // cầu thang chạm đất theo độ cao nhà (engine/stairs.js)
 
   // --- 4 chân ---
   const wood = new THREE.MeshStandardMaterial({ color: '#6b4226', roughness: 0.9 });
@@ -207,6 +210,7 @@ export function createHouse(THREE, opts = {}) {
     let y = BASE + (standY - BASE) * smooth(lift);
     const bob = walking ? Math.abs(Math.sin(cyc * Math.PI * 2)) : 0;
     y -= bob * 0.9 * lift;
+    stairsGround.update(y);
     body.position.set(Math.sin(t * 31) * 0.25 * shake, y, 0);
     body.rotation.set((p.pitch ?? 0) + (walking ? Math.sin(cyc * Math.PI * 4) * 0.012 : 0),
                       0,

@@ -10,6 +10,7 @@ CC0 (không bắt buộc, ghi để cảm ơn):
 Nội thất (engine/furnish.js) — CC0, không bắt buộc ghi, ghi để cảm ơn:
 - KayKit : Furniture Bits 1.0 by Kay Lousberg (https://www.kaylousberg.com, https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0) — assets/kaykit/furniture/, CC0.
 - Furniture Kit by Kenney (https://kenney.nl/assets/furniture-kit) — assets/kenney/furniture-kit/, CC0.
+- Car Kit by Kenney (https://kenney.nl/assets/car-kit) — assets/kenney/car-kit/ (sedan, taxi, van, suv, hatchback, delivery, truck…), xe chạy/đậu ở thị trấn (engine/townlife.js), CC0.
 - Mô hình quét Poly Haven (polyhaven.com), CC0 — ghi công từng món trong assets/manifest.json (`credit`).
 
 Ảnh vân PBR chất liệu (assets/polyhaven-tex/<id>/512webp, dùng trong engine/materials.js MAT_TEX + trang so engine/mat-lab.html) — Poly Haven (polyhaven.com), CC0, không bắt buộc ghi, ghi để cảm ơn:

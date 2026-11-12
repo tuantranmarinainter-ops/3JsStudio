@@ -75,7 +75,7 @@ export const SHOTS = [
   { id: 's032', f: [1111, 1128], env: 'shipStorm', line: 12, cam: { p: [34, 7.5, 27], l: [0, 10, 0], p2: [40, 8.5, 33], fov: 42, roll: [-0.04, 0.03], ease: 'linear' } },
   { id: 's033', f: [1129, 1142], env: 'storm', line: 12, cam: { p: [6, 11.5, 22], l: [-30, 14, -140], p2: [0, 12.5, 15], l2: [-40, 24, -140], fov: 52, roll: [0.04, -0.03], ease: 'linear' } },
   { id: 's034', f: [1143, 1199], env: 'kitchen', line: 12, cast: { mom: R(-2, 0, -9, { to: [-14, 0, -9], anim: 'walk', face: 'sad', speed: 1.2 }) },
-    cam: { p: [-4, 7, 8], l: [-8, 5, -12], p2: [-6, 7, 7], fov: 44 } },
+    cam: { p: [-4, 7, 8], l: [-8, 6.4, -12], p2: [-6, 7, 7], fov: 44 } },
 
   // ===== 05 · Nhà mình bắt đầu đi =====
   { id: 's035', f: [1200, 1219], env: 'town', line: 13, house: FAM({ legsOut: 0, lift: 0 }), cam: orb('house', 0, 64, -1, { look: [0, 3, 0], dist2: 76, fov: 52 }) },

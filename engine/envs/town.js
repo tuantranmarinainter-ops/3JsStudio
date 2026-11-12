@@ -151,7 +151,7 @@ export default function build(g, e, H) {
   for (const [x, z] of parked) { const dw = plane(9, 18, drive, 0.07, 'driveway'); dw.position.set(x, 0.07, z + (z < 50 ? 6 : -6)); g.add(dw); }
   // xe đậu dọc phố sau (bên lề)
   for (let i = 0; i < 10; i++) { const z = BACK_ST[i % 3], x = -230 + i * 49 + hash(i, 21) * 10; if (!nearX(x, z > 0 ? XS : XN, 14)) parked.push([x, z + (i % 2 ? 2.4 : -2.4), Math.PI / 2 * (i % 2 ? 1 : -1)]); }
-  const life = townLife(THREE, K, { parked }); g.add(life.group);
+  const life = townLife(THREE, K, { parked, fit }); g.add(life.group);
   // đèn đường + cây vỉa hè; chừa sân nhà gia đình (|x|<40, chỗ chân nhà đặt xuống) và miệng phố ngang → không che mặt tiền nhà
   for (let i = -10; i <= 10; i++) {
     let lx = i * 40 + 12; if (i === 0) lx = -32; if (nearX(lx, XN, 10)) lx += 14;
