@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Báo cáo nhanh về file âm thanh: thời lượng, âm lượng, LUFS, lặng đầu, cờ lỗi.
 Dùng: python tools/audio-check.py <file hoặc glob…> [--min-dur 0.2] [--max-dur 30] [--silent -45] [--json]
+Mục tiêu độ to (chỉ khi có --target): LUFS_OUT (ngoài --lufs-min..--lufs-max, mặc định -16..-14), TRUE_PEAK (> --tp-max, mặc định -1 dBTP).
 Cờ: SILENT (mean < --silent), TOO_SHORT, TOO_LONG, CLIPPING (max >= -0.1 dB), LONG_LEAD (lặng đầu > 0.3 s).
 """
 import argparse, glob, json, os, re, subprocess, sys
@@ -18,7 +19,7 @@ def fnum(m):
 
 
 def analyze(path, a):
-    r = {'file': path, 'dur': None, 'mean': None, 'max': None, 'lufs': None, 'lead': None, 'flags': [], 'error': None}
+    r = {'file': path, 'dur': None, 'mean': None, 'max': None, 'lufs': None, 'tp': None, 'lead': None, 'flags': [], 'error': None}
     p = run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=nw=1:nk=1', path])
     try:
         r['dur'] = float(p.stdout.strip())
@@ -28,7 +29,7 @@ def analyze(path, a):
         return r
     # 1 lần chạy ffmpeg: volumedetect + ebur128 + silencedetect (lặng đầu)
     f = run(['ffmpeg', '-hide_banner', '-nostats', '-i', path, '-af',
-             'volumedetect,ebur128=framelog=quiet,silencedetect=n=-50dB:d=0.02', '-f', 'null', NULL])
+             'volumedetect,ebur128=framelog=quiet:peak=true,silencedetect=n=-50dB:d=0.02', '-f', 'null', NULL])
     t = f.stderr
     r['mean'] = fnum(re.search(r'mean_volume:\s*(-?[\d.]+|-inf)', t) and re.search(r'mean_volume:\s*(-?[\d.]+)', t))
     r['max'] = fnum(re.search(r'max_volume:\s*(-?[\d.]+)', t))
@@ -36,6 +37,9 @@ def analyze(path, a):
     m = re.search(r'Integrated loudness:\s*I:\s*(-?[\d.]+|-inf)\s*LUFS', t)
     if m and m.group(1) != '-inf':
         r['lufs'] = float(m.group(1))
+    m = re.search(r'True peak:\s*Peak:\s*(-?[\d.]+|-inf)\s*dBFS', t)
+    if m and m.group(1) != '-inf':
+        r['tp'] = float(m.group(1))
     # lặng đầu: silence_start ~ 0 → silence_end đầu tiên
     s0 = re.search(r'silence_start:\s*(-?[\d.]+)', t)
     e0 = re.search(r'silence_end:\s*(-?[\d.]+)', t)
@@ -53,6 +57,11 @@ def analyze(path, a):
         r['flags'].append('CLIPPING')
     if r['lead'] is not None and r['lead'] > 0.3:
         r['flags'].append('LONG_LEAD')
+    if a.target:
+        if r['lufs'] is not None and not (a.lufs_min <= r['lufs'] <= a.lufs_max):
+            r['flags'].append('LUFS_OUT')
+        if r['tp'] is not None and r['tp'] > a.tp_max:
+            r['flags'].append('TRUE_PEAK')
     return r
 
 
@@ -66,6 +75,10 @@ def main():
     ap.add_argument('--min-dur', type=float, default=0.2)
     ap.add_argument('--max-dur', type=float, default=30)
     ap.add_argument('--silent', type=float, default=-45, help='ngưỡng mean dB coi là lặng')
+    ap.add_argument('--target', action='store_true', help='cảnh báo độ to tích hợp ngoài --lufs-min..--lufs-max hoặc true peak > --tp-max')
+    ap.add_argument('--lufs-min', type=float, default=-16)
+    ap.add_argument('--lufs-max', type=float, default=-14)
+    ap.add_argument('--tp-max', type=float, default=-1, help='dBTP')
     ap.add_argument('--json', action='store_true')
     a = ap.parse_args()
 
@@ -84,11 +97,11 @@ def main():
         return
     fm = lambda v, w, d=1: (f'{v:.{d}f}' if v is not None else '-').rjust(w)
     wn = min(max(len(os.path.basename(r['file'])) for r in res), 48)
-    print(f"{'file'.ljust(wn)} {'dur(s)':>7} {'mean':>7} {'max':>7} {'LUFS':>7} {'lead(s)':>7}  cờ")
+    print(f"{'file'.ljust(wn)} {'dur(s)':>7} {'mean':>7} {'max':>7} {'LUFS':>7} {'TP':>6} {'lead(s)':>7}  cờ")
     for r in res:
         n = os.path.basename(r['file'])
         n = n if len(n) <= wn else n[:wn - 1] + '…'
-        print(f"{n.ljust(wn)} {fm(r['dur'], 7, 2)} {fm(r['mean'], 7)} {fm(r['max'], 7)} {fm(r['lufs'], 7)} {fm(r['lead'], 7, 2)}  "
+        print(f"{n.ljust(wn)} {fm(r['dur'], 7, 2)} {fm(r['mean'], 7)} {fm(r['max'], 7)} {fm(r['lufs'], 7)} {fm(r['tp'], 6)} {fm(r['lead'], 7, 2)}  "
               + (' '.join(r['flags']) or '-') + (f" ({r['error']})" if r['error'] else ''))
     bad = sum(1 for r in res if r['flags'])
     print(f'Tổng: {len(res)} file, {bad} có cờ.')

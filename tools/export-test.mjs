@@ -16,6 +16,7 @@ import { spawnSync } from 'child_process';
 import { resolve, join, relative } from 'path';
 import { pathToFileURL } from 'url';
 import { launchBrowser } from './browser.mjs';
+import { kiemMoDau } from './mo-dau.mjs';
 
 const args = process.argv.slice(2);
 const input = args.find((a, i) => !a.startsWith('--') && !(i > 0 && args[i - 1].startsWith('--')));
@@ -167,6 +168,15 @@ for (const c of combos) {
     if (!!p.a !== expectAudio) r.errs.push(expectAudio ? 'thiếu âm thanh' : 'có âm thanh dù tắt giọng + tiếng động');
     if (p.v.width !== W || p.v.height !== H) r.errs.push(`kích thước ${p.v.width}×${p.v.height} ≠ ${W}×${H}`);
     if (p.a && c.voice && p.adur < (tEnd - tStart) - 0.5) r.errs.push(`âm thanh ngắn (${p.adur.toFixed(2)}s)`);
+    // cổng mở đầu (hook) 3 giây đầu: khởi âm ≤ 100 ms, không lặng > 600 ms — chỉ cảnh báo, không tính LỖI
+    r.moDau = '';
+    if (p.a && tStart === 0) {
+      try {
+        const m = kiemMoDau(file);
+        r.moDau = m.status === 'pass' ? `đạt (khởi âm ${m.onsetMs} ms)` : `CẦN XEM LẠI: ${m.flags.join(' ')}`;
+        r.moDauSha = m.sha256;
+      } catch (e) { r.moDau = 'không kiểm được: ' + e.message; }
+    } else r.moDau = p.a ? 'bỏ qua (đoạn không bắt đầu từ 0 s)' : 'bỏ qua (không âm thanh)';
     // khung giữa + các mốc --frames (giây tuyệt đối → trừ tStart)
     r.frames = [];
     const dur = tEnd - tStart;
@@ -186,7 +196,8 @@ for (const c of combos) {
     await setupPage().catch(() => {});
   }
   r.ok = r.errs.length === 0;
-  console.log(`[${label}] ${r.ok ? 'OK' : 'LỖI: ' + r.errs.join('; ')}  ${r.info || ''}`);
+  console.log(`[${label}] ${r.ok ? 'OK' : 'LỖI: ' + r.errs.join('; ')}  ${r.info || ''}` + (r.moDau ? `
+  mở đầu: ${r.moDau}` : ''));
 }
 
 // ---- bảng ghép khung (mỗi tổ hợp 1 hàng: giữa + các mốc --frames) ----
@@ -215,8 +226,8 @@ if (withFrame.length) {
 // ---- báo cáo ----
 const bad = results.filter((r) => !r.ok).length;
 let md = `# Kiểm tra xuất MP4\n\n- Trang: \`${relative(process.cwd(), htmlPath)}\`\n- Độ phân giải: ${res} (${SIZES[res].join('×')}) · đoạn ${tStart}–${tEnd}s\n- Kết quả: ${results.length - bad}/${results.length} OK\n\n`;
-md += '| Tổ hợp | Kết quả | Thông số | Lỗi | Trạng thái |\n|---|---|---|---|---|\n';
-for (const r of results) md += `| ${r.label} | ${r.ok ? 'OK' : 'LỖI'} | ${r.info || ''} | ${r.errs.join('; ')} | ${(r.status || '').replace(/\|/g, '/')} |\n`;
+md += '| Tổ hợp | Kết quả | Thông số | Lỗi | Mở đầu 3 s | sha256 | Trạng thái |\n|---|---|---|---|---|---|---|\n';
+for (const r of results) md += `| ${r.label} | ${r.ok ? 'OK' : 'LỖI'} | ${r.info || ''} | ${r.errs.join('; ')} | ${r.moDau || ''} | ${r.moDauSha ? r.moDauSha.slice(0, 12) : ''} |${(r.status || '').replace(/\|/g, '/')} |\n`;
 md += `\nBảng khung (mỗi hàng = 1 tổ hợp): \`${join(outDir, 'sheet.jpg')}\`\n`;
 await writeFile(join(outDir, 'report.md'), md);
 console.log('\n' + md);

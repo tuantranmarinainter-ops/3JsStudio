@@ -5,6 +5,7 @@
 //   node tools/doctor.mjs [ep001] [--fix-procs] [--shaders]
 //     ep001        tên tập (mặc định ep001)
 //     --fix-procs  dừng các tiến trình render/TTS bị treo (mục 7)
+//     --mix f.mp4  mục 11: kiểm độ to (LUFS -16..-14, true peak ≤ -1 dBTP) của bản xuất
 //     --shaders    mục 9: mở trang tập, đếm program shader + thời gian tới __ready (chậm ~1 phút, tools/shaders.mjs)
 // In danh sách ✔ / ⚠ / ✘ theo từng mục; thoát mã 1 nếu có ít nhất một ✘.
 // Không cần npm; chỉ Node + child_process (git, ffprobe, powershell).
@@ -360,6 +361,34 @@ section('10. Tư thế mô hình');
     if (r.thieu) info(`${r.thieu} GLB không có trên máy (bỏ qua)`);
     if (r.boQua) info(`${r.boQua} entry không phải .glb (gltf/ảnh) — không kiểm`);
   }
+}
+
+// ---------------------------------------------------------------- 11. Tiếng nền / nhạc phủ phim + độ to
+section('11. Tiếng nền & nhạc phủ phim · độ to');
+{
+  const rj = (p) => { try { return exists(p) ? JSON.parse(read(p)) : null; } catch (e) { bad(`${rel(p)} hỏng: ${e.message}`); return null; } };
+  const sfxLayers = rj(path.join(EPDIR, 'sfx_layers.json')), layers = rj(path.join(EPDIR, 'sfx/layers.json')), plan = rj(path.join(EPDIR, 'music/plan.json'));
+  if (!sfxLayers && !plan) info('không có sfx_layers.json / music/plan.json → bỏ qua');
+  else if (!(total > 0)) warn('không biết độ dài phim (mục 4) → bỏ qua kiểm phủ nền');
+  else {
+    const { gomPhu, khoangTrong } = await import('./phu-nen.mjs');
+    const g = gomPhu({ sfxLayers, layers, plan });
+    g.quietThieuLyDo.forEach((q) => warn(`layers.json quiet thiếu "reason" (không được tính): ${JSON.stringify(q)}`));
+    const gaps = khoangTrong(g.covers, total, 0.5);
+    if (gaps.length) {
+      warn(`${gaps.length} khoảng > 0.5 s không có tiếng nền/nhạc: ${head(gaps.map(([a, b]) => `${a.toFixed(2)}–${b.toFixed(2)} (${(b - a).toFixed(1)} s)`), 6)}`);
+      info('→ thêm nhạc/tiếng nền, hoặc khai báo "quiet":[{from,to,reason}] trong sfx/layers.json nếu chủ ý yên lặng');
+    } else ok(`mọi giây của ${fmt(total)} có tiếng nền hoặc nhạc${g.quiet.length ? ` (kể cả ${g.quiet.length} đoạn yên lặng có lý do)` : ''}`);
+  }
+  // độ to: chạy audio-check --target trên MP4 do người dùng đưa (--mix <mp4>); bỏ qua nếu không có
+  const mi = args.indexOf('--mix');
+  if (mi >= 0 && args[mi + 1]) {
+    const r = spawnSync('python', [path.join(ROOT, 'tools/audio-check.py'), args[mi + 1], '--target', '--json'], { encoding: 'utf8', maxBuffer: 1 << 26 });
+    try {
+      const j = JSON.parse(r.stdout)[0], f = j.flags.filter((x) => x === 'LUFS_OUT' || x === 'TRUE_PEAK');
+      (f.length ? warn : ok)(`${path.basename(args[mi + 1])}: ${j.lufs} LUFS, true peak ${j.tp} dBTP (mục tiêu -16..-14 LUFS, ≤ -1 dBTP)${f.length ? ' → ' + f.join(' ') : ''}`);
+    } catch { warn('audio-check.py lỗi: ' + (r.stderr || r.stdout || '').split('\n').filter(Boolean).pop()); }
+  } else info('độ to: thêm --mix <file.mp4> để kiểm LUFS/true peak của bản xuất (python tools/audio-check.py <file> --target)');
 }
 
 console.log(`\nKết quả: ${nBad} ✘ · ${nWarn} ⚠`);
