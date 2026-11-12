@@ -1266,6 +1266,8 @@ function buildAccessories(THREE, { o, head, torso, hips, parts, addMesh, mat, se
     // cổ mũ trùm (vòng sau gáy) + túi mũ nằm trên lưng
     const hood = addMesh(torso, new THREE.TorusGeometry(0.74, 0.15, 12, 28, PI * 1.08), hoodM, 'hood');
     hood.rotation.set(PI / 2, 0, PI * 0.96); hood.position.set(0, 1.62, 0.0); hood.scale.set(1.05, 0.9, 0.85);
+    // bịt 2 đầu cung ống (trước: hở ống 1 mặt → nhìn xuyên vành cổ áo ở 2 bên vai, góp ý #25 s071)
+    for (const a of [0, PI * 1.08]) { const cap = addMesh(hood, new THREE.SphereGeometry(0.15, 14, 10), hoodM, 'hood_cap'); cap.position.set(0.74 * Math.cos(a), 0.74 * Math.sin(a), 0); }
     const pouch = addMesh(torso, RB(1.15, 0.62, 0.26, 0.12), hoodM, 'hood_pouch'); pouch.position.set(0, 1.3, -0.6); pouch.rotation.x = 0.22;
     const strings = [];
     for (const sx of [-1, 1]) {
