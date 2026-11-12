@@ -83,7 +83,7 @@ async function init() {
     <div class="muted">${W0}×${H0} · ${FPS} fps · ${fmt(DUR)}</div>
     <div class="row"><span class="lbl">Ngôn ngữ</span><select id="xlang"><option value="vi">Tiếng Việt</option><option value="en">English</option></select></div>
     <div class="row" id="xvidrow"><span class="lbl">Giọng</span><select id="xvid"></select></div>
-    <div class="row"><label class="chk"><input id="xsubs" type="checkbox" checked> Phụ đề</label><label class="chk"><input id="xvoice" type="checkbox" checked> Giọng đọc</label></div>
+    <div class="row"><label class="chk"><input id="xsubs" type="checkbox" checked> Phụ đề</label><label class="chk"><input id="xvoice" type="checkbox" checked> Giọng đọc</label><label class="chk" id="xcredrow" style="display:none"><input id="xcred" type="checkbox"> Ghi công</label></div>
     <div id="xsfxbox" style="display:none"><div class="lbl" style="width:auto;margin:2px 0 6px">Tiếng động</div><div id="xsfx"></div></div>
     <div id="xaudopt" class="row" style="flex-direction:column;align-items:stretch;gap:6px">
       <label class="chk" id="xduckrow" style="display:none"><input id="xduck" type="checkbox" checked> Giảm nhạc khi có lời</label>
@@ -147,6 +147,7 @@ async function init() {
   else {
     const o = window.getOptions(); $('xlang').value = o.lang; $('xsubs').checked = o.subs; $('xvoice').checked = o.voice;
     if (!document.querySelector('audio[data-lang="en"]')) $('xlang').querySelector('[value=en]').remove();
+    if (o.credits != null) { $('xcredrow').style.display = ''; $('xcred').checked = !!o.credits; }   // ảnh ghi công 3 giây cuối (engine/credits.js)
   }
   const opts = () => (hasOpts ? window.getOptions() : { lang: 'vi', subs: true, voice: true });
   // giọng đọc đang chọn (null nếu tắt giọng)
@@ -164,6 +165,7 @@ async function init() {
     if (!hasOpts) return;
     const wasPlaying = playing; if (wasPlaying) pause();
     const o = { lang: $('xlang').value, subs: $('xsubs').checked, voice: $('xvoice').checked };
+    if ($('xcredrow').style.display !== 'none') o.credits = $('xcred').checked;
     if (ev && ev.target && ev.target.id === 'xvid') o.vid = $('xvid').value;
     window.setOptions(o);
     if (ev && ev.target && ev.target.id === 'xlang') fillVoices();
@@ -171,7 +173,7 @@ async function init() {
     show(+$('xseek').value);
     if (wasPlaying) play();
   };
-  for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice']) $(id).onchange = applyOpts;
+  for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice', 'xcred']) $(id).onchange = applyOpts;
   // hiệu ứng hình: mỗi ô = 1 hiệu ứng của engine/post.js
   const fxOpts = hasOpts ? window.getOptions() : null;
   if (fxOpts && fxOpts.fx) {
@@ -400,7 +402,7 @@ async function init() {
     const name = `${title}${tag}_${P.w}x${P.h}${ts > 0 || te < DUR ? `_${ts}-${te}s` : ''}.mp4`.replace(/[\\/:*?"<>|]/g, '_');
     busy = true; cancel = false;
     $('xgo').disabled = true; $('xplay').disabled = true; $('xstop').style.display = '';
-    for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice', 'xres', 'xduck', 'xloud']) $(id).disabled = true;
+    for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice', 'xcred', 'xres', 'xduck', 'xloud']) $(id).disabled = true;
     for (const el of document.querySelectorAll('#xsfx input')) el.disabled = true;
     for (const el of document.querySelectorAll('#xfx input, .xstep, #xframe, #xannbox button, #xannbox textarea')) el.disabled = true;
     const setStat = (s) => { $('xstat').textContent = s; };
@@ -477,6 +479,7 @@ async function init() {
           const p = window.renderAt(t); if (p && p.then) await p;
           g.drawImage(gl, 0, 0, P.w, P.h);
           drawCaption(g, cap, P.w / W0);
+          drawCredits(g, P.w, P.h, t);
           const vf = new VideoFrame(comp, { timestamp: Math.round(i * 1e6 / FPS), duration: Math.round(1e6 / FPS) });
           venc.encode(vf, { keyFrame: i % (FPS * 2) === 0 }); vf.close();
           pushAudio((f + 1) / FPS);
@@ -509,13 +512,20 @@ async function init() {
       if (stream) { try { await stream.abort(); } catch {} }
     } finally {
       busy = false; $('xgo').disabled = false; $('xplay').disabled = false; $('xstop').style.display = 'none';
-      for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice', 'xres', 'xduck', 'xloud']) $(id).disabled = false;
+      for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice', 'xcred', 'xres', 'xduck', 'xloud']) $(id).disabled = false;
       for (const el of document.querySelectorAll('#xsfx input')) el.disabled = false;
       for (const el of document.querySelectorAll('#xfx input, .xstep, #xframe, #xannbox button, #xannbox textarea')) el.disabled = false;
       if (!SR) $('xmic').disabled = true;
       show(+$('xseek').value);
     }
   };
+}
+
+// Ảnh ghi công 3 giây cuối (engine/credits.js): vẽ phủ lên khung xuất, cùng độ mờ với lớp <img> trên màn hình. Tắt/không có → không vẽ gì.
+function drawCredits(g, w, h, t) {
+  const c = window.__credits; if (!c || !c.img) return;
+  const a = c.alpha(t); if (!(a > 0)) return;
+  g.save(); g.globalAlpha = a; g.drawImage(c.img, 0, 0, w, h); g.restore();
 }
 
 // Vẽ phụ đề y như #cap trong DOM (Nunito 900 92px, viền 14px, bóng, phóng nảy) lên canvas xuất.

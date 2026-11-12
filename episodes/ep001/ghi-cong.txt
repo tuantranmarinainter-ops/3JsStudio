@@ -1,0 +1,55 @@
+GHI CÔNG / CREDITS
+
+Mô hình & hình ảnh
+- Penguin — Polyfork — CC BY 4.0 — https://polyfork.dev/asset/penguin-base
+- Old Lighthouse — Polyfork — CC BY 4.0 — https://polyfork.dev/asset/old-lighthouse-48ca6c
+- Herring Gull — Polyfork — CC BY 4.0 — https://polyfork.dev/asset/herring-gull-55c3da
+- Driftwood Log — Polyfork — CC BY 4.0 — https://polyfork.dev/asset/driftwood-log-89a68f
+- Marram Grass Tuft — Polyfork — CC BY 4.0 — https://polyfork.dev/asset/marram-grass-tuft-8c7a99
+- Shell Scatter — Polyfork — CC BY 4.0 — https://polyfork.dev/asset/shell-scatter-6d36b7
+- Tamarisk Bush — Polyfork — CC BY 4.0 — https://polyfork.dev/asset/tamarisk-bush-ba4337
+- Rowing Dinghy — Polyfork — CC BY 4.0 — https://polyfork.dev/asset/rowing-dinghy-022673
+- Snow-Laden Spruce — Polyfork — CC BY 4.0 — https://polyfork.dev/asset/snow-laden-spruce-36716e
+- Windblown Larch — Polyfork — CC BY 4.0 — https://polyfork.dev/asset/windblown-larch-abb99c
+- Boulder Field Cluster — Polyfork — CC BY 4.0 — https://polyfork.dev/asset/boulder-field-cluster-08e364
+- Rock Outcrop — Polyfork — CC BY 4.0 — https://polyfork.dev/asset/rock-outcrop-158ac3
+- Bare Mountain Rowan — Polyfork — CC BY 4.0 — https://polyfork.dev/asset/bare-mountain-rowan-10e72e
+- ROBLOX R15 Model — ShiroTheDream — CC BY 4.0 — https://sketchfab.com/3d-models/roblox-r15-model-4fb241582b0a4c50b55f890183866b4e
+- Sperm Whale - animated - marine mammals series — nolanfa — CC BY 4.0 — https://sketchfab.com/3d-models/sperm-whale-animated-marine-mammals-series-37dd875ead1b44318b682a978ed53983
+- Kenney — CC0 — kenney.nl
+- Poly Haven — CC0 — polyhaven.com
+- KayKit (Kay Lousberg) — CC0 — kaylousberg.com
+
+Âm thanh & nhạc
+- falling papers.wav — FreqMan — CC BY 4.0 — https://freesound.org/people/FreqMan/sounds/19952
+- Ambience, Night Wildlife, A.wav — InspectorJ — CC BY 4.0 — https://freesound.org/people/InspectorJ/sounds/352514
+- 210523_1598_FR_Blizzard.wav — kevp888 — CC BY 4.0 — https://freesound.org/people/kevp888/sounds/573290
+- Lapping Waves and Sea Gulls 2.wav — digifishmusic — CC BY 4.0 — https://freesound.org/people/digifishmusic/sounds/43779
+- Branch Snap.aif — JasonElrod — CC BY 4.0 — https://freesound.org/people/JasonElrod/sounds/85433
+- Cute Snore.wav — Trogg — CC BY 4.0 — https://freesound.org/people/Trogg/sounds/489478
+- saz_parrots.wav — soundbytez — CC BY 4.0 — https://freesound.org/people/soundbytez/sounds/100248
+- Blue Whale B call @ 5X — MBARI_MARS — CC BY 4.0 — https://freesound.org/people/MBARI_MARS/sounds/343682
+- Water Swirl, Small, 11.wav — InspectorJ — CC BY 4.0 — https://freesound.org/people/InspectorJ/sounds/398700
+- Blustery Wind — iainmccurdy — CC BY 4.0 — https://freesound.org/people/iainmccurdy/sounds/644384
+- wave3.wav — Kayyy — CC BY 4.0 — https://freesound.org/people/Kayyy/sounds/61013
+- cabinet_door_thump.wav — joedeshon — CC BY 4.0 — https://freesound.org/people/joedeshon/sounds/632535
+- Simulated wood crash 02 — Jagadamba — CC BY 4.0 — https://freesound.org/people/Jagadamba/sounds/258072
+- Monster Stomp Footsteps Sequence — Vilkas_Sound — CC BY 4.0 — https://freesound.org/people/Vilkas_Sound/sounds/753178
+- Splash.wav — patchen — CC BY 4.0 — https://freesound.org/people/patchen/sounds/6729
+- Hiss/Spray Burst — zerolagtime — CC BY 4.0 — https://freesound.org/people/zerolagtime/sounds/231550
+- small_water_fall_in_the_woods_2.wav — volivieri — CC BY 4.0 — https://freesound.org/people/volivieri/sounds/38390
+- Female Gasp.wav — nicklas3799 — CC BY 4.0 — https://freesound.org/people/nicklas3799/sounds/467348
+- AMBIENT - Rain - Far Away SoftThunder.mp3 — Arctura — CC BY 4.0 — https://freesound.org/people/Arctura/sounds/34064
+- sfx-creaks-1.wav — davilca — CC BY 4.0 — https://freesound.org/people/davilca/sounds/158199
+- Breaking wooden plank — jorickhoofd — CC BY 4.0 — https://freesound.org/people/jorickhoofd/sounds/178593
+- Bidous Transit — Blue Dot Sessions — CC BY 3.0 — https://www.jamendo.com/track/1365389
+- Wingspan — Blue Dot Sessions — CC BY 3.0 — https://www.jamendo.com/track/1365390
+- The Storm and the Adventure — Komiku — CC BY 3.0 — https://www.jamendo.com/track/1262526
+- Feeling - Piano Instrumental — E. Erkut — CC BY 3.0 — https://www.jamendo.com/track/1320222
+- Freesound — CC0 — freesound.org
+
+Công cụ & phương pháp
+- three.js 0.187.0 — three.js authors — MIT — https://threejs.org
+- GSAP 3.15.0 — GreenSock — GSAP Standard License — https://gsap.com/standard-license
+- mp4-muxer 5.2.1 — Vanilagy — MIT — https://github.com/Vanilagy/mp4-muxer
+- Phương pháp hoạt hình, hiệu ứng & dựng cảnh — fwjelaa (FWJ STUDIOS) — phương pháp, chuyển sang three.js

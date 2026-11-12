@@ -63,7 +63,8 @@
       import { snapPostcards } from '/engine/snap.js';
       import { applyGrunge } from '/engine/grunge.js';
       import { applyMaterials, MATS } from '/engine/materials.js';
-      import { buildCast, buildHouses, buildProps, buildFx } from '/episodes/ep001/episode.js';
+      import { EPISODE, buildCast, buildHouses, buildProps, buildFx } from '/episodes/ep001/episode.js';
+      import { createCredits } from '/engine/credits.js';
       import { SHOTS } from '/episodes/ep001/shots.js';
       import { CAPTIONS } from '/episodes/ep001/captions.js';
       import { CAPTIONS_EN } from '/episodes/ep001/captions_en.js';
@@ -109,6 +110,11 @@
       applyMaterials(THREE, stage.scene);
       await MATS.ready;   // ảnh vân CC0 (gỗ/ngói/đá/đất/cát/vải) tải xong trước khi vẽ
       const tl = buildTimeline(SHOTS, 30);
+      // GHI CÔNG cuối phim (engine/credits.js): ảnh episodes/<ep>/ghi-cong.png (tools/ghi-cong.mjs) phủ lên 3 giây cuối, tắt được (?credits=0|1 hoặc setOptions({ credits })).
+      // Mặc định bật khi EPISODE.credits !== false và có file ảnh.
+      const credits = await createCredits({ root: document.getElementById('root'), src: '/episodes/ep001/ghi-cong.png', total: tl.total,
+        on: q.get('credits') !== null ? q.get('credits') !== '0' : EPISODE.credits !== false });
+      window.__credits = credits;   // tools/export-ui.js vẽ ảnh này vào khung xuất MP4
       const director = createDirector({ THREE, stage, envs, K, actors, houses, props, fx });
       // Hiệu ứng hình (engine/post.js), mỗi cái bật/tắt riêng: ?fx=grade,bloom  (danh sách bật) hoặc ?fx=none
       const post = createPost(THREE, stage, { actors: Object.values(actors).map((a) => a.root) });
@@ -176,6 +182,7 @@
         warmEnv(shot.env);   // lazy: nếu env này chưa dịch (đang chờ nền) thì dịch ngay, rồi vẽ khung thật ngay sau đây
         director.render(shot, local, k, T);
         caption(T);
+        credits.update(T);
       });
       warmEnv(tl.at(0).shot.env, 1);   // trước __ready chỉ cần khung đầu; phần còn lại của env này dịch ở nền / khi seek tới
       window.__tm.warm0 = performance.now();
@@ -188,10 +195,11 @@
       window.__stage = stage;
       installMeasure({ THREE, stage, shots: tl });   // window.__measure(t) / window.__mask(t) cho tool kiểm luật
       window.getOptions = () => ({ ...OPTS, vid: { ...OPTS.vid }, voices: VOICES.map(({ id, lang, label, source }) => ({ id, lang, label, source })),
-        fx: window.__post ? window.__post.options : null, fxLabels: FX_LABELS });
+        fx: window.__post ? window.__post.options : null, fxLabels: FX_LABELS, credits: credits.available ? credits.on : null });
       window.setOptions = (o = {}) => {
         if (o.lang && CAPS[o.lang] && o.lang !== OPTS.lang) { OPTS.lang = o.lang; setPostcardLang(o.lang); }
         if (o.subs !== undefined) OPTS.subs = !!o.subs;
+        if (o.credits !== undefined) credits.setOn(o.credits);
         if (o.voice !== undefined) OPTS.voice = !!o.voice;
         if (o.fx && window.__post) window.__post.set(o.fx);
         if (o.vid) { const v = VOICES.find((x) => x.id === o.vid); if (v) OPTS.vid[v.lang] = v.id; }

@@ -55,6 +55,7 @@
       import { createPost, FX_DEFAULTS, FX_LABELS } from '/engine/post.js';
       import { EPISODE } from '/episodes/_template/episode.js';
       import { SHOTS } from '/episodes/_template/shots.js';
+      import { createCredits } from '/engine/credits.js';
       import { CAPTIONS } from '/episodes/_template/captions.js';
 
       await document.fonts.load("900 84px 'Be Vietnam Pro'", 'Việt ữ ầ ặ').catch(() => {});
@@ -74,6 +75,11 @@
       // shot ngắn theo loại → cam/cast đầy đủ (liên tục địa điểm + vị trí diễn viên giữa các shot)
       const shots = expandShots(SHOTS, { places, crowd: crowdNames(EPISODE.actors), env: EPISODE.env || 'kenneyTown', light: EPISODE.light, fps: FPS });
       const tl = buildTimeline(shots, FPS);
+      // GHI CÔNG cuối phim (engine/credits.js): ảnh episodes/<ep>/ghi-cong.png (tools/ghi-cong.mjs) phủ lên 3 giây cuối, tắt được (?credits=0|1 hoặc setOptions({ credits })).
+      // Mặc định bật khi EPISODE.credits !== false và có file ảnh.
+      const credits = await createCredits({ root: document.getElementById('root'), src: '/episodes/_template/ghi-cong.png', total: tl.total,
+        on: q.get('credits') !== null ? q.get('credits') !== '0' : EPISODE.credits !== false });
+      window.__credits = credits;   // tools/export-ui.js vẽ ảnh này vào khung xuất MP4
       const director = createDirector({ THREE, stage, envs, K, actors, houses: {}, props: {}, fx: {} });
       const post = createPost(THREE, stage, { actors: Object.values(actors).map((a) => a.root) });
       if (q.get('fx') !== null) { const on = new Set(q.get('fx').split(',')); post.set(Object.fromEntries(Object.keys(FX_DEFAULTS).map((k) => [k, on.has(k)]))); }
@@ -99,6 +105,7 @@
         const { shot, local, k } = tl.at(T);
         director.render(shot, local, k, T);
         overlay(T, shot, local);
+        credits.update(T);
       });
       for (const e of Object.values(envs.envs)) e.group.visible = true;
       stage.renderer.compile(stage.scene, stage.camera);
@@ -109,9 +116,10 @@
       window.__stage = stage;
       installMeasure({ THREE, stage, shots: tl });   // window.__measure(t) / window.__mask(t) cho tool kiểm luật
       window.__places = places;
-      window.getOptions = () => ({ ...OPTS, vid: {}, voices: [], fx: post.options, fxLabels: FX_LABELS });
+      window.getOptions = () => ({ ...OPTS, vid: {}, voices: [], fx: post.options, fxLabels: FX_LABELS, credits: credits.available ? credits.on : null });
       window.setOptions = (o = {}) => {
         if (o.subs !== undefined) OPTS.subs = !!o.subs;
+        if (o.credits !== undefined) credits.setOn(o.credits);
         if (o.voice !== undefined) OPTS.voice = !!o.voice;
         if (o.fx) post.set(o.fx);
         lastCap = -2;

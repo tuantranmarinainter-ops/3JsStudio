@@ -1,6 +1,6 @@
 // Chạy nút "Xuất MP4" của file HTML gộp (dist/*.html) hoàn toàn tự động, rồi kiểm tra từng MP4 xuất ra.
 //   node tools/export-test.mjs dist/ep001.html [--range 76:92] [--res 2k|1080p|4k]
-//        [--matrix "lang=vi,en;subs=1,0;voice=1"] [--vid <idGiọng>] [--frames 128.5,129] [--out output/kiem-tra/<ngày-giờ>]
+//        [--matrix "lang=vi,en;subs=1,0;voice=1"] [--vid <idGiọng>] [--credits 1|0] [--frames 128.5,129] [--out output/kiem-tra/<ngày-giờ>]
 // Ma trận: tích Descartes các giá trị lang / subs / voice / fx / sfx (mặc định lang=vi;subs=1;voice=1;fx=default;sfx=default).
 //   fx=default|none|all|<id>+<id>…    hiệu ứng hình: BẬT đúng các id nêu, còn lại tắt (grade,bloom,dof,vignette,outline,storm)
 //   sfx=default|none|all|<lớp>[@%]+…  lớp tiếng động giữ BẬT (nen,buoc-chan,khoanh-khac…), @% = âm lượng; lớp không nêu thì tắt
@@ -139,6 +139,7 @@ for (const c of combos) {
     if (opt('vid') && (await page.locator('#xvid option').count())) await page.selectOption('#xvid', opt('vid'));
     await page.setChecked('#xsubs', c.subs);
     await page.setChecked('#xvoice', c.voice);
+    if (opt('credits') != null && await page.locator('#xcred').count()) await page.setChecked('#xcred', opt('credits') === '1');   // --credits 1|0: ảnh ghi công 3 giây cuối
     if (fxOn) await applyFx(c.fx);
     let sfxLayersOn = null;
     if (sfxOn) sfxLayersOn = await applySfx(c.sfx);

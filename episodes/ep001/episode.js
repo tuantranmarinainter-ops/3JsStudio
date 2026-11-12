@@ -9,6 +9,7 @@ export const EPISODE = {
   id: 'ep001',
   title: 'Ngôi nhà biết đi',
   fps: 30,
+  credits: false,   // ep001 đã chốt hình: ảnh ghi công 3 giây cuối (ghi-cong.png) mặc định TẮT; bật bằng ô "Ghi công" trong trình phát hoặc ?credits=1
   frames: 5132,
   rule: 'Mỗi đêm một ngôi nhà ngẫu nhiên mọc chân, đi tới một nơi trên thế giới rồi đêm sau đi về.',
   weakness: 'Nhà chúng tôi không đi về — cứ đi tiếp mỗi đêm.',
