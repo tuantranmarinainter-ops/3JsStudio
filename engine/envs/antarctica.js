@@ -14,9 +14,10 @@ import { createCamp } from '../castaway.js';
 import { smoothFlash } from '../flash.js';
 
 export default function build(g, e, H) {
-  const { THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
+  const { ganTang, THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
   g.add(bumpy(900, 900, 70, '#f3f8fb', 6, 0.4, 'snowfield', 0.03));
-  g.add(snowRanges(THREE, { day: true, seed: 3 }));
+  const ranges = snowRanges(THREE, { day: true, seed: 3 });
+  g.add(ganTang(ranges, 'back'));
   // Hòm thư KHÔNG còn nằm trong env: nó là prop 'mailboxTown' gắn vào hiên nhà (parent:'house') trong shots.js; cảnh không có nhà (s022/24/25) đặt prop ở toạ độ thế giới.
   // Đàn cánh cụt: NP con, kích cỡ khác nhau (clone penguin-base). Vị trí tụ tập = lưới lệch ở trước nhà.
   const NP = 18, PEN = [];
@@ -26,16 +27,24 @@ export default function build(g, e, H) {
     const col = i % 6, row = Math.floor(i / 6);
     PEN.push({ o, sz, hx: 14 + col * 3.1 + (hash(i, 42) - 0.5) * 1.6 + (row % 2) * 1.2, hz: 27 + row * 3.6 + (hash(i, 43) - 0.5) * 1.8, face: hash(i, 44) * 1.4 - 0.2, ph: hash(i, 45) * 6, lag: hash(i, 46) * 0.9 });
   }
-  e.penguins = PEN.map((p) => p.o);
+  e.penguins = PEN.map((p) => ganTang(p.o, 'mid'));
   // góp ý #28: bỏ 'dwarf-pine-mat' (vật xanh lạ trên tuyết)
-  for (let i = 0; i < 14; i++) { const o = i % 3 === 2 ? null : pf(['boulder-field-cluster-08e364', 'rock-outcrop-158ac3'][i % 3], 1.4 + hash(i, 9));  const ox = (hash(i, 1) - 0.5) * 220, oz = -30 - hash(i, 2) * 120 + (i % 3 === 0 ? 100 : 0); if (o && !(ox > 0 && ox < 70 && oz > 5 && oz < 60)) place(g, o, ox, 0, oz, hash(i, 3) * 6); }
-  e.snow = fxSnow(THREE, { count: 900, area: [120, 60, 120], speed: 3, size: 0.45, wind: [3, 0] }); g.add(e.snow.obj);
+  for (let i = 0; i < 14; i++) { const o = i % 3 === 2 ? null : pf(['boulder-field-cluster-08e364', 'rock-outcrop-158ac3'][i % 3], 1.4 + hash(i, 9));  const ox = (hash(i, 1) - 0.5) * 220, oz = -30 - hash(i, 2) * 120 + (i % 3 === 0 ? 100 : 0); if (o && !(ox > 0 && ox < 70 && oz > 5 && oz < 60)) ganTang(place(g, o, ox, 0, oz, hash(i, 3) * 6), 'mid'); }
+  // ô FX tangXa (engine/post.js; ep001 tắt): vài tảng băng nhỏ quanh khu nhân vật = tầng trước. update() ẩn/hiện theo ô.
+  const tx = new THREE.Group(); tx.name = 'antarctica_tangxa'; g.add(tx);
+  { const ice = new THREE.Group(); ice.name = 'antarctica_ice_chunks';
+    for (let i = 0, n = 0; n < 7 && i < 60; i++) { const a = hash(i, 71) * 6.283, r = 26 + hash(i, 72) * 22, x = Math.cos(a) * r, z = 10 + Math.sin(a) * r;
+      if (x > 6 && x < 42 && z > 22 && z < 52) continue;
+      const s0 = 0.5 + hash(i, 73) * 0.9, m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat('#dbe9f2', { flatShading: true, roughness: 0.55 }));
+      m.scale.set(s0 * 1.3, s0 * 0.7, s0); m.position.set(x, s0 * 0.25, z); m.rotation.y = hash(i, 74) * 6.283; ice.add(m); n++; }
+    tx.add(ganTang(ice, 'front')); }
+  e.snow = fxSnow(THREE, { count: 900, area: [120, 60, 120], speed: 3, size: 0.45, wind: [3, 0] }); g.add(ganTang(e.snow.obj, 'front'));
   // Bão tuyết theo shot (góp ý #16): shot ghi snowStorm:{k,wind} + fn đặt globalThis.__snowStorm (dùng 1 lần mỗi khung). Mặc định tắt.
   e.blizzard = fxBlizzard(THREE); g.add(e.blizzard.obj);
   // Dòng thời gian cánh cụt: t<TA đứng thành đàn (ảnh bưu thiếp, cảnh bố); TA..PT0 ẩn; PT0 đi vào từ TRÁI (s047), tụ trước nhà (s048),
   // TL (sau s049, ngoài khung) quay đi bước ra bên phải rồi biến mất → s081/s082 KHÔNG còn cánh cụt đứng chết.
   const TA = 50, PT0 = 55.7, PV = 5, TL = 60.5, TEND = TL + 7;
-  return { ground: { kind: 'snow', y: 0.1 }, update(t, ctx) { e.snow.update(t, ctx.focus || [0, 0, 0]);
+  return { suSong: ['chim'], ground: { kind: 'snow', y: 0.1 }, update(t, ctx) { tx.visible = globalThis.__autoFx?.tangXa !== false; e.snow.update(t, ctx.focus || [0, 0, 0]);
     { const S = globalThis.__snowStorm; globalThis.__snowStorm = null; const WK = globalThis.__autoFx?.wind === false ? 0.3 : 1;
       e.blizzard.update(t, ctx.focus || [0, 0, 0], S ? { k: (S.k ?? 1) * WK, wind: S.wind ?? 18, ground: 0.1 } : { k: 0 }); }
     PEN.forEach((P, i) => {
