@@ -89,7 +89,16 @@ export function docAnimCo(goc = GOC) {
   const t = fs.readFileSync(path.join(goc, 'engine', 'r15.js'), 'utf8');
   const m = /export const R15_ANIMATIONS\s*=\s*\{\n(.*?)\n\};/s.exec(t);
   if (!m) throw new Error('không đọc được R15_ANIMATIONS trong engine/r15.js');
-  return new Set([...m[1].matchAll(/^ {2}([A-Za-z_]\w*)\s*:/gm)].map((x) => x[1]));
+  const co = new Set([...m[1].matchAll(/^ {2}([A-Za-z_]\w*)\s*:/gm)].map((x) => x[1]));
+  // animation đăng ký thêm vào bảng R15 dùng chung (engine/anim-them.js) + bảng của gấu (engine/bear.js)
+  const doc = (f) => { try { return fs.readFileSync(path.join(goc, 'engine', f), 'utf8'); } catch { return ''; } };
+  const them = /export const ANIM_THEM\s*=\s*\{\n(.*?)\n\};/s.exec(doc('anim-them.js'));
+  if (them) for (const x of them[1].matchAll(/^ {2}([A-Za-z_]\w*)\s*:/gm)) co.add(x[1]);
+  const bear = doc('bear.js');
+  const bt = /export const BEAR_ANIMATIONS\s*=\s*\{\n(.*?)\n\};/s.exec(bear);
+  if (bt) for (const x of bt[1].matchAll(/^ {2}([A-Za-z_]\w*)\s*:/gm)) co.add(x[1]);
+  for (const x of bear.matchAll(/^BEAR_ANIMATIONS\.([A-Za-z_]\w*)\s*=/gm)) co.add(x[1]);
+  return co;
 }
 
 // ANIM_WORDS / PLACE_WORDS / TOWN_PLACES của tools/storyboard.py (chỉ đọc) — để không coi mô tả tự do là "thiếu".
@@ -272,12 +281,32 @@ function ungVienThat(syns, ctx) {
 // mô hình không khai pose là vật tĩnh -> coi như đứng
 const hopTuThe = (e, pose) => !pose || (Array.isArray(e.pose) ? e.pose : e.pose ? [e.pose] : (pose === 'standing' ? ['standing'] : [])).includes(pose);
 
+// khớp tên đạo cụ với khoá code: bằng nhau -> alias `vat` đầu kịch bản -> lỏng (từ của tên là tiền tố từ của khoá, hoặc ngược lại)
+function khopKhoaCode(c, ctx) {
+  const tu = (s) => fold(s).split(' ').filter(Boolean);
+  const khoa = [...ctx.propKeys];
+  const bang = (w) => khoa.find((k) => chuanKhoa(k) === chuanKhoa(w));
+  for (const n of [c.ten, c.loai]) { const k = bang(n); if (k) return { khoa: k }; }
+  for (const n of [c.ten, c.loai]) { const a = ctx.alias.get(chuanKhoa(n)); const k = a && bang(a); if (k) return { khoa: k }; }
+  const tienTo = (a, b) => a.length <= b.length && a.every((w, i) => w === b[i]);
+  for (const n of [c.ten, c.loai]) {
+    const nw = tu(n);
+    if (!nw.length) continue;
+    const k = khoa.find((x) => { const kw = x.toLowerCase().split('_'); return tienTo(nw, kw) || tienTo(kw, nw); });
+    if (k) return { khoa: k, long: `tên bỏ dấu "${nw.join('_')}" <-> khoá "${k}"` };
+  }
+  return null;
+}
+
 function xetProp(nhuCau, ctx) {
-  const thieu = [], daCo = [], tuDung = [];
+  const thieu = [], daCo = [], tuDung = [], canhBao = [];
   for (const c of nhuCau.prop.values()) {
     const syns = dichLoai(c.loai);
     const khoaTen = [chuanKhoa(c.ten), chuanKhoa(c.loai)];
     if (khoaTen.some((k) => ctx.dienVien.has(k))) { daCo.push({ ten: c.ten, tuThe: c.tuThe, id: null, nguon: 'dien-vien' }); continue; }   // bear=1 / ga=1: dựng như diễn viên
+    if (ctx.coSan.has(chuanKhoa(c.ten)) || ctx.coSan.has(chuanKhoa(c.loai))) { daCo.push({ ten: c.ten, tuThe: c.tuThe, id: null, nguon: 'co_san' }); canhBao.push(`đạo cụ "${c.ten}" khai co_san: bỏ qua, không dựng`); continue; }
+    const kh = khopKhoaCode(c, ctx);
+    if (kh) { daCo.push({ ten: c.ten, tuThe: c.tuThe, id: null, nguon: 'code', khoa: kh.khoa }); if (kh.long) canhBao.push(`đạo cụ "${c.ten}" khớp lỏng khoá "${kh.khoa}" (${kh.long})`); continue; }
     const bangCode = khoaTen.some((k) => ctx.propCo.has(k)) || (c.loai.trim().split(/\s+/).length <= 2 && syns.some((s) => ctx.propCo.has(chuanKhoa(s))));
     if (bangCode) { daCo.push({ ten: c.ten, tuThe: c.tuThe, id: null, nguon: 'code' }); continue; }   // propKit / PROPS_KB
     const tim = (pose) => {
@@ -298,7 +327,7 @@ function xetProp(nhuCau, ctx) {
       tuDung.push({ loai: 'prop', ten: c.ten, lyDo: khac.length ? `manifest chỉ có tư thế ${[...new Set(khac.flatMap((e) => e.pose ?? []))].join('/') || 'khác'}, cần ${c.tuThe}` : 'không có trong manifest lẫn danh mục cục bộ' });
     }
   }
-  return { thieu, daCo, tuDung };
+  return { thieu, daCo, tuDung, canhBao };
 }
 
 export function lapKeHoach({ kb, manifest, envCo, animCo, propCo = new Set(), tuStoryboard = { anim: [], noi: [], town: new Set() }, danhMuc = { muc: [], trangThai: {} } }) {
@@ -307,10 +336,12 @@ export function lapKeHoach({ kb, manifest, envCo, animCo, propCo = new Set(), tu
   const places = new Set(Object.keys(meta.places || {}));
   const dienVien = new Set(Object.entries(meta.actors || {}).filter(([, v]) => v && (v.bear || v.ga)).map(([k]) => chuanKhoa(k)));
   const ctx = { manifest, envCo, animCo, animTu: tuStoryboard.anim, noi: tuStoryboard.noi, town: tuStoryboard.town, danhMuc,
-    propCo: new Set([...propCo].map(chuanKhoa)), places, dienVien };
+    propCo: new Set([...propCo].map(chuanKhoa)), propKeys: [...propCo], places, dienVien,
+    alias: new Map(Object.entries(meta.vat || {}).flatMap(([k, ds]) => (Array.isArray(ds) ? ds : [ds]).map((d) => [chuanKhoa(d), k]))),
+    coSan: new Set((Array.isArray(meta.co_san) ? meta.co_san : String(meta.co_san || '').split(',')).map((s) => chuanKhoa(s)).filter(Boolean)) };
   const e = xetEnv(nhuCau, ctx), p = xetProp(nhuCau, ctx), a = xetAnim(nhuCau, ctx);
   return {
-    env: e.thieu, prop: p.thieu, anim: a.thieu, tuDung: [...e.tuDung, ...p.tuDung], canhBao: e.canhBao,
+    env: e.thieu, prop: p.thieu, anim: a.thieu, tuDung: [...e.tuDung, ...p.tuDung], canhBao: [...e.canhBao, ...p.canhBao],
     daCo: { env: e.daCo, prop: p.daCo, anim: a.daCo }, danhMuc: danhMuc.trangThai,
   };
 }

@@ -257,3 +257,38 @@ test('C1: "- prop: a, b, c" tách thành từng đạo cụ; env "Cần dựng" 
   assert.deepEqual(r.env, []);
   assert.ok(r.canhBao.some((x) => x.includes('street')));
 });
+
+// ---------- vòng sửa 2: anim-them/bear, alias vat, khớp lỏng, co_san ----------
+test('V2: docAnimCo đọc cả ANIM_THEM (anim-them.js) và BEAR_ANIMATIONS (bear.js)', () => {
+  const g = tmp();
+  fs.mkdirSync(path.join(g, 'engine'));
+  fs.writeFileSync(path.join(g, 'engine', 'r15.js'), 'export const R15_ANIMATIONS = {\n  idle: () => 1,\n};\n');
+  fs.writeFileSync(path.join(g, 'engine', 'anim-them.js'), 'export const ANIM_THEM = {\n  // c\n  sitUp: (t) => 1,\n  climb: (t) => 2,\n};\n');
+  fs.writeFileSync(path.join(g, 'engine', 'bear.js'), 'export const BEAR_ANIMATIONS = {\n  idle: (t) => 1,\n  hug: (t) => 1,\n};\nBEAR_ANIMATIONS.cower = BEAR_ANIMATIONS.hug;\n');
+  const a = docAnimCo(g);
+  for (const k of ['idle', 'sitUp', 'climb', 'hug', 'cower']) assert.ok(a.has(k), k);
+});
+
+test('V2: đạo cụ khớp alias `vat`, khớp lỏng theo tiền tố từ (ghi canhBao), ưu tiên code trước manifest', () => {
+  const propCo = new Set(['nhan_moi', 'ket_tien', 'bang_tin', 'thung_tiem_bach', 'ban_do']);
+  const man = [ent('furniture/table', ['standing'])];
+  const r = lapKeHoach({
+    kb: kb([{ kind: 'prop', name: 'nhẫn', desc: '' }, { kind: 'prop', name: 'két tiền tiệm bánh', desc: '' }, { kind: 'prop', name: 'chồng thùng in tên tiệm', desc: '' },
+      { kind: 'prop', name: 'bản đồ thị trấn', desc: '' }, { kind: 'prop', name: 'kèn', desc: '' }], [], { vat: { thung_tiem_bach: ['chồng thùng in tên tiệm'] } }),
+    manifest: man, envCo: new Set(), animCo: new Set(), propCo,
+  });
+  assert.deepEqual(r.prop.map((p) => p.ten), ['kèn']);
+  assert.ok(r.daCo.prop.filter((p) => p.nguon === 'code').length === 4);
+  assert.ok(r.canhBao.some((x) => x.includes('"nhẫn"') && x.includes('nhan_moi')));
+  assert.ok(r.canhBao.some((x) => x.includes('két tiền tiệm bánh') && x.includes('ket_tien')));
+  assert.ok(!r.canhBao.some((x) => x.includes('chồng thùng')), 'alias là khớp chính xác, không cảnh báo');
+});
+
+test('V2: co_san bỏ mục khỏi thiếu và ghi canhBao', () => {
+  const r = lapKeHoach({
+    kb: kb([{ kind: 'prop', name: 'mu_ga', desc: '' }, { kind: 'prop', name: 'mũ lính gác', desc: '' }, { kind: 'prop', name: 'kèn', desc: '' }], [], { co_san: 'mu_ga, mũ lính gác' }),
+    manifest: [], envCo: new Set(), animCo: new Set(),
+  });
+  assert.deepEqual(r.prop.map((p) => p.ten), ['kèn']);
+  assert.equal(r.canhBao.filter((x) => x.includes('co_san')).length, 2);
+});

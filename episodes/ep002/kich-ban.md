@@ -18,6 +18,7 @@ actor bap: bear=1 bow=#2e86de
 actor bear2: bear=1 bow=#e74c3c
 actor bear3: bear=1 bow=#f1c40f
 vat thung_tiem_bach: chồng thùng in tên tiệm
+co_san: mu_ga, mũ lính gác, mũ đầu bếp
 crowd: 8
 place bakery: 18, -6
 place tailor: 26, -6

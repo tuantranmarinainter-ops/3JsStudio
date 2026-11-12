@@ -41,6 +41,7 @@ Khoá thông tin tập: `title, seed, rule, weakness, twist, solution, env, ligh
 `crowd: <số>`, `place <tên>: x, z[, ry]`, `vat <tên_ascii>: <tên Việt>[, <tên Việt 2>]`, `nhom <tên>: a, b, c`). `actor` nhận mọi tuỳ chọn `createR15` của `engine/r15.js`
 (skin, shirt, sleeves, pants, skirt, hat, hatColor, hair, hairColor, scarf, beard, lashes…) và được chép NGUYÊN xuống `episode.js`
 (diễn viên không phải người: `actor bap: bear=1 bow=#2e86de`, hero Gà `actor hero: ga=1` — không bị thêm màu áo R15).
+`co_san: <tên>, <tên>` = mục "Cần dựng" người làm phim tuyên bố ĐÃ CÓ / không dựng cho bản này (vd `co_san: mu_ga, mũ lính gác`); `tools/kb/asset-plan.mjs` bỏ chúng khỏi danh sách thiếu và ghi vào `canhBao`.
 
 ## Cột của bảng (tên Việt hoặc Anh, có dấu hay không đều được)
 | Cột | Anh | Ý nghĩa |
