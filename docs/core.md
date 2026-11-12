@@ -218,3 +218,6 @@ triplanarChunk({ prefix: 'bk', oriented: kind === 'wood' })  // GLSL: BkOut o = 
 - `engine/grass.js` `createGrass(THREE,{wind, area:{center,size,round}, heightAt, cell, height, colors, seed, follow})`: cỏ instanced theo hash ô thế giới, 3 vòng LOD, **1 program**; `setPushers([[x,y,z,r]…])` cỏ rạp quanh chân; `lightFrom(sun, hemi)` gọi trong `onBeforeRender` (đèn shot đặt sau env.update).
 - `engine/sway.js` `createSway(THREE, wind)` → `addPalm/addTree/update(t)/rest()`: xoay group trên CPU, không thêm shader.
 - Đang dùng: `envs/island.js` (bãi cỏ + cây dừa); ô FX `grass`, `sway`. Trang thử: `engine/grass-lab.html`, `engine/sway-lab.html`; gộp 1 file mở bằng file://: `node tools/lab1file.mjs <lab> dist/<lab>.html`.
+
+## Bóng mây trôi
+- `engine/cloudshade.js` `createCloudShade(THREE, wind)` → `add(geo,{x,y,z})`, `lightFrom(sun)`: tấm phủ nhân màu (1 program) trên mặt đất phẳng; `wind.set({cloud:[độ tối, cỡ m, nhân tốc độ, che phủ]})` → GLSL `cloudOpen(xz)` trong wind.js (cỏ tự đọc). Đêm tự tắt. Ô FX `cloudShade`. Đang dùng: island (mặt cát + bãi cỏ).

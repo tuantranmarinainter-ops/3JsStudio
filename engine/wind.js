@@ -45,6 +45,15 @@ uniform vec4 uWind;          // dirx, dirz, speed m/s, gust 0..1
 uniform vec2 uWindScroll;    // dir*speed*t
 uniform float uGustSize;     // cỡ dải gió giật lớn (m); dải nhỏ = 0.28×
 uniform sampler2D tWindNoise;
+uniform vec4 uCloud;         // bóng mây: độ tối 0..1 (0 = tắt), cỡ đám mây (m), nhân tốc độ trôi, độ che phủ 0..1
+// 1 = nắng, < 1 = trong bóng mây; mây trôi theo hướng gió (uWindScroll × uCloud.z), mép mềm
+float cloudOpen(vec2 xz) {
+  if (uCloud.x <= 0.0) return 1.0;
+  vec2 p = (xz - uWindScroll * uCloud.z) / uCloud.y;
+  float c = texture2D(tWindNoise, p).b * 0.7 + texture2D(tWindNoise, p * 2.7 + 0.19).a * 0.3;
+  float th = mix(0.66, 0.38, uCloud.w);
+  return 1.0 - uCloud.x * smoothstep(th, th + 0.1, c);
+}
 float gustAt(vec2 xz) {
   float broad = texture2D(tWindNoise, (xz - uWindScroll) / uGustSize).r;
   float fine  = texture2D(tWindNoise, (xz - uWindScroll * 0.62) / (uGustSize * 0.28)).g;
@@ -62,12 +71,13 @@ vec2 windBend(vec2 xz, float rand) {
 `;
 
 export function createWind(THREE = THREE_NS, opts = {}) {
-  const P = { dir: [1, 0.25], speed: 5, gust: 0.7, seed: 1, gustSize: 61, ...opts };
+  const P = { dir: [1, 0.25], speed: 5, gust: 0.7, seed: 1, gustSize: 61, cloud: [0, 60, 2.6, 0.45], ...opts };
   const uniforms = {
     uWindT: { value: 0 },
     uWind: { value: new THREE.Vector4(1, 0, 5, 0.7) },
     uWindScroll: { value: new THREE.Vector2() },
     uGustSize: { value: 61 },
+    uCloud: { value: new THREE.Vector4(0, 60, 2.6, 0.45) },
     tWindNoise: { value: null },
   };
   let t = 0, noiseSeed = null, noiseData = null;
@@ -84,6 +94,7 @@ export function createWind(THREE = THREE_NS, opts = {}) {
     uniforms.uWindScroll.value.set(d[0] * P.speed * t, d[1] * P.speed * t);
     uniforms.uWindT.value = t;
     uniforms.uGustSize.value = P.gustSize;
+    uniforms.uCloud.value.fromArray(P.cloud);
     if (noiseSeed !== P.seed) makeNoise();
   }
   // ---- bản CPU của gustAt (cùng dữ liệu nhiễu, RepeatWrapping, lọc song tuyến như GPU LinearFilter) ----

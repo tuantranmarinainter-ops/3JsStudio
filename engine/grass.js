@@ -25,7 +25,7 @@ uniform float uRound;   // 1 = vùng tròn (area.round)
 uniform vec4 uPushers[6];   // xyz = tâm bàn chân/thân (m, thế giới), w = bán kính (0 = không dùng) — cỏ rạp ra ngoài
 uniform sampler2D tHeight; uniform vec4 uHRect;   // minx, minz, 1/size, 1/size
 attribute vec2 aCell;
-varying float vV; varying float vRand; varying float vGust; varying vec3 vN;
+varying float vV; varying float vRand; varying float vGust; varying vec3 vN; varying float vCloud;
 uint ph(uint v) { v = v * 747796405u + 2891336453u; uint w = ((v >> ((v >> 28u) + 4u)) ^ v) * 277803737u; return (w >> 22u) ^ w; }
 void cellRand(vec2 c, out vec4 a, out vec4 b) {
   uint h = ph(uint(int(c.x)) ^ ph(uint(int(c.y)) ^ ph(uint(int(uSeed)))));
@@ -69,12 +69,13 @@ void main() {
   vN = normalize(cross(vec3(right.x, 0.0, right.y), axis));
   vV = v; vRand = q.x;
   vGust = gustAt(p) * uWind.w;
+  vCloud = cloudOpen(p);                                      // bóng mây (wind.js) — chỉ che nắng
   gl_Position = projectionMatrix * viewMatrix * wp;
 }
 `;
 const FRAG = /* glsl */`
 uniform vec3 uBase, uTip, uSunDir, uSunColor, uSkyColor;
-varying float vV; varying float vRand; varying float vGust; varying vec3 vN;
+varying float vV; varying float vRand; varying float vGust; varying vec3 vN; varying float vCloud;
 void main() {
   float v = vV;
   vec3 alb = mix(uBase, uTip, pow(v, 1.1));
@@ -86,7 +87,7 @@ void main() {
   float ao = mix(0.32, 1.0, smoothstep(0.0, 0.55, v));
   float diff = max(dot(nn, uSunDir), 0.0);
   float trans = max(dot(-n, uSunDir), 0.0);                   // nắng xuyên qua lá từ phía sau
-  vec3 col = alb * (uSkyColor * 0.55 * ao + uSunColor * diff * 0.9 * mix(0.55, 1.0, ao)) + uTip * uSunColor * trans * 0.4 * v;
+  vec3 col = alb * (uSkyColor * 0.55 * ao + uSunColor * vCloud * diff * 0.9 * mix(0.55, 1.0, ao)) + uTip * uSunColor * vCloud * trans * 0.4 * v;
   gl_FragColor = vec4(col, 1.0);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>

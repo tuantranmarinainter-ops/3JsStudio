@@ -16,6 +16,7 @@ import { createCoconutPalm, gullIdle } from '../coconut.js';
 import { createWind } from '../wind.js';
 import { createGrass } from '../grass.js';
 import { createSway } from '../sway.js';
+import { createCloudShade } from '../cloudshade.js';
 
 const PERCH_ROOF = 0.9, PERCH_RAIL = 0.715;
 export default function build(g, e, H) {
@@ -30,7 +31,21 @@ export default function build(g, e, H) {
   g.add(e.meadow.group);
   // đèn của shot được đặt SAU env.update → lấy ánh sáng ngay lúc vẽ (không dùng đèn của khung trước)
   const _sun = () => (scene.children.find((o) => o.isDirectionalLight && o.name === 'sun')), _hemi = () => scene.children.find((o) => o.isHemisphereLight);
-  e.meadow.rings.forEach((r) => { r.mesh.onBeforeRender = () => e.meadow.lightFrom(_sun(), _hemi()); });
+  // bóng mây trôi theo cùng gió (engine/cloudshade.js + cloudOpen trong wind.js): phủ mặt cát + bãi cỏ; cỏ tự đọc; ô bật/tắt 'cloudShade'
+  const CLOUD = [0.5, 45, 2.6, 0.45];
+  e.cloudShade = createCloudShade(THREE, e.wind, { far: 240 });
+  e.cloudShade.add(new THREE.CircleGeometry(70, 56), { y: 0.0, name: 'cloud_shade_sand' });
+  e.cloudShade.add(new THREE.CircleGeometry(30, 40), { x: -30, y: 0.7, z: -30, name: 'cloud_shade_meadow' });
+  g.add(e.cloudShade.group);
+  const lightNow = () => {
+    const sun = _sun(); e.cloudShade.lightFrom(sun);
+    const on = globalThis.__autoFx?.cloudShade !== false;
+    e.wind.uniforms.uCloud.value.x = on ? CLOUD[0] * e.cloudShade.uniforms.uSunK.value : 0;   // ban đêm / tắt → không bóng (cả cỏ)
+    e.meadow.lightFrom(sun, _hemi());
+  };
+  e.wind.set({ cloud: CLOUD });
+  e.cloudShade.onRender(lightNow);
+  e.meadow.rings.forEach((r) => { r.mesh.onBeforeRender = lightNow; });
   // cỏ rạp quanh chân: khớp LeftFoot/RightFoot của diễn viên R15 đang hiện (cast đặt trước env.update) → tối đa 6 vật đẩy
   let feet = null; const _fp = new THREE.Vector3();
   const shown = (o) => { for (; o; o = o.parent) if (!o.visible) return false; return true; };
@@ -91,5 +106,5 @@ export default function build(g, e, H) {
   ];
   e.gullBase = perches;
   e.gulls = perches.map((p, i) => { const o = pf('herring-gull-55c3da', 1.3); return o ? place(g, o, p.x, p.y, p.z, p.ry) : null; });
-  return { update(t) { e.wind.update(t); if (globalThis.__autoFx?.sway !== false) e.sway.update(t); else e.sway.rest(); e.meadow.group.visible = globalThis.__autoFx?.grass !== false; if (e.meadow.group.visible) { e.meadow.setPushers(meadowFeet()); e.meadow.update(t, stage.camera); } e.sea(t); e.crabs.update(t); e.grass.update(t); e.gulls.forEach((gl, i) => { if (gl) gullIdle(gl, e.gullBase[i], i, t); }); } };
+  return { update(t) { e.wind.update(t); e.cloudShade.group.visible = globalThis.__autoFx?.cloudShade !== false; if (globalThis.__autoFx?.sway !== false) e.sway.update(t); else e.sway.rest(); e.meadow.group.visible = globalThis.__autoFx?.grass !== false; if (e.meadow.group.visible) { e.meadow.setPushers(meadowFeet()); e.meadow.update(t, stage.camera); } e.sea(t); e.crabs.update(t); e.grass.update(t); e.gulls.forEach((gl, i) => { if (gl) gullIdle(gl, e.gullBase[i], i, t); }); } };
 }
