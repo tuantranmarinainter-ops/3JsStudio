@@ -232,7 +232,8 @@ script từ đó; thiếu giấy phép rõ → không dùng.
 Phiên thiết kế đã dài. Phiên mới bắt đầu bằng: "Đọc docs/superpowers/specs/2026-11-12-quy-trinh-mot-cau-luat-ra-phim-design.md
 rồi làm tiếp mục còn lại số 1." Mục còn lại:
 1. Người dùng duyệt bản thiết kế này (sửa trực tiếp hoặc nói miệng) → cập nhật file.
-2. Viết kế hoạch triển khai (skill superpowers:writing-plans) theo thứ tự mục 10; mỗi tool ở 6.2 là một việc giao agent
+2. ✅ ĐÃ VIẾT 2026-11-12 → `docs/superpowers/plans/2026-11-12-quy-trinh-mot-cau-luat-ra-phim.md` (chờ người dùng duyệt + chọn cách thực thi).
+   Gốc: Viết kế hoạch triển khai (skill superpowers:writing-plans) theo thứ tự mục 10; mỗi tool ở 6.2 là một việc giao agent
    Sonnet (Haiku cho tool chỉ đếm), ≤ 3 agent cùng lúc, mỗi agent file riêng.
 3. Cập nhật `CLAUDE.md`: R15 cho tất cả; thêm skill `viet-kich-ban`, `lam-phim`; thư mục `output/<ep>/duyet/`.
 4. Việc ep001 đang chạy ở phiên con `ep001-sky-storm` (trời, bão, góp ý 3 đợt) và phiên fork (gió, cỏ) — không trộn vào đây.
