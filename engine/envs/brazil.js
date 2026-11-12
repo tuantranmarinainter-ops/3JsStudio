@@ -55,8 +55,8 @@ export default function build(g, e, H) {
   const tx = new THREE.Group(); tx.name = 'brazil_tangxa'; g.add(tx);
   { const far = new THREE.Group(); far.name = 'brazil_far_hills';
     for (let i = 0; i < 14; i++) {
-      const a = (i + hash(i, 61) * 0.6) * 0.44880, r = 420 + hash(i, 62) * 100, w = 120 + hash(i, 63) * 80, h = 40 + hash(i, 64) * 40;
-      const m = new THREE.Mesh(new THREE.SphereGeometry(1, 14, 8), mat('#2f6b3a', { flatShading: true, roughness: 1 }));
+      const a = (i + hash(i, 61) * 0.6) * 0.44880, r = 400 + hash(i, 62) * 90, w = 200 + hash(i, 63) * 100, h = 250 + hash(i, 64) * 100;   // cao hơn tán cây + sương: nhô lên khỏi đường chân trời
+      const m = new THREE.Mesh(new THREE.SphereGeometry(1, 14, 8), mat('#4f8a8c', { flatShading: true, roughness: 1 }));
       m.scale.set(w, h, w * 0.6);
       m.position.set(Math.cos(a) * r, -6, Math.sin(a) * r);
       m.rotation.y = -a + Math.PI / 2;

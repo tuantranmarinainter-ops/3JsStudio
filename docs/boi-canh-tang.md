@@ -97,3 +97,6 @@ Test đo: lấy 1 shot town, gỡ mọi khoá trừ id/t0/dur/f/line, đặt `en
 | sea | 2/2/3 | 1/1/1 | — |
 
 Ngoại lệ tangXa tắt (ep001 tắt): brazil, storm, shipStorm, reef thiếu tầng sau (storm còn thiếu tầng giữa) — vật tầng đó nằm sau ô `tangXa`, đúng thiết kế. Ảnh: `output/look/t13f/<env>_<goc>.png`, `sheet.jpg`.
+
+Giới hạn đã biết: `__measure().tang` đếm theo frustum (mesh con giao khung), KHÔNG xét che khuất (tán cây, buồm, sương có thể che vật tầng). Số đếm ≥ 1 chưa đảm bảo mắt thấy — người duyệt xem bảng mẫu (`output/look/t13f/sheet.jpg`); kiểm che khuất bằng BVH để Task 20b.
+Góc mẫu đã chỉnh cho thấy được tầng sau: brazil `rong` ở trên tán cây (p[0,90,160]) và `can` đứng ngoài rìa rừng (p[0,5,300]); shipStorm `can` lùi ra ngoài tàu (p[-55,9,80]); forest `can` nhìn qua khoảng trống (p[0,7,70]).
