@@ -70,7 +70,7 @@ async function toUrl(p) {
   const rel = path.relative(root, abs).replace(/\\/g, '/');
   if (rel.startsWith('dist/') || rel.startsWith('..') || path.isAbsolute(rel)) return pathToFileURL(abs).href + q;
   await ensureServer();
-  return `http://localhost:${port}/${rel}${q}`;
+  return `http://localhost:${port}/${rel.split('/').map(encodeURIComponent).join('/')}${q}`;
 }
 
 // ---- làm tròn 4 chữ số / bỏ undefined ----
@@ -121,42 +121,73 @@ async function chup(page) {
 }
 const seek = (page, t) => page.evaluate(async (t) => { const r = window.renderAt(t); if (r && r.then) await r; }, t);
 const khungSo = (t) => Math.round(t * FPS);
+const lam4 = (x) => Math.round(x * 1e4) / 1e4;
+const thuTu = (a, b) => a.index - b.index;
 
-async function doShot({ page, C, coMeasure }, s, ng) {
-  const ts = [s.t0 + 1 / FPS, (s.t0 + s.t1) / 2, s.t1 - 1 / FPS];
-  const pngs = [], anh = [], m = [];
-  for (const t of ts) {
-    await seek(page, t);
-    m.push(coMeasure ? await page.evaluate((t) => { try { return JSON.parse(JSON.stringify(window.__measure(t))); } catch { return null; } }, t) : null);
-    const png = await chup(page);
-    pngs.push(png);
-    anh.push(await docAnh(C, png, 135, 240));
-  }
-  let mask = null;
-  if (await page.evaluate(() => typeof window.__mask === 'function')) {
-    try {
-      await page.evaluate(async (t) => { await window.__mask(t); }, ts[1]);
-      mask = await docAnh(C, await chup(page), 135, 240);
-    } catch { mask = null; }
-    finally { await page.evaluate(() => { try { window.__mask(null); } catch { /* bỏ */ } }); }
-  }
-  const e = loaiEnv(s);
-  const ctx = {
-    shot: { id: s.id, type: s.type, dur: s.dur, static: s.static, frame: s.frame, read: s.read },
-    m: m.some(Boolean) ? m : null, anh, mask, env: { dem: e.dem, tuyet: e.tuyet, mua: e.mua },
-  };
-  const luat = kiemShot(ctx, ng);
-  if (e.ghiChu) luat.L7 = { ...luat.L7, ghiChu: [luat.L7.ghiChu, e.ghiChu].filter(Boolean).join('; ') };
-  const loi = Object.keys(luat).filter((k) => luat[k].ok === false && !luat[k].skip);
-  const khung = [khungSo(ts[0]), khungSo(ts[1]), khungSo(ts[2])];
-  const jpgs = [];
-  if (coAnh) {
-    const dong2 = loi.length ? loi.map((k) => `${k} ${TEN_LUAT[k]}`).join(' · ') : '✅';
-    for (let i = 0; i < 3; i++) jpgs.push(await ganNhan(C, pngs[i], `${s.id} f${khung[i]} t=${ts[i].toFixed(2)}s`, dong2));
-  }
-  // tên file: khung đầu đặt theo frame bắt đầu của shot (s001 -> f0000), giữa/cuối theo frame đo
-  return { id: s.id, rec: { type: s.type ?? null, dur: s.dur, khung, luat, loi }, jpgs, tenKhung: [khungSo(s.t0), khung[1], khung[2]] };
+// shot ném lỗi: mọi luật = lỗi, skip 'loi'
+function ketQuaLoi(msg) {
+  const luat = {};
+  for (const ma of Object.keys(LUAT)) luat[ma] = { ok: false, val: null, nguong: null, skip: 'loi', ghiChu: 'loi: ' + msg };
+  return luat;
 }
+
+async function doShot(tab, s, ng) {
+  const { page, C, coMeasure } = tab;
+  const dur = lam4(Math.round((s.t1 - s.t0) * FPS) / FPS);
+  try {
+    const ts = [s.t0 + 1 / FPS, (s.t0 + s.t1) / 2, s.t1 - 1 / FPS];
+    const pngs = [], anh = [], m = [];
+    for (const t of ts) {
+      await seek(page, t);
+      m.push(coMeasure ? await page.evaluate((t) => { try { return JSON.parse(JSON.stringify(window.__measure(t))); } catch { return null; } }, t) : null);
+      const png = await chup(page);
+      pngs.push(png);
+      anh.push(await docAnh(C, png, 135, 240));
+    }
+    // cảnh có vật gắn userData.vai không? (đếm trong scene; không có __stage thì xét số đo)
+    const nVai = await page.evaluate(() => {
+      const sc = window.__stage && window.__stage.scene; if (!sc || !sc.traverse) return null;
+      let n = 0; sc.traverse((o) => { if (o.userData && o.userData.vai) n++; }); return n;
+    });
+    const coVaiShot = nVai === null ? m.some((x) => x && Array.isArray(x.vat) && x.vat.length > 0) : nVai > 0;
+    const dungMeasure = coMeasure && coVaiShot;
+    let mask = null;
+    if (dungMeasure && await page.evaluate(() => typeof window.__mask === 'function')) {
+      try {
+        await page.evaluate(async (t) => { await window.__mask(t); }, ts[1]);
+        mask = await docAnh(C, await chup(page), 135, 240);
+      } catch { mask = null; }
+      finally { await page.evaluate(() => { try { window.__mask(null); } catch { /* bỏ */ } }); }
+    }
+    const e = loaiEnv(s);
+    const ctx = {
+      shot: { id: s.id, type: s.type, dur, static: s.static, frame: s.frame, read: s.read },
+      m: dungMeasure && m.some(Boolean) ? m : null, anh, mask, env: { dem: e.dem, tuyet: e.tuyet, mua: e.mua },
+    };
+    const luat = kiemShot(ctx, ng);
+    if (coMeasure && !coVaiShot) for (const ma of Object.keys(luat)) if (luat[ma].skip === 'khong-co-measure') luat[ma] = { ...luat[ma], skip: 'khong-co-vai' };
+    if (e.ghiChu) luat.L7 = { ...luat.L7, ghiChu: [luat.L7.ghiChu, e.ghiChu].filter(Boolean).join('; ') };
+    const loi = Object.keys(luat).filter((k) => luat[k].ok === false && !luat[k].skip);
+    const khung = ts.map(khungSo);
+    const jpgs = [];
+    if (coAnh) {
+      const dong2 = loi.length ? loi.map((k) => `${k} ${TEN_LUAT[k]}`).join(' · ') : '✅';
+      for (let i = 0; i < 3; i++) jpgs.push(await ganNhan(C, pngs[i], `${s.id} f${khung[i]} t=${ts[i].toFixed(2)}s`, dong2));
+    }
+    return { id: s.id, index: s.index, coVai: coVaiShot, rec: { type: s.type ?? null, dur, khung, luat, loi }, jpgs };
+  } catch (err) {
+    try { await page.evaluate(() => { try { if (window.__mask) window.__mask(null); } catch { /* bỏ */ } }); } catch { /* bỏ */ }
+    const msg = String((err && err.message) || err).split('\n')[0].slice(0, 200);
+    const t = [s.t0 + 1 / FPS, (s.t0 + s.t1) / 2, s.t1 - 1 / FPS];
+    return { id: s.id, index: s.index, coVai: false, loiMsg: msg, jpgs: [], rec: { type: s.type ?? null, dur, khung: t.map(khungSo), luat: ketQuaLoi(msg), loi: ['loi'] } };
+  }
+}
+
+const tenAnh = (id, f) => `${id}_f${String(f).padStart(4, '0')}.jpg`;
+const xoaAnhShot = (dir, id) => {
+  if (!fs.existsSync(dir)) return;
+  for (const f of fs.readdirSync(dir)) if (f.startsWith(id + '_f') && f.endsWith('.jpg')) fs.rmSync(path.join(dir, f), { force: true });
+};
 
 // ---- chạy ----
 const t0 = Date.now();
@@ -164,16 +195,29 @@ try {
   browser = await launchBrowser();
   const url = await toUrl(pageArg);
   const dau = await moTab(url);
-  const tatCa = await dau.page.evaluate(() => window.__shots.list.map((s) => ({ id: s.id, t0: s.t0, t1: s.t1, dur: s.dur ?? (s.t1 - s.t0), type: s.type, static: s.static, frame: s.frame, read: s.read, env: s.env, light: s.light, fx: s.fx ? JSON.parse(JSON.stringify(s.fx)) : undefined })));
+  const tatCa = await dau.page.evaluate(() => window.__shots.list.map((s, i) => ({ id: s.id, index: i, t0: s.t0, t1: s.t1, type: s.type, static: s.static, frame: s.frame, read: s.read, env: s.env, light: s.light, night: s.night, fx: s.fx ? JSON.parse(JSON.stringify(s.fx)) : undefined })));
+  const toanBo = !opt.shots || opt.shots === 'all';
   let chon = tatCa;
-  if (opt.shots && opt.shots !== 'all') {
+  if (!toanBo) {
     chon = opt.shots.split(',').map((x) => x.trim()).filter(Boolean).map((id) => tatCa.find((s) => s.id === id) || loiMoi('Không có shot ' + id));
+    chon = [...new Map(chon.map((s) => [s.id, s])).values()].sort(thuTu);
   }
   const ng = docNguong(path.join(root, 'episodes', ep || '_khong-co-ep'));
+  const fJson = path.join(outDir, 'luat.json');
+
+  // bản cũ (chạy một phần): chỉ dùng khi cùng ep + cùng trang
+  let cu = null;
+  if (!toanBo && fs.existsSync(fJson)) {
+    try {
+      const j = JSON.parse(fs.readFileSync(fJson, 'utf8'));
+      if ((j.ep ?? null) === (ep || null) && j.trang === pageArg && j.shots && typeof j.shots === 'object') cu = j;
+      else console.error('Cảnh báo: luat.json cũ khác ep/trang, bỏ bản cũ.');
+    } catch { console.error('Cảnh báo: luat.json cũ hỏng, bỏ bản cũ.'); }
+  }
 
   if (coAnh) {
     fs.mkdirSync(path.join(duyetDir, '01_shots'), { recursive: true });
-    fs.rmSync(path.join(duyetDir, '02_loi'), { recursive: true, force: true });
+    if (toanBo) fs.rmSync(path.join(duyetDir, '02_loi'), { recursive: true, force: true });
     fs.mkdirSync(path.join(duyetDir, '02_loi'), { recursive: true });
   }
   fs.mkdirSync(outDir, { recursive: true });
@@ -188,42 +232,64 @@ try {
     for (const s of ds) out.push(await doShot(tabs[i], s, ng));
     return out;
   }));
-  const dsKq = kq.flat();
+  const dsKq = kq.flat().sort(thuTu);
   const coMeasure = tabs.some((t) => t.coMeasure);
+  const coVai = dsKq.some((r) => r.coVai);
 
-  // ghi ảnh duyệt
+  // gộp với bản cũ, sắp theo thứ tự phim
+  const idsDo = new Set(dsKq.map((r) => r.id));
+  const shots = {};
+  for (const s of tatCa) {
+    const moi = dsKq.find((r) => r.id === s.id);
+    if (moi) shots[s.id] = moi.rec;
+    else if (cu && cu.shots[s.id]) shots[s.id] = cu.shots[s.id];
+  }
+  const loiShot = [];
+  if (cu && Array.isArray(cu.loiShot)) for (const x of cu.loiShot) if (!idsDo.has(x.id) && shots[x.id]) loiShot.push(x);
+  for (const r of dsKq) if (r.loiMsg) loiShot.push({ id: r.id, loi: r.loiMsg });
+  loiShot.sort((a, b) => tatCa.findIndex((s) => s.id === a.id) - tatCa.findIndex((s) => s.id === b.id));
+
+  // ghi ảnh duyệt (chỉ đụng ảnh của shot vừa đo)
   if (coAnh) {
-    const giuaLoi = [];
     for (const r of dsKq) {
-      const ten = (i) => `${r.id}_f${String(r.tenKhung[i]).padStart(4, '0')}.jpg`;
-      for (let i = 0; i < 3; i++) {
-        fs.writeFileSync(path.join(duyetDir, '01_shots', ten(i)), r.jpgs[i]);
-        if (r.rec.loi.length) fs.writeFileSync(path.join(duyetDir, '02_loi', ten(i)), r.jpgs[i]);
+      xoaAnhShot(path.join(duyetDir, '01_shots'), r.id);
+      xoaAnhShot(path.join(duyetDir, '02_loi'), r.id);
+      const da = new Set();
+      for (let i = 0; i < r.jpgs.length; i++) {
+        const f = r.rec.khung[i];
+        if (da.has(f)) continue;
+        da.add(f);
+        fs.writeFileSync(path.join(duyetDir, '01_shots', tenAnh(r.id, f)), r.jpgs[i]);
+        if (r.rec.loi.length) fs.writeFileSync(path.join(duyetDir, '02_loi', tenAnh(r.id, f)), r.jpgs[i]);
       }
-      if (r.rec.loi.length) giuaLoi.push(r.jpgs[1]);
     }
-    const lu = await luoiAnh(tabs[0].C, giuaLoi.slice(0, 12), { cot: 4, rong: 800 });
+    const giuaLoi = [];
+    for (const [id, rec] of Object.entries(shots)) {
+      if (!rec.loi.length || giuaLoi.length >= 12) continue;
+      const f = path.join(duyetDir, '01_shots', tenAnh(id, rec.khung[1]));
+      if (fs.existsSync(f)) giuaLoi.push(fs.readFileSync(f));
+    }
+    const lu = await luoiAnh(tabs[0].C, giuaLoi, { cot: 4, rong: 800 });
     if (lu) fs.writeFileSync(path.join(duyetDir, 'luoi-loi.jpg'), lu);
     else fs.rmSync(path.join(duyetDir, 'luoi-loi.jpg'), { force: true });
   }
 
-  // tổng hợp
-  const shots = {}; for (const r of dsKq) shots[r.id] = r.rec;
+  // tổng hợp trên TOÀN BỘ shot
+  const dsRec = Object.values(shots);
   const theoLuat = {};
   for (const ma of Object.keys(LUAT)) {
     let loi = 0, skip = 0;
-    for (const r of dsKq) { const x = r.rec.luat[ma]; if (x.skip) skip++; else if (x.ok === false) loi++; }
-    theoLuat[ma] = { loi, tyLe: dsKq.length ? loi / dsKq.length : 0, skip };
+    for (const rec of dsRec) { const x = rec.luat[ma]; if (!x) continue; if (x.skip) skip++; else if (x.ok === false) loi++; }
+    theoLuat[ma] = { loi, tyLe: dsRec.length ? loi / dsRec.length : 0, skip };
   }
-  const shotLoi = dsKq.filter((r) => r.rec.loi.length).length;
+  const shotLoi = dsRec.filter((rec) => rec.loi.length).length;
   const lyDo = [];
   if (shotLoi > ng.goi.shotLoiMax) lyDo.push(`shot-loi ${shotLoi} > ${ng.goi.shotLoiMax}`);
   for (const ma of Object.keys(theoLuat)) if (theoLuat[ma].tyLe > ng.goi.tyLeLuatMax) lyDo.push(`${ma} loi ${(theoLuat[ma].tyLe * 100).toFixed(1)}% > ${ng.goi.tyLeLuatMax * 100}%`);
   const luatJson = {
-    ep: ep || null, trang: pageArg, luc: new Date().toISOString(), coMeasure,
-    shots, tong: { soShot: dsKq.length, shotLoi, theoLuat }, goi: { can: lyDo.length > 0, lyDo },
+    ep: ep || null, trang: pageArg, luc: new Date().toISOString(), coMeasure, coVai,
+    shots, tong: { soShot: dsRec.length, shotLoi, theoLuat }, goi: { can: lyDo.length > 0, lyDo }, loiShot,
   };
-  const fJson = path.join(outDir, 'luat.json');
   fs.writeFileSync(fJson, JSON.stringify(lam(luatJson), null, 1) + '\n');
 
   // nhật ký (chỉ khi biết tập)
@@ -231,28 +297,29 @@ try {
   if (ep) {
     try {
       const { ghiNhatKy } = await import('./kiem/trang-thai.mjs');
-      ghiNhatKy(ep, { buoc: 'kiem-luat', hanh_dong: 'do', so_shot: dsKq.length, shot_loi: shotLoi, co_measure: coMeasure, goi_can: lyDo.length > 0, giay });
+      ghiNhatKy(ep, { buoc: 'kiem-luat', hanh_dong: 'do', so_shot: dsRec.length, shot_loi: shotLoi, co_measure: coMeasure, co_vai: coVai, goi_can: lyDo.length > 0, giay });
     } catch { /* lỗi ghi nhật ký: bỏ qua */ }
   }
 
   // stdout
   const pct = (x) => (x * 100).toFixed(1).padStart(5) + '%';
-  console.log(`kiem-luat ${ep || '-'}  ${dsKq.length} shot  loi ${shotLoi}  measure ${coMeasure ? 'co' : 'khong'}  ${giay}s`);
+  console.log(`kiem-luat ${ep || '-'}  ${dsRec.length} shot  loi ${shotLoi}  measure ${coMeasure ? 'co' : 'khong'}  vai ${coVai ? 'co' : 'khong'}  ${giay}s`);
   for (const ma of Object.keys(theoLuat)) {
     const x = theoLuat[ma];
     console.log(`  ${ma.padEnd(3)} loi ${String(x.loi).padStart(3)}  skip ${String(x.skip).padStart(3)}  ${pct(x.tyLe)}  ${TEN_LUAT[ma]}`);
   }
-  const dsLoi = dsKq.filter((r) => r.rec.loi.length);
+  const dsLoi = Object.entries(shots).filter(([, rec]) => rec.loi.length);
   if (dsLoi.length) {
     console.log(`Shot loi (${Math.min(10, dsLoi.length)}/${dsLoi.length}):`);
-    for (const r of dsLoi.slice(0, 10)) console.log(`  ${r.id}  ${r.rec.loi.join(',')}`);
+    for (const [id, rec] of dsLoi.slice(0, 10)) console.log(`  ${id}  ${rec.loi.join(',')}`);
   }
+  if (loiShot.length) console.log('Shot ném lỗi: ' + loiShot.map((x) => `${x.id} (${x.loi})`).join('; '));
   if (lyDo.length) console.log('Can goi: ' + lyDo.join('; '));
   console.log('luat.json: ' + fJson);
   if (coAnh) console.log('anh duyet: ' + duyetDir);
   await browser.close().catch(() => {});
   srv?.close();
-  process.exit(dsLoi.length ? 1 : 0);
+  process.exit(dsLoi.length || loiShot.length ? 1 : 0);
 } catch (e) {
   if (!e.moi) console.error('Lỗi môi trường: ' + ((e && e.stack) || e));
   else if (!/__ready/.test(e.message)) console.error(e.message);

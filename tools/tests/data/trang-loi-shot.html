@@ -1,0 +1,22 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>trang loi shot</title>
+<style>html,body{margin:0;background:#000}#root{width:1080px;height:1920px}canvas{display:block}</style>
+<div id="root"><canvas id="c" width="1080" height="1920"></canvas></div>
+<script>
+  // Như trang tối thiểu nhưng renderAt ném lỗi trong shot s002 (1 <= t < 2.5).
+  const c = document.getElementById('c'), g = c.getContext('2d');
+  window.renderAt = (t) => {
+    if (t >= 1 && t < 2.5) throw new Error('renderAt hong o s002');
+    const k = t * 40;
+    g.fillStyle = `rgb(${40 + k % 150},${90 + (k * 2) % 100},170)`; g.fillRect(0, 0, 1080, 1920);
+    g.fillStyle = '#fff'; g.fillRect(100 + k * 6 % 700, 600, 200, 400);
+  };
+  window.__shots = { total: 3.5, list: [
+    { id: 's001', index: 0, t0: 0, t1: 1, dur: 1, env: 'town' },
+    { id: 's002', index: 1, t0: 1, t1: 2.5, dur: 1.5, env: 'island' },
+    { id: 's003', index: 2, t0: 2.5, t1: 3.5, dur: 1, env: 'town' },
+  ] };
+  window.renderAt(0);
+  window.__ready = true;
+</script>
