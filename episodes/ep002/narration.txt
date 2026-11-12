@@ -5,85 +5,85 @@
 @voice mayor capcut:multi_female_xinwenjieshuo_uranus_bigtts
 
 @at 0.05 Ở thị trấn này, đồ đạc liên tục biến mất,
-@at 3.05 dù căn phòng đã được khóa kín.
-@at 5.25 Ban đầu là két tiền của chú bán bánh.
-@at 8.05 Rồi tới nhẫn cưới của cô thợ may.
-@at 10.45 Ngay cả ông Bách, người hàng xóm thân thiện,
-@at 13.65 hay phát gấu bông miễn phí cho cả thị trấn,
-@at 16.85 cũng báo mất đồ.
-@at 18.05 Nhà ông còn báo mất nhiều nhất.
-@at 20.35 Chỉ trong một tuần,
-@at 21.85 cả thị trấn đã có hàng chục nhà báo mất đồ.
-@at 25.05 Rồi tới lượt tôi mất
-@at 26.55 chiếc dây chuyền bà để lại.
-@at 28.55 Đó là món tôi quý nhất.
-@at 30.35 Tôi quyết điều tra vụ mất cắp này.
-@at 32.85 Tối đó, tôi đặt cái đồng hồ
-@at 34.85 lên chỗ sợi dây chuyền rồi giả vờ ngủ.
-@at 37.65 Qua tấm gương đối diện giường,
-@at 39.85 tôi vẫn thấy rõ cái kệ.
-@at 41.55 Đợi tới lúc tôi sắp ngủ thật,
-@at 43.65 trong gương có thứ gì đó ngồi dậy.
-@at 46.25 Là Bắp.
-@at 47.45 Con gấu bông vẫn nằm ở cuối giường tôi.
-@at 50.25 Nó trèo lên kệ, ôm cái đồng hồ
-@at 52.45 rồi kéo cuốn sách che đúng chỗ vừa lấy đồ.
-@at 55.45 Tôi bật dậy.
-@at 56.35 Bắp biến mất ngay trước mắt.
-@at 58.35 Tới lúc tôi mở được cửa sổ,
-@at 60.35 ngoài đường chẳng còn thấy bóng nó đâu.
-@at 63.15 Tối hôm sau, tôi đặt một chiếc nhẫn lên kệ.
-@at 66.35 Lần này, tôi nấp sẵn ngoài ban công.
-@at 68.95 Bắp chộp chiếc nhẫn rồi biến mất.
-@at 71.35 Từ ban công, tôi thấy nó xuất hiện
-@at 73.85 trên mái hiên nhà đối diện.
-@at 75.85 Tôi chạy xuống đường bám theo.
-@at 78.05 Qua ngã ba, hai con gấu khác nhập vào.
-@at 80.85 Một con ôm ví,
-@at 81.85 một con kéo theo túi tiền.
-@at 83.75 Cả ba biến mất sau hàng rào
-@at 85.75 của một nhà máy cuối phố.
-@at 87.55 Tôi đứng lên thùng gỗ,
-@at 89.15 ghé mắt qua cửa kính.
-@at 90.75 Bắp thả chiếc nhẫn xuống băng chuyền.
-@at 93.45 Đứng cuối băng, gom đồ vào thùng,
-@at 95.85 là ông Bách.
-@at 97.45 Sau lưng ông là cả một dãy gấu
-@at 99.65 mới may xong.
-@at 100.65 Ông chỉ vào tấm bản đồ trên tường.
-@at 103.45 [bach] Nhà nào có gấu rồi thì đánh dấu.
-@at 105.85 [bach] Mai phát tiếp mấy nhà còn lại.
-@at 108.05 Dưới băng chuyền là két tiền
-@at 110.05 của chú bán bánh.
-@at 111.35 Trên nắp két, tôi thấy
-@at 112.95 sợi dây chuyền của bà.
-@at 114.55 Tôi chạy thẳng tới nhà thị trưởng.
-@at 117.15 Thị trưởng mở cửa, vẫn mặc nguyên đồ ngủ.
-@at 120.15 Nghe tới đoạn gấu bông đi ăn trộm,
-@at 122.65 chú nhìn tôi mất mấy giây.
-@at 124.55 Tôi bảo: “Chú cứ qua nhìn một lần thôi.”
-@at 127.55 Chú gọi hai lính gác đi cùng.
-@at 129.65 Qua cửa kính, cả ba thấy
-@at 131.45 ông Bách rung chuông.
-@at 132.95 Một con gấu biến mất.
-@at 134.45 Vài giây sau, nó quay lại, ôm một đôi dép.
-@at 137.45 Thị trưởng cúi nhìn
-@at 138.85 hai bàn chân trần của mình.
-@at 140.85 Chú đi vội quá, để nguyên dép trước cửa nhà.
-@at 144.05 Lính gác mở cửa kho.
-@at 145.55 Thị trưởng nhìn sang chồng thùng
-@at 147.85 in tên tiệm ông Bách.
-@at 149.35 [mayor] Ủa, đây là mấy thùng
-@at 150.85 [mayor] sáng nay ông báo mất mà?
-@at 152.65 Ông Bách im luôn.
-@at 154.15 Tôi mới hiểu.
-@at 155.15 Cứ mỗi lần cả thị trấn mất đồ,
-@at 157.35 ông lại giấu thêm
-@at 158.65 vài thùng hàng của mình
-@at 160.35 rồi đi báo mất.
-@at 161.45 Ai mà nghi người than mất nhiều nhất chứ?
-@at 164.45 Sáng hôm sau, tôi lấy lại sợi dây chuyền.
-@at 167.45 Tôi cất dây chuyền vào két.
-@at 169.45 Vừa quay lưng, Bắp đã ôm nguyên cái két.
-@at 172.45 “Bắp.”
-@at 173.65 Nó đặt xuống liền.
+@at 3.10 dù căn phòng đã được khóa kín.
+@at 5.30 Ban đầu là két tiền của chú bán bánh.
+@at 8.10 Rồi tới nhẫn cưới của cô thợ may.
+@at 10.50 Ngay cả ông Bách, người hàng xóm thân thiện,
+@at 13.70 hay phát gấu bông miễn phí cho cả thị trấn,
+@at 16.90 cũng báo mất đồ.
+@at 18.10 Nhà ông còn báo mất nhiều nhất.
+@at 20.40 Chỉ trong một tuần,
+@at 21.90 cả thị trấn đã có hàng chục nhà báo mất đồ.
+@at 25.10 Rồi tới lượt tôi mất
+@at 26.60 chiếc dây chuyền bà để lại.
+@at 28.60 Đó là món tôi quý nhất.
+@at 30.40 Tôi quyết điều tra vụ mất cắp này.
+@at 32.90 Tối đó, tôi đặt cái đồng hồ
+@at 34.90 lên chỗ sợi dây chuyền rồi giả vờ ngủ.
+@at 37.70 Qua tấm gương đối diện giường,
+@at 39.90 tôi vẫn thấy rõ cái kệ.
+@at 41.60 Đợi tới lúc tôi sắp ngủ thật,
+@at 43.70 trong gương có thứ gì đó ngồi dậy.
+@at 46.30 Là Bắp.
+@at 47.50 Con gấu bông vẫn nằm ở cuối giường tôi.
+@at 50.30 Nó trèo lên kệ, ôm cái đồng hồ
+@at 52.50 rồi kéo cuốn sách che đúng chỗ vừa lấy đồ.
+@at 55.50 Tôi bật dậy.
+@at 56.40 Bắp biến mất ngay trước mắt.
+@at 58.40 Tới lúc tôi mở được cửa sổ,
+@at 60.40 ngoài đường chẳng còn thấy bóng nó đâu.
+@at 63.20 Tối hôm sau, tôi đặt một chiếc nhẫn lên kệ.
+@at 66.40 Lần này, tôi nấp sẵn ngoài ban công.
+@at 69.00 Bắp chộp chiếc nhẫn rồi biến mất.
+@at 71.40 Từ ban công, tôi thấy nó xuất hiện
+@at 73.90 trên mái hiên nhà đối diện.
+@at 75.90 Tôi chạy xuống đường bám theo.
+@at 78.10 Qua ngã ba, hai con gấu khác nhập vào.
+@at 80.90 Một con ôm ví,
+@at 81.90 một con kéo theo túi tiền.
+@at 83.80 Cả ba biến mất sau hàng rào
+@at 85.80 của một nhà máy cuối phố.
+@at 87.60 Tôi đứng lên thùng gỗ,
+@at 89.20 ghé mắt qua cửa kính.
+@at 90.80 Bắp thả chiếc nhẫn xuống băng chuyền.
+@at 93.50 Đứng cuối băng, gom đồ vào thùng,
+@at 95.90 là ông Bách.
+@at 97.50 Sau lưng ông là cả một dãy gấu
+@at 99.70 mới may xong.
+@at 100.70 Ông chỉ vào tấm bản đồ trên tường.
+@at 103.50 [bach] Nhà nào có gấu rồi thì đánh dấu.
+@at 105.90 [bach] Mai phát tiếp mấy nhà còn lại.
+@at 108.10 Dưới băng chuyền là két tiền
+@at 110.10 của chú bán bánh.
+@at 111.40 Trên nắp két, tôi thấy
+@at 113.00 sợi dây chuyền của bà.
+@at 114.60 Tôi chạy thẳng tới nhà thị trưởng.
+@at 117.20 Thị trưởng mở cửa, vẫn mặc nguyên đồ ngủ.
+@at 120.20 Nghe tới đoạn gấu bông đi ăn trộm,
+@at 122.70 chú nhìn tôi mất mấy giây.
+@at 124.60 Tôi bảo: “Chú cứ qua nhìn một lần thôi.”
+@at 127.60 Chú gọi hai lính gác đi cùng.
+@at 129.70 Qua cửa kính, cả ba thấy
+@at 131.50 ông Bách rung chuông.
+@at 133.00 Một con gấu biến mất.
+@at 134.50 Vài giây sau, nó quay lại, ôm một đôi dép.
+@at 137.50 Thị trưởng cúi nhìn
+@at 138.90 hai bàn chân trần của mình.
+@at 140.90 Chú đi vội quá, để nguyên dép trước cửa nhà.
+@at 144.10 Lính gác mở cửa kho.
+@at 145.60 Thị trưởng nhìn sang chồng thùng
+@at 147.90 in tên tiệm ông Bách.
+@at 149.40 [mayor] Ủa, đây là mấy thùng
+@at 150.90 [mayor] sáng nay ông báo mất mà?
+@at 152.70 Ông Bách im luôn.
+@at 154.20 Tôi mới hiểu.
+@at 155.20 Cứ mỗi lần cả thị trấn mất đồ,
+@at 157.40 ông lại giấu thêm
+@at 158.70 vài thùng hàng của mình
+@at 160.40 rồi đi báo mất.
+@at 161.50 Ai mà nghi người than mất nhiều nhất chứ?
+@at 164.50 Sáng hôm sau, tôi lấy lại sợi dây chuyền.
+@at 167.50 Tôi cất dây chuyền vào két.
+@at 169.50 Vừa quay lưng, Bắp đã ôm nguyên cái két.
+@at 172.50 “Bắp.”
+@at 173.70 Nó đặt xuống liền.

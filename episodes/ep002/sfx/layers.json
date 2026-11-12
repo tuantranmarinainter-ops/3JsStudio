@@ -1,0 +1,43 @@
+{
+ "_doc": "Cấu hình các LỚP tiếng động của ep002. Sửa rồi chạy: node tools/build.mjs ep002 <lớp> (nen | buoc-chan | khoanh-khac | nhac). Bối cảnh/giờ lấy từ shots.js qua tools/sfx/shot-list.mjs (env, hoặc <chỗ>_in; time:dem = đêm). gain = âm lượng mặc định trong trình phát; peak = mức đỉnh mục tiêu của track lớp.",
+ "nen": {
+  "label": "Tiếng nền (phố, phòng, xưởng…)",
+  "gain": 1.0,
+  "vol": 0.16,
+  "fade": 0.35,
+  "map": {
+   "kenneyTown": "town ambience day birds",
+   "town": "town ambience day birds",
+   "bedroom": "kitchen room tone quiet",
+   "factory": "conveyor hum"
+  },
+  "night": {
+   "kenneyTown": "night crickets ambience",
+   "town": "night crickets ambience"
+  },
+  "boost": {
+   "conveyor hum": 0.6,
+   "kitchen room tone quiet": 0.6,
+   "night crickets ambience": 0.8,
+   "town ambience day birds": 0.7
+  },
+  "peak": 0.35
+ },
+ "buoc-chan": {
+  "label": "Bước chân nhà (rầm) — ep002 không có nhà có chân: để trống",
+  "gain": 1.0,
+  "sound": "heavy footstep thud",
+  "near": 0.75,
+  "offscreen": 0.22,
+  "refDist": 70,
+  "maxDur": 1.6,
+  "shift": -0.017,
+  "peak": 0.6
+ },
+ "khoanh-khac": {
+  "label": "Tiếng động theo cảnh",
+  "gain": 1.0,
+  "dedupe": 0.6,
+  "peak": 0.5
+ }
+}

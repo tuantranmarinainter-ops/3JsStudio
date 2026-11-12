@@ -1,0 +1,21 @@
+{
+ "width": 1080,
+ "height": 1920,
+ "minFontPx": 32,
+ "fontPx": 32,
+ "level": 0,
+ "lines": 18,
+ "txtLines": 18,
+ "chuaRo": [
+  {
+   "ten": "sky-7",
+   "nguon": "assets/sky/CREDITS.md",
+   "lyDo": "CREDITS ghi: Người dùng gửi 2026-11-12, từ Roblox Sky | Nguồn/giấy phép do người dùng chịu trách nhiệm."
+  },
+  {
+   "ten": "sky-9",
+   "nguon": "assets/sky/CREDITS.md",
+   "lyDo": "CREDITS ghi: Người dùng gửi 2026-11-12, từ Roblox Sky | Nguồn/giấy phép do người dùng chịu trách nhiệm."
+  }
+ ]
+}

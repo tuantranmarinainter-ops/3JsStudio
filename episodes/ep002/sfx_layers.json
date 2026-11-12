@@ -1,0 +1,223 @@
+{
+ "nen": {
+  "label": "Tiếng nền (phố, phòng, xưởng…)",
+  "gain": 1.0,
+  "src": "sfx_nen.ogg",
+  "count": 18,
+  "missing": [],
+  "items": [
+   [
+    0,
+    25.05,
+    "town ambience day birds"
+   ],
+   [
+    25.05,
+    60.35,
+    "kitchen room tone quiet"
+   ],
+   [
+    60.35,
+    63.15,
+    "night crickets ambience"
+   ],
+   [
+    63.15,
+    66.35,
+    "kitchen room tone quiet"
+   ],
+   [
+    66.35,
+    68.95,
+    "night crickets ambience"
+   ],
+   [
+    68.95,
+    71.35,
+    "kitchen room tone quiet"
+   ],
+   [
+    71.35,
+    83.75,
+    "night crickets ambience"
+   ],
+   [
+    83.75,
+    114.55,
+    "conveyor hum"
+   ],
+   [
+    114.55,
+    129.65,
+    "night crickets ambience"
+   ],
+   [
+    129.65,
+    140.85,
+    "conveyor hum"
+   ],
+   [
+    140.85,
+    142.45,
+    "night crickets ambience"
+   ],
+   [
+    142.45,
+    155.15,
+    "conveyor hum"
+   ],
+   [
+    155.15,
+    158.65,
+    "town ambience day birds"
+   ],
+   [
+    158.65,
+    160.35,
+    "conveyor hum"
+   ],
+   [
+    160.35,
+    162.95,
+    "town ambience day birds"
+   ],
+   [
+    162.95,
+    164.45,
+    "conveyor hum"
+   ],
+   [
+    164.45,
+    165.95,
+    "town ambience day birds"
+   ],
+   [
+    165.95,
+    175.95,
+    "kitchen room tone quiet"
+   ]
+  ]
+ },
+ "buoc-chan": {
+  "label": "Bước chân nhà (rầm) — ep002 không có nhà có chân: để trống",
+  "gain": 1.0,
+  "src": "sfx_buoc-chan.ogg",
+  "count": 0,
+  "missing": [],
+  "items": []
+ },
+ "khoanh-khac": {
+  "label": "Tiếng động theo cảnh",
+  "gain": 1.0,
+  "src": "sfx_khoanh-khac.ogg",
+  "count": 21,
+  "missing": [],
+  "items": [
+   [
+    0.0,
+    "town ambience day birds",
+    "s001"
+   ],
+   [
+    3.252,
+    "door lock click",
+    "s003"
+   ],
+   [
+    52.75,
+    "book slide",
+    "s034"
+   ],
+   [
+    56.75,
+    "magic poof",
+    "s037"
+   ],
+   [
+    58.95,
+    "window open",
+    "s039"
+   ],
+   [
+    70.449,
+    "magic poof",
+    "s046"
+   ],
+   [
+    75.849,
+    "footsteps run",
+    "s049"
+   ],
+   [
+    90.749,
+    "conveyor hum",
+    "s060"
+   ],
+   [
+    95.849,
+    "dramatic sting",
+    "s062"
+   ],
+   [
+    104.948,
+    "marker squeak",
+    "s069"
+   ],
+   [
+    114.548,
+    "footsteps run",
+    "s076"
+   ],
+   [
+    117.147,
+    "door knock",
+    "s078"
+   ],
+   [
+    117.747,
+    "door creak",
+    "s078"
+   ],
+   [
+    131.647,
+    "small bell ring",
+    "s086"
+   ],
+   [
+    133.248,
+    "magic poof",
+    "s087"
+   ],
+   [
+    134.448,
+    "magic poof",
+    "s088"
+   ],
+   [
+    144.248,
+    "metal door slide",
+    "s094"
+   ],
+   [
+    152.649,
+    "cricket",
+    "s099"
+   ],
+   [
+    164.447,
+    "town ambience day birds",
+    "s107"
+   ],
+   [
+    168.049,
+    "safe door close",
+    "s109"
+   ],
+   [
+    174.048,
+    "thud soft",
+    "s113"
+   ]
+  ]
+ }
+}

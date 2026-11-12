@@ -1,0 +1,176 @@
+[
+ {
+  "t": 0.0,
+  "name": "town ambience day birds",
+  "vol": 0.3,
+  "dur": 1.53,
+  "shot": "s001",
+  "why": "storyboard (mốc cục bộ 0.0 s trong shot, bắt đầu shot 0.000)"
+ },
+ {
+  "t": 3.252,
+  "name": "door lock click",
+  "vol": 0.6,
+  "dur": 0.5,
+  "shot": "s003",
+  "why": "storyboard (mốc cục bộ 0.2 s trong shot, bắt đầu shot 3.052)",
+  "align": "peak"
+ },
+ {
+  "t": 52.75,
+  "name": "book slide",
+  "vol": 0.5,
+  "dur": 1.5,
+  "shot": "s034",
+  "why": "storyboard (mốc cục bộ 0.3 s trong shot, bắt đầu shot 52.450)"
+ },
+ {
+  "t": 56.75,
+  "name": "magic poof",
+  "vol": 0.6,
+  "dur": 1.2,
+  "shot": "s037",
+  "why": "storyboard (mốc cục bộ 0.4 s trong shot, bắt đầu shot 56.350)"
+ },
+ {
+  "t": 58.95,
+  "name": "window open",
+  "vol": 0.5,
+  "dur": 1.4,
+  "shot": "s039",
+  "why": "storyboard (mốc cục bộ 0.6 s trong shot, bắt đầu shot 58.350)"
+ },
+ {
+  "t": 70.449,
+  "name": "magic poof",
+  "vol": 0.6,
+  "dur": 1.2,
+  "shot": "s046",
+  "why": "storyboard (mốc cục bộ 0.3 s trong shot, bắt đầu shot 70.149)"
+ },
+ {
+  "t": 75.849,
+  "name": "footsteps run",
+  "vol": 0.5,
+  "dur": 1.1,
+  "shot": "s049",
+  "why": "storyboard (mốc cục bộ 0.0 s trong shot, bắt đầu shot 75.848)"
+ },
+ {
+  "t": 90.749,
+  "name": "conveyor hum",
+  "vol": 0.4,
+  "dur": 2.7,
+  "shot": "s060",
+  "why": "storyboard (mốc cục bộ 0.0 s trong shot, bắt đầu shot 90.748)"
+ },
+ {
+  "t": 95.849,
+  "name": "dramatic sting",
+  "vol": 0.7,
+  "dur": 1.7,
+  "shot": "s062",
+  "why": "storyboard (mốc cục bộ 0.0 s trong shot, bắt đầu shot 95.848)"
+ },
+ {
+  "t": 104.948,
+  "name": "marker squeak",
+  "vol": 0.5,
+  "dur": 1.2,
+  "shot": "s069",
+  "why": "storyboard (mốc cục bộ 0.3 s trong shot, bắt đầu shot 104.648)"
+ },
+ {
+  "t": 114.548,
+  "name": "footsteps run",
+  "vol": 0.5,
+  "dur": 1.3,
+  "shot": "s076",
+  "why": "storyboard (mốc cục bộ 0.0 s trong shot, bắt đầu shot 114.547)"
+ },
+ {
+  "t": 117.147,
+  "name": "door knock",
+  "vol": 0.6,
+  "dur": 0.9,
+  "shot": "s078",
+  "why": "storyboard (mốc cục bộ 0.0 s trong shot, bắt đầu shot 117.147)",
+  "align": "peak"
+ },
+ {
+  "t": 117.747,
+  "name": "door creak",
+  "vol": 0.5,
+  "dur": 1.0,
+  "shot": "s078",
+  "why": "storyboard (mốc cục bộ 0.6 s trong shot, bắt đầu shot 117.147)"
+ },
+ {
+  "t": 131.647,
+  "name": "small bell ring",
+  "vol": 0.7,
+  "dur": 1.3,
+  "shot": "s086",
+  "why": "storyboard (mốc cục bộ 0.2 s trong shot, bắt đầu shot 131.447)",
+  "align": "peak"
+ },
+ {
+  "t": 133.248,
+  "name": "magic poof",
+  "vol": 0.6,
+  "dur": 1.2,
+  "shot": "s087",
+  "why": "storyboard (mốc cục bộ 0.3 s trong shot, bắt đầu shot 132.948)"
+ },
+ {
+  "t": 134.448,
+  "name": "magic poof",
+  "vol": 0.6,
+  "dur": 1.2,
+  "shot": "s088",
+  "why": "storyboard (mốc cục bộ 0.0 s trong shot, bắt đầu shot 134.447)"
+ },
+ {
+  "t": 144.248,
+  "name": "metal door slide",
+  "vol": 0.7,
+  "dur": 1.5,
+  "shot": "s094",
+  "why": "storyboard (mốc cục bộ 0.2 s trong shot, bắt đầu shot 144.048)",
+  "align": "peak"
+ },
+ {
+  "t": 152.649,
+  "name": "cricket",
+  "vol": 0.4,
+  "dur": 1.5,
+  "shot": "s099",
+  "why": "storyboard (mốc cục bộ 0.0 s trong shot, bắt đầu shot 152.648)"
+ },
+ {
+  "t": 164.447,
+  "name": "town ambience day birds",
+  "vol": 0.3,
+  "dur": 1.5,
+  "shot": "s107",
+  "why": "storyboard (mốc cục bộ 0.0 s trong shot, bắt đầu shot 164.447)"
+ },
+ {
+  "t": 168.049,
+  "name": "safe door close",
+  "vol": 0.6,
+  "dur": 1.2,
+  "shot": "s109",
+  "why": "storyboard (mốc cục bộ 0.6 s trong shot, bắt đầu shot 167.449)",
+  "align": "peak"
+ },
+ {
+  "t": 174.048,
+  "name": "thud soft",
+  "vol": 0.5,
+  "dur": 1.0,
+  "shot": "s113",
+  "why": "storyboard (mốc cục bộ 0.4 s trong shot, bắt đầu shot 173.648)",
+  "align": "peak"
+ }
+]

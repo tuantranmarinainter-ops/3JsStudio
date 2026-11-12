@@ -1,0 +1,12 @@
+{
+ "_doc": "Kế hoạch NHẠC NỀN ep002 (lớp nhac), cùng lược đồ ep001/music/plan.json: track = khoá trong assets/music/music_manifest.json (bài CC BY đã có sẵn trong repo, ghi công ở assets/music/CREDITS.md), offset = giây bắt đầu trong bài, vol tương đối giữa các đoạn, fadeIn/fadeOut giây, đoạn kề nhau chồng lên để hoà dần. targetLUFS = độ to cả track (giọng ≈ -18.5) nên nhạc luôn nằm dưới lời. Sửa rồi chạy: node tools/build.mjs ep002 nhac",
+ "label": "Nhạc nền",
+ "targetLUFS": -26,
+ "loopFade": 2.0,
+ "segments": [
+  { "from": 0.0,   "to": 52.0,  "track": "bidous_transit",  "offset": 0,   "vol": 0.8, "fadeIn": 1.5, "fadeOut": 4.0, "why": "mở đầu bí ẩn, tinh nghịch: đồ đạc biến mất trong phòng khoá" },
+  { "from": 48.0,  "to": 112.0, "track": "wingspan",        "offset": 20,  "vol": 0.8, "fadeIn": 4.0, "fadeOut": 4.0, "why": "đêm theo dõi: Bắp biến mất, đuổi theo tới nhà máy" },
+  { "from": 108.0, "to": 150.0, "track": "storm_adventure", "offset": 30,  "vol": 0.9, "fadeIn": 3.0, "fadeOut": 4.0, "why": "căng lên: lộ ông Bách, dẫn thị trưởng tới" },
+  { "from": 146.0, "to": 175.95,"track": "bidous_transit",  "offset": 70,  "vol": 0.7, "fadeIn": 3.0, "fadeOut": 5.0, "why": "lắng xuống, kết nhẹ gợi cảnh đầu" }
+ ]
+}

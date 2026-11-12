@@ -1,0 +1,31 @@
+# Dán toàn bộ phần dưới vào mô tả video (ảnh cuối phim chỉ ghi tác giả + giấy phép).
+
+GHI CÔNG / CREDITS
+
+Mô hình & hình ảnh
+- ROBLOX R15 Model — ShiroTheDream — CC BY 4.0 — https://sketchfab.com/3d-models/roblox-r15-model-4fb241582b0a4c50b55f890183866b4e
+- Sperm Whale - animated - marine mammals series — nolanfa — CC BY 4.0 — https://sketchfab.com/3d-models/sperm-whale-animated-marine-mammals-series-37dd875ead1b44318b682a978ed53983
+- Kenney — CC0 — kenney.nl
+- Poly Haven — CC0 — polyhaven.com
+- KayKit (Kay Lousberg) — CC0 — kaylousberg.com
+
+Âm thanh & nhạc
+- city hum.wav — Tomlija — CC BY 4.0 — https://freesound.org/people/Tomlija/sounds/96952
+- Ambience, Night Wildlife, A.wav — InspectorJ — CC BY 4.0 — https://freesound.org/people/InspectorJ/sounds/352514
+- Small poofs of flux.ogg — jobro — CC BY 4.0 — https://freesound.org/people/jobro/sounds/204302
+- Footsteps, Running On Stairs.wav — theplax — CC BY 4.0 — https://freesound.org/people/theplax/sounds/547385
+- Small bell ringing wildly — JakLocke — CC BY 4.0 — https://freesound.org/people/JakLocke/sounds/261391
+- Bidous Transit — Blue Dot Sessions — CC BY 3.0 — https://www.jamendo.com/track/1365389
+- Wingspan — Blue Dot Sessions — CC BY 3.0 — https://www.jamendo.com/track/1365390
+- The Storm and the Adventure — Komiku — CC BY 3.0 — https://www.jamendo.com/track/1262526
+- Freesound — CC0 — freesound.org
+
+Công cụ & phương pháp
+- three.js 0.187.0 — three.js authors — MIT — https://threejs.org
+- GSAP 3.15.0 — GreenSock — GSAP Standard License — https://gsap.com/standard-license
+- mp4-muxer 5.2.1 — Vanilagy — MIT — https://github.com/Vanilagy/mp4-muxer
+- Phương pháp hoạt hình, hiệu ứng & dựng cảnh — fwjelaa (FWJ STUDIOS) — phương pháp, chuyển sang three.js
+
+# CHƯA RÕ GIẤY PHÉP (xoá khối này khi đã xác nhận; không dán lên YouTube)
+# - sky-7 — assets/sky/CREDITS.md — CREDITS ghi: Người dùng gửi 2026-11-12, từ Roblox Sky | Nguồn/giấy phép do người dùng chịu trách nhiệm.
+# - sky-9 — assets/sky/CREDITS.md — CREDITS ghi: Người dùng gửi 2026-11-12, từ Roblox Sky | Nguồn/giấy phép do người dùng chịu trách nhiệm.
