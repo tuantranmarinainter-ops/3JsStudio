@@ -206,3 +206,27 @@ test('measure có soTheHat số nguyên', T, async () => {
   const m = await measureAt(41);
   assert.ok(Number.isInteger(m.soTheHat) && m.soTheHat >= 0);
 });
+
+// ---- Task 13f: tầng đếm theo mesh con nhìn thấy, không theo bbox gộp ----
+test('tang: nhóm vòng tròn quanh camera (không mesh nào trong khung) = 0; một mesh trong khung = 1', T, async () => {
+  const r = await page.evaluate(async () => {
+    const TH = window.THREE, stage = window.__stage, cam = stage.camera;
+    const t = window.__shots.list[0].t0 + 0.1;
+    await window.renderAt(t);
+    const { ganTang } = await import('/engine/envs/tang.js');
+    const o = cam.getWorldPosition(new TH.Vector3()), d = cam.getWorldDirection(new TH.Vector3()), right = new TH.Vector3().crossVectors(d, cam.up).normalize();
+    const box = (p) => { const m = new TH.Mesh(new TH.BoxGeometry(2, 2, 2), new TH.MeshBasicMaterial()); m.position.copy(p); return m; };
+    const g = new TH.Group(); ganTang(g, 'back');
+    for (const v of [d.clone().multiplyScalar(-60), right.clone().multiplyScalar(60), right.clone().multiplyScalar(-60)]) g.add(box(o.clone().add(v)));
+    stage.scene.add(g); g.updateMatrixWorld(true);
+    const dem = () => window.__measure(t).tang.back;
+    const goc = (() => { g.visible = false; const n = dem(); g.visible = true; return n; })();
+    const vong = dem();
+    const trong = box(o.clone().addScaledVector(d, 30)); g.add(trong); g.updateMatrixWorld(true);
+    const mot = dem();
+    stage.scene.remove(g);
+    return { goc, vong, mot };
+  });
+  assert.equal(r.vong, r.goc, 'vòng quanh camera không mesh nào trong khung mà vẫn bị đếm: ' + JSON.stringify(r));
+  assert.equal(r.mot, r.goc + 1, 'có một mesh trong khung phải đếm đúng 1 vật: ' + JSON.stringify(r));
+});

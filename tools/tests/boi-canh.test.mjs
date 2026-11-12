@@ -15,6 +15,7 @@ import { GIO, THOI_TIET, gioThoiTiet } from '../../engine/envs/gio-thoi-tiet.js'
 import { ganTang, layersOf, TANG } from '../../engine/envs/tang.js';
 import { LIGHTS } from '../../engine/lights.js';
 import { seaPreset } from '../../engine/seaweather.js';
+import { GOC_MAU } from '../../engine/envs/goc-mau.js';
 
 const root = resolve(import.meta.dirname, '..', '..');
 const doc = (p) => readFileSync(join(root, p), 'utf8');
@@ -22,7 +23,7 @@ const doc = (p) => readFileSync(join(root, p), 'utf8');
 // 17 env hiện có (đồng bộ với def('<tên>', …) trong engine/envs.js — test bên dưới kiểm lệch)
 export const ENV17 = ['town', 'forest', 'hawaii', 'brazil', 'sahara', 'antarctica', 'ocean', 'mountain', 'snowNight', 'iceSea', 'storm', 'shipStorm', 'island', 'reef', 'kitchen', 'bedroom', 'sea'];
 // Env CHƯA gắn userData.tang. Agent env gỡ tên của mình khỏi danh sách này khi xong (test sẽ bắt đầu kiểm 3 tầng cho env đó).
-const DA_GAN = new Set(['town', 'sea', 'ocean', 'storm', 'shipStorm']);
+const DA_GAN = new Set(['town', 'sea', 'ocean', 'storm', 'shipStorm', 'forest', 'brazil', 'sahara', 'mountain', 'iceSea', 'reef', 'island', 'hawaii', 'kitchen', 'bedroom', 'antarctica', 'snowNight']);
 export const CHUA_GAN = new Set(ENV17.filter((e) => !DA_GAN.has(e)));
 
 // ---------------------------------------------------------------- phần 1: thuần
@@ -198,26 +199,39 @@ const voiShot = (patch, fn) => page.evaluate(async ({ patch, tTown, fn }) => {
   finally { for (const k of Object.keys(cu)) { if (cu[k] === undefined) delete s[k]; else s[k] = cu[k]; } await window.renderAt(tTown); }
 }, { patch, tTown, fn: fn.toString() });
 
+// Cách đo (Task 13f): lấy MỘT shot town làm "khung", gỡ mọi khoá trừ id/t0/dur/f/line (nhà, diễn viên, đạo cụ, camera cũ biến mất),
+// đặt env = env được kiểm và cam = góc mẫu GOC_MAU[env][goc] (director tự đặt camera), tangXa/seaDecor bật; rồi khôi phục nguyên trạng.
+// Nhờ vậy không còn nhà town chen vào env nội thất và camera đúng góc mà phim thật dùng.
 for (const env of ENV17) {
-  test(`env ${env}: __measure().tang có cả 3 tầng >= 1 ở CẢ 2 góc mặc định`, { ...T, skip: CHUA_GAN.has(env) ? 'chưa gắn tầng (CHUA_GAN)' : false }, async () => {
-    const tang = await page.evaluate(async ({ env, tTown, tTown2 }) => {
-      const L = window.__shots.list.filter((x) => x.env === 'town'); const s1 = L[0], s2 = L[1] || L[0];
-      const cu = [s1.env, s2.env];
+  test(`env ${env}: __measure().tang có cả 3 tầng >= 1 ở CẢ 2 góc mẫu (GOC_MAU)`, { ...T, skip: CHUA_GAN.has(env) ? 'chưa gắn tầng (CHUA_GAN)' : false }, async () => {
+    assert.ok(GOC_MAU[env] && GOC_MAU[env].rong && GOC_MAU[env].can, 'thiếu GOC_MAU cho ' + env);
+    const tang = await page.evaluate(async ({ env, goc, tTown }) => {
+      const s = window.__shots.list.find((x) => x.env === 'town'); const cu = { ...s };
       const AF = (globalThis.__autoFx ||= {}), af0 = { tangXa: AF.tangXa, seaDecor: AF.seaDecor }; AF.tangXa = true; AF.seaDecor = true;   // ep001 tắt tangXa; ô bật ⇒ đủ 3 tầng
       try {
-        s1.env = env; s2.env = env;   // CẢ HAI shot (góc 1 và góc 2) đều phải chạy env được kiểm
+        for (const k of Object.keys(s)) if (!['id', 't0', 'dur', 'f', 'line'].includes(k)) delete s[k];
+        s.env = env;
         const o = [];
-        for (const t of [tTown, tTown2]) {
-          await window.renderAt(t);
+        for (const g of goc) {
+          s.cam = { p: g.p, l: g.look, fov: g.fov };
+          const t = s.t0 + s.dur / 2; await window.renderAt(t);
           const hien = []; window.__stage.scene.children.forEach((c) => { if (c.name.startsWith('env_') && c.visible) hien.push(c.name); });
-          o.push({ ...JSON.parse(JSON.stringify(window.__measure(t).tang)), hien });
+          o.push({ ten: g.ten, ...JSON.parse(JSON.stringify(window.__measure(t).tang)), hien });
         }
         return o;
-      } finally { s1.env = cu[0]; s2.env = cu[1]; AF.tangXa = af0.tangXa; AF.seaDecor = af0.seaDecor; await window.renderAt(tTown); }
-    }, { env, tTown, tTown2 });
-    tang.forEach((tg, g) => { assert.deepEqual(tg.hien, ['env_' + env], `${env}: góc ${g + 1} đang hiển thị ${tg.hien} (không phải env được kiểm)`); for (const k of TANG) assert.ok(tg[k] >= 1, `${env}: góc ${g + 1}: tầng ${k} = ${tg[k]}`); });
+      } finally { for (const k of Object.keys(s)) delete s[k]; Object.assign(s, cu); AF.tangXa = af0.tangXa; AF.seaDecor = af0.seaDecor; await window.renderAt(tTown); }
+    }, { env, goc: [GOC_MAU[env].rong, GOC_MAU[env].can], tTown });
+    tang.forEach((tg) => { assert.deepEqual(tg.hien, ['env_' + env], `${env}: góc ${tg.ten} đang hiển thị ${tg.hien} (không phải env được kiểm)`); for (const k of TANG) assert.ok(tg[k] >= 1, `${env}: góc ${tg.ten}: tầng ${k} = ${tg[k]}`); });
   });
 }
+
+test('GOC_MAU: đủ 17 env, mỗi env đúng 2 góc rong/can hợp lệ', () => {
+  assert.deepEqual(Object.keys(GOC_MAU).sort(), [...ENV17].sort());
+  for (const e of ENV17) {
+    assert.deepEqual(Object.keys(GOC_MAU[e]).sort(), ['can', 'rong'], e);
+    for (const k of ['rong', 'can']) { const g = GOC_MAU[e][k]; assert.equal(g.ten, k); assert.ok(g.p.length === 3 && g.look.length === 3 && g.p.concat(g.look).every(Number.isFinite) && g.fov > 10 && g.fov < 120, `${e}.${k}`); }
+  }
+});
 
 test('sea: không vật seaDecor nào có tâm trong bán kính tối thiểu quanh gốc (phao, đá, đảo, bọt)', T, async () => {
   const r = await page.evaluate(async ({ tTown }) => {

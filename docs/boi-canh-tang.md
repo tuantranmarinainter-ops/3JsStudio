@@ -18,8 +18,8 @@ ganTang(woods.group, 'back');                          // tầng sau: xa (núi, 
 Tầng giữa = vật chính của cảnh (nhà, tàu, cây lớn, đồ nội thất). Gắn lên Group cha là đủ (con không đếm riêng).
 Mỗi tầng ≥ 1 vật **đang hiện** (`measure.js` bỏ vật có tổ tiên `visible = false`). Mẫu chạy được: `engine/envs/town.js`.
 Không gắn `userData.vai` vào vật tầng (vai dành cho nhân vật/nhà chính).
-Định nghĩa tầng theo khoảng cách tới camera có MỘT ngoại lệ: mặt nước luôn là `front` dù rộng tới chân trời; `storm`/`shipStorm` chỉ đủ 3 tầng khi ô `tangXa` bật (ep001 tắt nên thiếu tầng ở hai env đó). Test `boi-canh` đo 2 góc mặc định (shot town thứ nhất và thứ hai) cho mọi env đã gắn.
-**Quy ước mặt nước (env biển) = tầng `front`** (sea, ocean, storm, shipStorm). `__measure().tang` chỉ đếm vật giao frustum camera (trong near..far) — vật ngoài tầm nhìn không tính; tầng xa của storm/shipStorm + đá gần của storm nằm sau ô FX `tangXa` (ep001 tắt), decor của `sea` sau ô `seaDecor`.
+Định nghĩa tầng theo khoảng cách tới camera có MỘT ngoại lệ: mặt nước luôn là `front` dù rộng tới chân trời; `storm`/`shipStorm` chỉ đủ 3 tầng khi ô `tangXa` bật (ep001 tắt nên thiếu tầng ở hai env đó). Test `boi-canh` đo 2 góc mẫu `GOC_MAU[env]` (`engine/envs/goc-mau.js`) cho mọi env đã gắn.
+**Quy ước mặt nước (env biển) = tầng `front`** (sea, ocean, storm, shipStorm). `__measure().tang` chỉ đếm vật gắn thẻ có ÍT NHẤT MỘT mesh con nhìn thấy mà bbox RIÊNG của mesh giao frustum camera (trong near..far) — bbox gộp của nhóm KHÔNG dùng (nhóm vòng đồi/đảo quanh gốc chứa luôn camera sẽ không được đếm oan); vật không có mesh (hạt Points) đếm luôn; đếm theo vật gắn thẻ, không theo mesh; tầng xa của storm/shipStorm + đá gần của storm nằm sau ô FX `tangXa` (ep001 tắt), decor của `sea` sau ô `seaDecor`.
 
 ## 2. Giờ và thời tiết theo shot
 Shot hoặc episode ghi `time` (`sang|trua|chieu|hoang-hon|dem`) và/hoặc `weather` (`nang|may|mua|giong|bao|tuyet|suong`);
@@ -68,3 +68,32 @@ Hai góc mặc định để kiểm env: (a) `establish` (toàn cảnh) và (b) 
 Xong env nào thì gỡ tên env đó khỏi `CHUA_GAN` trong `tools/tests/boi-canh.test.mjs` (test báo lỗi nếu env đủ 3 tầng mà còn nằm trong danh sách).
 Tất định: vị trí = hàm thuần của `t` và seed (`hash`); cấm `Math.random()`, giờ thực, rAF. Mỗi agent chỉ sửa file env của mình;
 không đụng `engine/envs.js`, `shots.js`, `cong-thuc.js`, `gio-thoi-tiet.js`. Vật thêm phải đi kèm `ganTang`; không đổi hình ep001 ở shot env đó ngoài vật mới.
+
+## 7. Đếm tầng (Task 13f) và góc mẫu
+Cách đếm: vật mang `userData.tang` được đếm 1 lần khi chuỗi `visible` đúng và có >= 1 mesh con (không mờ) mà bbox riêng của mesh (InstancedMesh: bbox của các thể hiện) giao frustum camera. Nhóm "vòng xa" bao quanh camera mà không mesh nào trong khung = 0.
+
+`engine/envs/goc-mau.js` (`GOC_MAU`, dữ liệu thuần, Task 15 dùng lại): mỗi env 2 góc `{ ten, p, look, fov }`:
+`rong` = toàn cảnh (chân trời / toàn phòng), `can` = tầm mắt nhân vật (y ~4–6) tại chỗ diễn chính. Nội thất (kitchen, bedroom) đặt camera TRONG phòng.
+Test đo: lấy 1 shot town, gỡ mọi khoá trừ id/t0/dur/f/line, đặt `env` + `cam` = góc mẫu, bật `tangXa`/`seaDecor`, `renderAt` rồi `__measure`; khôi phục sau. Không còn nhà town trong khung.
+
+| env | rong F/M/B | can F/M/B | tangXa tắt: ô = 0 |
+|---|---|---|---|
+| town | 2/9/2 | 1/4/1 | — |
+| forest | 1/1/1 | 1/1/1 | — |
+| hawaii | 3/21/3 | 1/8/2 | — |
+| brazil | 1/1/1 | 1/1/1 | back = 0 (vòng đồi xa) |
+| sahara | 16/13/6 | 1/8/3 | — |
+| antarctica | 2/7/1 | 2/1/1 | — |
+| ocean | 1/1/2 | 1/1/1 | — |
+| mountain | 3/1/1 | 1/1/1 | — |
+| snowNight | 2/14/1 | 2/10/1 | — |
+| iceSea | 1/1/2 | 1/1/2 | — |
+| storm | 2/1/1 | 2/1/1 | mid = 0, back = 0 |
+| shipStorm | 2/1/1 | 2/1/1 | back = 0 |
+| island | 3/13/3 | 2/3/2 | — |
+| reef | 26/1/1 | 14/1/1 | back = 0 |
+| kitchen | 2/2/2 | 1/1/1 | — |
+| bedroom | 2/1/2 | 2/1/2 | — |
+| sea | 2/2/3 | 1/1/1 | — |
+
+Ngoại lệ tangXa tắt (ep001 tắt): brazil, storm, shipStorm, reef thiếu tầng sau (storm còn thiếu tầng giữa) — vật tầng đó nằm sau ô `tangXa`, đúng thiết kế. Ảnh: `output/look/t13f/<env>_<goc>.png`, `sheet.jpg`.

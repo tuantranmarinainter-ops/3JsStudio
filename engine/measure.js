@@ -145,13 +145,31 @@ export function installMeasure({ THREE, stage, shots }) {
     const matDat = stage.ground && stage.ground.visible ? stage.ground.position.y : 0;   // env không khai báo thì mặt đất ở y = 0
     camera.updateMatrixWorld();
     const frTang = new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, new THREE.Matrix4().copy(camera.matrixWorld).invert()));
-    const tangTrongTamNhin = (o) => { const bx = worldBox(o); return bx.isEmpty() || frTang.intersectsBox(bx); };
+    // vật gắn tầng chỉ được đếm khi có ÍT NHẤT MỘT mesh con nhìn thấy mà bbox RIÊNG của mesh giao frustum (gồm near..far).
+    // Nhóm bao quanh gốc (vòng đồi xa) có bbox gộp chứa luôn camera nên KHÔNG được xét bằng bbox gộp.
+    // Vật không có mesh nào (hạt mưa/tuyết là Points) đếm luôn như cũ; có mesh nhưng toàn mesh mờ/ẩn thì không đếm.
+    const _tb = new THREE.Box3();
+    const tangTrongTamNhin = (root) => {
+      let coMesh = false, coHat = false, thay = false;
+      (function walk(o) {
+        if (thay || !o.visible) return;
+        if (o.isMesh && o.geometry && !faint(o)) {
+          coMesh = true;
+          if (o.isInstancedMesh && o.computeBoundingBox) { o.computeBoundingBox(); _tb.copy(o.boundingBox); }
+          else { if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); _tb.copy(o.geometry.boundingBox); }
+          _tb.applyMatrix4(o.matrixWorld);
+          if (!_tb.isEmpty() && frTang.intersectsBox(_tb)) { thay = true; return; }
+        } else if (o.isPoints || o.isLine || o.isSprite) coHat = true;
+        for (const c of o.children) walk(c);
+      })(root);
+      return thay || (!coMesh && coHat);
+    };
     const hats = [];
     let soTheHat = 0;
     scene.traverse((o) => {
       const u = o.userData; if (!u) return;
       if (u.hat) soTheHat++;
-      if (u.tang && tang[u.tang] !== undefined && chainVisible(o) && tangTrongTamNhin(o)) tang[u.tang]++;   // chỉ đếm vật giao frustum camera (gồm near..far); vật không có mesh (hạt mưa quanh camera) đếm luôn
+      if (u.tang && tang[u.tang] !== undefined && chainVisible(o) && tangTrongTamNhin(o)) tang[u.tang]++;   // chỉ đếm vật có ít nhất một mesh con (bbox riêng) giao frustum camera (gồm near..far); hạt không-mesh đếm luôn
       if (u.hat && seenHat[u.hat] !== undefined && chainVisible(o)) { seenHat[u.hat] += typeof u.soHat === 'function' ? u.soHat() : 0; if (typeof u.hatViTri === 'function') hats.push(u); }
     });
     for (const o of nodes) {
