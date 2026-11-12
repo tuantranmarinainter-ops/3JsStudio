@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Backdrop Lab</title>
+<style>
+  :root { --bg:#0e1118; --panel:rgba(14,17,24,.86); --ink:#e8eef6; --mute:#9aa8bb; --line:#2a3344; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:13px/1.35 system-ui, sans-serif; overflow:hidden; }
+  #c { display:block; margin:0 auto; height:100vh; width:auto; aspect-ratio:9/16; max-width:100vw; }
+  #ui { position:fixed; left:8px; right:8px; bottom:8px; max-width:460px; margin:0 auto; background:var(--panel); border:1px solid var(--line);
+        border-radius:10px; padding:8px 10px; display:grid; grid-template-columns:auto 1fr auto; gap:6px 8px; align-items:center; }
+  #ui label { color:var(--mute); white-space:nowrap; }
+  #ui input[type=range] { width:100%; min-width:0; }
+  #ui output { font-variant-numeric:tabular-nums; min-width:3.5em; text-align:right; }
+  #ui .row { grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:4px 12px; align-items:center; }
+  #ui .row label { color:var(--ink); }
+  #hide { position:fixed; top:8px; right:8px; background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:6px; padding:4px 8px; }
+  body.noui #ui { display:none; }
+  body.cap #hide { display:none; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<button id="hide" type="button">UI</button>
+<div id="ui">
+  <label for="t">t (giây)</label><input id="t" type="range" min="0" max="30" step="0.02" value="0"><output id="to">0</output>
+  <label for="yaw">hướng nhìn °</label><input id="yaw" type="range" min="0" max="360" step="1" value="0"><output id="yawo">0</output>
+  <label for="pitch">ngẩng °</label><input id="pitch" type="range" min="-10" max="30" step="0.5" value="8"><output id="pitcho">8</output>
+  <label for="haze">sương ×</label><input id="haze" type="range" min="0" max="1.6" step="0.05" value="1"><output id="hazeo">1</output>
+  <div class="row"><button id="play" type="button" style="font:inherit;padding:2px 12px">▶ Chạy</button>
+    <button data-l="day" type="button">ngày</button><button data-l="dusk" type="button">hoàng hôn</button><button data-l="night" type="button">đêm</button>
+    <label><input type="checkbox" id="bd" checked> núi xa</label></div>
+</div>
+<script type="importmap">{ "imports": { "three": "../vendor/three/three.module.js", "three/addons/": "../vendor/three/addons/" } }</script>
+<script type="module">
+// backdrop-lab — trang thử NÚI XA VẼ MỘT LẦN (engine/backdrop.js). Không sửa file engine nào khác.
+//   ?light=day|dusk|night · ?yaw=độ (hướng nhìn, 0 = +X, 90 = +Z) · ?pitch=độ · ?haze=0..1.6 · ?snow=0..1 · ?seed=4 · ?ranges=2..4 · ?backdrop=0 tắt · ?ui=0 ẩn bảng
+//   snow/seed/ranges đổi lúc TẠO (vẽ lại 1 lần); yaw/pitch/haze/light đổi lúc chạy.
+// TẤT ĐỊNH: thời gian chỉ từ thanh trượt / ?t / window.renderAt(t) (tools/look.mjs). Không rAF cho hình, không đồng hồ, không Math.random.
+import * as THREE from 'three';
+import { createBackdrop } from './backdrop.js';
+
+window.THREE = THREE;
+const q = new URLSearchParams(location.search);
+const $ = (id) => document.getElementById(id);
+const on = (k, d = true) => (q.has(k) ? q.get(k) !== '0' : d);
+const num = (k, d) => (q.has(k) ? +q.get(k) : d);
+if (!on('ui')) document.body.classList.add('noui', 'cap');
+$('hide').onclick = () => document.body.classList.toggle('noui');
+
+const renderer = new THREE.WebGLRenderer({ canvas: $('c'), antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(1080, 1920, false); renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog('#cfeaff', 160, 700);
+const camera = new THREE.PerspectiveCamera(50, 1080 / 1920, 0.05, 2000);
+const hemi = new THREE.HemisphereLight('#ffffff', '#7a9a66', 1.15);
+const sun = new THREE.DirectionalLight('#fff3dc', 2.6);
+scene.add(hemi, sun, sun.target);
+
+// các preset sao chép giá trị từ engine/lights.js (day, night) + một hoàng hôn
+const L = {
+  day:   { top: '#3f9fe6', bottom: '#cdeeff', fog: '#cfeaff', fogR: [160, 700], hemi: ['#ffffff', '#7a9a66', 1.15], sun: ['#fff3dc', 2.6], dir: [0.5, 1, 0.6], exposure: 1.0, ground: '#35602a' },
+  dusk:  { top: '#4a5e9a', bottom: '#f2b38a', fog: '#e9b99c', fogR: [140, 650], hemi: ['#ffd9b8', '#5a4a58', 0.95], sun: ['#ffb070', 2.2], dir: [0.8, 0.28, 0.45], exposure: 1.0, ground: '#3a4a2c' },
+  night: { top: '#0c1238', bottom: '#33428a', fog: '#26326e', fogR: [90, 520], hemi: ['#8fa0ff', '#1b2040', 0.95], sun: ['#a9bcff', 1.3], dir: [-0.5, 1, 0.5], exposure: 1.05, ground: '#1d2a3a' },
+};
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), new THREE.MeshStandardMaterial({ color: '#35602a', roughness: 1 }));
+ground.rotation.x = -Math.PI / 2; ground.name = 'ground'; scene.add(ground);
+const crate = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: '#b07a3e', roughness: 0.8 })); crate.position.set(6, 0.5, 3); crate.name = 'crate'; scene.add(crate);
+
+const bd = createBackdrop(THREE, { seed: num('seed', 4), radius: 900, base: -30, height: 380, ranges: num('ranges', 3), snow: num('snow', 0.8), sunAz: 0.9 });
+scene.add(bd.group);
+window.__buildMs = bd.buildMs;
+
+let light = q.get('light') || 'day';
+function applyLight(name) {
+  const p = L[name] || L.day; light = name;
+  hemi.color.set(p.hemi[0]); hemi.groundColor.set(p.hemi[1]); hemi.intensity = p.hemi[2];
+  sun.color.set(p.sun[0]); sun.intensity = p.sun[1]; sun.position.set(...p.dir).normalize().multiplyScalar(50); sun.target.position.set(0, 0, 0);
+  scene.fog.color.set(p.fog); scene.fog.near = p.fogR[0]; scene.fog.far = p.fogR[1];
+  scene.background = new THREE.Color(p.bottom).lerp(new THREE.Color(p.top), 0.3);
+  ground.material.color.set(p.ground); renderer.toneMappingExposure = p.exposure;
+  bd.lightFrom(sun, hemi); bd.fogFrom(scene.fog);
+}
+for (const b of document.querySelectorAll('button[data-l]')) b.onclick = () => { applyLight(b.dataset.l); renderAt(+$('t').value); };
+
+function renderAt(tIn) {
+  const t = +tIn, yaw = (+$('yaw').value) * Math.PI / 180, pitch = (+$('pitch').value) * Math.PI / 180;
+  camera.position.set(0, 1.7, 0);
+  camera.lookAt(Math.cos(yaw) * 100, 1.7 + Math.tan(pitch) * 100, Math.sin(yaw) * 100);
+  camera.updateProjectionMatrix(); camera.updateMatrixWorld();
+  bd.set({ haze: +$('haze').value }); bd.group.visible = $('bd').checked;
+  bd.update(t, camera);
+  renderer.render(scene, camera);
+  $('to').textContent = t.toFixed(2); $('yawo').textContent = $('yaw').value; $('pitcho').textContent = $('pitch').value; $('hazeo').textContent = (+$('haze').value).toFixed(2);
+}
+
+const setIf = (id, k) => { if (q.has(k)) { const el = $(id); if (el.type === 'checkbox') el.checked = q.get(k) !== '0'; else el.value = q.get(k); } };
+setIf('t', 't'); setIf('yaw', 'yaw'); setIf('pitch', 'pitch'); setIf('haze', 'haze'); setIf('bd', 'backdrop');
+applyLight(light);
+for (const el of document.querySelectorAll('#ui input')) el.addEventListener('input', () => renderAt(+$('t').value));
+window.renderAt = (t) => { $('t').value = t; renderAt(t); };
+// ▶ Chạy: chỉ để XEM — đồng hồ thật chỉ xoay thanh hướng nhìn; hình vẫn là hàm thuần của thanh trượt
+let playing = false, t0 = 0, w0 = 0;
+const tick = (now) => { if (!playing) return; const y = (w0 + (now - t0) / 1000 * 12) % 360; $('yaw').value = y; renderAt(+$('t').value); requestAnimationFrame(tick); };
+$('play').onclick = () => { playing = !playing; $('play').textContent = playing ? '⏸ Dừng' : '▶ Chạy'; if (playing) { t0 = performance.now(); w0 = +$('yaw').value; requestAnimationFrame(tick); } };
+window.__shots = null; window.__stage = { renderer, scene, camera };
+renderAt(+$('t').value);
+window.__ready = true;
+</script>
+</body>
+</html>

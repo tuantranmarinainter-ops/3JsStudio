@@ -224,3 +224,6 @@ triplanarChunk({ prefix: 'bk', oriented: kind === 'wood' })  // GLSL: BkOut o = 
 
 ## Rừng xa ảnh vẽ
 - `engine/farwoods.js` `createFarwoods(THREE,{wind, seed, center, ring:[rIn,rOut], count, size, kinds, avoid, clumps})`: cây xa = thẻ ảnh vẽ quay về camera, 1 InstancedMesh + 1 program, atlas vẽ bằng code; `lightFrom`/`fogFrom` gọi trong onBeforeRender. Ô FX `farwoods`. Đang dùng: town (vành 150–400 m, chừa đường). Trang thử `engine/farwoods-lab.html`.
+
+## Núi xa vẽ 1 lần
+- `engine/backdrop.js` `createBackdrop(THREE,{seed, radius, base, height, ranges, snow, palette})`: 3 dãy núi (đồi có cây, dãy chính tuyết, dãy xa nhạt) vẽ 1 lần (~430 ms) vào dải tranh 4096×512 (R sáng, G tuyết/cây, B không khí, A mặt nạ); ống trụ ghim mặt phẳng xa theo camera, 1 program; `lightFrom`/`fogFrom` trong onBeforeRender → ngày/đêm không vẽ lại. Ô FX `backdrop`. Đang dùng: town. Trang thử `engine/backdrop-lab.html?light=day|dusk|night`.

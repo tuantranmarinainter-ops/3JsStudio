@@ -14,6 +14,7 @@ import { createCamp } from '../castaway.js';
 import { smoothFlash } from '../flash.js';
 import { createWind } from '../wind.js';
 import { createFarwoods } from '../farwoods.js';
+import { createBackdrop } from '../backdrop.js';
 
 export default function build(g, e, H) {
   const { THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
@@ -170,9 +171,13 @@ export default function build(g, e, H) {
     kinds: { leafy: 1, pine: 0.8 }, avoid: (x, z) => Math.abs(z - 36) < 16, clumps: true });
   woods.mesh.onBeforeRender = () => { woods.lightFrom(scene.children.find((o) => o.isDirectionalLight && o.name === 'sun'), scene.children.find((o) => o.isHemisphereLight)); woods.fogFrom(scene.fog); };
   g.add(woods.group);
+  // núi xa vẽ 1 lần thành dải tranh quấn chân trời (engine/backdrop.js, 1 program); màu theo nắng/sương của shot; ô bật/tắt 'backdrop'
+  const hills = createBackdrop(THREE, { seed: 8, radius: 900, base: -30, height: 340, snow: 0.6 });
+  hills.mesh.onBeforeRender = () => { hills.lightFrom(scene.children.find((o) => o.isDirectionalLight && o.name === 'sun'), scene.children.find((o) => o.isHemisphereLight)); hills.fogFrom(scene.fog); };
+  g.add(hills.group);
   // ghế ngồi hiên (s030: bé ngồi chờ thư). Shot gọi env.seat.userData.want = true + đặt position/rotation (toạ độ thế giới) trong fn mỗi khung;
   // update() đọc cờ rồi xoá → mọi shot khác không thấy ghế (hàm thuần của shot, tua tới/lui như nhau)
   const seat = K.chair(); seat.name = 'porch_chair'; seat.scale.setScalar(1.8); seat.visible = false; g.add(seat);
   return { setNight(n) { nbWins.forEach((w) => { w.emissiveIntensity = n * 1.4; }); moon.visible = n > 0.5; }, dirt, hole, seat,
-    update(t, ctx) { woods.group.visible = globalThis.__autoFx?.farwoods !== false; if (woods.group.visible) woods.update(t, stage.camera); const L = LIGHTS[ctx.light || 'night']; life.update(t, !L.night); seat.visible = !!seat.userData.want; seat.userData.want = false; } };
+    update(t, ctx) { woods.group.visible = globalThis.__autoFx?.farwoods !== false; if (woods.group.visible) woods.update(t, stage.camera); hills.group.visible = globalThis.__autoFx?.backdrop !== false; if (hills.group.visible) hills.update(t, stage.camera); const L = LIGHTS[ctx.light || 'night']; life.update(t, !L.night); seat.visible = !!seat.userData.want; seat.userData.want = false; } };
 }
