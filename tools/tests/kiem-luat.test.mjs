@@ -141,3 +141,49 @@ test('dur tròn theo khung nguyên (2.4 - 1.6 không rơi dưới 0.8)', T, () =
   assert.equal(s.dur, 0.8);
   assert.equal(s.luat.L11.ok, true);
 });
+
+const coVai = path.join(root, 'tools', 'tests', 'data', 'trang-co-vai.html');
+
+test('trang coVai:false có hat/tang: L6/L8 không skip, L1/L3/L10 skip khong-co-vai', T, () => {
+  const d = tmp(); const out = path.join(d, 'k');
+  const r = chay([khongVai, '--shots', 'all', '--jobs', '1', '--out', out, '--duyet', path.join(d, 'd')]);
+  assert.ok(r.status === 0 || r.status === 1, r.stdout + r.stderr);
+  const s = doc(path.join(out, 'luat.json')).shots.s001.luat;
+  for (const ma of ['L6', 'L8']) assert.ok(!s[ma].skip, ma + ' không được skip');
+  for (const ma of ['L1', 'L2', 'L3', 'L5', 'L10']) assert.equal(s[ma].skip, 'khong-co-vai', ma);
+});
+
+test('chạy một phần trên trang có vai: coVai cấp cao vẫn true, coVaiShot theo shot', T, () => {
+  const d = tmp(); const out = path.join(d, 'k'), du = path.join(d, 'd');
+  const a = chay([coVai, '--shots', 'all', '--jobs', '1', '--out', out, '--duyet', du]);
+  assert.ok(a.status === 0 || a.status === 1, a.stdout + a.stderr);
+  assert.equal(doc(path.join(out, 'luat.json')).coVai, true);
+  assert.equal(doc(path.join(out, 'luat.json')).shots.s002.coVaiShot, true);
+  assert.ok(!doc(path.join(out, 'luat.json')).shots.s001.luat.L1.skip);
+  chay([coVai, '--shots', 's002', '--jobs', '1', '--out', out, '--duyet', du]);
+  const j = doc(path.join(out, 'luat.json'));
+  assert.equal(j.coVai, true); assert.equal(j.coMeasure, true);
+});
+
+test('gộp: shot đổi dur được đo lại; shot bị xoá mất bản ghi + ảnh', T, () => {
+  const d = tmp(); const out = path.join(d, 'k'), du = path.join(d, 'd');
+  const p = path.join(d, 'p.html');
+  const goc = fs.readFileSync(toiThieu, 'utf8');
+  fs.writeFileSync(p, goc);
+  const a = chay([p, '--shots', 'all', '--jobs', '1', '--out', out, '--duyet', du]);
+  assert.ok(a.status === 0 || a.status === 1, a.stdout + a.stderr);
+  const cu = doc(path.join(out, 'luat.json'));
+  // s002 dài hơn (t1 2.5 -> 3.0), s003 bị xoá
+  const moi = goc.replace("t1: 2.5, dur: 1.5", "t1: 3.0, dur: 2").replace(/\s*\{ id: 's003'[^\n]*\n/, '\n');
+  assert.notEqual(moi, goc);
+  fs.writeFileSync(p, moi);
+  const r = chay([p, '--shots', 's001', '--jobs', '1', '--out', out, '--duyet', du]);
+  assert.ok(r.status === 0 || r.status === 1, r.stdout + r.stderr);
+  assert.match(r.stderr, /đo lại vì đổi: s002/);
+  const j = doc(path.join(out, 'luat.json'));
+  assert.deepEqual(Object.keys(j.shots), ['s001', 's002']);
+  assert.equal(j.tong.soShot, 2);
+  assert.equal(j.shots.s002.dur, 2);
+  assert.ok(!j.shots.s003);
+  for (const dir of ['01_shots', '02_loi']) assert.deepEqual(fs.readdirSync(path.join(du, dir)).filter((f) => f.startsWith('s003_')), []);
+});

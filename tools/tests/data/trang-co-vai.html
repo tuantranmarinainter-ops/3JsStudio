@@ -1,0 +1,26 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>trang co vai</title>
+<style>html,body{margin:0;background:#000}#root{width:1080px;height:1920px}canvas{display:block}</style>
+<div id="root"><canvas id="c" width="1080" height="1920"></canvas></div>
+<script>
+  // Trang giả: 3 shot, có renderAt/__shots/__ready, KHÔNG có __measure/__stage/__mask.
+  const c = document.getElementById('c'), g = c.getContext('2d');
+  window.renderAt = (t) => {
+    const k = t * 40;
+    const gr = g.createLinearGradient(0, 0, 1080, 1920);
+    gr.addColorStop(0, `rgb(${60 + k % 120},${120 + (k * 2) % 100},200)`);
+    gr.addColorStop(1, `rgb(30,${40 + (k * 3) % 80},${80 + k % 100})`);
+    g.fillStyle = gr; g.fillRect(0, 0, 1080, 1920);
+    g.fillStyle = '#fff'; g.fillRect(100 + k * 6 % 700, 600, 200, 400);
+    g.fillStyle = '#e74c3c'; g.fillRect(300, 1300 - (k * 4) % 300, 300, 300);
+  };
+  window.__measure = (t) => ({ t, shot: "x", cam: {}, vat: [{ ten: "hero", vai: "hero", bbox: [0.3, 0.3, 0.6, 0.8], trongKhung: 1, che: 0 }], chan: [], hat: { bui: 1, tuyet: 1, mua: 1 }, tang: { front: 1, mid: 1, back: 1 }, vatLieu: [] });
+  window.__shots = { total: 3.5, list: [
+    { id: 's001', index: 0, t0: 0, t1: 1, dur: 1, env: 'town' },
+    { id: 's002', index: 1, t0: 1, t1: 2.5, dur: 1.5, env: 'island', type: 'closeup' },
+    { id: 's003', index: 2, t0: 2.5, t1: 3.5, dur: 1, env: 'snowNight' },
+  ] };
+  window.renderAt(0);
+  window.__ready = true;
+</script>
