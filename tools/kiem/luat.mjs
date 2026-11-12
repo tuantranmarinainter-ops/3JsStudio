@@ -21,29 +21,30 @@ const giao = (a, b) => a[0] < b[2] && b[0] < a[2] && a[1] < b[3] && b[1] < a[3];
 const r3 = (x) => Math.round(x * 1000) / 1000;
 
 export const LUAT = {
-  // L1: nhà có chân lọt khung với lề, đủ chân (ít nhất MỘT trong 3 khung đạt: camera zoom out/lia để lộ đủ chân).
-  // Chỉ áp khi nhà CÓ chân, là CHỦ THỂ và không phải cận cảnh.
+  // L1: nhà có chân lọt khung với lề, đủ chân TRONG KHUNG. Chỉ áp khi nhà CÓ chân, là CHỦ THỂ và không phải cận cảnh.
+  // Miễn theo TỪNG khung (khung cận cảnh = nhà trong khung < trongKhungMin hoặc lề <= leSat). Shot có khung cận cảnh
+  // (cận rồi lùi) thì KHUNG CUỐI phải lộ đủ chân; shot không có khung cận cảnh thì chỉ cần MỘT khung đạt; toàn khung cận cảnh: miễn.
   L1(ctx, ng) {
     const t = ng.L1;
     if (ctx.shot.frame === 'close') return mien('frame-close: bo qua', t);
     if (!coM(ctx)) return { ...KHONG_MEASURE, nguong: t };
-    let leMinTat = Infinity, coNha = false, soNodeChan = 0, tkNha = Infinity;
-    let tot = null;   // khung tốt nhất: { le, canh, soChan, dat }
+    let coNha = false, soNodeChan = 0;
+    const khung = [];   // mỗi khung có nhà: { le, canh, soChan, dat, can }
     for (const m of ms(ctx)) {
       const nha = vaiCua(m, 'nha');
       if (!nha.length) continue;
       coNha = true;
-      soNodeChan += vaiCua(m, 'chan-nha').length;   // đếm cả chân bbox null
+      soNodeChan += vaiCua(m, 'chan-nha').length;   // đếm cả chân bbox null / ngoài khung (chỉ để biết nhà có chân hay không)
       const chan = vaiCua(m, 'chan-nha').filter(coBbox);
+      const chanTrong = chan.filter((v) => (Number.isFinite(v.trongKhung) ? v.trongKhung : 0) >= t.chanTrongKhungMin).length;
       const bs = [...nha.filter(coBbox), ...chan].map((v) => v.bbox);
-      if (!bs.length) { tkNha = 0; tot = tot || { le: -Infinity, canh: 'trai', soChan: 0, dat: false }; continue; }
-      tkNha = Math.min(tkNha, ...nha.map((v) => (Number.isFinite(v.trongKhung) ? v.trongKhung : 0)));
+      if (!bs.length) { khung.push({ le: -Infinity, canh: 'trai', soChan: 0, dat: false, can: true }); continue; }
+      const tkNha = Math.min(...nha.map((v) => (Number.isFinite(v.trongKhung) ? v.trongKhung : 0)));
       const b = hop(bs);
       let le = Infinity, canh = 'trai';
       for (const [ten, l] of [['trai', b[0]], ['tren', b[1]], ['phai', 1 - b[2]], ['duoi', 1 - b[3]]]) if (l < le) { le = l; canh = ten; }
-      leMinTat = Math.min(leMinTat, le);
-      const dat = le >= t.le && chan.length >= t.soChan;
-      if (!tot || (dat && !tot.dat) || (dat === tot.dat && (le > tot.le))) tot = { le, canh, soChan: chan.length, dat };
+      const can = !(tkNha >= t.trongKhungMin) || !(le > t.leSat);
+      khung.push({ le, canh, soChan: chanTrong, dat: !can && le >= t.le && chanTrong >= t.soChan, can });
     }
     if (!coNha) return mien('khong-co-nha-trong-khung', t);
     const exempt = (ghiChu) => ({ ok: true, val: { apDung: false }, nguong: t, ghiChu });
@@ -51,8 +52,12 @@ export const LUAT = {
     const g = giua(ctx);
     const nguoiTo = (g.vat || []).some((v) => (v.vai === 'hero' || v.vai === 'nguoi') && coBbox(v) && (v.bbox[3] - v.bbox[1]) >= t.nguoiChuTheCao);
     if (nguoiTo) return exempt('nha-la-nen');
-    if (!(tkNha >= t.trongKhungMin) || !(leMinTat > t.leSat)) return exempt('can-canh');
-    return { ok: tot.dat, val: { le: r3(tot.le), canh: tot.canh, soChan: tot.soChan, apDung: true }, nguong: t };
+    if (khung.every((k) => k.can)) return exempt('can-canh');
+    const coCan = khung.some((k) => k.can);
+    const xet = coCan ? khung[khung.length - 1] : (khung.find((k) => k.dat) || khung.reduce((a, k) => (k.le > a.le ? k : a)));
+    const r = { ok: xet.dat, val: { le: r3(xet.le), canh: xet.canh, soChan: xet.soChan, apDung: true }, nguong: t };
+    if (coCan) r.ghiChu = 'co-khung-can-canh: xet khung cuoi';
+    return r;
   },
 
   // L2: vật cần đọc (insertRead) ở giữa, không che, không tràn.

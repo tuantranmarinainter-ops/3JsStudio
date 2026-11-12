@@ -165,10 +165,20 @@ test('__maskAnh: ổn định, khôi phục, tỉ lệ đen khớp', T, async ()
   const t = await shotHero();
   await page.evaluate((t) => window.renderAt(t), t);
   const shot = () => page.locator('canvas').first().screenshot();
+  const trangThai = () => page.evaluate(() => {
+    const { renderer: r, scene: sc } = window.__stage; let an = 0;
+    sc.traverse((o) => { if (!o.visible) an++; });
+    const cc = r.getClearColor(new sc.background.constructor()).getHex?.();
+    return { rt: r.getRenderTarget() === null, auto: r.autoClear, sh: r.shadowMap.autoUpdate, ca: r.getClearAlpha(), cc: typeof cc === 'number' ? cc : null,
+      over: sc.overrideMaterial === null, fog: sc.fog ? sc.fog.constructor.name : null, bg: sc.background ? (sc.background.isColor ? sc.background.getHex() : 'tex') : null, an };
+  });
+  const tt0 = await trangThai();
   const truoc = await shot();
   const a = await maskAnh(t);
   const sau = await shot();
   assert.ok(truoc.equals(sau), 'canvas bị đổi sau __maskAnh');
+  assert.deepEqual(await trangThai(), tt0, 'trạng thái renderer/scene không được khôi phục sau __maskAnh');
+  assert.equal(tt0.rt, true); assert.equal(tt0.over, true);
   assert.equal(a.data.length, 135 * 240 * 4);
   const b = await maskAnh(t);
   assert.deepEqual(a.data, b.data);

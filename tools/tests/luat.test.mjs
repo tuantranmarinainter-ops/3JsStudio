@@ -35,6 +35,30 @@ test('L1', () => {
   assert.ok(LUAT.L1(ctx(), ng).skip);
 });
 
+// I1: miễn L1 theo từng khung; shot có khung cận cảnh thì khung cuối phải lộ đủ chân.
+const nhaCan = () => nha([0.1, 0.1, 0.9, 0.9]).map((v) => ({ ...v, trongKhung: v.vai === 'nha' ? 0.1 : 0 }));
+test('L1: khung cận cảnh không miễn cả shot', () => {
+  const tot = mk(nha([0.1, 0.1, 0.9, 0.9])), can = mk(nhaCan());
+  const khungSai = mk([...nha([0.02, 0.1, 0.9, 0.9])]);   // lùi ra nhưng nhà sát lề
+  const r1 = LUAT.L1(ctx({ m: [can, can, khungSai] }), ng);
+  assert.equal(r1.ok, false, 'cận cảnh rồi lùi mà vẫn hụt lề phải trượt');
+  assert.equal(LUAT.L1(ctx({ m: [can, can, tot] }), ng).ok, true, 'cận cảnh rồi lùi thấy đủ chân: đạt');
+  assert.equal(LUAT.L1(ctx({ m: [tot, tot, can] }), ng).ok, false, 'kết thúc ở cận cảnh: khung cuối không lộ chân');
+  const r3 = LUAT.L1(ctx({ m: bo3(can) }), ng);
+  assert.equal(r3.ok, true); assert.equal(r3.val.apDung, false);   // toàn bộ cận cảnh: miễn
+});
+
+// I2: chỉ đếm chân nằm trong khung (trongKhung >= chanTrongKhungMin).
+test('L1: chân ngoài khung không được đếm', () => {
+  assert.ok(ng.L1.chanTrongKhungMin > 0);
+  const chanNgoai = nha([0.1, 0.1, 0.9, 0.9]).map((v) => (v.vai === 'chan-nha' && v.ten >= 'c2') ? { ...v, trongKhung: 0 } : v);
+  const r = LUAT.L1(ctx({ m: bo3(mk(chanNgoai)) }), ng);
+  assert.equal(r.ok, false);
+  assert.equal(r.val.soChan, 2);
+  const du = LUAT.L1(ctx({ m: bo3(mk(nha([0.1, 0.1, 0.9, 0.9]))) }), ng);
+  assert.equal(du.ok, true); assert.equal(du.val.soChan, 4);
+});
+
 test('L2', () => {
   const sh = { id: 's', type: 'insertRead', dur: 2 };
   const doc = (bbox, che = 0) => mk([{ ten: 'thiep', vai: 'doc', bbox, trongKhung: 1, che }]);

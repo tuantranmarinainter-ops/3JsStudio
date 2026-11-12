@@ -183,7 +183,8 @@ async function doShotTrong(tab, s, ng, dur) {
       const xam = (im) => im ? Buffer.from(Uint8Array.from({ length: im.w * im.h }, (_, i) => Math.round(0.2126 * im.data[i * 4] + 0.7152 * im.data[i * 4 + 1] + 0.0722 * im.data[i * 4 + 2]))).toString('base64') : null;
       dumpCtx[s.id] = { shot: ctx.shot, m: ctx.m, env: ctx.env, anh: anh.map(xam), mask: xam(mask), w: 135, h: 240 };
     }
-    const luat = kiemShot(ctx, ng);    if (e.ghiChu) luat.L7 = { ...luat.L7, ghiChu: [luat.L7.ghiChu, e.ghiChu].filter(Boolean).join('; ') };
+    const luat = kiemShot(ctx, ng);
+    if (e.ghiChu) luat.L7 = { ...luat.L7, ghiChu: [luat.L7.ghiChu, e.ghiChu].filter(Boolean).join('; ') };
     const loi = Object.keys(luat).filter((k) => luat[k].ok === false && !luat[k].skip);
     const khung = ts.map(khungSo);
     const jpgs = [];

@@ -1,5 +1,5 @@
 {
-  "L1": { "le": 0.05, "soChan": 4, "nguoiChuTheCao": 0.35, "trongKhungMin": 0.2, "leSat": -1 },
+  "L1": { "le": 0.05, "soChan": 4, "nguoiChuTheCao": 0.35, "trongKhungMin": 0.2, "leSat": -1, "chanTrongKhungMin": 0.5 },
   "L2": { "lechTam": 0.10, "cheMax": 0.05, "rongMax": 0.90 },
   "L3": { "trongKhungMin": 0.5, "cheMatMax": 0.2, "canCanhDienTich": 2 },
   "L4": { "psnrMax": 30 },
