@@ -7,6 +7,7 @@
 //
 // Trường của shot ngắn (đều tuỳ chọn trừ id/type; dur hoặc f như timeline.js):
 //   type   establish | crowd | walkBy | follow | closeup | reaction | overShoulder | insert | chase | reveal | dialogue
+//          | insertRead | houseFull | hug | fall | sinkTilt   (5 loại "thư viện chuẩn": mặc định đã đúng luật camera + qua kiểm luật)
 //   who    diễn viên chính ('hero')          with   diễn viên thứ 2 (dialogue/overShoulder/chase) hoặc mảng
 //   at     tên địa điểm (places của tập/thị trấn) hoặc [x,y,z]; bỏ trống = nối tiếp địa điểm của shot trước
 //   anim   animation R15 (idle, walk, run, jump, wave, point, scared, cheer, dance, lookAround, cower, panic…)
@@ -15,6 +16,9 @@
 //   side   'left' = đảo chiều đi / đảo phía camera      obj   tên object cho insert/reveal ('mailbox_home')
 //   n      số người đám đông (crowd)                     env, light  bối cảnh / ánh sáng (mặc định: theo tập)
 //   cam    ghi đè từng khoá camera (yaw, dist, h, fov, look, dist2, …)   cast  ghi đè từng diễn viên
+//   read   (insertRead) tên object cần đọc, vd 'postcard_island'; w = bề ngang vật (stud, mặc định 2.6), fill = tỉ lệ bề ngang khung (0.6)
+//   house  (houseFull/sinkTilt) ghi đè house mặc định của loại (style, at, ry, legsOut, lift…)   tilt (độ) / sink (stud) cho sinkTilt
+//   fov    (houseFull/sinkTilt) fov camera — khoảng lùi tự tính từ fov + kích thước nhà để lề ≥ 5%
 //
 // Liên tục giữa các shot: địa điểm (`at`) và vị trí/hướng cuối của mỗi diễn viên được nhớ sang shot sau.
 // Loại bám nhân vật (closeup, reaction, insert…) không ghi `at` → diễn viên đứng đúng chỗ shot trước để lại.
@@ -65,6 +69,29 @@ function applyMove(cam, move) {
   }
   return c;
 }
+
+// ---- kích thước nhà (engine/house.js: W=28, D=20, STAND=19; chân dang ±12.6 + bàn chân/móng ~3, bước ±3.5) để tính khoảng lùi ----
+const ASPECT = 9 / 16;                         // khung dọc 1080×1920
+// NGUỒN: đo tay, KHÔNG đọc từ engine/house.js (house.js chỉ xuất dims {W,D,WALL,BASE,PORCH,STAND,STRIDE} trên thể hiện nhà, không xuất độ dang chân).
+// ĐO LẠI khi đổi house.js: mở engine/shot-lab.html?type=houseFull, ở khung giữa lấy bbox thế giới của nhà family (legsOut 1, lift 1)
+// (Box3.setFromObject trên root nhà): hiện x ∈ ±29.9, z ∈ −15.4…20.9, cao 0…40.9 → HOUSE = làm tròn lên. Test shottypes (L1 lề ≥ 5%) sẽ đỏ nếu số này sai.
+const HOUSE = { hw: 30.5, hd: 21, top: 41.5 };
+const HOUSE_LOOK_Y = -4;                       // nhìn thấp hơn mốc nhà (thân + 6) ~4 stud cho nhà + chân nằm giữa khung dọc
+const LE = 0.065;                              // lề thiết kế mỗi cạnh (> 5% bắt buộc, chừa dư cho phối cảnh + phình AABB)
+// khoảng cách camera để bbox nhà + chân chiếm ≤ (1 − 2·LE) bề ngang/cao khung, camera xoay tối đa `th` rad quanh nhà (+ `extra` stud bề ngang)
+function houseDist(fovDeg, th, extra = 0, H = HOUSE) {
+  if (!(fovDeg > 0 && fovDeg < 180)) throw new Error(`houseDist: fov phải trong (0,180) độ, nhận ${fovDeg}`);
+  const t = Math.tan((fovDeg * PI) / 360), hx = H.hw + extra;
+  const hw = hx * Math.cos(th) + H.hd * Math.sin(th);      // nửa bề ngang chiếu lên màn hình
+  const zn = H.hd * Math.cos(th) + hx * Math.sin(th);      // mặt gần camera nhất cách tâm
+  const dW = hw / ((1 - 2 * LE) * t * ASPECT), dH = H.top / (2 * t * (1 - 2 * LE));
+  return Math.round((Math.max(dW, dH) + zn) * 1000) / 1000;
+}
+// BÙ TẠM cho engine/measure.js: worldBox lấy AABB theo trục của hộp con đã xoay nên nhà xoay ry bị đo phồng ≈ hd·|sin 2ry| bề ngang.
+// GỠ hàm này (và các chỗ gọi) khi measure.js tính bbox từ đỉnh thật.
+const aabbPhong = (ryNha) => HOUSE.hd * Math.abs(Math.sin(2 * ryNha));
+// nhà mặc định của loại: kiểu family tại địa điểm, chân dang hết, đứng thẳng
+const houseSpec = (P, ry, o = {}) => ({ style: 'family', at: [P[0], P[2]], ry, legsOut: 1, lift: 1, ...o });
 
 // ---- thư viện loại shot. Mỗi hàm nhận (shot, C) với C = { P, ry, f, s, who, other, crowd, pos(name), dur, flip }
 //      và trả { cam, cast, move } — cam là camera quỹ đạo của engine/shots.js. ----
@@ -184,6 +211,73 @@ export const SHOT_TYPES = {
       return { cam: { at: add(P, [UP, 3.6]), yaw: ry + 0.22 * d, dist: 21, h: 1.2, fov: 38 }, cast };
     },
   },
+
+  // ---- 5 loại thư viện chuẩn: mặc định đã đúng luật camera + qua kiểm luật L1/L2/L4/L5 ----
+
+  // vật cần ĐỌC (bưu thiếp, chữ): tâm vật ở giữa khung, camera gần như đứng yên (zoom 2%), shot tĩnh (static) để L4 bỏ qua
+  insertRead: {
+    doc: 'Cận vật cần đọc: read = tên object (vd "postcard_island"). Vật ở giữa khung, camera gần tĩnh (zoom 2%), static:true. w = bề ngang vật (stud), fill = tỉ lệ bề ngang khung.',
+    move: 'static',
+    make: ({ ry, who, sh, pos }) => {
+      if (!sh.read) throw new Error(`Shot ${sh.id}: insertRead cần trường read (tên object cần đọc).`);
+      for (const k of ['w', 'fill', 'fov']) if (sh[k] !== undefined && !(sh[k] > 0)) throw new Error(`Shot ${sh.id}: insertRead ${k} phải > 0, nhận ${sh[k]}`);
+      if (sh.fov !== undefined && sh.fov >= 180) throw new Error(`Shot ${sh.id}: insertRead fov phải < 180, nhận ${sh.fov}`);
+      const fov = sh.fov ?? 30, dist = Math.round(((sh.w ?? 2.6) / ((sh.fill ?? 0.6) * 2 * Math.tan((fov * PI) / 360) * ASPECT)) * 1000) / 1000;
+      return {
+        cam: { at: 'obj:' + sh.read, look: [0, 0, 0], yaw: ry, dist, dist2: Math.round(dist * 0.98 * 1000) / 1000, h: 0, fov },
+        cast: who ? { [who]: { at: pos(who), ry, anim: sh.anim || 'idle', face: sh.face } } : {},
+        static: true,
+      };
+    },
+  },
+  // toàn thân ngôi nhà có chân: lùi tới khi nhà + 4 chân lọt khung với lề ≥ 5% ở MỌI khung (kể cả lúc lia hết)
+  houseFull: {
+    doc: 'Toàn cảnh nhà + 4 chân: khoảng lùi tính từ kích thước nhà và fov (lề ≥ 5% mọi khung), lia ngang + lùi 25%. house (mặc định family tại địa điểm) ghi đè được.',
+    move: 'pan',
+    make: ({ P, ry, sh, flip }) => {
+      const fov = sh.fov ?? 55, d = flip ? -1 : 1, ryNha = sh.house?.ry ?? ry, dist = houseDist(fov, 0.11, aabbPhong(ryNha));
+      return { cam: { at: 'house', rel: true, look: [0, HOUSE_LOOK_Y, 0], yaw: -0.11 * d, dist, dist2: Math.round(dist * 1.25 * 1000) / 1000, h: 6, fov }, cast: {}, house: houseSpec(P, ry) };
+    },
+  },
+  // ôm: 2 người quay vào nhau rất gần, camera lùi dần (2 người trở lên → zoom OUT)
+  hug: {
+    doc: 'Ôm: who + with quay vào nhau (anim hug), camera lùi dần cho thấy cả hai (zoom out).',
+    move: 'pull',
+    make: ({ P, ry, s, who, other, sh, flip }) => {
+      if (!other) throw new Error(`Shot ${sh.id}: hug cần with (người thứ hai).`);
+      const d = flip ? -1 : 1, a = add(P, [s, -0.8 * d]), b = add(P, [s, 0.8 * d]);
+      const cast = {
+        [who]: { at: a, ry: headingOf([s[0] * d, 0, s[2] * d]), anim: sh.anim || 'hug', face: sh.face || 'happy' },
+        [other]: { at: b, ry: headingOf([-s[0] * d, 0, -s[2] * d]), anim: sh.withAnim || 'hug', face: sh.withFace || sh.face || 'happy' },
+      };
+      return { cam: { at: add(P, [UP, 2.9]), yaw: ry + 0.08 * d, dist: 9, h: 0.8, fov: 38 }, cast };
+    },
+  },
+  // ngã: 1 người, camera đẩy vào (zoom in) và HẠ theo xuống sát đất
+  fall: {
+    doc: 'Ngã: who ngã (anim tumble, hoặc fall); camera đẩy vào (1 người → zoom in) và hạ thấp theo xuống sát đất. Không ghi at → ngã tại chỗ đang đứng.',
+    move: 'push,drop', follows: true,
+    make: ({ ry, who, sh, pos, flip, dur }) => {
+      const anim = sh.anim || 'tumble';
+      return {
+        cam: { at: who, look: [0, -0.5, 0], look2: [0, -3.4, 0], yaw: ry + (flip ? -0.3 : 0.3), dist: 12.5, h: 1.5, fov: 38 },
+        cast: { [who]: { at: pos(who), ry, anim, animFromShot: true, animDur: dur, face: sh.face || (anim === 'fall' ? 'scared' : 'surprised') } },
+      };
+    },
+  },
+  // nhà nghiêng + chìm dần: tilt (độ), sink (stud); camera lùi để thấy cả nhà (zoom out), cả đầu lẫn cuối đều trọn nhà + chân
+  sinkTilt: {
+    doc: 'Nhà nghiêng (tilt, độ) và lún (sink, stud) dần trong shot; camera lùi 25% (zoom out), mọi khung đều thấy trọn nhà + chân. house ghi đè được.',
+    move: 'static',
+    make: ({ P, ry, sh, flip }) => {
+      const tilt = sh.tilt ?? 12, sink = sh.sink ?? 4, d = flip ? -1 : 1, fov = sh.fov ?? 55, rad = (tilt * PI) / 180, ryNha = sh.house?.ry ?? ry;
+      const spec = houseSpec(P, ry);
+      spec.roll = [0, Math.round(rad * d * 1e4) / 1e4];
+      spec.y = [0, -sink];
+      const dist = houseDist(fov, 0.3, Math.sin(rad) * HOUSE.hw + aabbPhong(ryNha));   // đủ cho nhà nghiêng hết cỡ ở góc lệch tối đa
+      return { cam: { at: 'house', rel: true, look: [0, HOUSE_LOOK_Y, 0], yaw: 0.3 * d, dist, dist2: Math.round(dist * 1.25 * 1000) / 1000, h: 8, fov }, cast: {}, house: spec };
+    },
+  },
 };
 export const SHOT_TYPE_NAMES = Object.keys(SHOT_TYPES);
 
@@ -216,7 +310,7 @@ export function expandShot(sh, ctx = {}, state = { at: null, actors: {} }) {
   // loại bám nhân vật, không ghi at → lấy hướng cuối của diễn viên làm hướng "mặt tiền" (camera vẫn đứng trước mặt)
   if (T.follows && sh.at === undefined && state.actors[who0]) ry = state.actors[who0].ry + (sh.turn || 0);
   const { f, s } = frame(ry);
-  const who = sh.who || (['crowd', 'establish', 'insert'].includes(sh.type) ? null : ctx.hero || 'hero');
+  const who = sh.who || (['crowd', 'establish', 'insert', 'insertRead', 'houseFull', 'sinkTilt'].includes(sh.type) ? null : ctx.hero || 'hero');
   const others = Array.isArray(sh.with) ? sh.with : sh.with ? [sh.with] : [];
   const dur = sh.dur ?? (sh.f ? (sh.f[1] + 1 - sh.f[0]) / (ctx.fps || 30) : 1);
   // vị trí diễn viên: loại bám nhân vật & không ghi at → chỗ cuối của shot trước; không có thì giữa địa điểm
@@ -234,6 +328,8 @@ export function expandShot(sh, ctx = {}, state = { at: null, actors: {} }) {
   for (const k of Object.keys(cast)) if (!cast[k]) delete cast[k];
   remember(cast, state);
   const out = { ...sh, env, light: sh.light ?? light, cam, cast };
+  if (made.house) out.house = { ...made.house, ...(sh.house || {}) };   // loại có nhà (houseFull, sinkTilt): house của shot gộp đè lên mặc định
+  if (made.static !== undefined && sh.static === undefined) out.static = made.static;
   delete out.type; out.shotType = sh.type;     // đã mở rộng (tránh mở rộng lần 2)
   return out;
 }

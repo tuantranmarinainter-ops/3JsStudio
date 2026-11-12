@@ -63,7 +63,7 @@ export const LUAT = {
   // L2: vật cần đọc (insertRead) ở giữa, không che, không tràn.
   L2(ctx, ng) {
     const t = ng.L2;
-    if (ctx.shot.type !== 'insertRead') return mien('khong-phai-insertRead', t);
+    if ((ctx.shot.type ?? ctx.shot.shotType) !== 'insertRead') return mien('khong-phai-insertRead', t);
     if (!coM(ctx)) return { ...KHONG_MEASURE, nguong: t };
     let lech = 0, dx = 0, dy = 0, che = 0, rong = 0, thay = false;
     for (const m of ms(ctx)) {
@@ -113,7 +113,7 @@ export const LUAT = {
   // L5: nhà nghiêng / chìm ở khung giữa (chỉ sinkTilt).
   L5(ctx, ng) {
     const t = ng.L5;
-    if (ctx.shot.type !== 'sinkTilt') return mien('khong-phai-sinkTilt', t);
+    if ((ctx.shot.type ?? ctx.shot.shotType) !== 'sinkTilt') return mien('khong-phai-sinkTilt', t);
     if (!coM(ctx)) return { ...KHONG_MEASURE, nguong: t };
     const g = giua(ctx);
     const vat = g.vat || [];
@@ -202,7 +202,7 @@ export const LUAT = {
       const moCoi = tp.filter((c) => c.dienTich >= t.moCoiMin && !moi.some((b) => giao(c.bbox, b)));
       if (moCoi.length) { ok = false; val.moCoi = moCoi.length; ghi.push('thanh-phan-mo-coi'); }
     } else ghi.push('khong-co-measure: khong kiem thanh phan theo vat');
-    if (HANH_DONG_TACH.includes(ctx.shot.type) && tp.length < 2) {
+    if (HANH_DONG_TACH.includes((ctx.shot.type ?? ctx.shot.shotType)) && tp.length < 2) {
       const than = mg ? vaiCua(mg, 'hero')[0] : null;
       const chi = mg && than ? (mg.vat || []).filter((v) => (v.vai === 'tay' || v.vai === 'chan-nguoi') && v.chu === than.ten && coBbox(v)) : [];
       if (than && coBbox(than) && chi.length) {
@@ -219,7 +219,7 @@ export const LUAT = {
   // L11: thời lượng tối thiểu theo loại shot.
   L11(ctx, ng) {
     const t = ng.L11;
-    const type = ctx.shot.type;
+    const type = ctx.shot.type ?? ctx.shot.shotType;
     let min;
     if (HANH_DONG.includes(type)) min = t.hanhDong;
     else if (type !== 'hanhDong' && type !== 'macDinh' && typeof t[type] === 'number') min = t[type];

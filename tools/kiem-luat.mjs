@@ -149,7 +149,7 @@ async function doShot(tab, s, ng) {
     try { await page.evaluate(() => { try { if (window.__mask) window.__mask(null); } catch { /* bỏ */ } }); } catch { /* bỏ */ }
     const msg = String((err && err.message) || err).split(/\r?\n/)[0].slice(0, 200);
     const t = [s.t0 + 1 / FPS, (s.t0 + s.t1) / 2, s.t1 - 1 / FPS];
-    return { id: s.id, index: s.index, loiMsg: msg, jpgs: [], rec: { type: s.type ?? null, dur, khung: t.map(khungSo), luat: ketQuaLoi(msg), loi: ['loi'], coMeasureShot: false, coVaiShot: false } };
+    return { id: s.id, index: s.index, loiMsg: msg, jpgs: [], rec: { type: s.type ?? s.shotType ?? null, dur, khung: t.map(khungSo), luat: ketQuaLoi(msg), loi: ['loi'], coMeasureShot: false, coVaiShot: false } };
   }
 }
 
@@ -176,7 +176,7 @@ async function doShotTrong(tab, s, ng, dur) {
     }
     const e = loaiEnv(s);
     const ctx = {
-      shot: { id: s.id, type: s.type, dur, static: s.static, frame: s.frame, read: s.read },
+      shot: { id: s.id, type: s.type ?? s.shotType, dur, static: s.static, frame: s.frame, read: s.read },
       m: m.some(Boolean) ? m : null, anh, mask, env: { dem: e.dem, tuyet: e.tuyet, mua: e.mua },
     };
     if (opt['luu-ctx']) {   // đổ dữ liệu vào để phát lại luật offline khi hiệu chỉnh ngưỡng (ảnh -> xám 8 bit, base64)
@@ -192,7 +192,7 @@ async function doShotTrong(tab, s, ng, dur) {
       const dong2 = loi.length ? loi.map((k) => `${k} ${TEN_LUAT[k]}`).join(' · ') : '✅';
       for (let i = 0; i < 3; i++) jpgs.push(await ganNhan(C, pngs[i], `${s.id} f${khung[i]} t=${ts[i].toFixed(2)}s`, dong2));
     }
-    return { id: s.id, index: s.index, rec: { type: s.type ?? null, dur, khung, luat, loi, coMeasureShot: !!ctx.m, coVaiShot }, jpgs };
+    return { id: s.id, index: s.index, rec: { type: s.type ?? s.shotType ?? null, dur, khung, luat, loi, coMeasureShot: !!ctx.m, coVaiShot }, jpgs };
   }
 }
 
@@ -211,7 +211,7 @@ try {
   browser = await launchBrowser();
   const url = await toUrl(pageArg);
   const dau = await moTab(url);
-  const tatCa = await dau.page.evaluate(() => window.__shots.list.map((s, i) => ({ id: s.id, index: i, t0: s.t0, t1: s.t1, type: s.type, static: s.static, frame: s.frame, read: s.read, env: s.env, light: s.light, night: s.night, fx: s.fx ? JSON.parse(JSON.stringify(s.fx)) : undefined })));
+  const tatCa = await dau.page.evaluate(() => window.__shots.list.map((s, i) => ({ id: s.id, index: i, t0: s.t0, t1: s.t1, type: s.type ?? s.shotType, static: s.static, frame: s.frame, read: s.read, env: s.env, light: s.light, night: s.night, fx: s.fx ? JSON.parse(JSON.stringify(s.fx)) : undefined })));
   const toanBo = !opt.shots || opt.shots === 'all';
   let chon = tatCa;
   if (!toanBo) {

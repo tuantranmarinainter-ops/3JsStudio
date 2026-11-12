@@ -1,0 +1,107 @@
+<!doctype html>
+<!-- shot-lab — trang thử LOẠI SHOT (engine/shottypes.js) tách riêng, không cần tập phim.
+       engine/shot-lab.html?type=houseFull|insertRead|sinkTilt|hug|fall     (mặc định houseFull)
+     Mỗi loại có vài shot mẫu (id h1.. r1.. s1.. g1.. f1..). Bề mặt kiểm giống tập thật: window.__ready, renderAt(t), __shots, __measure(t).
+       node tools/kiem-luat.mjs "engine/shot-lab.html?type=houseFull" --shots all --khong-anh
+       node tools/look.mjs engine/shot-lab.html?type=sinkTilt --shots all
+     Thị trấn/bối cảnh được thay bằng một mặt đất phẳng để chỉ đo CAMERA + BỐ TRÍ của loại shot.
+     TẤT ĐỊNH: thời gian chỉ từ window.renderAt(t); không rAF, không đồng hồ, không Math.random. -->
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, height=1920">
+<title>Shot Lab</title>
+<style>
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+  #root { position: relative; width: 1080px; height: 1920px; }
+  #stage { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+</style>
+</head>
+<body>
+<div id="root"><canvas id="stage" width="1080" height="1920"></canvas></div>
+<script type="importmap">{ "imports": { "three": "../vendor/three/three.module.js", "three/addons/": "../vendor/three/addons/" } }</script>
+<script type="module">
+import * as THREE from 'three';
+import { createStage } from './stage.js';
+import { createHouse } from './house.js';
+import { buildTimeline } from './timeline.js';
+import { createDirector } from './shots.js';
+import { installMeasure } from './measure.js';
+import { expandShots, resolvePlaces, SHOT_TYPE_NAMES } from './shottypes.js';
+import { LIGHTS } from './lights.js';
+import { makePostcard } from './postcards.js';
+import { buildCast } from './cast.js';
+
+window.THREE = THREE;
+const q = new URLSearchParams(location.search);
+const TYPE = q.get('type') || 'houseFull';
+if (!SHOT_TYPE_NAMES.includes(TYPE)) throw new Error(`type="${TYPE}" không có. Có: ${SHOT_TYPE_NAMES.join(', ')}`);
+const FPS = 30;
+
+// shot mẫu theo loại (đủ để thử biến thể: hướng nhà, fov, tham số)
+const LAB_SHOTS = {
+  houseFull: [
+    { id: 'h1', dur: 1.5, type: 'houseFull', at: 'lab' },
+    { id: 'h2', dur: 1.5, type: 'houseFull', at: 'lab', house: { ry: 0.7 } },
+    { id: 'h3', dur: 1.5, type: 'houseFull', at: 'lab', fov: 40, side: 'left' },
+  ],
+  insertRead: [
+    { id: 'r1', dur: 1.5, type: 'insertRead', at: 'lab', read: 'postcard_island', props: { card: { at: [0, 3, 0], ry: 0 } } },
+    { id: 'r2', dur: 1.5, type: 'insertRead', at: 'lab', turn: 0.4, read: 'postcard_island', props: { card: { at: [6, 4, -3], ry: 0.4 } } },
+  ],
+  sinkTilt: [
+    { id: 's1', dur: 1.5, type: 'sinkTilt', at: 'lab', tilt: 12, sink: 5 },
+    { id: 's2', dur: 1.5, type: 'sinkTilt', at: 'lab', tilt: 14, sink: 8, side: 'left' },
+  ],
+  hug: [
+    { id: 'g1', dur: 1.5, type: 'hug', at: 'lab', who: 'hero', with: 'mom' },
+    { id: 'g2', dur: 1.5, type: 'hug', at: 'lab', who: 'hero', with: 'mom', side: 'left' },
+  ],
+  fall: [
+    { id: 'f1', dur: 1.2, type: 'fall', at: 'lab', who: 'hero' },
+    { id: 'f2', dur: 1.2, type: 'fall', who: 'hero', anim: 'fall', turn: 0.6 },
+  ],
+};
+
+const stage = createStage(THREE, { canvas: document.getElementById('stage'), ground: null, fov: 40 });
+stage.scene.background = new THREE.Color('#9fd3f5');
+// mặt đất ô vuông (16 stud/ô) để camera chuyển động thì hình đổi như ngoài thị trấn thật (nền phẳng một màu làm L4 đo sai)
+const chk = document.createElement('canvas'); chk.width = chk.height = 64;
+{ const g = chk.getContext('2d'); g.fillStyle = '#7fae5c'; g.fillRect(0, 0, 64, 64); g.fillStyle = '#5f8f45'; g.fillRect(0, 0, 32, 32); g.fillRect(32, 32, 32, 32); }
+const chkTex = new THREE.CanvasTexture(chk); chkTex.colorSpace = THREE.SRGBColorSpace; chkTex.wrapS = chkTex.wrapT = THREE.RepeatWrapping; chkTex.repeat.set(900 / 32, 900 / 32); chkTex.magFilter = THREE.NearestFilter;
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(900, 900), new THREE.MeshStandardMaterial({ map: chkTex, roughness: 1 }));
+floor.name = 'lab_ground'; floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; stage.scene.add(floor);
+
+// env giả tối thiểu cho đạo diễn (engine/shots.js): một nhóm rỗng + ánh sáng 'day'
+const lab = { group: new THREE.Group(), light: 'day' }; lab.group.name = 'lab_env'; stage.scene.add(lab.group);
+const envObj = { group: lab.group, ground: { kind: 'dirt', y: 0.05 } };
+const envs = { LIGHTS, envs: { lab }, current: envObj, last: {}, activate: () => envObj, use() {} };
+
+const houses = { family: createHouse(THREE, { style: 'family', name: 'house_family' }), illus: createHouse(THREE, { style: 'illustration', name: 'house_illus' }) };
+houses.illustration = houses.illus;
+for (const h of Object.values(houses)) stage.scene.add(h.root);
+const props = { card: makePostcard(THREE, 'island', { w: 2.6 }) };
+const actors = (TYPE === 'hug' || TYPE === 'fall') ? await buildCast(THREE, { hero: { shirt: '#e74c3c', face: 'smile' }, mom: { shirt: '#8e44ad', skirt: '#5d4037', hair: 'braids' } }) : {};
+for (const a of Object.values(actors)) stage.scene.add(a.root);
+
+const places = resolvePlaces({ lab: { pos: [0, 0, 0], ry: 0 } }, {});
+const shots = expandShots(LAB_SHOTS[TYPE], { places, crowd: [], env: 'lab', light: 'day', fps: FPS });
+const tl = buildTimeline(shots, FPS);
+
+const director = createDirector({ THREE, stage, envs, K: {}, actors, houses, props, fx: {} });
+stage.onFrame((t) => {
+  const T = Math.min(t, tl.total - 1e-4);
+  const { shot, local, k } = tl.at(T);
+  director.render(shot, local, k, T);
+});
+stage.renderer.compile(stage.scene, stage.camera);
+stage.start();
+window.renderAt = (t) => stage.renderAt(t);
+window.__shots = tl;
+window.__stage = stage;
+window.__places = places;
+installMeasure({ THREE, stage, shots: tl });
+window.__ready = true;
+</script>
+</body>
+</html>
