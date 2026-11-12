@@ -8,6 +8,7 @@ import { readFile } from 'node:fs/promises';
 import { readFileSync } from 'node:fs';
 import { extname, join, resolve, relative } from 'node:path';
 import { launchBrowser } from '../browser.mjs';
+import { docAnh } from '../kiem/nhan.mjs';
 
 const root = resolve(import.meta.dirname, '..', '..');
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.glb': 'model/gltf-binary', '.ogg': 'audio/ogg', '.mp3': 'audio/mpeg', '.ttf': 'font/ttf', '.woff2': 'font/woff2', '.css': 'text/css', '.svg': 'image/svg+xml' };
@@ -116,4 +117,41 @@ test('tắt faceLive: đường mã cũ — không có trạng thái mặt sốn
   assert.equal(f.st.mp, undefined);
   assert.equal(f.st.mixK, undefined);
   assert.equal(f.face, 'scared');
+});
+
+// Kiểm hướng nhìn TRÊN ẢNH (không chỉ dấu của gaze.x): trục u của texture mặt có thể ngược +X của đầu.
+// Chụp mặt chính diện (camera trước mặt, +X thế giới = bên PHẢI màn hình) ở g1 (lookAt bên phải) và g2 (bên trái);
+// với mỗi tròng trắng (2 mảng trắng lớn nhất) so tâm khối trắng với lúc nhìn thẳng: khối trắng dồn sang trái ⇒ đồng tử lệch phải (và ngược lại).
+async function lechDongTu(pg, t) {
+  await pg.evaluate((t) => window.renderAt(t), t);
+  const png = await pg.screenshot({ clip: { x: 0, y: 0, width: 1080, height: 1920 } });
+  const { w, h, data } = await docAnh(pg, png, 540, 960);
+  const px = (i) => [data[i * 4], data[i * 4 + 1], data[i * 4 + 2]];
+  const white = new Uint8Array(w * h);
+  for (let i = 0; i < w * h; i++) { const [r, g, b] = px(i); if (Math.min(r, g, b) > 120 && Math.max(r, g, b) - Math.min(r, g, b) < 45) white[i] = 1; }
+  const seen = new Uint8Array(w * h), comps = [];
+  for (let i0 = 0; i0 < w * h; i0++) {
+    if (!white[i0] || seen[i0]) continue;
+    const st = [i0]; seen[i0] = 1; let n = 0, x0 = w, x1 = 0, y0 = h, y1 = 0;
+    while (st.length) {
+      const i = st.pop(), x = i % w, y = (i / w) | 0; n++; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+      for (const j of [i - 1, i + 1, i - w, i + w]) if (j >= 0 && j < w * h && white[j] && !seen[j] && Math.abs((j % w) - x) <= 1) { seen[j] = 1; st.push(j); }
+    }
+    comps.push({ n, x0, x1, y0, y1 });
+  }
+  const eyes = comps.sort((a, b) => b.n - a.n).slice(0, 2).sort((a, b) => a.x0 - b.x0);
+  assert.equal(eyes.length, 2, 'không thấy 2 tròng trắng');
+  // tâm KHỐI TRẮNG của mỗi tròng: đồng tử (tối) dịch về phía nào thì khối trắng dồn về phía ngược lại
+  return eyes.map((e) => { let sx = 0, n = 0; for (let y = e.y0; y <= e.y1; y++) for (let x = e.x0; x <= e.x1; x++) if (white[y * w + x]) { sx += x; n++; } return sx / n; });
+}
+test('ánh nhìn trên ảnh: đồng tử lệch đúng phía đối tượng TRÊN MÀN HÌNH', T, async () => {
+  const pg = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 0.5 });
+  try {
+    await pg.goto(`http://localhost:${srv.address().port}/engine/face-lab.html?a=smile&b=scared&c=sad`);
+    await pg.waitForFunction(() => window.__ready === true, null, { timeout: 170000 });
+    const phai = await lechDongTu(pg, 10.5), trai = await lechDongTu(pg, 11.7);
+    const d = phai.map((c, i) => trai[i] - c);   // > 0: ở g1 khối trắng nằm bên trái hơn g2 ⇒ đồng tử g1 lệch PHẢI hơn g2
+    console.log('nhin: tâm trắng phải', phai.map((v) => v.toFixed(1)), 'trái', trai.map((v) => v.toFixed(1)));
+    for (const x of d) assert.ok(x > 8, 'lookAt bên PHẢI màn hình phải kéo đồng tử sang phải hơn lookAt bên TRÁI, hiệu tâm trắng = ' + x.toFixed(1) + ' px');
+  } finally { await pg.close(); }
 });

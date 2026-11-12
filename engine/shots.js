@@ -263,6 +263,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
   //   Kịch bản: cột `mặt` → cast[<vai>].face của shot (shot.face của kịch bản đã được sinh vào đó).
   const FACE_MIX_SEC = 0.25;
   let timeline = null;
+  const warned = {};   // cảnh báo mặt sống chỉ in MỘT lần
   const _gp = new THREE.Vector3();
   function gazeToward(a, tgt) {
     if (tgt === 'cam') camera.getWorldPosition(_gp);
@@ -279,7 +280,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
   }
   function liveFacePass(shot, prev, local, t, night) {
     let P = prev;
-    if (P && P.type && resolveType) { try { P = resolveType(P); } catch { P = null; } }
+    if (P && P.type && resolveType) { try { P = resolveType(P); } catch (e) { P = null; if (!warned.resolve) { warned.resolve = true; console.warn('[director] mặt sống: resolveType lỗi ở shot trước, bỏ chuyển mềm —', e?.message || e); } } }
     const mixK = smoothstep(local / FACE_MIX_SEC);
     for (const [name, a] of Object.entries(actors)) {
       const s = shot.cast?.[name]; if (!s || !a.root.visible) continue;
@@ -328,7 +329,8 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
   }
 
   function render(shot, local, k, t, prev) {
-    prev = prev ?? timeline?.list?.[shot.index - 1];   // shot trước (mặt sống): tham số thứ 5, hoặc director.setTimeline(tl)
+    prev = prev ?? timeline?.list?.[shot.index - 1];   // shot trước (mặt sống): tham số thứ 5 (tl.at(T).prev) hoặc director.setTimeline(tl)
+    if (!prev && shot.index > 0 && FACE_LIVE() && !warned.prev) { warned.prev = true; console.warn('[director] faceLive bật nhưng không biết shot trước (shot ' + shot.id + '): truyền tl.at(T).prev làm tham số thứ 5 của render hoặc gọi director.setTimeline(tl) — nếu không, mặt đổi cứng ở cú cắt.'); }
     if (shot.type && resolveType) shot = resolveType(shot);
     const time = shot.time ?? episode.time, weather = shot.weather ?? episode.weather;   // shot ghi thì thắng; KHÔNG thừa kế sang shot sau
     if ((time || weather) && (AUTO.gioThoiTiet ?? true)) {   // giờ / thời tiết theo shot (engine/envs/gio-thoi-tiet.js); không ghi gì ⇒ không chạm shot

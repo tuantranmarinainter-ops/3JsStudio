@@ -90,7 +90,34 @@ export const R15_DEFAULTS = {
   seed: null,           // seed chớp mắt/đảo mắt (mặc định băm từ name)
   textures: null,       // kết quả loadCharacterTextures() → { outfit, outfitNormal, face }
   outfitTexture: null, outfitNormal: null, faceTexture: null,
+  // --- nhân vật "Gà" (tuỳ chọn, mặc định tắt hết → nhân vật khác không đổi) ---
+  shorts: false,        // quần ngắn rộng (màu = pants), cẳng chân + đùi dưới màu da
+  headband: null,       // băng đô màu (vd '#d6322b') + nút + 2 đuôi lay theo chuyển động
+  crest: null,          // chỏm 3 cọng màu (vd '#f5d000') trên đỉnh đầu
+  sneakers: null,       // { color, sole, laces } giày sneaker
+  drawstrings: null,    // màu dây rút hoodie (mặc định = giá trị hoodie)
+  stripeColors: null,   // với shirtPattern 'hstripes': [sáng, tối, vạch] (sọc ngang liền mạch thân + tay)
+  faceSet: null,        // { tên: Texture } từ loadGaFaces() → mặt decal ảnh thay mặt vẽ thủ tục
 };
+
+// ---------- Bộ mặt decal của Gà (assets/characters/ga/faces/NN_tên.png, 362², nét đen nền trong suốt) ----------
+export const GA_FACES = [[0, 'binh_thuong'], [1, 'o_tho'], [2, 'cuoi_rang_tho'], [3, 'cuoi_ra_nuoc_mat'], [4, 'phan_khich'], [5, 'nan_ni_moi_vien_den'],
+  [6, 'buon_rung_rung'], [7, 'khoc_oa'], [8, 'que_do_mat'], [9, 'ren_do_mo_hoi'], [10, 'hoang_so'], [11, 'soc_ha_hoc'], [12, 'la_het'], [13, 'met_moi'],
+  [14, 'nghien_rang_tuc_gian'], [15, 'quat'], [16, 'nghi_ngo'], [17, 'boi_roi'], [18, 'cuoi_dac_y'], [19, 'ghe_tom'], [20, 'cuoi_guong'], [21, 'kiet_suc'],
+  [22, 'ngo_ngac'], [23, 'buon_ngu'], [24, 'quyet_tam'], [25, 'thac_mac'], [26, 'ngam_nghi'], [27, 'thiet_ha'], [28, 'a_ra_roi'], [29, 'hoi_loi'],
+  [30, 'dao_mat'], [31, 'ban_tin_ban_nghi'], [32, 'nhin_cuoi'], [33, 'im_lang_kho_xu'], [34, 'thi_tham'], [35, 'tho_phao'], [36, 'nhay_mat']];
+// tên biểu cảm của phim → ảnh của Gà (gọi trực tiếp tên ảnh như 'quyet_tam' cũng được)
+export const GA_FACE_MAP = { smile: 'binh_thuong', happy: 'cuoi_rang_tho', laugh: 'cuoi_ra_nuoc_mat', neutral: 'o_tho', sad: 'buon_rung_rung',
+  worried: 'ren_do_mo_hoi', scared: 'hoang_so', panic: 'la_het', surprised: 'soc_ha_hoc', angry: 'nghien_rang_tuc_gian', sleepy: 'buon_ngu',
+  sleep: 'kiet_suc', cold: 'hoi_loi', moved: 'tho_phao', grin: 'cuoi_guong', shy: 'que_do_mat' };
+export async function loadGaFaces(THREE, { base = '/assets/characters/ga/faces', urls = null } = {}) {
+  const loader = new THREE.TextureLoader(), out = {};
+  await Promise.all(GA_FACES.map(([n, k]) => new Promise((res) => {
+    const u = urls?.[k] || `${base}/${String(n).padStart(2, '0')}_${k}.png`;
+    try { loader.load(u, (t) => { t.colorSpace = THREE.SRGBColorSpace; out[k] = t; res(); }, undefined, () => res()); } catch { res(); }
+  })));
+  return out;
+}
 
 export const R15_FACES = ['smile', 'happy', 'laugh', 'neutral', 'sad', 'worried', 'scared', 'panic', 'surprised', 'angry',
   'sleepy', 'sleep', 'cold', 'moved'];
@@ -323,11 +350,13 @@ function headProfile(THREE) {
 }
 // Mảng mặt trước bám theo biên dạng đầu; UV = (cung ngang, chiều cao) → canvas mặt không méo
 const FACE_Y = [0.02, 0.97];
-function facePatchGeometry(THREE) {
-  const span = (FACE_Y[1] - FACE_Y[0]) / HEAD.R, NU = 28, NV = 28;
+const GA_PATCH = { span: 1.9, y: [0.02, 0.99] };   // mảng mặt rộng hơn cho decal của Gà (canvas 512² ↔ 1,2 × 0,97 stud)
+function facePatchGeometry(THREE, ga = null) {
+  const FY = ga ? ga.y : FACE_Y;
+  const span = ga ? ga.span : (FY[1] - FY[0]) / HEAD.R, NU = 28, NV = 28;
   const pos = [], uv = [], idx = [];
   for (let j = 0; j <= NV; j++) {
-    const y = FACE_Y[0] + (FACE_Y[1] - FACE_Y[0]) * j / NV, r = headRadius(y) + 0.006;
+    const y = FY[0] + (FY[1] - FY[0]) * j / NV, r = headRadius(y) + 0.006;
     for (let i = 0; i <= NU; i++) {
       const ph = -span / 2 + span * i / NU;
       pos.push(r * S(ph), y, r * C(ph)); uv.push(i / NU, j / NV);
@@ -402,8 +431,9 @@ function paintOutfit(o, seed) {
   const r = rng(seed ^ 0x5bd1e995);
   const skin = o.skin, shirt = o.shirt, sleeve = o.sleeves || null, pants = o.pants;
   const tornS = o.shirtPattern === 'torn', tornP = o.pantsPattern === 'torn', stripes = o.shirtPattern === 'stripes';
-  const lower = o.skirt || pants;
-  const shoe = o.shoes || (tornP ? null : toHex(shade(lower, -0.45)));
+  const hstr = o.shirtPattern === 'hstripes', SC = o.stripeColors || ['#91a846', '#6e7e37', '#e2e56c'];
+  const lower = o.skirt || (o.shorts ? skin : pants);
+  const shoe = o.sneakers?.color || o.shoes || (tornP ? null : toHex(shade(lower, -0.45)));
   const jeans = !o.skirt && !tornP && hexRgb(pants)[2] > hexRgb(pants)[0] + 40; // quần xanh → chỉ khâu vàng kiểu jean
   g.fillStyle = '#808080'; g.fillRect(0, 0, 1024, 1024);
 
@@ -453,9 +483,21 @@ function paintOutfit(o, seed) {
     if (face === 'right' || face === 'left') { g.fillStyle = 'rgba(0,0,0,0.05)'; g.fillRect(0, 0, w, h); }
   };
 
+  // sọc ngang liền mạch theo độ cao thế giới (128 px/stud, chu kỳ 0,5 stud: sáng–vạch–tối–vạch); yTop = độ cao đỉnh ô khi đứng thẳng
+  const hstripes = (w, h, yTop, face) => {
+    if (face === 'top' || face === 'bottom') return;
+    const off = Math.round((4 - yTop) * 128);
+    for (let py = 0; py < h; py++) {
+      const p = (((py + off) % 64) + 64) % 64;
+      g.fillStyle = p < 27 ? SC[0] : p < 32 ? SC[2] : p < 59 ? SC[1] : SC[2];
+      g.fillRect(0, py, w, 1);
+    }
+    grain(w, h, 0.7);
+  };
   // --- Thân trên ---
   paint('UpperTorso', (face, w, h) => {
     fabric(w, h, shirt, face);
+    if (hstr) hstripes(w, h, 4, face);
     if (face === 'front') {
       // cổ áo
       g.fillStyle = 'rgba(0,0,0,0.25)'; g.beginPath(); g.ellipse(w / 2, -6, 50, 26, 0, 0, PI); g.fill();
@@ -464,7 +506,7 @@ function paintOutfit(o, seed) {
         const y0 = h * 0.56, pc = shade(shirt, -0.06);
         g.beginPath(); g.moveTo(w * 0.2, h + 2); g.lineTo(w * 0.26, y0 + 14); g.quadraticCurveTo(w * 0.27, y0, w * 0.32, y0);
         g.lineTo(w * 0.68, y0); g.quadraticCurveTo(w * 0.73, y0, w * 0.74, y0 + 14); g.lineTo(w * 0.8, h + 2); g.closePath();
-        g.fillStyle = pc; g.fill(); g.strokeStyle = shade(shirt, -0.3); g.lineWidth = 3; g.stroke();
+        g.fillStyle = hstr ? 'rgba(0,0,0,0.05)' : pc; g.fill(); g.strokeStyle = shade(shirt, -0.3); g.lineWidth = 3; g.stroke();
         stitch([[w * 0.235, h], [w * 0.28, y0 + 10], [w * 0.32, y0 + 5], [w * 0.68, y0 + 5], [w * 0.72, y0 + 10], [w * 0.765, h]], shade(shirt, 0.35));
         g.strokeStyle = shade(shirt, -0.38); g.lineWidth = 3;
         g.beginPath(); g.moveTo(w * 0.27, y0 + 12); g.lineTo(w * 0.33, h - 4); g.stroke();
@@ -512,7 +554,14 @@ function paintOutfit(o, seed) {
     if (o.skirt) { fabric(w, h, o.skirt, face, false); return; }
     fabric(w, h, pants, face, false);
     if (face === 'top' || face === 'bottom') return;
-    if (o.hoodie) { // gấu hoodie bo len phủ nửa trên
+    if (o.hoodie && o.shorts && hstr) { // gấu hoodie bo len (gân dọc) phủ phần trên, dưới là cạp quần ngắn
+      const hh = h * 0.72;
+      g.fillStyle = SC[1]; g.fillRect(0, 0, w, hh);
+      g.fillStyle = 'rgba(0,0,0,0.14)'; for (let x = 2; x < w; x += 6) g.fillRect(x, 0, 2, hh);
+      g.fillStyle = 'rgba(255,255,255,0.07)'; for (let x = 4; x < w; x += 6) g.fillRect(x, 0, 1, hh);
+      g.fillStyle = 'rgba(0,0,0,0.3)'; g.fillRect(0, hh, w, 3);
+      stitch([[0, hh + 9], [w, hh + 9]], shade(pants, 0.3), [5, 3], 1.4);
+    } else if (o.hoodie) { // gấu hoodie bo len phủ nửa trên
       g.fillStyle = shade(shirt, -0.08); g.fillRect(0, 0, w, h * 0.55);
       g.fillStyle = 'rgba(0,0,0,0.12)'; for (let x = 2; x < w; x += 6) g.fillRect(x, 0, 2, h * 0.55);
       g.fillStyle = 'rgba(0,0,0,0.3)'; g.fillRect(0, h * 0.55, w, 3);
@@ -527,16 +576,18 @@ function paintOutfit(o, seed) {
   for (const side of ['Right', 'Left']) {
     paint(side + 'UpperArm', (face, w, h) => {
       fabric(w, h, sleeve || skin, face, stripes && !!sleeve);
+      if (hstr && sleeve) hstripes(w, h, 4, face);
       if (sleeve && face !== 'top') { stitch([[0, 6], [w, 6]], 'rgba(0,0,0,0.25)'); edgeAO(w, h, 10, 0); }
       if (tornS && sleeve && face === 'front') hole(w * 0.5, h * 0.55, 12, 9);
       if (!sleeve) edgeAO(w, h, 0, 8);
     });
     paint(side + 'LowerArm', (face, w, h) => {
       fabric(w, h, sleeve || skin, face, stripes && !!sleeve);
+      if (hstr && sleeve) hstripes(w, h, 3, face);
       edgeAO(w, h, 10, 0);
       if (!sleeve) return;
       if (tornS) { raggedBottom(w, h, h * 0.62, skin); return; }
-      if (o.hoodie) { g.fillStyle = shade(sleeve, -0.1); g.fillRect(0, h * 0.62, w, h); g.fillStyle = 'rgba(0,0,0,0.12)'; for (let x = 2; x < w; x += 6) g.fillRect(x, h * 0.62, 2, h); g.fillStyle = 'rgba(0,0,0,0.3)'; g.fillRect(0, h * 0.62, w, 2); }
+      if (o.hoodie) { const cy = h * (hstr ? 0.8 : 0.62), cc = hstr ? SC[1] : shade(sleeve, -0.1); g.fillStyle = cc; g.fillRect(0, cy, w, h); g.fillStyle = 'rgba(0,0,0,0.12)'; for (let x = 2; x < w; x += 6) g.fillRect(x, cy, 2, h); g.fillStyle = 'rgba(0,0,0,0.3)'; g.fillRect(0, cy, w, 2); }
       else { g.fillStyle = shade(sleeve, -0.12); g.fillRect(0, h * 0.72, w, h); stitch([[0, h * 0.72 + 4], [w, h * 0.72 + 4]], shade(sleeve, 0.3), [4, 3], 1.2); }
     });
     paint(side + 'Hand', (face, w, h) => {
@@ -553,7 +604,7 @@ function paintOutfit(o, seed) {
       fabric(w, h, lower, face, false);
       if (face === 'top') return;
       edgeAO(w, h, 10, 0);
-      if (o.skirt) return;
+      if (o.skirt || o.shorts) return;
       if (face === outer) { stitch([[w / 2 - 3, 0], [w / 2 - 3, h]], jeans ? '#e0a64a' : 'rgba(0,0,0,0.25)'); if (jeans) stitch([[w / 2 + 3, 0], [w / 2 + 3, h]], '#e0a64a'); }
       if (face === inner) stitch([[w / 2, 0], [w / 2, h]], 'rgba(0,0,0,0.22)');
       if (face === 'front') {
@@ -566,6 +617,7 @@ function paintOutfit(o, seed) {
     paint(side + 'LowerLeg', (face, w, h) => {
       fabric(w, h, lower, face, false);
       edgeAO(w, h, 12, 0);
+      if (o.shorts) return;
       if (o.skirt) { g.fillStyle = shade(lower, -0.25); g.fillRect(0, 0, w, h); grain(w, h); edgeAO(w, h, 14, 0); return; }
       if (tornP) { if (face === 'front') hole(w * 0.45, h * 0.18, 18, 10); raggedBottom(w, h, h * 0.66, skin); return; }
       if (o.boots && shoe) {
@@ -583,7 +635,7 @@ function paintOutfit(o, seed) {
         if (face === 'front') { g.strokeStyle = rgba(toHex(shade(skin, -0.45)), 0.4); g.lineWidth = 2; for (const x of [0.25, 0.42, 0.58, 0.75]) { g.beginPath(); g.moveTo(w * x, h * 0.3); g.lineTo(w * x, h); g.stroke(); } }
         return;
       }
-      const sole = o.boots ? '#2a1d14' : '#f4f4f4';
+      const sole = o.sneakers?.sole || (o.boots ? '#2a1d14' : '#f4f4f4');
       g.fillStyle = shoe; g.fillRect(0, 0, w, h); grain(w, h);
       if (face === 'bottom') { g.fillStyle = sole; g.fillRect(0, 0, w, h); g.strokeStyle = 'rgba(0,0,0,0.18)'; g.lineWidth = 3; for (let y = 10; y < h; y += 14) { g.beginPath(); g.moveTo(8, y); g.lineTo(w - 8, y); g.stroke(); } return; }
       g.fillStyle = 'rgba(255,255,255,0.12)'; g.fillRect(0, 0, w, h * 0.2);
@@ -900,7 +952,7 @@ function eyeNumbers(pr) { return { es: 1, lid: [0, 0], ps: 1, ...(EYE_KIND[pr.ey
 //   rời rạc (kiểu mắt khác loại nét vẽ, bộ phụ, saccade): theo biểu cảm GẦN HƠN (đổi tại k = 0,5)
 //   miệng: vẽ chồng mờ 2 hình (mouthA→mouthB, trọng số wB = k), kèm tham số số `mp` để đo.
 export function mixFace(a, b, k) {
-  const A = presetOf(a), B = presetOf(b), w = clamp01f(k), near = w < 0.5 ? A : B;
+  const A = presetOf(a), B = presetOf(b), w = Number.isFinite(k) ? clamp01f(k) : 0, near = w < 0.5 ? A : B;
   const out = { brows: near.brows, eyes: near.eyes, mouth: near.mouth, extras: [...(near.extras || [])], saccade: near.saccade,
     ms: lerpN(A.ms || 1, B.ms || 1, w), browDy: lerpN(A.browDy || 0, B.browDy || 0, w), k: w };
   const ba = BROWS[A.brows] || BROWS.neutral, bb = BROWS[B.brows] || BROWS.neutral;
@@ -996,7 +1048,8 @@ export function createR15(THREE, opts = {}) {
   const faceCanvas = canvas(FACE_PX, FACE_PX), fg = faceCanvas.getContext('2d');
   const faceTex = new THREE.CanvasTexture(faceCanvas); faceTex.colorSpace = THREE.SRGBColorSpace; faceTex.anisotropy = 8;
   const faceMat = new THREE.MeshStandardMaterial({ map: faceTex, transparent: true, roughness: 0.55, metalness: 0, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
-  const facePatch = addMesh(head, facePatchGeometry(THREE), faceMat, 'face', { cast: false });
+  const gaSet = o.faceSet || null;
+  const facePatch = addMesh(head, facePatchGeometry(THREE, gaSet ? GA_PATCH : null), faceMat, 'face', { cast: false });
   facePatch.renderOrder = 2;
 
   const hat = piv('hat', 0, 0, 0, head);
@@ -1064,7 +1117,27 @@ export function createR15(THREE, opts = {}) {
     char.lastFace = st;
     return st;
   }
+  // mặt decal ảnh của Gà: 1 material/1 canvas dùng chung, đổi biểu cảm = vẽ lại ảnh khác (không thêm program shader). Không chớp mắt (ảnh tĩnh).
+  const gaKey = (n) => { const k = GA_FACE_MAP[n] || n; return gaSet[k] ? k : 'binh_thuong'; };
+  const gaDraw = (k) => {
+    const img = gaSet[k]?.image; if (!img) return;
+    const w = 1.05 * FACE_PX / 1.2, h = 1.05 * FACE_PX / (GA_PATCH.y[1] - GA_PATCH.y[0]), cy = FACE_PX * (1 - (0.42 - GA_PATCH.y[0]) / (GA_PATCH.y[1] - GA_PATCH.y[0]));
+    fg.drawImage(img, FACE_PX / 2 - w / 2, cy - h / 2, w, h);
+  };
+  function faceAtGa(t, name, { from, mix = 1 } = {}) {
+    const key = gaKey(name), fk = from && mix < 1 ? gaKey(from) : null;
+    const wq = fk && fk !== key ? Math.round(clamp01(mix) * 8) / 8 : 1;
+    const fkey = `G|${key}|${wq < 1 ? fk : ''}|${wq}`;
+    if (fkey !== faceKey) {
+      faceKey = fkey; fg.setTransform(1, 0, 0, 1, 0, 0); fg.clearRect(0, 0, FACE_PX, FACE_PX);
+      if (wq < 1) { fg.globalAlpha = 1 - wq; gaDraw(fk); fg.globalAlpha = wq; gaDraw(key); fg.globalAlpha = 1; } else gaDraw(key);
+      faceTex.needsUpdate = true;
+    }
+    const st = { brows: 'neutral', eyes: 'open', mouth: 'smile', extras: [], eyesQ: { gaze: [0, 0] }, ms: 1, browDy: 0, mp: mouthParams('smile'), mixK: wq, ga: key };
+    char.lastFace = st; return st;
+  }
   function faceAt(t, name = o.face, opt = {}) {
+    if (gaSet) return faceAtGa(t, name, opt);
     if (opt.live) return faceAtLive(t, name, opt);
     const { blink = o.blink, gaze } = opt;
     const pr = FACE_PRESETS[name] || FACE_PRESETS[{ sleepy: 'sleepy', panic: 'panic' }[name]] || FACE_PRESETS.smile;
@@ -1344,7 +1417,14 @@ function buildAccessories(THREE, { o, head, torso, hips, parts, addMesh, mat, se
   }
 
   if (o.hoodie) {
-    const hoodM = mat(o.shirt, 0.85), strM = mat(o.hoodie, 0.7), tipM = mat('#e9e2d0', 0.5);
+    let hoodM = mat(o.shirt, 0.85);
+    if (o.shirtPattern === 'hstripes') {   // mũ trùm sọc ngang (cùng bảng màu, chu kỳ khớp thân áo)
+      const SC = o.stripeColors || ['#91a846', '#6e7e37', '#e2e56c'], cv = canvas(16, 128), g = cv.getContext('2d');
+      for (let py = 0; py < 128; py++) { const p = py % 64; g.fillStyle = p < 27 ? SC[0] : p < 32 ? SC[2] : p < 59 ? SC[1] : SC[2]; g.fillRect(0, py, 16, 1); }
+      hoodM = new THREE.MeshStandardMaterial({ map: repTex(THREE, cv, 1, 1), roughness: 0.85, metalness: 0 });
+    }
+    const dsC = o.drawstrings || (typeof o.hoodie === 'string' ? o.hoodie : '#e9e2d0');
+    const strM = mat(dsC, 0.7), tipM = mat(o.drawstrings || '#e9e2d0', 0.5);
     materials.hood = hoodM;
     // cổ mũ trùm (vòng sau gáy) + túi mũ nằm trên lưng
     const hood = addMesh(torso, new THREE.TorusGeometry(0.74, 0.15, 12, 28, PI * 1.08), hoodM, 'hood');
@@ -1362,6 +1442,69 @@ function buildAccessories(THREE, { o, head, torso, hips, parts, addMesh, mat, se
     dyn.push((p0, p1, p2, sig) => {
       strings.forEach((p, i) => p.rotation.set(Math.min(-0.03, -0.85 * sig.Pt + 0.9 * sig.dPt + 0.8 * sig.dY - 0.04), 0, -0.8 * sig.Rt + 0.9 * sig.dRt + (i ? 0.03 : -0.03)));
     });
+  }
+
+  // ---------- Gà: băng đô + nút/đuôi, chỏm 3 cọng, quần ngắn, sneaker (tất cả tuỳ chọn) ----------
+  if (o.headband) {
+    const bm = new THREE.MeshStandardMaterial({ color: o.headband, roughness: 0.75, metalness: 0, side: THREE.DoubleSide });
+    materials.headband = bm;
+    const prof = [[0.64, 0.74], [0.67, 0.755], [0.69, 0.79], [0.7, 0.9], [0.69, 1.01], [0.67, 1.045], [0.64, 1.06]];
+    addMesh(head, lathe(THREE, prof, 56), bm, 'headband');
+    const knot = addMesh(head, new THREE.SphereGeometry(0.1, 14, 10), bm, 'headband_knot'); knot.position.set(0, 0.9, -0.71); knot.scale.set(1.25, 0.85, 0.8);
+    for (const sx of [-1, 1]) { const w = addMesh(head, RB(0.17, 0.2, 0.05, 0.02), bm, 'headband_wing'); w.position.set(sx * 0.15, 0.9, -0.71); w.rotation.z = -sx * 0.18; }
+    const tails = [];
+    for (const sx of [-1, 1]) {
+      const p = new THREE.Group(); p.name = 'headband_tail'; p.position.set(sx * 0.05, 0.86, -0.72); head.add(p);
+      const m = addMesh(p, RB(0.2, 0.62, 0.035, 0.015), bm, 'headband_tail_mesh'); m.position.y = -0.31;
+      tails.push({ p, sx });
+    }
+    dyn.push((p0, p1, p2, sig) => {   // đuôi vải: treo theo trọng lực (bù góc đầu) + trễ theo chuyển động + hất ra sau khi chạy
+      for (const { p, sx } of tails) {
+        const th = clamp(0.1 - 0.9 * sig.P - 0.8 * sig.dP1 + 0.35 * sig.drag + 0.5 * sig.dY, 0.03, 1.1);
+        const tz = clamp(sx * 0.2 - 0.6 * sig.R - 0.8 * sig.dR1, -0.7, 0.7);
+        p.rotation.set(th, 0, tz);
+      }
+    });
+  }
+  if (o.crest) {
+    const cm = new THREE.MeshStandardMaterial({ color: o.crest, roughness: 0.5, metalness: 0 }); materials.crest = cm;
+    const grp = new THREE.Group(); grp.name = 'crest'; grp.position.set(0, 1.17, -0.02); head.add(grp);
+    // 3 cọng xoè hình quạt, ngọn cong về +X (bên trái nhân vật = bên phải màn hình khi nhìn trước)
+    for (const [x0, L, a0] of [[-0.09, 0.3, -0.2], [0, 0.4, -0.5], [0.09, 0.32, -1.0]]) {
+      const pts = [new THREE.Vector3(x0, -0.03, 0), new THREE.Vector3(x0 + L * 0.5 * S(-a0) * 0.8, L * 0.5 * C(a0), 0), new THREE.Vector3(x0 + L * (-S(a0) + 0.3), L * C(a0) * 0.92, 0)];
+      const curve = new THREE.CatmullRomCurve3(pts), N = 10, RS = 8;
+      const geo = new THREE.TubeGeometry(curve, N, 0.075, RS, false), P = geo.attributes.position;
+      for (let i = 0; i <= N; i++) {
+        const c = curve.getPointAt(i / N), k = 1 - 0.88 * Math.pow(i / N, 1.4);
+        for (let j = 0; j <= RS; j++) { const idx = i * (RS + 1) + j; P.setXYZ(idx, c.x + (P.getX(idx) - c.x) * k, c.y + (P.getY(idx) - c.y) * k, c.z + (P.getZ(idx) - c.z) * k); }
+      }
+      geo.computeVertexNormals();
+      addMesh(grp, geo, cm, 'crest_tuft');
+    }
+  }
+  if (o.shorts) {
+    const sm = new THREE.MeshStandardMaterial({ color: o.pants, roughness: 0.88, metalness: 0 }); materials.shorts = sm;
+    for (const side of ['Right', 'Left']) {
+      const m = addMesh(parts[side + 'UpperLeg'], RB(1.16, 1.2, 1.16, 0.09), sm, 'shorts_' + side); m.position.set(0, -0.6, 0);
+    }
+  }
+  if (o.sneakers) {
+    const sn = { color: '#212020', sole: '#dccfc8', laces: '#f4f4f4', ...o.sneakers };
+    const upM = mat(sn.color, 0.55), soM = mat(sn.sole, 0.6);
+    const lc = canvas(128, 96), lg = lc.getContext('2d');   // dây giày đan chéo + lỗ xỏ (nền trong suốt)
+    lg.strokeStyle = sn.laces; lg.lineWidth = 7; lg.lineCap = 'round';
+    for (let i = 0; i < 3; i++) { const y = 14 + i * 26; lg.beginPath(); lg.moveTo(26, y); lg.lineTo(102, y + 22); lg.moveTo(102, y); lg.lineTo(26, y + 22); lg.stroke(); }
+    lg.fillStyle = '#9a9a9a'; for (let i = 0; i < 4; i++) for (const x of [20, 108]) { lg.beginPath(); lg.arc(x, 12 + i * 22, 5, 0, PI * 2); lg.fill(); }
+    const lt = new THREE.CanvasTexture(lc); lt.colorSpace = THREE.SRGBColorSpace; lt.anisotropy = 8;
+    const lcM = new THREE.MeshStandardMaterial({ map: lt, transparent: true, roughness: 0.7, metalness: 0, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+    materials.sneakers = upM;
+    for (const side of ['Right', 'Left']) {
+      const ft = parts[side + 'Foot'];
+      const sole = addMesh(ft, RB(1.1, 0.2, 1.2, 0.07), soM, 'sneaker_sole'); sole.position.set(0, -0.2, 0.08);
+      const up = addMesh(ft, RB(1.04, 0.38, 1.12, 0.1), upM, 'sneaker_upper'); up.position.set(0, 0.0, 0.05);
+      const cap = addMesh(ft, RB(1.0, 0.1, 0.5, 0.04), soM, 'sneaker_toecap'); cap.position.set(0, -0.12, 0.45);
+      const lace = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.46), lcM); lace.name = 'sneaker_laces'; lace.position.set(0, 0.16, 0.38); lace.rotation.x = -0.95; ft.add(lace);
+    }
   }
 
   // --- váy dài: ống lofted theo trục trung bình của 2 chân (không xuyên chân) ---

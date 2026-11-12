@@ -3,7 +3,8 @@
        engine/face-lab.html?a=smile&b=scared&c=sad            3 biểu cảm liền nhau (mỗi shot 1,2 s) → 2 ranh chuyển
        &live=0                                                 tắt faceLive (đường mã cũ, để so sánh)
      Shot: f1,f2,f3 = mặt a,b,c (cận mặt hero); l1 = hero nhìn mom ở +X; l2 = hero nhìn mom ở −X; l3 = hero nhìn máy quay;
-           d1 (ban ngày) / d2 (ban đêm, light 'night') = cùng mặt 'smile' để so cỡ đồng tử.
+           d1 (ban ngày) / d2 (ban đêm, light 'night') = cùng mặt 'smile' để so cỡ đồng tử;
+           g1 / g2 = lookAt điểm bên phải / trái màn hình (t = 10.5 / 11.7) để kiểm đồng tử lệch ĐÚNG phía trên ảnh.
      Bề mặt kiểm: window.__ready, renderAt(t), __shots, __face(t) → { st: trạng thái mặt đã vẽ của hero, pose: pose JSON, blink… }.
        node tools/look.mjs "engine/face-lab.html?a=smile&b=scared&c=sad" --range 1.0:1.6:0.05
      TẤT ĐỊNH: thời gian chỉ từ window.renderAt(t); không rAF, không đồng hồ, không Math.random. -->
@@ -59,6 +60,8 @@ const SHOTS = [
   { id: 'l3', dur: 1.2, env: 'lab', cam: near, lookAt: 'cam', cast: hero('smile') },
   { id: 'd1', dur: 1.2, env: 'lab', cam: near, light: 'day', cast: hero('smile') },
   { id: 'd2', dur: 1.2, env: 'lab', cam: near, light: 'night', cast: hero('smile') },
+  { id: 'g1', dur: 1.2, env: 'lab', cam: near, lookAt: [8, 4.6, 4], cast: hero('smile') },    // nhìn về +X (bên PHẢI màn hình)
+  { id: 'g2', dur: 1.2, env: 'lab', cam: near, lookAt: [-8, 4.6, 4], cast: hero('smile') },   // nhìn về −X (bên TRÁI màn hình)
 ];
 const tl = buildTimeline(SHOTS, FPS);
 const director = createDirector({ THREE, stage, envs, K: {}, actors, houses: {}, props: {}, fx: {} });

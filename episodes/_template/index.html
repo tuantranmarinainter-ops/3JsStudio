@@ -81,7 +81,6 @@
         on: q.get('credits') !== null ? q.get('credits') !== '0' : EPISODE.credits !== false });
       window.__credits = credits;   // tools/export-ui.js vẽ ảnh này vào khung xuất MP4
       const director = createDirector({ THREE, stage, envs, K, actors, houses: {}, props: {}, fx: {}, episode: EPISODE });
-      director.setTimeline(tl);   // mặt sống (faceLive): director cần biết shot trước để chuyển biểu cảm mềm
       const post = createPost(THREE, stage, { actors: Object.values(actors).map((a) => a.root) });
       if (q.get('fx') !== null) { const on = new Set(q.get('fx').split(',')); post.set(Object.fromEntries(Object.keys(FX_DEFAULTS).map((k) => [k, on.has(k)]))); }
       stage.draw = (t) => post.render({ t, ...envs.last, focus: stage.target });
@@ -103,8 +102,8 @@
 
       stage.onFrame((t) => {
         const T = Math.min(t, tl.total - 1e-4);
-        const { shot, local, k } = tl.at(T);
-        director.render(shot, local, k, T);
+        const { shot, local, k, prev } = tl.at(T);
+        director.render(shot, local, k, T, prev);   // prev = shot trước (mặt sống chuyển biểu cảm mềm)
         overlay(T, shot, local);
         credits.update(T);
       });

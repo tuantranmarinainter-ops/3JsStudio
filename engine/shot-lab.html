@@ -88,11 +88,12 @@ const places = resolvePlaces({ lab: { pos: [0, 0, 0], ry: 0 } }, {});
 const shots = expandShots(LAB_SHOTS[TYPE], { places, crowd: [], env: 'lab', light: 'day', fps: FPS });
 const tl = buildTimeline(shots, FPS);
 
+(globalThis.__autoFx ||= {}).faceLive = false;   // trang thử loại shot: giữ hình cũ (mặt sống chỉ ở face-lab / tập mẫu)
 const director = createDirector({ THREE, stage, envs, K: {}, actors, houses, props, fx: {} });
 stage.onFrame((t) => {
   const T = Math.min(t, tl.total - 1e-4);
-  const { shot, local, k } = tl.at(T);
-  director.render(shot, local, k, T);
+  const { shot, local, k, prev } = tl.at(T);
+  director.render(shot, local, k, T, prev);
 });
 stage.renderer.compile(stage.scene, stage.camera);
 stage.start();
