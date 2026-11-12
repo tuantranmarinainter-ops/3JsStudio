@@ -17,6 +17,18 @@
 //   --det                       kiểm tất định: chụp lại mỗi t sau khi tua tới t khác; báo sai khác lớn nhất + số điểm ảnh lệch > 16/255; thoát mã 1 nếu vùng lệch > 0,005% khung (lưu *_det-lai.png)
 //   --full                      chụp + lưu PNG 1080×1920 (mặc định chụp 540×960: nhanh ~4×, đủ để xem/so)
 //   --jobs N                    chụp song song N tab (mặc định: 1 nếu ≤ 8 thời điểm, 4 nếu nhiều hơn)
+//
+// KIỂM BẰNG SỐ TRƯỚC, XEM ẢNH SAU (tiết kiệm token: chỉ mở ảnh khi số vượt ngưỡng)
+//   --pose                      lưu tư thế mọi xương (vị trí + quaternion thế giới) tại mỗi t vào <out>/pose.json.
+//                               Lấy từ window.dumpPose(t) nếu trang có, không thì tự duyệt window.__stage.scene.
+//   --pose-ref <pose.json>      so với tư thế chuẩn (một pose.json đã lưu, vd refs/ep001/pose.json); chỉ in xương lệch quá ngưỡng
+//   --pose-tol 2:0.01           ngưỡng lệch: độ xoay (°) : vị trí (đơn vị cảnh). Mặc định 2° và 0,01
+//   --ref <thư mục>             so từng khung với ảnh chuẩn cùng tên trong thư mục (tạo bằng: --out refs/<tên>);
+//                               in PSNR + % điểm ảnh lệch; chỉ khung vượt ngưỡng mới lưu *_diff.png (tô đỏ vùng lệch)
+//   --ref-tol 0.05              ngưỡng % điểm ảnh lệch thấy được (> 16/255). Mặc định 0,05%
+//   Lệch tư thế hoặc lệch ảnh vượt ngưỡng → thoát mã 1 (như --det).
+//   Ví dụ: lưu chuẩn   node tools/look.mjs episodes/ep001/index.html --t 12,30 --pose --out refs/ep001
+//          kiểm lại    node tools/look.mjs episodes/ep001/index.html --t 12,30 --pose-ref refs/ep001/pose.json --ref refs/ep001
 import { createServer } from 'http';
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
@@ -25,7 +37,7 @@ import { pathToFileURL } from 'url';
 import { launchBrowser } from './browser.mjs';
 
 const args = process.argv.slice(2);
-const FLAGS = new Set(['det', 'full']);
+const FLAGS = new Set(['det', 'full', 'pose']);
 const opt = {}; const pos = [];
 for (let i = 0; i < args.length; i++) {
   const a = args[i];
@@ -152,6 +164,58 @@ async function compare(b1, b2) {
   }, { x: b1.toString('base64'), y: b2.toString('base64') });
 }
 
+async function diffImage(b1, b2) {   // ảnh diff: điểm lệch > 16/255 tô đỏ, còn lại xám mờ
+  return C.evaluate(async ({ x, y }) => {
+    const load = async (s) => { const im = new Image(); im.src = 'data:image/png;base64,' + s; await im.decode(); return im; };
+    const [i1, i2] = [await load(x), await load(y)];
+    const c = document.createElement('canvas'); c.width = i1.width; c.height = i1.height; const g = c.getContext('2d');
+    const d = (im) => { g.drawImage(im, 0, 0); return g.getImageData(0, 0, c.width, c.height); };
+    const p = d(i1).data, o = d(i2); const q = o.data;
+    for (let i = 0; i < p.length; i += 4) {
+      const e = Math.max(Math.abs(p[i] - q[i]), Math.abs(p[i + 1] - q[i + 1]), Math.abs(p[i + 2] - q[i + 2]));
+      const l = (0.299 * q[i] + 0.587 * q[i + 1] + 0.114 * q[i + 2]) * 0.35;
+      if (e > 16) { q[i] = 255; q[i + 1] = 0; q[i + 2] = 0; } else { q[i] = q[i + 1] = q[i + 2] = l; }
+      q[i + 3] = 255;
+    }
+    g.putImageData(o, 0, 0);
+    return c.toDataURL('image/png').split(',')[1];
+  }, { x: b1.toString('base64'), y: b2.toString('base64') });
+}
+
+// tư thế xương tại thời điểm đang tua tới (vị trí + quaternion thế giới, khoá = tên gốc/tên xương)
+const dumpPose = () => {
+  if (typeof window.dumpPose === 'function') return window.dumpPose(window.__lookT);
+  const sc = window.__stage && window.__stage.scene;
+  if (!sc) return null;
+  sc.updateMatrixWorld(true);
+  const out = {}, seen = {};
+  sc.traverse((o) => {
+    if (!o.isBone) return;
+    let r = o; while (r.parent && r.parent !== sc) r = r.parent;
+    let k = (r.name || 'goc') + '/' + (o.name || 'xuong');
+    if (k in seen) k += '#' + (++seen[k]); else seen[k] = 0;
+    const p = o.getWorldPosition(new o.position.constructor()), q = o.getWorldQuaternion(new o.quaternion.constructor());
+    out[k] = [p.x, p.y, p.z, q.x, q.y, q.z, q.w].map((v) => +v.toFixed(5));
+  });
+  return out;
+};
+const [POSE_DEG, POSE_POS] = (opt['pose-tol'] || '2:0.01').split(':').map(Number);
+function poseDiff(cur, ref) {   // → danh sách xương lệch quá ngưỡng, lệch nhiều nhất trước
+  const bad = [], miss = [];
+  for (const k of Object.keys(ref)) {
+    const a = cur[k], b = ref[k];
+    if (!a) { miss.push(k); continue; }
+    const dot = Math.min(1, Math.abs(a[3] * b[3] + a[4] * b[4] + a[5] * b[5] + a[6] * b[6]));
+    const deg = 2 * Math.acos(dot) * 180 / Math.PI;
+    const dp = Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+    if (deg > POSE_DEG || dp > POSE_POS) bad.push({ k, deg, dp });
+  }
+  bad.sort((x, y) => y.deg - x.deg || y.dp - x.dp);
+  return { bad, miss, extra: Object.keys(cur).filter((k) => !(k in ref)) };
+}
+const poseRef = opt['pose-ref'] ? JSON.parse(await readFile(resolve(opt['pose-ref']), 'utf8')) : null;
+const REF_TOL = +(opt['ref-tol'] || 0.05);
+
 async function lumaOf(buf) {   // độ sáng trung bình + % điểm cháy (≥ 250) / tối đặc (≤ 5)
   return C.evaluate(async (x) => {
     const im = new Image(); im.src = 'data:image/png;base64,' + x; await im.decode();
@@ -183,6 +247,18 @@ async function one(PA, idx) {
   row.file = join(outDir, B ? tag + '_A.png' : tag + '.png');
   await save(bufA, row.file);
   tilesA[idx] = bufA;
+  if (opt.pose || poseRef) { await PA.evaluate((t) => { window.__lookT = t; }, t); row.pose = await PA.evaluate(dumpPose); }
+  if (opt.ref) {
+    const rf = join(resolve(opt.ref), basename(row.file));
+    if (existsSync(rf)) {
+      const refBuf = await readFile(rf), c = await compare(refBuf, bufA);
+      row.ref = c.size ? { size: true } : { psnr: c.psnr, pct: 100 * c.bad / c.px };
+      if (c.size || row.ref.pct > REF_TOL) {
+        row.refFail = true;
+        if (!c.size) await save(Buffer.from(await diffImage(refBuf, bufA), 'base64'), row.file.replace(/\.png$/, '_diff.png'));
+      }
+    } else row.ref = { missing: true };
+  }
   row.luma = await lumaOf(bufA);
   if (B) {
     const bufB = await shot(B, t);
@@ -249,6 +325,46 @@ if (B) {
 { const m = (k) => rows.filter((r) => r[k]).reduce((a, r) => a + r[k].mean, 0) / Math.max(1, rows.filter((r) => r[k]).length);
   console.log(`Độ sáng TB: ${m('luma').toFixed(1)}${B ? ` (B: ${m('lumaB').toFixed(1)})` : ''} — khoảng mong muốn ${LUMA[0]}–${LUMA[1]}; ⚠ = ngoài khoảng (--luma a:b để đổi)`); }
 if (opt.det) console.log(detFail ? 'TẤT ĐỊNH: LỖI (có vùng lệch thấy được)' : 'TẤT ĐỊNH: OK (không có vùng lệch thấy được)');
-console.log('Bảng ghép:', sheetPath);
+
+// ---- so ảnh chuẩn (--ref) ----
+let refFail = false;
+if (opt.ref) {
+  console.log(`\nSO ẢNH CHUẨN (${relative(root, resolve(opt.ref)) || opt.ref}; ngưỡng ${REF_TOL}% điểm lệch):`);
+  for (const r of rows) {
+    const R = r.ref, head = `  t=${r.t.toFixed(2)} ${r.id || ''}`.padEnd(18);
+    if (R.missing) console.log(head + 'không có ảnh chuẩn cùng tên');
+    else if (R.size) console.log(head + '⚠ khác kích thước (chụp chuẩn và kiểm cùng --full?)');
+    else console.log(head + `${Number.isFinite(R.psnr) ? R.psnr.toFixed(1) + ' dB' : 'giống hệt'}  lệch ${R.pct.toFixed(3)}%` + (r.refFail ? '  ⚠ → ' + relative(root, r.file.replace(/\.png$/, '_diff.png')) : ''));
+    if (r.refFail) refFail = true;
+  }
+  console.log(refFail ? 'ẢNH: LỆCH (chỉ mở các *_diff.png được nêu)' : 'ẢNH: OK (không cần mở ảnh)');
+}
+
+// ---- tư thế xương (--pose / --pose-ref) ----
+let poseFail = false;
+if (opt.pose || poseRef) {
+  const poses = {}; for (const r of rows) poses[r.t.toFixed(3)] = r.pose;
+  const pf = join(outDir, 'pose.json');
+  await writeFile(pf, JSON.stringify({ page: pageArg, times: poses }));
+  const nb = rows[0] && rows[0].pose ? Object.keys(rows[0].pose).length : 0;
+  console.log(`\nTư thế: ${nb} xương × ${rows.length} thời điểm → ${relative(root, pf)}` + (nb ? '' : '  ⚠ không thấy xương (trang không có window.__stage.scene hay window.dumpPose?)'));
+  if (poseRef) {
+    console.log(`SO TƯ THẾ với ${opt['pose-ref']} (ngưỡng ${POSE_DEG}° / ${POSE_POS}):`);
+    for (const r of rows) {
+      const ref = poseRef.times && poseRef.times[r.t.toFixed(3)];
+      const head = `  t=${r.t.toFixed(2)} ${r.id || ''}`.padEnd(18);
+      if (!ref) { console.log(head + 'bản chuẩn không có thời điểm này'); continue; }
+      if (!r.pose) { console.log(head + '⚠ không đọc được tư thế'); poseFail = true; continue; }
+      const d = poseDiff(r.pose, ref);
+      if (!d.bad.length && !d.miss.length) { console.log(head + 'OK'); continue; }
+      poseFail = true;
+      console.log(head + `${d.bad.length} xương lệch` + (d.miss.length ? `, thiếu ${d.miss.length}` : '') + (d.extra.length ? `, thêm ${d.extra.length}` : ''));
+      for (const b of d.bad.slice(0, 8)) console.log(`      ${b.k}: xoay ${b.deg.toFixed(1)}°, dời ${b.dp.toFixed(3)}`);
+      if (d.bad.length > 8) console.log(`      … và ${d.bad.length - 8} xương khác`);
+    }
+    console.log(poseFail ? 'TƯ THẾ: LỆCH' : 'TƯ THẾ: OK');
+  }
+}
+console.log('Bảng ghép:', sheetPath, (opt.ref || poseRef) ? '(chỉ mở khi số ở trên báo lệch)' : '');
 await browser.close(); if (srv) srv.close();
-process.exit(detFail ? 1 : 0);
+process.exit(detFail || refFail || poseFail ? 1 : 0);

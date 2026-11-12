@@ -33,6 +33,7 @@ Cảnh 3D dựng bằng three.js, render ra MP4 bằng **HyperFrames**. Claude �
 | `node tools/shaders.mjs <trang> [--film] [--json f] [--top N]` | đo số program shader + giờ dịch của Chrome/ANGLE (trang mở chậm): __ready, top program chậm, nhóm theo khoá mat_*/grunge_*; ⚠ khi > 80 program hoặc > 10 s (cũng có `doctor.mjs --shaders`) |
 | `bash tools/branches.sh [--fetch]` | phiên cloud nào đã push gì, nhánh nào chưa gộp |
 | `node tools/look.mjs <trang> --shots … / --t … / --range a:b:s [--ab trang2] [--det]` | bảng khung có nhãn, so A/B + PSNR, kiểm tất định (skill `kiem-tra-khung`) |
+| `node tools/look.mjs <trang> --t … --pose --out refs/<tên>` rồi `--pose-ref refs/<tên>/pose.json --ref refs/<tên>` | lưu chuẩn rồi kiểm lại **bằng số**: xương lệch (°, dời) + % điểm ảnh lệch; chỉ lưu `*_diff.png` cho khung vượt ngưỡng |
 | `npm run bundle:ep001` | gộp `dist/ep001.html` |
 | `node tools/export-test.mjs dist/ep001.html --range a:b --matrix "lang=vi,en;subs=1,0;voice=1,0"` | bấm Xuất MP4 tự động mọi tổ hợp + báo cáo |
 | `python tools/voices_build.py ep001 sample|vi|en|index [--only …]` | giọng nhiều giọng, trang nghe thử |
@@ -195,6 +196,7 @@ Render 140 shot:
 - **Chụp kiểm nhanh**: `look.mjs` mặc định chụp 540×960, tua không chụp, tự chạy 4 tab khi > 8 thời điểm (`--jobs N`).
   Agent chỉ chụp đúng shot mình sửa (`--shots …` / `--t …`), mỗi agent `--out output/look/<tên-agent>` riêng.
 - **Người dùng báo lỗi theo frame → chỉ chụp phân cảnh chứa frame đó**: `look.mjs --frames 676,1262` tự tìm shot của từng frame và chụp frame đó + đầu/giữa/cuối shot (3 frame lỗi ≈ 35 giây). Không chụp cả phim để tìm lỗi.
+- **Kiểm bằng số trước, mở ảnh sau** (tiết kiệm token): trước khi sửa, lưu chuẩn `look.mjs … --pose --out refs/<tên>`; sau khi sửa chạy `--pose-ref refs/<tên>/pose.json --ref refs/<tên>`. Số báo OK thì KHÔNG mở ảnh; báo lệch thì chỉ mở đúng `*_diff.png` được nêu (hoặc giao agent phụ xem và trả lời bằng chữ).
 - **Kiểm cả phim 1 lần ở cuối** (agent chính): `node tools/look.mjs episodes/<ep>/index.html --shots all --det` (~2–3 phút).
 - Góp ý của người dùng từ trình phát (nút "Ghi chú lỗi") → `node tools/feedback.mjs --latest` (frame + shot + ảnh khoanh) → chia agent theo file.
 
