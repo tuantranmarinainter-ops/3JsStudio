@@ -1,0 +1,14 @@
+{
+  "L1": { "le": 0.05, "soChan": 4 },
+  "L2": { "lechTam": 0.10, "cheMax": 0.05, "rongMax": 0.90 },
+  "L3": { "trongKhungMin": 0.5, "cheMatMax": 0.2 },
+  "L4": { "psnrMax": 30 },
+  "L5": { "nghiengMin": 5, "chimMin": 0.5 },
+  "L6": { "hatMin": 1 },
+  "L7": { "toiMax": 0.55, "diemSangMin": 3 },
+  "L8": { "oPhangMax": 0.30, "vatMoiTangMin": 1 },
+  "L9": { "camGrunge": ["chrome", "metalpaint", "iron", "glass", "enamel", "skin", "carpaint"] },
+  "L10": { "dienTichMin": 0.08 },
+  "L11": { "insertRead": 1.5, "closeup": 0.8, "hanhDong": 1.0, "establish": 1.2, "macDinh": 0.8 },
+  "goi": { "shotLoiMax": 10, "tyLeLuatMax": 0.15, "phutKhongTien": 30, "vongMax": 2 }
+}
