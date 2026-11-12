@@ -21,6 +21,7 @@
     "look": "node tools/look.mjs",
     "export-test": "node tools/export-test.mjs dist/ep001.html",
     "voices:sample": "python tools/voices_build.py ep001 sample",
+    "kiem-luat": "node tools/kiem-luat.mjs",
     "test": "python -m unittest discover -s tools/kb/tests && node --test tools/tests/*.test.mjs"
   },
   "hyperframes": "0.9.30",
