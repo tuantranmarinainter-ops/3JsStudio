@@ -41,6 +41,57 @@ class TestNhip(unittest.TestCase):
         self.assertGreaterEqual(stats["vi_tri_twist_pct"], 55)
         self.assertLessEqual(stats["vi_tri_twist_pct"], 65)
 
+    def _srt(self, cau_list):
+        khoi = []
+        for i, c in enumerate(cau_list):
+            khoi.append(f"{i+1}" + chr(10) + f"00:00:{i*5:02d},000 --> 00:00:{i*5+5:02d},000" + chr(10) + c + chr(10))
+        return chr(10).join(khoi)
+
+    def test_khong_phat_hien_khong_gan_50(self):
+        text = self._srt(["Alpha one two three."] * 2 + [f"Plain line number {i}." for i in range(10)])
+        text = text.replace("Alpha one two three.", "Opening words here.")
+        st = nhip.chi_so(nhip.cau(nhip.parse_srt(text)))
+        self.assertIsNone(st["twist_phat_hien"])
+        self.assertIsNone(st["vi_tri_twist_pct"])
+        tong = nhip.tong_hop([st])
+        self.assertEqual(tong["vi_tri_twist_pct"]["n"], 0)
+        self.assertEqual(tong["vi_tri_twist_pct"]["n_chac"], 0)
+
+    def test_tu_khoa_yeu(self):
+        lines = [f"Plain line number {i}." for i in range(12)]
+        lines[8] = "Suddenly the lights were gone."
+        st = nhip.chi_so(nhip.cau(nhip.parse_srt(self._srt(lines))))
+        self.assertEqual(st["twist_phat_hien"], "yeu")
+        self.assertGreater(st["vi_tri_twist_pct"], 40)
+
+    def test_phan_twist_khong_rong(self):
+        lines = [f"Plain line number {i}." for i in range(20)]
+        lines[16] = "But then the truth came out."
+        st = nhip.chi_so(nhip.cau(nhip.parse_srt(self._srt(lines))))
+        self.assertEqual(st["twist_phat_hien"], "chac")
+        self.assertGreaterEqual(st["cau_moi_phan"]["twist"], 1)
+        self.assertGreaterEqual(st["cau_moi_phan"]["giai_quyet"], 1)
+
+    def test_tu_khoa_chac_thang_yeu(self):
+        st = nhip.chi_so(nhip.cau(nhip.parse_srt(MAU.read_text(encoding="utf-8-sig"))))
+        self.assertEqual(st["twist_phat_hien"], "chac")
+
+    def test_json_co_canh_bao_va_doi_canh_null(self):
+        import json
+        with tempfile.TemporaryDirectory() as tmp:
+            nhip.main([str(DATA), "--out", str(Path(tmp) / "nhip-kich-ban")])
+            d = json.loads((Path(tmp) / "nhip-kich-ban.json").read_text(encoding="utf-8"))
+            md = (Path(tmp) / "nhip-kich-ban.md").read_text(encoding="utf-8")
+        self.assertTrue(d["canh_bao"])
+        self.assertIn("ranh_phan", d)
+        self.assertTrue(any("suy từ độ dài chữ" in c for c in d["canh_bao"]))
+        ct = d["chi_tieu"]
+        self.assertIsNone(ct["mat_do_doi_canh_moi_phut"])
+        self.assertNotIn("ky_tu_moi_giay", ct)
+        for k in ("n", "n_chac", "ti_le_phat_hien"):
+            self.assertIn(k, ct["vi_tri_twist_pct"])
+        self.assertIn("cận dưới", md)
+
     def test_khong_chua_loi_goc(self):
         source = MAU.read_text(encoding="utf-8-sig")
         words = re.findall(r"\w+", source.lower())

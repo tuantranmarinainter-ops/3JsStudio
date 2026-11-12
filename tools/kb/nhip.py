@@ -31,15 +31,22 @@ TU_KHOA_TWIST = [
     "realized",
     "actually",
 ]
+TU_KHOA_YEU = ["until", "suddenly", "finally", "found out"]
 TWIST_RE = re.compile(
     r"\b(" + "|".join(re.escape(k) for k in TU_KHOA_TWIST) + r")\b"
 )
+TWIST_YEU_RE = re.compile(
+    r"\b(" + "|".join(re.escape(k) for k in TU_KHOA_YEU) + r")\b"
+)
 MOM_TU = {"mom", "mommy", "mum", "mama"}
 GRANDMA_TU = {"grandma", "grandmother", "granny", "nana"}
-NGUONG_DOI_CANH = 0.6
+RANH_PHAN = "hook 10% | leo thang tới câu twist | twist = nửa đầu đoạn sau twist | giải quyết = nửa sau"
+CANH_BAO = [
+    "mốc thời gian suy từ độ dài chữ: thoi_luong_s chỉ là ước lượng, không dùng để suy tốc độ đọc",
+    "mat_do_doi_canh_moi_phut = null: dữ liệu .srt không có thông tin cắt cảnh",
+    "vi_tri_twist_pct và 3 mục cau_moi_phan (leo_thang, twist, giai_quyet) chỉ tính trên truyện phát hiện được twist (xem n)",
+]
 MOC_HOOK = 0.10
-MOC_GIAI_QUYET = 0.75
-MOC_TWIST_MAC_DINH = 0.50
 MOC_TWIST_TOI_THIEU = 0.40
 
 
@@ -117,7 +124,7 @@ def _phan_cua(rel, moc_twist):
         return "hook"
     if rel < moc_twist:
         return "leo_thang"
-    if rel < max(MOC_GIAI_QUYET, moc_twist):
+    if rel < moc_twist + (1 - moc_twist) / 2:
         return "twist"
     return "giai_quyet"
 
@@ -134,15 +141,26 @@ def chi_so(sentences):
     def rel(t):
         return (t - base) / T
 
-    twist_rel = MOC_TWIST_MAC_DINH
-    for s in sentences:
-        if rel(s["start"]) > MOC_TWIST_TOI_THIEU and TWIST_RE.search(_chuan_hoa(s["text"])):
-            twist_rel = rel(s["start"])
+    twist_rel = None
+    twist_loai = None
+    for loai, regex in (("chac", TWIST_RE), ("yeu", TWIST_YEU_RE)):
+        for s in sentences:
+            if rel(s["start"]) > MOC_TWIST_TOI_THIEU and regex.search(_chuan_hoa(s["text"])):
+                twist_rel = rel(s["start"])
+                twist_loai = loai
+                break
+        if twist_loai:
             break
 
-    dem_phan = {"hook": 0, "leo_thang": 0, "twist": 0, "giai_quyet": 0}
-    for s in sentences:
-        dem_phan[_phan_cua(rel(s["start"]), twist_rel)] += 1
+    if twist_rel is None:
+        dem_phan = {
+            "hook": sum(1 for s in sentences if rel(s["start"]) < MOC_HOOK),
+            "leo_thang": None, "twist": None, "giai_quyet": None,
+        }
+    else:
+        dem_phan = {"hook": 0, "leo_thang": 0, "twist": 0, "giai_quyet": 0}
+        for s in sentences:
+            dem_phan[_phan_cua(rel(s["start"]), twist_rel)] += 1
 
     do_dai = [len(s["text"]) for s in sentences]
     tong_ky_tu = sum(do_dai)
@@ -169,33 +187,29 @@ def chi_so(sentences):
     n_tu = len(tokens)
     tan_suat = {k: (v / n_tu * 1000 if n_tu else 0.0) for k, v in dem.items()}
 
-    so_doi_canh = 0
-    for prev, nxt in zip(sentences, sentences[1:]):
-        if nxt["start"] - prev["end"] >= NGUONG_DOI_CANH:
-            so_doi_canh += 1
-
     return {
         "so_cau": len(sentences),
         "thoi_luong_s": T,
         "ky_tu_moi_cau": tong_ky_tu / len(sentences),
-        "ky_tu_moi_giay": tong_ky_tu / T,
         "cau_moi_phan": dem_phan,
-        "vi_tri_twist_pct": twist_rel * 100,
+        "vi_tri_twist_pct": None if twist_rel is None else twist_rel * 100,
+        "twist_phat_hien": twist_loai,
         "kieu_mo": kieu_mo,
         "ket_goi_lai_mo": ket_goi_lai,
         "tan_suat_1000_tu": tan_suat,
-        "mat_do_doi_canh_moi_phut": so_doi_canh / (T / 60),
     }
 
 
 def _phan_bo(values):
+    values = [v for v in values if v is not None]
     if not values:
-        return None
+        return {"n": 0, "tb": None, "p25": None, "p50": None, "p75": None}
     if len(values) >= 2:
         p25, p50, p75 = statistics.quantiles(values, n=4, method="inclusive")
     else:
         p25 = p50 = p75 = values[0]
     return {
+        "n": len(values),
         "tb": round(statistics.fmean(values), 2),
         "p25": round(p25, 2),
         "p50": round(p50, 2),
@@ -203,21 +217,28 @@ def _phan_bo(values):
     }
 
 
+def _thong_ke_twist(stories):
+    d = _phan_bo([s["vi_tri_twist_pct"] for s in stories])
+    phat_hien = [s for s in stories if s["twist_phat_hien"]]
+    d["n_chac"] = sum(1 for s in phat_hien if s["twist_phat_hien"] == "chac")
+    d["ti_le_phat_hien"] = round(len(phat_hien) / len(stories), 3) if stories else 0.0
+    return d
+
+
 def tong_hop(stories):
     chi_tieu = {
         "so_cau": _phan_bo([s["so_cau"] for s in stories]),
         "thoi_luong_s": _phan_bo([s["thoi_luong_s"] for s in stories]),
         "ky_tu_moi_cau": _phan_bo([s["ky_tu_moi_cau"] for s in stories]),
-        "ky_tu_moi_giay": _phan_bo([s["ky_tu_moi_giay"] for s in stories]),
         "cau_moi_phan": {
             phan: _phan_bo([s["cau_moi_phan"][phan] for s in stories])
             for phan in ("hook", "leo_thang", "twist", "giai_quyet")
         },
-        "vi_tri_twist_pct": _phan_bo([s["vi_tri_twist_pct"] for s in stories]),
+        "vi_tri_twist_pct": _thong_ke_twist(stories),
         "kieu_mo": {},
         "ket_goi_lai_mo_pct": 0.0,
         "tan_suat_1000_tu": {},
-        "mat_do_doi_canh_moi_phut": _phan_bo([s["mat_do_doi_canh_moi_phut"] for s in stories]),
+        "mat_do_doi_canh_moi_phut": None,
     }
     n = len(stories)
     if n:
@@ -232,7 +253,7 @@ def tong_hop(stories):
 
 
 def _fmt(d, key="p50"):
-    if d is None:
+    if d is None or d.get(key) is None:
         return "—"
     return f"{d[key]}"
 
@@ -242,6 +263,10 @@ def _ghi_md(path, so_truyen, bo_qua, ct):
     dong = []
     dong.append("# Nhịp kịch bản: số liệu từ phụ đề tiếng Anh\n")
     dong.append(f"Số truyện: {so_truyen}; bỏ qua: {bo_qua}. Chỉ có số liệu, không lưu lời gốc.\n")
+    dong.append(f"Ranh phần (truyện phát hiện được twist): {RANH_PHAN}.")
+    for c in CANH_BAO:
+        dong.append(f"- Cảnh báo: {c}")
+    dong.append("")
     dong.append("| Chỉ tiêu | TB | p25 | p50 | p75 |")
     dong.append("|---|---|---|---|---|")
 
@@ -251,24 +276,24 @@ def _ghi_md(path, so_truyen, bo_qua, ct):
     them("1. Số câu / truyện", ct["so_cau"])
     them("2. Thời lượng (s)", ct["thoi_luong_s"])
     them("3. Ký tự / câu", ct["ky_tu_moi_cau"])
-    them("   Ký tự / giây (phụ)", ct["ky_tu_moi_giay"])
     them("4a. Câu phần hook (10% đầu)", cp["hook"])
-    them("4b. Câu phần leo thang", cp["leo_thang"])
+    them("4b. Câu phần leo thang (chỉ truyện phát hiện twist)", cp["leo_thang"])
     them("4c. Câu phần twist", cp["twist"])
     them("4d. Câu phần giải quyết", cp["giai_quyet"])
-    them("5. Vị trí twist (% thời lượng)", ct["vi_tri_twist_pct"])
+    vt = ct["vi_tri_twist_pct"]
+    them(f"5. Vị trí twist (% thời lượng; phát hiện {vt['n']} truyện, {vt['n_chac']} chắc)", vt)
     kieu = ct["kieu_mo"]
     dong.append(
         f"| 6. Kiểu mở: 'in this town' / khác | "
         f"{kieu.get('in this town', '—')} / {kieu.get('khac', '—')} | | | |"
     )
-    dong.append(f"| 7. Kết gợi lại câu mở (%) | {ct['ket_goi_lai_mo_pct']} | | | |")
+    dong.append(f"| 7. Kết gợi lại câu mở (%, cận dưới) | {ct['ket_goi_lai_mo_pct']} | | | |")
     tt = ct["tan_suat_1000_tu"]
     dong.append(
         f"| 8. Tần suất / 1000 từ: i / mom / grandma | "
         f"{tt.get('i', '—')} / {tt.get('mom', '—')} / {tt.get('grandma', '—')} | | | |"
     )
-    them("9. Đổi cảnh (lần/phút, khoảng lặng >= 0,6 s)", ct["mat_do_doi_canh_moi_phut"])
+    dong.append("| 9. Đổi cảnh (lần/phút) | không có dữ liệu (null) | | | |")
 
     dong.append("")
     dong.append("## Áp dụng cho tiếng Việt\n")
@@ -277,21 +302,22 @@ def _ghi_md(path, so_truyen, bo_qua, ct):
         f"{_fmt(ct['so_cau'],'p25')}-{_fmt(ct['so_cau'],'p75')}). Giữ dải này cho cùng thời lượng, không dùng số tuyệt đối."
     )
     dong.append(
-        f"2. Thời lượng: trung vị {_fmt(ct['thoi_luong_s'])} s. Quy đổi lời Việt theo ký tự/giây "
-        f"(tiếng Anh trung vị {_fmt(ct['ky_tu_moi_giay'])}), không theo số từ."
+        f"2. Thời lượng: tiếng Anh trung vị {_fmt(ct['thoi_luong_s'])} s (chỉ là ước lượng, xem cảnh báo). "
+        f"Lời Việt quy đổi theo quy ước dự án: ~14 ký tự/giây. Mật độ cắt cảnh lấy từ luật dự án: "
+        f"~1 shot/giây, 1-3 shot mỗi câu."
     )
     dong.append(
         f"3. Phân bổ câu (trung vị): hook {_fmt(cp['hook'])}, leo thang {_fmt(cp['leo_thang'])}, "
         f"twist {_fmt(cp['twist'])}, giải quyết {_fmt(cp['giai_quyet'])}. Dùng làm tỉ lệ khi viết lời Việt."
     )
     dong.append(
-        f"4. Vị trí twist: trung vị {_fmt(ct['vi_tri_twist_pct'])}% thời lượng. "
-        f"Đặt cú ngoặt của phim quanh mốc này, không đặt sớm hơn 40%."
+        f"4. Vị trí twist: trên {vt['n']}/{so_truyen} truyện phát hiện được ({vt['ti_le_phat_hien']*100:.0f}%), "
+        f"p25-p75 là {_fmt(vt,'p25')}-{_fmt(vt,'p75')}% thời lượng (trung vị {_fmt(vt)}%). "
+        f"Đặt cú ngoặt trong dải này, không đặt sớm hơn 40%."
     )
     dong.append(
         f"5. Mở và kết: tỉ lệ truyện mở bằng 'in this town' là {kieu.get('in this town', '—')}; "
-        f"{ct['ket_goi_lai_mo_pct']}% có kết gợi lại câu mở; đổi cảnh trung vị "
-        f"{_fmt(ct['mat_do_doi_canh_moi_phut'])} lần/phút."
+        f"ít nhất {ct['ket_goi_lai_mo_pct']}% có kết gợi lại câu mở (cận dưới)."
     )
     path.write_text("\n".join(dong) + "\n", encoding="utf-8")
 
@@ -313,7 +339,8 @@ def main(argv=None):
         try:
             sentences = cau(parse_srt(f.read_text(encoding="utf-8-sig")))
             st = chi_so(sentences)
-        except Exception:
+        except Exception as e:
+            print(f"LOI {f.name}: {e}", file=sys.stderr)
             st = None
         if st is None:
             bo_qua += 1
@@ -323,7 +350,7 @@ def main(argv=None):
     ct = tong_hop(stories)
     so_truyen = len(stories)
     out.parent.mkdir(parents=True, exist_ok=True)
-    du_lieu = {"so_truyen": so_truyen, "bo_qua": bo_qua, "chi_tieu": ct}
+    du_lieu = {"so_truyen": so_truyen, "bo_qua": bo_qua, "canh_bao": CANH_BAO, "ranh_phan": RANH_PHAN, "chi_tieu": ct}
     out.with_suffix(".json").write_text(
         json.dumps(du_lieu, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )

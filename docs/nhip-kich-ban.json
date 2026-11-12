@@ -1,62 +1,72 @@
 {
   "so_truyen": 96,
   "bo_qua": 0,
+  "canh_bao": [
+    "mốc thời gian suy từ độ dài chữ: thoi_luong_s chỉ là ước lượng, không dùng để suy tốc độ đọc",
+    "mat_do_doi_canh_moi_phut = null: dữ liệu .srt không có thông tin cắt cảnh",
+    "vi_tri_twist_pct và 3 mục cau_moi_phan (leo_thang, twist, giai_quyet) chỉ tính trên truyện phát hiện được twist (xem n)"
+  ],
+  "ranh_phan": "hook 10% | leo thang tới câu twist | twist = nửa đầu đoạn sau twist | giải quyết = nửa sau",
   "chi_tieu": {
     "so_cau": {
+      "n": 96,
       "tb": 66.36,
       "p25": 58.0,
       "p50": 66.0,
       "p75": 73.0
     },
     "thoi_luong_s": {
+      "n": 96,
       "tb": 133.25,
       "p25": 126.38,
       "p50": 136.67,
       "p75": 145.46
     },
     "ky_tu_moi_cau": {
+      "n": 96,
       "tb": 45.4,
       "p25": 40.38,
       "p50": 44.45,
       "p75": 49.19
     },
-    "ky_tu_moi_giay": {
-      "tb": 22.08,
-      "p25": 21.69,
-      "p50": 22.03,
-      "p75": 22.5
-    },
     "cau_moi_phan": {
       "hook": {
+        "n": 96,
         "tb": 5.96,
         "p25": 5.0,
         "p50": 6.0,
         "p75": 7.0
       },
       "leo_thang": {
-        "tb": 29.51,
-        "p25": 23.0,
-        "p50": 27.5,
-        "p75": 33.25
+        "n": 53,
+        "tb": 38.83,
+        "p25": 28.0,
+        "p50": 39.0,
+        "p75": 47.0
       },
       "twist": {
-        "tb": 16.15,
-        "p25": 12.75,
-        "p50": 16.5,
-        "p75": 20.0
+        "n": 53,
+        "tb": 12.28,
+        "p25": 7.0,
+        "p50": 11.0,
+        "p75": 16.0
       },
       "giai_quyet": {
-        "tb": 14.75,
-        "p25": 12.0,
-        "p50": 15.0,
-        "p75": 17.0
+        "n": 53,
+        "tb": 9.19,
+        "p25": 6.0,
+        "p50": 8.0,
+        "p75": 13.0
       }
     },
     "vi_tri_twist_pct": {
-      "tb": 53.85,
-      "p25": 50.0,
-      "p50": 50.0,
-      "p75": 50.0
+      "n": 53,
+      "tb": 66.64,
+      "p25": 55.33,
+      "p50": 66.26,
+      "p75": 79.78,
+      "n_chac": 26,
+      "ti_le_phat_hien": 0.552
     },
     "kieu_mo": {
       "in this town": 0.333,
@@ -68,11 +78,6 @@
       "mom": 1.93,
       "grandma": 0.74
     },
-    "mat_do_doi_canh_moi_phut": {
-      "tb": 0.0,
-      "p25": 0.0,
-      "p50": 0.0,
-      "p75": 0.0
-    }
+    "mat_do_doi_canh_moi_phut": null
   }
 }
