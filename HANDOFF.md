@@ -1,6 +1,7 @@
 # HANDOFF — ep001 "Ngôi nhà biết đi" (cập nhật 2026-11-12 tối)
 
 Đọc `CLAUDE.md` trước. Người dùng nói tiếng Việt. Bản bàn giao cũ (v4/core, 162 dòng): `git show 7688261:HANDOFF.md`.
+nBàn giao phần cảnh nhẹ + gió/cỏ/rừng/núi kiểu Painted Valley: **`HANDOFF-canh.md`**.
 
 ## Mục tiêu
 Phim dọc 1080×1920 ep001, giao dạng 1 file HTML có trình phát + nút Xuất MP4. Người dùng góp ý theo frame → sửa →
