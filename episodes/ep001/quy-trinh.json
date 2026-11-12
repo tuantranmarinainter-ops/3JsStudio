@@ -3,7 +3,7 @@
   "L1": { "le": -0.4, "leSat": -0.6 },
   "L3": { "trongKhungMin": 0.3 },
   "L7": { "toiMax": 0.63, "diemSangMin": 0 },
-  "L8": { "oPhangMax": 0.2 },
+  "L8": { "oPhangMax": 0.2, "vatMoiTangMin": 0 },
   "L10": { "dienTichMin": 0.04 },
   "L11": { "macDinh": 0.13 }
 }
