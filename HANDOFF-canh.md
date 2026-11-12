@@ -18,14 +18,14 @@ mọi vật dùng chung 1 khối uniform gió/nắng/sương, noise làm sẵn t
 - Trang thử (gộp 1 file mở bằng file://: `node tools/lab1file.mjs engine/<x>-lab.html dist/<x>-lab.html`):
   `grass-lab`, `sway-lab`, `farwoods-lab`, `backdrop-lab` (`?light=day|dusk|night`).
 - 075d07e: ảnh vân CC0 Poly Haven 512 WebP cho gỗ/gỗ sơn/ngói/đá/đất/cát/vải trơn (`MAT_TEX` trong materials.js, ô `matTex`), vẫn 1 program.
-- Bản xem thử mới nhất: `dist/ep1_v7.html`.
+- 1d22c8f: hoa trong cỏ (grass.js `flowers`, ô `flowers`, bãi cỏ island density 0.008; vòng xa không hoa). Ở các shot đảo hiện tại camera xa → hoa gần như không thấy (A/B PSNR > 77 dB); thấy rõ ở `dist/grass-lab.html`.
+- Bản xem thử mới nhất: `dist/ep1_v8.html`.
 
 ## Việc còn lại (theo thứ tự)
-1. Hoa trong cỏ (mở rộng grass.js, cùng hash ô + gió).
-2. Gắn rừng xa / núi xa / cỏ cho bối cảnh khác (forest, brazil, mountain…) nếu người dùng muốn.
-3. Dãy núi xa còn phẳng màu; vạch sáng mảnh ở chân trời (sương mặt đất).
-4. Kiểm cả phim 1 lần: `node tools/look.mjs episodes/ep001/index.html --shots all --det`.
-5. Tồn từ trước: Xuất MP4 chậm (5m27 so với 1m17); `tools/shaders.mjs` cho cả phim; tách `materials.js` thành `engine/shaders/<họ>.js`
+1. Gắn rừng xa / núi xa / cỏ cho bối cảnh khác (forest, brazil, mountain…) nếu người dùng muốn.
+2. Dãy núi xa còn phẳng màu; vạch sáng mảnh ở chân trời (sương mặt đất).
+3. Kiểm cả phim 1 lần: `node tools/look.mjs episodes/ep001/index.html --shots all --det`.
+4. Tồn từ trước: Xuất MP4 chậm (5m27 so với 1m17); `tools/shaders.mjs` cho cả phim; tách `materials.js` thành `engine/shaders/<họ>.js`
    + `episodes/<ep>/shaders.json` để mỗi tập chỉ nạp họ nó dùng (`engine/shaders/registry.js`, `docs/shaders.md`).
 
 ## Lưu ý
