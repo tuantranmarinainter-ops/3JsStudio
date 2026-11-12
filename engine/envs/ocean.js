@@ -52,21 +52,22 @@ export const OCEAN_PLAN_EP001 = {
 };
 
 export default function build(g, e, H) {
-  const { THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
+  const { ganTang, THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
   e.sea = makeSea(g, { preset: 'deep', y: 11, amp: 0.6, size: 1600 });
+  ganTang(e.sea.water.mesh, 'front');   // tầng trước: mặt biển (sát camera); cá voi = tầng giữa; mây = tầng sau
   e.sea.water.mesh.userData.noAO = true;   // mặt nước (đẩy đỉnh trong shader riêng): loại khỏi prepass AO của engine/ao.js
   const seabed = plane(900, 900, mat('#0e5f86'), -10, 'seabed'); seabed.userData.noAO = true; g.add(seabed);   // đáy nằm dưới mặt nước: không để AO đáy lọt lên mặt nước
   e.sea.water.mesh.traverse((o) => { o.userData.noAO = true; });
   // cá voi GLB (nổi lên, bơi vòng quanh chân nhà, 1 cú nhảy + nước văng); thiếu asset → về cá voi khối cũ
   // e.oceanPlan: tập khác có thể gán kịch bản riêng trước khi dựng env; mặc định = ep001
   e.life = A && A.has('sea/sperm_whale') ? createOceanLife(THREE, A, { seaY: 11, plan: e.oceanPlan || OCEAN_PLAN_EP001 }) : null;
-  if (e.life) g.add(e.life.group);
-  else e.whales = [0, 1, 2].map(() => place(g, K.whale(), 0, 0, 0, 0, 1));
-  place(g, K.cloud(2.5), -120, 120, -300); place(g, K.cloud(2), 150, 100, -350);
+  if (e.life) g.add(ganTang(e.life.group, 'mid'));
+  else e.whales = [0, 1, 2].map(() => ganTang(place(g, K.whale(), 0, 0, 0, 0, 1), 'mid'));
+  ganTang(place(g, K.cloud(2.5), -120, 120, -300), 'back'); ganTang(place(g, K.cloud(2), 150, 100, -350), 'back');
   // mây nền lớn (góp ý #20): vành khối mây to quanh chân trời, nhiều lớp — sau nhà/cá voi từ mọi hướng camera. Tất định theo hash.
   { const list = []; for (let i = 0; i < 26; i++) { const a = (i / 26) * Math.PI * 2 + (hash(i, 31) - 0.5) * 0.25, r = 520 + hash(i, 32) * 260, big = i % 3 === 0;
       list.push({ x: Math.cos(a) * r, z: Math.sin(a) * r, y: (big ? 90 : 55) + hash(i, 33) * 90, s: big ? 330 + hash(i, 34) * 160 : 170 + hash(i, 35) * 110, ar: 1.7, seed: i, k: 0 }); }
-    e.bgClouds = createCloudPuffs(THREE, { list, seed: 7, drift: [0, 0], name: 'ocean_bg_clouds' }); g.add(e.bgClouds.object); }
+    e.bgClouds = createCloudPuffs(THREE, { list, seed: 7, drift: [0, 0], name: 'ocean_bg_clouds' }); g.add(ganTang(e.bgClouds.object, 'back')); }
 
   // --- bảng màu sea2 ↔ màu cũ: đặt thẳng uniform mỗi khung (water.update không ghi đè các uniform này) ---
   const W = e.sea.water, U = W?.uniforms;
@@ -84,7 +85,7 @@ export default function build(g, e, H) {
   // khai thuần cho lõi (engine/shots.js): vật nổi (nhà nổi) dập dềnh theo sóng cá voi CÙNG khung — gọi trước env.update
   e.seaEvents = (t) => ((globalThis.__autoFx?.sea2 ?? true) && e.life ? e.life.seaEvents(t) : null);
 
-  return { update(t, ctx = {}) {
+  return { suSong: ['song'], update(t, ctx = {}) {
     const on = globalThis.__autoFx?.sea2 ?? true;
     e.sea(t);   // thời gian của mặt biển = t toàn cục (cá voi + sự kiện mặt nước cùng hệ)
     applyLook(on);
