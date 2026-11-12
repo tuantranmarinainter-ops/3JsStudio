@@ -7,7 +7,7 @@ import { readFile } from 'node:fs/promises';
 import { readFileSync } from 'node:fs';
 import { extname, join, resolve, relative } from 'node:path';
 import * as THREE from '../../vendor/three/three.module.js';
-import { applyMaterials, classifyMaterial, khaiBao, khaiBaoMat, KHONG_GRUNGE, MAT_KINDS } from '../../engine/materials.js';
+import { applyMaterials, classifyMaterial, khaiBao, khaiBaoMat, KHONG_GRUNGE, MAT_KINDS, MAT_DE_XUAT } from '../../engine/materials.js';
 import { applyGrunge } from '../../engine/grunge.js';
 import { sinhMarkdown } from '../vat-lieu-doc.mjs';
 import { LUAT, nguong } from '../kiem/luat.mjs';
@@ -57,6 +57,17 @@ test('khaiBao trả danh sách mesh chưa khai báo', () => {
   const con = khaiBao(g, [[/^p$/, 'wood'], [/^q$/, 'none']]);
   assert.deepEqual(con.map((o) => o.name), ['r']);
   assert.equal(g.children[1].userData.matKind, 'none');
+});
+
+test('không import vòng: grunge.js và mat-khai-bao.js không import materials.js', () => {
+  for (const f of ['grunge.js', 'mat-khai-bao.js']) assert.ok(!/from\s+['"]\.\/materials\.js['"]/.test(readFileSync(join(root, 'engine', f), 'utf8')), f);
+});
+
+test('docs/vat-lieu.md có bảng đề xuất đổi loại từ MAT_DE_XUAT', () => {
+  const md = readFileSync(join(root, 'docs', 'vat-lieu.md'), 'utf8');
+  assert.match(md, /Đề xuất đổi loại/);
+  assert.ok(MAT_DE_XUAT.length >= 5);
+  for (const d of MAT_DE_XUAT) { assert.ok(md.includes(d.vat), d.vat); assert.ok(d.hienTai && d.deXuat); }
 });
 
 test('docs/vat-lieu.md đúng với MAT_KINDS (chạy node tools/vat-lieu-doc.mjs để sinh lại)', () => {
@@ -135,4 +146,65 @@ test('mesh MeshStandardMaterial trơn gắn vai vat-chinh: nguon doan và L9 đ�
   const r = LUAT.L9({ m: [m, m, m] }, nguong(join(root, 'tools', 'tests', 'khong-co-ep')));
   assert.equal(r.ok, false);
   assert.ok(r.val.loi.some((s) => s.startsWith('hop_tron:')));
+});
+
+test('khai báo đạo cụ chính trùng loại luật đoán cũ (không đổi loại ngoài chủ đích)', T, async () => {
+  const diff = await page.evaluate(async () => {
+    const THREE = window.THREE;
+    const { MAT_RULES } = await import('/engine/materials.js');
+    const { propKit } = await import('/engine/props.js');
+    const { createHouse } = await import('/engine/house.js');
+    const K = propKit(THREE);
+    const guess = (m, p) => { const s = `${p} [${(m.name || '').toLowerCase()}]`; for (const [re, k] of MAT_RULES) if (re.test(s)) return k; return 'matte'; };
+    const out = [];
+    const run = (label, root) => {
+      const walk = (o, path) => {
+        const p = o.name ? (path ? path + '/' + o.name.toLowerCase() : o.name.toLowerCase()) : path;
+        if (o.isMesh) {
+          const m = Array.isArray(o.material) ? o.material[0] : o.material;
+          const decl = o.userData.matKind || m.userData.matDecl, g = guess(m, p);
+          if (!decl) out.push(`${label}/${o.name}: chưa khai báo`);
+          else if (decl !== g && !(decl === 'none' && (m.transparent || /^(fridge_|handle_)/.test(o.name)))) out.push(`${label}/${o.name}: ${decl} != ${g}`);
+        }
+        o.children.forEach((c) => walk(c, p));
+      };
+      walk(root, '');
+    };
+    run('fridge', K.fridge()); run('mailbox', K.mailbox()); run('lighthouse', K.lighthouse()); run('ship', K.ship()); run('cardStack', K.cardStack());
+    run('house', createHouse(THREE, { style: 'family', name: 'house' }).root);
+    return [...new Set(out)];
+  });
+  assert.deepEqual(diff, []);
+});
+
+test('hải đăng GLB của ep001 là vật chính và khai-bao', T, async () => {
+  const t = await page.evaluate(() => { const s = window.__shots.list.find((x) => x.id === 's107'); return s.t0 + s.dur / 2; });
+  const m = await measureAt(t);
+  const lh = (m.vatLieu || []).filter((v) => /lighthouse|door-mesh|lifebuoy/.test(v.ten));
+  assert.ok(lh.length >= 1, 'không thấy hải đăng trong vatLieu');
+  for (const v of lh) { assert.equal(v.nguon, 'khai-bao'); assert.equal(v.kind, 'metalpaint'); assert.equal(v.grunge, false); }
+});
+
+test('mesh có vai nhưng vật liệu trong suốt chưa vá: nguon chua-va và L9 đỏ', T, async () => {
+  const t = await page.evaluate(() => window.__shots.list[3].t0 + 0.1);
+  const m = await page.evaluate(async (t) => {
+    await window.renderAt(t);
+    const sc = window.__stage.scene, cam = window.__stage.camera, THREE = window.THREE;
+    const g = new THREE.Group(); g.name = 'thu_trong_suot'; g.userData.vai = 'vat-chinh';
+    const mm = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), new THREE.MeshStandardMaterial({ color: '#88aaff', transparent: true, opacity: 0.5 }));
+    mm.name = 'hop_trong_suot'; g.add(mm);
+    const d = new THREE.Vector3(); cam.getWorldDirection(d); g.position.copy(cam.position).addScaledVector(d, 10);
+    sc.add(g);
+    const { applyMaterials } = await import('/engine/materials.js');
+    applyMaterials(THREE, g);
+    const r = JSON.parse(JSON.stringify(window.__measure(t)));
+    sc.remove(g);
+    return r;
+  }, t);
+  const v = (m.vatLieu || []).find((x) => x.ten === 'hop_trong_suot');
+  assert.ok(v, 'mesh trong suốt bị bỏ qua im lặng');
+  assert.equal(v.nguon, 'chua-va');
+  const r = LUAT.L9({ m: [m, m, m] }, nguong(join(root, 'tools', 'tests', 'khong-co-ep')));
+  assert.equal(r.ok, false);
+  assert.ok(r.val.loi.some((s) => s.startsWith('hop_trong_suot:')));
 });

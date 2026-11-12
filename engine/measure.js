@@ -143,12 +143,15 @@ export function installMeasure({ THREE, stage, shots }) {
     scene.traverse((o) => { if (o.userData && o.userData.vai && chainVisible(o)) nodes.push(o); });
     const camPos = new THREE.Vector3().setFromMatrixPosition(camera.matrixWorld);
     const matDat = stage.ground && stage.ground.visible ? stage.ground.position.y : 0;   // env không khai báo thì mặt đất ở y = 0
+    camera.updateMatrixWorld();
+    const frTang = new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, new THREE.Matrix4().copy(camera.matrixWorld).invert()));
+    const tangTrongTamNhin = (o) => { const bx = worldBox(o); return bx.isEmpty() || frTang.intersectsBox(bx); };
     const hats = [];
     let soTheHat = 0;
     scene.traverse((o) => {
       const u = o.userData; if (!u) return;
       if (u.hat) soTheHat++;
-      if (u.tang && tang[u.tang] !== undefined && chainVisible(o)) tang[u.tang]++;
+      if (u.tang && tang[u.tang] !== undefined && chainVisible(o) && tangTrongTamNhin(o)) tang[u.tang]++;   // chỉ đếm vật giao frustum camera (gồm near..far); vật không có mesh (hạt mưa quanh camera) đếm luôn
       if (u.hat && seenHat[u.hat] !== undefined && chainVisible(o)) { seenHat[u.hat] += typeof u.soHat === 'function' ? u.soHat() : 0; if (typeof u.hatViTri === 'function') hats.push(u); }
     });
     for (const o of nodes) {
@@ -196,14 +199,18 @@ export function installMeasure({ THREE, stage, shots }) {
       if (!o.isMesh || !o.geometry || faint(o)) return;
       if (!coVaiVL(o)) return;   // chỉ vật chính / nhà / vật cần đọc (luật L9); đất, cây, người… không khai báo từng mesh
       const m = matsOf(o)[0]; let kind = m && m.userData && m.userData.matKind;
-      if (!kind && o.userData && o.userData.matKind === 'none' && o.userData.matNguon === 'khai-bao') kind = 'none';   // khai báo "giữ vật liệu gốc"
-      if (!kind) return;
+      let chuaVa = false;   // có vai nhưng vật liệu chưa được vá (trong suốt, không phải MeshStandard…): KHÔNG bỏ qua, báo nguon 'chua-va' để L9 thấy
+      if (!kind) {
+        const kd = (o.userData && o.userData.matKind) || (m && m.userData && m.userData.matDecl) || null;
+        if (o.userData && o.userData.matKind === 'none' && o.userData.matNguon === 'khai-bao') kind = 'none';   // khai báo "giữ vật liệu gốc"
+        else { kind = kd; chuaVa = true; }
+      }
       if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere();
       sph.copy(o.geometry.boundingSphere).applyMatrix4(o.matrixWorld);
       if (!fr.intersectsSphere(sph)) return;
       let gk; for (let p = o; p && gk === undefined; p = p.parent) gk = p.userData && p.userData.grungeKind;
-      const grunge = gk !== 'none' && !!(m.userData && m.userData.grunge);
-      const nguon = (o.userData && o.userData.matNguon) || (m.userData && m.userData.matNguon) || 'doan';
+      const grunge = gk !== 'none' && !!(m && m.userData && m.userData.grunge);
+      const nguon = chuaVa ? 'chua-va' : ((o.userData && o.userData.matNguon) || (m && m.userData && m.userData.matNguon) || 'doan');
       vl.set(`${o.name}|${kind}|${nguon}|${grunge}`, { ten: o.name, kind, nguon, grunge });
     });
     return {

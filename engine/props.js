@@ -367,11 +367,10 @@ export function propKit(THREE) {
   // Bưu thiếp (makePostcard) tự khai báo 'paper'. Test tools/tests/vat-lieu.test.mjs kiểm vật chính trong ep001 không còn 'doan'.
   const DECL = {
     fridge: [[/^(fridge_body|fridge_split|handle_)/, 'none'], [/^(front|back|card_collage)$/, 'paper'], [/^magnet/, 'plastic']],   // vỏ tủ: tôn sơn bóng, giữ nguyên vật liệu gốc (không vân, không grunge)
-    mailbox: [[/^(box_rib|door_handle|door_hinge|flag_pin)$/, 'chrome'], [/^house_number$/, 'enamel'], [/^(box_|door_leaf|door_inner|flag_)/, 'metalpaint'],
-      [/^(post|post_foot|post_arm|post_brace)$/, 'wood'], [/^letter/, 'paper'], [/^(front|back)$/, 'paper']],
-    lighthouse: [[/^(band_|gallery|rail|cap)/, 'metalpaint'], [/^lantern$/, 'none'], [/^door$/, 'wood'], [/^window$/, 'matte']],
-    ship: [[/^(hull|hull_stripe|cabin)$/, 'woodpaint'], [/^(deck|mast|mast2)$/, 'wood'], [/^sail/, 'fabric']],
-    cardStack: [[/^(ribbon_|bow_)/, 'fabric'], [/^(front|back)$/, 'paper']],
+    mailbox: [[/^(box_|door_|flag_|post|house_number)/, 'metalpaint'], [/^letter/, 'paper'], [/^(front|back)$/, 'paper']],   // = loại luật đoán cũ; đề xuất đổi: MAT_DE_XUAT
+    lighthouse: [[/^(band_|gallery|rail|cap|door|window)/, 'metalpaint'], [/^lantern$/, 'none']],
+    ship: [[/^(hull|hull_stripe)$/, 'metalpaint'], [/^(deck|cabin)$/, 'wood'], [/^(mast|mast2)$/, 'matte'], [/^sail/, 'fabric']],
+    cardStack: [[/^ribbon_/, 'fabric'], [/^bow_/, 'paper'], [/^(front|back)$/, 'paper']],
   };
   for (const [fn, vai] of Object.entries(VAI)) { const f = K[fn]; K[fn] = (...a) => { const g = f.apply(K, a); if (g && g.userData) { g.userData.vai = vai; if (DECL[fn]) khaiBao(g, DECL[fn]); } return g; }; }
   return K;

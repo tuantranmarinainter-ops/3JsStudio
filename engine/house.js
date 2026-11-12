@@ -67,6 +67,14 @@ export function createHouse(THREE, opts = {}) {
   const trim = M('trim', c.trim), roof = M('roof', c.roof, { roughness: 0.6 }), roofDark = M('roofDark', c.roofDark);
   const accent = M('accent', c.accent, { roughness: 0.5, metalness: 0.2 });
   const glass = M('glass', c.glass, { emissive: new THREE.Color('#ffd27a'), emissiveIntensity: 0, roughness: 0.3 });
+  // khai báo loại cho RIÊNG mesh này (khác loại khai báo của vật liệu): nhân bản vật liệu theo loại để grunge/vân không lan sang mesh khác dùng chung;
+  // bản sao của `glass` vẫn sáng đèn đêm (setNight cập nhật cả glassCopies)
+  const copies = new Map(), glassCopies = [];
+  const tagOwn = (m, kind) => {
+    const ck = m.material.uuid + '|' + kind;
+    if (!copies.has(ck)) { const c = khaiBaoMat(m.material.clone(), kind); copies.set(ck, c); if (m.material === glass) glassCopies.push(c); }
+    m.material = copies.get(ck); m.userData.matKind = kind; m.userData.matNguon = 'khai-bao';
+  };
   const baseMat = M('base', c.base, { roughness: 1 }), porchMat = M('porch', c.porch), stepMat = M('step', c.porch), capMat = M('cap', c.trim);
   const doorMat = M('door', c.door, { roughness: 0.6 });
 
@@ -118,6 +126,7 @@ export function createHouse(THREE, opts = {}) {
     const leaf = new THREE.Mesh(leafShape(side), doorMat); leaf.position.x = -side * 2.5; leaf.castShadow = true; hinge.add(leaf);
     const port = new THREE.Mesh(new THREE.TorusGeometry(0.7, 0.18, 8, 20), accent); port.position.set(-side * 1.25, 5.2, 0.4); hinge.add(port);
     const pg = new THREE.Mesh(new THREE.CircleGeometry(0.7, 20), glass); pg.position.set(-side * 1.25, 5.2, 0.37); hinge.add(pg);
+    tagOwn(pg, 'woodpaint');   // = loại luật đoán cũ (kính ô cửa tròn); đề xuất: MAT_DE_XUAT
     const knob = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 6), accent); knob.position.set(-side * 0.4, 3.6, 0.5); hinge.add(knob);
     leaves.push({ hinge, side });
   }
@@ -129,6 +138,8 @@ export function createHouse(THREE, opts = {}) {
     const my = new THREE.Mesh(B(3.6, 0.25, 0.5), trim); g.add(my);
     const sill = new THREE.Mesh(B(5, 0.4, 0.9), trim); sill.position.set(0, -2.9, 0.3); g.add(sill);
     for (const s of [-1, 1]) { const sh = new THREE.Mesh(B(1.1, 5.2, 0.3), roofDark); sh.position.set(s * 2.9, 0, 0.1); g.add(sh); }
+    // giữ ĐÚNG loại luật đoán cũ (chưa đổi hình): cả cụm window_front → glass; kính các cửa sổ khác → woodpaint. Đề xuất sửa: MAT_DE_XUAT.
+    g.traverse((m) => { if (!m.isMesh) return; const k = name === 'window_front' ? 'glass' : (m.material === glass ? 'woodpaint' : null); if (k) tagOwn(m, k); });
     return g;
   };
   for (const x of [-9, -4.8, 4.8, 9]) if (Math.abs(x) > 6) windowAt(x, 5.6, D / 2 + 0.1, 0, 'window_front');
@@ -254,7 +265,7 @@ export function createHouse(THREE, opts = {}) {
     }
   }
 
-  function setNight(k = 1) { glass.emissiveIntensity = k * 1.6; }
+  function setNight(k = 1) { glass.emissiveIntensity = k * 1.6; for (const c of glassCopies) c.emissiveIntensity = k * 1.6; }
   // mở cửa: 0 → 1 (cánh trái/phải xoay ra ngoài)
   function setDoor(k = 0) { for (const { hinge, side } of leaves) hinge.rotation.y = side * k * 1.6; }
 

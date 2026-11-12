@@ -16,6 +16,7 @@
 // Gán tay: object.userData.matKind = 'wood' | 'paper' | … (ưu tiên hơn luật), 'none' = bỏ qua.
 // Kiểm kê: node tools/mat-inventory.mjs → output/mat-inventory.json (cột kind).
 import { ensureBoxAttr } from './grunge.js';
+import { KHONG_GRUNGE } from './mat-khai-bao.js';
 
 export const MATS = { on: { value: 1 }, tex: { value: 1 }, ready: Promise.resolve() };
 
@@ -25,7 +26,7 @@ export const MATS = { on: { value: 1 }, tex: { value: 1 }, ready: Promise.resolv
 // Ưu tiên: tag trên mesh > khai báo trên vật liệu > luật đoán MAT_RULES (matNguon = 'doan'). Sau applyMaterials,
 // engine/measure.js đọc matNguon vào __measure().vatLieu và luật L9 đòi 'khai-bao' cho vật chính.
 // Danh sách loại CẤM lớp bụi/cũ (grunge.js bỏ qua): nguồn duy nhất — tools/kiem/mac-dinh.json L9.camGrunge phải khớp (có test).
-export const KHONG_GRUNGE = ['chrome', 'metalpaint', 'iron', 'glass', 'enamel', 'skin', 'carpaint'];
+export { KHONG_GRUNGE };
 // Loại đang dùng trong ep001 (kiểm kê tools/mat-inventory.mjs 2026-11-12) = da-duyet; chưa dùng (fruit, whale) = chua-duyet.
 // Chỉ để tools/vat-lieu-doc.mjs ghi cột trạng thái.
 export const MAT_DA_DUYET = [
@@ -34,6 +35,19 @@ export const MAT_DA_DUYET = [
   'hair', 'ice', 'iron', 'knit', 'leather', 'matte', 'metalpaint', 'organic',
   'paper', 'plaster', 'plastic', 'roadpaint', 'rubber', 'sand', 'shell', 'shingle',
   'skin', 'snow', 'soil', 'stone', 'tile', 'wood', 'woodpaint',
+];
+// Đề xuất đổi loại vật liệu (CHỜ NGƯỜI DÙNG DUYỆT). Khai báo hiện giữ ĐÚNG loại luật đoán cũ → hình ep001 không đổi ngoài việc kim loại/kính mất grunge.
+// vat: vật; hienTai: loại đang khai báo; deXuat: loại nên dùng; shot: shot ep001 có vật trong khung (lấy mẫu 3 mốc/shot; số liệu 2026-11-12). tools/vat-lieu-doc.mjs ghi bảng này vào docs/vat-lieu.md.
+export const MAT_DE_XUAT = [
+  { vat: 'mailbox: post, post_foot, post_arm, post_brace', hienTai: 'metalpaint', deXuat: 'wood', shot: 's028 s030 s047 s048 s081 s082' },
+  { vat: 'mailbox: box_rib, door_handle, door_hinge, flag_pin', hienTai: 'metalpaint', deXuat: 'chrome', shot: 's028 s030 s047 s048 s081 s082' },
+  { vat: 'mailbox: house_number', hienTai: 'metalpaint', deXuat: 'enamel', shot: 's028 s030 s047 s048 s081 s082' },
+  { vat: 'hải đăng GLB: door-mesh', hienTai: 'metalpaint', deXuat: 'wood', shot: 's088 s104 s105 s106 s107 s108 s109 s110 s113 s116 s117 s126 s127 s128' },
+  { vat: 'hải đăng props (K.lighthouse, không dùng trong ep001): door / window', hienTai: 'metalpaint', deXuat: 'wood / matte', shot: '' },
+  { vat: 'tàu props (K.ship, không dùng trong ep001): hull, hull_stripe / cabin / mast, mast2', hienTai: 'metalpaint / wood / matte', deXuat: 'woodpaint / woodpaint / wood', shot: '' },
+  { vat: 'chồng thiếp: bow_loop, bow_tail, bow_knot (nơ)', hienTai: 'paper', deXuat: 'fabric', shot: 's107 s108 s110 s111 s112 s116' },
+  { vat: 'nhà: cụm window_front (khung, thanh giữa, bậu, cánh chớp)', hienTai: 'glass', deXuat: 'woodpaint', shot: 's001 s003 s004 s005 s007 s008 s009 s011 s012 s013 s014 s015 s016 s017 s018 s019 s020 s028 s030 s035 s036 s039 s040 s041 s042 s043 s044 s045 s047 s048 s049 s050 s051 s053 s054 s055 s056 s058 s059 s080 s081 s082 s092 s093 s094 s095 s096 s097 s098 s099 s105 s114 s115 s119 s130 s131 s132 s133 s134 s135 s136 s137' },
+  { vat: 'nhà: kính cửa sổ bên/sau + kính ô cửa tròn của cửa', hienTai: 'woodpaint', deXuat: 'glass', shot: 's001 s003 s004 s005 s006 s007 s008 s009 s011 s012 s013 s014 s015 s016 s017 s018 s019 s020 s030 s035 s036 s039 s040 s041 s042 s043 s044 s045 s047 s048 s050 s051 s053 s054 s055 s056 s058 s059 s080 s081 s082 s092 s093 s094 s095 s096 s097 s098 s099 s105 s114 s115 s130 s131 s132 s133 s135 s137' },
 ];
 export function khaiBaoMat(mat, kind) {
   if (!kind) return mat;

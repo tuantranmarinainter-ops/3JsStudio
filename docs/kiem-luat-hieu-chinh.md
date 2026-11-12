@@ -44,7 +44,7 @@ Nhóm đối chiếu: L4 = nhóm "camera" (16 shot); L7 = shot báo cáo ghi "t�
 | L6 | 0 | 3 | - | - | 3 | - | 145 / 0 |
 | L7 | 12 | 1 | 1 | 1 (100%) | 1 | 0 | 0 / 0 |
 | L8 | 15 | 2 | 28 | 6 (21%) | 2 | 22 | 0 / 0 |
-| L9 | 0 | 0 | - | - | - | - | tắt (145 / 145) |
+| L9 | 0 | 0 | - | - | - | - | bật lại (Task 10): 0 đỏ / 145, 0 skip (kể cả hải đăng GLB và mesh chưa vá) |
 | L10 | 0 | 0 | 8 | 0 | 0 | không đo được trên v1 | 145 / 30 |
 | L11 | 0 | 0 | 0 | - | 0 | - | 0 / 0 |
 
@@ -74,7 +74,7 @@ Lý do từng số (ep001, ghi trong `episodes/ep001/quy-trinh.json`):
 - **L1**: ở lượt 0 trượt 41 shot (bảng trên; sau lượt 1 còn 30 shot áp dụng và đều đạt); trượt vì nhà + 4 chân rộng hơn khung (lề −0,0 … −0,97) trong khi phim đã được duyệt; v1 không đo được nên không có chứng cứ phân biệt. Nới `le` về −0,4 và coi nhà tràn quá 0,6 khung là cận cảnh. **Đây là chỗ yếu: L1 gần như chỉ còn bắt nhà ra khỏi khung hẳn; cần người xem xác nhận ngưỡng.**
 - **L3**: 0,30 (hero chỉ cần 30% nằm trong khung); phần cận cảnh xử lý bằng mã (xem dưới).
 - **L11 = 0,13**: ep001 không khai `type`, 37 shot < 0,8 s, ngắn nhất 0,133 s.
-- **L9 tắt**: chưa có dữ liệu vật liệu khai báo (task sau).
+- **L9 bật lại (Task 10)**: đạo cụ chính/nhà/thiếp/hải đăng khai báo vật liệu (xem `docs/vat-lieu.md`), `vatLieu` đo vật có vai gần nhất `vat-chinh|nha|chan-nha|doc`, mesh chưa vá báo `chua-va`. ep001: 0 shot L9 đỏ / 145. (Các bảng cũ ở trên là số liệu lúc L9 còn tắt.)
 
 Bốn shot s087, s089, s139, s142 (camera hoàn toàn không đổi, PSNR 52–54 dB; bưu thiếp/tủ thiếp cận để đọc chữ) KHÔNG còn nằm trong `rieng` của `quy-trinh.json`: đã thêm `static: true` vào 4 dòng shot tương ứng trong `episodes/ep001/shots.js` (L4 bỏ qua shot `static`; engine không đọc trường này nên hình render không đổi). Mục `rieng` đã bỏ.
 
