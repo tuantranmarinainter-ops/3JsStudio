@@ -14,6 +14,10 @@ actor guard2: shirt=#1f3a68 pants=#1f3a68 hat=beanie hatColor=#f1c40f
 actor baker: shirt=#ffffff pants=#795548
 actor tailor: shirt=#e91e63 skirt=#4a148c hair=braids lashes=true
 actor kid1: shirt=#4caf50 pants=#1565c0
+actor bap: bear=1 bow=#2e86de
+actor bear2: bear=1 bow=#e74c3c
+actor bear3: bear=1 bow=#f1c40f
+vat thung_tiem_bach: chồng thùng in tên tiệm
 crowd: 8
 place bakery: 18, -6
 place tailor: 26, -6
