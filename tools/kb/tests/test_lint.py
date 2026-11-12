@@ -109,6 +109,29 @@ class TestLint(unittest.TestCase):
         self.assertIn('gần nhất: establish', msgs['K02'])
         self.assertIn('gần nhất: walk', msgs['K04'])
 
+    def run_kb(self, *args):
+        r = subprocess.run([sys.executable, str(KB / 'kichban.py'), *args], capture_output=True)
+        return r.returncode, r.stdout.decode('utf-8')
+
+    def test_danh_sach(self):
+        rc, out = self.run_kb('--danh-sach')
+        self.assertEqual(rc, 0)
+        lines = {l.split(':', 1)[0]: l.split(':', 1)[1] for l in out.splitlines() if ':' in l}
+        self.assertEqual(set(lines), {'loại', 'hành động', 'mặt', 'giờ', 'thời tiết', 'tư thế'})
+        self.assertIn('insertRead', lines['loại'])
+        self.assertIn('lookAround', lines['hành động'])
+        self.assertEqual(len(lines['mặt'].split(',')), 16)
+
+    def test_tom_tat(self):
+        rc, out = self.run_kb(str(DATA / 'kb_tot.md'), '--tom-tat')
+        self.assertEqual(rc, 0)
+        self.assertIn('số câu: 6', out)
+        self.assertIn('số shot: 8', out)
+        self.assertIn('tổng giây: 10.2', out)
+        self.assertIn('cần dựng: 2 (anim 1, env 1)', out)
+        self.assertIn('shot dài nhất: 5 (2 s)', out)
+        self.assertIn('shot ngắn nhất: 2 (1 s)', out)
+
 
 if __name__ == '__main__':
     unittest.main()

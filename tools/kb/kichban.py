@@ -1,6 +1,8 @@
 """Bộ đọc kich-ban.md (định dạng mở rộng của storyboard.md, xem docs/kich-ban-vao.md).
 
   python tools/kb/kichban.py <kich-ban.md> --json
+  python tools/kb/kichban.py <kich-ban.md> --tom-tat     số câu/shot/giây, mục cần dựng, shot dài/ngắn nhất
+  python tools/kb/kichban.py --danh-sach                 giá trị hợp lệ (loại, hành động, mặt, giờ, thời tiết, tư thế)
 
 doc(path) -> {"meta", "shots", "can_dung", "loi_doc"}; mỗi shot có `_dong` (số dòng 1-based).
 Lỗi dữ liệu không ném ngoại lệ: thành mục trong loi_doc {"dong", "ma": "K00", "msg"}.
@@ -115,15 +117,52 @@ def doc(path):
     return out
 
 
+def so_cau(d):
+    """số câu lời kể, gom như K10: ô có chữ mở câu mới; `^`… thuộc câu trước; ô trống = không lời."""
+    n, open_ = 0, False
+    for sh in d['shots']:
+        nar = sh.get('narration', '')
+        if nar in CONT:
+            continue
+        open_ = bool(nar)
+        n += open_
+    return n
+
+
+def tom_tat(d):
+    shots = d['shots']
+    durs = [s for s in shots if 'dur' in s]
+    out = [f'số câu: {so_cau(d)}', f'số shot: {len(shots)}',
+           f'tổng giây: {round(sum(s["dur"] for s in durs), 1):g}']
+    kinds = {}
+    for c in d['can_dung']: kinds[c['kind']] = kinds.get(c['kind'], 0) + 1
+    out.append(f'cần dựng: {len(d["can_dung"])} (' + ', '.join(f'{k} {v}' for k, v in sorted(kinds.items())) + ')')
+    if durs:
+        hi, lo = max(durs, key=lambda s: s['dur']), min(durs, key=lambda s: s['dur'])
+        out.append(f'shot dài nhất: {hi.get("id", "?")} ({hi["dur"]:g} s)')
+        out.append(f'shot ngắn nhất: {lo.get("id", "?")} ({lo["dur"]:g} s)')
+    return '\n'.join(out)
+
+
+def danh_sach():
+    v, sets = vocab(), {'giờ': TIME_OK, 'thời tiết': WEATHER_OK, 'tư thế': POSE_OK}
+    rows = [('loại', v['types']), ('hành động', v['anims']), ('mặt', v['faces'])] + list(sets.items())
+    return '\n'.join(f'{k}: ' + ', '.join(sorted(vals)) for k, vals in rows)
+
+
 def main(argv):
     if hasattr(sys.stdout, 'reconfigure'): sys.stdout.reconfigure(encoding='utf-8')
     if hasattr(sys.stderr, 'reconfigure'): sys.stderr.reconfigure(encoding='utf-8')
     args = [a for a in argv if not a.startswith('--')]
+    if '--danh-sach' in argv:
+        print(danh_sach()); return 0
     if not args:
         print(__doc__); return 2
     try: d = doc(args[0])
     except OSError:
         print(f'{args[0]}: K00 không đọc được file', file=sys.stderr); return 2
+    if '--tom-tat' in argv:
+        print(tom_tat(d)); return 0
     print(json.dumps(d, ensure_ascii=False, indent=2) if '--json' in argv else f'{len(d["shots"])} shot, {len(d["loi_doc"])} lỗi đọc')
     return 0
 
