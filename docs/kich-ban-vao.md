@@ -97,7 +97,7 @@ Bản mở rộng của `storyboard.md` cho quy trình "một câu luật → ph
 
 **Header thêm:** `ep: epNNN`, `luat_goc: <câu người dùng>`, `kiem_tong: off` (tắt kiểm tổng giây, dùng cho file thử).
 
-**5 cột thêm:**
+**6 cột thêm:**
 | Cột | Giá trị cho phép |
 |---|---|
 | giờ | `sang`, `trua`, `chieu`, `hoang-hon`, `dem` |
@@ -105,6 +105,7 @@ Bản mở rộng của `storyboard.md` cho quy trình "một câu luật → ph
 | vật cần đọc | tên đạo cụ có chữ/số; trống nếu không. Chỉ dùng với loại `insertRead` |
 | tư thế | `standing`, `flying`, `sitting`, `swimming` (cho mô hình không phải người) |
 | tối thiểu | giây; trống = theo loại (insertRead 1.5, closeup 0.8, chase/fall/hug/walkBy/follow/sinkTilt 1.0, establish 1.2, còn lại 0.8) |
+| nhìn | (tuỳ chọn) hướng nhìn của nhân vật: tên diễn viên (`mẹ`, `hero`), đạo cụ, `nhà`, `máy quay`, hoặc 3 số `x y z`. `tools/shot-gen.mjs` ghi thành `lookAt` của shot; không có cột/ô trống = không ghi |
 
 **Đánh dấu twist:** ghi chữ `twist` vào cột `ghi chú` của shot ĐẦU TIÊN của câu twist; `kichban.py --tom-tat` in vị trí twist + số câu mỗi phần, lint K11 kiểm.
 
@@ -121,3 +122,5 @@ Ví dụ (3 hàng; header rút gọn, cột thiếu coi như trống):
 | 3 | 2 | Mẹ đưa tôi một tấm thiếp. | insertRead | home | hold | | chieu | mua | tấm thiếp |
 ```
 Ví dụ đầy đủ 19 cột (thêm `ghi chú` cuối): `tools/kb/tests/data/kb_tot.md`.
+
+**Sinh shots.js từ kịch bản:** `node tools/shot-gen.mjs <ep> [--force] [--khop-giong]` (kịch bản ở `episodes/<ep>/kich-ban.md`) — gọi `storyboard.py` rồi áp luật camera dồn dập (1 người zoom in, ≥ 2 người/nhà zoom out), `vật cần đọc` → `insertRead`, giờ/thời tiết/nhìn/mặt theo từng shot, `giây` ≥ tối thiểu; `--khop-giong` co giãn `dur` theo `narration.json`.

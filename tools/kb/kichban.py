@@ -15,7 +15,7 @@ sys.path.insert(0, str(ROOT / 'tools'))
 from storyboard import fold, match, COL_OF, parse_meta_lines  # noqa: E402,F401
 
 # cột chỉ có ở kich-ban.md (khoá đã bỏ dấu → khoá shot)
-EXTRA_COLS = {'gio': 'time', 'thoi tiet': 'weather', 'vat can doc': 'read', 'tu the': 'pose', 'toi thieu': 'min'}
+EXTRA_COLS = {'gio': 'time', 'thoi tiet': 'weather', 'vat can doc': 'read', 'tu the': 'pose', 'toi thieu': 'min', 'nhin': 'lookAt'}
 KEY_OF = dict(COL_OF)
 KEY_OF.update(EXTRA_COLS)
 KEY_OF['notes'] = 'notes'
