@@ -4,6 +4,7 @@
   python tools/voices_build.py ep001 en            # mọi giọng tiếng Anh Microsoft (Edge), 4 giọng song song
   python tools/voices_build.py ep001 vi            # mọi giọng tiếng Việt CapCut (qua engine VoiceStudio)
   python tools/voices_build.py ep001 index         # chỉ nén .ogg + ghi index.json từ những gì đã có
+  python tools/voices_build.py ep001 list          # in JSON danh sách giọng đang dùng (không gọi dịch vụ)
 Tuỳ chọn: --only <id1,id2>  --jobs 4  --py-capcut "<python có miniaudio/requests>" (mặc định .venv của VoiceStudio)
 
 - Tiếng Anh: tools/en/tts_en.py --voice <id> --out voices/en/<id> (đọc theo nhịp cắt cảnh, phụ đề riêng từng giọng).
@@ -16,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ap = argparse.ArgumentParser()
-ap.add_argument('ep'); ap.add_argument('what', choices=['en', 'vi', 'index', 'sample'])
+ap.add_argument('ep'); ap.add_argument('what', choices=['en', 'vi', 'index', 'sample', 'list'])
 ap.add_argument('--sample-s', type=float, default=26.4, help='độ dài đoạn nghe thử (giây)')
 ap.add_argument('--only'); ap.add_argument('--jobs', type=int, default=4)
 ap.add_argument('--py-capcut', default=r'S:\ChatGPT\MMO TOOL\TTS1\.venv\Scripts\python.exe')
@@ -31,17 +32,26 @@ if only is None and args.what == 'index' and _chot.exists():
     only = set(x.strip() for x in _chot.read_text(encoding='utf8').replace(chr(10), ',').split(',') if x.strip())
 
 
+# Danh sách giọng DÙNG (người dùng chốt 2026-11-12). Không sửa tools/voice_studio/ — chỉ lọc ở đây.
+VI_BO = {'multi_female_sisi_uranus_bigtts', 'multi_female_daqi_uranus_bigtts', 'multi_female_kiwi_uranus_bigtts'}
+EN_DUNG = ['en-US-AndrewMultilingualNeural', 'en-US-AndrewNeural', 'en-US-AvaMultilingualNeural', 'en-US-EmmaNeural',
+           'en-US-BrianNeural', 'en-US-SteffanNeural', 'en-GB-SoniaNeural', 'en-AU-WilliamMultilingualNeural', 'en-AU-WilliamNeural']
+# trang nghe thử (sample): chỉ Thanh Niên Tự Tin + Andrew (Multilingual + Neural)
+NGHE_THU_VI = ['BV075_streaming']
+NGHE_THU_EN = ['en-US-AndrewMultilingualNeural', 'en-US-AndrewNeural']
+
+
 def edge_voices():
     import edge_tts
     vs = asyncio.run(edge_tts.list_voices())
-    return [v for v in vs if v['Locale'].startswith('en-')]
+    return [v for v in vs if v['ShortName'] in EN_DUNG]
 
 
 def capcut_voices():
     out = []
     for ln in (ROOT / 'tools' / 'voice_studio' / 'voices-capcut.txt').read_text(encoding='utf8').splitlines():
         m = re.match(r'(\S+)\s+vi-VN\s+\S+\s+(.+)$', ln.strip())
-        if m: out.append((m.group(1), m.group(2).strip()))
+        if m and m.group(1) not in VI_BO: out.append((m.group(1), m.group(2).strip()))
     return out
 
 
@@ -88,6 +98,7 @@ def do_index():
     names = dict(capcut_voices())
     for mp3 in sorted((VD / 'vi').glob('*.mp3')):
         vid = mp3.stem
+        if vid in VI_BO: continue
         if only and vid not in only: continue   # chỉ giọng người dùng đã chốt
         it = {'id': vid, 'lang': 'vi', 'source': 'capcut', 'label': names.get(vid, vid),
               'audio': '/' + ogg(mp3).relative_to(ROOT).as_posix()}
@@ -122,8 +133,8 @@ def do_sample():
         if mm and float(mm.group(1)) >= args.sample_s - 0.5: break
         head.append(ln)
     head = '\n'.join(head) + '\n'
-    en = [v['ShortName'] for v in edge_voices()]
-    vi = capcut_voices()
+    en = [v['ShortName'] for v in edge_voices() if v['ShortName'] in NGHE_THU_EN]
+    vi = [(i, n) for i, n in capcut_voices() if i in NGHE_THU_VI]
     def one_en(v):
         if not (OUT / 'en' / f'{v}.mp3').exists():
             run([sys.executable, 'tools/en/tts_en.py', args.ep, '--voice', v, '--until', str(args.sample_s), '--out', str(OUT / 'en' / v)], v)
@@ -138,7 +149,7 @@ def do_sample():
         fe = [ex.submit(one_en, v) for v in en]
         for it in vi: one_vi(it)          # CapCut: lần lượt (giới hạn song song của dịch vụ)
         [f.result() for f in fe]
-    write_sample_page(OUT, vi, edge_voices())
+    write_sample_page(OUT, vi, [v for v in edge_voices() if v['ShortName'] in NGHE_THU_EN])
 
 
 def write_sample_page(OUT, vi, edge):
@@ -183,4 +194,8 @@ document.getElementById('cp').onclick=()=>{{ta.select();try{{navigator.clipboard
     print(f"trang nghe thử: {OUT / 'index.html'} — {sum(r[0] == 'vi' for r in rows)} Việt, {sum(r[0] == 'en' for r in rows)} Anh")
 
 
-{'en': do_en, 'vi': do_vi, 'index': do_index, 'sample': do_sample}[args.what]()
+def do_list():
+    print(json.dumps({'vi': [i for i, _ in capcut_voices()], 'en': EN_DUNG, 'nghe_thu': {'vi': NGHE_THU_VI, 'en': NGHE_THU_EN}}, ensure_ascii=False))
+
+
+{'en': do_en, 'vi': do_vi, 'index': do_index, 'sample': do_sample, 'list': do_list}[args.what]()
