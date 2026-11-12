@@ -221,3 +221,6 @@ triplanarChunk({ prefix: 'bk', oriented: kind === 'wood' })  // GLSL: BkOut o = 
 
 ## Bóng mây trôi
 - `engine/cloudshade.js` `createCloudShade(THREE, wind)` → `add(geo,{x,y,z})`, `lightFrom(sun)`: tấm phủ nhân màu (1 program) trên mặt đất phẳng; `wind.set({cloud:[độ tối, cỡ m, nhân tốc độ, che phủ]})` → GLSL `cloudOpen(xz)` trong wind.js (cỏ tự đọc). Đêm tự tắt. Ô FX `cloudShade`. Đang dùng: island (mặt cát + bãi cỏ).
+
+## Rừng xa ảnh vẽ
+- `engine/farwoods.js` `createFarwoods(THREE,{wind, seed, center, ring:[rIn,rOut], count, size, kinds, avoid, clumps})`: cây xa = thẻ ảnh vẽ quay về camera, 1 InstancedMesh + 1 program, atlas vẽ bằng code; `lightFrom`/`fogFrom` gọi trong onBeforeRender. Ô FX `farwoods`. Đang dùng: town (vành 150–400 m, chừa đường). Trang thử `engine/farwoods-lab.html`.

@@ -35,7 +35,7 @@ import { CLOTH } from './cloth.js';
 import { MAST } from './mastbreak.js';
 import { MATS } from './materials.js';
 
-export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true };
+export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
@@ -53,6 +53,7 @@ export const FX_LABELS = {
   grass: 'Cỏ mọc + gió thổi (bãi cỏ đảo)',
   sway: 'Cây dừa đung đưa theo gió',
   cloudShade: 'Bóng mây trôi trên mặt đất',
+  farwoods: 'Rừng xa (ảnh vẽ, thị trấn)',
   lite: 'Bóng đổ nhẹ (tắt bóng kính, vật phát sáng, hạt, vật nhỏ) — mở/xuất nhanh hơn',
 };
 
@@ -184,7 +185,7 @@ export function createPost(THREE, stage, { actors = [], paint: paintOpts = {}, a
   const _f = new THREE.Vector3();
 
   function render({ t = 0, light = 'day', env = '', focus = null, flash = 0 } = {}) {
-    const AF = (globalThis.__autoFx ||= {}); AF.foot = fx.foot; AF.prints = fx.prints; AF.wind = fx.wind; AF.breath = fx.breath; AF.ibl = fx.ibl; AF.scans = fx.scans; AF.lite = fx.lite; AF.skybox = fx.skybox; AF.stormSky = fx.stormSky; AF.shotSky = fx.shotSky; AF.skyCubic = fx.skyCubic; AF.skyScale = fx.skyScale; AF.grass = fx.grass; AF.sway = fx.sway; AF.cloudShade = fx.cloudShade;   // engine/shots.js hiệu ứng tự động
+    const AF = (globalThis.__autoFx ||= {}); AF.foot = fx.foot; AF.prints = fx.prints; AF.wind = fx.wind; AF.breath = fx.breath; AF.ibl = fx.ibl; AF.scans = fx.scans; AF.lite = fx.lite; AF.skybox = fx.skybox; AF.stormSky = fx.stormSky; AF.shotSky = fx.shotSky; AF.skyCubic = fx.skyCubic; AF.skyScale = fx.skyScale; AF.grass = fx.grass; AF.sway = fx.sway; AF.cloudShade = fx.cloudShade; AF.farwoods = fx.farwoods;   // engine/shots.js hiệu ứng tự động
     GRUNGE.char.value = fx.worn ? 1 : 0; GRUNGE.build.value = fx.grime ? 1 : 0;   // engine/grunge.js (vân bụi trên vật liệu)
     GRUNGE.aged.value = fx.aged ? 1 : 0;
     CLOTH.on.value = fx.cloth ? 1 : 0;   // engine/cloth.js
@@ -233,7 +234,7 @@ export function createPost(THREE, stage, { actors = [], paint: paintOpts = {}, a
     get paintDepth() { return paintDepth; }, set paintDepth(v) { paintDepth = ['own', 'ao', 'flat'].includes(v) ? v : 'own'; },
     get smaaReady() { return smaaReady; },
     get options() { return { ...fx }; },
-    set(o = {}) { for (const k of Object.keys(FX_DEFAULTS)) if (o[k] !== undefined) fx[k] = !!o[k]; CLOTH.on.value = fx.cloth ? 1 : 0; MAST.on.value = fx.mast ? 1 : 0; const AF = (globalThis.__autoFx ||= {}); for (const k of ['foot', 'prints', 'wind', 'breath', 'ibl', 'scans', 'sea2', 'skybox', 'stormSky', 'shotSky', 'skyCubic', 'skyScale', 'grass', 'sway', 'cloudShade']) AF[k] = fx[k]; return { ...fx }; },
+    set(o = {}) { for (const k of Object.keys(FX_DEFAULTS)) if (o[k] !== undefined) fx[k] = !!o[k]; CLOTH.on.value = fx.cloth ? 1 : 0; MAST.on.value = fx.mast ? 1 : 0; const AF = (globalThis.__autoFx ||= {}); for (const k of ['foot', 'prints', 'wind', 'breath', 'ibl', 'scans', 'sea2', 'skybox', 'stormSky', 'shotSky', 'skyCubic', 'skyScale', 'grass', 'sway', 'cloudShade', 'farwoods']) AF[k] = fx[k]; return { ...fx }; },
     render, resize,
   };
 }
