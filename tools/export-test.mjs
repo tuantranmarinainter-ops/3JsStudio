@@ -3,6 +3,7 @@
 //        [--matrix "lang=vi,en;subs=1,0;voice=1"] [--vid <idGiọng>] [--credits 1|0] [--frames 128.5,129] [--out output/kiem-tra/<ngày-giờ>]
 // Ma trận: tích Descartes các giá trị lang / subs / voice / fx / sfx (mặc định lang=vi;subs=1;voice=1;fx=default;sfx=default).
 //   fx=default|none|all|<id>+<id>…    hiệu ứng hình: BẬT đúng các id nêu, còn lại tắt (grade,bloom,dof,vignette,outline,storm)
+//   fx=default+id-id                  bộ mặc định, bật thêm (+) / tắt bớt (-), vd. default+chuTungChu, default-nhep
 //   sfx=default|none|all|<lớp>[@%]+…  lớp tiếng động giữ BẬT (nen,buoc-chan,khoanh-khac…), @% = âm lượng; lớp không nêu thì tắt
 //   Ví dụ: --matrix "fx=none,all,outline;sfx=none,nen@50+khoanh-khac"
 //   Trang cũ không có điều khiển fx/sfx → bỏ qua khoá đó kèm cảnh báo (không lỗi).
@@ -96,7 +97,13 @@ async function applyFx(spec) {
   if (spec === 'default') on = new Set(initCtl.fx.filter((f) => f.on).map((f) => f.id));
   else if (spec === 'none') on = new Set();
   else if (spec === 'all') on = new Set(ids);
-  else {
+  else if (spec.startsWith('default')) {   // default+idA-idB: bộ mặc định, bật thêm / tắt bớt
+    on = new Set(initCtl.fx.filter((f) => f.on).map((f) => f.id));
+    for (const [, sg, id] of spec.slice(7).matchAll(/([+-])(\w+)/g)) {
+      if (!ids.includes(id)) throw new Error(`fx '${id}' không có (có: ${ids.join(',')})`);
+      sg === '+' ? on.add(id) : on.delete(id);
+    }
+  } else {
     on = new Set(spec.split('+').filter(Boolean));
     for (const id of on) if (!ids.includes(id)) throw new Error(`fx '${id}' không có (có: ${ids.join(',')})`);
   }
