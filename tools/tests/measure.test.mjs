@@ -3,6 +3,7 @@ import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import { extname, join, resolve, relative } from 'node:path';
 import { launchBrowser } from '../browser.mjs';
 
@@ -74,4 +75,84 @@ test('nhà đủ chân', T, async () => {
   assert.equal(chan.length, 4);
   assert.equal(m.chan.length, 4);
   assert.ok(typeof nha[0].nghieng === 'number' && nha[0].chim >= 0);
+});
+
+// ---- Vòng sửa 1 ----
+const shotHero = async () => {
+  const ids = await page.evaluate(() => window.__shots.list.filter((s) => s.cast?.hero).map((s) => s.t0 + s.dur / 2));
+  for (const t of ids) { const m = await measureAt(t); const h = m.vat.find((v) => v.vai === 'hero'); if (h && h.trongKhung > 0.5) return t; }
+  throw new Error('không có shot hero');
+};
+const demMesh = () => {
+  const sc = window.__stage.scene; let tong = 0, hien = 0;
+  sc.traverse((o) => {
+    if (!o.isMesh) return;
+    let p = o, tay = false, hero = false; while (p) { if (p.userData?.vai === 'tay' || p.userData?.vai === 'chan-nguoi') tay = true; if (p.userData?.vai === 'hero') hero = true; p = p.parent; }
+    if (!tay || !hero) return;   // chỉ tay/chân thuộc hero (người khác bị ẩn là đúng)
+    let v = true; for (let q = o.parent; q; q = q.parent) if (!q.visible) v = false;
+    if (v) { tong++; if (o.visible) hien++; }
+  });
+  return { tong, hien };
+};
+
+test('mask giữ mesh của tay/chân (vai lồng trong hero)', T, async () => {
+  const t = await shotHero();
+  await page.evaluate((t) => window.renderAt(t), t);
+  const dang = await page.evaluate(async ([t, f]) => { await window.__mask(t); const r = (0, eval)('(' + f + ')')(); window.__mask(null); return r; }, [t, demMesh.toString()]);
+  assert.ok(dang.tong > 0, 'không có mesh tay/chân');
+  assert.equal(dang.hien, dang.tong);
+});
+
+test('mask khôi phục khi render ném lỗi', T, async () => {
+  const t = await shotHero();
+  await page.evaluate((t) => window.renderAt(t), t);
+  const r = await page.evaluate(async (t) => {
+    const sc = window.__stage.scene, rd = window.__stage.renderer;
+    const dem = () => { let n = 0; sc.traverse((o) => { if (o.visible && (o.isMesh || o.isPoints)) n++; }); return n; };
+    const truoc = dem(), orig = rd.render; let loi = false;
+    // renderAt trong __mask gọi render qua post; chỉ ném ở lần vẽ mask (khi đã có overrideMaterial)
+    rd.render = function (...a) { if (sc.overrideMaterial && sc.background?.isColor && sc.background.getHex() === 0xffffff) throw new Error('boom'); return orig.apply(this, a); };
+    try { await window.__mask(t); } catch { loi = true; }
+    rd.render = orig;
+    return { loi, truoc, sau: dem(), over: sc.overrideMaterial == null };
+  }, t);
+  assert.ok(r.loi); assert.equal(r.sau, r.truoc); assert.ok(r.over);
+});
+
+test('chan có y, tay/chân có chu, hero có trong', T, async () => {
+  const ts = await page.evaluate(() => window.__shots.list.filter((s) => s.house?.to).map((s) => s.t0 + s.dur / 2));
+  const m = await measureAt(ts[0]);
+  assert.equal(m.chan.length, 4);
+  for (const c of m.chan) { assert.equal(typeof c.y, 'number'); assert.equal(c.chamDat, c.y <= 0.05); }
+  const t = await shotHero();
+  const h = await measureAt(t);
+  const hero = h.vat.find((v) => v.vai === 'hero');
+  assert.ok('trong' in hero && (hero.trong === null || typeof hero.trong === 'string'));
+  const tay = h.vat.filter((v) => v.vai === 'tay' || v.vai === 'chan-nguoi');
+  assert.ok(tay.length > 0 && tay.every((v) => typeof v.chu === 'string'));
+  assert.ok(tay.some((v) => v.chu === hero.ten));
+});
+
+test('vật ngoài tầm nhìn: bbox null, trongKhung 0', T, async () => {
+  const ts = await page.evaluate(() => window.__shots.list.filter((s) => s.house?.to).map((s) => s.t0 + s.dur / 2));
+  const m = await page.evaluate(async (t) => {
+    await window.renderAt(t);
+    const sc = window.__stage.scene, cam = window.__stage.camera;
+    let nha = null; sc.traverse((o) => { if (!nha && o.userData?.vai === 'nha' && o.visible) nha = o; });
+    const fwd = cam.getWorldDirection(new window.THREE.Vector3()), p0 = nha.position.clone();
+    nha.position.addScaledVector(fwd, -1e5);   // ra sau lưng camera
+    const r = JSON.parse(JSON.stringify(window.__measure(t)));
+    nha.position.copy(p0); await window.renderAt(t);
+    return r;
+  }, ts[0]);
+  const v = m.vat.find((x) => x.vai === 'nha');
+  assert.equal(v.bbox, null); assert.equal(v.trongKhung, 0); assert.equal(v.che, 0);
+  assert.ok(!m.vat.some((x) => Array.isArray(x.bbox) && x.bbox.every((n) => n === 0)));
+});
+
+test('measure.js tiêm được: không import, new Function dùng được', () => {
+  const src = readFileSync(join(root, 'engine', 'measure.js'), 'utf8');
+  assert.ok(!/^\s*import\b/m.test(src) && !/import\.meta/.test(src));
+  const fn = new Function(src.replace(/\bexport\s+function\b/, 'function') + '; return installMeasure')();
+  assert.equal(typeof fn, 'function');
 });

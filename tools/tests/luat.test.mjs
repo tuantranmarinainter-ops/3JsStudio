@@ -75,7 +75,8 @@ test('L5', () => {
 test('L6', () => {
   const co = (chan, hat) => mk([], { chan, hat: { bui: 0, tuyet: 0, mua: 0, ...hat } });
   assert.equal(LUAT.L6(ctx({ m: bo3(co([{ ten: 'c', chamDat: true, hatGan: 3 }], {})) }), ng).ok, true);
-  assert.equal(LUAT.L6(ctx({ m: bo3(co([{ ten: 'c', chamDat: true, hatGan: 0 }], {})) }), ng).ok, false);
+  const ch = (dat, hat) => co([{ ten: 'c', chamDat: dat, hatGan: hat }], {});
+  assert.equal(LUAT.L6(ctx({ m: [ch(false, 0), ch(true, 0), ch(true, 0)] }), ng).ok, false);   // vừa chạm, không hạt
   assert.equal(LUAT.L6(ctx({ m: bo3(co([{ ten: 'c', chamDat: false, hatGan: 0 }], {})) }), ng).ok, true);
   assert.equal(LUAT.L6(ctx({ env: { ...env0, tuyet: true }, m: bo3(co([], { tuyet: 0 })) }), ng).ok, false);
   assert.equal(LUAT.L6(ctx({ env: { ...env0, tuyet: true }, m: bo3(co([], { tuyet: 5 })) }), ng).ok, true);
@@ -167,7 +168,7 @@ test('m có phần tử null / trường thiếu không ném lỗi', () => {
     const r = LUAT[ma](ctx({ shot: sh, m: [trong, trong, trong], mask: base.mask, anh: base.anh }), ng);
     assert.notEqual(r.skip, 'loi');
   }
-  assert.equal(LUAT.L8(ctx({ anh: base.anh, m: [trong, trong, trong] }), ng).ok, false); // tầng thiếu = 0
+  assert.equal(LUAT.L8(ctx({ anh: base.anh, m: [trong, trong, trong] }), ng).ghiChu, 'chua-gan-tang'); // tầng thiếu = chưa gắn
   assert.equal(LUAT.L10(ctx({ mask: base.mask, m: [null, dayDu, null] }), ng).ok, true); // 1 nha, 1 thành phần
 });
 
@@ -208,4 +209,54 @@ test('L2 không thấy vật doc; dx dy; L1 canh + soChan', () => {
   const l1 = LUAT.L1(ctx({ m: bo3(mk(nha([0.02, 0.1, 0.9, 0.9]))) }), ng);
   assert.equal(l1.val.canh, 'trai'); assert.equal(l1.val.soChan, 4);
   assert.equal(LUAT.L1(ctx({ m: bo3(mk(nha([0.1, 0.1, 0.9, 0.98]))) }), ng).val.canh, 'duoi');
+});
+
+// ---- Vòng sửa 1 (reviewer) ----
+test('L6 chỉ đòi bụi cho bàn chân VỪA chạm', () => {
+  const c = (dat, hat = 0, y = 0) => mk([], { chan: [{ ten: 'c', chamDat: dat, hatGan: hat, y }] });
+  assert.equal(LUAT.L6(ctx({ m: [c(true), c(true), c(true)] }), ng).ok, true, 'đứng yên chạm đất cả 3 khung');
+  assert.equal(LUAT.L6(ctx({ m: [c(false, 0, 3), c(true, 0), c(true)] }), ng).ok, false, 'vừa chạm không hạt');
+  assert.equal(LUAT.L6(ctx({ m: [c(false, 0, 3), c(true, 5), c(true)] }), ng).ok, true, 'vừa chạm có hạt');
+  assert.equal(LUAT.L6(ctx({ m: [c(false, 0, 3), c(false, 0, 2), c(false)] }), ng).ok, true, 'không chạm');
+  assert.equal(LUAT.L6(ctx({ env: { ...env0, tuyet: true }, m: bo3(mk([], { chan: [] })) }), ng).ok, false, 'hạt rơi giữ nguyên');
+});
+
+test('L8 chưa gắn tầng (tổng 0) chỉ kiểm ô phẳng + ghiChu', () => {
+  const phong = nhieuAnh();
+  const r = LUAT.L8(ctx({ anh: [phong, phong, phong], m: bo3(mk([], { tang: { front: 0, mid: 0, back: 0 } })) }), ng);
+  assert.equal(r.ok, true); assert.equal(r.ghiChu, 'chua-gan-tang');
+  assert.equal(LUAT.L8(ctx({ m: bo3(mk([], { tang: { front: 0, mid: 0, back: 0 } })) }), ng).ok, false); // ảnh trống vẫn trượt
+  assert.equal(LUAT.L8(ctx({ anh: [phong, phong, phong], m: bo3(mk([], { tang: { front: 1, mid: 0, back: 2 } })) }), ng).ok, false);
+});
+
+test('bbox null: bỏ qua, không kéo lề về 0', () => {
+  const n = nha([0.1, 0.1, 0.9, 0.9]);
+  const voiNull = [...n, { ten: 'c4', vai: 'chan-nha', bbox: null, trongKhung: 0, che: 0 }];
+  const r1 = LUAT.L1(ctx({ m: bo3(mk(voiNull)) }), ng);
+  assert.equal(r1.ok, true); assert.ok(r1.val.le >= 0.1);
+  const thieuChan = [...n.slice(0, 3), { ten: 'c3', vai: 'chan-nha', bbox: null, trongKhung: 0, che: 0 }, { ten: 'c4', vai: 'chan-nha', bbox: null, trongKhung: 0, che: 0 }];
+  const r2 = LUAT.L1(ctx({ m: bo3(mk(thieuChan)) }), ng);
+  assert.equal(r2.ok, false); assert.equal(r2.val.soChan, 2);
+  const sh = { id: 's', type: 'insertRead', dur: 2 };
+  assert.doesNotThrow(() => LUAT.L2(ctx({ shot: sh, m: bo3(mk([{ ten: 't', vai: 'doc', bbox: null, trongKhung: 0, che: 0 }])) }), ng));
+  const r = kiemShot(ctx({ shot: { id: 's', type: 'chase', dur: 2 }, mask: tao(50, 50, () => 255), m: bo3(mk([{ ten: 'h', vai: 'hero', bbox: null, trongKhung: 0, che: 0 }, { ten: 'h/RightUpperArm', vai: 'tay', chu: 'h', bbox: null, trongKhung: 0, che: 0 }])) }), ng);
+  for (const [ma, v] of Object.entries(r)) assert.notEqual(v.skip, 'loi', ma + ': ' + v.ghiChu);
+});
+
+test('L10: tách thân chỉ xét tay/chân của hero; hero trong nhà không là thành phần riêng', () => {
+  const khoi = (...hs) => tao(50, 50, (x, y) => hs.some(([x0, y0, x1, y1]) => x >= x0 && x < x1 && y >= y0 && y < y1) ? 0 : 255);
+  const sh = { id: 's', type: 'chase', dur: 2 };
+  const hero = { ten: 'hero', vai: 'hero', bbox: [0.2, 0.2, 0.5, 0.8], trongKhung: 1, che: 0, trong: null };
+  const tayXa = (chu) => ({ ten: chu + '/RightUpperArm', vai: 'tay', chu, bbox: [0.8, 0.2, 0.9, 0.4], trongKhung: 1, che: 0 });
+  const mask1 = khoi([10, 10, 35, 40]);
+  // tay của người khác tách xa không được tính
+  const rm = LUAT.L10(ctx({ shot: sh, mask: mask1, m: bo3(mk([hero, tayXa('mom')])) }), ng);
+  assert.equal(rm.val.tachThan, undefined); assert.match(rm.ghiChu, /khong-du-du-lieu-tach-than/);
+  // tay của hero tách xa -> đạt
+  assert.equal(LUAT.L10(ctx({ shot: sh, mask: mask1, m: bo3(mk([hero, tayXa('hero')])) }), ng).ok, true);
+  // hero trong nhà: 1 thành phần là đủ
+  const heroTrong = { ...hero, trong: 'house_family' };
+  const nh = { ten: 'house_family', vai: 'nha', bbox: [0, 0, 1, 1], trongKhung: 1, che: 0 };
+  assert.equal(LUAT.L10(ctx({ mask: mask1, m: bo3(mk([nh, heroTrong])) }), ng).ok, true);
+  assert.equal(LUAT.L10(ctx({ mask: mask1, m: bo3(mk([nh, hero])) }), ng).ok, false);
 });

@@ -15,6 +15,7 @@ const coM = (ctx) => ms(ctx).length > 0;
 // khung giữa; nếu hỏng thì lấy khung không-null gần nhất (đầu rồi cuối)
 const giua = (ctx) => ctx.m[1] || ctx.m[0] || ctx.m[2];
 const vaiCua = (m, vai) => (m.vat || []).filter((v) => v.vai === vai);
+const coBbox = (v) => Array.isArray(v.bbox);   // bbox === null: vật rỗng/ngoài tầm nhìn — mọi luật bỏ qua khi gộp/so bbox
 const hop = (bs) => [Math.min(...bs.map((b) => b[0])), Math.min(...bs.map((b) => b[1])), Math.max(...bs.map((b) => b[2])), Math.max(...bs.map((b) => b[3]))];
 const giao = (a, b) => a[0] < b[2] && b[0] < a[2] && a[1] < b[3] && b[1] < a[3];
 const r3 = (x) => Math.round(x * 1000) / 1000;
@@ -30,8 +31,10 @@ export const LUAT = {
       const nha = vaiCua(m, 'nha');
       if (!nha.length) continue;
       coNha = true;
-      const chan = vaiCua(m, 'chan-nha');
-      const b = hop([...nha, ...chan].map((v) => v.bbox));
+      const chan = vaiCua(m, 'chan-nha').filter(coBbox);
+      const bs = [...nha.filter(coBbox), ...chan].map((v) => v.bbox);
+      if (!bs.length) { chanMin = 0; continue; }
+      const b = hop(bs);
       for (const [ten, le] of [['trai', b[0]], ['tren', b[1]], ['phai', 1 - b[2]], ['duoi', 1 - b[3]]]) {
         if (le < leMin) { leMin = le; canhMin = ten; }
       }
@@ -48,7 +51,7 @@ export const LUAT = {
     if (!coM(ctx)) return { ...KHONG_MEASURE, nguong: t };
     let lech = 0, dx = 0, dy = 0, che = 0, rong = 0, thay = false;
     for (const m of ms(ctx)) {
-      const d = vaiCua(m, 'doc')[0];
+      const d = vaiCua(m, 'doc').filter(coBbox)[0];
       if (!d) continue;
       thay = true;
       const cx = (d.bbox[0] + d.bbox[2]) / 2 - 0.5, cy = (d.bbox[1] + d.bbox[3]) / 2 - 0.5;
@@ -104,8 +107,13 @@ export const LUAT = {
   L6(ctx, ng) {
     const t = ng.L6;
     if (!coM(ctx)) return { ...KHONG_MEASURE, nguong: t };
+    // bụi chỉ nổ lúc vừa chạm: chỉ đòi cho bàn chân chamDat ở khung giữa mà khung đầu chưa chạm (ghép theo ten)
     const thieuHat = [];
-    for (const m of ms(ctx)) for (const c of m.chan || []) if (c.chamDat && !(c.hatGan >= t.hatMin)) thieuHat.push(c.ten);
+    const dau = ctx.m[0] ? new Map((ctx.m[0].chan || []).map((c) => [c.ten, c])) : null;
+    for (const c of giua(ctx).chan || []) {
+      const truoc = dau && dau.get(c.ten);
+      if (c.chamDat && truoc && !truoc.chamDat && !(c.hatGan >= t.hatMin)) thieuHat.push(c.ten);
+    }
     const hat = giua(ctx).hat || {};
     const loi = [...new Set(thieuHat)];
     if (ctx.env.tuyet && !(hat.tuyet > 0)) loi.push('hat.tuyet');
@@ -129,7 +137,8 @@ export const LUAT = {
     let okTang = true, tang = null, ghiChu;
     if (coM(ctx)) {
       tang = giua(ctx).tang || {};
-      okTang = ['front', 'mid', 'back'].every((k) => (tang[k] ?? 0) >= t.vatMoiTangMin);
+      if (['front', 'mid', 'back'].reduce((s, k) => s + (tang[k] ?? 0), 0) === 0) ghiChu = 'chua-gan-tang';   // env chưa gắn tầng: chỉ kiểm ô phẳng
+      else okTang = ['front', 'mid', 'back'].every((k) => (tang[k] ?? 0) >= t.vatMoiTangMin);
     } else ghiChu = 'khong-co-measure: chi kiem anh';
     const r = { ok: op < t.oPhangMax && okTang, val: { oPhang: r3(op), tang }, nguong: t };
     if (ghiChu) r.ghiChu = ghiChu;
@@ -159,15 +168,15 @@ export const LUAT = {
     let ok = dt >= t.dienTichMin;
     if (coM(ctx)) {
       const mg = giua(ctx);
-      const can = (mg.vat || []).filter((v) => ['hero', 'vat-chinh', 'nha'].includes(v.vai) && !(v.trongKhung <= 0));
+      const can = (mg.vat || []).filter((v) => ['hero', 'vat-chinh', 'nha'].includes(v.vai) && !(v.trongKhung <= 0) && !(v.vai === 'hero' && v.trong));   // hero trong nhà dính vào thành phần của nhà
       val.canCo = can.length;
       if (can.length && tp.length !== can.length) ok = false;
     } else ghi.push('khong-co-measure: khong kiem so thanh phan');
     if (HANH_DONG_TACH.includes(ctx.shot.type) && tp.length < 2) {
       const mg = coM(ctx) ? giua(ctx) : null;
       const than = mg ? vaiCua(mg, 'hero')[0] : null;
-      const chi = mg ? (mg.vat || []).filter((v) => v.vai === 'tay' || v.vai === 'chan-nguoi') : [];
-      if (than && chi.length) {
+      const chi = mg && than ? (mg.vat || []).filter((v) => (v.vai === 'tay' || v.vai === 'chan-nguoi') && v.chu === than.ten && coBbox(v)) : [];
+      if (than && coBbox(than) && chi.length) {
         const tach = chi.some((c) => !giao(c.bbox, than.bbox));
         val.tachThan = tach;
         if (!tach) ok = false;

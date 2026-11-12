@@ -18,6 +18,8 @@ export function installMeasure({ THREE, stage, shots }) {
   const matsOf = (m) => (Array.isArray(m.material) ? m.material : [m.material]);
   const faint = (m) => { const ms = matsOf(m).filter(Boolean); return !ms.length || ms.every((x) => x.visible === false || (x.transparent && x.opacity < 0.05)); };
   const vaiOf = (o) => { for (let p = o; p; p = p.parent) if (p.userData && p.userData.vai) return p.userData.vai; return null; };
+  // giữ mesh nếu BẤT KỲ tổ tiên (kể cả chính nó) có vai trong MASK_VAI — tay/chân lồng trong hero vẫn được vẽ
+  const coVaiMask = (o) => { for (let p = o; p; p = p.parent) if (p.userData && MASK_VAI.has(p.userData.vai)) return true; return false; };
   const vaiNode = (o) => { for (let p = o; p; p = p.parent) if (p.userData && p.userData.vai) return p; return null; };
 
   // bbox thế giới của các mesh nhìn thấy dưới `obj` (bỏ cây con thoả `skip`)
@@ -122,6 +124,11 @@ export function installMeasure({ THREE, stage, shots }) {
 
   function ownMeshes(root) { const s = new Set(); root.traverse((o) => { if (o.isMesh) s.add(o); }); return s; }
 
+  const tenOf = (o) => {
+    const owner = o.parent ? vaiNode(o.parent) : null;
+    return owner ? `${tenOf(owner)}/${o.name || o.userData.vai}` : (o.name || o.userData.vai);
+  };
+
   function measure(t) {
     scene.updateMatrixWorld(true);
     const T = Math.min(t, (shots.total ?? t) - 1e-4);
@@ -131,6 +138,7 @@ export function installMeasure({ THREE, stage, shots }) {
     const nodes = [];
     scene.traverse((o) => { if (o.userData && o.userData.vai && chainVisible(o)) nodes.push(o); });
     const camPos = new THREE.Vector3().setFromMatrixPosition(camera.matrixWorld);
+    const matDat = stage.ground && stage.ground.visible ? stage.ground.position.y : 0;   // env không khai báo thì mặt đất ở y = 0
     const hats = [];
     scene.traverse((o) => {
       const u = o.userData; if (!u) return;
@@ -140,13 +148,17 @@ export function installMeasure({ THREE, stage, shots }) {
     for (const o of nodes) {
       const vai = o.userData.vai;
       const box = worldBox(o);
-      if (box.isEmpty()) continue;
       const owner = o.parent ? vaiNode(o.parent) : null;
-      const ten = owner ? `${owner.name || owner.userData.vai}/${o.name || vai}` : (o.name || vai);
-      const rect = screenRect(box);
+      const ten = tenOf(o);
+      const rect = box.isEmpty() ? null : screenRect(box);
       const own = ownMeshes(o);
-      const e = { ten, vai, bbox: rect ? rect.map(R4) : [0, 0, 0, 0], trongKhung: rect ? R4(inFrame(rect)) : 0, che: R4(cheKhuat(box, rect, own, cands, vai === 'tay' || vai === 'chan-nguoi' ? 5 : 9)) };   // bộ phận người: lưới 5×5 cho kịp ≤ ~1 s
+      // bbox null = hộp rỗng / hoàn toàn sau lưng camera (không phải [0,0,0,0])
+      const e = { ten, vai, bbox: rect ? rect.map(R4) : null, trongKhung: rect ? R4(inFrame(rect)) : 0, che: rect ? R4(cheKhuat(box, rect, own, cands, vai === 'tay' || vai === 'chan-nguoi' ? 5 : 9)) : 0 };   // bộ phận người: lưới 5×5 cho kịp ≤ ~1 s
+      if ((vai === 'tay' || vai === 'chan-nguoi') && owner) e.chu = tenOf(owner);   // vật chủ (vd. hero) để luật tách thân chỉ xét hero
+      if (box.isEmpty()) { vat.push(e); continue; }
       if (vai === 'hero') {
+        let nhaCha = null; for (let p = o.parent; p && !nhaCha; p = p.parent) if (p.userData && p.userData.vai === 'nha') nhaCha = p;
+        e.trong = nhaCha ? tenOf(nhaCha) : null;   // hero đứng trong/trên nhà: dính vào bóng dáng của nhà
         let head = null; o.traverse((c) => { if (!head && c.name === 'Head') head = c; });
         if (head) { const hb = worldBox(head); e.mat = { che: R4(cheKhuat(hb, screenRect(hb), own, cands)) }; }
       }
@@ -161,13 +173,14 @@ export function installMeasure({ THREE, stage, shots }) {
       if (vai === 'chan-nha') {
         let foot = null; o.traverse((c) => { if (!foot && c.name === 'foot') foot = c; });
         const fb = worldBox(foot || o);
-        const chamDat = !fb.isEmpty() && fb.min.y <= 0.05;
+        const y = fb.isEmpty() ? null : R4(fb.min.y - matDat);   // độ cao đáy bàn chân so với mặt đất của cảnh
+        const chamDat = y !== null && y <= 0.05;
         let hatGan = 0;
         if (!fb.isEmpty() && hats.length) {
           const c = fb.getCenter(new THREE.Vector3());
           for (const u of hats) { const a = u.hatViTri(); for (let i = 0; i + 2 < a.length; i += 3) if (Math.hypot(a[i] - c.x, a[i + 1] - c.y, a[i + 2] - c.z) <= 5) hatGan++; }
         }
-        chan.push({ ten, chamDat, hatGan });
+        chan.push({ ten, chamDat, y, hatGan });
       }
     }
     // vật liệu của mesh đang trong khung (gộp theo tên+loại)
@@ -208,12 +221,16 @@ export function installMeasure({ THREE, stage, shots }) {
       saved = { vis: [], over: scene.overrideMaterial, bg: scene.background, fog: scene.fog, cc, ca: renderer.getClearAlpha(), auto: renderer.autoClear,
         sh: renderer.shadowMap.autoUpdate, basic: new THREE.MeshBasicMaterial({ color: 0x000000 }) };
       scene.traverse((o) => {
-        if ((o.isMesh || o.isPoints || o.isLine || o.isSprite) && o.visible && !MASK_VAI.has(vaiOf(o))) { saved.vis.push([o, o.visible]); o.visible = false; }
+        if ((o.isMesh || o.isPoints || o.isLine || o.isSprite) && o.visible && !coVaiMask(o)) { saved.vis.push([o, o.visible]); o.visible = false; }
       });
       scene.overrideMaterial = saved.basic; scene.background = new THREE.Color(0xffffff); scene.fog = null;
       renderer.setClearColor(0xffffff, 1); renderer.autoClear = true; renderer.shadowMap.autoUpdate = false;
-      renderer.setRenderTarget(null);
-      renderer.render(scene, camera);   // thẳng ra canvas, không qua hậu kỳ
+      let xong = false;
+      try {
+        renderer.setRenderTarget(null);
+        renderer.render(scene, camera);   // thẳng ra canvas, không qua hậu kỳ
+        xong = true;
+      } finally { if (!xong) mask(null); }   // render ném lỗi → luôn khôi phục cảnh
     };
     const p = stage.renderAt(t);   // đưa cảnh về đúng khung t (thường đồng bộ)
     return p && p.then ? p.then(go) : go();

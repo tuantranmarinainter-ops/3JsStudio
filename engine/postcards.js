@@ -190,6 +190,7 @@ export function makePostcard(THREE, kind, opts = {}) {
   const back = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ map: opts.back || postcardBack(THREE, ['']), roughness: 0.9 }));
   back.rotation.y = Math.PI; back.position.z = -0.011; back.name = 'back'; g.add(back);
   front.castShadow = back.castShadow = true;
+  g.userData.vai = 'doc';   // vật cần đọc (engine/measure.js)
   return g;
 }
 

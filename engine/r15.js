@@ -964,7 +964,7 @@ export function createR15(THREE, opts = {}) {
   };
 
   // vai cho engine/measure.js (tool kiểm luật): hero / nguoi; 2 tay, 2 chân là vai riêng (chỉ userData, không đổi hình)
-  root.userData.vai = o.name === 'hero' ? 'hero' : 'nguoi';
+  root.userData.vai = (o.name === 'hero' || o.vai === 'hero' || o.hero === true) ? 'hero' : 'nguoi';   // tập mới đặt tên khác: truyền { vai: 'hero' } hoặc { hero: true }
   for (const k of ['rightArm', 'leftArm']) parts[k].userData.vai = 'tay';
   for (const k of ['rightLeg', 'leftLeg']) parts[k].userData.vai = 'chan-nguoi';
 
