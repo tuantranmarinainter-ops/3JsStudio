@@ -201,12 +201,21 @@ const voiShot = (patch, fn) => page.evaluate(async ({ patch, tTown, fn }) => {
 for (const env of ENV17) {
   test(`env ${env}: __measure().tang có cả 3 tầng >= 1 ở CẢ 2 góc mặc định`, { ...T, skip: CHUA_GAN.has(env) ? 'chưa gắn tầng (CHUA_GAN)' : false }, async () => {
     const tang = await page.evaluate(async ({ env, tTown, tTown2 }) => {
-      const s = window.__shots.list.find((x) => x.env === 'town'); const cu = s.env; s.env = env;
+      const L = window.__shots.list.filter((x) => x.env === 'town'); const s1 = L[0], s2 = L[1] || L[0];
+      const cu = [s1.env, s2.env];
       const AF = (globalThis.__autoFx ||= {}), af0 = { tangXa: AF.tangXa, seaDecor: AF.seaDecor }; AF.tangXa = true; AF.seaDecor = true;   // ep001 tắt tangXa; ô bật ⇒ đủ 3 tầng
-      try { const o = []; for (const t of [tTown, tTown2]) { s.env = env; await window.renderAt(t); o.push(JSON.parse(JSON.stringify(window.__measure(t).tang))); } return o; }
-      finally { s.env = cu; AF.tangXa = af0.tangXa; AF.seaDecor = af0.seaDecor; await window.renderAt(tTown); }
+      try {
+        s1.env = env; s2.env = env;   // CẢ HAI shot (góc 1 và góc 2) đều phải chạy env được kiểm
+        const o = [];
+        for (const t of [tTown, tTown2]) {
+          await window.renderAt(t);
+          const hien = []; window.__stage.scene.children.forEach((c) => { if (c.name.startsWith('env_') && c.visible) hien.push(c.name); });
+          o.push({ ...JSON.parse(JSON.stringify(window.__measure(t).tang)), hien });
+        }
+        return o;
+      } finally { s1.env = cu[0]; s2.env = cu[1]; AF.tangXa = af0.tangXa; AF.seaDecor = af0.seaDecor; await window.renderAt(tTown); }
     }, { env, tTown, tTown2 });
-    tang.forEach((tg, g) => { for (const k of TANG) assert.ok(tg[k] >= 1, `${env}: góc ${g + 1}: tầng ${k} = ${tg[k]}`); });
+    tang.forEach((tg, g) => { assert.deepEqual(tg.hien, ['env_' + env], `${env}: góc ${g + 1} đang hiển thị ${tg.hien} (không phải env được kiểm)`); for (const k of TANG) assert.ok(tg[k] >= 1, `${env}: góc ${g + 1}: tầng ${k} = ${tg[k]}`); });
   });
 }
 

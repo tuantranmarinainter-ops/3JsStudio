@@ -36,14 +36,14 @@ export default function build(g, e, H) {
         const s = i === 0 ? 7 : 2.5 + hash(i + 5 * k, 21) * 3; m.scale.set(s, s * (0.8 + hash(i + 5 * k, 22) * 0.5), s * 0.9); m.position.set(i === 0 ? 0 : (hash(i + 5 * k, 23) - 0.5) * 14, s * 0.35, i === 0 ? 0 : (hash(i + 5 * k, 24) - 0.5) * 9);
         m.castShadow = true; rock.add(m);
       }
-      const a = (k + 0.3 + hash(k, 25) * 0.4) * 1.5708, r = 52 + hash(k, 26) * 8; rock.position.set(Math.sin(a) * r, -1.2, -Math.cos(a) * r);
+      const a = (k + 0.1 + hash(k, 25) * 0.9) * 1.5708, r = 48 + hash(k, 26) * 22;   // lệch góc + bán kính lớn để không thành vòng đều rock.position.set(Math.sin(a) * r, -1.2, -Math.cos(a) * r);
       dec.add(ganTang(rock, 'mid'));
     }
     for (let k = 0; k < 8; k++) {
       const isl = new THREE.Group(); isl.name = 'open_sea_islet_' + k;
       const w = 12 + hash(k, 27) * 8, h = 9 + hash(k, 28) * 6;
       const m = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), mat(['#5f7a62', '#6b8470', '#56705c'][k % 3], { flatShading: true, roughness: 1 })); m.scale.set(w, h, w * 0.8); m.position.y = h * 0.25; isl.add(m);
-      const a = (k + hash(k, 29) * 0.5) * 0.7854, r = 68 + hash(k, 30) * 12; isl.position.set(Math.sin(a) * r, -1, -Math.cos(a) * r);
+      const a = (k + (hash(k, 29) - 0.5) * 1.3) * 0.7854 + 0.2, r = 62 + hash(k, 30) * 34; isl.position.set(Math.sin(a) * r, -1, -Math.cos(a) * r);
       dec.add(ganTang(isl, 'back'));
     }
     const far = new THREE.Group(); far.name = 'open_sea_far';
