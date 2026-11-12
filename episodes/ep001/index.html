@@ -69,7 +69,7 @@
       import { SHOTS } from '/episodes/ep001/shots.js';
       import { CAPTIONS } from '/episodes/ep001/captions.js';
       import { CAPTIONS_EN } from '/episodes/ep001/captions_en.js';
-      import { setPostcardLang, postcardsTroikaReady } from '/engine/postcards.js';
+      import { setPostcardLang, postcardsTroikaReady, postcardsTroikaSettled } from '/engine/postcards.js';
 
       // nạp phông TRƯỚC khi vẽ bưu thiếp (canvas) và phụ đề — không thì chữ dùng phông thay thế
       await Promise.all([document.fonts.load("900 84px 'Be Vietnam Pro'", 'Việt ữ ầ ặ'), document.fonts.load("30px 'Patrick Hand'", 'Việt ữ ầ ặ')]).catch(() => {});
@@ -190,6 +190,7 @@
       }
       window.__warm = { warmed, warmEnv, order: Object.keys(warmShot) };
       let lastT = 0;
+      stage.onFrame(() => postcardsTroikaSettled());   // đổi Việt/Anh khi ô troikaText bật: chờ chữ SDF sync xong rồi mới vẽ (tất định lúc xuất MP4)
       stage.onFrame((t) => {
         const T = Math.min(t, tl.total - 1e-4);
         lastT = t;
