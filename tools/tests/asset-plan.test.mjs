@@ -198,3 +198,62 @@ test('bộ nhớ đệm mất hiệu lực khi env / GLB / catalog / công thứ
   fs.appendFileSync(path.join(g, 'engine', 'envs', 'cong-thuc.js'), '\n// đổi\n');
   assert.doesNotMatch(chayLai(), /dùng lại/, 'công thức đổi');
 });
+
+// ---------- C1: đạo cụ dựng bằng code / sổ đạo cụ theo kịch bản / diễn viên gấu-gà / place ----------
+import { docPropCo } from '../kb/asset-plan.mjs';
+
+test('C1: đạo cụ có khoá trong propKit hoặc props-kb -> đã có, không đòi dựng', () => {
+  const propCo = new Set(['fridge', 'bap', 'day_chuyen', 'mu_ga']);
+  const r = lapKeHoach({
+    kb: kb([{ kind: 'prop', name: 'bap', desc: 'gấu' }, { kind: 'prop', name: 'dây chuyền', desc: '' }, { kind: 'prop', name: 'tủ lạnh', desc: '' }, { kind: 'prop', name: 'mu_ga', desc: '' }, { kind: 'prop', name: 'đồng hồ', desc: '' }]),
+    manifest: [], envCo: new Set(), animCo: new Set(), propCo,
+  });
+  assert.deepEqual(r.prop.map((p) => p.ten), ['đồng hồ']);
+  assert.deepEqual(r.daCo.prop.map((p) => p.ten).sort(), ['bap', 'dây chuyền', 'mu_ga', 'tủ lạnh']);
+  assert.ok(r.daCo.prop.every((p) => p.nguon === 'code'));
+});
+
+test('C1: docPropCo đọc khoá propKit + PROPS_KB; props-kb.js chưa có -> rỗng, không ném', () => {
+  const g = tmp();
+  fs.mkdirSync(path.join(g, 'engine'));
+  fs.writeFileSync(path.join(g, 'engine', 'props.js'), "export function propKit(THREE) {\n  const K = {\n    M, mesh, box,\n\n    fridge({ a = 1 } = {}) {},\n    mailbox() {},\n    bush(r = 2) { return 1; },\n  };\n  return K;\n}\n");
+  const a = docPropCo(g);
+  assert.ok(a.has('fridge') && a.has('mailbox') && a.has('bush'));
+  assert.ok(!a.has('mesh') && !a.has('box'), 'bỏ hàm phụ');
+  fs.writeFileSync(path.join(g, 'engine', 'props-kb.js'), "export const PROPS_KB = {\n  'bap': (THREE) => null,\n  day_chuyen: (THREE) => null,\n  \"ve\": (T) => null,\n};\n");
+  const b = docPropCo(g);
+  assert.ok(b.has('bap') && b.has('day_chuyen') && b.has('ve') && b.has('fridge'));
+  fs.writeFileSync(path.join(g, 'engine', 'props-kb.js'), 'đây không phải JS hợp lệ {{{');
+  assert.ok(docPropCo(g).has('fridge'));
+});
+
+test('C1: diễn viên bear=1 / ga=1 không bị đòi dựng như đạo cụ', () => {
+  const r = lapKeHoach({
+    kb: kb([{ kind: 'prop', name: 'bear2', desc: 'gấu nơ đỏ' }, { kind: 'prop', name: 'hero', desc: 'Gà' }, { kind: 'prop', name: 'ví', desc: '' }],
+      [], { actors: { bear2: { bear: 1 }, hero: { ga: 1 }, bach: { beard: true } } }),
+    manifest: [], envCo: new Set(), animCo: new Set(),
+  });
+  assert.deepEqual(r.prop.map((p) => p.ten), ['ví']);
+});
+
+test('C1: place khai đầu kịch bản không đòi dựng env cùng tên; env: <place> -> canhBao; env thật thiếu vẫn báo', () => {
+  const r = lapKeHoach({
+    kb: kb([{ kind: 'env', name: 'bakery', desc: 'tiệm bánh' }, { kind: 'env', name: 'bedroom', desc: 'phòng Gà' }],
+      [{ id: 's1', at: 'balcony' }, { id: 's2', at: 'roof' }, { id: 's3', at: 'hangngam' }],
+      { places: { bakery: { pos: [18, 0, -6] }, balcony: {}, roof: {} } }),
+    manifest: [], envCo: new Set(['sea']), animCo: new Set(),
+  });
+  assert.deepEqual(r.env.map((e) => e.ten).sort(), ['bedroom', 'hangngam']);
+  assert.ok(r.canhBao.some((x) => x.includes('bakery')), JSON.stringify(r.canhBao));
+  assert.ok(!r.canhBao.some((x) => x.includes('balcony')), 'at: place không cần cảnh báo');
+});
+
+test('C1: "- prop: a, b, c" tách thành từng đạo cụ; env "Cần dựng" trùng địa điểm thị trấn (street) -> canhBao, không đòi env riêng', () => {
+  const r = lapKeHoach({
+    kb: kb([{ kind: 'prop', name: 'dây chuyền, đồng hồ,  ví', desc: '' }, { kind: 'env', name: 'street', desc: 'phố chính' }]),
+    manifest: [], envCo: new Set(), animCo: new Set(), tuStoryboard: TOWN,
+  });
+  assert.deepEqual(r.prop.map((p) => p.ten), ['dây chuyền', 'đồng hồ', 'ví']);
+  assert.deepEqual(r.env, []);
+  assert.ok(r.canhBao.some((x) => x.includes('street')));
+});

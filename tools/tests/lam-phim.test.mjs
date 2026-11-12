@@ -119,6 +119,8 @@ test('ra-loi báo goi.can -> canNguoiDung kèm lý do; lỗi dưới ngưỡng -
   assert.match(a.json.canNguoiDung.lyDo, /khong tu sua/);
   assert.ok(!giaLog(ep).some((d) => d.buoc === 'am-thanh'));
   // lỗi dưới ngưỡng: agent rà (tối đa 3, sonnet), mỗi agent một việc; sau goi.vongMax lượt thì chấp nhận
+  const doiShots = () => fs.appendFileSync(path.join(GOC, 'episodes', ep, 'shots.js'), '// agent sửa\n');   // kết quả rà lỗi được nhớ theo hash đầu vào
+  doiShots();
   fs.writeFileSync(path.join(k, 'gia-ra-loi.json'), JSON.stringify({ goi: { can: false, lyDo: [] },
     conLai: [{ shot: 's001', luat: 'L1' }, { shot: 's002', luat: 'L4' }, { shot: 's003', luat: 'L6' }, { shot: 's004', luat: 'L8' }],
     loiKe: [{ shot: 's009', cau: 4, lyDo: 'L2' }] }));
@@ -128,8 +130,10 @@ test('ra-loi báo goi.can -> canNguoiDung kèm lý do; lỗi dưới ngưỡng -
   assert.ok(b.json.canAgent.length >= 1 && b.json.canAgent.length <= 3, JSON.stringify(b.json.canAgent));
   assert.ok(b.json.canAgent.every((x) => x.model === 'sonnet' && x.file && x.viec));
   for (const sid of ['s001', 's002', 's003', 's004', 's009']) assert.ok(b.json.canAgent.some((x) => x.viec.includes(sid)), sid);
+  doiShots();
   const c = lam(ep, 'tiep');
   assert.equal(c.json.buocTiep, 'ra-loi');   // lượt agent 2
+  doiShots();
   const d = lam(ep, 'tiep');
   assert.equal(d.ma, 0, d.loi);
   assert.deepEqual(d.json.daChay, ['ra-loi', 'am-thanh', 'gop']);
@@ -226,4 +230,123 @@ test('N1: shot-gen thoát 1 sau khi đã ghi file -> canAgent; sửa kịch bả
   assert.equal(b.ma, 0, b.loi);
   assert.equal(b.json.canNguoiDung, null);
   assert.ok(b.json.daChay.includes('shot') && b.json.daChay.includes('gop'));
+});
+
+// ---------- vòng sửa sau rà cả nhánh ----------
+const doc = (...p) => JSON.parse(fs.readFileSync(path.join(GOC, ...p), 'utf8'));
+const dat = (ep, f, noiDung) => { const k = path.join(GOC, 'output', ep, 'kiem'); fs.mkdirSync(k, { recursive: true }); fs.writeFileSync(path.join(k, f), noiDung); };
+const lenhBuoc = (ep, b) => giaLog(ep).filter((d) => d.buoc === b).map((d) => d.lenh);
+const duongBuildAll = /build\.mjs \S+ all\b/;
+
+test('C2: gop không gọi build.mjs all / tieng-anh; bản cuối chỉ bundle; thiếu music/plan.json -> canhBao, không lớp nhac', () => {
+  const ep = tapGia('12');
+  const a = lam(ep, 'tiep');
+  assert.equal(a.ma, 0, a.loi);
+  const tat = giaLog(ep).map((d) => d.lenh).join('\n');
+  assert.ok(!duongBuildAll.test(tat) && !tat.includes('tieng-anh') && !tat.includes('--keep s055'), tat);
+  const am = lenhBuoc(ep, 'am-thanh').find((l) => l.includes('build.mjs'));
+  assert.ok(am && !am.includes(' nhac') && am.includes('--no-bundle'), am);
+  assert.ok(a.json.canhBao.some((x) => x.includes('music/plan.json')), JSON.stringify(a.json.canhBao));
+  const gop = lenhBuoc(ep, 'gop');
+  assert.ok(gop.some((l) => l.includes('bundle.mjs') && !l.includes('--out')), gop.join(' | '));
+  assert.ok(!gop.some((l) => l.includes('build.mjs')));
+});
+
+test('C2: bản nháp (giọng chưa xong) ra dist/<ep>_xem-thu.html bằng bundle, không build all', () => {
+  const ep = tapGia('13');
+  dat(ep, 'gia-giong-nen', '1');
+  const a = lam(ep, 'tiep');
+  assert.equal(a.ma, 0, a.loi);
+  const gop = lenhBuoc(ep, 'gop');
+  assert.ok(gop.some((l) => l.includes('bundle.mjs') && l.includes(`dist/${ep}_xem-thu.html`)), gop.join(' | '));
+  assert.ok(!giaLog(ep).some((d) => duongBuildAll.test(d.lenh)));
+  assert.ok(a.json.lien.xemThu.duongDan.endsWith(`${ep}_xem-thu.html`));
+});
+
+test('I1: ghi-cong mã 3 — bản nháp chỉ cảnh báo; bản cuối chặn, trừ khi quy-trinh.json ghiCong.choPhepTroi', () => {
+  const nhap = tapGia('14');
+  dat(nhap, 'gia-giong-nen', '1'); dat(nhap, 'gia-ghi-cong-ma', '3');
+  const a = lam(nhap, 'tiep');
+  assert.equal(a.ma, 0, a.loi);
+  assert.equal(a.json.canNguoiDung, null);
+  assert.ok(a.json.canhBao.some((x) => /giấy phép/.test(x)), JSON.stringify(a.json.canhBao));
+  assert.ok(a.json.daChay.includes('gop'));
+
+  const ep = tapGia('15');
+  dat(ep, 'gia-ghi-cong-ma', '3');
+  const b = lam(ep, 'tiep');
+  assert.equal(b.ma, 1, b.loi);
+  assert.equal(b.json.buocTiep, 'am-thanh');
+  assert.match(b.json.canNguoiDung.lyDo, /choPhepTroi/);
+  fs.writeFileSync(path.join(GOC, 'episodes', ep, 'quy-trinh.json'), JSON.stringify({ ghiCong: { choPhepTroi: true } }));
+  const c = lam(ep, 'tiep');
+  assert.equal(c.ma, 0, c.loi);
+  assert.ok(lenhBuoc(ep, 'am-thanh').some((l) => l.includes('ghi-cong.mjs') && l.includes('--cho-phep-chua-ro')));
+  assert.ok(c.json.daChay.includes('gop'));
+});
+
+test('I1: cờ --cho-phep-troi lưu khoá vào quy-trinh.json (giữ khoá cũ) để lần sau qua', () => {
+  const ep = tapGia('16');
+  fs.writeFileSync(path.join(GOC, 'episodes', ep, 'quy-trinh.json'), JSON.stringify({ goi: { vongMax: 3 } }));
+  dat(ep, 'gia-ghi-cong-ma', '3');
+  const a = lam(ep, 'tiep', '--cho-phep-troi');
+  assert.equal(a.ma, 0, a.loi);
+  const q = doc('episodes', ep, 'quy-trinh.json');
+  assert.equal(q.ghiCong.choPhepTroi, true);
+  assert.equal(q.goi.vongMax, 3);
+});
+
+test('I2: ra-loi goi.can + --nhap -> chấp nhận bản nháp, ghi duyet/02_loi, đi tiếp am-thanh/gop; không kiểm lại 114 shot', () => {
+  const ep = tapGia('17');
+  dat(ep, 'gia-ra-loi.json', JSON.stringify({ goi: { can: true, lyDo: ['9 loi vuot nguong'] }, conLai: [{ shot: 's001', luat: 'L1' }], loiKe: [] }));
+  const a = lam(ep, 'tiep');
+  assert.equal(a.ma, 1, a.loi);
+  assert.equal(a.json.buocTiep, 'ra-loi');
+  assert.equal(lenhBuoc(ep, 'ra-loi').filter((l) => l.includes('kiem-luat.mjs')).length, 1);
+  const b = lam(ep, 'tiep', '--nhap');
+  assert.equal(b.ma, 0, b.loi);
+  assert.ok(b.json.daChay.includes('ra-loi') && b.json.daChay.includes('am-thanh') && b.json.daChay.includes('gop'), JSON.stringify(b.json.daChay));
+  assert.ok(b.json.canhBao.some((x) => /nháp/.test(x) && x.includes('9 loi')), JSON.stringify(b.json.canhBao));
+  assert.equal(lenhBuoc(ep, 'ra-loi').filter((l) => l.includes('kiem-luat.mjs')).length, 1, 'đầu vào không đổi: không kiểm lại');
+  assert.deepEqual(doc('output', ep, 'duyet', '02_loi', 'chap-nhan-nhap.json').goi.lyDo, ['9 loi vuot nguong']);
+});
+
+test('I2: khoá quy-trinh.json goi.chapNhanNhap thay cờ --nhap', () => {
+  const ep = tapGia('18');
+  dat(ep, 'gia-ra-loi.json', JSON.stringify({ goi: { can: true, lyDo: ['x'] }, conLai: [], loiKe: [] }));
+  fs.writeFileSync(path.join(GOC, 'episodes', ep, 'quy-trinh.json'), JSON.stringify({ goi: { chapNhanNhap: true } }));
+  const a = lam(ep, 'tiep');
+  assert.equal(a.ma, 0, a.loi);
+  assert.ok(a.json.daChay.includes('gop'));
+});
+
+test('I6: bước ghi vào episodes/<ep> (ra-loi, am-thanh) từ chối tập dựng tay, mã 1, không chạy lệnh con', () => {
+  for (const b of ['ra-loi', 'am-thanh']) {
+    const ep = tapGia('19' + b);
+    fs.writeFileSync(path.join(GOC, 'episodes', ep, 'shots.js'), 'export const SHOTS = [];\n');
+    const a = lam(ep, b);
+    assert.equal(a.ma, 1, `${b}: ${a.loi}`);
+    assert.match(a.json.canNguoiDung.lyDo, /Từ chối/);
+    assert.equal(giaLog(ep).length, 0, b);
+  }
+});
+
+test('I7: bước ném lỗi môi trường -> không để lại bat_dau (tiep sau không báo treo)', () => {
+  const ep = tapGia('20');
+  dat(ep, 'gia-asset-ma', '2');
+  const a = lam(ep, 'tiep');
+  assert.equal(a.ma, 2, a.loi);
+  const st = doc('output', ep, 'kiem', 'trang-thai.json');
+  assert.ok(!st.buoc.asset.bat_dau, JSON.stringify(st.buoc.asset));
+  assert.equal(st.buoc.asset.xong, false);
+});
+
+test('asset: env mới nêu đủ 3 chỗ nối; canhBao của asset-plan chuyển lên kết quả', () => {
+  const ep = tapGia('21');
+  dat(ep, 'gia-thieu.json', JSON.stringify({ env: [{ ten: 'cellar', moTa: 'hầm' }], prop: [], anim: [], tuDung: [], canhBao: ['env "bakery" trùng place'] }));
+  const a = lam(ep, 'tiep');
+  assert.equal(a.ma, 0, a.loi);
+  const v = a.json.canAgent[0].viec;
+  assert.ok(v.includes('engine/envs/cellar.js') && v.includes('engine/envs.js') && v.includes('engine/envs/goc-mau.js'), v);
+  assert.ok(a.json.canhBao.some((x) => x.includes('bakery')), JSON.stringify(a.json.canhBao));
 });

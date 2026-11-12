@@ -11,5 +11,6 @@
   "L10": { "dienTichMin": 0.08, "nguongDen": 0.5, "cumMin": 0.001, "phuKinMax": 0.9, "noiBbox": 0.03, "moCoiMin": 0.003 },
   "L11": { "insertRead": 1.5, "closeup": 0.8, "hanhDong": 1.0, "establish": 1.2, "macDinh": 0.8 },
   "L12": { "cuaSo": 2.25, "buoc": 1.0, "nguong": 12, "diemMin": 8 },
-  "goi": { "shotLoiMax": 10, "tyLeLuatMax": 0.15, "phutKhongTien": 30, "vongMax": 2 }
+  "goi": { "shotLoiMax": 10, "tyLeLuatMax": 0.15, "phutKhongTien": 30, "vongMax": 2, "chapNhanNhap": false },
+  "ghiCong": { "choPhepTroi": false }
 }

@@ -62,7 +62,7 @@ def split_voice(value, default_source):
 # ---------- Đọc kịch bản ----------
 def parse(path, args):
     raw = Path(path).read_bytes().decode("utf-8-sig").replace("\r\n", "\n").replace("\r", "\n")
-    m = re.search(r"^\s*@source\s+(edge|capcut)\s*$", raw, re.M)
+    m = re.search(r"^\s*@source\s+(edge|capcut)\s*(?:\s#.*)?$", raw, re.M)
     source = m.group(1) if m else args.source
     voice = args.voice or DEFAULT_VOICE[source]
     narrator = {"source": source, "voice": voice, "rate": args.rate, "pitch": args.pitch, "volume": args.volume}
@@ -81,6 +81,8 @@ def parse(path, args):
             continue
         if s.startswith("#") or s.startswith("@source"):
             continue
+        if s.startswith(("@narrator", "@voice")):
+            s = re.split(r"\s+#", s, maxsplit=1)[0].strip()   # chú thích "# …" cuối dòng chỉ thị
         m = re.match(r"@narrator\s+(\S+)(?:\s+([+-]?\d+))?(?:\s+([+-]?\d+))?\s*$", s)
         if m:
             narrator = voices[""] = spec(*m.groups(), narrator)

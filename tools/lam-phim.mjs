@@ -12,6 +12,9 @@
 // Giọng: --dry trước (có nhịp), rồi python tools/tts.py chạy NỀN (không chặn); CapCut lỗi / log không đổi quá
 //   goi.phutKhongTien phút -> canNguoiDung (KHÔNG tự đổi sang Edge). Bước khác treo quá ngưỡng đó (batDau cũ, nhật ký không đổi) -> canNguoiDung.
 // Giọng nền khởi chạy NGAY sau kich-ban (trước asset): thứ tự chạy kich-ban, giong, asset, mau-duyet, ...; JSON có `giongNen:{pid,batDau,log}`.
+// Cờ: --force (ép chạy), --nhap (ra-loi: chấp nhận lỗi còn lại cho BẢN NHÁP, ghi duyet/02_loi/chap-nhan-nhap.json, đi tiếp),
+//   --cho-phep-troi (ghi quy-trinh.json ghiCong.choPhepTroi=true: trời "người dùng chịu trách nhiệm" được qua ở bản cuối).
+//   Khoá tương đương trong episodes/<ep>/quy-trinh.json: goi.chapNhanNhap, ghiCong.choPhepTroi.
 // Biến LAM_PHIM_PY_CAPCUT = python có miniaudio/requests cho CapCut.
 // LAM_PHIM_GIA=1: mọi lệnh con thay bằng lệnh giả (ghi output/<ep>/kiem/gia.log, tạo vài file kết quả tối thiểu) — dùng cho test.
 // Mã thoát: 0 chạy được (kể cả đang chờ agent / giọng nền), 1 cần người dùng, 2 lỗi môi trường / tham số.
@@ -91,7 +94,7 @@ function bam(ep, b) {
     case 'giong': p.push(hashNarration(ep)); break;
     case 'shot': p.push(kbSha(ep), hashVao([`${E}/narration.json`])); break;
     case 'ra-loi': p.push(hashVao([`${E}/shots.js`])); break;
-    case 'am-thanh': p.push(hashVao([`${E}/sfx`, `${E}/music`])); break;
+    case 'am-thanh': p.push(hashVao([`${E}/sfx`, `${E}/music`]), giongXong(ep) ? 'cuoi' : 'nhap'); break;   // bản cuối chạy lại ghi-cong (chặn trời chưa rõ)
     case 'gop': p.push(giongXong(ep) ? 'giong-xong' : 'giong-nhap'); break;
     default: throw new Error('bước lạ: ' + b);
   }
@@ -104,7 +107,9 @@ function giaTao(c, args) {
   let ma = 0;
   const k = kiemDir(c.ep); fs.mkdirSync(k, { recursive: true });
   const co = (s) => args.some((a) => String(a).endsWith(s));
-  if (co('asset-plan.mjs')) {   // gia-thieu.json (nếu test đặt sẵn) = kết quả giả của asset-plan
+  if (co('ghi-cong.mjs') && fs.existsSync(path.join(k, 'gia-ghi-cong-ma')) && !args.includes('--cho-phep-chua-ro')) ma = Number(fs.readFileSync(path.join(k, 'gia-ghi-cong-ma'), 'utf8'));
+  if (co('asset-plan.mjs')) {   // gia-thieu.json (nếu test đặt sẵn) = kết quả giả của asset-plan; gia-asset-ma = mã thoát giả
+    if (fs.existsSync(path.join(k, 'gia-asset-ma'))) ma = Number(fs.readFileSync(path.join(k, 'gia-asset-ma'), 'utf8'));
     const tay = path.join(k, 'gia-thieu.json');
     fs.writeFileSync(path.join(k, 'thieu.json'), fs.existsSync(tay) ? fs.readFileSync(tay) : JSON.stringify({ env: [], prop: [], anim: [], tuDung: [] }));
   }
@@ -143,6 +148,13 @@ const node = (c, buoc, script, ...a) => chay(c, buoc, process.execPath, [script,
 const chan = (o) => ({ chan: { canAgent: [], canNguoiDung: null, ...o } });
 const anhCo = (ep, ...fs_) => fs_.map((f) => rel('output', ep, f)).filter((f) => fs.existsSync(path.join(GOC, f)));
 
+// I6: mọi bước GHI vào episodes/<ep>/ chỉ chạy trên tập do lam-phim sinh (có dấu shotSinh); tập dựng tay (ep001…) bị từ chối
+function chanTayLam(c) {
+  const coTay = fs.existsSync(path.join(epDir(c.ep), 'shots.js')) || fs.existsSync(path.join(epDir(c.ep), 'episode.js'));
+  if (!coTay || docLm(c.ep).shotSinh) return null;
+  return chan({ canNguoiDung: { lyDo: `episodes/${c.ep} có shots.js/episode.js nhưng lam-phim chưa từng sinh chúng (tập làm tay?). Từ chối ghi vào episodes/${c.ep}/. Muốn sửa tập này dùng skill sua-theo-lop / node tools/build.mjs ${c.ep} <lớp>.`, anh: [] } });
+}
+
 // ---------- handler từng bước ----------
 const H = {};
 
@@ -163,11 +175,12 @@ H.asset = async (c) => {
   if (r.status === 2 || (r.status === 1 && !t)) throw new LoiMoiTruong('asset-plan lỗi: ' + duoi(r.out));
   if (r.status === 1) return chan({ canAgent: [{ viec: `Kịch bản có lỗi dữ liệu khi lập kế hoạch asset: ${duoi(r.out, 6).replace(/\n/g, ' | ')}`, file: `episodes/${c.ep}/kich-ban.md`, model: 'sonnet' }] });
   const ag = [];
-  for (const e of t.env || []) ag.push({ viec: `Dựng bối cảnh "${e.ten}" (${e.moTa || 'theo kịch bản'}) theo skill scene-env${e.congThuc ? ', công thức ' + JSON.stringify(e.congThuc) : ''}; thêm layers front/mid/back`, file: `engine/envs/${e.ten}.js`, model: 'sonnet' });
+  for (const w of t.canhBao || []) c.kq.canhBao.push('asset: ' + w);
+  for (const e of t.env || []) ag.push({ viec: `Dựng bối cảnh "${e.ten}" (${e.moTa || 'theo kịch bản'}) theo skill scene-env${e.congThuc ? ', công thức ' + JSON.stringify(e.congThuc) : ''}; thêm layers front/mid/back. ĐỦ 3 CHỖ NỐI: (1) engine/envs/${e.ten}.js, (2) đăng ký trong engine/envs.js (import + def('${e.ten}', …)), (3) góc mẫu cho bảng mẫu duyệt trong engine/envs/goc-mau.js. Thiếu một chỗ là env dựng xong vẫn không được dùng.`, file: `engine/envs/${e.ten}.js`, model: 'sonnet' });
   const nhap = [], dung = [];
   for (const p of t.prop || []) ((p.ungVien || []).some((u) => u.id) ? nhap : dung).push(p);
   if (nhap.length) ag.push({ viec: `Nhập mô hình vào assets/manifest.json (kèm pose/anim, ghi công CREDITS): ${nhap.map((p) => `${p.ten} <- ${p.ungVien.find((u) => u.id).nguon}:${p.ungVien.find((u) => u.id).id}`).join('; ')}`, file: 'assets/manifest.json', model: 'sonnet' });
-  if (dung.length) ag.push({ viec: `Dựng đạo cụ bằng code (skill ref-model, khai báo mat từng bộ phận): ${dung.map((p) => p.ten).join(', ')}`, file: 'engine/props.js', model: 'sonnet' });
+  if (dung.length) ag.push({ viec: `Dựng đạo cụ bằng code (skill ref-model, khai báo mat từng bộ phận), thêm khoá vào PROPS_KB trong engine/props-kb.js dạng '<tên_ascii>': (THREE) => Object3D: ${dung.map((p) => p.ten).join(', ')}`, file: 'engine/props-kb.js', model: 'sonnet' });
   if ((t.anim || []).length) ag.push({ viec: `Thêm animation R15 (phương pháp skill r6-anim, hàm thuần của t): ${t.anim.join(', ')}`, file: 'engine/r15.js', model: 'sonnet' });
   if (ag.length) return chan({ canAgent: ag });
   return {};
@@ -224,17 +237,31 @@ H.shot = async (c) => {
 };
 
 H['ra-loi'] = async (c) => {
-  const trang = `episodes/${c.ep}/index.html`;
-  const kl = node(c, 'ra-loi', 'tools/kiem-luat.mjs', trang, '--ep', c.ep, '--shots', 'all');
-  if (kl.status === 2) throw new LoiMoiTruong('kiem-luat lỗi môi trường: ' + duoi(kl.out));
-  const r = node(c, 'ra-loi', 'tools/ra-loi.mjs', c.ep);
-  if (r.status === 2) throw new LoiMoiTruong('ra-loi lỗi môi trường: ' + duoi(r.out));
-  const rl = readJson(path.join(kiemDir(c.ep), 'ra-loi.json'), null);
+  const tay = chanTayLam(c);
+  if (tay) return tay;
+  const trang = `episodes/${c.ep}/index.html`, rlF = path.join(kiemDir(c.ep), 'ra-loi.json');
+  // đầu vào (shots.js + bước shot) không đổi kể từ lần kiểm trước -> dùng lại kết quả, không kiểm lại cả phim
+  if (c.force || docLm(c.ep).raLoiKiem !== bam(c.ep, 'ra-loi') || !fs.existsSync(rlF)) {
+    const kl = node(c, 'ra-loi', 'tools/kiem-luat.mjs', trang, '--ep', c.ep, '--shots', 'all');
+    if (kl.status === 2) throw new LoiMoiTruong('kiem-luat lỗi môi trường: ' + duoi(kl.out));
+    const r = node(c, 'ra-loi', 'tools/ra-loi.mjs', c.ep);
+    if (r.status === 2) throw new LoiMoiTruong('ra-loi lỗi môi trường: ' + duoi(r.out));
+    ghiLm(c.ep, { raLoiKiem: bam(c.ep, 'ra-loi') });   // băm SAU khi ra-loi.mjs có thể đã sửa shots.js
+  } else log('ra-loi: đầu vào không đổi, dùng lại output/<ep>/kiem/ra-loi.json');
+  const rl = readJson(rlF, null);
   if (!rl) throw new LoiMoiTruong('ra-loi không ghi output/<ep>/kiem/ra-loi.json');
-  if (rl.goi && rl.goi.can) {
-    return chan({ canNguoiDung: { lyDo: (rl.goi.lyDo || []).join('; ') || 'ra-loi yêu cầu gọi người dùng', anh: anhCo(c.ep, 'duyet/luoi-loi.jpg', 'duyet/02_loi') } });
+  const loiKe = rl.loiKe || [], conLai = rl.conLai || [], goiCan = !!(rl.goi && rl.goi.can);
+  const lyDoGoi = ((rl.goi && rl.goi.lyDo) || []).join('; ');
+  if ((goiCan || loiKe.length || conLai.length) && (c.nhap || nguong(epDir(c.ep)).goi?.chapNhanNhap === true)) {
+    const d = path.join(GOC, 'output', c.ep, 'duyet', '02_loi');
+    fs.mkdirSync(d, { recursive: true });
+    fs.writeFileSync(path.join(d, 'chap-nhan-nhap.json'), JSON.stringify({ ts: new Date().toISOString(), ghiChu: 'Chấp nhận lỗi còn lại cho BẢN NHÁP; bản cuối cần sửa hoặc nâng ngưỡng trong quy-trinh.json', goi: rl.goi || null, conLai, loiKe, khongSua: rl.khongSua || [] }, null, 1) + '\n');
+    c.kq.canhBao.push(`ra-loi: CHẤP NHẬN lỗi còn lại cho bản nháp (${lyDoGoi || `${conLai.length} lỗi dưới ngưỡng + ${loiKe.length} lỗi lời kể`}) — danh sách ở output/${c.ep}/duyet/02_loi/chap-nhan-nhap.json`);
+    return {};
   }
-  const loiKe = rl.loiKe || [], conLai = rl.conLai || [];
+  if (goiCan) {
+    return chan({ canNguoiDung: { lyDo: (lyDoGoi || 'ra-loi yêu cầu gọi người dùng') + ' — chấp nhận cho bản nháp: chạy lại với --nhap (hoặc quy-trinh.json goi.chapNhanNhap=true).', anh: anhCo(c.ep, 'duyet/luoi-loi.jpg', 'duyet/02_loi') } });
+  }
   if (!loiKe.length && !conLai.length) return {};
   const vongMax = nguong(epDir(c.ep)).goi?.vongMax ?? 2, lm = docLm(c.ep), vong = lm.vongRaLoi || 0;
   if (vong >= vongMax) {
@@ -255,6 +282,8 @@ H['ra-loi'] = async (c) => {
 };
 
 H['am-thanh'] = async (c) => {
+  const tay = chanTayLam(c);
+  if (tay) return tay;
   const E = epDir(c.ep), lop = ['canh'];
   if (fs.existsSync(path.join(E, 'sfx', 'layers.json'))) lop.push('nen', 'buoc-chan');
   else c.kq.canhBao.push(`thiếu episodes/${c.ep}/sfx/layers.json: bỏ lớp nen + buoc-chan`);
@@ -266,27 +295,29 @@ H['am-thanh'] = async (c) => {
   lop.push('phu-de');
   const r = node(c, 'am-thanh', 'tools/build.mjs', c.ep, ...lop, '--no-bundle');
   if (r.status !== 0) throw new LoiMoiTruong(`build.mjs ${lop.join(' ')} lỗi (mã ${r.status}): ${duoi(r.out)}`);
-  const g = node(c, 'am-thanh', 'tools/ghi-cong.mjs', c.ep);
+  const cho = nguong(E).ghiCong?.choPhepTroi === true;
+  const g = node(c, 'am-thanh', 'tools/ghi-cong.mjs', c.ep, ...(cho ? ['--cho-phep-chua-ro'] : []));
   if (g.status === 3) {
     const j = readJson(path.join(E, 'ghi-cong.json'), {}) || {};
-    return chan({ canNguoiDung: { lyDo: `Asset ĐANG DÙNG chưa rõ giấy phép: ${JSON.stringify(j.chuaRo || '(xem ghi-cong.json)')}. Thay asset hoặc chạy ghi-cong.mjs --cho-phep-chua-ro nếu bạn chịu trách nhiệm.`, anh: [] } });
-  }
-  if (g.status !== 0) throw new LoiMoiTruong(`ghi-cong lỗi (mã ${g.status}): ${duoi(g.out)}`);
+    const mo = `Asset ĐANG DÙNG chưa rõ giấy phép: ${JSON.stringify(j.chuaRo || '(xem ghi-cong.json)')}`;
+    if (!giongXong(c.ep)) c.kq.canhBao.push(`${mo}. Bản nháp vẫn ra; bản CUỐI sẽ chặn trừ khi thay asset hoặc bạn chịu trách nhiệm (--cho-phep-troi / quy-trinh.json ghiCong.choPhepTroi).`);
+    else return chan({ canNguoiDung: { lyDo: `${mo}. Thay asset, hoặc nếu bạn chịu trách nhiệm: chạy lại với --cho-phep-troi (ghi quy-trinh.json ghiCong.choPhepTroi=true).`, anh: [] } });
+  } else if (g.status === 0 && cho) c.kq.canhBao.push('ghi-cong: giấy phép chưa rõ đã được người dùng cho phép (quy-trinh.json ghiCong.choPhepTroi).');
+  if (g.status !== 0 && g.status !== 3) throw new LoiMoiTruong(`ghi-cong lỗi (mã ${g.status}): ${duoi(g.out)}`);
   return {};
 };
 
 H.gop = async (c) => {
   const final = giongXong(c.ep);
   const dist = (n) => path.join(GOC, 'dist', n);
+  // KHÔNG gọi build.mjs all: các lớp âm thanh/phụ đề đã tính ở bước am-thanh; lớp tieng-anh (Edge, beats ep001) không thuộc dây chuyền
   if (final) {
-    const r = node(c, 'gop', 'tools/build.mjs', c.ep, 'all');
-    if (r.status !== 0) throw new LoiMoiTruong(`build.mjs all lỗi (mã ${r.status}): ${duoi(r.out)}`);
+    const b = node(c, 'gop', 'tools/bundle.mjs', c.ep);
+    if (b.status !== 0) throw new LoiMoiTruong(`bundle.mjs lỗi (mã ${b.status}): ${duoi(b.out)}`);
   } else {
-    const r = node(c, 'gop', 'tools/build.mjs', c.ep, 'all', '--no-bundle');
-    if (r.status !== 0) throw new LoiMoiTruong(`build.mjs all lỗi (mã ${r.status}): ${duoi(r.out)}`);
     const b = node(c, 'gop', 'tools/bundle.mjs', c.ep, '--out', `dist/${c.ep}_xem-thu.html`);
     if (b.status !== 0) throw new LoiMoiTruong(`bundle.mjs lỗi (mã ${b.status}): ${duoi(b.out)}`);
-    c.kq.canhBao.push('Bản nháp (giọng thật chưa xong): dist/<ep>_xem-thu.html. Khi giọng xong, chạy lại tiep -> shot/ra-loi/am-thanh/gop chạy lại (vòng rà lỗi cuối với giọng thật) và ra dist/<ep>.html.');
+    c.kq.canhBao.push(`Bản nháp (giọng thật chưa xong): dist/${c.ep}_xem-thu.html. Khi giọng xong, chạy lại tiep -> shot/ra-loi/am-thanh/gop chạy lại (vòng rà lỗi cuối với giọng thật) và ra dist/${c.ep}.html.`);
   }
   const t = node(c, 'gop', 'tools/theo-doi.mjs', c.ep);
   if (t.status !== 0) throw new LoiMoiTruong(`theo-doi lỗi (mã ${t.status}): ${duoi(t.out)}`);
@@ -412,7 +443,8 @@ async function chayBuoc(c, b) {
   if (!c.force && !canChay(c.ep, b, h)) return { daBo: true };
   batDau(c.ep, b);
   log(`== ${b}`);
-  const r = await H[b](c);
+  let r;
+  try { r = await H[b](c); } catch (e) { datBuoc(c.ep, b, { xong: false }); throw e; }   // I7: không để lại bat_dau
   if (r.chan) {
     datBuoc(c.ep, b, { xong: false });
     ghiNhatKy(c.ep, { buoc: b, hanh_dong: 'lam-phim', ket: 'chan', canAgent: r.chan.canAgent.length, canNguoiDung: !!r.chan.canNguoiDung });
@@ -423,9 +455,9 @@ async function chayBuoc(c, b) {
   return { chay: true };
 }
 
-async function tiepTrong(ep, { chi = null, force = false, gia = false } = {}) {
+async function tiepTrong(ep, { chi = null, force = false, gia = false, nhap = false } = {}) {
   const kq = { ep, buocTiep: null, canAgent: [], canNguoiDung: null, daChay: [], daBo: [], dangChayNen: [], giongNen: null, canhBao: [], lien: null, toiDaSongSong: TOI_DA_AGENT };
-  const c = { ep, kq, force, gia };
+  const c = { ep, kq, force, gia, nhap };
   const treo = quaHan(c);
   if (treo) {
     kq.buocTiep = treo.b;
@@ -461,16 +493,26 @@ function trangThai(ep) {
   return { ep, buoc, buocTiep: tiepB ? tiepB.ten : null, giong: g ? { pid: g.pid, batDau: g.batDau, ma: fs.existsSync(path.join(giongDir(ep), 'ma.txt')) ? fs.readFileSync(path.join(giongDir(ep), 'ma.txt'), 'utf8').trim() : null } : null, vongRaLoi: docLm(ep).vongRaLoi || 0 };
 }
 
+// trộn nông 2 cấp vào episodes/<ep>/quy-trinh.json (giữ mọi khoá khác)
+function luuQuyTrinh(ep, patch) {
+  const f = path.join(epDir(ep), 'quy-trinh.json');
+  const d = readJson(f, {}) || {};
+  for (const [k, v] of Object.entries(patch)) d[k] = { ...(d[k] || {}), ...v };
+  fs.mkdirSync(epDir(ep), { recursive: true });
+  fs.writeFileSync(f, JSON.stringify(d, null, 1) + '\n');
+}
+
 export async function main(argv) {
   const pos = argv.filter((a) => !a.startsWith('--'));
-  const force = argv.includes('--force');
+  const force = argv.includes('--force'), nhap = argv.includes('--nhap');
   const [ep, act = 'tiep'] = pos;
-  const dung = 'Dùng: node tools/lam-phim.mjs <ep> [tiep|trang-thai|' + BUOC.join('|') + '] [--force]';
+  const dung = 'Dùng: node tools/lam-phim.mjs <ep> [tiep|trang-thai|' + BUOC.join('|') + '] [--force] [--nhap] [--cho-phep-troi]';
   if (!ep || !/^[\w-]+$/.test(ep)) { console.error(dung); return 2; }
   if (act !== 'tiep' && act !== 'trang-thai' && !BUOC.includes(act)) { console.error(dung); return 2; }
   try {
     if (act === 'trang-thai') { console.log(JSON.stringify(trangThai(ep), null, 1)); return 0; }
-    const kq = await tiep(ep, { chi: act === 'tiep' ? null : act, force, gia: process.env.LAM_PHIM_GIA === '1' });
+    if (argv.includes('--cho-phep-troi')) luuQuyTrinh(ep, { ghiCong: { choPhepTroi: true } });
+    const kq = await tiep(ep, { chi: act === 'tiep' ? null : act, force, nhap, gia: process.env.LAM_PHIM_GIA === '1' });
     console.log(JSON.stringify(kq, null, 1));
     return kq.canNguoiDung ? 1 : 0;
   } catch (e) {

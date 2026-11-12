@@ -14,6 +14,8 @@ Spec: `docs/superpowers/specs/2026-11-12-quy-trinh-mot-cau-luat-ra-phim-design.m
 node tools/lam-phim.mjs <ep> tiep          # chạy các bước cần chạy cho tới khi gặp việc cần agent / người dùng
 node tools/lam-phim.mjs <ep> trang-thai    # chỉ đọc: 8 bước, bước kế tiếp
 node tools/lam-phim.mjs <ep> <buoc> [--force]   # đúng 1 bước (kich-ban asset giong mau-duyet shot ra-loi am-thanh gop)
+node tools/lam-phim.mjs <ep> tiep --nhap   # ra-loi: CHẤP NHẬN lỗi còn lại cho bản nháp (ghi duyet/02_loi/chap-nhan-nhap.json + canhBao), đi tiếp am-thanh/gop ra dist/<ep>_xem-thu.html
+node tools/lam-phim.mjs <ep> tiep --cho-phep-troi   # ghi quy-trinh.json ghiCong.choPhepTroi=true (trời "người dùng chịu trách nhiệm" được qua ở bản CUỐI)
 ```
 Tool KHÔNG gọi LLM, không commit, không push. Stdout là một khối JSON; log ở stderr. Mã thoát: `0` chạy được (kể cả chờ agent / giọng nền), `1` cần người dùng, `2` lỗi môi trường.
 ```
@@ -33,12 +35,13 @@ Mỗi bước chạy lại CHỈ khi đầu vào đổi (hash): sửa kịch b�
 4. **3c mau-duyet** → `output/<ep>/duyet/00_mau.jpg` = **MỐC DUYỆT 2**. Chưa duyệt thì tool dừng với `canNguoiDung`; KHÔNG dựng shot khi chưa duyệt. Người dùng duyệt: `node tools/mau-duyet.mjs <ep> --duyet tat-ca` (hoặc `--tu-choi <muc,…>` → chỉ chụp lại mẫu đó). Duyệt trước rồi mới ghép.
 5. **3d shot** — `shot-gen.mjs` (luật camera dồn dập, `--khop-giong` khi đã có `narration.json`).
 6. **3e ra-loi** (vòng rà lỗi) — `kiem-luat` → `ra-loi` tự sửa tối đa `goi.vongMax` vòng/nhóm. Lỗi dưới ngưỡng còn lại → `canAgent` rà tay (≤ 3 agent, mỗi agent một nhóm luật, chỉ Edit đúng dòng shot của mình). **Vòng rà lỗi cuối phải chạy SAU khi có giọng thật**: khi `giong` xong, `narration.json` đổi → `tiep` tự chạy lại shot→ra-loi→am-thanh→gop; đừng chốt phim bằng kết quả của giọng `--dry`.
-7. **3f am-thanh** (tiếng động nền/bước chân/khoảnh khắc + nhạc + phụ đề + ghi công `ghi-cong.mjs`) → **gop** (`build.mjs <ep> all`, `theo-doi.mjs`).
+7. **3f am-thanh** (tiếng động nền/bước chân/khoảnh khắc + nhạc + phụ đề + ghi công `ghi-cong.mjs`) → **gop** (chỉ `bundle.mjs` — bản nháp `--out dist/<ep>_xem-thu.html`; KHÔNG `build.mjs all`, lớp `tieng-anh` không chạy trong dây chuyền, lớp `nhac` chỉ khi có `music/plan.json`; rồi `theo-doi.mjs`). Ghi công `ghi-cong.mjs` mã 3 (trời chưa rõ): bản nháp chỉ cảnh báo, bản cuối chặn trừ khi `--cho-phep-troi`.
 8. Cuối: đưa link (xem "Giao sản phẩm").
 
 ## Khi nào gọi người dùng (mục 8; ngưỡng ở `episodes/<ep>/quy-trinh.json`, mặc định `tools/kiem/mac-dinh.json`)
 - Sau 2 vòng còn > 10 shot lỗi, hoặc 1 luật lỗi ở > 15% số shot → gửi bảng số + `output/<ep>/duyet/02_loi/` + `luoi-loi.jpg`.
 - Lỗi không tự sửa: thiếu mô hình/animation, kịch bản mâu thuẫn hình, vật liệu chưa duyệt, silhouette (L10) không đạt sau 2 vòng, tất định (`--det`) lỗi, L5/L9/L12.
+- `ra-loi` báo `goi.can` mà bạn chấp nhận cho bản nháp → `--nhap` (hoặc `goi.chapNhanNhap: true` trong `quy-trinh.json`); kết quả kiểm được nhớ theo hash `shots.js` nên không kiểm lại cả phim khi đầu vào không đổi.
 - Một bước quá 30 phút không tiến (`goi.phutKhongTien`) → tool tự báo.
 - Không bao giờ: push, xoá asset, đổi cốt truyện (twist/kết) khi tự sửa.
 
@@ -55,5 +58,5 @@ Sau MỖI lần sửa xong (kể cả nhỏ) luôn gộp lại và đưa link �
 
 ## Ghi chú
 - Nhân vật chính có thể là **Gà** (`engine/ga-rig.js`, xem `HANDOFF-ga.md`) — CHƯA nối vào `engine/cast.js`; nối là việc của lúc chạy tập (mau-duyet hiện chụp `ga` bằng R15 mặc định).
-- Tập làm tay (ep001, ep002): bước `shot` TỪ CHỐI (mã 1) khi `shots.js`/`episode.js` đã có mà lam-phim chưa từng sinh (dấu `shotSinh` trong `output/<ep>/kiem/lam-phim.json`). Vẫn đừng chạy `tiep` trên chúng; `trang-thai` là đọc an toàn. Chạy lại `shot` sau khi giọng xong chỉ co giãn `dur` (`shot-gen --chi-khop-giong`); chỉ khi kịch bản đổi mới sinh lại, có sao lưu vào `output/<ep>/kiem/sao-luu/<ISO>/`.
+- Tập làm tay (ep001): các bước ghi vào `episodes/<ep>/` (`shot`, `ra-loi`, `am-thanh`) TỪ CHỐI (mã 1) khi `shots.js`/`episode.js` đã có mà lam-phim chưa từng sinh (dấu `shotSinh` trong `output/<ep>/kiem/lam-phim.json`). Vẫn đừng chạy `tiep` trên chúng; `trang-thai` là đọc an toàn. Chạy lại `shot` sau khi giọng xong chỉ co giãn `dur` (`shot-gen --chi-khop-giong`); chỉ khi kịch bản đổi mới sinh lại, có sao lưu vào `output/<ep>/kiem/sao-luu/<ISO>/`.
 - Test tool: `LAM_PHIM_GIA=1 node tools/lam-phim.mjs _test_lamphimX tiep` (lệnh con giả, log ở `output/<ep>/kiem/gia.log`); `node --test tools/tests/lam-phim.test.mjs`.

@@ -67,7 +67,7 @@ export const FX_LABELS = {
   nhep: 'Nhép miệng theo giọng đọc (shot có talk)', chuTungChu: 'Phụ đề từng chữ (chữ đang đọc sáng hơn)', troikaText: 'Chữ bưu thiếp sắc nét (troika SDF thay chữ canvas)',
   faceLive: 'Mặt sống: đổi biểu cảm mềm, chớp mắt, ánh nhìn, đồng tử theo ánh sáng',
   gioThoiTiet: 'Giờ + thời tiết theo shot (time / weather)',
-  tangXa: 'Tầng xa bối cảnh bão: núi mờ trong sương + đá gần (storm, shipStorm)',
+  tangXa: 'Tầng bổ sung',
   seaDecor: 'Biển chung: phao, mõm đá, đảo xa (env sea)',
   matTex: 'Ảnh vân CC0: gỗ, ngói, đá, đất, cát, vải (tắt = vân toán)',
   lite: 'Bóng đổ nhẹ (tắt bóng kính, vật phát sáng, hạt, vật nhỏ) — mở/xuất nhanh hơn',

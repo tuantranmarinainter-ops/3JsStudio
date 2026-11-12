@@ -107,6 +107,53 @@ export function docTuStoryboard(goc = GOC) {
 }
 const khopTuKhoa = (bang, text) => { const t = ' ' + fold(text) + ' '; for (const [w] of bang) { const k = ' ' + w.trim(); if (t.includes(k) || t.trim() === w.trim()) return true; } return false; };
 
+// Đạo cụ dựng bằng CODE: khoá của propKit (engine/props.js) + khoá của PROPS_KB (engine/props-kb.js, sổ đạo cụ theo kịch bản).
+const HAM_PHU_PROPKIT = new Set(['M', 'mesh', 'box', 'cyl', 'sph', 'group', 'waddle', 'swim']);
+function khoaPropKit(text) {
+  const ra = [];
+  const i0 = text.search(/\bconst K = \{/);
+  if (i0 < 0) return ra;
+  for (const dong of text.slice(i0).split('\n').slice(1)) {
+    if (/^ {2}\};/.test(dong)) break;
+    const m = /^ {4}([A-Za-z_]\w*)\s*\(/.exec(dong);
+    if (m && !HAM_PHU_PROPKIT.has(m[1])) ra.push(m[1]);
+  }
+  return ra;
+}
+// khoá cấp 1 của `export const PROPS_KB = { … }` — quét có đếm ngoặc, bỏ chuỗi/chú thích; file lạ/hỏng -> []
+export function khoaPropsKb(text) {
+  const ra = [];
+  const m = /PROPS_KB\s*=\s*\{/.exec(text);
+  if (!m) return ra;
+  let i = m.index + m[0].length, depth = 1, canKhoa = true;
+  const n = text.length;
+  while (i < n && depth > 0) {
+    const c = text[i];
+    if (/\s/.test(c)) { i++; continue; }
+    if (c === '/' && text[i + 1] === '/') { while (i < n && text[i] !== '\n') i++; continue; }
+    if (c === '/' && text[i + 1] === '*') { const e = text.indexOf('*/', i + 2); i = e < 0 ? n : e + 2; continue; }
+    if (depth === 1 && canKhoa) {
+      const k = /^(?:'([^']+)'|"([^"]+)"|([A-Za-z_$][\w$]*))\s*[:(]/.exec(text.slice(i, i + 200));
+      canKhoa = false;
+      if (k) { ra.push(k[1] ?? k[2] ?? k[3]); i += k[0].length - 1; if (text[i] === '(') continue; i++; continue; }
+    }
+    if (c === "'" || c === '"' || c === '`') { let j = i + 1; while (j < n && text[j] !== c) { if (text[j] === '\\') j++; j++; } i = j + 1; continue; }
+    if (c === '{' || c === '(' || c === '[') depth++;
+    else if (c === '}' || c === ')' || c === ']') depth--;
+    else if (c === ',' && depth === 1) canKhoa = true;
+    i++;
+  }
+  return ra;
+}
+export function docPropCo(goc = GOC) {
+  const co = new Set();
+  const doc = (f) => { try { return fs.readFileSync(path.join(goc, 'engine', f), 'utf8'); } catch { return ''; } };
+  for (const k of khoaPropKit(doc('props.js'))) co.add(k);
+  for (const k of khoaPropsKb(doc('props-kb.js'))) co.add(k);
+  return co;
+}
+const chuanKhoa = (s) => fold(String(s)).replace(/[^a-z0-9]/g, '');
+
 function* duyetGlb(dir) {
   let ds; try { ds = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
   for (const d of ds.sort((a, b) => a.name.localeCompare(b.name))) {
@@ -152,9 +199,11 @@ export function gomNhuCau(kb) {
     if (c.kind === 'env') them(env, c.name, { moTa: c.desc || '', rieng: true });
     else if (c.kind === 'anim') them(anim, c.name, { moTa: c.desc || '', rieng: true });
     else if (c.kind === 'prop') {
-      const { loai, tuThe } = tachTuThe(c.name, c.desc);
-      const k = `${loai}|${tuThe ?? ''}`;
-      if (!prop.has(k)) prop.set(k, { ten: c.name, loai, tuThe, moTa: c.desc || '', shot: [] });
+      for (const ten of String(c.name).split(',').map((s) => s.trim()).filter(Boolean)) {   // "- prop: ví, túi tiền, nhẫn" = 3 đạo cụ
+        const { loai, tuThe } = tachTuThe(ten, c.desc);
+        const k = `${loai}|${tuThe ?? ''}`;
+        if (!prop.has(k)) prop.set(k, { ten, loai, tuThe, moTa: c.desc || '', shot: [] });
+      }
     }
   }
   for (const sh of kb.shots || []) {
@@ -177,10 +226,15 @@ export function gomNhuCau(kb) {
 
 // ---------- tra cứu ----------
 function xetEnv(nhuCau, ctx) {
-  const thieu = [], daCo = [], tuDung = [];
+  const thieu = [], daCo = [], tuDung = [], canhBao = [];
   for (const c of nhuCau.env.values()) {
     const ten = c.ten;
     if (ctx.envCo.has(ten)) { daCo.push(ten); continue; }
+    if (ctx.places.has(ten) || (c.rieng && ctx.town.has(ten))) {   // `place <tên>: x, z` đầu kịch bản = địa điểm trong env town, không phải env riêng
+      daCo.push(`${ten} => place (env town)`);
+      if (c.rieng) canhBao.push(`"Cần dựng" env "${ten}" trùng một địa điểm (place khai ở đầu kịch bản / địa điểm sẵn của env town): dùng làm địa điểm trong env town, KHÔNG dựng env riêng. Muốn env riêng thì đổi tên place hoặc tên env.`);
+      continue;
+    }
     if (c.la_at && !c.rieng) {
       if (ctx.town.has(ten) || /^house\d+$/.test(ten)) continue;
     }
@@ -190,7 +244,7 @@ function xetEnv(nhuCau, ctx) {
     thieu.push({ ten, moTa: c.moTa || ten, congThuc: congThuc ?? null, shot: uniq(c.shot) });
     if (!congThuc) tuDung.push({ loai: 'env', ten, lyDo: 'không khớp công thức nào trong engine/envs/cong-thuc.js' });
   }
-  return { thieu, daCo, tuDung };
+  return { thieu, daCo, tuDung, canhBao };
 }
 
 function xetAnim(nhuCau, ctx) {
@@ -222,6 +276,10 @@ function xetProp(nhuCau, ctx) {
   const thieu = [], daCo = [], tuDung = [];
   for (const c of nhuCau.prop.values()) {
     const syns = dichLoai(c.loai);
+    const khoaTen = [chuanKhoa(c.ten), chuanKhoa(c.loai)];
+    if (khoaTen.some((k) => ctx.dienVien.has(k))) { daCo.push({ ten: c.ten, tuThe: c.tuThe, id: null, nguon: 'dien-vien' }); continue; }   // bear=1 / ga=1: dựng như diễn viên
+    const bangCode = khoaTen.some((k) => ctx.propCo.has(k)) || (c.loai.trim().split(/\s+/).length <= 2 && syns.some((s) => ctx.propCo.has(chuanKhoa(s))));
+    if (bangCode) { daCo.push({ ten: c.ten, tuThe: c.tuThe, id: null, nguon: 'code' }); continue; }   // propKit / PROPS_KB
     const tim = (pose) => {
       const th = [];
       for (const s of syns) for (const e of ungVien(ctx.manifest, { loai: s })) if (!th.includes(e) && hopTuThe(e, pose)) th.push(e);
@@ -243,12 +301,16 @@ function xetProp(nhuCau, ctx) {
   return { thieu, daCo, tuDung };
 }
 
-export function lapKeHoach({ kb, manifest, envCo, animCo, tuStoryboard = { anim: [], noi: [], town: new Set() }, danhMuc = { muc: [], trangThai: {} } }) {
+export function lapKeHoach({ kb, manifest, envCo, animCo, propCo = new Set(), tuStoryboard = { anim: [], noi: [], town: new Set() }, danhMuc = { muc: [], trangThai: {} } }) {
   const nhuCau = gomNhuCau(kb);
-  const ctx = { manifest, envCo, animCo, animTu: tuStoryboard.anim, noi: tuStoryboard.noi, town: tuStoryboard.town, danhMuc };
+  const meta = kb.meta || {};
+  const places = new Set(Object.keys(meta.places || {}));
+  const dienVien = new Set(Object.entries(meta.actors || {}).filter(([, v]) => v && (v.bear || v.ga)).map(([k]) => chuanKhoa(k)));
+  const ctx = { manifest, envCo, animCo, animTu: tuStoryboard.anim, noi: tuStoryboard.noi, town: tuStoryboard.town, danhMuc,
+    propCo: new Set([...propCo].map(chuanKhoa)), places, dienVien };
   const e = xetEnv(nhuCau, ctx), p = xetProp(nhuCau, ctx), a = xetAnim(nhuCau, ctx);
   return {
-    env: e.thieu, prop: p.thieu, anim: a.thieu, tuDung: [...e.tuDung, ...p.tuDung],
+    env: e.thieu, prop: p.thieu, anim: a.thieu, tuDung: [...e.tuDung, ...p.tuDung], canhBao: e.canhBao,
     daCo: { env: e.daCo, prop: p.daCo, anim: a.daCo }, danhMuc: danhMuc.trangThai,
   };
 }
@@ -266,17 +328,17 @@ export function chay(ep, { kichBan, ra, force = false, goc = GOC } = {}) {
   const file = ung.find((f) => fs.existsSync(f));
   if (!file) { console.error(`[asset-plan] không thấy kịch bản (thử: ${ung.join(', ')})`); return 2; }
   const dinhRa = ra ?? path.join(thuMucKiem(ep, { goc }), 'thieu.json');
-  const envCo = docEnvCo(goc), animCo = docAnimCo(goc), tuStoryboard = docTuStoryboard(goc), manifest = docManifest(goc);
+  const envCo = docEnvCo(goc), animCo = docAnimCo(goc), propCo = docPropCo(goc), tuStoryboard = docTuStoryboard(goc), manifest = docManifest(goc);
   const danhMuc = docDanhMuc(goc, manifest);
   // băm: kịch bản + manifest + MỌI thứ kết quả phụ thuộc (tên env, tên anim, từ điển storyboard, danh sách GLB/catalog chưa vào manifest, công thức)
-  const phuThuoc = JSON.stringify({ env: [...envCo].sort(), anim: [...animCo].sort(), sb: [tuStoryboard.anim, tuStoryboard.noi, [...tuStoryboard.town].sort()], dm: danhMuc,
+  const phuThuoc = JSON.stringify({ env: [...envCo].sort(), prop: [...propCo].sort(), anim: [...animCo].sort(), sb: [tuStoryboard.anim, tuStoryboard.noi, [...tuStoryboard.town].sort()], dm: danhMuc,
     ct: hashVao([path.join(goc, 'engine', 'envs', 'cong-thuc.js')], { goc }) });
   const hash = crypto.createHash('sha1').update(hashVao([file, path.join(goc, 'assets', 'manifest.json')], { goc })).update(phuThuoc).digest('hex');
   if (!force && fs.existsSync(dinhRa) && !canChay(ep, 'asset', hash, { goc })) { console.log(`[asset-plan] ${ep}: đầu vào không đổi, dùng lại ${dinhRa}`); return 0; }
   let kb;
   try { kb = docKichBan(file, goc); } catch (e) { console.error(`[asset-plan] ${e.message}`); return 2; }
   batDau(ep, 'asset', { goc });
-  const kq = lapKeHoach({ kb, manifest, envCo, animCo, tuStoryboard, danhMuc });
+  const kq = lapKeHoach({ kb, manifest, envCo, animCo, propCo, tuStoryboard, danhMuc });
   fs.mkdirSync(path.dirname(dinhRa), { recursive: true });
   fs.writeFileSync(dinhRa, JSON.stringify(kq, null, 2) + '\n');
   const loi = (kb.loi_doc || []).length;
