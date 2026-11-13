@@ -6,33 +6,43 @@
    "viec": [
     {
      "ten": "Nhận gói kịch bản 104 shot (2:20) + ảnh + giọng",
-     "tt": "xong",
-     "ghiChu": "kich-ban/ep003-goi; đặc tả màu/hình: episodes/ep003/nguon/thiet-ke-hinh.md"
+     "tt": "xong"
     },
     {
-     "ten": "Lõi nhân vật thân R6 + 37 mặt emote (engine/r6-rig.js, r6-looks.js, nối cast.js)",
+     "ten": "13 nhân vật thân R6 + 37 mặt emote",
      "tt": "xong",
-     "ghiChu": "13 nhân vật; bảng mẫu output/ep003/mau-r6/"
+     "ghiChu": "người dùng đã duyệt mẫu"
     },
     {
-     "ten": "Duyệt mẫu 13 nhân vật R6",
+     "ten": "4 bối cảnh mới: phòng Gà, tiệm bánh/may, nhà máy, phố",
+     "tt": "xong",
+     "ghiChu": "còn vài chỗ lệch thiết kế, ghi ở docs/handoff/ep003.md"
+    },
+    {
+     "ten": "Nhập 104 shot + giọng 2:20 + phụ đề từng chữ; vá tập mẫu",
+     "tt": "xong"
+    },
+    {
+     "ten": "Dựng shot theo khung — vòng 1 (3 agent)",
+     "tt": "xong",
+     "ghiChu": "khoảng 75/103 shot đọc đúng ý khung gốc; 37 shot ngoài khoảng sáng"
+    },
+    {
+     "ten": "Bản xem thử đầu tiên dist/ep003_xem-thu.html",
+     "tt": "xong",
+     "ghiChu": "chưa có tiếng động/nhạc, chưa xuất thử MP4"
+    },
+    {
+     "ten": "Dựng shot vòng 2: ~28 shot chưa đạt + shot tối + sửa bối cảnh",
+     "tt": "chua"
+    },
+    {
+     "ten": "Gấu Bắp: model hiện tại lệch thiết kế, chưa có 37 mặt",
      "tt": "cho",
-     "ghiChu": "chờ người dùng xem truoc-sau.jpg"
+     "ghiChu": "cần người dùng chọn hướng"
     },
     {
-     "ten": "Bối cảnh mới: phòng Gà + ban công, phố + ngã ba + các tiệm, nhà máy (ngoài/trong/kho), hiên thị trưởng",
-     "tt": "chua"
-    },
-    {
-     "ten": "Nhập 104 shot + giọng 2:20 + phụ đề từng chữ",
-     "tt": "chua"
-    },
-    {
-     "ten": "Dựng shot theo khung, rà lỗi, âm thanh",
-     "tt": "chua"
-    },
-    {
-     "ten": "Gộp dist/ep003_xem-thu.html, kiểm, xuất thử",
+     "ten": "Tiếng động, nhạc, kiểm cả phim, xuất thử MP4",
      "tt": "chua"
     }
    ],
