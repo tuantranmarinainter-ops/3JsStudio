@@ -19,6 +19,8 @@ Cảnh 3D dựng bằng three.js + engine tự viết (`engine/`). Sản phẩm 
   `file:///S:/3JS%20Studio/dist/<file>.html` (bản xem thử khi chưa chốt: `dist/<ep>_xem-thu.html`).
 - **Trang tiến độ:** mỗi khi xong/đổi trạng thái một việc → sửa `docs/tien-do.json`, chạy `node tools/tien-do.mjs`, và **kèm link**
   `file:///S:/3JS%20Studio/dist/tien-do.html` ở cuối câu trả lời (người dùng không phải hỏi tiến độ).
+  Bản xem trên điện thoại: `node tools/tien-do-artifact.mjs` rồi đăng lại `output/artifact/tien-do.html` lên artifact
+  https://claude.ai/artifact/HZXy4g9aPUZYGUDdiYmRiW (truyền `url` này) — đăng lại mỗi lần cập nhật tiến độ.
 - **Mọi tính năng mới phải bật/tắt được** trong trình phát (ngôn ngữ, giọng, phụ đề, tiếng, hiệu ứng hình…).
 - Bộ kịch bản người dùng đưa (khung ảnh + mô tả) là **tài sản của họ** → làm luôn, không hỏi lại về nguồn.
 - Duyệt trước rồi mới ghép: đoạn mẫu / trang nghe thử → người dùng chốt → mới gộp vào HTML.
