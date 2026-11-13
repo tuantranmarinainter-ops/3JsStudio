@@ -1,0 +1,148 @@
+# Chi tiết chuyển ra từ CLAUDE.md (2026-11-13)
+
+Các mục dưới đây từng nằm trong `CLAUDE.md`. Chuyển sang đây để `CLAUDE.md` ngắn lại; nội dung giữ nguyên văn.
+Mục nào ghi **(luồng cũ)** thì không còn là cách làm chính — xem `CLAUDE.md` mục "Quy tắc người dùng".
+
+## (luồng cũ) Stack và cài đặt HyperFrames
+| Lớp | Công cụ | Vai trò |
+|---|---|---|
+| Render video | **Bản gộp 1 file + WebCodecs** trên máy người dùng (tools/bundle.mjs, tools/export-ui.js); HyperFrames chỉ còn dự phòng | HTML → MP4 tất định; phụ đề, giọng, hiệu ứng bật/tắt |
+| Cảnh 3D | **three.js** + engine tự viết (`engine/`) | Nhân vật R6, thị trấn, camera |
+| Asset | **Kenney** (gốc) + **Polyfork** (bổ sung, có MCP) | Nhà, đường, đạo cụ |
+
+Cài đặt: `npx hyperframes init` (workspace là một project HyperFrames, Node ≥ 22),
+`npx skills add heygen-com/hyperframes` (thêm /hyperframes, /hyperframes-cli, /gsap + skill three).
+Ghim phiên bản HyperFrames trong package.json (frame adapter còn là bản thử nghiệm v0).
+KHÔNG copy mã nguồn HyperFrames vào repo (monorepo ~400 MB) — dùng qua `npx`/npm + skill. Muốn đọc mã/tài liệu:
+clone tạm `https://github.com/heygen-com/hyperframes` ra ngoài repo (docs/packages/cli.mdx = tham chiếu CLI).
+
+
+## Hệ thống shot (~140 shot / phim)
+**Nguyên tắc:** shot là DỮ LIỆU, không phải code. Không viết tay 140 cảnh — chọn LOẠI SHOT có sẵn rồi điền tham số.
+
+`episodes/epNNN/episode.js` — cấu hình chung, khai báo 1 lần:
+```js
+export const EPISODE = {
+  seed: 7,                                   // thị trấn + dân giống hệt mỗi lần render
+  rule: 'Ai đi bộ cũng phải nhảy',
+  twist: 'special/monster.glb',
+  actors: { hero: { shirt: '#e74c3c', face: 'smile' }, mom: { shirt: '#8e44ad' }, crowd: { count: 12 } },
+  places: { square: [0, 0, 0], shop: [20, 0, -8], home: [-15, 0, 10] },
+};
+```
+
+`episodes/epNNN/shots.js` — mỗi shot 1 dòng, chỉ ghi phần KHÁC mặc định:
+```js
+export const SHOTS = [
+  { id: 's001', dur: 1.5, type: 'establish', at: 'square', text: 'Ở thị trấn này…' },
+  { id: 's002', dur: 1.0, type: 'crowd',     at: 'square', anim: 'jump' },
+  { id: 's003', dur: 0.8, type: 'closeup',   who: 'hero',  face: 'surprised' },
+  { id: 's004', dur: 1.2, type: 'walkBy',    who: 'hero',  at: 'square', anim: 'walk' },
+  // … ~140 dòng
+];
+```
+
+Loại shot trong `engine/shottypes.js` (thư viện dùng chung, ~10–12 loại, thêm khi thật cần):
+establish (toàn cảnh), crowd (đám đông), walkBy (đi ngang), follow (bám theo), closeup (cận mặt),
+reaction (phản ứng), overShoulder (qua vai), insert (cận đạo cụ), chase (rượt), reveal (lộ twist), dialogue (thoại 2 người).
+Mỗi loại tự quyết camera + bố trí mặc định; shot chỉ ghi đè khi cần.
+
+Quy tắc shot:
+- `id` cố định (s001…), không đánh số lại khi chèn — chèn thì dùng `s012a`.
+- `dur` tính bằng giây; tổng thời lượng = tổng `dur`, phải khớp độ dài mục tiêu.
+- **Liên tục giữa các shot:** `timeline.js` giữ vị trí/hướng/trang phục nhân vật nối từ shot trước sang shot sau,
+  trừ khi shot ghi rõ `at`/vị trí mới.
+- Phụ đề lấy từ lời dẫn (theo câu), không gõ lại trong shot; trường `text` chỉ cho chữ nổi đặc biệt (tiêu đề luật, con số).
+- Giọng đọc, nhạc: 1 track liền cho cả phim (không cắt theo shot). Hiệu ứng âm thanh gắn theo shot (`sfx`).
+
+Render 140 shot:
+- Preview: `npx hyperframes snapshot . --at <giữa mỗi shot>` (có contact sheet) hoặc `--review` (khung mỗi cảnh + quanh mỗi cắt).
+  Kiểm tra lỗi bố cục: `npx hyperframes check . --range a,b`.
+- Render theo **đoạn**: `npx hyperframes render --start a --end b -o output/part_NN.mp4` (~10–20 shot/đoạn),
+  chỉ render lại đoạn có shot bị sửa; ghép bằng FFmpeg (concat). `--workers` để chạy song song trong 1 lần render.
+- Root composition: `data-width="1080" data-height="1920" data-fps="30"`.
+- Claude chủ yếu sửa `shots.js`/`episode.js`, hạn chế sửa `engine/`.
+
+
+## (luồng cũ — nhân vật chính nay là R15 `engine/r15.js` và Gà `engine/ga-rig.js`) Nhân vật R6
+- Dùng cho cả nhân vật chính lẫn dân thị trấn; dựng bằng code, không cần GLB hay Mixamo.
+- 6 khối có tên: `torso`, `head`, `rightArm`, `leftArm`, `rightLeg`, `leftLeg` + `body` (nhún/nhảy/ngã) + `hat`.
+- Pivot cổ/vai/hông. Mặt nhìn +Z; tay PHẢI ở -X. 1 đơn vị = 1 stud, cao ~5.2.
+- API: `createR6(THREE, opts)` → `.animate(name, t, {from, mix})`, `.setFace()`, `.setColors()`, `.setHat()`.
+- Animation: idle, walk, run, jump, fall, wave, point, sit, scared, cheer, dance, lookAround, faint, cower, tpose.
+- Biểu cảm: smile, happy, neutral, sad, scared, surprised, angry, sleepy.
+- Dân thị trấn: `randomLook(seed)`. Animation mới = thêm 1 hàm `(t) => pose` vào `R6_ANIMATIONS`.
+
+
+## Cấu trúc phim (~140 shot, 2–3 phút)
+1. **Hook** ~10% (≈15 shot): 2–3 giây đầu phải có câu "Ở thị trấn này, …" + hình minh hoạ luật ngay.
+   Sau đó giới thiệu "tôi" và điểm yếu của tôi theo luật.
+2. **Leo thang** ~40% (≈55 shot): luật làm khổ nhân vật, rủi ro tăng dần, có ít nhất 1 lần suýt thất bại.
+3. **Twist** ~25% (≈35 shot): lộ nguyên nhân ẩn / bí mật người lớn / kẽ hở của luật.
+4. **Giải quyết** ~25% (≈35 shot): điểm yếu thành lời giải; kết ấm áp hoặc bất ngờ nhẹ, cảnh cuối gợi lại cảnh đầu.
+
+## Quy trình làm một tập (giọng đọc dẫn nhịp)
+1. Chốt **luật, điểm yếu, twist, lời giải** — mỗi thứ 1 câu.
+2. Viết **lời dẫn** (ngôi thứ nhất, câu ngắn) theo 4 phần trên.
+3. Viết `episodes/epNNN/narration.txt` (mỗi dòng 1 câu) → push → workflow `tts-narration` tự tạo giọng đọc
+   → `narration.mp3/.json/.srt`. Thời lượng shot bám theo `narration.json` (1 câu ≈ 1–4 shot).
+4. Bẻ từng câu thành shot trong `shots.js` (mỗi shot ghi `line` = số câu thoại nó minh hoạ).
+5. Thiếu asset → Kenney trước, Polyfork sau; ghi manifest.
+6. Xem contact sheet cả phim → sửa shot lỗi → render từng đoạn → ghép MP4 1080×1920.
+
+
+## Sử dụng agent (chung)
+- Claude ĐƯỢC PHÉP dùng agent nhỏ hơn (Haiku/Sonnet) để hỗ trợ, không cần hỏi lại.
+- **Huy động nhiều agent chạy song song** (gọi nhiều Agent trong cùng 1 lượt, chạy nền) mỗi khi việc chia được thành
+  phần độc lập: các chương shot, các asset/env, các đoạn contact sheet cần kiểm, các đoạn render.
+- **Chọn model theo độ khó** (luôn ghi rõ `model` khi gọi Agent):
+  - `haiku`: việc đơn giản, lặp lại — tra cứu, đổi tên, chép số liệu, kiểm tra định dạng, đọc log.
+  - `sonnet` (mặc định cho agent phụ): viết/sửa shot theo mẫu, dựng asset/env theo skill, xem contact sheet và báo lỗi.
+  - `opus`: CHỈ khi việc khó — kiến trúc engine, IK/rig, lỗi khó tìm, quyết định đạo diễn ảnh hưởng cả phim.
+- Mỗi agent chỉ sửa file/khối việc của mình (vd. `shots.js` đoạn s046–s090), không sửa engine dùng chung nếu không
+  được giao; agent chính gộp kết quả, chạy kiểm tra và commit.
+- 3 vai:
+  - **kịch bản**: luật, twist, lời dẫn; bẻ câu thoại thành shot — mỗi agent nhận 1 phần (~35–55 shot) chạy song song.
+  - **asset**: tìm/tải/manifest.
+  - **kiểm tra**: xem contact sheet, báo shot lỗi (bố cục, camera, chữ, liên tục nhân vật, thời lượng) theo `id`.
+- Agent chính giữ `episode.js`, dàn ý và tính liên tục; ghép kết quả và quyết định cuối. Việc nhỏ thì tự làm.
+
+## Nghiên cứu video tham khảo (`tools/ref.py`)
+- Cần `yt-dlp` + `ffmpeg`. Lời thoại chỉ lấy từ phụ đề có sẵn (vi/en, kể cả tự động), không nhận dạng giọng. Chạy: `python tools/ref.py "ytsearch5:In This Town roblox story"`
+  hoặc dán URL/file. Kết quả ở `refs/<id>/` (chỉ báo cáo + ảnh được commit; video nằm trong `.gitignore`).
+- Claude đọc `report.md` (thống kê shot, nhịp 4 phần, lời thoại theo shot) + `sheets/*.jpg` (mỗi ô 1 shot).
+- Nhiều video → `refs/summary.md` so sánh độ dài, số shot, shot/phút.
+- Bắt thiếu cắt cảnh → giảm `--thr` (vd 0.15); bắt thừa → tăng (vd 0.35).
+- Chỉ để học nhịp/cấu trúc; không chép cốt truyện, không đăng lại nội dung người khác.
+
+### Chạy tự động trên GitHub Actions (Claude tự làm, không cần người dùng)
+- Cloud của Claude không vào được YouTube → việc tải + phân tích chạy trên GitHub Actions (`.github/workflows/ref.yml`).
+- Claude chạy: `tools/ref_remote.sh "ytsearch5:In This Town roblox story" "<url>"` trong repo
+  → ghi vào `refs/queue.txt`, push → Actions tải, phân tích, commit `refs/<id>/` → script tự `git pull` và in tóm tắt.
+- Sau đó Claude đọc `refs/summary.md`, `refs/<id>/report.md`, `refs/<id>/sheets/*.jpg`; lỗi xem `refs/errors.md`.
+- Video bị xoá trên Actions, chỉ commit báo cáo + ảnh nhỏ. Repo nên để **private**.
+- YouTube đòi "xác minh không phải bot" → người dùng thêm secret `YT_COOKIES` (nội dung cookies.txt) cho repo.
+
+## Giọng đọc (`tools/tts.py` + engine Voice Studio trong `tools/voice_studio/`)
+- Engine là tool TTS của người dùng (Voice Studio): `edge_jobs.render_job` (Edge hoặc CapCut), `capcut_engine`,
+  `tts_engine`. KHÔNG sửa logic engine; nếu cần khác thì bọc ngoài trong `tools/tts.py`.
+- Tạo **từng câu một** rồi ghép thành 1 track → biết chính xác `start/end` mỗi câu (không cần nhận dạng giọng).
+- Nguồn:
+  - **Edge**: giọng Việt `vi-VN-HoaiMyNeural` (nữ), `vi-VN-NamMinhNeural` (nam). Chạy được trên GitHub Actions.
+  - **CapCut**: cần SDK ở `tools/voice_studio/vendor/capcut-tts-api/` (gói `capcut_tts_api` + `PROVENANCE.json`)
+    và secret `TTS_CAPCUT_DEVICE_CONFIG` (nếu tool cần). Giọng CapCut: chỉ tốc độ -50..100%, không cao độ/âm lượng.
+    Danh sách ID giọng: `tools/voice_studio/voices-capcut.txt` (workflow tự cập nhật).
+    SDK được commit sẵn trong repo; chạy được trên GitHub Actions không cần cấu hình thiết bị (đã kiểm chứng).
+    Giọng gợi ý: **mặc định tiếng Việt = `BV075_streaming` "Thanh Niên Tự Tin"** (người dùng chốt 2026-11-11); bé `BV074_streaming_dsp` "Giọng Bé"; mẹ `multi_female_yangguangnv_uranus_bigtts`
+    "Ban Mai"; nam trầm `multi_male_felipe_uranus_bigtts`. CapCut chậm hơn Edge (~1 phút/câu, 2 câu song song)
+    → tập 140 câu mất khoảng 1 giờ lần đầu; các lần sau chỉ tạo lại câu bị sửa (cache).
+  - `--dry`: không gọi dịch vụ, ước lượng ~14 ký tự/giây → dựng shot trước khi có giọng thật.
+- `narration.txt`:
+  - `@source capcut|edge` (nguồn mặc định cả tập), `@narrator <giọng> [tốc độ] [cao độ]`,
+    `@voice <vai> <giọng> [tốc độ] [cao độ]`, câu của vai: `[vai] …`.
+  - Giọng ghi kèm nguồn để trộn 2 nguồn: `capcut:<ID>` / `edge:<ID>`.
+  - Dòng trống = ngắt đoạn (lặng 0.6s), giữa 2 câu lặng 0.25s; `#` = ghi chú.
+- Edge: tốc độ -80..100%, cao độ -50..50Hz, âm lượng -100..100%. Song song: Edge tối đa 3, CapCut tối đa 2.
+- Cache từng câu ở `.cache/tts/` → sửa 1 câu chỉ tạo lại câu đó. Đổi file engine → workflow tạo lại mọi tập.
+- Giọng Edge tham khảo: `tools/voice_studio/voices-edge-vi.txt`.
+

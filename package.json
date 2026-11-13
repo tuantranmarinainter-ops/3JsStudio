@@ -6,14 +6,6 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "npx --yes hyperframes@0.9.30 preview",
-    "check": "npx --yes hyperframes@0.9.30 check",
-    "snapshot": "npx --yes hyperframes@0.9.30 snapshot",
-    "render": "npx --yes hyperframes@0.9.30 render",
-    "test:walk": "npx --yes hyperframes@0.9.30 render . -c episodes/_test_walk/index.html -o output/test_walk.mp4",
-    "render:ep001": "npx --yes hyperframes@0.9.30 render . -c episodes/ep001/index.html --workers 3 -o output/ep001.mp4",
-    "png:ep001": "npx --yes hyperframes@0.9.30 render . -c episodes/ep001/index.html --format png-sequence -o output/ep001_png",
-    "sheet:ep001": "bash tools/sheet_ep.sh ep001 1 15 output/sheet_ep001_1.jpg",
     "bundle": "node tools/bundle.mjs",
     "bundle:ep001": "node tools/bundle.mjs ep001",
     "doctor": "node tools/doctor.mjs ep001",
@@ -22,9 +14,10 @@
     "export-test": "node tools/export-test.mjs dist/ep001.html",
     "voices:sample": "python tools/voices_build.py ep001 sample",
     "kiem-luat": "node tools/kiem-luat.mjs",
-    "test": "python -m unittest discover -s tools/kb/tests && node --test tools/tests/*.test.mjs"
+    "test": "python -m unittest discover -s tools/kb/tests && node --test tools/tests/*.test.mjs",
+    "bundle:ep002": "node tools/bundle.mjs ep002",
+    "don": "node tools/don.mjs"
   },
-  "hyperframes": "0.9.30",
   "vendored": {
     "three": "0.187.0",
     "gsap": "3.15.0"

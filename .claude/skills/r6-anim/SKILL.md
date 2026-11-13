@@ -23,7 +23,7 @@ animation thẳng vào `R6_ANIMATIONS` trong `engine/r6.js`. Method by fwjelaa (
    hồi; mỗi pose chính bằng pose language; góc máy.
 2. Lập timeline trước khi code (bảng dưới), rồi viết `(t, o) => pose` trong `R6_ANIMATIONS`. Hàm thuần của t, không
    trạng thái, không `Math.random()`.
-3. Xem bằng `node tools/peek.mjs "episodes/_lab/index.html?view=chars&anim=<tên>" 0,0.1,0.2,… out.png` từ **2 góc**
+3. Xem bằng `node tools/look.mjs episodes/_lab/index.html --query "view=chars&anim=<tên>" --t 0,0.1,0.2,… --sheet output/look/<tên>/sheet.jpg` từ **2 góc**
    (3/4 trước và ngang). Sửa lỗi lớn nhất trước. 3–6 vòng.
 
 ## Timing (60 fps; snappy / weighty) → chia 60 ra giây

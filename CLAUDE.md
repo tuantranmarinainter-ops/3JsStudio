@@ -1,278 +1,114 @@
 # CLAUDE.md — Workspace Short "Ở thị trấn này…" (phong cách khối vuông)
 
 ## Mục tiêu
-Sản xuất video short dọc 1080×1920 theo format "Ở thị trấn này…".
-Một phim hoàn chỉnh ghép từ **~140 cảnh nhỏ (shot)** → mọi thứ thiết kế theo đơn vị shot.
-Độ dài phim: **2–3 phút** (chuẩn của format) → ~1 giây/shot.
+Sản xuất video short dọc 1080×1920 theo format "Ở thị trấn này…", **2–3 phút**, ghép từ **~140 shot** (~1 giây/shot).
+Cảnh 3D dựng bằng three.js + engine tự viết (`engine/`). Sản phẩm là **một file HTML** có nút Xuất MP4 chạy trên máy người dùng.
 
 ## Format "Ở thị trấn này" (= "In This Town" Roblox story)
-- Hoạt hình kể chuyện (không phải gameplay): một **luật lạ** chi phối cả thị trấn, kể **ngôi thứ nhất** bởi một
-  đứa trẻ, có **giọng đọc** dẫn truyện, nhạc + hiệu ứng âm thanh riêng.
-- Luật nên giống **cơ chế game** (thanh máu, chỉ số, % pin, con số trên đầu, "sàn là dung nham", đếm ngược…),
-  nói được trong **1 câu**.
-- Nhân vật chính có **điểm yếu** do luật gây ra (pin 1%, may mắn = 0…). Người lớn (mẹ, bà) thường giữ **bí mật**.
+- Hoạt hình kể chuyện: một **luật lạ** chi phối cả thị trấn, kể **ngôi thứ nhất** bởi một đứa trẻ, có giọng đọc, nhạc, tiếng động.
+- Luật giống **cơ chế game** (thanh máu, % pin, con số trên đầu, đếm ngược…), nói được trong **1 câu**.
+- Nhân vật chính có **điểm yếu** do luật gây ra. Người lớn (mẹ, bà) thường giữ **bí mật**.
 - Twist = **nguyên nhân ẩn / bí mật người lớn / kẽ hở của luật** — KHÔNG phải chỉ là quái vật xuất hiện.
-- Kết: **điểm yếu của nhân vật trở thành lời giải**.
+- Kết: **điểm yếu của nhân vật trở thành lời giải**. 4 phần: Hook ~10% · Leo thang ~40% · Twist ~25% · Giải quyết ~25%.
 - Chỉ dùng ý tưởng TỰ NGHĨ; không chép cốt truyện của kênh khác.
-Cảnh 3D dựng bằng three.js, render ra MP4 bằng **HyperFrames**. Claude điều khiển qua skill + CLI + Polyfork MCP.
 
-## Quy tắc người dùng (cập nhật 2026-11-11 — ưu tiên hơn các mục cũ bên dưới)
+## Quy tắc người dùng (ưu tiên cao nhất)
 - **Render trên máy người dùng, KHÔNG qua cloud/Actions.** Sản phẩm = `dist/<ep>.html` một file (nút ⬇ Xuất MP4 2K/1080p/4K
-  bằng GPU máy họ). Làm xong **luôn đưa link file HTML**. Skill: `xuat-phim`.
-- **Sau MỖI lần sửa xong (dù nhỏ) luôn gộp lại và đưa link file HTML** ở cuối câu trả lời: đường dẫn `S:\3JS Studio\dist\<file>.html` + `file:///S:/3JS%20Studio/dist/<file>.html` (bản xem thử khi chưa chốt: `dist/<ep>_xem-thu.html`).
+  bằng GPU máy họ). Skill: `xuat-phim`.
+- **Sau MỖI lần sửa xong (dù nhỏ) luôn gộp lại và đưa link file HTML** ở cuối câu trả lời: `S:\3JS Studio\dist\<file>.html` +
+  `file:///S:/3JS%20Studio/dist/<file>.html` (bản xem thử khi chưa chốt: `dist/<ep>_xem-thu.html`).
 - **Mọi tính năng mới phải bật/tắt được** trong trình phát (ngôn ngữ, giọng, phụ đề, tiếng, hiệu ứng hình…).
-- Bộ kịch bản người dùng đưa (khung ảnh + mô tả chi tiết) là **tài sản của họ** → làm luôn, không hỏi lại về nguồn.
+- Bộ kịch bản người dùng đưa (khung ảnh + mô tả) là **tài sản của họ** → làm luôn, không hỏi lại về nguồn.
 - Duyệt trước rồi mới ghép: đoạn mẫu / trang nghe thử → người dùng chốt → mới gộp vào HTML.
-- Giọng: Việt = CapCut qua VoiceStudio, Anh = Microsoft Edge đọc nhấn ở cú cắt. Skill: `giong-doc`.
-- **Phiên điều phối** (phiên chính ở `S:\3JS Studio`, nơi mở và theo dõi các phiên con; người dùng chốt 2026-11-13): không bỏ, không lưu trữ (archive),
-  **không `/clear`** — khi đầy chỉ dùng **`/compact`** để nén. Claude không đề nghị "chuyển sang phiên mới" hay clear cho phiên này (ngoại lệ của quy tắc
-  "phiên dài" trong CLAUDE.md chung và lời nhắc session-guard); thay vào đó nhắc người dùng `/compact` và đẩy việc nặng sang phiên con / agent phụ.
-  Trước khi compact, ghi các quyết định chưa có trong file vào `HANDOFF.md`/docs để không mất. **Phiên con thì clear thoải mái.**
+- Giọng: Việt = CapCut qua VoiceStudio (mặc định `BV075_streaming`), Anh = Microsoft Edge đọc nhấn ở cú cắt. Chạy trên máy, có cache
+  từng câu ở `.cache/tts/`. KHÔNG sửa logic `tools/voice_studio/`. Skill: `giong-doc`.
+- **Phiên điều phối** (phiên chính ở `S:\3JS Studio`): không bỏ, không archive, **không `/clear`** — khi đầy chỉ dùng **`/compact`**.
+  Claude không đề nghị "chuyển sang phiên mới" cho phiên này; nhắc `/compact` và đẩy việc nặng sang phiên con / agent phụ.
+  Trước khi compact, ghi quyết định chưa có trong file vào `HANDOFF.md`/docs. **Phiên con thì clear thoải mái.**
+- Tài sản Roblox (Creator Store, Marketplace) **được dùng để dựng phim**; tải bằng `tools/sky-extract/`, vẫn ghi nguồn vào manifest.
 - Đã chốt: hải đăng màu xanh; bỏ Three.js Water Pro; phông Be Vietnam Pro (phụ đề) + Patrick Hand (bưu thiếp).
 
 ## Công cụ (dùng thay vì viết script tạm)
 | Lệnh | Việc |
 |---|---|
-| `node tools/doctor.mjs ep001 [--fix-procs]` | kiểm cả repo: asset/manifest/ghi công, phông, shot liền frame, giọng/phụ đề/nhịp, bản gộp cũ, tiến trình treo, git |
-| `node tools/shaders.mjs <trang> [--film] [--json f] [--top N]` | đo số program shader + giờ dịch của Chrome/ANGLE (trang mở chậm): __ready, top program chậm, nhóm theo khoá mat_*/grunge_*; ⚠ khi > 80 program hoặc > 10 s (cũng có `doctor.mjs --shaders`) |
-| `bash tools/branches.sh [--fetch]` | phiên cloud nào đã push gì, nhánh nào chưa gộp |
-| `node tools/look.mjs <trang> --shots … / --t … / --range a:b:s [--ab trang2] [--det]` | bảng khung có nhãn, so A/B + PSNR, kiểm tất định (skill `kiem-tra-khung`) |
-| `node tools/look.mjs <trang> --t … --pose --out refs/<tên>` rồi `--pose-ref refs/<tên>/pose.json --ref refs/<tên>` | lưu chuẩn rồi kiểm lại **bằng số**: xương lệch (°, dời) + % điểm ảnh lệch; chỉ lưu `*_diff.png` cho khung vượt ngưỡng |
-| `npm run bundle:ep001` | gộp `dist/ep001.html` |
-| `node tools/export-test.mjs dist/ep001.html --range a:b --matrix "lang=vi,en;subs=1,0;voice=1,0"` | bấm Xuất MP4 tự động mọi tổ hợp + báo cáo |
-| `python tools/voices_build.py ep001 sample|vi|en|index [--only …]` | giọng nhiều giọng, trang nghe thử |
-| `python tools/en/beats.py` / `tools/en/tts_en.py` | lời Anh theo nhịp cắt cảnh |
-| `python tools/storyboard.py <thư mục> epNNN [--sheet] [--force]` | storyboard (khung + mô tả) → tập mới: episode/shots theo loại shot/narration `@at`/phụ đề/tiếng động/index.html + bảng so khung (skill `nhap-kich-ban`, định dạng `docs/kich-ban-vao.md`) |
-| `python tools/video2kb.py <video|URL> [--cua-toi] [--loi off] [--no-am-thanh]` | quăng video vào → shot + khung đầu/giữa/cuối + lời (faster-whisper GPU) + tiếng động/nhịp → `kich-ban/<tên>/storyboard.md` nháp cho Claude điền rồi `storyboard.py` (skill `video-sang-kich-ban`) |
+| `node tools/look.mjs <trang> --shots … / --t … / --frames … [--ab trang2] [--det] [--pose]` | **công cụ chụp duy nhất**: bảng khung có nhãn, so A/B, kiểm tất định, so bằng số (skill `kiem-tra-khung`) |
+| `node tools/build.mjs <ep> <lớp>` / `npm run bundle:ep001` | dựng lại một lớp / gộp `dist/<ep>.html` |
+| `node tools/export-test.mjs dist/<ep>.html --range a:b --matrix "…"` | bấm Xuất MP4 tự động mọi tổ hợp + báo cáo |
+| `node tools/doctor.mjs <ep> [--fix-procs] [--shaders]` | khám cả repo: asset, phông, shot, giọng, bản gộp cũ, tiến trình treo, git |
+| `node tools/shaders.mjs <trang>` | đo số shader + thời gian mở trang (⚠ khi > 80 program hoặc > 10 s) |
+| `node tools/lam-phim.mjs <ep>` | điều phối dây chuyền "một câu luật → phim" (skill `lam-phim`) |
+| `python tools/storyboard.py …` / `python tools/video2kb.py …` | kịch bản → tập mới / video → kịch bản (skill `nhap-kich-ban`, `video-sang-kich-ban`) |
+| `python tools/voices_build.py <ep> sample|vi|en|index` | giọng nhiều giọng, trang nghe thử |
+| `node tools/nhap-model.mjs tim|nhap|kiem` | nhập model qua Blender (`docs/nhap-model.md`) |
+| `node tools/feedback.mjs --latest` | đọc góp ý từ trình phát (skill `gop-y`) |
+| `node tools/don.mjs [--xoa]` | liệt kê / dọn ảnh kiểm tra cũ hơn 24 giờ trong `output/` |
 
-## Làm việc theo LỚP (người dùng chốt 2026-11-11)
-Mỗi tập chia lớp độc lập: **canh** (cảnh/model/camera), **hieu-ung-hinh**, **phu-de**, **giong**, **tieng-anh**, và tiếng động
-gồm **nen**, **buoc-chan**, **khoanh-khac** + **nhac** (nhạc nền, tự hạ khi có lời; `episodes/<ep>/music/plan.json`). Bản đồ lớp → file → lệnh: `episodes/<ep>/LAYERS.md`.
-Người dùng nói "sửa lớp X" → chỉ sửa file của lớp đó → `node tools/build.mjs <ep> <lớp>` (tự gộp `dist/<ep>.html`).
-Không trộn lẫn sửa nhiều lớp trong một lần nếu người dùng chỉ nhắc một lớp.
-
-## Stack (chỉ 3 thành phần)
-| Lớp | Công cụ | Vai trò |
-|---|---|---|
-| Render video | **Bản gộp 1 file + WebCodecs** trên máy người dùng (tools/bundle.mjs, tools/export-ui.js); HyperFrames chỉ còn dự phòng | HTML → MP4 tất định; phụ đề, giọng, hiệu ứng bật/tắt |
-| Cảnh 3D | **three.js** + engine tự viết (`engine/`) | Nhân vật R6, thị trấn, camera |
-| Asset | **Kenney** (gốc) + **Polyfork** (bổ sung, có MCP) | Nhà, đường, đạo cụ |
-
-Cài đặt: `npx hyperframes init` (workspace là một project HyperFrames, Node ≥ 22),
-`npx skills add heygen-com/hyperframes` (thêm /hyperframes, /hyperframes-cli, /gsap + skill three).
-Ghim phiên bản HyperFrames trong package.json (frame adapter còn là bản thử nghiệm v0).
-KHÔNG copy mã nguồn HyperFrames vào repo (monorepo ~400 MB) — dùng qua `npx`/npm + skill. Muốn đọc mã/tài liệu:
-clone tạm `https://github.com/heygen-com/hyperframes` ra ngoài repo (docs/packages/cli.mdx = tham chiếu CLI).
+## Làm việc theo LỚP
+Mỗi tập chia lớp độc lập: **canh**, **hieu-ung-hinh**, **phu-de**, **giong**, **tieng-anh**, **nen**, **buoc-chan**, **khoanh-khac**, **nhac**.
+Bản đồ lớp → file → lệnh: `episodes/<ep>/LAYERS.md`. Người dùng nói "sửa lớp X" → chỉ sửa file của lớp đó →
+`node tools/build.mjs <ep> <lớp>`. Không trộn nhiều lớp nếu người dùng chỉ nhắc một lớp. Skill: `sua-theo-lop`.
 
 ## Cấu trúc thư mục
 ```
-CLAUDE.md
-engine/
-  r6.js        nhân vật R6 (6 khối, 15 animation, 8 biểu cảm, randomLook)
-  stage.js     renderer 1080×1920, camera, ánh sáng, nghe sự kiện hf-seek
-  envs.js      ánh sáng + nạp bối cảnh; MỖI bối cảnh 1 file engine/envs/<tên>.js (town, forest, island, mountain…)
-  town.js      dựng thị trấn từ asset Kenney theo seed, trả địa điểm có tên (square, home, shop, street…)
-  shottypes.js thư viện LOẠI SHOT (camera + bố trí mặc định, liên tục giữa shot), dùng lại cho mọi tập
-  shots.js     đạo diễn: shot (dữ liệu) + t → camera/diễn viên/env/đạo cụ
-  cast.js      diễn viên R15 từ episode.actors (+ crowd theo seed)
-  timeline.js  t toàn cục → shot đang chạy + t cục bộ; nối trạng thái nhân vật giữa các shot
-  winter.js    trời (Sky.js + IBL), mây khối, tuyết rơi, tuyết phủ material, núi tuyết, nước (xem HANDOFF.md)
-  splash.js    nước văng khi vật cắt mặt nước (tự tìm thời điểm từ animation)
-assets/
-  kenney/      GLB CC0 (City Kit Roads/Commercial/Suburban)
-  polyfork/    asset tải từ Polyfork — nằm trong .gitignore (không được phân phối lại .mjs/HD)
-  special/     GLB riêng cho twist (quái vật, vật thể lạ)
-  manifest.json  id, nguồn, giấy phép, scale chuẩn hoá, node, clip
-episodes/
-  _template/             tập mẫu
-  ep001/
-    episode.js   cấu hình tập (seed, diễn viên, luật, twist)
-    shots.js     danh sách ~140 shot (dữ liệu thuần, mỗi shot 1 dòng)
-    index.html   composition HyperFrames tổng (đọc 2 file trên)
-output/        MP4, ảnh preview
+engine/        lõi dựng cảnh dùng chung: stage.js (sân khấu), shots.js + shottypes.js + timeline.js (đạo diễn),
+               r15.js + ga-rig.js + cast.js (nhân vật), envs.js + envs/<tên>.js (mỗi bối cảnh 1 file), post.js (hậu kỳ)
+episodes/<ep>/ dữ liệu một tập: episode.js, shots.js (mỗi shot 1 dòng), narration.txt, index.html, LAYERS.md
+assets/        kenney/ polyfork/ polyhaven/ nhap/ special/ + manifest.json (mọi asset phải có dòng ở đây)
+tools/         công cụ dòng lệnh + tools/tests/ (npm test)
+docs/          tài liệu; docs/handoff/ = handoff và báo cáo của các phiên
+dist/          bản gộp HTML (không vào git)      output/  ảnh, video kiểm tra (không vào git, dọn bằng tools/don.mjs)
+refs/          ảnh chuẩn so khung               .cache/  giọng, tiếng động đã tạo
 ```
+- **Handoff / báo cáo mới** ghi vào `docs/handoff/<tên>.md`; ở gốc repo chỉ có `HANDOFF.md` của phiên điều phối.
+- **Ảnh và video kiểm tra** chỉ ghi vào `output/<tên-việc>/`; file tạm của script ghi vào `output/_tmp/`. Không ghi vào gốc repo.
 
-## Luật camera "dồn dập" (người dùng chốt 2026-11-11, bắt buộc cho mọi shot)
-- Camera **gần như không bao giờ đứng yên**: mỗi shot có zoom in hoặc zoom out rõ (đổi `dist`/`fov` hoặc `p`→`p2`), tạo nhịp cuốn.
-- **1 người trong khung → zoom IN** (đẩy dần vào mặt/thân). **2 người trở lên hoặc vật lớn (ngôi nhà) → zoom OUT** (lùi dần cho thấy toàn bộ).
-- **Nhà có chân**: zoom out hoặc lia ngang trái↔phải để **thấy trọn 4 chân**; không giữ khung tĩnh làm mất chân.
-- Shot tĩnh chỉ dùng hiếm, khi cần dừng nhịp (bưu thiếp cận để đọc chữ).
+## Luật camera "dồn dập" (bắt buộc cho mọi shot)
+- Camera **gần như không bao giờ đứng yên**: mỗi shot có zoom in hoặc zoom out rõ (đổi `dist`/`fov` hoặc `p`→`p2`).
+- **1 người trong khung → zoom IN.** **2 người trở lên hoặc vật lớn (ngôi nhà) → zoom OUT.**
+- **Nhà có chân**: zoom out hoặc lia ngang để **thấy trọn 4 chân**.
+- Shot tĩnh chỉ dùng hiếm (bưu thiếp cận để đọc chữ).
 - Không để đạo cụ/cây che mặt nhân vật hoặc mặt tiền nhà; không cắt nửa người nhân vật chính.
 
-## Hệ thống shot (~140 shot / phim)
-**Nguyên tắc:** shot là DỮ LIỆU, không phải code. Không viết tay 140 cảnh — chọn LOẠI SHOT có sẵn rồi điền tham số.
-
-`episodes/epNNN/episode.js` — cấu hình chung, khai báo 1 lần:
-```js
-export const EPISODE = {
-  seed: 7,                                   // thị trấn + dân giống hệt mỗi lần render
-  rule: 'Ai đi bộ cũng phải nhảy',
-  twist: 'special/monster.glb',
-  actors: { hero: { shirt: '#e74c3c', face: 'smile' }, mom: { shirt: '#8e44ad' }, crowd: { count: 12 } },
-  places: { square: [0, 0, 0], shop: [20, 0, -8], home: [-15, 0, 10] },
-};
-```
-
-`episodes/epNNN/shots.js` — mỗi shot 1 dòng, chỉ ghi phần KHÁC mặc định:
-```js
-export const SHOTS = [
-  { id: 's001', dur: 1.5, type: 'establish', at: 'square', text: 'Ở thị trấn này…' },
-  { id: 's002', dur: 1.0, type: 'crowd',     at: 'square', anim: 'jump' },
-  { id: 's003', dur: 0.8, type: 'closeup',   who: 'hero',  face: 'surprised' },
-  { id: 's004', dur: 1.2, type: 'walkBy',    who: 'hero',  at: 'square', anim: 'walk' },
-  // … ~140 dòng
-];
-```
-
-Loại shot trong `engine/shottypes.js` (thư viện dùng chung, ~10–12 loại, thêm khi thật cần):
-establish (toàn cảnh), crowd (đám đông), walkBy (đi ngang), follow (bám theo), closeup (cận mặt),
-reaction (phản ứng), overShoulder (qua vai), insert (cận đạo cụ), chase (rượt), reveal (lộ twist), dialogue (thoại 2 người).
-Mỗi loại tự quyết camera + bố trí mặc định; shot chỉ ghi đè khi cần.
-
-Quy tắc shot:
-- `id` cố định (s001…), không đánh số lại khi chèn — chèn thì dùng `s012a`.
-- `dur` tính bằng giây; tổng thời lượng = tổng `dur`, phải khớp độ dài mục tiêu.
-- **Liên tục giữa các shot:** `timeline.js` giữ vị trí/hướng/trang phục nhân vật nối từ shot trước sang shot sau,
-  trừ khi shot ghi rõ `at`/vị trí mới.
-- Phụ đề lấy từ lời dẫn (theo câu), không gõ lại trong shot; trường `text` chỉ cho chữ nổi đặc biệt (tiêu đề luật, con số).
-- Giọng đọc, nhạc: 1 track liền cho cả phim (không cắt theo shot). Hiệu ứng âm thanh gắn theo shot (`sfx`).
-
-Render 140 shot:
-- Preview: `npx hyperframes snapshot . --at <giữa mỗi shot>` (có contact sheet) hoặc `--review` (khung mỗi cảnh + quanh mỗi cắt).
-  Kiểm tra lỗi bố cục: `npx hyperframes check . --range a,b`.
-- Render theo **đoạn**: `npx hyperframes render --start a --end b -o output/part_NN.mp4` (~10–20 shot/đoạn),
-  chỉ render lại đoạn có shot bị sửa; ghép bằng FFmpeg (concat). `--workers` để chạy song song trong 1 lần render.
-- Root composition: `data-width="1080" data-height="1920" data-fps="30"`.
-- Claude chủ yếu sửa `shots.js`/`episode.js`, hạn chế sửa `engine/`.
+## Hệ thống shot
+- Shot là DỮ LIỆU, không phải code: chọn LOẠI SHOT trong `engine/shottypes.js` rồi điền tham số, mỗi shot 1 dòng trong `shots.js`,
+  chỉ ghi phần KHÁC mặc định. Loại có sẵn: establish, crowd, walkBy, follow, closeup, reaction, overShoulder, insert, chase, reveal, dialogue.
+- `id` cố định (s001…), không đánh số lại khi chèn — chèn thì dùng `s012a`. `dur` tính bằng giây.
+- `timeline.js` nối vị trí/hướng/trang phục nhân vật giữa các shot, trừ khi shot ghi rõ `at`/vị trí mới.
+- Phụ đề lấy từ lời dẫn; trường `text` chỉ cho chữ nổi đặc biệt. Giọng, nhạc là 1 track liền; tiếng động gắn theo shot.
+- Claude chủ yếu sửa `shots.js`/`episode.js`, hạn chế sửa `engine/`. Tập mới chỉ ghi dữ liệu (`env`, `seaWeather`, `float`…) — xem `docs/core.md`.
+- Ví dụ `episode.js`/`shots.js` đầy đủ: `docs/chi-tiet-tu-claude-md.md`.
 
 ## Quy tắc kỹ thuật (bắt buộc)
-- Thời gian chỉ lấy từ HyperFrames: sự kiện `hf-seek` (`e.detail.time`) → đặt pose/camera → `renderer.render()` 1 lần.
-  Việc bất đồng bộ trong lúc seek → `e.detail.waitUntil(promise)`.
-- Gán `window.THREE = THREE` để adapter three của HyperFrames theo dõi `DefaultLoadingManager`
-  và chờ GLB/texture tải xong trước khi chụp frame.
+- Mọi animation là **hàm thuần của `t`**: tua tới/lui/nhảy cóc đều ra cùng kết quả. Trang phát đặt pose/camera theo `t` rồi vẽ 1 lần.
 - CẤM dùng giờ thực, `requestAnimationFrame`/`setAnimationLoop` cho chuyển động, `Math.random()` không seed.
-- Tải xong mọi GLB/texture trước khi seek; không fetch trong lúc seek.
-- Mọi animation là hàm thuần của `t`, tua tới/lui/nhảy cóc đều ra cùng kết quả.
+- Tải xong mọi GLB/texture trước khi tua (`window.__ready`); không fetch trong lúc tua. Gán `window.THREE = THREE`.
 - Đặt tên rõ cho object, bộ phận, clip — đó là "tay cầm" để Claude điều khiển.
-- Sau mỗi thay đổi: xem preview vài frame (đầu, giữa mỗi shot, cuối) trước khi render cả video.
-- Tài sản Roblox (Creator Store, Marketplace: mũ, phụ kiện, đạo cụ, trời) **được dùng để dựng phim** (người dùng chốt 2026-11-13: chỉ làm video
-  phong cách Roblox, không bán lại hay khai thác tài sản; người dùng chịu trách nhiệm giấy phép). Tải bằng `tools/sky-extract/`; vẫn ghi nguồn
-  (asset ID, người tạo, link) vào manifest + ghi công như mọi asset khác.
-
-## Nhân vật R6 (`engine/r6.js`)
-- Dùng cho cả nhân vật chính lẫn dân thị trấn; dựng bằng code, không cần GLB hay Mixamo.
-- 6 khối có tên: `torso`, `head`, `rightArm`, `leftArm`, `rightLeg`, `leftLeg` + `body` (nhún/nhảy/ngã) + `hat`.
-- Pivot cổ/vai/hông. Mặt nhìn +Z; tay PHẢI ở -X. 1 đơn vị = 1 stud, cao ~5.2.
-- API: `createR6(THREE, opts)` → `.animate(name, t, {from, mix})`, `.setFace()`, `.setColors()`, `.setHat()`.
-- Animation: idle, walk, run, jump, fall, wave, point, sit, scared, cheer, dance, lookAround, faint, cower, tpose.
-- Biểu cảm: smile, happy, neutral, sad, scared, surprised, angry, sleepy.
-- Dân thị trấn: `randomLook(seed)`. Animation mới = thêm 1 hàm `(t) => pose` vào `R6_ANIMATIONS`.
+- Nhân vật: **R15** (`engine/r15.js`, `createR15`) và Gà (`engine/ga-rig.js`), khai báo trong `episode.actors` qua `cast.js`.
+  Mặt nhìn +Z; 1 đơn vị = 1 stud. Animation mới = thêm 1 hàm `(t) => pose`.
+- Chụp và render mặc định bằng GPU; chỉ đặt `GL=swiftshader` khi so khung tất định (`docs/core.md`).
+- Sau mỗi thay đổi: kiểm vài khung (đầu, giữa, cuối shot) trước khi gộp.
 
 ## Asset
-1. **Kenney** (kenney.nl, CC0, scale 1.0) — bộ gốc: City Kit Roads/Commercial/Suburban.
-2. **Polyfork** (polyfork.dev) — chỉ khi Kenney thiếu. MCP `https://polyfork.dev/mcp` (search_assets,
-   get_asset, get_variant, list_kits, get_kit). Đọc `https://polyfork.dev/prompt.txt` lần đầu.
-   Mesh GLB miễn phí là **CC BY 4.0** → được commit vào `assets/polyfork/` kèm ghi công (`assets/polyfork/CREDITS.md`);
-   KHÔNG commit/phân phối `.mjs` hay bản HD. Tải qua GitHub Actions: thêm dòng `polyfork:<id>` vào `assets/queue.txt` → push
-   (cloud của Claude bị chặn polyfork.dev). Danh mục công khai: github.com/lucas-martinic/polyfork-catalog (catalog.json).
-3. **GLB riêng** (`assets/special/`) — chỉ cho twist. Nguồn gợi ý: Quaternius (quái vật; kiểm tra giấy phép QAL).
-- Mỗi asset nhập vào phải có dòng trong `assets/manifest.json`. Chuẩn hoá scale về chuẩn Kenney.
-- **Blender 5.1.2** (`S:/Program Files/Blender Foundation/Blender 5.1/blender.exe`, biến `BLENDER` trong `.env.local`) là **trạm nhập model**
-  (người dùng chốt 2026-11-13): `node tools/nhap-model.mjs tim|nhap|kiem` tìm trên Sketchfab / Poly Haven / Poly Pizza → chuẩn hoá → `assets/nhap/`
-  + manifest + ghi công. Chỉ CC0 và CC BY. **Ưu tiên low poly** theo ngưỡng trong `docs/nhap-model.md`; không có low poly → hỏi người dùng trước.
-  Blender KHÔNG dùng cho animation, bố trí cảnh, ánh sáng theo shot hay render (các phần đó phải là hàm của `t` trong three.js).
+1. **Kenney** (CC0, scale 1.0) — bộ gốc. 2. **Polyfork / Poly Haven / Sketchfab / Poly Pizza** — khi Kenney thiếu, nhập bằng
+   `tools/nhap-model.mjs` qua **Blender 5.1.2** (biến `BLENDER` trong `.env.local`). 3. **GLB riêng** (`assets/special/`) — chỉ cho twist.
+- Chỉ CC0 và CC BY; mỗi asset có dòng trong `assets/manifest.json` + ghi công. KHÔNG commit `.mjs`/bản HD của Polyfork.
+- **Ưu tiên low poly** theo ngưỡng `docs/nhap-model.md`; không có low poly → hỏi người dùng trước.
+- Blender chỉ là trạm nhập model; KHÔNG dùng cho animation, bố trí cảnh, ánh sáng hay render.
 
-## Cấu trúc phim (~140 shot, 2–3 phút)
-1. **Hook** ~10% (≈15 shot): 2–3 giây đầu phải có câu "Ở thị trấn này, …" + hình minh hoạ luật ngay.
-   Sau đó giới thiệu "tôi" và điểm yếu của tôi theo luật.
-2. **Leo thang** ~40% (≈55 shot): luật làm khổ nhân vật, rủi ro tăng dần, có ít nhất 1 lần suýt thất bại.
-3. **Twist** ~25% (≈35 shot): lộ nguyên nhân ẩn / bí mật người lớn / kẽ hở của luật.
-4. **Giải quyết** ~25% (≈35 shot): điểm yếu thành lời giải; kết ấm áp hoặc bất ngờ nhẹ, cảnh cuối gợi lại cảnh đầu.
+## Agent phụ
+- Tuân theo quy tắc agent trong CLAUDE.md chung của người dùng (model rẻ, tối đa 3 cùng lúc, giao việc rõ, kiểm lại kết quả).
+  Riêng dây chuyền `lam-phim` thì theo "Quy tắc agent" trong skill đó.
+- **Mỗi agent sở hữu file riêng**: bối cảnh = `engine/envs/<tên>.js`; shot = dải dòng trong `shots.js` (sửa từng dòng bằng Edit).
+  Không giao 2 agent cùng một file; không sửa engine dùng chung nếu không được giao. Chia đều, ≤ 3–4 lỗi mỗi agent.
+- **Chụp kiểm nhanh**: agent chỉ chụp đúng shot mình sửa (`look.mjs --shots …`), mỗi agent `--out output/look/<tên-agent>` riêng.
+- **Người dùng báo lỗi theo frame** → `look.mjs --frames 676,1262` (chỉ chụp phân cảnh chứa frame đó). Không chụp cả phim để tìm lỗi.
+- **Kiểm bằng số trước, mở ảnh sau**: lưu chuẩn `look.mjs … --pose --out refs/<tên>`; sau khi sửa chạy
+  `--pose-ref refs/<tên>/pose.json --ref refs/<tên>`. Số báo OK thì KHÔNG mở ảnh; lệch thì chỉ mở `*_diff.png` được nêu.
+- **Kiểm cả phim 1 lần ở cuối** (agent chính): `node tools/look.mjs episodes/<ep>/index.html --shots all --det`.
+- Agent chính giữ `episode.js`, dàn ý và tính liên tục; gộp kết quả, chạy kiểm tra và commit.
 
-## Quy trình làm một tập (giọng đọc dẫn nhịp)
-1. Chốt **luật, điểm yếu, twist, lời giải** — mỗi thứ 1 câu.
-2. Viết **lời dẫn** (ngôi thứ nhất, câu ngắn) theo 4 phần trên.
-3. Viết `episodes/epNNN/narration.txt` (mỗi dòng 1 câu) → push → workflow `tts-narration` tự tạo giọng đọc
-   → `narration.mp3/.json/.srt`. Thời lượng shot bám theo `narration.json` (1 câu ≈ 1–4 shot).
-4. Bẻ từng câu thành shot trong `shots.js` (mỗi shot ghi `line` = số câu thoại nó minh hoạ).
-5. Thiếu asset → Kenney trước, Polyfork sau; ghi manifest.
-6. Xem contact sheet cả phim → sửa shot lỗi → render từng đoạn → ghép MP4 1080×1920.
-
-## Sử dụng agent — chia việc NHANH (người dùng chốt 2026-11-11)
-- **Mỗi agent sở hữu file riêng**: bối cảnh = `engine/envs/<tên>.js` (16 file, mỗi env 1 file; `engine/envs.js` chỉ còn ánh sáng + nạp env),
-  shot = dải dòng trong `episodes/<ep>/shots.js` (sửa từng dòng bằng Edit, không ghi lại cả file). Không giao 2 agent cùng một file env.
-- **Chia đều, ≤ 3–4 lỗi mỗi agent**; việc nặng (bão, mây, đảo…) tách nhỏ. Cả đợt chỉ nhanh bằng agent chậm nhất.
-- **Chụp kiểm nhanh**: `look.mjs` mặc định chụp 540×960, tua không chụp, tự chạy 4 tab khi > 8 thời điểm (`--jobs N`).
-  Agent chỉ chụp đúng shot mình sửa (`--shots …` / `--t …`), mỗi agent `--out output/look/<tên-agent>` riêng.
-- **Người dùng báo lỗi theo frame → chỉ chụp phân cảnh chứa frame đó**: `look.mjs --frames 676,1262` tự tìm shot của từng frame và chụp frame đó + đầu/giữa/cuối shot (3 frame lỗi ≈ 35 giây). Không chụp cả phim để tìm lỗi.
-- **Kiểm bằng số trước, mở ảnh sau** (tiết kiệm token): trước khi sửa, lưu chuẩn `look.mjs … --pose --out refs/<tên>`; sau khi sửa chạy `--pose-ref refs/<tên>/pose.json --ref refs/<tên>`. Số báo OK thì KHÔNG mở ảnh; báo lệch thì chỉ mở đúng `*_diff.png` được nêu (hoặc giao agent phụ xem và trả lời bằng chữ).
-- **Kiểm cả phim 1 lần ở cuối** (agent chính): `node tools/look.mjs episodes/<ep>/index.html --shots all --det` (~2–3 phút).
-- Góp ý của người dùng từ trình phát (nút "Ghi chú lỗi") → `node tools/feedback.mjs --latest` (frame + shot + ảnh khoanh) → chia agent theo file.
-
-## Sử dụng agent (chung)
-- Claude ĐƯỢC PHÉP dùng agent nhỏ hơn (Haiku/Sonnet) để hỗ trợ, không cần hỏi lại.
-- **Huy động nhiều agent chạy song song** (gọi nhiều Agent trong cùng 1 lượt, chạy nền) mỗi khi việc chia được thành
-  phần độc lập: các chương shot, các asset/env, các đoạn contact sheet cần kiểm, các đoạn render.
-- **Chọn model theo độ khó** (luôn ghi rõ `model` khi gọi Agent):
-  - `haiku`: việc đơn giản, lặp lại — tra cứu, đổi tên, chép số liệu, kiểm tra định dạng, đọc log.
-  - `sonnet` (mặc định cho agent phụ): viết/sửa shot theo mẫu, dựng asset/env theo skill, xem contact sheet và báo lỗi.
-  - `opus`: CHỈ khi việc khó — kiến trúc engine, IK/rig, lỗi khó tìm, quyết định đạo diễn ảnh hưởng cả phim.
-- Mỗi agent chỉ sửa file/khối việc của mình (vd. `shots.js` đoạn s046–s090), không sửa engine dùng chung nếu không
-  được giao; agent chính gộp kết quả, chạy kiểm tra và commit.
-- 3 vai:
-  - **kịch bản**: luật, twist, lời dẫn; bẻ câu thoại thành shot — mỗi agent nhận 1 phần (~35–55 shot) chạy song song.
-  - **asset**: tìm/tải/manifest.
-  - **kiểm tra**: xem contact sheet, báo shot lỗi (bố cục, camera, chữ, liên tục nhân vật, thời lượng) theo `id`.
-- Agent chính giữ `episode.js`, dàn ý và tính liên tục; ghép kết quả và quyết định cuối. Việc nhỏ thì tự làm.
-
-## Nghiên cứu video tham khảo (`tools/ref.py`)
-- Cần `yt-dlp` + `ffmpeg`. Lời thoại chỉ lấy từ phụ đề có sẵn (vi/en, kể cả tự động), không nhận dạng giọng. Chạy: `python tools/ref.py "ytsearch5:In This Town roblox story"`
-  hoặc dán URL/file. Kết quả ở `refs/<id>/` (chỉ báo cáo + ảnh được commit; video nằm trong `.gitignore`).
-- Claude đọc `report.md` (thống kê shot, nhịp 4 phần, lời thoại theo shot) + `sheets/*.jpg` (mỗi ô 1 shot).
-- Nhiều video → `refs/summary.md` so sánh độ dài, số shot, shot/phút.
-- Bắt thiếu cắt cảnh → giảm `--thr` (vd 0.15); bắt thừa → tăng (vd 0.35).
-- Chỉ để học nhịp/cấu trúc; không chép cốt truyện, không đăng lại nội dung người khác.
-
-### Chạy tự động trên GitHub Actions (Claude tự làm, không cần người dùng)
-- Cloud của Claude không vào được YouTube → việc tải + phân tích chạy trên GitHub Actions (`.github/workflows/ref.yml`).
-- Claude chạy: `tools/ref_remote.sh "ytsearch5:In This Town roblox story" "<url>"` trong repo
-  → ghi vào `refs/queue.txt`, push → Actions tải, phân tích, commit `refs/<id>/` → script tự `git pull` và in tóm tắt.
-- Sau đó Claude đọc `refs/summary.md`, `refs/<id>/report.md`, `refs/<id>/sheets/*.jpg`; lỗi xem `refs/errors.md`.
-- Video bị xoá trên Actions, chỉ commit báo cáo + ảnh nhỏ. Repo nên để **private**.
-- YouTube đòi "xác minh không phải bot" → người dùng thêm secret `YT_COOKIES` (nội dung cookies.txt) cho repo.
-
-## Giọng đọc (`tools/tts.py` + engine Voice Studio trong `tools/voice_studio/`)
-- Engine là tool TTS của người dùng (Voice Studio): `edge_jobs.render_job` (Edge hoặc CapCut), `capcut_engine`,
-  `tts_engine`. KHÔNG sửa logic engine; nếu cần khác thì bọc ngoài trong `tools/tts.py`.
-- Tạo **từng câu một** rồi ghép thành 1 track → biết chính xác `start/end` mỗi câu (không cần nhận dạng giọng).
-- Nguồn:
-  - **Edge**: giọng Việt `vi-VN-HoaiMyNeural` (nữ), `vi-VN-NamMinhNeural` (nam). Chạy được trên GitHub Actions.
-  - **CapCut**: cần SDK ở `tools/voice_studio/vendor/capcut-tts-api/` (gói `capcut_tts_api` + `PROVENANCE.json`)
-    và secret `TTS_CAPCUT_DEVICE_CONFIG` (nếu tool cần). Giọng CapCut: chỉ tốc độ -50..100%, không cao độ/âm lượng.
-    Danh sách ID giọng: `tools/voice_studio/voices-capcut.txt` (workflow tự cập nhật).
-    SDK được commit sẵn trong repo; chạy được trên GitHub Actions không cần cấu hình thiết bị (đã kiểm chứng).
-    Giọng gợi ý: **mặc định tiếng Việt = `BV075_streaming` "Thanh Niên Tự Tin"** (người dùng chốt 2026-11-11); bé `BV074_streaming_dsp` "Giọng Bé"; mẹ `multi_female_yangguangnv_uranus_bigtts`
-    "Ban Mai"; nam trầm `multi_male_felipe_uranus_bigtts`. CapCut chậm hơn Edge (~1 phút/câu, 2 câu song song)
-    → tập 140 câu mất khoảng 1 giờ lần đầu; các lần sau chỉ tạo lại câu bị sửa (cache).
-  - `--dry`: không gọi dịch vụ, ước lượng ~14 ký tự/giây → dựng shot trước khi có giọng thật.
-- `narration.txt`:
-  - `@source capcut|edge` (nguồn mặc định cả tập), `@narrator <giọng> [tốc độ] [cao độ]`,
-    `@voice <vai> <giọng> [tốc độ] [cao độ]`, câu của vai: `[vai] …`.
-  - Giọng ghi kèm nguồn để trộn 2 nguồn: `capcut:<ID>` / `edge:<ID>`.
-  - Dòng trống = ngắt đoạn (lặng 0.6s), giữa 2 câu lặng 0.25s; `#` = ghi chú.
-- Edge: tốc độ -80..100%, cao độ -50..50Hz, âm lượng -100..100%. Song song: Edge tối đa 3, CapCut tối đa 2.
-- Cache từng câu ở `.cache/tts/` → sửa 1 câu chỉ tạo lại câu đó. Đổi file engine → workflow tạo lại mọi tập.
-- Giọng Edge tham khảo: `tools/voice_studio/voices-edge-vi.txt`.
-
-## Skill hỗ trợ (`.claude/skills/` + `skills/`)
-- `xuat-phim` (gộp HTML + xuất MP4 + giao link), `giong-doc` (CapCut/Edge nhiều giọng, nghe thử), `kiem-tra-khung` (look/A-B/tất định).
-- `r6-anim` (animation R6), `ref-model` (model từ ảnh), `scene-env` (môi trường), `vfx3d` (hiệu ứng tất định):
-  phương pháp của **fwjelaa (FWJ STUDIOS)** chuyển sang three.js. Gói gốc (Roblox Studio/Blender) ở `skills/fwjelaa/`
-  — đọc khi cần chi tiết; cloud không có Blender/Studio nên chỉ dùng phương pháp. Ghi công fwjelaa khi chia sẻ.
-- `skills/forgegui/MASTER_PROMPT_game_ui.md`: prompt dựng UI game Roblox bằng ForgeGUI + Roblox Studio MCP
-  (dự án khác; cần Studio MCP trên máy người dùng).
-
-## Core (lõi engine dùng lại cho mọi tập)
-- Hướng dẫn: **`docs/core.md`** — water, sea (`makeSea`), floating, seaweather (thang thời tiết biển), ibl, materials, grunge, scans, post toggles, look.mjs.
-- Tập mới chỉ ghi dữ liệu: `env: 'sea'`, `seaWeather: 'nang' | { from, to }`, `cast/props.<tên>.float`, `seaEvents`, `house.boat` — không viết env/code nổi mới.
-- Thử lõi biển riêng (cả trên điện thoại): `engine/sea-lab.html?wx=giong&wx2=bao&mix=0.5&t=4`.
+## Đọc thêm khi cần (không nạp sẵn)
+- `docs/core.md` — lõi engine: biển, thời tiết, vật liệu, hậu kỳ, look.mjs. `docs/shaders.md`, `docs/vat-lieu.md`, `docs/nhap-model.md`, `docs/kich-ban-vao.md`.
+- `docs/chi-tiet-tu-claude-md.md` — ví dụ shot đầy đủ, quy trình viết tập, `tools/ref.py` (nghiên cứu video tham khảo), cú pháp
+  `narration.txt` và giọng, R6, luồng HyperFrames cũ (chỉ còn dự phòng: `tools/render-local.mjs`).
+- `skills/fwjelaa/` — phương pháp gốc của fwjelaa (FWJ STUDIOS) cho skill `r6-anim`, `ref-model`, `scene-env`, `vfx3d`; ghi công khi chia sẻ.

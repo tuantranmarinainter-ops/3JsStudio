@@ -11,6 +11,6 @@ Gốc: `skills/fwjelaa/maps/CLAUDE.md`, `styles/simulator.md` (phong cách khố
 1. **Kế hoạch 5 dòng**: chủ đề + giờ trong ngày; bố cục (vùng chính, lối đi, điểm nhìn); bảng màu hex; ánh sáng/bầu trời/sương;
    danh sách đạo cụ + mật độ rải (seed).
 2. **Xây theo pha**: địa hình (mặt đất/nước) → khối lớn (nhà, núi) → đạo cụ vừa → rải chi tiết (cây, đá, cỏ — InstancedMesh, seed cố định) → ánh sáng + sương + bầu trời.
-3. **QA**: chụp từ đúng các góc camera của shot dùng env đó (`tools/peek.mjs`), chấm theo rubric qa.md: đọc được chủ thể,
+3. **QA**: chụp từ đúng các góc camera của shot dùng env đó (`tools/look.mjs <trang> --shots … / --t …`), chấm theo rubric qa.md: đọc được chủ thể,
    chiều sâu (tiền/trung/hậu cảnh), không khoảng trống/lỗ, đường chân trời, màu khớp tham chiếu. Ít nhất 2 vòng.
 4. **Ngân sách**: < 300k tam giác hiển thị/khung, < 150 draw call, bóng đổ chỉ quanh điểm nhìn (stage.shadowFocus).

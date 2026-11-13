@@ -13,7 +13,7 @@ primitive three.js (Box/Cylinder/Extrude/Lathe + texture canvas), giữ phong c�
    dạng hex (lấy mẫu bằng PIL), chi tiết nhận diện (mũ, khăn, cửa vòm…), mặt sau có thể trông thế nào.
 3. **Viết builder** trong `engine/<asset>.js`, tên rõ cho từng bộ phận (`door_left`, `leg_FL`…), đơn vị stud
    (người R6 cao 5.2), mặt trước nhìn +Z.
-4. **Lặp tới khi khớp**: chụp cùng góc với ảnh (`tools/peek.mjs` + `&cam=…&look=…&fov=…`), ghép cạnh ảnh gốc
+4. **Lặp tới khi khớp**: chụp cùng góc với ảnh (`tools/look.mjs <trang> --query "cam=…&look=…&fov=…" --t …`), ghép cạnh ảnh gốc
    (`tools/compare.py`), sửa khác biệt lớn nhất trước: silhouette > tỷ lệ > màu > chi tiết. 5–10 vòng; đừng dừng ở "gần giống".
 5. Ngân sách: ≤ 20k tam giác / model; dùng InstancedMesh cho vật lặp.
 6. Ghi asset vào `assets/manifest.json` nếu là file ngoài; asset dựng bằng code ghi chú trong README tập.

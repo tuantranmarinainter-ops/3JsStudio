@@ -39,3 +39,6 @@ assets/polyhaven-tex/*/512/
 # khoá API cục bộ
 .env.local
 .env
+
+# file hệ thống của Windows
+Desktop.ini
