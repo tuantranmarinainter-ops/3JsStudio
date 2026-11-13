@@ -38,6 +38,14 @@ export const GLB_KIT = {
   day_chuyen: { id: 'nhap/day-chuyen-vang', basis: [[1, 0, 0], [0, 0, -1], [0, 1, 0]], keep: [] },   // Rx(−90°): dây dựng đứng → nằm phẳng, mặt dây hướng +Z
   chuong: { id: 'nhap/chuong-tay', keep: [] },
   doi_dep: { id: 'nhap/dep-xo-ngon', dims: [1.3, 0.3, 1.3], keep: [] },
+  // ---- Đợt 4 (duyet/ep002/da-nhap-dot4.json) ----
+  // đồng hồ quả quýt: kit cũ NẰM mặt số ngửa (xích về −Z) → xoay Rx(−90°); cỡ co đều ×1.33 cho khớp thân tròn 0.84 của kit cũ (model 0.63)
+  dong_ho_quyt: { id: 'nhap/dong-ho-qua-quyt', basis: [[1, 0, 0], [0, 0, -1], [0, 1, 0]], dims: [0.84, 0.177, 1.2], keep: [] },
+  dong_ho_quyt_thi: { id: 'nhap/dong-ho-qua-quyt', basis: [[1, 0, 0], [0, 0, -1], [0, 1, 0]], dims: [0.84, 0.177, 1.2], keep: [] },
+  // hộp nhẫn MỞ TRỐNG (kịch bản s006: "hộp nhẫn mở trống, cuộn chỉ") → bản hop-nhan-sang (rỗng); cuộn chỉ = model cuon-chi đặt bên phải như kit cũ
+  hop_nhan: { id: 'nhap/hop-nhan-sang', at: [-0.15, 0.05], keep: [], extra: ['nhap/cuon-chi'], ext: 'hopNhan' },
+  thung_go: { id: 'nhap/thung-go-dung', dims: [2.4, 2, 2.4], keep: [] },   // (factory: env tự dựng sẵn — coSan — nên chưa có tác dụng ở ep002)
+  hang_rao: { id: 'nhap/hang-rao', dims: [8, 3.5, 0.3], keep: [] },        // (factory: coSan, như trên). Cổng 3.6 rộng bị kéo ngang ×2.2 — dùng khi env không dựng sẵn
   chan_tran: { id: 'nhap/ban-chan', keep: [], haiBan: 0.45, da: '#f0c89a' },
   bac_them_dep: { id: 'nhap/bac-them', dims: [5, 1, 3.5], at: [-1, 0.25], keep: ['dep_', 'tham_chui_chan'] },
   bac_them_trong: { id: 'nhap/bac-them', dims: [5, 1, 3.5], at: [-1, 0.25], keep: ['tham_chui_chan'] },
@@ -58,7 +66,7 @@ const DUONG = '/assets/manifest.json';
 let LIB = null;
 const urlFlag = () => { try { const v = new URLSearchParams(globalThis.location?.search || '').get('propsGlb'); return v === null ? null : v !== '0'; } catch (e) { return null; } };
 export const glbOn = () => LIB !== null && (urlFlag() ?? (globalThis.__propsGlb !== false));
-export const glbIds = () => [...new Set(Object.values(GLB_KIT).map((k) => k.id))];
+export const glbIds = () => [...new Set(Object.values(GLB_KIT).flatMap((k) => [k.id, ...(k.extra || [])]))];
 
 // Chỉ trong trình duyệt (Node: test/công cụ → bỏ qua, kit code như cũ). ?propsGlb=0 → không tải gì.
 export async function glbPreload() {
@@ -150,6 +158,18 @@ const EXT = {
         D.add(L);
       }
       model.add(D);
+    },
+  },
+  hopNhan: {
+    post(THREE, g) {   // cuộn chỉ (cao 0.34, đáy y=0) cạnh hộp, đúng chỗ cuộn chỉ của kit cũ (0.3, 0, 0.05)
+      const c = LIB.A.instance('nhap/cuon-chi', { name: 'hop_nhan_chi' });
+      c.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; m.userData.matKind = 'none'; m.userData.grungeKind = 'none'; } });
+      const h = new THREE.Group(); h.add(c); h.updateMatrixWorld(true);
+      const b = new THREE.Box3().setFromObject(h), s = 0.34 / Math.max(b.max.y - b.min.y, 1e-3);
+      h.scale.setScalar(s); h.updateMatrixWorld(true);
+      const b2 = new THREE.Box3().setFromObject(h), ct = b2.getCenter(new THREE.Vector3());
+      h.position.set(0.3 - ct.x, -b2.min.y, 0.05 - ct.z); h.name = 'hop_nhan_chi_glb';
+      g.add(h);
     },
   },
   hocQuay: {

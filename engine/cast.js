@@ -6,6 +6,7 @@
 import { createR15, loadR15Body, loadCharacterTextures, loadGaFaces, FACE_PRESETS, GA_FACES, GA_FACE_MAP } from './r15.js';
 // Gà (engine/ga-rig.js) nạp ĐỘNG khi có diễn viên ga:1 — tập không dùng Gà không phụ thuộc file này
 import { createBear } from './bear.js';
+import { createBearGlb, bearGlbPreload, bearGlbOn, bearGlbWanted } from './bear-glb.js';   // gấu GLB có xương (bật: EPISODE.bearGlb / ?bearGlb=1; tắt → gấu khối)
 import './anim-them.js';   // đăng ký animation bổ sung (sitUp, climb, drag, vanish, peek, putDown, ringBell, sleepy) vào bảng R15 dùng chung cho R15 + Gà
 import { rng } from './stage.js';
 
@@ -65,10 +66,12 @@ export async function buildCast(THREE, actors = {}, { seed = 1 } = {}) {
   let gaRes = null;
   let createGa = null;
   if (plan.some((p) => p.kind === 'ga')) { const G = await import('./ga-rig.js'); createGa = G.createGa; const { loadGaAtlas, loadGaHood } = G; gaRes = { faceSet: await loadGaFaces(THREE), atlas: await loadGaAtlas(THREE), hood: await loadGaHood(THREE) }; }
+  if (plan.some((p) => p.kind === 'bear') && bearGlbWanted()) await bearGlbPreload();
+  let bearIdx = 0;
   const make = async (name, o, kind = 'r15') => {
     let a;
     if (kind === 'ga') a = wrapFaces(createGa(THREE, { name, face: 'smile', ...o, ...gaRes }), GA_KNOWN);
-    else if (kind === 'bear') a = wrapFaces(createBear(THREE, { name, ...o }), () => true);
+    else if (kind === 'bear') { const bi = bearIdx++; a = wrapFaces((bearGlbOn() && createBearGlb(THREE, { name, glbIndex: bi, ...o })) || createBear(THREE, { name, ...o }), () => true); }
     else a = wrapFaces(createR15(THREE, { name, face: 'smile', ...o, body, textures: await loadCharacterTextures(THREE, name) }), R15_KNOWN);
     a._defaultFace = o.face || 'smile';
     out[name] = a;

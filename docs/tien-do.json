@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 12:50",
+ "capNhat": "2026-11-13 13:10",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -16,13 +16,13 @@
     },
     {
      "ten": "11 đạo cụ Đợt 4 (kể cả hộp nhẫn sang)",
-     "tt": "dang",
-     "ghiChu": "1 agent Sonnet đang nối vào phim"
+     "tt": "do",
+     "ghiChu": "đã nối: đồng hồ quả quýt, hộp nhẫn, cuộn chỉ; còn 6 model chưa có chỗ gắn (cửa kính, giường Gà, bàn tiệm may, bảng hiệu treo, đèn cửa, nhẫn)"
     },
     {
      "ten": "Gấu Bắp có xương, lông mềm, nơ đã duyệt (3 màu)",
-     "tt": "dang",
-     "ghiChu": "1 agent Sonnet đang nối vào phim"
+     "tt": "xong",
+     "ghiChu": "đã vào phim, bật/tắt bằng bearGlb; tất định OK trên 6 shot"
     },
     {
      "ten": "8 mục dựng riêng (bản đồ, 2 cụm thùng dấu gấu, 4 bảng hiệu, bảng bánh mì)",
@@ -39,7 +39,7 @@
     {
      "ten": "Tiếng động + nhạc cho thời lượng mới (kể cả \"Boang\")",
      "tt": "do",
-     "ghiChu": "đã dựng lại 4 lớp đúng 124,5 giây, đo mốc đạt; chưa gộp vào bản xem thử, chưa ai nghe bằng tai"
+     "ghiChu": "đã vào bản xem thử; chưa ai nghe bằng tai"
     },
     {
      "ten": "Tiếng Anh giọng Andrew",
@@ -49,7 +49,7 @@
     {
      "ten": "Tài sản Roblox (mũ, đạo cụ đã chọn ở Đợt 3)",
      "tt": "cho",
-     "ghiChu": "chờ người dùng tạo khoá Open Cloud (ROBLOX_API_KEY trong .env.local)"
+     "ghiChu": "người dùng: để sau"
     }
    ]
   },
@@ -69,7 +69,7 @@
     {
      "ten": "Đưa khung studio vào trình phát thật (viền kéo, cột thẻ dọc, timeline, marker M, bánh răng, Gửi tới Claude)",
      "tt": "do",
-     "ghiChu": "đã vào trình phát thật, agent thử tự động đạt, xuất MP4 thử đạt; chờ gộp bản xem thử cuối và người dùng dùng thử"
+     "ghiChu": "đã vào bản xem thử; bộ thử tự động đạt trên bản gộp; chờ người dùng dùng thử"
     },
     {
      "ten": "Tách khung studio khỏi nội dung tập (tập xuất ra nhẹ hơn)",
@@ -87,8 +87,8 @@
     },
     {
      "ten": "Chế độ 3D (xem bố trí thành phố, nhân vật, camera từng shot)",
-     "tt": "cho",
-     "ghiChu": "đã ghi ý tưởng + đề xuất 3 giai đoạn ở docs/dinh-huong-studio.md; chờ người dùng duyệt"
+     "tt": "chua",
+     "ghiChu": "đề xuất đã được duyệt; làm sau dây chuyền kịch bản→video (docs/dinh-huong-studio.md)"
     },
     {
      "ten": "Dây chuyền kịch bản → video với Gà, ít phải sửa tay",
@@ -117,7 +117,7 @@
     {
      "ten": "Gà cho ep001",
      "tt": "cho",
-     "ghiChu": "chờ người dùng trả lời có bật không"
+     "ghiChu": "người dùng: chưa bật"
     }
    ]
   }
@@ -137,12 +137,10 @@
   }
  ],
  "canBan": [
-  "Tạo khoá Roblox Open Cloud rồi đặt vào .env.local dòng ROBLOX_API_KEY= (để tải mũ, đạo cụ Roblox đã chọn)",
-  "Trả lời: có bật nhân vật Gà cho ep001 không",
-  "Xác nhận chiều nơ gấu (đã xoay trước–sau) và màu nơ Bắp (xanh)",
-  "Tuỳ chọn: khoá API Poly Pizza (POLY_PIZZA_API_KEY) để tìm model nhanh hơn",
-  "Duyệt đề xuất chế độ 3D và thứ tự ưu tiên (docs/dinh-huong-studio.md)",
-  "Phiên \"Quy trình câu luật → phim: phiên 3\" đã xong việc nhưng app không cho Claude lưu trữ (còn kết nối Remote Control): bạn tự lưu trữ từ thanh bên"
+  "Nghe thử tiếng động + nhạc mới trên bản xem thử (đặc biệt tiếng \"Boang\" cuối phim) rồi cho ý kiến",
+  "Dùng thử khung studio mới trên bản xem thử: kéo viền, rê timeline, phím M, nút ▶/✎ trên dòng shot",
+  "Hộp nhẫn ở tiệm may (shot s006): đang dùng hộp RỖNG vì kịch bản ghi \"hộp nhẫn mở trống\"; muốn hộp có nhẫn thì ghi vào ô",
+  "Chỗ đặt 3 đạo cụ chưa có vị trí: bàn tiệm may (đề xuất: trong tiệm may, đỡ hộp nhẫn), bảng hiệu treo (trước tiệm gấu), đèn cửa (trước các nhà)"
  ],
  "daChot": [
   [
@@ -151,7 +149,7 @@
   ],
   [
    "Hướng đi",
-   "Studio phát triển thành công cụ chuyên nghiệp; thêm chế độ 3D (đề xuất đang chờ duyệt)"
+   "Studio phát triển thành công cụ chuyên nghiệp; thêm chế độ 3D"
   ],
   [
    "Tập 2",
@@ -224,6 +222,22 @@
   [
    "Cách làm",
    "Phiên điều phối chỉ /compact, không /clear; tối đa 3 agent phụ, dùng model rẻ"
+  ],
+  [
+   "Hướng đi",
+   "Duyệt đề xuất chế độ 3D (xem → kiểm → chỉnh nhẹ) và thứ tự ưu tiên: xong tập 2 → dây chuyền kịch bản→video với Gà → khung studio → 3D giai đoạn 1"
+  ],
+  [
+   "Tập 2",
+   "Nơ gấu: chiều sau khi xoay đúng; Bắp nơ xanh"
+  ],
+  [
+   "Tập 1",
+   "Chưa bật nhân vật Gà cho ep001"
+  ],
+  [
+   "Tài sản",
+   "Khoá Roblox Open Cloud: để sau. Khoá Poly Pizza: người dùng đã điền trong Blender (chưa có trong .env.local)"
   ]
  ]
 }
