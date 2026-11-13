@@ -35,7 +35,7 @@ const mayorHead = { hair: { style: 'slick', color: '#b8b3b8', cap: 0.5, back: 1.
 export const R6_LOOKS = {
   // Anh Gà — đầu vàng, chỏm 3 múi, băng đỏ, hoodie ô-liu sọc vàng, quần lửng nâu, giày đen đế kem
   ga: {
-    skin: '#ffe000', shirt: '#7da33c', pants: '#6b2e1e', hero: true,
+    skin: '#ffe000', shirt: '#7da33c', pants: '#6b2e1e', hero: true, chat: { ao: 'knit' },   // hoodie LEN sọc (khung kịch bản)
     torso: { bands: [[0, 0.92, '#7da33c'], [0.92, 1, '#6b8f32']], wrap: [{ op: 'stripes', color: '#c9d95a', n: 7, h: 0.035, y0: 0.02, y1: 0.9 }],
       front: [P([[0.24, 0.6], [0.76, 0.6], [0.86, 0.88], [0.14, 0.88]], '#77993a'), P([[0.24, 0.6], [0.76, 0.6], [0.86, 0.88], [0.14, 0.88]], '#5f7f2c', { stroke: true, w: 0.014 })] },
     arm: { bands: [[0, 0.74, '#7da33c'], [0.74, 0.8, '#6b8f32'], [0.8, 1, '#ffe000']], wrap: [{ op: 'stripes', color: '#c9d95a', n: 6, h: 0.035, y0: 0.02, y1: 0.74 }] },
@@ -44,7 +44,7 @@ export const R6_LOOKS = {
   },
   // Ông Bách — tóc muối tiêu, kính tròn, áo len kem, tạp dề cam đất
   bach: {
-    skin: SKIN, scale: 1.05, shirt: '#ebd9b0', pants: '#7a5a2e',
+    skin: SKIN, scale: 1.05, shirt: '#ebd9b0', pants: '#7a5a2e', chat: { ao: 'knit' },   // áo len kem
     torso: { wrap: ribs('#d9c598'), front: apronF('#b5532b', '#a04923', '#7a3a1b'), back: apronB('#b5532b', true) },
     arm: arms('#ebd9b0', 0.8, '#dccaa0', SKIN, ribs('#d9c598', 5)), leg: legs('#7a5a2e', '#4a2e22', '#1c1412', apronLeg('#b5532b')),
     hair: { color: '#8e8a8c', cap: 0.46, back: 0.72, arc: 1.15, fringe: 'left', curls: 3 },

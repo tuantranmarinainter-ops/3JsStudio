@@ -1,598 +1,604 @@
 {
- "capNhat": "2026-11-13 21:40",
- "nhom": [
-  {
-   "ten": "Tập 3",
-   "viec": [
+  "capNhat": "2026-11-13 21:40",
+  "nhom": [
     {
-     "ten": "Gói kịch bản 104 shot + giọng 2:20 + số đo camera của Codex",
-     "tt": "xong"
+      "ten": "Tập 3",
+      "viec": [
+        {
+          "ten": "Gói kịch bản 104 shot + giọng 2:20 + số đo camera của Codex",
+          "tt": "xong"
+        },
+        {
+          "ten": "13 nhân vật thân R6 + 37 mặt emote",
+          "tt": "xong",
+          "ghiChu": "đã duyệt mẫu; còn lỗi da ngả xanh, không có bàn tay"
+        },
+        {
+          "ten": "4 bối cảnh mới",
+          "tt": "do",
+          "ghiChu": "sai tỉ lệ so với kịch bản, thiếu nhiều vật chính → phải dựng lại theo Bo_canh_kich_thuoc.json"
+        },
+        {
+          "ten": "Bộ đặt máy theo khung hình (engine/dat-may.js) + kiểm bằng số",
+          "tt": "xong",
+          "ghiChu": "77/104 shot dùng số của Codex"
+        },
+        {
+          "ten": "Bản xem thử dist/ep003_xem-thu.html",
+          "tt": "do",
+          "ghiChu": "soi độc lập 13/11: đạt 1, lệch 58, hỏng 45 / 104 shot (docs/handoff/ep003-loi-html-a.md, -b.md)"
+        },
+        {
+          "ten": "Dựng lại set đúng tỉ lệ + đặt lại nhân vật theo bố trí của Codex",
+          "tt": "chua"
+        },
+        {
+          "ten": "Đạo cụ đúng thiết kế (dây chuyền, nhẫn bạc, két, đồng hồ quả quýt, ghim đầu gấu…) + gấu Bắp",
+          "tt": "chua"
+        },
+        {
+          "ten": "Tay và tư thế cho thân R6, màu da",
+          "tt": "chua"
+        },
+        {
+          "ten": "Tiếng động, nhạc, kiểm cả phim, xuất thử MP4",
+          "tt": "chua"
+        },
+        {
+          "ten": "Bộ kit dựng phim tập 3 do Codex làm (nhân vật, mặt bằng bối cảnh, camera 104 shot, ánh sáng, tỉ lệ + vật liệu đồ vật)",
+          "tt": "dang",
+          "pt": 20,
+          "ghiChu": "lần 1 Codex chỉ ra khung dữ liệu (chưa đo: 357 lỗi thiếu số, cả 104 shot tin cậy thấp). Đang chạy lần 2 theo 3 đợt: phòng Gà (35 shot) → nhà máy (33) → phố và tiệm (36), mỗi đợt phải đo thật và tự chiếu ngược kiểm"
+        },
+        {
+          "ten": "Vật liệu theo chất liệu (gỗ ra gỗ, vải ra vải…)",
+          "tt": "dang",
+          "pt": 25,
+          "ghiChu": "đo 13/11: 4 bối cảnh tập 3 = 0/196 vật liệu được vá (file bối cảnh tự tắt), đạo cụ 0; nhân vật R6 đã khai xong (da, len, vải, đế cao su, tóc, kính nhựa, huy hiệu kim loại). Bối cảnh + đạo cụ sẽ khai khi dựng lại theo kit"
+        }
+      ],
+      "tap": "Tập 3"
     },
     {
-     "ten": "13 nhân vật thân R6 + 37 mặt emote",
-     "tt": "xong",
-     "ghiChu": "đã duyệt mẫu; còn lỗi da ngả xanh, không có bàn tay"
+      "ten": "Tập 2 — TẠM GÁC từ 13/11 (xem docs/handoff/ep002-tam-gac.md)",
+      "viec": [
+        {
+          "ten": "Kịch bản + shot theo giọng mới (104 shot, 124,5 giây)",
+          "tt": "xong",
+          "ghiChu": "commit dc4dabd",
+          "tok": 290
+        },
+        {
+          "ten": "Bảng nhà pastel",
+          "tt": "xong",
+          "ghiChu": "đã vào bản xem thử"
+        },
+        {
+          "ten": "11 đạo cụ Đợt 4 (kể cả hộp nhẫn sang)",
+          "tt": "do",
+          "ghiChu": "đã nối thêm bàn tiệm may, bảng hiệu treo, đèn cửa; còn cửa kính, giường Gà (bối cảnh tự dựng) chưa dùng",
+          "tok": 238,
+          "pt": 80
+        },
+        {
+          "ten": "Gấu Bắp có xương, lông mềm, nơ đã duyệt (3 màu)",
+          "tt": "xong",
+          "ghiChu": "đã vào phim, bật/tắt bằng bearGlb; tất định OK trên 6 shot",
+          "tok": 201
+        },
+        {
+          "ten": "8 mục dựng riêng (bản đồ, 2 cụm thùng dấu gấu, 4 bảng hiệu, bảng bánh mì)",
+          "tt": "xong",
+          "ghiChu": "đã vào bản xem thử; bảng hiệu là bảng đứng trên trụ sau mỗi địa điểm; 2 cụm thùng chưa có shot nào quay tới",
+          "tok": 296
+        },
+        {
+          "ten": "Băng chuyền nhà máy dùng model đã chọn",
+          "tt": "chua",
+          "ghiChu": "chưa làm (kệ gấu đã xong)"
+        },
+        {
+          "ten": "Sửa shot yếu: s037, s051, s032, s048, s044, s087, s114",
+          "tt": "xong",
+          "ghiChu": "17 shot đã sửa + chỉnh độ sáng 27 shot; đo lại cả 104 shot: không shot nào ngoài khoảng (trừ cảnh đen cuối)",
+          "tok": 171
+        },
+        {
+          "ten": "Tiếng động + nhạc cho thời lượng mới (kể cả \"Boang\")",
+          "tt": "do",
+          "ghiChu": "người dùng nghe: âm nền s001–s017 sai, khó chịu → nguyên nhân: file nền thị trấn thật ra là tiếng ù thành phố; đã đổi sang tiếng chim sáng nhẹ, mức −32,7 LUFS; chờ nghe lại",
+          "tok": 153,
+          "pt": 85
+        },
+        {
+          "ten": "Tiếng Anh giọng Andrew",
+          "tt": "cho",
+          "ghiChu": "làm sau cùng, theo ý người dùng"
+        },
+        {
+          "ten": "Tài sản Roblox (mũ, đạo cụ đã chọn ở Đợt 3)",
+          "tt": "cho",
+          "ghiChu": "người dùng: để sau"
+        },
+        {
+          "ten": "s061: nửa sau shot chỉ thấy sàn gỗ tối (lỗi bối cảnh nhà máy ở shot reveal)",
+          "tt": "xong",
+          "ghiChu": "nguyên nhân: camera của shot tự cẩu lên cao 24 và nhìn xuống sàn; đã giữ camera thấp, 3 khung đều thấy nhà máy + ông Bách; s070 đã đủ người. Đã vào bản xem thử",
+          "tok": 63
+        },
+        {
+          "ten": "Lỗi đen màn hình sau khi phim kết thúc",
+          "tt": "xong",
+          "ghiChu": "đã sửa và đã vào bản xem thử (thời lượng 124,49 giây)"
+        },
+        {
+          "ten": "s006: hiệu ứng hộp có nhẫn → zoom → nhấp nháy → mất",
+          "tt": "xong",
+          "ghiChu": "hộp có nhẫn → zoom → nhấp nháy 3 nhịp → chớp rồi mất, có tiếng; đã vào bản xem thử",
+          "tok": 199
+        },
+        {
+          "ten": "Kệ nhà máy: thay 30 gấu khối bằng gấu bông mới (3 màu)",
+          "tt": "xong",
+          "ghiChu": "30 gấu bông 3 màu trên kệ, đã vào bản xem thử; tất định OK trên 6 shot",
+          "tok": 134
+        },
+        {
+          "ten": "Thêm 6 bảng màu nhà (kẹo ngọt, Địa Trung Hải, rừng thu, sa mạc, đêm neon, Nhật Bản)",
+          "tt": "cho",
+          "ghiChu": "đã mở Đợt 6 trang duyệt: 11 thẻ, mỗi bảng một ảnh",
+          "tok": 63
+        },
+        {
+          "ten": "Nội thất mới hơi cháy sáng (s002 167, s004 162, s084 179) và s044 hơi tối (78); s047 Gà lệch chỗ so với s044",
+          "tt": "chua",
+          "ghiChu": "sửa sau khi agent thị trấn xong"
+        }
+      ],
+      "tap": "Tập 2"
     },
     {
-     "ten": "4 bối cảnh mới",
-     "tt": "do",
-     "ghiChu": "sai tỉ lệ so với kịch bản, thiếu nhiều vật chính → phải dựng lại theo Bo_canh_kich_thuoc.json"
+      "ten": "Chuyển nhân vật sang R6 (thay đổi lớn)",
+      "viec": [
+        {
+          "ten": "Dân làng tập 2 (ông Bách, thị trưởng, lính gác…) đổi từ R15 sang R6",
+          "tt": "chua",
+          "ghiChu": "phải làm trước: nối R6 vào dàn diễn viên và thêm mặt sống cho R6 (hiện R6 gặp mặt sống sẽ lỗi)"
+        },
+        {
+          "ten": "Thân hình R6 mới (thiết kế lại)",
+          "tt": "cho",
+          "ghiChu": "chờ người dùng xác nhận ý về Gà; sẽ có trang duyệt mẫu trước khi thay"
+        },
+        {
+          "ten": "Tập mẫu + dây chuyền lam-phim mặc định R6",
+          "tt": "chua"
+        },
+        {
+          "ten": "Áp toàn bộ biểu cảm của Gà cho nhân vật phụ và dân làng",
+          "tt": "chua",
+          "ghiChu": "rà soát: Gà có 37 mặt (ảnh) nhưng không chớp mắt/nhìn theo/nhép; R15 có 16 mặt + chớp, nhìn, nhép; gấu gần như không có. Hướng: thư viện mặt chung từ bộ ảnh của Gà + giữ mặt sống. Công lớn"
+        }
+      ]
     },
     {
-     "ten": "Bộ đặt máy theo khung hình (engine/dat-may.js) + kiểm bằng số",
-     "tt": "xong",
-     "ghiChu": "77/104 shot dùng số của Codex"
+      "ten": "Lõi chung áp cho mọi tập",
+      "viec": [
+        {
+          "ten": "Rà soát tập 2 thiếu gì so với tập 1",
+          "tt": "xong",
+          "tok": 220,
+          "ghiChu": "10 thiếu sót, chi tiết ở docs/handoff/ra-soat-loi-chung-ep002.md. Đã đủ: hậu kỳ, đèn nhân vật, vật liệu, bụi cũ"
+        },
+        {
+          "ten": "Thị trấn: trời thật (mây, trăng, sao) theo giờ và thời tiết",
+          "tt": "xong",
+          "ghiChu": "ngày có mây thật, đêm có sao; đã vào bản xem thử; hình tập 1 không đổi",
+          "tok": 85
+        },
+        {
+          "ten": "Thị trấn ban đêm: cửa sổ nhà sáng, đèn đường",
+          "tt": "xong",
+          "ghiChu": "458 cửa sổ sáng + 18 đèn đường (quầng sáng); vệt sáng dưới đường còn mờ",
+          "tok": 85
+        },
+        {
+          "ten": "Thị trấn: núi/rừng xa, bóng mây; xe và dân đi bộ nếu dùng lại được của tập 1",
+          "tt": "do",
+          "pt": 70,
+          "ghiChu": "núi xa, rừng xa, bóng mây đã có; xe và dân đi bộ CHƯA (làn xe của tập 1 không khớp lưới phố mới, xe sẽ xuyên qua nhân vật)",
+          "tok": 43
+        },
+        {
+          "ten": "Phụ đề từng chữ chưa chạy ở tập 2 (bật mà không có tác dụng)",
+          "tt": "chua",
+          "ghiChu": "tập mẫu thiếu mã, phụ đề tập 2 thiếu mốc từng chữ"
+        },
+        {
+          "ten": "Bụi chân / dấu chân khi nhân vật đi, chạy",
+          "tt": "chua",
+          "ghiChu": "hiện chỉ tính cho nhà có chân của tập 1"
+        },
+        {
+          "ten": "Mở trang chậm: tập 2 có 181 shader (tập 1: 104)",
+          "tt": "chua",
+          "ghiChu": "cần gom vật liệu + làm nóng trước"
+        },
+        {
+          "ten": "~100 đạo cụ/nội thất chưa khai chất liệu (thùng, bảng tin, nội thất, nhà máy)",
+          "tt": "chua"
+        },
+        {
+          "ten": "Tiếng động tập 2 mới 37 tiếng (~18/phút, chuẩn ≥ 20)",
+          "tt": "chua"
+        },
+        {
+          "ten": "Công cụ đồng bộ tập mẫu → tập đã sinh + bước kiểm \"chuẩn tập 1\" trong dây chuyền",
+          "tt": "chua",
+          "ghiChu": "hiện sửa tập mẫu không lan sang tập 2"
+        }
+      ]
     },
     {
-     "ten": "Bản xem thử dist/ep003_xem-thu.html",
-     "tt": "do",
-     "ghiChu": "soi độc lập 13/11: đạt 1, lệch 58, hỏng 45 / 104 shot (docs/handoff/ep003-loi-html-a.md, -b.md)"
+      "ten": "Góp ý từ studio 13/11 14:17 (20 ghi chú theo shot)",
+      "viec": [
+        {
+          "ten": "s001: Nhiều nhà hơn cho ra thị trấn",
+          "tt": "do",
+          "ghiChu": "đã sửa: thêm một vành nhà + đường quanh thị trấn, dãy phố dày hơn. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 51
+        },
+        {
+          "ten": "s002: Đồ ở trong nhà",
+          "tt": "do",
+          "ghiChu": "đã sửa: chuyển vào trong nhà Gà (nội thất mới): kệ trống, sàn, tường. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 51
+        },
+        {
+          "ten": "s004: Két tiền trong nhà, tiệm có biển bánh mì",
+          "tt": "do",
+          "ghiChu": "đã sửa: chuyển vào trong tiệm bánh: quầy, bảng TIỆM BÁNH MÌ, két tiền cạnh quầy (s005 cũng vào tiệm). Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 51
+        },
+        {
+          "ten": "s010: Nhiều hộp hơn",
+          "tt": "do",
+          "ghiChu": "đã sửa: thêm 3 thùng in dấu gấu, lùi máy. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        },
+        {
+          "ten": "s014b: Nhà ông Bách có biển hiệu bánh mì (sai biển)",
+          "tt": "do",
+          "ghiChu": "đã sửa: CẦN BẠN XEM: không tìm thấy biển bánh mì đặt sai (thứ trong ảnh là hòm thư nhà Gà); đã đặt biển TIỆM GẤU trước nhà bên cạnh nhà Gà. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        },
+        {
+          "ten": "s016: Ảnh chưa rõ",
+          "tt": "do",
+          "ghiChu": "đã sửa: vẽ lại chân dung bà rõ nét, cận hơn. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        },
+        {
+          "ten": "s018: Ảnh chưa rõ",
+          "tt": "do",
+          "ghiChu": "đã sửa: vẽ lại chân dung bà rõ nét. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        },
+        {
+          "ten": "s025: Ảnh hơi xấu",
+          "tt": "do",
+          "ghiChu": "đã sửa: vẽ lại ảnh trong gương (đêm có sao, kệ, đồng hồ). Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        },
+        {
+          "ten": "s033: Đứng im, chưa kỹ hành động",
+          "tt": "do",
+          "ghiChu": "đã sửa: gấu ôm đồng hồ và bước đi (animation mới). Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        },
+        {
+          "ten": "s034: Đứng im, chưa kỹ hành động",
+          "tt": "do",
+          "ghiChu": "đã sửa: gấu kéo sách đi; sách còn lệch trái một chút. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        },
+        {
+          "ten": "s037: Gấu nhảy ra cửa sổ",
+          "tt": "do",
+          "ghiChu": "đã sửa: gấu chạy tới cửa sổ. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        },
+        {
+          "ten": "s039: Gấu nhảy ra cửa sổ",
+          "tt": "do",
+          "ghiChu": "đã sửa: gấu bật qua cửa sổ rồi biến mất, Gà chạy theo. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        },
+        {
+          "ten": "s044: Nấp sai chỗ",
+          "tt": "do",
+          "ghiChu": "đã sửa: Gà nấp trên mái hiên sát tường cạnh cửa sổ; thấy lưng, không thấy mặt. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        },
+        {
+          "ten": "s048: Sai vị trí",
+          "tt": "do",
+          "ghiChu": "đã sửa: gấu dời lên mái hiên nhà bên cạnh. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        },
+        {
+          "ten": "s055: Sai hàng rào",
+          "tt": "do",
+          "ghiChu": "đã sửa: thay bằng hàng rào sắt đã duyệt; shot dời ra sân, gấu chạy qua khe rào. Ban đêm chỉ thấy rõ khung rào. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 51
+        },
+        {
+          "ten": "s074: Rõ ràng hơn",
+          "tt": "do",
+          "ghiChu": "đã sửa: dây chuyền làm lại dày hơn, mặt đá to; vòng dây còn hơi giống hai nhánh. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        },
+        {
+          "ten": "s084: Cảnh này trong nhà thị trưởng",
+          "tt": "do",
+          "ghiChu": "đã sửa: chuyển vào trong nhà thị trưởng: bàn giấy, đồng hồ, bảng THỊ TRƯỞNG, đèn bàn. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 51
+        },
+        {
+          "ten": "s087: Lỗi người đứng",
+          "tt": "do",
+          "ghiChu": "đã sửa: xếp lại đội hình so le, thị trưởng ở giữa. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        },
+        {
+          "ten": "s101: Quay thùng hàng",
+          "tt": "do",
+          "ghiChu": "đã sửa: dời một cụm thùng HÀNG TIỆM BÁCH về tiệm gấu, máy quay vào đó. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        },
+        {
+          "ten": "s107: Thêm dây chuyền",
+          "tt": "do",
+          "ghiChu": "đã sửa: đặt dây chuyền vào trong két; chưa chắc đúng chỗ bạn khoanh. Đã vào bản xem thử, chờ bạn kiểm",
+          "pt": 90,
+          "tok": 19
+        }
+      ],
+      "tap": "Tập 2"
     },
     {
-     "ten": "Dựng lại set đúng tỉ lệ + đặt lại nhân vật theo bố trí của Codex",
-     "tt": "chua"
+      "ten": "Studio (trình phát)",
+      "viec": [
+        {
+          "ten": "Theo dõi và bắt lỗi theo shot",
+          "tt": "xong",
+          "ghiChu": "commit 716eb58"
+        },
+        {
+          "ten": "Bản mẫu khung studio PC",
+          "tt": "xong",
+          "ghiChu": "người dùng duyệt v2"
+        },
+        {
+          "ten": "Đưa khung studio vào trình phát thật (viền kéo, cột thẻ dọc, timeline, marker M, bánh răng, Gửi tới Claude)",
+          "tt": "xong",
+          "ghiChu": "đã vào bản xem thử; người dùng dùng thử: ổn",
+          "tok": 238
+        },
+        {
+          "ten": "Tách khung studio khỏi nội dung tập (tập xuất ra nhẹ hơn)",
+          "tt": "chua"
+        },
+        {
+          "ten": "Trang duyệt tài sản theo đợt + nút Gửi tới Claude",
+          "tt": "xong",
+          "ghiChu": "đã nhận Đợt 5 qua nút gửi"
+        },
+        {
+          "ten": "Trang tiến độ (trang này)",
+          "tt": "xong",
+          "ghiChu": "commit 5f567d6"
+        },
+        {
+          "ten": "Chế độ 3D (xem bố trí thành phố, nhân vật, camera từng shot)",
+          "tt": "chua",
+          "ghiChu": "đề xuất đã được duyệt; làm sau dây chuyền kịch bản→video (docs/dinh-huong-studio.md)"
+        },
+        {
+          "ten": "Dây chuyền kịch bản → video với Gà, ít phải sửa tay",
+          "tt": "chua",
+          "ghiChu": "ưu tiên số 1 sau khi xong ep002; rút bài học ep002 vào lam-phim + tập mẫu"
+        }
+      ]
     },
     {
-     "ten": "Đạo cụ đúng thiết kế (dây chuyền, nhẫn bạc, két, đồng hồ quả quýt, ghim đầu gấu…) + gấu Bắp",
-     "tt": "chua"
-    },
-    {
-     "ten": "Tay và tư thế cho thân R6, màu da",
-     "tt": "chua"
-    },
-    {
-     "ten": "Tiếng động, nhạc, kiểm cả phim, xuất thử MP4",
-     "tt": "chua"
-    },
-    {
-     "ten": "Bộ kit dựng phim tập 3 do Codex làm (nhân vật, mặt bằng bối cảnh, camera 104 shot, ánh sáng, tỉ lệ + vật liệu đồ vật)",
-     "tt": "dang",
-     "pt": 20,
-     "ghiChu": "lần 1 Codex chỉ ra khung dữ liệu (chưa đo: 357 lỗi thiếu số, cả 104 shot tin cậy thấp). Đang chạy lần 2 theo 3 đợt: phòng Gà (35 shot) → nhà máy (33) → phố và tiệm (36), mỗi đợt phải đo thật và tự chiếu ngược kiểm"
+      "ten": "Phiên con",
+      "viec": [
+        {
+          "ten": "Tối ưu repo: dọn output (−5,66 GB), rút gọn CLAUDE.md, nén 3 model nặng nhất",
+          "tt": "xong"
+        },
+        {
+          "ten": "Tối ưu repo: mục 5, nén các model còn lại, giảm shader",
+          "tt": "chua",
+          "ghiChu": "ghi ở docs/handoff/toi-uu.md; 5/335 test đang hỏng"
+        },
+        {
+          "ten": "ep001: phụ đề từng chữ bật sẵn",
+          "tt": "xong",
+          "ghiChu": "commit 8d9b6ca; dist/ep001.html chính chưa gộp lại"
+        },
+        {
+          "ten": "Gà cho ep001",
+          "tt": "cho",
+          "ghiChu": "người dùng: chưa bật"
+        }
+      ]
     }
-   ],
-   "tap": "Tập 3"
-  },
-  {
-   "ten": "Tập 2 — TẠM GÁC từ 13/11 (xem docs/handoff/ep002-tam-gac.md)",
-   "viec": [
+  ],
+  "link": [
     {
-     "ten": "Kịch bản + shot theo giọng mới (104 shot, 124,5 giây)",
-     "tt": "xong",
-     "ghiChu": "commit dc4dabd",
-     "tok": 290
+      "ten": "Bản xem thử tập 2",
+      "href": "ep002_xem-thu.html"
     },
     {
-     "ten": "Bảng nhà pastel",
-     "tt": "xong",
-     "ghiChu": "đã vào bản xem thử"
+      "ten": "Trang duyệt tài sản tập 2",
+      "href": "ep002_duyet.html"
     },
     {
-     "ten": "11 đạo cụ Đợt 4 (kể cả hộp nhẫn sang)",
-     "tt": "do",
-     "ghiChu": "đã nối thêm bàn tiệm may, bảng hiệu treo, đèn cửa; còn cửa kính, giường Gà (bối cảnh tự dựng) chưa dùng",
-     "tok": 238,
-     "pt": 80
-    },
-    {
-     "ten": "Gấu Bắp có xương, lông mềm, nơ đã duyệt (3 màu)",
-     "tt": "xong",
-     "ghiChu": "đã vào phim, bật/tắt bằng bearGlb; tất định OK trên 6 shot",
-     "tok": 201
-    },
-    {
-     "ten": "8 mục dựng riêng (bản đồ, 2 cụm thùng dấu gấu, 4 bảng hiệu, bảng bánh mì)",
-     "tt": "xong",
-     "ghiChu": "đã vào bản xem thử; bảng hiệu là bảng đứng trên trụ sau mỗi địa điểm; 2 cụm thùng chưa có shot nào quay tới",
-     "tok": 296
-    },
-    {
-     "ten": "Băng chuyền nhà máy dùng model đã chọn",
-     "tt": "chua",
-     "ghiChu": "chưa làm (kệ gấu đã xong)"
-    },
-    {
-     "ten": "Sửa shot yếu: s037, s051, s032, s048, s044, s087, s114",
-     "tt": "xong",
-     "ghiChu": "17 shot đã sửa + chỉnh độ sáng 27 shot; đo lại cả 104 shot: không shot nào ngoài khoảng (trừ cảnh đen cuối)",
-     "tok": 171
-    },
-    {
-     "ten": "Tiếng động + nhạc cho thời lượng mới (kể cả \"Boang\")",
-     "tt": "do",
-     "ghiChu": "người dùng nghe: âm nền s001–s017 sai, khó chịu → nguyên nhân: file nền thị trấn thật ra là tiếng ù thành phố; đã đổi sang tiếng chim sáng nhẹ, mức −32,7 LUFS; chờ nghe lại",
-     "tok": 153,
-     "pt": 85
-    },
-    {
-     "ten": "Tiếng Anh giọng Andrew",
-     "tt": "cho",
-     "ghiChu": "làm sau cùng, theo ý người dùng"
-    },
-    {
-     "ten": "Tài sản Roblox (mũ, đạo cụ đã chọn ở Đợt 3)",
-     "tt": "cho",
-     "ghiChu": "người dùng: để sau"
-    },
-    {
-     "ten": "s061: nửa sau shot chỉ thấy sàn gỗ tối (lỗi bối cảnh nhà máy ở shot reveal)",
-     "tt": "xong",
-     "ghiChu": "nguyên nhân: camera của shot tự cẩu lên cao 24 và nhìn xuống sàn; đã giữ camera thấp, 3 khung đều thấy nhà máy + ông Bách; s070 đã đủ người. Đã vào bản xem thử",
-     "tok": 63
-    },
-    {
-     "ten": "Lỗi đen màn hình sau khi phim kết thúc",
-     "tt": "xong",
-     "ghiChu": "đã sửa và đã vào bản xem thử (thời lượng 124,49 giây)"
-    },
-    {
-     "ten": "s006: hiệu ứng hộp có nhẫn → zoom → nhấp nháy → mất",
-     "tt": "xong",
-     "ghiChu": "hộp có nhẫn → zoom → nhấp nháy 3 nhịp → chớp rồi mất, có tiếng; đã vào bản xem thử",
-     "tok": 199
-    },
-    {
-     "ten": "Kệ nhà máy: thay 30 gấu khối bằng gấu bông mới (3 màu)",
-     "tt": "xong",
-     "ghiChu": "30 gấu bông 3 màu trên kệ, đã vào bản xem thử; tất định OK trên 6 shot",
-     "tok": 134
-    },
-    {
-     "ten": "Thêm 6 bảng màu nhà (kẹo ngọt, Địa Trung Hải, rừng thu, sa mạc, đêm neon, Nhật Bản)",
-     "tt": "cho",
-     "ghiChu": "đã mở Đợt 6 trang duyệt: 11 thẻ, mỗi bảng một ảnh",
-     "tok": 63
-    },
-    {
-     "ten": "Nội thất mới hơi cháy sáng (s002 167, s004 162, s084 179) và s044 hơi tối (78); s047 Gà lệch chỗ so với s044",
-     "tt": "chua",
-     "ghiChu": "sửa sau khi agent thị trấn xong"
+      "ten": "Bản mẫu khung studio",
+      "href": "studio_ban-mau.html"
     }
-   ],
-   "tap": "Tập 2"
-  },
-  {
-   "ten": "Chuyển nhân vật sang R6 (thay đổi lớn)",
-   "viec": [
-    {
-     "ten": "Dân làng tập 2 (ông Bách, thị trưởng, lính gác…) đổi từ R15 sang R6",
-     "tt": "chua",
-     "ghiChu": "phải làm trước: nối R6 vào dàn diễn viên và thêm mặt sống cho R6 (hiện R6 gặp mặt sống sẽ lỗi)"
-    },
-    {
-     "ten": "Thân hình R6 mới (thiết kế lại)",
-     "tt": "cho",
-     "ghiChu": "chờ người dùng xác nhận ý về Gà; sẽ có trang duyệt mẫu trước khi thay"
-    },
-    {
-     "ten": "Tập mẫu + dây chuyền lam-phim mặc định R6",
-     "tt": "chua"
-    },
-    {
-     "ten": "Áp toàn bộ biểu cảm của Gà cho nhân vật phụ và dân làng",
-     "tt": "chua",
-     "ghiChu": "rà soát: Gà có 37 mặt (ảnh) nhưng không chớp mắt/nhìn theo/nhép; R15 có 16 mặt + chớp, nhìn, nhép; gấu gần như không có. Hướng: thư viện mặt chung từ bộ ảnh của Gà + giữ mặt sống. Công lớn"
-    }
-   ]
-  },
-  {
-   "ten": "Lõi chung áp cho mọi tập",
-   "viec": [
-    {
-     "ten": "Rà soát tập 2 thiếu gì so với tập 1",
-     "tt": "xong",
-     "tok": 220,
-     "ghiChu": "10 thiếu sót, chi tiết ở docs/handoff/ra-soat-loi-chung-ep002.md. Đã đủ: hậu kỳ, đèn nhân vật, vật liệu, bụi cũ"
-    },
-    {
-     "ten": "Thị trấn: trời thật (mây, trăng, sao) theo giờ và thời tiết",
-     "tt": "xong",
-     "ghiChu": "ngày có mây thật, đêm có sao; đã vào bản xem thử; hình tập 1 không đổi",
-     "tok": 85
-    },
-    {
-     "ten": "Thị trấn ban đêm: cửa sổ nhà sáng, đèn đường",
-     "tt": "xong",
-     "ghiChu": "458 cửa sổ sáng + 18 đèn đường (quầng sáng); vệt sáng dưới đường còn mờ",
-     "tok": 85
-    },
-    {
-     "ten": "Thị trấn: núi/rừng xa, bóng mây; xe và dân đi bộ nếu dùng lại được của tập 1",
-     "tt": "do",
-     "pt": 70,
-     "ghiChu": "núi xa, rừng xa, bóng mây đã có; xe và dân đi bộ CHƯA (làn xe của tập 1 không khớp lưới phố mới, xe sẽ xuyên qua nhân vật)",
-     "tok": 43
-    },
-    {
-     "ten": "Phụ đề từng chữ chưa chạy ở tập 2 (bật mà không có tác dụng)",
-     "tt": "chua",
-     "ghiChu": "tập mẫu thiếu mã, phụ đề tập 2 thiếu mốc từng chữ"
-    },
-    {
-     "ten": "Bụi chân / dấu chân khi nhân vật đi, chạy",
-     "tt": "chua",
-     "ghiChu": "hiện chỉ tính cho nhà có chân của tập 1"
-    },
-    {
-     "ten": "Mở trang chậm: tập 2 có 181 shader (tập 1: 104)",
-     "tt": "chua",
-     "ghiChu": "cần gom vật liệu + làm nóng trước"
-    },
-    {
-     "ten": "~100 đạo cụ/nội thất chưa khai chất liệu (thùng, bảng tin, nội thất, nhà máy)",
-     "tt": "chua"
-    },
-    {
-     "ten": "Tiếng động tập 2 mới 37 tiếng (~18/phút, chuẩn ≥ 20)",
-     "tt": "chua"
-    },
-    {
-     "ten": "Công cụ đồng bộ tập mẫu → tập đã sinh + bước kiểm \"chuẩn tập 1\" trong dây chuyền",
-     "tt": "chua",
-     "ghiChu": "hiện sửa tập mẫu không lan sang tập 2"
-    }
-   ]
-  },
-  {
-   "ten": "Góp ý từ studio 13/11 14:17 (20 ghi chú theo shot)",
-   "viec": [
-    {
-     "ten": "s001: Nhiều nhà hơn cho ra thị trấn",
-     "tt": "do",
-     "ghiChu": "đã sửa: thêm một vành nhà + đường quanh thị trấn, dãy phố dày hơn. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 51
-    },
-    {
-     "ten": "s002: Đồ ở trong nhà",
-     "tt": "do",
-     "ghiChu": "đã sửa: chuyển vào trong nhà Gà (nội thất mới): kệ trống, sàn, tường. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 51
-    },
-    {
-     "ten": "s004: Két tiền trong nhà, tiệm có biển bánh mì",
-     "tt": "do",
-     "ghiChu": "đã sửa: chuyển vào trong tiệm bánh: quầy, bảng TIỆM BÁNH MÌ, két tiền cạnh quầy (s005 cũng vào tiệm). Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 51
-    },
-    {
-     "ten": "s010: Nhiều hộp hơn",
-     "tt": "do",
-     "ghiChu": "đã sửa: thêm 3 thùng in dấu gấu, lùi máy. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    },
-    {
-     "ten": "s014b: Nhà ông Bách có biển hiệu bánh mì (sai biển)",
-     "tt": "do",
-     "ghiChu": "đã sửa: CẦN BẠN XEM: không tìm thấy biển bánh mì đặt sai (thứ trong ảnh là hòm thư nhà Gà); đã đặt biển TIỆM GẤU trước nhà bên cạnh nhà Gà. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    },
-    {
-     "ten": "s016: Ảnh chưa rõ",
-     "tt": "do",
-     "ghiChu": "đã sửa: vẽ lại chân dung bà rõ nét, cận hơn. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    },
-    {
-     "ten": "s018: Ảnh chưa rõ",
-     "tt": "do",
-     "ghiChu": "đã sửa: vẽ lại chân dung bà rõ nét. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    },
-    {
-     "ten": "s025: Ảnh hơi xấu",
-     "tt": "do",
-     "ghiChu": "đã sửa: vẽ lại ảnh trong gương (đêm có sao, kệ, đồng hồ). Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    },
-    {
-     "ten": "s033: Đứng im, chưa kỹ hành động",
-     "tt": "do",
-     "ghiChu": "đã sửa: gấu ôm đồng hồ và bước đi (animation mới). Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    },
-    {
-     "ten": "s034: Đứng im, chưa kỹ hành động",
-     "tt": "do",
-     "ghiChu": "đã sửa: gấu kéo sách đi; sách còn lệch trái một chút. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    },
-    {
-     "ten": "s037: Gấu nhảy ra cửa sổ",
-     "tt": "do",
-     "ghiChu": "đã sửa: gấu chạy tới cửa sổ. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    },
-    {
-     "ten": "s039: Gấu nhảy ra cửa sổ",
-     "tt": "do",
-     "ghiChu": "đã sửa: gấu bật qua cửa sổ rồi biến mất, Gà chạy theo. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    },
-    {
-     "ten": "s044: Nấp sai chỗ",
-     "tt": "do",
-     "ghiChu": "đã sửa: Gà nấp trên mái hiên sát tường cạnh cửa sổ; thấy lưng, không thấy mặt. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    },
-    {
-     "ten": "s048: Sai vị trí",
-     "tt": "do",
-     "ghiChu": "đã sửa: gấu dời lên mái hiên nhà bên cạnh. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    },
-    {
-     "ten": "s055: Sai hàng rào",
-     "tt": "do",
-     "ghiChu": "đã sửa: thay bằng hàng rào sắt đã duyệt; shot dời ra sân, gấu chạy qua khe rào. Ban đêm chỉ thấy rõ khung rào. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 51
-    },
-    {
-     "ten": "s074: Rõ ràng hơn",
-     "tt": "do",
-     "ghiChu": "đã sửa: dây chuyền làm lại dày hơn, mặt đá to; vòng dây còn hơi giống hai nhánh. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    },
-    {
-     "ten": "s084: Cảnh này trong nhà thị trưởng",
-     "tt": "do",
-     "ghiChu": "đã sửa: chuyển vào trong nhà thị trưởng: bàn giấy, đồng hồ, bảng THỊ TRƯỞNG, đèn bàn. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 51
-    },
-    {
-     "ten": "s087: Lỗi người đứng",
-     "tt": "do",
-     "ghiChu": "đã sửa: xếp lại đội hình so le, thị trưởng ở giữa. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    },
-    {
-     "ten": "s101: Quay thùng hàng",
-     "tt": "do",
-     "ghiChu": "đã sửa: dời một cụm thùng HÀNG TIỆM BÁCH về tiệm gấu, máy quay vào đó. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    },
-    {
-     "ten": "s107: Thêm dây chuyền",
-     "tt": "do",
-     "ghiChu": "đã sửa: đặt dây chuyền vào trong két; chưa chắc đúng chỗ bạn khoanh. Đã vào bản xem thử, chờ bạn kiểm",
-     "pt": 90,
-     "tok": 19
-    }
-   ],
-   "tap": "Tập 2"
-  },
-  {
-   "ten": "Studio (trình phát)",
-   "viec": [
-    {
-     "ten": "Theo dõi và bắt lỗi theo shot",
-     "tt": "xong",
-     "ghiChu": "commit 716eb58"
-    },
-    {
-     "ten": "Bản mẫu khung studio PC",
-     "tt": "xong",
-     "ghiChu": "người dùng duyệt v2"
-    },
-    {
-     "ten": "Đưa khung studio vào trình phát thật (viền kéo, cột thẻ dọc, timeline, marker M, bánh răng, Gửi tới Claude)",
-     "tt": "xong",
-     "ghiChu": "đã vào bản xem thử; người dùng dùng thử: ổn",
-     "tok": 238
-    },
-    {
-     "ten": "Tách khung studio khỏi nội dung tập (tập xuất ra nhẹ hơn)",
-     "tt": "chua"
-    },
-    {
-     "ten": "Trang duyệt tài sản theo đợt + nút Gửi tới Claude",
-     "tt": "xong",
-     "ghiChu": "đã nhận Đợt 5 qua nút gửi"
-    },
-    {
-     "ten": "Trang tiến độ (trang này)",
-     "tt": "xong",
-     "ghiChu": "commit 5f567d6"
-    },
-    {
-     "ten": "Chế độ 3D (xem bố trí thành phố, nhân vật, camera từng shot)",
-     "tt": "chua",
-     "ghiChu": "đề xuất đã được duyệt; làm sau dây chuyền kịch bản→video (docs/dinh-huong-studio.md)"
-    },
-    {
-     "ten": "Dây chuyền kịch bản → video với Gà, ít phải sửa tay",
-     "tt": "chua",
-     "ghiChu": "ưu tiên số 1 sau khi xong ep002; rút bài học ep002 vào lam-phim + tập mẫu"
-    }
-   ]
-  },
-  {
-   "ten": "Phiên con",
-   "viec": [
-    {
-     "ten": "Tối ưu repo: dọn output (−5,66 GB), rút gọn CLAUDE.md, nén 3 model nặng nhất",
-     "tt": "xong"
-    },
-    {
-     "ten": "Tối ưu repo: mục 5, nén các model còn lại, giảm shader",
-     "tt": "chua",
-     "ghiChu": "ghi ở docs/handoff/toi-uu.md; 5/335 test đang hỏng"
-    },
-    {
-     "ten": "ep001: phụ đề từng chữ bật sẵn",
-     "tt": "xong",
-     "ghiChu": "commit 8d9b6ca; dist/ep001.html chính chưa gộp lại"
-    },
-    {
-     "ten": "Gà cho ep001",
-     "tt": "cho",
-     "ghiChu": "người dùng: chưa bật"
-    }
-   ]
-  }
- ],
- "link": [
-  {
-   "ten": "Bản xem thử tập 2",
-   "href": "ep002_xem-thu.html"
-  },
-  {
-   "ten": "Trang duyệt tài sản tập 2",
-   "href": "ep002_duyet.html"
-  },
-  {
-   "ten": "Bản mẫu khung studio",
-   "href": "studio_ban-mau.html"
-  }
- ],
- "canBan": [
-  "R6: Gà có thêm thân hình R6, hay chỉ dân làng đổi sang R6?",
-  "Khi rảnh: kiểm 20 góp ý tập 2 trên bản xem thử (thẻ Làm dở), duyệt 11 bảng màu nhà (Đợt 6), nghe lại âm nền",
-  "Điền khoá vào S:\u0003JS Studio\\.env.local rồi chạy: node tools/kiem-khoa.mjs"
- ],
- "daChot": [
-  [
-   "Hướng đi",
-   "Ưu tiên số 1: ra video nhanh — đầu vào chỉ là kịch bản, nhân vật chủ đạo là Gà, ít phải sửa tay nhất"
   ],
-  [
-   "Hướng đi",
-   "Studio phát triển thành công cụ chuyên nghiệp; chế độ 3D để XEM và KIỂM"
+  "canBan": [
+    "R6: Gà có thêm thân hình R6, hay chỉ dân làng đổi sang R6?",
+    "Khi rảnh: kiểm 20 góp ý tập 2 trên bản xem thử (thẻ Làm dở), duyệt 11 bảng màu nhà (Đợt 6), nghe lại âm nền",
+    "Điền khoá vào S:\u0003JS Studio\\.env.local rồi chạy: node tools/kiem-khoa.mjs"
   ],
-  [
-   "Tập 2",
-   "Kịch bản \"Món đồ biến mất trong phòng khóa kín\" + file giọng mẫu là chuẩn duy nhất; lời lấy theo kịch bản, nhịp theo giọng mẫu"
+  "daChot": [
+    [
+      "Hướng đi",
+      "Ưu tiên số 1: ra video nhanh — đầu vào chỉ là kịch bản, nhân vật chủ đạo là Gà, ít phải sửa tay nhất"
+    ],
+    [
+      "Hướng đi",
+      "Studio phát triển thành công cụ chuyên nghiệp; chế độ 3D để XEM và KIỂM"
+    ],
+    [
+      "Tập 2",
+      "Kịch bản \"Món đồ biến mất trong phòng khóa kín\" + file giọng mẫu là chuẩn duy nhất; lời lấy theo kịch bản, nhịp theo giọng mẫu"
+    ],
+    [
+      "Tập 2",
+      "Giọng Việt chỉ Thanh Niên Tự Tin; giọng Anh chỉ Andrew, làm sau cùng"
+    ],
+    [
+      "Tập 2",
+      "Đạo cụ làm lại toàn bộ bằng model low poly, duyệt trước rồi mới nhập (đã duyệt Đợt 2, 3, 4); mỗi món đề xuất NHIỀU model để chốt"
+    ],
+    [
+      "Tập 2",
+      "Gấu Bắp = Mister Bear, lông mềm kiểu gấu bông; nơ Bow Tie (Sketchfab) bỏ 2 vạt, xoay 180°, chỉ đổi màu"
+    ],
+    [
+      "Tập 2",
+      "Bảng màu nhà thị trấn ep002: pastel; thêm nhiều bảng có sẵn để chọn cho tập sau"
+    ],
+    [
+      "Tập 2",
+      "8 mục dựng riêng đã duyệt: bản đồ, 2 cụm thùng dấu gấu, 4 bảng hiệu, bảng bánh mì"
+    ],
+    [
+      "Tập 2",
+      "Hộp nhẫn: texture sang trọng hơn, thay nhẫn xịn (đã làm)"
+    ],
+    [
+      "Tập 2",
+      "Nhân vật Gà: duyệt tạm, không cần mũ, không dùng chung mô hình R15"
+    ],
+    [
+      "Video",
+      "Bỏ trang ghi công khỏi video (ghi công vẫn lưu trong repo)"
+    ],
+    [
+      "Tài sản",
+      "Ưu tiên low poly theo bảng ngưỡng tam giác; không có low poly thì hỏi trước"
+    ],
+    [
+      "Tài sản",
+      "Blender 5.1.2 là trạm nhập model; nhận model giấy phép BẤT KỲ (người dùng quyết 13/11), vẫn ghi nguồn + giấy phép vào manifest"
+    ],
+    [
+      "Tài sản",
+      "Tài sản Roblox miễn phí được dùng để dựng phim"
+    ],
+    [
+      "Studio",
+      "Bắt lỗi theo shot là chính; theo frame khi cần chi tiết"
+    ],
+    [
+      "Studio",
+      "Khung PC bản mẫu v2: viền kéo co giãn, cột thẻ dọc, timeline rê theo frame, marker phím M, bánh răng, Gửi tới Claude + Xuất file"
+    ],
+    [
+      "Studio",
+      "Dòng shot đang chọn có nút ▶ (phát riêng shot) và ✎ (ghi chú), lưu xong sang shot kế"
+    ],
+    [
+      "Cách làm",
+      "Duyệt tài sản bằng trang HTML cục bộ theo đợt, không dùng artifact"
+    ],
+    [
+      "Cách làm",
+      "Trang tiến độ HTML cục bộ; mỗi lần cập nhật phải kèm link"
+    ],
+    [
+      "Cách làm",
+      "Phiên điều phối chỉ /compact, không /clear; tối đa 3 agent phụ, dùng model rẻ"
+    ],
+    [
+      "Hướng đi",
+      "Duyệt đề xuất chế độ 3D (xem → kiểm → chỉnh nhẹ) và thứ tự ưu tiên: xong tập 2 → dây chuyền kịch bản→video với Gà → khung studio → 3D giai đoạn 1"
+    ],
+    [
+      "Tập 2",
+      "Nơ gấu: chiều sau khi xoay đúng; Bắp nơ xanh"
+    ],
+    [
+      "Tập 1",
+      "Chưa bật nhân vật Gà cho ep001"
+    ],
+    [
+      "Tài sản",
+      "Khoá Roblox Open Cloud: để sau. Khoá Poly Pizza: người dùng đã điền trong Blender (chưa có trong .env.local)"
+    ],
+    [
+      "Tập 2",
+      "Hộp nhẫn s006: hộp CÓ nhẫn → zoom vào → nhẫn nhấp nháy rồi biến mất"
+    ],
+    [
+      "Tập 2",
+      "Gấu bông mới đặt trên kệ NHÀ MÁY (thay gấu khối), không thêm kệ trước tiệm gấu"
+    ],
+    [
+      "Nhân vật",
+      "THAY ĐỔI LỚN 13/11: tạm thời không dùng R15; toàn bộ dân làng là R6; thiết kế thêm thân hình R6"
+    ],
+    [
+      "Studio",
+      "Khung studio mới: người dùng dùng thử, ổn"
+    ],
+    [
+      "Nhân vật",
+      "Toàn bộ biểu cảm hiện chỉ Gà có phải áp cho mọi nhân vật phụ và dân làng"
+    ],
+    [
+      "Hướng đi",
+      "Hiệu ứng, phông nền, code chung phải áp cho TẤT CẢ các tập; tập 2 đang thiếu → rà soát"
+    ],
+    [
+      "Hướng đi",
+      "13/11: tạm gác tập 2 tại bản xem thử hiện có; mở phiên riêng làm tập 3"
+    ]
   ],
-  [
-   "Tập 2",
-   "Giọng Việt chỉ Thanh Niên Tự Tin; giọng Anh chỉ Andrew, làm sau cùng"
-  ],
-  [
-   "Tập 2",
-   "Đạo cụ làm lại toàn bộ bằng model low poly, duyệt trước rồi mới nhập (đã duyệt Đợt 2, 3, 4); mỗi món đề xuất NHIỀU model để chốt"
-  ],
-  [
-   "Tập 2",
-   "Gấu Bắp = Mister Bear, lông mềm kiểu gấu bông; nơ Bow Tie (Sketchfab) bỏ 2 vạt, xoay 180°, chỉ đổi màu"
-  ],
-  [
-   "Tập 2",
-   "Bảng màu nhà thị trấn ep002: pastel; thêm nhiều bảng có sẵn để chọn cho tập sau"
-  ],
-  [
-   "Tập 2",
-   "8 mục dựng riêng đã duyệt: bản đồ, 2 cụm thùng dấu gấu, 4 bảng hiệu, bảng bánh mì"
-  ],
-  [
-   "Tập 2",
-   "Hộp nhẫn: texture sang trọng hơn, thay nhẫn xịn (đã làm)"
-  ],
-  [
-   "Tập 2",
-   "Nhân vật Gà: duyệt tạm, không cần mũ, không dùng chung mô hình R15"
-  ],
-  [
-   "Video",
-   "Bỏ trang ghi công khỏi video (ghi công vẫn lưu trong repo)"
-  ],
-  [
-   "Tài sản",
-   "Ưu tiên low poly theo bảng ngưỡng tam giác; không có low poly thì hỏi trước"
-  ],
-  [
-   "Tài sản",
-   "Blender 5.1.2 là trạm nhập model; nhận model giấy phép BẤT KỲ (người dùng quyết 13/11), vẫn ghi nguồn + giấy phép vào manifest"
-  ],
-  [
-   "Tài sản",
-   "Tài sản Roblox miễn phí được dùng để dựng phim"
-  ],
-  [
-   "Studio",
-   "Bắt lỗi theo shot là chính; theo frame khi cần chi tiết"
-  ],
-  [
-   "Studio",
-   "Khung PC bản mẫu v2: viền kéo co giãn, cột thẻ dọc, timeline rê theo frame, marker phím M, bánh răng, Gửi tới Claude + Xuất file"
-  ],
-  [
-   "Studio",
-   "Dòng shot đang chọn có nút ▶ (phát riêng shot) và ✎ (ghi chú), lưu xong sang shot kế"
-  ],
-  [
-   "Cách làm",
-   "Duyệt tài sản bằng trang HTML cục bộ theo đợt, không dùng artifact"
-  ],
-  [
-   "Cách làm",
-   "Trang tiến độ HTML cục bộ; mỗi lần cập nhật phải kèm link"
-  ],
-  [
-   "Cách làm",
-   "Phiên điều phối chỉ /compact, không /clear; tối đa 3 agent phụ, dùng model rẻ"
-  ],
-  [
-   "Hướng đi",
-   "Duyệt đề xuất chế độ 3D (xem → kiểm → chỉnh nhẹ) và thứ tự ưu tiên: xong tập 2 → dây chuyền kịch bản→video với Gà → khung studio → 3D giai đoạn 1"
-  ],
-  [
-   "Tập 2",
-   "Nơ gấu: chiều sau khi xoay đúng; Bắp nơ xanh"
-  ],
-  [
-   "Tập 1",
-   "Chưa bật nhân vật Gà cho ep001"
-  ],
-  [
-   "Tài sản",
-   "Khoá Roblox Open Cloud: để sau. Khoá Poly Pizza: người dùng đã điền trong Blender (chưa có trong .env.local)"
-  ],
-  [
-   "Tập 2",
-   "Hộp nhẫn s006: hộp CÓ nhẫn → zoom vào → nhẫn nhấp nháy rồi biến mất"
-  ],
-  [
-   "Tập 2",
-   "Gấu bông mới đặt trên kệ NHÀ MÁY (thay gấu khối), không thêm kệ trước tiệm gấu"
-  ],
-  [
-   "Nhân vật",
-   "THAY ĐỔI LỚN 13/11: tạm thời không dùng R15; toàn bộ dân làng là R6; thiết kế thêm thân hình R6"
-  ],
-  [
-   "Studio",
-   "Khung studio mới: người dùng dùng thử, ổn"
-  ],
-  [
-   "Nhân vật",
-   "Toàn bộ biểu cảm hiện chỉ Gà có phải áp cho mọi nhân vật phụ và dân làng"
-  ],
-  [
-   "Hướng đi",
-   "Hiệu ứng, phông nền, code chung phải áp cho TẤT CẢ các tập; tập 2 đang thiếu → rà soát"
-  ],
-  [
-   "Hướng đi",
-   "13/11: tạm gác tập 2 tại bản xem thử hiện có; mở phiên riêng làm tập 3"
-  ]
- ],
- "tokenGhiChu": "phần trăm của việc đang làm là ước lượng của Claude, không phải số đo trực tiếp"
+  "tokenGhiChu": "phần trăm của việc đang làm là ước lượng của Claude, không phải số đo trực tiếp"
 }

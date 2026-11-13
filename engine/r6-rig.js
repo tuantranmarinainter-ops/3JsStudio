@@ -21,6 +21,7 @@ export const R6_RIG_DEFAULTS = {
   torso: null, arm: null, leg: null,     // { bands:[[y0,y1,màu]…], front:[nét…], back:[nét…] } — y tính từ trên xuống 0..1
   hair: null, hat: null, acc: [],        // hair:{style,color,…}  hat:{style,color,…}  acc:[{kind,…}]
   EK: 0.6, KK: 0.25,
+  chat: null,                            // chất liệu (engine/materials.js): { ao: 'fabric'|'knit'…, quan, giay: 'leather', de: 'rubber', mu, toc: 'hair' } — ghi phần KHÁC mặc định
 };
 
 // ---------- pose R15 → R6 cứng ----------
@@ -237,7 +238,7 @@ export function createR6Rig(THREE, opts = {}) {
       const m = std(a.color, 0.85);
       for (const sx of [-1, 1]) { const l = addMesh(torso, RB(0.3, 0.2, 0.08, 0.04), m, 'bow_loop', { cast: false }); l.position.set(sx * 0.2, a.y ?? 0.2, -0.54); l.rotation.z = sx * 0.3; const t = addMesh(torso, RB(0.12, 0.42, 0.05, 0.02), m, 'bow_tail', { cast: false }); t.position.set(sx * 0.1, (a.y ?? 0.2) - 0.28, -0.54); t.rotation.z = -sx * 0.15; }
     } else if (a.kind === 'box') {        // khối tự do: { on:'head'|'torso', size:[w,h,d], pos:[x,y,z], color, r }
-      const b = addMesh(a.on === 'head' ? head : torso, RB(...a.size, a.r ?? 0.04), std(a.color, 0.8), a.name || 'acc_box'); b.position.set(...a.pos); if (a.rot) b.rotation.set(...a.rot);
+      const b = addMesh(a.on === 'head' ? head : torso, RB(...a.size, a.r ?? 0.04), std(a.color, 0.8), a.name || 'acc_box'); if (a.chat) b.userData.chat = a.chat; b.position.set(...a.pos); if (a.rot) b.rotation.set(...a.rot);
     }
   }
 
@@ -251,6 +252,20 @@ export function createR6Rig(THREE, opts = {}) {
   };
   root.userData.vai = (o.name === 'hero' || o.vai === 'hero' || o.hero === true) ? 'hero' : 'nguoi';
   root.userData.r6 = true;
+  // KHAI BÁO chất liệu (cùng dạng khaiBaoMat của engine/materials.js: userData.matDecl + matNguon) → applyMaterials không phải ĐOÁN theo tên.
+  // Tay/chân là MỘT khối vẽ canvas (tay áo + bàn tay; quần + chân trần + giày) nên cả khối theo chất liệu phần chiếm nhiều nhất; đáy khối tay = da, đáy chân = đế.
+  {
+    const CH = { ao: 'fabric', quan: 'fabric', giay: 'leather', de: 'rubber', mu: 'fabric', toc: 'hair', ...(o.chat || {}) };
+    const kb = (m, kind) => { if (!m || !kind) return; (m.userData || (m.userData = {})).matDecl = kind; m.userData.matNguon = 'khai-bao'; };
+    const tran = (c) => String(c).toLowerCase() === String(o.skin).toLowerCase();
+    torsoMats.forEach((m) => kb(m, CH.ao));
+    armMats.forEach((m, i) => kb(m, i === 3 || tran(sleeves) ? 'skin' : CH.ao));
+    legMats.forEach((m, i) => kb(m, i === 3 ? CH.de : tran(o.pants) ? 'skin' : CH.quan));
+    const THEO_TEN = [[/^head_mesh$|^crest/, 'skin'], [/^hair_|^moustache/, CH.toc], [/^glasses/, 'plastic'], [/^hat_badge/, 'chrome'], [/^hat_/, CH.mu],
+      [/^hood_/, CH.ao], [/^backpack/, CH.balo || 'fabric'], [/^(headband|hoodie_string|bow_|epaulette)/, 'fabric']];
+    root.traverse((m) => { if (!m.isMesh || Array.isArray(m.material) || m.material === faceMat || m.material.userData?.matDecl) return;
+      const hit = THEO_TEN.find(([re]) => re.test(m.name)); kb(m.material, hit ? hit[1] : (m.userData.chat || 'fabric')); });
+  }
   for (const k of ['rightArm', 'leftArm']) parts[k].userData.vai = 'tay';
   for (const k of ['rightLeg', 'leftLeg']) parts[k].userData.vai = 'chan-nguoi';
 
