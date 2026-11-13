@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 12:20",
+ "capNhat": "2026-11-13 12:30",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -143,5 +143,87 @@
   "Tuỳ chọn: khoá API Poly Pizza (POLY_PIZZA_API_KEY) để tìm model nhanh hơn",
   "Duyệt đề xuất chế độ 3D và thứ tự ưu tiên (docs/dinh-huong-studio.md)",
   "Phiên \"Quy trình câu luật → phim: phiên 3\" đã xong việc nhưng app không cho Claude lưu trữ (còn kết nối Remote Control): bạn tự lưu trữ từ thanh bên"
+ ],
+ "daChot": [
+  [
+   "Hướng đi",
+   "Ưu tiên số 1: ra video nhanh — đầu vào chỉ là kịch bản, nhân vật chủ đạo là Gà, ít phải sửa tay nhất"
+  ],
+  [
+   "Hướng đi",
+   "Studio phát triển thành công cụ chuyên nghiệp; thêm chế độ 3D (đề xuất đang chờ duyệt)"
+  ],
+  [
+   "Tập 2",
+   "Kịch bản \"Món đồ biến mất trong phòng khóa kín\" + file giọng mẫu là chuẩn duy nhất; lời lấy theo kịch bản, nhịp theo giọng mẫu"
+  ],
+  [
+   "Tập 2",
+   "Giọng Việt chỉ Thanh Niên Tự Tin; giọng Anh chỉ Andrew, làm sau cùng"
+  ],
+  [
+   "Tập 2",
+   "Đạo cụ làm lại toàn bộ bằng model low poly, duyệt trước rồi mới nhập (đã duyệt Đợt 2, 3, 4)"
+  ],
+  [
+   "Tập 2",
+   "Gấu Bắp = Mister Bear, lông mềm kiểu gấu bông; nơ Bow Tie (Sketchfab) bỏ 2 vạt, xoay 180°, chỉ đổi màu"
+  ],
+  [
+   "Tập 2",
+   "Bảng màu nhà thị trấn: pastel"
+  ],
+  [
+   "Tập 2",
+   "8 mục dựng riêng đã duyệt: bản đồ, 2 cụm thùng dấu gấu, 4 bảng hiệu, bảng bánh mì"
+  ],
+  [
+   "Tập 2",
+   "Hộp nhẫn: texture sang trọng hơn, thay nhẫn xịn (đã làm)"
+  ],
+  [
+   "Tập 2",
+   "Nhân vật Gà: duyệt tạm, không cần mũ, không dùng chung mô hình R15"
+  ],
+  [
+   "Video",
+   "Bỏ trang ghi công khỏi video (ghi công vẫn lưu trong repo)"
+  ],
+  [
+   "Tài sản",
+   "Ưu tiên low poly theo bảng ngưỡng tam giác; không có low poly thì hỏi trước"
+  ],
+  [
+   "Tài sản",
+   "Blender 5.1.2 là trạm nhập model; chỉ nhận CC0 và CC BY"
+  ],
+  [
+   "Tài sản",
+   "Tài sản Roblox miễn phí được dùng để dựng phim"
+  ],
+  [
+   "Studio",
+   "Bắt lỗi theo shot là chính; theo frame khi cần chi tiết"
+  ],
+  [
+   "Studio",
+   "Khung PC bản mẫu v2: viền kéo co giãn, cột thẻ dọc, timeline rê theo frame, marker phím M, bánh răng, Gửi tới Claude + Xuất file"
+  ],
+  [
+   "Studio",
+   "Dòng shot đang chọn có nút ▶ (phát riêng shot) và ✎ (ghi chú), lưu xong sang shot kế"
+  ],
+  [
+   "Cách làm",
+   "Duyệt tài sản bằng trang HTML cục bộ theo đợt, không dùng artifact"
+  ],
+  [
+   "Cách làm",
+   "Trang tiến độ HTML cục bộ; mỗi lần cập nhật phải kèm link"
+  ],
+  [
+   "Cách làm",
+   "Phiên điều phối chỉ /compact, không /clear; tối đa 3 agent phụ, dùng model rẻ"
+  ]
  ]
 }
