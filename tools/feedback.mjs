@@ -25,7 +25,7 @@ notes.forEach((n, i) => {
   let file = '';
   const m = /^data:image\/png;base64,(.+)$/.exec(n.img || '');
   if (m) { file = path.join(out, `${nn}_f${n.frame}.png`); fs.writeFileSync(file, Buffer.from(m[1], 'base64')); }
-  console.log(`${nn}. frame ${n.frame} · ${Number(n.t).toFixed(2)}s · shot ${n.shotId || '?'}`);
+  console.log(`${nn}. shot ${n.shotId || '?'}${n.scope ? (n.scope === 'shot' ? ` [CẢ SHOT, frame ${n.shotF0}–${n.shotF1}]` : ' [đúng khung]') : ''} · frame ${n.frame}${n.frameInShot ? ` (khung ${n.frameInShot}/${n.shotFrames} của shot)` : ''} · ${Number(n.t).toFixed(2)}s`);
   console.log(`    ${n.text ? n.text.replace(/\n/g, '\n    ') : '(chỉ có nét vẽ, xem ảnh)'}`);
   if (file) console.log(`    ảnh: ${file}`);
 });

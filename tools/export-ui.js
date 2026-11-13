@@ -50,7 +50,9 @@ async function init() {
     #xtime { font-variant-numeric: tabular-nums; min-width: 92px; text-align: right; }
     #xui .xfr { gap: 6px; } #xui .xstep { padding: 6px 0; flex: 1; font-variant-numeric: tabular-nums; }
     #xframe { width: 78px; font: inherit; background: #1b2030; color: #e8ecf3; border: 1px solid #343c50; border-radius: 6px; padding: 4px 6px; }
-    #xftot, #xshot { font-variant-numeric: tabular-nums; }
+    #xftot, #xshot, #xshinfo { font-variant-numeric: tabular-nums; }
+    #xshsel { flex: 1; min-width: 0; padding: 5px 6px; border-radius: 6px; background: #1c2230; color: #fff; border: 1px solid #3a4358; font: inherit; font-weight: 700; }
+    .xsh { padding: 5px 9px; }
     #xui { max-height: 100vh; overflow-y: auto; padding-right: 4px; box-sizing: border-box; }
     #xwrap { cursor: pointer; }
     #xann { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 5; display: none; touch-action: none; cursor: crosshair; }
@@ -90,6 +92,7 @@ async function init() {
       <label class="chk"><input id="xloud" type="checkbox" checked> Chuẩn âm lượng YouTube (−14 LUFS)</label></div>
     <div id="xfxbox" style="display:none"><div class="lbl" style="width:auto;margin:2px 0 6px">Hiệu ứng hình</div><div id="xfx" class="fxgrid"></div></div>
     <div class="row"><button id="xplay">▶ Xem</button><input id="xseek" type="range" min="0" max="${DUR}" step="0.001" value="0"><span id="xtime">0:00.0</span></div>
+    <div class="row xfr" id="xshotrow" style="display:none"><span class="lbl" style="width:auto">Shot</span><button class="xsh" data-d="-1" title="Shot trước (phím [)">◀</button><select id="xshsel" title="Nhảy tới shot"></select><button class="xsh" data-d="1" title="Shot sau (phím ])">▶</button><button class="xsh" data-d="0" title="Về đầu shot này">↺</button><span id="xshinfo" class="muted"></span></div>
     <div class="row xfr"><span class="lbl" style="width:auto">Frame</span><input id="xframe" type="number" min="0" step="1" value="0"><span id="xftot" class="muted"></span><span id="xshot" class="muted"></span></div>
     <div class="row xfr">${[-10, -5, -1, 1, 5, 10].map((d) => `<button class="xstep" data-d="${d}" title="${d < 0 ? 'Lùi' : 'Tới'} ${Math.abs(d)} frame">${d < 0 ? '◀' : ''}${Math.abs(d)}${d > 0 ? '▶' : ''}</button>`).join('')}</div>
     <div id="xannbox">
@@ -99,7 +102,7 @@ async function init() {
         <div class="row xfr"><button class="tl act" data-tool="pen">✏ Bút</button><button class="tl" data-tool="ell">◯ Elip</button><button class="tl" data-tool="arrow">➚ Mũi tên</button></div>
         <div class="row xfr"><button class="tl" id="xundo">↶ Hoàn tác</button><button class="tl" id="xclr">🗑 Xoá nét</button></div>
         <textarea id="xnote" placeholder="Ghi chú cho khung này (gõ hoặc bấm micro để nói)…"></textarea>
-        <div class="row xfr"><button id="xmic" style="flex:1">🎤 Nói</button><button id="xsave" class="main" style="flex:2;padding:10px 14px;font-size:14px">Lưu ghi chú</button></div>
+        <div class="row xfr"><label class="chk" style="flex-basis:100%"><input id="xscope" type="checkbox" checked> Lỗi của cả shot (bỏ tick = chỉ đúng khung này)</label><button id="xmic" style="flex:1">🎤 Nói</button><button id="xsave" class="main" style="flex:2;padding:10px 14px;font-size:14px">Lưu ghi chú</button></div>
         <div id="xmicst" class="muted"></div>
       </div>
       <div id="xnotes"></div>
@@ -192,7 +195,29 @@ async function init() {
     window.renderAt(t); $('xseek').value = t; $('xtime').textContent = fmt(t, true);
     const f = Math.min(NF - 1, Math.round(t * FPS)); if (document.activeElement !== $('xframe')) $('xframe').value = f;
     $('xftot').textContent = '/ ' + (NF - 1);
-    try { const sh = window.__shots && window.__shots.at(Math.min(t, DUR - 1e-4)).shot; $('xshot').textContent = sh ? '· ' + sh.id : ''; } catch (e) {}
+    try {
+      const si = shotInfo(t); $('xshot').textContent = si ? '· ' + si.id : '';
+      if (si) { if ($('xshsel').value !== si.id) $('xshsel').value = si.id; $('xshinfo').textContent = `${si.index + 1}/${si.count} · khung ${si.fIn + 1}/${si.fCount}`; }
+    } catch (e) {}
+  };
+  // ---- theo dõi theo SHOT: shot đang xem, khung thứ mấy trong shot; bắt lỗi theo shot là mặc định, theo frame khi cần chi tiết ----
+  const fOf = (t) => Math.ceil(t * FPS - 1e-6);
+  const shotInfo = (t) => {
+    const tl = window.__shots; if (!tl || !tl.list || !tl.list.length) return null;
+    const sh = tl.at(Math.min(Math.max(0, t), DUR - 1e-4)).shot; if (!sh) return null;
+    const f0 = fOf(sh.t0), f1 = Math.max(f0, fOf(sh.t1) - 1);   // khung đầu của shot = khung đầu tiên có t ≥ t0
+    const f = Math.min(NF - 1, Math.round(t * FPS));
+    return { id: sh.id, index: sh.index, count: tl.list.length, f0, f1, fCount: f1 - f0 + 1, fIn: Math.max(0, Math.min(f1 - f0, f - f0)), t0: sh.t0 };
+  };
+  const goShot = (i) => { const tl = window.__shots; if (!tl || !tl.list) return; i = Math.max(0, Math.min(tl.list.length - 1, i)); goFrame(fOf(tl.list[i].t0)); };
+  const initShots = () => {
+    const tl = window.__shots; if (!tl || !tl.list || !tl.list.length) return;
+    $('xshotrow').style.display = 'flex';
+    $('xshsel').innerHTML = tl.list.map((x) => `<option value="${x.id}">${x.id}</option>`).join('');
+    $('xshsel').onchange = (e) => { const i = tl.list.findIndex((x) => x.id === e.target.value); if (i >= 0) goShot(i); e.target.blur(); };
+    document.querySelectorAll('.xsh').forEach((b) => { b.onclick = () => { const si = shotInfo(+$('xseek').value); if (si) goShot(si.index + (+b.dataset.d)); }; });
+    addEventListener('keydown', (e) => { if (/INPUT|TEXTAREA|SELECT/.test((e.target || {}).tagName || '')) return; const si = shotInfo(+$('xseek').value); if (!si) return;
+      if (e.key === '[') goShot(si.fIn > 0 ? si.index : si.index - 1); else if (e.key === ']') goShot(si.index + 1); });
   };
   // đi từng frame: nút ◀10 ◀5 ◀1 1▶ 5▶ 10▶, ô số frame, phím ← → (giữ Shift = 10 frame)
   const goFrame = (f) => { if (playing) pause(); f = Math.max(0, Math.min(NF - 1, Math.round(f))); show(f / FPS); };
@@ -250,6 +275,7 @@ async function init() {
   $('xplay').onclick = () => (playing ? pause() : play());
   $('xduck').onchange = () => { if (playing) applyMusicVolume(nowT()); };
   $('xseek').oninput = () => { if (playing) pause(); show(+$('xseek').value); };
+  try { initShots(); show(+$('xseek').value); } catch (e) { console.warn('shot ui', e); }
   addEventListener('keydown', (e) => { if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !annotating) { e.preventDefault(); playing ? pause() : play(); } });
   for (const b of document.querySelectorAll('.xstep')) b.onclick = () => goFrame(curFrame() + +b.dataset.d);
   $('xframe').onchange = () => goFrame(+$('xframe').value);
@@ -348,18 +374,19 @@ async function init() {
       if (strokes.length) g.drawImage(annCv, 0, 0, CW, CH);
       img = cv.toDataURL('image/png');
     } catch (e) { console.warn('không chụp được khung', e); }
-    let shotId = ''; try { const sh = window.__shots && window.__shots.at(t).shot; shotId = sh ? sh.id : ''; } catch {}
-    notes.push({ id: Date.now().toString(36), frame, t: +t.toFixed(3), shotId, text, img, created: new Date().toISOString() });
+    let shotId = '', si = null; try { si = shotInfo(t); shotId = si ? si.id : ''; } catch {}
+    const scope = si && $('xscope') && $('xscope').checked ? 'shot' : 'frame';   // 'shot' = lỗi của cả shot (khung chỉ là ảnh minh hoạ); 'frame' = lỗi đúng khung này
+    notes.push({ id: Date.now().toString(36), frame, t: +t.toFixed(3), shotId, scope, shotIndex: si ? si.index + 1 : 0, frameInShot: si ? si.fIn + 1 : 0, shotFrames: si ? si.fCount : 0, shotF0: si ? si.f0 : 0, shotF1: si ? si.f1 : 0, text, img, created: new Date().toISOString() });
     notes.sort((a, b) => a.frame - b.frame);
     const ok = persist();
     strokes = []; cur = null; redrawAnn(); $('xnote').value = ''; stopMic();
-    $('xmicst').textContent = ok ? 'Đã lưu ghi chú ở frame ' + frame + '.' : 'Đã lưu, nhưng bộ nhớ trình duyệt đầy: hãy bấm Gửi góp ý sớm (ảnh sẽ mất khi tải lại trang).';
+    $('xmicst').textContent = ok ? 'Đã lưu ghi chú ' + (scope === 'shot' ? 'cho shot ' + shotId : 'ở frame ' + frame) + '.' : 'Đã lưu, nhưng bộ nhớ trình duyệt đầy: hãy bấm Gửi góp ý sớm (ảnh sẽ mất khi tải lại trang).';
     renderNotes();
   }
   $('xsave').onclick = saveNote;
   function renderNotes() {
     $('xnotes').innerHTML = notes.map((n, i) => `<div class="nt" data-i="${i}">${n.img ? `<img src="${n.img}" alt="">` : '<img alt="">'}` +
-      `<div class="tx"><b>f${n.frame}</b> · ${n.t.toFixed(2)}s${n.shotId ? ' · ' + escapeHtml(n.shotId) : ''}<span>${escapeHtml(n.text || '(chỉ có nét vẽ)')}</span></div>` +
+      `<div class="tx">${n.shotId ? `<b>${escapeHtml(n.shotId)}</b> · ${n.scope === 'shot' ? 'cả shot' : 'đúng khung'}${n.frameInShot ? ` ${n.frameInShot}/${n.shotFrames}` : ''} · f${n.frame}` : `<b>f${n.frame}</b>`} · ${n.t.toFixed(2)}s<span>${escapeHtml(n.text || '(chỉ có nét vẽ)')}</span></div>` +
       `<button class="del" data-del="${i}" title="Xoá ghi chú">✕</button></div>`).join('');
     $('xsendrow').style.display = notes.length ? 'flex' : 'none'; $('xncnt').textContent = notes.length;
   }
