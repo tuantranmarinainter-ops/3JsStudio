@@ -213,7 +213,7 @@ export default function build(g, e, H) {
   cyl(front, 'den_ban_de', 0.4, 0.5, 0.26, NX, NH + 0.16, NZ, '#3b2a1c', 'wood'); cyl(front, 'den_ban_than', 0.08, 0.08, 1.0, NX, NH + 0.42, NZ, '#3b2a1c', 'wood', {}, 8);
   { const sh = none(new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.78, 1.2, 4, 1, true), shadeMat)); sh.rotation.y = Math.PI / 4; sh.position.set(NX, NH + 1.9, NZ); sh.name = 'den_ban_chup'; front.add(sh);
     const bulb = none(new THREE.Mesh(new THREE.SphereGeometry(0.3, 10, 8), new THREE.MeshBasicMaterial({ color: '#fff0c8' }))); bulb.position.set(NX, NH + 1.8, NZ); bulb.name = 'den_ban_bong'; front.add(bulb); e.bulb = bulb; }
-  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex('255,176,80'), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 0.3, fog: false })); glow.scale.set(3.6, 3.6, 1); glow.position.set(NX + 0.2, NH + 1.9, NZ + 0.4); glow.name = 'den_ban_quang'; front.add(glow);
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex('255,176,80'), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 0.16, fog: false })); glow.scale.set(3.2, 3.2, 1); glow.position.set(NX + 0.2, NH + 1.9, NZ + 0.4); glow.name = 'den_ban_quang'; front.add(glow);
   // ---- KỆ GỖ THẤP 2 ngăn (bên phải cửa sổ) + lớp bụi có VẾT DÂY CHUYỀN (S002, S016–S019) ----
   { const x0 = KX - KW / 2, x1 = KX + KW / 2;
     for (const x of [x0 + 0.12, x1 - 0.12]) box(mid, 'phong_ke_hong', 0.24, KH - 0.22, KD, x, 0, KZ, WOOD, 'wood');
@@ -299,7 +299,7 @@ export default function build(g, e, H) {
   const setNight = (night) => {
     if (nightNow === night) return; nightNow = night;
     for (const m of viewMats) m.map = night ? viewNight : viewDay;
-    shadeMat.emissiveIntensity = night ? 1.1 : 0.1; shadeMat.color.set(night ? '#ffb347' : '#d9a050'); e.bulb.material.color.set(night ? '#fff0c8' : '#d8c8a0'); glow.visible = night;
+    shadeMat.emissiveIntensity = night ? 0.5 : 0.1; shadeMat.color.set(night ? '#ffb347' : '#d9a050'); e.bulb.material.color.set(night ? '#e8c890' : '#d8c8a0');   // đèn dịu: không cháy sáng khi vào khung glow.visible = night;
     wallMat.color.set(night ? '#8b90a2' : '#a9b0bb'); patchMat.color.set(night ? '#9fb8ff' : '#fff0c0'); patchMat.opacity = night ? 0.22 : 0.4;
     e.pointSpec = night ? DEM : SANG;
   };

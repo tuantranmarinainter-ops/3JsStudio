@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 22:30",
+ "capNhat": "2026-11-13 23:30",
  "nhom": [
   {
    "ten": "Tập 3",
@@ -26,15 +26,19 @@
     {
      "ten": "Bản xem thử dist/ep003_xem-thu.html",
      "tt": "do",
-     "ghiChu": "soi độc lập 13/11: đạt 1, lệch 58, hỏng 45 / 104 shot (docs/handoff/ep003-loi-html-a.md, -b.md)"
+     "ghiChu": "gộp lại 13/11 đêm với phòng Gà bản 2; 69 shot còn lại (nhà máy, phố, tiệm) vẫn là bản cũ"
     },
     {
      "ten": "Dựng lại set đúng tỉ lệ + đặt lại nhân vật theo bố trí của Codex",
-     "tt": "chua"
+     "tt": "dang",
+     "pt": 33,
+     "ghiChu": "Phòng Gà XONG vòng 1 (35/104 shot): 14,6 × 17,7 × 9,4 stud, gương phản chiếu thật, két mở/nhấc, cửa mở. Soi độc lập vòng 2: đạt 2, lệch 27, hỏng 6 (s022, s026, s029, s041, s102, s103) — docs/handoff/ep003-phong2-soi-a-v2.md, -b-v2.md. Còn: nhà máy (33), phố + tiệm (36)"
     },
     {
      "ten": "Đạo cụ đúng thiết kế (dây chuyền, nhẫn bạc, két, đồng hồ quả quýt, ghim đầu gấu…) + gấu Bắp",
-     "tt": "chua"
+     "tt": "dang",
+     "pt": 30,
+     "ghiChu": "xong: dây chuyền bạc mặt giọt xanh ngọc, nhẫn bạc, sách xanh rêu, két teal mở được. Chưa: đồng hồ đỏ cam (đang dùng model chuông xanh/vàng), chốt cửa màu đồng, két tiệm bánh, đồng hồ quả quýt, ghim đầu gấu, gấu Bắp"
     },
     {
      "ten": "Tay và tư thế cho thân R6, màu da",
@@ -53,8 +57,8 @@
     {
      "ten": "Vật liệu theo chất liệu (gỗ ra gỗ, vải ra vải…)",
      "tt": "dang",
-     "pt": 25,
-     "ghiChu": "đo 13/11: 4 bối cảnh tập 3 = 0/196 vật liệu được vá (file bối cảnh tự tắt), đạo cụ 0; nhân vật R6 đã khai xong (da, len, vải, đế cao su, tóc, kính nhựa, huy hiệu kim loại). Bối cảnh + đạo cụ sẽ khai khi dựng lại theo kit"
+     "pt": 45,
+     "ghiChu": "nhân vật R6 + phòng Gà đã có vật liệu (phòng: 58 vật liệu được vá, 14 mặt sáng/kính cố ý để nguyên); nhà máy, phố, tiệm = 0/150 (sẽ khai khi dựng lại); đạo cụ mới của phòng đã khai"
     }
    ],
    "tap": "Tập 3"
