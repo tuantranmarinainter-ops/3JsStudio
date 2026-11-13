@@ -1,0 +1,188 @@
+{
+ "so": 6,
+ "ngay": "2026-11-13",
+ "tieuDe": "Đợt 6",
+ "tomTat": "",
+ "token": {
+  "tong": 0,
+  "chiTiet": [],
+  "ghiChu": ""
+ },
+ "nhom": [
+  {
+   "id": "bang-mau-nha",
+   "ten": "Bảng màu nhà thị trấn (11 bảng)",
+   "mota": "Cùng một khung thị trấn ban ngày (shot s001), mỗi thẻ một bảng màu. Chọn bảng muốn giữ; ghi chú bảng nào cần sửa.",
+   "kieu": "ung-vien",
+   "anh": [],
+   "muc": [
+    {
+     "id": "bang-pastel",
+     "chuDe": "bang-mau-nha-pastel",
+     "ten": "Pastel (đang dùng cho tập 2)",
+     "phu": "Duyệt = giữ làm bảng có sẵn · Sửa = ghi điều muốn đổi",
+     "ungVien": [
+      {
+       "id": "bang-pastel-1",
+       "ten": "Pastel (đang dùng cho tập 2)",
+       "anh": "output/look/bang-nha/pastel/t0000.65_s001.png",
+       "link": "",
+       "phu": "thử nhanh: ?nha=pastel"
+      }
+     ]
+    },
+    {
+     "id": "bang-ven-bien",
+     "chuDe": "bang-mau-nha-ven-bien",
+     "ten": "Ven biển",
+     "phu": "Duyệt = giữ làm bảng có sẵn · Sửa = ghi điều muốn đổi",
+     "ungVien": [
+      {
+       "id": "bang-ven-bien-1",
+       "ten": "Ven biển",
+       "anh": "output/look/bang-nha/ven-bien/t0000.65_s001.png",
+       "link": "",
+       "phu": "thử nhanh: ?nha=ven-bien"
+      }
+     ]
+    },
+    {
+     "id": "bang-lang-go",
+     "chuDe": "bang-mau-nha-lang-go",
+     "ten": "Làng gỗ",
+     "phu": "Duyệt = giữ làm bảng có sẵn · Sửa = ghi điều muốn đổi",
+     "ungVien": [
+      {
+       "id": "bang-lang-go-1",
+       "ten": "Làng gỗ",
+       "anh": "output/look/bang-nha/lang-go/t0000.65_s001.png",
+       "link": "",
+       "phu": "thử nhanh: ?nha=lang-go"
+      }
+     ]
+    },
+    {
+     "id": "bang-pho-cu",
+     "chuDe": "bang-mau-nha-pho-cu",
+     "ten": "Phố cũ",
+     "phu": "Duyệt = giữ làm bảng có sẵn · Sửa = ghi điều muốn đổi",
+     "ungVien": [
+      {
+       "id": "bang-pho-cu-1",
+       "ten": "Phố cũ",
+       "anh": "output/look/bang-nha/pho-cu/t0000.65_s001.png",
+       "link": "",
+       "phu": "thử nhanh: ?nha=pho-cu"
+      }
+     ]
+    },
+    {
+     "id": "bang-tuyet",
+     "chuDe": "bang-mau-nha-tuyet",
+     "ten": "Tuyết",
+     "phu": "Duyệt = giữ làm bảng có sẵn · Sửa = ghi điều muốn đổi",
+     "ungVien": [
+      {
+       "id": "bang-tuyet-1",
+       "ten": "Tuyết",
+       "anh": "output/look/bang-nha/tuyet/t0000.65_s001.png",
+       "link": "",
+       "phu": "thử nhanh: ?nha=tuyet"
+      }
+     ]
+    },
+    {
+     "id": "bang-keo-ngot",
+     "chuDe": "bang-mau-nha-keo-ngot",
+     "ten": "Kẹo ngọt (mới)",
+     "phu": "Duyệt = giữ làm bảng có sẵn · Sửa = ghi điều muốn đổi",
+     "ungVien": [
+      {
+       "id": "bang-keo-ngot-1",
+       "ten": "Kẹo ngọt (mới)",
+       "anh": "output/look/bang-nha/keo-ngot/t0000.65_s001.png",
+       "link": "",
+       "phu": "thử nhanh: ?nha=keo-ngot"
+      }
+     ]
+    },
+    {
+     "id": "bang-dia-trung-hai",
+     "chuDe": "bang-mau-nha-dia-trung-hai",
+     "ten": "Địa Trung Hải (mới)",
+     "phu": "Duyệt = giữ làm bảng có sẵn · Sửa = ghi điều muốn đổi",
+     "ungVien": [
+      {
+       "id": "bang-dia-trung-hai-1",
+       "ten": "Địa Trung Hải (mới)",
+       "anh": "output/look/bang-nha/dia-trung-hai/t0000.65_s001.png",
+       "link": "",
+       "phu": "thử nhanh: ?nha=dia-trung-hai"
+      }
+     ]
+    },
+    {
+     "id": "bang-rung-thu",
+     "chuDe": "bang-mau-nha-rung-thu",
+     "ten": "Rừng thu (mới)",
+     "phu": "Duyệt = giữ làm bảng có sẵn · Sửa = ghi điều muốn đổi",
+     "ungVien": [
+      {
+       "id": "bang-rung-thu-1",
+       "ten": "Rừng thu (mới)",
+       "anh": "output/look/bang-nha/rung-thu/t0000.65_s001.png",
+       "link": "",
+       "phu": "thử nhanh: ?nha=rung-thu"
+      }
+     ]
+    },
+    {
+     "id": "bang-sa-mac",
+     "chuDe": "bang-mau-nha-sa-mac",
+     "ten": "Sa mạc (mới)",
+     "phu": "Duyệt = giữ làm bảng có sẵn · Sửa = ghi điều muốn đổi",
+     "ungVien": [
+      {
+       "id": "bang-sa-mac-1",
+       "ten": "Sa mạc (mới)",
+       "anh": "output/look/bang-nha/sa-mac/t0000.65_s001.png",
+       "link": "",
+       "phu": "thử nhanh: ?nha=sa-mac"
+      }
+     ]
+    },
+    {
+     "id": "bang-dem-neon",
+     "chuDe": "bang-mau-nha-dem-neon",
+     "ten": "Đêm neon (mới, chụp ban ngày)",
+     "phu": "Duyệt = giữ làm bảng có sẵn · Sửa = ghi điều muốn đổi",
+     "ungVien": [
+      {
+       "id": "bang-dem-neon-1",
+       "ten": "Đêm neon (mới, chụp ban ngày)",
+       "anh": "output/look/bang-nha/dem-neon/t0000.65_s001.png",
+       "link": "",
+       "phu": "thử nhanh: ?nha=dem-neon"
+      }
+     ]
+    },
+    {
+     "id": "bang-nhat-ban",
+     "chuDe": "bang-mau-nha-nhat-ban",
+     "ten": "Nhật Bản (mới)",
+     "phu": "Duyệt = giữ làm bảng có sẵn · Sửa = ghi điều muốn đổi",
+     "ungVien": [
+      {
+       "id": "bang-nhat-ban-1",
+       "ten": "Nhật Bản (mới)",
+       "anh": "output/look/bang-nha/nhat-ban/t0000.65_s001.png",
+       "link": "",
+       "phu": "thử nhanh: ?nha=nhat-ban"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "lienKet": []
+}

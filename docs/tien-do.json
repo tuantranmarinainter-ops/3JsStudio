@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 16:20",
+ "capNhat": "2026-11-13 16:50",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -42,7 +42,7 @@
     {
      "ten": "Tiếng động + nhạc cho thời lượng mới (kể cả \"Boang\")",
      "tt": "do",
-     "ghiChu": "đã vào bản xem thử; chưa ai nghe bằng tai"
+     "ghiChu": "người dùng nghe: âm nền s001–s017 sai, khó chịu → nguyên nhân: file nền thị trấn thật ra là tiếng ù thành phố; đã đổi sang tiếng chim sáng nhẹ, mức −32,7 LUFS; chờ nghe lại"
     },
     {
      "ten": "Tiếng Anh giọng Andrew",
@@ -77,7 +77,26 @@
     {
      "ten": "Thêm 6 bảng màu nhà (kẹo ngọt, Địa Trung Hải, rừng thu, sa mạc, đêm neon, Nhật Bản)",
      "tt": "cho",
-     "ghiChu": "đã xong 6 bảng; ảnh lưới 11 bảng đã gửi, chờ người dùng xem (output/look/bang-nha/luoi.jpg)"
+     "ghiChu": "đã mở Đợt 6 trang duyệt: 11 thẻ, mỗi bảng một ảnh"
+    }
+   ]
+  },
+  {
+   "ten": "Chuyển nhân vật sang R6 (thay đổi lớn)",
+   "viec": [
+    {
+     "ten": "Dân làng tập 2 (ông Bách, thị trưởng, lính gác…) đổi từ R15 sang R6",
+     "tt": "chua",
+     "ghiChu": "repo đã có engine/r6.js nhưng dàn diễn viên (cast.js) chưa dùng; cần ánh xạ animation R15 → R6 và kiểm mọi shot"
+    },
+    {
+     "ten": "Thân hình R6 mới (thiết kế lại)",
+     "tt": "cho",
+     "ghiChu": "chờ người dùng xác nhận ý về Gà; sẽ có trang duyệt mẫu trước khi thay"
+    },
+    {
+     "ten": "Tập mẫu + dây chuyền lam-phim mặc định R6",
+     "tt": "chua"
     }
    ]
   },
@@ -270,9 +289,10 @@
   }
  ],
  "canBan": [
-  "Dùng thử khung studio mới khi có PC (kéo viền, rê timeline, phím M, nút ▶/✎)",
-  "Nghe thử tiếng động + nhạc khi có PC",
-  "Xem ảnh lưới 11 bảng màu nhà (đã gửi trong chat): bảng nào giữ, bảng nào sửa"
+  "R6: xác nhận ý — (1) Gà có thêm một thân hình R6 (đầu gà, thân khối R6), hay (2) Gà giữ nguyên, chỉ dân làng đổi sang R6?",
+  "Duyệt 11 bảng màu nhà ở Đợt 6 trang duyệt (http://127.0.0.1:8791/)",
+  "Nghe lại âm nền s001–s017 trên bản xem thử kế tiếp (đã đổi sang tiếng chim sáng nhẹ)",
+  "Điền khoá vào S:\u0003JS Studio\\.env.local rồi chạy: node tools/kiem-khoa.mjs"
  ],
  "daChot": [
   [
@@ -378,6 +398,14 @@
   [
    "Tập 2",
    "Gấu bông mới đặt trên kệ NHÀ MÁY (thay gấu khối), không thêm kệ trước tiệm gấu"
+  ],
+  [
+   "Nhân vật",
+   "THAY ĐỔI LỚN 13/11: tạm thời không dùng R15; toàn bộ dân làng là R6; thiết kế thêm thân hình R6"
+  ],
+  [
+   "Studio",
+   "Khung studio mới: người dùng dùng thử, ổn"
   ]
  ]
 }
