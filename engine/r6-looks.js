@@ -47,7 +47,7 @@ export const R6_LOOKS = {
     skin: SKIN, scale: 1.05, shirt: '#ebd9b0', pants: '#7a5a2e',
     torso: { wrap: ribs('#d9c598'), front: apronF('#b5532b', '#a04923', '#7a3a1b'), back: apronB('#b5532b', true) },
     arm: arms('#ebd9b0', 0.8, '#dccaa0', SKIN, ribs('#d9c598', 5)), leg: legs('#7a5a2e', '#4a2e22', '#1c1412', apronLeg('#b5532b')),
-    hair: { color: '#8e8a8c', cap: 0.46, back: 1.0, arc: 1.3, fringe: 'left', curls: 9 },
+    hair: { color: '#8e8a8c', cap: 0.46, back: 0.72, arc: 1.15, fringe: 'left', curls: 3 },
     acc: [{ kind: 'glasses', color: '#6b3a1e' }, { kind: 'bow', color: '#b5532b', y: 0.3 }],
   },
   // Thị trưởng ban ngày — vest navy, sơ mi kem, cà vạt vàng nhạt

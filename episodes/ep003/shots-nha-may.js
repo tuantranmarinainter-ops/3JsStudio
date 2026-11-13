@@ -103,13 +103,13 @@ export const SHOTS_NHA_MAY = [
             linh_a: { at: [-37.6, 0, -0.8], ry: -0.3, anim: "idle", face: "nghi_ngo" },
             linh_b: { at: [-38.8, 0, -3.2], ry: -0.1, anim: "idle", face: "thac_mac" } } },
   // s082 · set:factory-exterior · ngày · 117.66–119.00 s · mặt: mayor=quyet_tam, linh_a=quyet_tam, linh_b=quyet_tam
-  { id: "s082", dur: 1.342, env: "e3-nha-may", light: "day", line: 48,
+  { id: "s082", dur: 1.342, env: "e3-nha-may", light: "day", envArg: {"cuaKho":0}, line: 48,
     cam: { p: [28.6, 3.8, 3.6], l: [22.0, 5.0, -0.5], fov: 44, p2: [29.4, 4.0, 4.6], l2: [22.0, 5.0, -0.5], fov2: 48 },
     cast: { mayor: { at: [21.0, 0, 0.0], ry: 1.5708, anim: "point", face: "quyet_tam" },
             linh_a: { at: [24.6, 0, -2.6], ry: 1.5708, anim: "idle", face: "quyet_tam" },
             linh_b: { at: [24.6, 0, 2.6], ry: 1.5708, anim: "idle", face: "quyet_tam" } } },
   // s083 · set:factory-storage · ngày · 119.00–120.18 s · mặt: linh_a=quyet_tam, linh_b=quyet_tam, mayor=quyet_tam, hero=nghi_ngo
-  { id: "s083", dur: 1.183, env: "e3-nha-may", light: "day", line: 49,
+  { id: "s083", dur: 1.183, env: "e3-nha-may", light: "day", envArg: {"cuaKho":[0.12,1]}, line: 49,
     cam: { p: [17.5, 4.2, 0.0], l: [30.0, 5.0, 0.4], fov: 52, p2: [13.5, 4.4, 0.0], l2: [30.0, 5.0, 0.4], fov2: 56 },
     cast: { linh_a: { at: [28.6, 0, -4.2], ry: 1.5708, anim: "idle", face: "quyet_tam" },
             linh_b: { at: [28.6, 0, 4.2], ry: 1.5708, anim: "idle", face: "quyet_tam" },
