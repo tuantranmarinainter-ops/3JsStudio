@@ -19,6 +19,7 @@
 //   hang_rao         [-1.2,0,34]   khe hở hàng rào cho gấu chui (rộng ~2,2); rào chữ U: z=34, x=±30
 //   cua_kho          [17,0,16.5]   cửa kho trượt bằng tôn x 12..22 ngoài tường +Z; e.cuaKho = Group cửa (đổi position.x để mở)
 //   san_ngoai        [0,0,24]      giữa sân (trống x −16..16, z 17..32)
+import { bearGlbOn, bearGlbBakedStatic } from '../bear-glb.js';   // gấu bông GLB nướng tĩnh cho kệ (tắt/thiếu model → gấu khối)
 export const LIGHT = 'night';   // khoá ánh sáng mặc định (envs.define(tên, m.LIGHT, m.default))
 export const FACTORY_DIEM = {
   trong_giua: [0, 0, 3], bang_chuyen_dau: [-10, 3, -6], bang_chuyen_cuoi: [0, 3, -6], cho_gom: [1.8, 0, -6],
@@ -147,6 +148,7 @@ export default function build(g, e, H) {
     for (const x of [-22, -16.45, -8.35, -0.25, 5.2]) items.push({ p: [x, 6.7, -14.5], s: [0.4, 13.4, 3], c: '#8a6038' });
     for (let i = 0; i < 8; i++) items.push({ p: [-20.5 + i * 3.3, 1.35, -14.4], s: [2.6, 2.3, 2.5], c: i % 2 ? '#c89b5c' : '#b98a4c' });
     inst(shelf, 'shelf_unit', BOX, white, items); }
+  let blockBears = [];
   { const sph = [], bow = [], BODY = ['#d9a066', '#b8804e', '#e8c99a'], BOW = ['#3f7fe0', '#e0453f', '#f2c230'];
     SY.forEach((y, lv) => BX.forEach((x, k) => {
       const c = BODY[Math.floor(hash(lv * 20 + k, 3) * 3) % 3], b = BOW[(k + lv) % 3], z = -14.2, j = (hash(lv * 20 + k, 5) - 0.5) * 0.25;
@@ -157,7 +159,23 @@ export default function build(g, e, H) {
         { p: [x - 0.5, y + 0.15, z + 0.55], s: [0.34, 0.3, 0.5], c }, { p: [x + 0.5, y + 0.15, z + 0.55], s: [0.34, 0.3, 0.5], c });
       bow.push({ p: [x - 0.36, y + 1.8, z + 0.78], s: [0.55, 0.4, 0.16], r: [0, 0, 0.3 + j], c: b }, { p: [x + 0.36, y + 1.8, z + 0.78], s: [0.55, 0.4, 0.16], r: [0, 0, -0.3 - j], c: b }, { p: [x, y + 1.8, z + 0.82], s: [0.26, 0.26, 0.2], c: b });
     }));
-    inst(shelf, 'bear_plush', SPH, white, sph); inst(shelf, 'ribbon_bow', BOX, white, bow); }
+    blockBears = [inst(shelf, 'bear_plush', SPH, white, sph), inst(shelf, 'ribbon_bow', BOX, white, bow)]; }
+  // Gấu bông GLB (nướng tĩnh, InstancedMesh): env dựng TRƯỚC khi nạp model (createEnvs chạy trước buildCast) → thay gấu khối ở lần update đầu khi model đã sẵn sàng.
+  // Tắt (EPISODE.bearGlb=false / ?bearGlb=0 / globalThis.__keGauGlb=false) hoặc thiếu model → giữ gấu khối. Chỉ làm 1 lần, kết quả không phụ thuộc t.
+  let glbDone = false;
+  const doiGauGlb = () => {
+    glbDone = true;
+    const baked = [0, 1, 2].map((v) => bearGlbBakedStatic(THREE, v));
+    if (!baked.every((b) => b && b.materials[0])) return;
+    const H0 = 3.0, per = [[], [], []];   // cao ngồi ~3 stud (gấu khối cũ 3,3; hạ để tay không chạm cột kệ), ngồi đúng mặt ván
+    SY.forEach((y, lv) => BX.forEach((x, k) => {
+      const v = (k + lv) % 3, b = baked[v], sc = H0 / b.size[1], jy = (hash(lv * 20 + k, 5) - 0.5) * 0.3;
+      per[v].push({ p: [x + (hash(lv * 20 + k, 6) - 0.5) * 0.2, y - b.box.min.y * sc, -14.45], s: [sc, sc, sc], r: [0, jy, 0] });
+    }));
+    per.forEach((items, v) => { const b = baked[v]; const im = inst(shelf, 'bear_plush_' + v, b.geometry, b.materials, items); im.frustumCulled = false; });
+    blockBears.forEach((m) => { m.visible = false; shelf.remove(m); }); e.bearShelfGlb = true;
+  };
+
 
   // --- cụm thùng, bàn chuông (tầng giữa) ---
   const mid = grp('factory_midstuff', 'mid');
@@ -188,6 +206,7 @@ export default function build(g, e, H) {
   return {
     suSong: [],
     update(t) {
+      if (!glbDone && bearGlbOn() && globalThis.__keGauGlb !== false) doiGauGlb();
       beltTex.offset.x = -((t * 1.2) % 1);   // mặt băng trôi theo +X, hàm thuần của t
       mist.forEach((m, i) => { m.position.x = (i ? 16 : -14) + Math.sin(t * 0.15 + i * 2) * 3; });
     },

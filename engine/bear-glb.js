@@ -150,3 +150,54 @@ export function createBearGlb(THREE, opts = {}) {
   char.root.userData.glb = id; char.root.userData.glbDebug = char.glbDebug;
   return char;
 }
+
+// ---- gấu bông tĩnh để rải bằng InstancedMesh (kệ gấu trong nhà máy) ----
+// Nướng lưới một gấu GLB ở tư thế `pose` (mặc định ngồi 'idle') thành BufferGeometry thường (đã áp xương 1 lần), hệ gốc: chân/mông y=0, mặt nhìn +Z, cao ~BEAR_GLB_HEIGHT.
+// Trả về { geometry (group 0 = lông, group 1 = nơ), materials: [lông, nơ], size:[w,h,d], id } hoặc null khi gấu GLB tắt / chưa nạp. Có cache theo (biến thể, pose, t).
+const BAKED = new Map();
+export function bearGlbBakedStatic(THREE, variant = 0, pose = 'idle', t = 0.4) {
+  if (!bearGlbOn()) return null;
+  const id = bearGlbVariant('', variant), key = id + '|' + pose + '|' + t;
+  if (BAKED.has(key)) return BAKED.get(key);
+  const c = createBearGlb(THREE, { name: 'baked_' + variant, glbId: id }); if (!c) return null;
+  c.animate(pose, t); c.root.updateMatrixWorld(true);
+  const out = { fur: [], bow: [] }, mat = { fur: null, bow: null };
+  const bm = new THREE.Matrix4(), tmp = new THREE.Matrix4(), v = new THREE.Vector3(), n = new THREE.Vector3(), a = new THREE.Vector3(), an = new THREE.Vector3(), bv = new THREE.Vector3(), bn = new THREE.Vector3();
+  c.glb.traverse((sm) => {
+    if (!sm.isSkinnedMesh) return;
+    sm.skeleton.update();
+    const bones = sm.skeleton.bones.map((_, i) => new THREE.Matrix4().fromArray(sm.skeleton.boneMatrices, i * 16));
+    const fin = new THREE.Matrix4().multiplyMatrices(sm.matrixWorld, sm.bindMatrixInverse);
+    const g = sm.geometry, P = g.attributes.position, N = g.attributes.normal, UV = g.attributes.uv, SI = g.attributes.skinIndex, SW = g.attributes.skinWeight;
+    const pos = new Float32Array(P.count * 3), nor = new Float32Array(P.count * 3);
+    for (let i = 0; i < P.count; i++) {
+      v.fromBufferAttribute(P, i).applyMatrix4(sm.bindMatrix); n.fromBufferAttribute(N, i).transformDirection(sm.bindMatrix);
+      a.set(0, 0, 0); an.set(0, 0, 0);
+      for (let j = 0; j < 4; j++) {
+        const w = SW.getComponent(i, j); if (!w) continue; bm.copy(bones[SI.getComponent(i, j)]);
+        bv.copy(v).applyMatrix4(bm); bn.copy(n).transformDirection(bm); a.addScaledVector(bv, w); an.addScaledVector(bn, w);
+      }
+      a.applyMatrix4(fin); an.transformDirection(fin);
+      pos.set([a.x, a.y, a.z], i * 3); nor.set([an.x, an.y, an.z], i * 3);
+    }
+    const idx = g.index ? Array.from(g.index.array) : Array.from({ length: P.count }, (_, i) => i);
+    const m = [].concat(sm.material)[0], isBow = m.name === 'no_mau';
+    (isBow ? out.bow : out.fur).push({ pos, nor, uv: UV ? Float32Array.from(UV.array) : new Float32Array(P.count * 2), idx });
+    if (isBow) mat.bow ||= m; else mat.fur ||= m;
+  });
+  const geo = new THREE.BufferGeometry(); let vo = 0, io = 0;
+  const all = [...out.fur, ...out.bow], nv = all.reduce((s, p) => s + p.pos.length / 3, 0), ni = all.reduce((s, p) => s + p.idx.length, 0);
+  const P = new Float32Array(nv * 3), N = new Float32Array(nv * 3), U = new Float32Array(nv * 2), I = new Uint32Array(ni);
+  const grp = [];
+  for (const set of [out.fur, out.bow]) {
+    const start = io;
+    for (const p of set) { P.set(p.pos, vo * 3); N.set(p.nor, vo * 3); U.set(p.uv, vo * 2); for (let i = 0; i < p.idx.length; i++) I[io++] = p.idx[i] + vo; vo += p.pos.length / 3; }
+    grp.push([start, io - start]);
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(P, 3)); geo.setAttribute('normal', new THREE.BufferAttribute(N, 3)); geo.setAttribute('uv', new THREE.BufferAttribute(U, 2));
+  geo.setIndex(new THREE.BufferAttribute(I, 1)); grp.forEach(([s, n2], i) => geo.addGroup(s, n2, i));
+  geo.computeBoundingBox(); geo.computeBoundingSphere();
+  const bb = geo.boundingBox, res = { id, geometry: geo, materials: [mat.fur, mat.bow || mat.fur], box: bb, size: [bb.max.x - bb.min.x, bb.max.y - bb.min.y, bb.max.z - bb.min.z] };
+  BAKED.set(key, res); return res;
+}
+export const bearGlbBakedClear = () => BAKED.clear();

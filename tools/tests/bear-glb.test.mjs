@@ -84,3 +84,12 @@ test('thiếu model → createBearGlb trả null (cast.js rơi về gấu khối
   G.bearGlbSetLib({ THREE, A: { instance: () => new THREE.Group() } });
   assert.equal(G.createBearGlb(THREE, { name: 'bap' }), null);
 });
+
+test('bearGlbBakedStatic: tắt/chưa nạp → null (kệ gấu giữ gấu khối); nạp lib giả không có lưới xương → vật liệu thiếu để env tự bỏ qua', () => {
+  G.bearGlbSetLib(null); globalThis.__bearGlb = true;
+  assert.equal(G.bearGlbBakedStatic(THREE, 0), null);
+  G.bearGlbSetLib(fakeLib()); G.bearGlbBakedClear();
+  const r = G.bearGlbBakedStatic(THREE, 0);
+  assert.ok(r === null || !r.materials[0], 'không có SkinnedMesh → không có vật liệu lông');
+  G.bearGlbSetLib(null); globalThis.__bearGlb = false;
+});
