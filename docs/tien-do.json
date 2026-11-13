@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 16:50",
+ "capNhat": "2026-11-13 17:00",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -97,6 +97,26 @@
     {
      "ten": "Tập mẫu + dây chuyền lam-phim mặc định R6",
      "tt": "chua"
+    },
+    {
+     "ten": "Áp toàn bộ biểu cảm của Gà cho nhân vật phụ và dân làng",
+     "tt": "chua",
+     "ghiChu": "làm cùng đợt chuyển R6; đang rà cơ chế mặt của Gà / R15 / R6"
+    }
+   ]
+  },
+  {
+   "ten": "Lõi chung áp cho mọi tập",
+   "viec": [
+    {
+     "ten": "Rà soát tập 2 thiếu gì so với tập 1 (hậu kỳ, trời/phông nền, vật liệu, hiệu ứng tự động, mặt nhân vật, âm thanh, dây chuyền)",
+     "tt": "dang",
+     "ghiChu": "1 agent Sonnet chỉ đọc; kết quả ở docs/handoff/ra-soat-loi-chung-ep002.md"
+    },
+    {
+     "ten": "Vá các thiếu sót vào tập 2 + tập mẫu + dây chuyền",
+     "tt": "chua",
+     "ghiChu": "chờ kết quả rà soát"
     }
    ]
   },
@@ -406,6 +426,14 @@
   [
    "Studio",
    "Khung studio mới: người dùng dùng thử, ổn"
+  ],
+  [
+   "Nhân vật",
+   "Toàn bộ biểu cảm hiện chỉ Gà có phải áp cho mọi nhân vật phụ và dân làng"
+  ],
+  [
+   "Hướng đi",
+   "Hiệu ứng, phông nền, code chung phải áp cho TẤT CẢ các tập; tập 2 đang thiếu → rà soát"
   ]
  ]
 }
