@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 21:40",
+ "capNhat": "2026-11-13 22:30",
  "nhom": [
   {
    "ten": "Tập 3",
@@ -46,9 +46,9 @@
     },
     {
      "ten": "Bộ kit dựng phim tập 3 do Codex làm (nhân vật, mặt bằng bối cảnh, camera 104 shot, ánh sáng, tỉ lệ + vật liệu đồ vật)",
-     "tt": "dang",
-     "pt": 20,
-     "ghiChu": "lần 1 Codex chỉ ra khung dữ liệu (chưa đo: 357 lỗi thiếu số, cả 104 shot tin cậy thấp). Đang chạy lần 2 theo 3 đợt: phòng Gà (35 shot) → nhà máy (33) → phố và tiệm (36), mỗi đợt phải đo thật và tự chiếu ngược kiểm"
+     "tt": "do",
+     "pt": 45,
+     "ghiChu": "Codex chạy 4 lượt, kit bản 0.4 vẫn DỞ: có 14 bối cảnh với mặt bằng + điểm đứng, 21 đồ vật kèm vật liệu, 6 bộ đèn, 14 màu, 16 nhân vật, và mô tả bố trí từng nhân vật trong 104 ảnh; CHƯA giải được vị trí máy 3D (2/104), cả 104 shot tin cậy thấp. Đã giao phiên tập 3 dùng phần có sẵn + bộ giải đặt máy của engine"
     },
     {
      "ten": "Vật liệu theo chất liệu (gỗ ra gỗ, vải ra vải…)",
