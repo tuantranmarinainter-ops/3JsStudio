@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 16:00",
+ "capNhat": "2026-11-13 16:20",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -78,6 +78,111 @@
      "ten": "Thêm 6 bảng màu nhà (kẹo ngọt, Địa Trung Hải, rừng thu, sa mạc, đêm neon, Nhật Bản)",
      "tt": "cho",
      "ghiChu": "đã xong 6 bảng; ảnh lưới 11 bảng đã gửi, chờ người dùng xem (output/look/bang-nha/luoi.jpg)"
+    }
+   ]
+  },
+  {
+   "ten": "Góp ý từ studio 13/11 14:17 (20 ghi chú theo shot)",
+   "viec": [
+    {
+     "ten": "s001: Nhiều nhà hơn cho ra thị trấn",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s002: Đồ ở trong nhà",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s004: Két tiền trong nhà, tiệm có biển bánh mì",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s010: Nhiều hộp hơn",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s014b: Nhà ông Bách có biển hiệu bánh mì (sai biển)",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s016: Ảnh chưa rõ",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s018: Ảnh chưa rõ",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s025: Ảnh hơi xấu",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s033: Đứng im, chưa kỹ hành động",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s034: Đứng im, chưa kỹ hành động",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s037: Gấu nhảy ra cửa sổ",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s039: Gấu nhảy ra cửa sổ",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s044: Nấp sai chỗ",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s048: Sai vị trí",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s055: Sai hàng rào",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s074: Rõ ràng hơn",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s084: Cảnh này trong nhà thị trưởng",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s087: Lỗi người đứng",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s101: Quay thùng hàng",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
+    },
+    {
+     "ten": "s107: Thêm dây chuyền",
+     "tt": "dang",
+     "ghiChu": "đã giao agent sửa"
     }
    ]
   },
