@@ -11,7 +11,7 @@ def commits(ep):
     except Exception:
         return 0, '', ''
 # Đánh số theo cách người dùng nhớ: 4 lần làm phim. (khoá số liệu, tên, thư mục tập trong repo, tên phim, nền tảng, nội dung, trạng thái)
-TAP = [('rb', 'Tập 1', '', 'Nhà có chân — bản Roblox Studio', 'Roblox Studio (thư mục S:\ROBLOX CLAUDE)',
+TAP = [('rb', 'Tập 1', '', 'Nhà có chân — bản Roblox Studio', 'Roblox Studio (thư mục S:/ROBLOX CLAUDE)',
         'Lần làm đầu tiên của câu chuyện ngôi nhà mọc chân, dựng trực tiếp trong Roblox Studio. Sau đó chuyển hẳn sang dựng bằng three.js vì làm trong Studio tốn công.',
         'Đã dừng, thay bằng bản three.js'),
        ('ep1', 'Tập 2', 'ep001', 'Ngôi nhà biết đi', 'three.js — ep001 trong repo',
