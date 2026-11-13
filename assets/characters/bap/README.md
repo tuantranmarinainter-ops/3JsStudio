@@ -37,6 +37,6 @@ node tools/nhap-model.mjs tai sketchfab:47e7ee6daff54b018dcd55caaec755f0        
 Nơ = "Bow Tie" by Peakz (Sketchfab, CC BY 4.0, `assets/nhap/no-gau-2.glb`), cắt bỏ 2 vạt rủ, chỉ đổi màu; gắn cứng xương `base_01` (không nhún theo đầu).
 Lông "gấu bông mềm" (`--mem`): hàn đỉnh (12,7k → 2,2k), bóng mượt, roughness 1 + sheen 0,45, hạt lông mịn trên ảnh màu.
 ```
-… nhap_rig.py -- <model.glb> --ra assets/characters/bap/bap.glb --cao 2.6 --cat-mu 1 --long "#a8692a" --mem --no-glb assets/nhap/no-gau-2.glb --no "#2e86de" --no-cat 0.5 --no-rong 0.8 --no-dz -0.12
+… nhap_rig.py -- <model.glb> --ra assets/characters/bap/bap.glb --cao 2.6 --cat-mu 1 --long "#a8692a" --mem --no-glb assets/nhap/no-gau-2.glb --no "#2e86de" --no-cat 0.5 --no-xoay 180 --no-rong 0.8 --no-dz -0.12
 ```
 bap2: lông #ecd9b0, nơ #d63031 · bap3: lông #5a3a24, nơ #f1c40f. `bap_co_mu_khan.glb` là bản cũ (mũ + khăn + nơ tự dựng), chỉ để so.

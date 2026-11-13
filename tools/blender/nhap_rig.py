@@ -26,7 +26,8 @@ ap.add_argument('--mau-pk', default='', help='màu #hex cho phụ kiện giữ l
 ap.add_argument('--no-glb', default='', help='GLB nơ lấy từ nguồn ngoài (đã chuẩn hoá bằng nhap-model): gắn ở cổ, chỉ đổi màu bằng --no; thay khăn giữ bởi --cat-mu')
 ap.add_argument('--no-rong', type=float, default=0.9, help='bề ngang nơ (stud)')
 ap.add_argument('--no-dz', type=float, default=0.0, help='dời nơ lên/xuống (stud)')
-ap.add_argument('--no-cat', type=float, default=0, help='cắt bỏ phần dưới của nơ GLB (tỉ lệ chiều cao 0..1, vd 0.45 = bỏ 2 vạt rủ)')
+ap.add_argument('--no-cat', type=float, default=0, help='xoá nguyên các mảnh rời của nơ GLB có tâm dưới tỉ lệ chiều cao này (vd 0.5 = bỏ 2 vạt rủ)')
+ap.add_argument('--no-xoay', type=float, default=0, help='xoay nơ quanh trục đứng (độ)')
 ap.add_argument('--mem', action='store_true', help='gấu bông mềm: hàn đỉnh + bóng mượt, lông nhám có ánh nhung (sheen), hạt lông mịn trên ảnh màu')
 ap.add_argument('--no', default='', help='màu nơ cổ #hex')
 ap.add_argument('--no-xuong', default='', help='tên xương gắn nơ (mặc định tự tìm cổ/đầu)')
@@ -324,13 +325,25 @@ if A.no_glb and arm:
     no = mm[0]; no.name = 'no_co'
     for o in moi:
         if o.name in bpy.data.objects and o is not no and o.type != 'MESH': bpy.data.objects.remove(o, do_unlink=True)
+    if A.no_xoay:
+        no.data.transform(Matrix.Rotation(math.radians(A.no_xoay), 4, 'Z'))
     if A.no_cat > 0:
+        # xoá NGUYÊN mảnh rời (vạt rủ) có tâm nằm dưới mức --no-cat; không cắt lát
         import bmesh
         l0, h0 = world_bbox([no]); zc = l0.z + (h0.z - l0.z) * A.no_cat
-        bm = bmesh.new(); bm.from_mesh(no.data)
-        bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, zc), plane_no=(0, 0, -1), clear_outer=True)
-        bmesh.ops.holes_fill(bm, edges=[e for e in bm.edges if e.is_boundary], sides=0)
-        bm.to_mesh(no.data); bm.free(); say('cắt vạt nơ dưới z =', round(zc, 3))
+        bm = bmesh.new(); bm.from_mesh(no.data); bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=1e-5)
+        seen = set(); xoa = []; nx = 0
+        for v in bm.verts:
+            if v.index in seen: continue
+            comp = []; st = [v]; seen.add(v.index)
+            while st:
+                q = st.pop(); comp.append(q)
+                for e in q.link_edges:
+                    w = e.other_vert(q)
+                    if w.index not in seen: seen.add(w.index); st.append(w)
+            if sum(c.co.z for c in comp) / len(comp) < zc: xoa += comp; nx += 1
+        bmesh.ops.delete(bm, geom=xoa, context='VERTS')
+        bm.to_mesh(no.data); bm.free(); say('xoá', nx, 'mảnh vạt nơ (tâm dưới z =', round(zc, 3), ')')
     l2, h2 = world_bbox([no]); kk = A.no_rong / max(1e-6, h2.x - l2.x)
     c2 = (l2 + h2) / 2; day = (h2.y - l2.y) * kk
     no.data.transform(Matrix.Translation(co + Vector((0, -day * 0.5, A.no_dz))) @ Matrix.Scale(kk, 4) @ Matrix.Translation(-c2))
