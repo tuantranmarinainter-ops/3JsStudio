@@ -6,10 +6,12 @@
   "vol": 0.16,
   "fade": 0.35,
   "map": {
-   "kenneyTown": "town ambience day birds",
-   "town": "town ambience day birds",
+   "kenneyTown": "forest ambience birds",
+   "town": "forest ambience birds",
    "bedroom": "kitchen room tone quiet",
-   "factory": "conveyor hum"
+   "factory": "conveyor hum",
+   "shop-in": "kitchen room tone quiet",
+   "mayor-in": "kitchen room tone quiet"
   },
   "night": {
    "kenneyTown": "night crickets ambience",
@@ -20,7 +22,8 @@
    "conveyor hum": 0.6,
    "kitchen room tone quiet": 0.6,
    "night crickets ambience": 0.8,
-   "town ambience day birds": 0.7
+   "town ambience day birds": 0.7,
+   "forest ambience birds": 0.5
   },
   "peak": 0.35,
   "minSeg": 3.0,
