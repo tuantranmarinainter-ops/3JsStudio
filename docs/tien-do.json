@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 15:30",
+ "capNhat": "2026-11-13 15:40",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -70,9 +70,9 @@
      "ghiChu": "hộp có nhẫn → zoom → nhấp nháy 3 nhịp → chớp rồi mất, có tiếng; đã vào bản xem thử"
     },
     {
-     "ten": "Tiệm gấu: gấu bông trên giá",
-     "tt": "cho",
-     "ghiChu": "chưa làm: tiệm gấu chỉ có cảnh ngoài phố, không có giá; kệ gấu nằm trong nhà máy (30 gấu khối). Chờ người dùng chọn cách"
+     "ten": "Kệ nhà máy: thay 30 gấu khối bằng gấu bông mới (3 màu)",
+     "tt": "dang",
+     "ghiChu": "người dùng chọn kệ nhà máy; 1 agent Sonnet đang làm"
     },
     {
      "ten": "Thêm 6 bảng màu nhà (kẹo ngọt, Địa Trung Hải, rừng thu, sa mạc, đêm neon, Nhật Bản)",
@@ -165,7 +165,6 @@
   }
  ],
  "canBan": [
-  "Gấu trên giá: chọn (a) thay 30 gấu khối trên kệ NHÀ MÁY bằng gấu bông mới — Claude đề xuất, hoặc (b) thêm một kệ trưng bày gấu trước TIỆM GẤU ngoài phố (đổi bố cục 6 shot), hoặc cả hai",
   "Dùng thử khung studio mới khi có PC (kéo viền, rê timeline, phím M, nút ▶/✎)",
   "Nghe thử tiếng động + nhạc khi có PC",
   "Xem ảnh lưới 11 bảng màu nhà (đã gửi trong chat): bảng nào giữ, bảng nào sửa"
@@ -273,7 +272,7 @@
   ],
   [
    "Tập 2",
-   "Tiệm gấu: thêm gấu bông đứng trên giá trong cửa hàng"
+   "Gấu bông mới đặt trên kệ NHÀ MÁY (thay gấu khối), không thêm kệ trước tiệm gấu"
   ]
  ]
 }
