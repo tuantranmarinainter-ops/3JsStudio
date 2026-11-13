@@ -10,15 +10,25 @@ def commits(ep):
         return len(o), (min(o) if o else ''), (max(o) if o else '')
     except Exception:
         return 0, '', ''
-TAP = [('ep1', 'Tập 1', 'ep001', 'Ngôi nhà có chân — đã có bản hoàn chỉnh; gồm cả việc dựng lõi engine, studio, dây chuyền'),
-       ('ep2', 'Tập 2', 'ep002', 'Món đồ biến mất — tạm gác ở bản xem thử'),
-       ('ep3', 'Tập 3', 'ep003', 'Đang dựng — vòng đầu, phần lớn shot chưa khớp kịch bản'),
-       ('ep4', 'Tập 4', 'ep004', 'Chưa bắt đầu — chưa có thư mục tập, chưa có phiên làm việc')]
+# Đánh số theo cách người dùng nhớ: 4 lần làm phim. (khoá số liệu, tên, thư mục tập trong repo, tên phim, nền tảng, nội dung, trạng thái)
+TAP = [('rb', 'Tập 1', '', 'Nhà có chân — bản Roblox Studio', 'Roblox Studio (thư mục S:\ROBLOX CLAUDE)',
+        'Lần làm đầu tiên của câu chuyện ngôi nhà mọc chân, dựng trực tiếp trong Roblox Studio. Sau đó chuyển hẳn sang dựng bằng three.js vì làm trong Studio tốn công.',
+        'Đã dừng, thay bằng bản three.js'),
+       ('ep1', 'Tập 2', 'ep001', 'Ngôi nhà biết đi', 'three.js — ep001 trong repo',
+        'Mỗi đêm một ngôi nhà ngẫu nhiên mọc chân, đi tới một nơi trên thế giới rồi đêm sau đi về. Nhà của nhân vật chính thì không về: nó đi tiếp mỗi đêm, và các nơi nó dừng trùng đúng thứ tự bưu thiếp ba gửi về — ngôi nhà đang lần theo dấu ba. Cùng câu chuyện với Tập 1 nhưng làm lại từ đầu; số liệu gồm cả việc dựng lõi engine, trình phát/studio, dây chuyền và công cụ.',
+        'Đã có bản hoàn chỉnh, đang sửa theo góp ý'),
+       ('ep2', 'Tập 3', 'ep002', 'Món đồ biến mất trong phòng khóa kín', 'three.js — ep002 trong repo',
+        'Ở thị trấn này đồ đạc cứ biến mất dù phòng đã khóa kín. Gà mất sợi dây chuyền bà để lại. Thủ phạm là lũ gấu bông ông Bách phát miễn phí, trong đó có Bắp; ông Bách còn tự giấu hàng của mình rồi báo mất để không ai nghi. Lần dựng đầu của câu chuyện Gà và Bắp, theo kịch bản chữ và file giọng mẫu.',
+        'Tạm gác ở bản xem thử (104 shot, 124,5 giây)'),
+       ('ep3', 'Tập 4', 'ep003', 'Ở thị trấn này — Gà và Bắp (bản storyboard 104 khung)', 'three.js — ep003 trong repo',
+        'Cùng câu chuyện Gà và Bắp, dựng lại theo bộ storyboard 104 khung hình có sẵn bối cảnh, nhân vật và 37 biểu cảm; dân làng chuyển sang thân R6. Mục tiêu là khớp từng khung với ảnh gốc.',
+        'Đang dựng: phòng Gà đã dựng lại, phần lớn shot chưa khớp khung gốc; chưa có tiếng động, nhạc')]
 rows = []
-for k, ten, ep, mo_ta in TAP:
-    c = T.get(k, {}); n, d0, d1 = commits(ep)
-    rows.append(dict(k=k, ten=ten, mo_ta=mo_ta, tong=c.get('tong', 0), moi=c.get('moi', 0), ra=c.get('ra', 0), doc=c.get('doc_dem', 0), gio=c.get('gio', 0),
-                     luot=c.get('luot', 0), agent=c.get('luot_agent', 0), chinh=c.get('luot_chinh', 0), commit=n, d0=d0, d1=d1))
+for k, ten, ep, phim, nen, noi_dung, trang_thai in TAP:
+    c = T.get(k, {}); n, d0, d1 = commits(ep) if ep else (0, '', '')
+    rows.append(dict(k=k, ten=ten, mo_ta=phim, phim=phim, nen=nen, noi_dung=noi_dung, trang_thai=trang_thai, tong=c.get('tong', 0), moi=c.get('moi', 0), ra=c.get('ra', 0), doc=c.get('doc_dem', 0), gio=c.get('gio', 0),
+                     luot=c.get('luot', 0), agent=c.get('luot_agent', 0), chinh=c.get('luot_chinh', 0), commit=n, d0=c.get('tu', ''), d1=c.get('den', '')))
+T['chung'] = {**T.get('chung', {}), 'tong': T.get('chung', {}).get('tong', 0) + T.get('ep4', {}).get('tong', 0)}   # vài lượt lẻ nhắc "tập 4" → gộp vào phần không gán được
 chung = T.get('chung', {})
 e = lambda s: html.escape(str(s))
 def so(v, don_vi='tr'):
@@ -35,6 +45,7 @@ def chart(tieu_de, chu_thich, khoa, don_vi):
               f'<span class="tr"><i style="width:{max(w, 0.6 if r[khoa] else 0):.2f}%"></i></span><span class="vl num">{e(nhan)}</span></div>')
     return h + '</div></figure>'
 tong_all = sum(r['tong'] for r in rows) + chung.get('tong', 0)
+the = ''.join(f'<article class="ep"><div class="hd"><span class="so">{e(r["ten"])}</span><b>{e(r["phim"])}</b></div><p class="mu">{e(r["nen"])} · {e(r["d0"][5:])} → {e(r["d1"][5:])}</p><p>{e(r["noi_dung"])}</p><p class="tt"><span class="k">Trạng thái</span> {e(r["trang_thai"])}</p><p class="num mu">{so(r["tong"])} token · {so(r["moi"])} mới · {so(r["gio"], "h")} máy</p></article>' for r in rows)
 bang = ''.join(f'<tr><th scope="row">{e(r["ten"])}<small>{e(r["mo_ta"])}</small></th><td class="num">{so(r["tong"])}</td><td class="num">{so(r["moi"])}</td><td class="num">{so(r["ra"])}</td>'
                f'<td class="num">{so(r["gio"], "h") if r["gio"] else "—"}</td><td class="num">' + f'{r["luot"]:,}'.replace(',', '.') + f'</td><td class="num">{(str(round(r["agent"] / r["luot"] * 100)) + "%") if r["luot"] else "—"}</td>'
                f'<td class="num">{r["commit"] or "—"}</td><td class="num">{e((r["d0"][5:] + " → " + r["d1"][5:]) if r["d0"] else "—")}</td></tr>' for r in rows)
@@ -59,24 +70,27 @@ p{{margin:0}}.mu{{color:var(--mu);font-size:13px}}.num{{font-variant-numeric:tab
 .tw{{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px}}table{{border-collapse:collapse;width:100%;font-size:14px;min-width:680px}}
 td{{white-space:nowrap}}th,td{{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}}thead th{{font-size:12px;color:var(--mu);font-weight:600}}tbody th{{text-align:left;font-weight:600}}th:first-child{{text-align:left}}
 tbody th small{{display:block;font-weight:400;color:var(--mu);font-size:12px}}tr:last-child th,tr:last-child td{{border-bottom:0}}
+.eps{{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr));gap:10px}}.ep{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px;min-width:0}}.ep .hd{{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}}.so{{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);border:1px solid var(--line);border-radius:99px;padding:1px 9px}}.k{{color:var(--mu);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}}
 .warn{{background:var(--warnbg);border:1px solid var(--warn);border-radius:8px;padding:10px 12px;font-size:14px}}ul{{margin:4px 0 0;padding-left:18px}}li{{margin:2px 0}}
 </style>
 <main>
-<header><h1>Token và thời gian theo tập</h1><p class="mu">3JS Studio · lập lúc {e(D["lap_luc"])} từ nhật ký {D["so_phien"]} phiên Claude Code và các agent phụ của chúng</p></header>
+<header><h1>Token và thời gian theo tập</h1><p class="mu">3JS Studio · lập lúc {e(D["lap_luc"])} từ nhật ký các phiên Claude Code và agent phụ ở thư mục 3JS Studio và thư mục Roblox Studio</p></header>
 <div class="hero"><div><b class="num">{so(tong_all)}</b><span class="mu">token cả dự án (gồm đọc lại bộ nhớ đệm)</span></div>
 <div><b class="num">{so(sum(r["moi"] for r in rows))}</b><span class="mu">token mới (không tính đọc lại)</span></div>
 <div><b class="num">{so(sum(r["gio"] for r in rows), "h")}</b><span class="mu">giờ máy làm việc, cộng mọi phiên và agent</span></div></div>
+<h2>Bốn lần làm phim</h2><div class="eps">{the}</div>
+<h2>So sánh</h2>
 {chart("Tổng token", "Mọi token đi qua mô hình, gồm cả phần đọc lại từ bộ nhớ đệm (rẻ hơn nhiều so với token mới)", "tong", "tr")}
 {chart("Token mới", "Token vào chưa có trong bộ nhớ đệm + token ghi đệm + token mô hình viết ra — sát với chi phí thật hơn", "moi", "tr")}
 {chart("Giờ máy làm việc", "Cộng thời gian hoạt động của phiên chính và từng agent phụ; nhiều agent chạy song song thì cộng dồn, nên lớn hơn giờ đồng hồ", "gio", "h")}
 <h2>Bảng số</h2>
-<div class="tw"><table><thead><tr><th>Tập</th><th>Tổng token</th><th>Token mới</th><th>Token viết ra</th><th>Giờ máy</th><th>Lượt gọi mô hình</th><th>Do agent phụ</th><th>Commit</th><th>Ngày có commit</th></tr></thead><tbody>{bang}</tbody></table></div>
+<div class="tw"><table><thead><tr><th>Tập</th><th>Tổng token</th><th>Token mới</th><th>Token viết ra</th><th>Giờ máy</th><th>Lượt gọi mô hình</th><th>Do agent phụ</th><th>Commit</th><th>Thời gian làm</th></tr></thead><tbody>{bang}</tbody></table></div>
 <div class="warn"><b>Cách đọc các con số này</b><ul>
 <li>Việc gán một lượt làm việc cho tập nào là <b>ước lượng</b>: dựa vào tên tập được nhắc trong lượt đó; lượt không nhắc tập nào thì tính theo tập của lượt trước.</li>
-<li><b>Tập 1 gánh cả phần dựng nền</b>: lõi engine, trình phát/studio, dây chuyền, công cụ — vì các việc đó diễn ra khi chỉ có tập 1. Con số tập 1 vì vậy không phải "giá của một tập".</li>
-<li>Tập 2 và tập 3 chưa xong, nên số của hai tập này sẽ còn tăng.</li>
-<li>Tập 4 chưa có phiên làm việc nào; vài lượt lẻ ghi "tập 4" chỉ là lúc nhắc tới nó.</li>
-<li>Chỉ tính Claude Code trong thư mục dự án này. Không gồm Codex, không gồm các phiên ở thư mục khác.</li>
+<li><b>Cách đánh số</b>: theo bốn lần làm phim. Tập 1 là bản Roblox Studio; Tập 2, 3, 4 lần lượt là <code>ep001</code>, <code>ep002</code>, <code>ep003</code> trong repo. Nhật ký chỉ ghi câu chuyện "nhà có chân / nhà biết đi", không thấy "nhà trên cây".</li>
+<li><b>Tập 2 gánh cả phần dựng nền</b>: lõi engine, trình phát/studio, dây chuyền, công cụ — vì các việc đó diễn ra khi mới chỉ có tập này. Con số Tập 2 vì vậy không phải "giá của một tập".</li>
+<li>Tập 3 và Tập 4 chưa xong, nên số của hai tập này sẽ còn tăng.</li>
+<li>Tập 1 tính trọn mọi phiên trong thư mục Roblox Studio. Không gồm Codex và các phiên ở thư mục khác.</li>
 <li>Ngoài bốn tập còn {so(chung.get("tong", 0))} token không gán được cho tập nào.</li></ul></div>
 </main>
 <div id="tip" hidden></div>

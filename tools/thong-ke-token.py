@@ -18,7 +18,8 @@ def tap_trong(s):
 
 tong = collections.defaultdict(lambda: collections.Counter())
 phien = []
-def doc(f, la_agent):
+moc = collections.defaultdict(lambda: None)
+def doc(f, la_agent, co_dinh=None):   # co_dinh: gán cả file cho một khoá (dự án ở thư mục khác)
     da_thay = set(); hien = None; t_truoc = None; rieng = collections.Counter(); so_luot = 0; dau = cuoi = None
     # agent phụ: gán cả file theo tập được nhắc nhiều nhất trong 200 KB đầu
     if la_agent:
@@ -40,13 +41,15 @@ def doc(f, la_agent):
                     elif c.get('type') == 'tool_use': chu += json.dumps(c.get('input'), ensure_ascii=False)[:3000]
             tp = tap_trong(chu)
             if tp: hien = tp
-        khoa = hien or 'chung'
+        khoa = co_dinh or hien or 'chung'
         if ts:
             try: t = datetime.datetime.fromisoformat(ts.replace('Z', '+00:00')).timestamp()
             except Exception: t = None
             if t:
                 if t_truoc and 0 < t - t_truoc <= NGHI: tong[khoa]['giay'] += t - t_truoc; rieng['giay'] += t - t_truoc
                 t_truoc = t; dau = dau or t; cuoi = t
+                if not moc[khoa] or t < moc[khoa][0]: moc[khoa] = [t, (moc[khoa] or [t, t])[1]]
+                if t > moc[khoa][1]: moc[khoa][1] = t
         m = j.get('message') or {}
         u = m.get('usage')
         if j.get('type') == 'assistant' and u:
@@ -68,12 +71,18 @@ for d in THU_MUC:
         if '/memory/' in f.replace('\\', '/'): continue
         doc(f, True)
 
+# Bản Roblox Studio của câu chuyện "Nhà có chân" (trước khi chuyển sang three.js) — cả thư mục tính cho khoá 'rb'
+for d in [x for x in glob.glob(GOC + '/*') if os.path.basename(x) == 'S--ROBLOX-CLAUDE']:
+    for f in glob.glob(d + '/*.jsonl'): doc(f, False, 'rb')
+    for f in glob.glob(d + '/*/subagents/*.jsonl') + glob.glob(d + '/*/*/*.jsonl'): doc(f, True, 'rb')
+
 kq = {}
 for k, c in tong.items():
     kq[k] = {'vao': c['vao'], 'ghi_dem': c['ghi_dem'], 'doc_dem': c['doc_dem'], 'ra': c['ra'], 'tong': c['vao'] + c['ghi_dem'] + c['doc_dem'] + c['ra'],
-             'moi': c['vao'] + c['ghi_dem'] + c['ra'], 'gio': round(c['giay'] / 3600, 2), 'luot': c['luot'], 'luot_agent': c['luot_agent'], 'luot_chinh': c['luot_chinh']}
+             'moi': c['vao'] + c['ghi_dem'] + c['ra'], 'gio': round(c['giay'] / 3600, 2), 'luot': c['luot'], 'luot_agent': c['luot_agent'], 'luot_chinh': c['luot_chinh'],
+             'tu': datetime.datetime.fromtimestamp(moc[k][0]).strftime('%Y-%m-%d') if moc[k] else '', 'den': datetime.datetime.fromtimestamp(moc[k][1]).strftime('%Y-%m-%d') if moc[k] else ''}
 out = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'output', 'artifact', 'token')
 os.makedirs(out, exist_ok=True)
 json.dump({'lap_luc': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'), 'tap': kq, 'so_phien': len(phien), 'phien': sorted(phien, key=lambda x: -x['token'])[:25]}, open(out + '/du-lieu.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-for k in sorted(kq): print(k, {a: (round(b / 1e6, 1) if a not in ('gio', 'luot', 'luot_agent', 'luot_chinh') else b) for a, b in kq[k].items()})
+for k in sorted(kq): print(k, {a: (round(b / 1e6, 1) if a not in ('gio', 'luot', 'luot_agent', 'luot_chinh', 'tu', 'den') else b) for a, b in kq[k].items()})
 print('phiên:', len(phien))
