@@ -48,11 +48,15 @@ export function chieu(P, { p, l, fov, aspect = 9 / 16 }) {
 
 // ---- nối với cảnh three.js: lấy điểm đặt / kích thước / hướng mặt từ diễn viên, đạo cụ ----
 export function createDatMay(THREE) {
-  const _v = new THREE.Vector3(), _q = new THREE.Quaternion(), _s = new THREE.Vector3(), _b = new THREE.Box3();
-  const nghi = new WeakMap();   // kích thước đo một lần (bbox lúc gặp đầu tiên): chiều cao toàn thân của diễn viên không có số đo sẵn
+  const _v = new THREE.Vector3(), _q = new THREE.Quaternion(), _s = new THREE.Vector3(), _b = new THREE.Box3(), _b2 = new THREE.Box3();
   const wpos = (o, loc = [0, 0, 0]) => { _v.set(...loc); o.localToWorld(_v); return [_v.x, _v.y, _v.z]; };
   const wscale = (o) => { o.matrixWorld.decompose(_v, _q, _s); return _s.y; };
-  const caoThan = (a) => { let h = nghi.get(a.root); if (h === undefined) { _b.setFromObject(a.root); h = Math.max(0.5, _b.max.y - _b.min.y); nghi.set(a.root, h); } return h; };
+  // hộp bao phần ĐANG HIỆN của diễn viên (bỏ lưới ẩn: gấu khối nằm ẩn dưới gấu GLB…) — đo lại mỗi lần vì cỡ/tư thế đổi theo shot
+  const hop = (a) => { _b.makeEmpty(); a.root.traverse((m) => { if (!m.isMesh) return; for (let p = m; p && p !== a.root.parent; p = p.parent) if (p.visible === false) return; if (m.isSkinnedMesh && m.skeleton) { for (const bn of m.skeleton.bones) { bn.getWorldPosition(_v); _b.expandByPoint(_v); } return; }   // lưới có xương: hộp bao hình học không theo tư thế → đo theo khớp xương
+      _b2.setFromObject(m); if (!_b2.isEmpty()) _b.union(_b2); });
+    if (!_b.isEmpty()) { const pad = (_b.max.y - _b.min.y) * 0.06; _b.min.y -= pad * 0.3; _b.max.y += pad; }
+    if (_b.isEmpty()) _b.setFromObject(a.root); return { y0: _b.min.y, y1: _b.max.y, x: (_b.min.x + _b.max.x) / 2, z: (_b.min.z + _b.max.z) / 2 }; };
+  const caoThan = (a) => { const h = hop(a); return Math.max(0.5, h.y1 - h.y0); };
   // điểm neo của diễn viên: { tam: [x,y,z] thế giới, cao: chiều cao đoạn }
   function neo(a, bo = 'mat') {
     a.root.updateWorldMatrix(true, true);
@@ -67,6 +71,7 @@ export function createDatMay(THREE) {
     if (bo === 'chan') return { tam: wpos(a.root, [0, 0.19 * H / (wscale(a.root) || 1), 0]), cao: 0.38 * H };
     // mat / dau
     const kDau = gau ? 0.33 : 0.25;   // ước lượng khi diễn viên không khai số đo (a.khung): đầu gấu ~1/3, người ~1/4 chiều cao
+    if (gau || !(head && a.headCenter)) { const h = hop(a), Hh = Math.max(0.5, h.y1 - h.y0); return { tam: [h.x, h.y1 - (gau ? 0.26 : kDau / 2) * Hh, h.z], cao: kDau * Hh }; }   // gấu: tai nhô ~9 % phía trên đầu
     if (head && a.headCenter) return { tam: wpos(head, bo === 'mat' && a.faceCenter ? [0, a.faceCenter[1], 0] : a.headCenter), cao: kDau * H };
     return { tam: wpos(a.root, [0, (1 - kDau / 2) * H / (wscale(a.root) || 1), 0]), cao: kDau * H };
   }
