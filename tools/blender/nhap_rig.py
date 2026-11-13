@@ -26,6 +26,8 @@ ap.add_argument('--mau-pk', default='', help='màu #hex cho phụ kiện giữ l
 ap.add_argument('--no-glb', default='', help='GLB nơ lấy từ nguồn ngoài (đã chuẩn hoá bằng nhap-model): gắn ở cổ, chỉ đổi màu bằng --no; thay khăn giữ bởi --cat-mu')
 ap.add_argument('--no-rong', type=float, default=0.9, help='bề ngang nơ (stud)')
 ap.add_argument('--no-dz', type=float, default=0.0, help='dời nơ lên/xuống (stud)')
+ap.add_argument('--no-cat', type=float, default=0, help='cắt bỏ phần dưới của nơ GLB (tỉ lệ chiều cao 0..1, vd 0.45 = bỏ 2 vạt rủ)')
+ap.add_argument('--mem', action='store_true', help='gấu bông mềm: hàn đỉnh + bóng mượt, lông nhám có ánh nhung (sheen), hạt lông mịn trên ảnh màu')
 ap.add_argument('--no', default='', help='màu nơ cổ #hex')
 ap.add_argument('--no-xuong', default='', help='tên xương gắn nơ (mặc định tự tìm cổ/đầu)')
 ap.add_argument('--tex', type=int, default=512)
@@ -281,6 +283,12 @@ if A.long:
             col = fur[None, :] * (1 - t) + sang[None, :] * t
             den = np.clip((L / max(1e-4, Lf * 0.5)), 0, 1)[:, None]     # đen sâu (mũi, mắt) giữ tối
             a[:, :3] = col * den
+            if A.mem:
+                rng = np.random.default_rng(7)
+                g = rng.normal(0, 1, (h // 2 + 1, w // 2 + 1)).astype(np.float32)
+                g = np.repeat(np.repeat(g, 2, 0), 2, 1)[:h, :w]
+                g = (g + np.roll(g, 1, 0) + np.roll(g, 1, 1) + np.roll(g, -1, 0)) / 4      # hạt mịn, hơi nhoè như sợi bông
+                a[:, :3] = np.clip(a[:, :3] * (1 + 0.065 * g.reshape(-1, 1)), 0, 1)
             im.pixels.foreach_set(a.reshape(-1)); im.update()
             say('đổi màu lông', A.long, 'trên ảnh', im.name, w, h)
         else:
@@ -316,6 +324,13 @@ if A.no_glb and arm:
     no = mm[0]; no.name = 'no_co'
     for o in moi:
         if o.name in bpy.data.objects and o is not no and o.type != 'MESH': bpy.data.objects.remove(o, do_unlink=True)
+    if A.no_cat > 0:
+        import bmesh
+        l0, h0 = world_bbox([no]); zc = l0.z + (h0.z - l0.z) * A.no_cat
+        bm = bmesh.new(); bm.from_mesh(no.data)
+        bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, zc), plane_no=(0, 0, -1), clear_outer=True)
+        bmesh.ops.holes_fill(bm, edges=[e for e in bm.edges if e.is_boundary], sides=0)
+        bm.to_mesh(no.data); bm.free(); say('cắt vạt nơ dưới z =', round(zc, 3))
     l2, h2 = world_bbox([no]); kk = A.no_rong / max(1e-6, h2.x - l2.x)
     c2 = (l2 + h2) / 2; day = (h2.y - l2.y) * kk
     no.data.transform(Matrix.Translation(co + Vector((0, -day * 0.5, A.no_dz))) @ Matrix.Scale(kk, 4) @ Matrix.Translation(-c2))
@@ -392,6 +407,26 @@ for m in bpy.data.materials:
     for nd in list(m.node_tree.nodes):
         if nd.type == 'GROUP' and nd.node_tree and 'glTF' in nd.node_tree.name: m.node_tree.nodes.remove(nd)
         elif nd.type == 'TEX_IMAGE' and nd.name not in giu: m.node_tree.nodes.remove(nd)
+
+# ---------- gấu bông mềm ----------
+if A.mem:
+    import bmesh
+    for o in meshes:
+        if o.name == 'no_co': continue
+        bm = bmesh.new(); bm.from_mesh(o.data); n0 = len(bm.verts)
+        bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=1e-4)
+        bm.to_mesh(o.data); bm.free()
+        for pl in o.data.polygons: pl.use_smooth = True
+        say('mềm:', o.name, 'đỉnh', n0, '→', len(o.data.vertices))
+    for m in bpy.data.materials:
+        if m.name != 'body' or not m.use_nodes: continue
+        b = next((n for n in m.node_tree.nodes if n.type == 'BSDF_PRINCIPLED'), None)
+        if not b: continue
+        b.inputs['Roughness'].default_value = 1.0
+        for nm, v in (('Sheen Weight', 0.45), ('Sheen Roughness', 0.6)):
+            if b.inputs.get(nm) is not None: b.inputs[nm].default_value = v
+        if b.inputs.get('Sheen Tint') is not None and A.long:
+            c = hex_lin(A.long); b.inputs['Sheen Tint'].default_value = (*[x + (1 - x) * 0.6 for x in c], 1.0)
 
 # ---------- xuất ----------
 if arm: arm.data.pose_position = 'POSE'
