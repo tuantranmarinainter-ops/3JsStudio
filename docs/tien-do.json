@@ -1,0 +1,35 @@
+{
+ "capNhat": "2026-11-13 11:40",
+ "nhom": [
+  {"ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín", "viec": [
+   {"ten": "Kịch bản + shot theo giọng mới (104 shot, 124,5 giây)", "tt": "xong", "ghiChu": "commit dc4dabd"},
+   {"ten": "Bảng nhà pastel", "tt": "xong", "ghiChu": "đã vào bản xem thử"},
+   {"ten": "11 đạo cụ Đợt 4 (kể cả hộp nhẫn sang)", "tt": "do", "ghiChu": "đã nhập model, chưa nối vào phim"},
+   {"ten": "Gấu Bắp có xương, lông mềm, nơ đã duyệt (3 màu)", "tt": "do", "ghiChu": "đã xuất GLB, chưa nối vào phim; mắt hơi xám"},
+   {"ten": "8 mục dựng riêng (bản đồ, 2 cụm thùng dấu gấu, 4 bảng hiệu, bảng bánh mì)", "tt": "chua"},
+   {"ten": "Băng chuyền + kệ gấu trong nhà máy dùng model đã chọn", "tt": "chua"},
+   {"ten": "Sửa shot yếu: s037, s051, s032, s048, s044, s087, s114", "tt": "chua"},
+   {"ten": "Tiếng động + nhạc cho thời lượng mới (kể cả \"Boang\")", "tt": "chua", "ghiChu": "đang dùng bản cũ 176 giây, lệch hình"},
+   {"ten": "Tiếng Anh giọng Andrew", "tt": "cho", "ghiChu": "làm sau cùng, theo ý người dùng"},
+   {"ten": "Tài sản Roblox (mũ, đạo cụ đã chọn ở Đợt 3)", "tt": "cho", "ghiChu": "chờ người dùng tạo khoá Open Cloud (ROBLOX_API_KEY trong .env.local)"}
+  ]},
+  {"ten": "Studio (trình phát)", "viec": [
+   {"ten": "Theo dõi và bắt lỗi theo shot", "tt": "xong", "ghiChu": "commit 716eb58"},
+   {"ten": "Bản mẫu khung studio PC", "tt": "xong", "ghiChu": "người dùng duyệt v2"},
+   {"ten": "Đưa khung studio vào trình phát thật (viền kéo, cột thẻ dọc, timeline, marker M, bánh răng, Gửi tới Claude)", "tt": "dang", "ghiChu": "1 agent Sonnet đang làm"},
+   {"ten": "Tách khung studio khỏi nội dung tập (tập xuất ra nhẹ hơn)", "tt": "chua"},
+   {"ten": "Trang duyệt tài sản theo đợt + nút Gửi tới Claude", "tt": "xong", "ghiChu": "đã nhận Đợt 5 qua nút gửi"}
+  ]},
+  {"ten": "Phiên con", "viec": [
+   {"ten": "Tối ưu repo: dọn output (−5,66 GB), rút gọn CLAUDE.md, nén 3 model nặng nhất", "tt": "xong"},
+   {"ten": "Tối ưu repo: mục 5, nén các model còn lại, giảm shader", "tt": "chua", "ghiChu": "ghi ở docs/handoff/toi-uu.md; 5/335 test đang hỏng"},
+   {"ten": "ep001: phụ đề từng chữ bật sẵn", "tt": "xong", "ghiChu": "commit 8d9b6ca; dist/ep001.html chính chưa gộp lại"},
+   {"ten": "Gà cho ep001", "tt": "cho", "ghiChu": "chờ người dùng trả lời có bật không"}
+  ]}
+ ],
+ "link": [
+  {"ten": "Bản xem thử tập 2", "href": "ep002_xem-thu.html"},
+  {"ten": "Trang duyệt tài sản tập 2", "href": "ep002_duyet.html"},
+  {"ten": "Bản mẫu khung studio", "href": "studio_ban-mau.html"}
+ ]
+}
