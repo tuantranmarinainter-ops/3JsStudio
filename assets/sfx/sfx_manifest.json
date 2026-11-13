@@ -1652,5 +1652,101 @@
     "source_url": "synthesized in-repo, episodes/ep002/sfx/hollow_pan_bonk.wav",
     "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
     "ambience": false
+  },
+  "plush toy squeak": {
+    "missing": true
+  },
+  "conveyor clank": {
+    "missing": true
+  },
+  "small ring drop": {
+    "file": "assets/sfx/small_ring_drop.mp3",
+    "title": "Metal Knife Drop- Long.wav",
+    "creator": "akennedybrewer",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/akennedybrewer/sounds/389188",
+    "duration": 1.04,
+    "ambience": false
+  },
+  "necklace chain jingle": {
+    "file": "assets/sfx/necklace_chain_jingle.mp3",
+    "title": "Jingling.m4a",
+    "creator": "TheScarlettWitch89",
+    "license": "by",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "source_url": "https://freesound.org/people/TheScarlettWitch89/sounds/415533",
+    "duration": 5.78,
+    "ambience": false
+  },
+  "whoosh": {
+    "file": "assets/sfx/whoosh.mp3",
+    "title": "Deep Whoosh #1",
+    "creator": "Kinoton",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/Kinoton/sounds/351256",
+    "duration": 2.93,
+    "ambience": false
+  },
+  "footsteps running pavement": {
+    "file": "assets/sfx/footsteps_running_pavement.mp3",
+    "title": "soft-foot-steps-gravel-leaves-dirt-pavement.wav",
+    "creator": "newagesoup",
+    "license": "by",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "source_url": "https://freesound.org/people/newagesoup/sounds/342475",
+    "duration": 4.46,
+    "ambience": false
+  },
+  "pocket watch tick": {
+    "file": "assets/sfx/pocket_watch_tick.mp3",
+    "title": "Clock Ticking",
+    "creator": "BenjaminNelan",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/BenjaminNelan/sounds/321084",
+    "duration": 4.0,
+    "ambience": false
+  },
+  "glass window tap": {
+    "file": "assets/sfx/glass_window_tap.mp3",
+    "title": "Knocking On Screen, 01.wav",
+    "creator": "MATRIXXX_",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/MATRIXXX_/sounds/368680",
+    "duration": 0.53,
+    "ambience": false
+  },
+  "cardboard box thud": {
+    "file": "assets/sfx/cardboard_box_thud.mp3",
+    "title": "drop05.wav",
+    "creator": "newagesoup",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/newagesoup/sounds/339365",
+    "duration": 2.35,
+    "ambience": false
+  },
+  "squeaky toy": {
+    "file": "assets/sfx/squeaky_toy.mp3",
+    "title": "Squeaky Toy #4",
+    "creator": "Breviceps",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/Breviceps/sounds/483922",
+    "duration": 1.21,
+    "ambience": false
+  },
+  "metal clank": {
+    "file": "assets/sfx/metal_clank.mp3",
+    "title": "Metal Clank 1",
+    "creator": "JustInvoke",
+    "license": "by",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "source_url": "https://freesound.org/people/JustInvoke/sounds/446102",
+    "duration": 0.21,
+    "ambience": false
   }
 }
