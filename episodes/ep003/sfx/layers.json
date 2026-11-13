@@ -1,13 +1,39 @@
 {
- "_doc": "Lớp tiếng động của tập (mẫu, chép bởi tools/storyboard.py). Sửa rồi chạy: node tools/build.mjs <ep> <lớp> (nen | khoanh-khac). Mốc tiếng động theo shot: sfx/cues_*.json.",
+ "_doc": "Lớp tiếng động ep003 (phim 140,00 s, 104 shot; s104 khung đen từ 138,92 s). Sửa rồi chạy: node tools/build.mjs ep003 <lớp> (nen | khoanh-khac | nhac). Bối cảnh/giờ lấy từ shots.js qua tools/sfx/shot-list.mjs (env + light night). Mốc tiếng theo cảnh: sfx/cues_*.json.",
  "nen": {
-  "label": "Tiếng nền (gió, sóng, mưa…)",
-  "gain": 1.0, "vol": 0.16, "fade": 0.35,
-  "map": { "kenneyTown": "town ambience day birds", "town": "town ambience day birds", "forest": "forest ambience birds",
-   "hawaii": "waves beach shore gentle", "island": "waves beach shore gentle", "ocean": "ocean waves open sea",
-   "storm": "rain heavy storm ambience", "kitchen": "kitchen room tone quiet", "bedroom": "kitchen room tone quiet" },
-  "night": { "kenneyTown": "night crickets ambience", "town": "night crickets ambience" },
-  "boost": {}
+  "label": "Tiếng nền (phòng, phố, xưởng…)",
+  "gain": 1.0,
+  "vol": 0.16,
+  "fade": 0.35,
+  "map": {
+   "e3-phong": "kitchen room tone quiet",
+   "e3-pho": "town ambience day birds",
+   "e3-tiem": "kitchen room tone quiet",
+   "e3-nha-may": "conveyor hum",
+   "kenneyTown": "town ambience day birds"
+  },
+  "night": {
+   "e3-phong": "night crickets ambience",
+   "e3-pho": "night crickets ambience",
+   "e3-nha-may": "conveyor hum"
+  },
+  "boost": {
+   "conveyor hum": 0.6,
+   "kitchen room tone quiet": 0.6,
+   "night crickets ambience": 0.8,
+   "town ambience day birds": 0.7
+  },
+  "peak": 0.35,
+  "minSeg": 3.0,
+  "cutAt": 138.92,
+  "cutFade": 0.15
  },
- "khoanh-khac": { "label": "Tiếng động theo cảnh", "gain": 1.0, "dedupe": 0.6 }
+ "khoanh-khac": {
+  "label": "Tiếng động theo cảnh",
+  "gain": 1.0,
+  "dedupe": 0.6,
+  "peak": 0.5,
+  "cutAt": 138.92,
+  "cutFade": 0.25
+ }
 }

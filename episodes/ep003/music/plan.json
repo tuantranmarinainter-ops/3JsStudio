@@ -1,0 +1,49 @@
+{
+ "_doc": "Kế hoạch NHẠC NỀN ep003 (lớp nhac), cùng lược đồ ep002/music/plan.json (bài CC BY trong assets/music/music_manifest.json). ep003 = làm lại truyện ep002, phim 140 s: HOOK 0–21,5 (s001–s015 đồ biến mất, ông Bách phát gấu) · LEO THANG 21,5–70,6 (phòng Gà, hai đêm rình Bắp, bám theo ra phố) · TWIST 70,6–111,9 (nhà máy đêm: lộ ông Bách gom đồ, về báo thị trưởng) · GIẢI QUYẾT 111,9–138,92 (dẫn thị trưởng tới nhà máy ban ngày, lấy lại dây chuyền, cắt đen). Sửa rồi chạy: node tools/build.mjs ep003 nhac",
+ "label": "Nhạc nền",
+ "targetLUFS": -26,
+ "loopFade": 2.0,
+ "duration": 140.0,
+ "segments": [
+  {
+   "from": 0.0,
+   "to": 23.0,
+   "track": "bidous_transit",
+   "offset": 0,
+   "vol": 0.8,
+   "fadeIn": 1.5,
+   "fadeOut": 3.0,
+   "why": "HOOK: đồ đạc biến mất, ông Bách phát gấu miễn phí — bí ẩn tinh nghịch"
+  },
+  {
+   "from": 20.0,
+   "to": 72.0,
+   "track": "wingspan",
+   "offset": 20,
+   "vol": 0.8,
+   "fadeIn": 3.0,
+   "fadeOut": 3.0,
+   "why": "LEO THANG: Gà mất dây chuyền, giả ngủ soi gương, hai đêm bám Bắp"
+  },
+  {
+   "from": 69.0,
+   "to": 113.5,
+   "track": "storm_adventure",
+   "offset": 30,
+   "vol": 0.9,
+   "fadeIn": 3.0,
+   "fadeOut": 3.0,
+   "why": "TWIST: nhà máy đêm, lộ ông Bách là chủ mưu, về báo thị trưởng"
+  },
+  {
+   "from": 110.5,
+   "to": 138.92,
+   "track": "feeling_piano",
+   "offset": 40,
+   "vol": 0.9,
+   "fadeIn": 3.0,
+   "fadeOut": 0.6,
+   "why": "GIẢI QUYẾT: bắt quả tang ban ngày, lấy lại dây chuyền, Bắp trả két; dứt ở cú cắt đen"
+  }
+ ]
+}

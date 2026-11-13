@@ -29,8 +29,9 @@ if (!pageArg) { console.log('Dùng: node tools/shaders.mjs <trang|dist/x.html> [
 
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json', '.glb': 'model/gltf-binary', '.png': 'image/png', '.jpg': 'image/jpeg', '.ogg': 'audio/ogg', '.mp3': 'audio/mpeg', '.wasm': 'application/wasm', '.css': 'text/css' };
 let srv = null;
-async function toUrl(p) {
-  if (/^(https?|file):\/\//i.test(p)) return p;
+async function toUrl(p0) {
+  if (/^(https?|file):\/\//i.test(p0)) return p0;
+  const [p, qs] = p0.split('?'), hoi = qs ? '?' + qs : '';   // cho phép tham số URL: trang.html?fx=grade,bloom
   const abs = resolve(p);
   if (!existsSync(abs)) throw new Error('Không thấy trang: ' + p);
   const rel = relative(root, abs).replace(/\\/g, '/');
@@ -44,7 +45,7 @@ async function toUrl(p) {
     } catch { res.writeHead(404); res.end(); }
   }).listen(0);
   await new Promise((r) => srv.once('listening', r));
-  return `http://localhost:${srv.address().port}/${rel}`;
+  return `http://localhost:${srv.address().port}/${rel}${hoi}`;
 }
 
 const browser = await launchBrowser();
