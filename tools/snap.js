@@ -21,7 +21,11 @@ const types = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'applic
 
 (async () => {
   fs.mkdirSync(out, { recursive: true });
-  const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+  // Mặc định GPU thật; GL=swiftshader ép CPU (chỉ dùng khi chụp so sánh tất định / máy không GPU).
+  const glArgs = process.env.GL === 'swiftshader'
+    ? ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader']
+    : ['--use-gl=angle', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-unsafe-swiftshader'];
+  const b = await chromium.launch({ args: glArgs });
   const p = await b.newPage({ viewport: { width: 540, height: 960 } });
   p.on('pageerror', (e) => console.log('pageerror:', e.message));
   p.on('console', (m) => (m.type() === 'error' || m.type() === 'log') && console.log('console:', m.text()));

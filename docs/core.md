@@ -162,8 +162,11 @@ Chuỗi pass: `copyIn → ao → outline → bokeh → paint → bloom → grade
 
 ## look.mjs — `tools/look.mjs` (kiểm khung)
 Chụp, ghép bảng có nhãn, so A/B (PSNR), kiểm tất định. Chạy được với mọi trang có `window.__ready` + `window.renderAt(t)`, kể cả sea-lab.
+**GPU mặc định.** Mọi lệnh chụp/render chạy bằng GPU thật (bỏ trống `GL`). Chỉ đặt `GL=swiftshader` (CPU) khi **chụp so sánh tất định** với ảnh chuẩn (`--det`, so PSNR/pixel) — rất nặng CPU, mỗi lúc chỉ 1 agent chạy, ≤ 12 khung.
 ```bash
+# so sánh tất định (CPU, 1 agent một lúc):
 BROWSER=chromium GL=swiftshader node tools/look.mjs episodes/ep001/index.html --shots s095,s096 --out output/look/<agent> --det
+# mọi việc khác (GPU):
 node tools/look.mjs engine/sea-lab.html --t 0.5,1.5,2.5 --query "sweep=1&ui=0" --out output/look/sea-lab
 node tools/look.mjs episodes/ep001/index.html --t 30 --ab "episodes/ep001/index.html?fx=none"
 ```
