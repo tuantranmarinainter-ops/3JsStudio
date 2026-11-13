@@ -9,11 +9,14 @@ Sounds found via Openverse (Freesound). Paste the CC BY lines into the video des
 "ExplosionBombBlastDistantMuffled_LikeCinematicBoom_2.wav" by zimbot (https://freesound.org/people/zimbot/sounds/120955), licensed under CC BY 4.0
 "Female Gasp.wav" by nicklas3799 (https://freesound.org/people/nicklas3799/sounds/467348), licensed under CC BY 4.0
 "Footsteps, Running On Stairs.wav" by theplax (https://freesound.org/people/theplax/sounds/547385), licensed under CC BY 4.0
+"soft-foot-steps-gravel-leaves-dirt-pavement.wav" by newagesoup (https://freesound.org/people/newagesoup/sounds/342475), licensed under CC BY 4.0
 "crows.wav" by soundbytez (https://freesound.org/people/soundbytez/sounds/108766), licensed under CC BY 4.0
 "Monster Stomp Footsteps Sequence" by Vilkas_Sound (https://freesound.org/people/Vilkas_Sound/sounds/753178), licensed under CC BY 4.0
 "Splash.wav" by patchen (https://freesound.org/people/patchen/sounds/6729), licensed under CC BY 4.0
 "Small poofs of flux.ogg" by jobro (https://freesound.org/people/jobro/sounds/204302), licensed under CC BY 4.0
+"Metal Clank 1" by JustInvoke (https://freesound.org/people/JustInvoke/sounds/446102), licensed under CC BY 4.0
 "Blustery Wind" by iainmccurdy (https://freesound.org/people/iainmccurdy/sounds/644384), licensed under CC BY 4.0
+"Jingling.m4a" by TheScarlettWitch89 (https://freesound.org/people/TheScarlettWitch89/sounds/415533), licensed under CC BY 4.0
 "Ambience, Night Wildlife, A.wav" by InspectorJ (https://freesound.org/people/InspectorJ/sounds/352514), licensed under CC BY 4.0
 "falling papers.wav" by FreqMan (https://freesound.org/people/FreqMan/sounds/19952), licensed under CC BY 4.0
 "wave close coast small 012.wav" by klankbeeld (https://freesound.org/people/klankbeeld/sounds/578770), licensed under CC BY 4.0
@@ -48,6 +51,7 @@ Sounds found via Openverse (Freesound). Paste the CC BY lines into the video des
 "Body Fall Over.wav" by raubana (https://freesound.org/people/raubana/sounds/82027), CC0
 "sliding book (1).mp3" by Heyy_Jayy_ (https://freesound.org/people/Heyy_Jayy_/sounds/515002), CC0
 "Matchbox fire lucifer - shaking riser build-up.wav" by Duisterwho (https://freesound.org/people/Duisterwho/sounds/644680), CC0
+"drop05.wav" by newagesoup (https://freesound.org/people/newagesoup/sounds/339365), CC0
 "Cartoon Boing.wav" by reelworldstudio (https://freesound.org/people/reelworldstudio/sounds/161122), CC0
 "Creaking" by Lightnessko (https://freesound.org/people/Lightnessko/sounds/390323), CC0
 "Boy or Young Child Laughing" by OBXJohn (https://freesound.org/people/OBXJohn/sounds/365632), CC0
@@ -76,6 +80,7 @@ Sounds found via Openverse (Freesound). Paste the CC BY lines into the video des
 "Whimper_Gasp_1_Male" by Drkvixn91 (https://freesound.org/people/Drkvixn91/sounds/318077), CC0
 "50-MiniGaspNiña.wav" by wintuh (https://freesound.org/people/wintuh/sounds/471930), CC0
 "Glass Being Knocked over.wav" by fattirewhitey (https://freesound.org/people/fattirewhitey/sounds/328938), CC0
+"Knocking On Screen, 01.wav" by MATRIXXX_ (https://freesound.org/people/MATRIXXX_/sounds/368680), CC0
 "People in bistro.wav" by keepthatPMA (https://freesound.org/people/keepthatPMA/sounds/500291), CC0
 "Heart trouble" by lisakale (https://freesound.org/people/lisakale/sounds/138388), CC0
 "FloorBang_03.wav" by Faulkin (https://freesound.org/people/Faulkin/sounds/336489), CC0
@@ -107,6 +112,7 @@ Sounds found via Openverse (Freesound). Paste the CC BY lines into the video des
 "Paper slide" by Kingofgamers_cz (https://freesound.org/people/Kingofgamers_cz/sounds/352914), CC0
 "scribble.mp3" by indigosierra (https://freesound.org/people/indigosierra/sounds/82610), CC0
 "Penguin Squeak" by Breviceps (https://freesound.org/people/Breviceps/sounds/705839), CC0
+"Clock Ticking" by BenjaminNelan (https://freesound.org/people/BenjaminNelan/sounds/321084), CC0
 "Heavy rain with thuder" by dersinnsspace (https://freesound.org/people/dersinnsspace/sounds/435222), CC0
 "S09-15 Falling rock & dirt debris.wav" by craigsmith (https://freesound.org/people/craigsmith/sounds/675728), CC0
 "Running Up The Stairs.wav" by RutgerMuller (https://freesound.org/people/RutgerMuller/sounds/51163), CC0
@@ -122,11 +128,13 @@ Sounds found via Openverse (Freesound). Paste the CC BY lines into the video des
 "Whoosh #1" by Kinoton (https://freesound.org/people/Kinoton/sounds/427823), CC0
 "Sigh, male" by giddster (https://freesound.org/people/giddster/sounds/336539), CC0
 "footsteps staircase carpet" by Yuval (https://freesound.org/people/Yuval/sounds/205749), CC0
+"Metal Knife Drop- Long.wav" by akennedybrewer (https://freesound.org/people/akennedybrewer/sounds/389188), CC0
 "Footstep in the snow_04 [RAW]" by cabled_mess (https://freesound.org/people/cabled_mess/sounds/384424), CC0
 "Magic Wings - Soft" by angelkunev (https://freesound.org/people/angelkunev/sounds/561287), CC0
 "digital_whoosh_soft.wav" by ludvique (https://freesound.org/people/ludvique/sounds/71852), CC0
 "Whoosh_Simple_ER_SFX_4.wav" by Alex_hears_things (https://freesound.org/people/Alex_hears_things/sounds/521047), CC0
 "rabbit-thump-on-soil-edited.wav" by bunnyluvvid (https://freesound.org/people/bunnyluvvid/sounds/431204), CC0
+"Squeaky Toy #4" by Breviceps (https://freesound.org/people/Breviceps/sounds/483922), CC0
 "Swishes_11_gentle.wav" by videofueralle (https://freesound.org/people/videofueralle/sounds/614153), CC0
 "Chattering Teeth" by danlucaz (https://freesound.org/people/danlucaz/sounds/517676), CC0
 "ApplesDroppingThudinaForest.wav" by kvgarlic (https://freesound.org/people/kvgarlic/sounds/149418), CC0
@@ -137,6 +145,7 @@ Sounds found via Openverse (Freesound). Paste the CC BY lines into the video des
 "Heavy Rain Short" by presidentevil4zombie (https://freesound.org/people/presidentevil4zombie/sounds/241195), CC0
 "8 Bit Beach Wave" by Jofae (https://freesound.org/people/Jofae/sounds/360634), CC0
 "Anxious Swell.wav" by 5P4C3_C4173T (https://freesound.org/people/5P4C3_C4173T/sounds/347502), CC0
+"Deep Whoosh #1" by Kinoton (https://freesound.org/people/Kinoton/sounds/351256), CC0
 "Impact" by chriskalos (https://freesound.org/people/chriskalos/sounds/172779), CC0
 "Wind 2.mp3" by FunWithSound (https://freesound.org/people/FunWithSound/sounds/390740), CC0
 "Window Opening Squeaks Slide.wav" by RutgerMuller (https://freesound.org/people/RutgerMuller/sounds/51047), CC0

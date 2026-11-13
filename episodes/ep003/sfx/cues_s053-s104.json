@@ -1,0 +1,229 @@
+[
+ {
+  "t": 78.2,
+  "name": "small ring drop",
+  "vol": 0.3,
+  "dur": 0.6,
+  "align": "peak",
+  "shot": "s053",
+  "why": "nhẫn rơi xuống băng"
+ },
+ {
+  "t": 80.4,
+  "name": "glass clink table",
+  "vol": 0.25,
+  "dur": 0.8,
+  "align": "peak",
+  "shot": "s054",
+  "why": "nhẫn chạm miệng thùng"
+ },
+ {
+  "t": 80.85,
+  "name": "dramatic sting",
+  "vol": 0.6,
+  "dur": 1.4,
+  "align": "peak",
+  "shot": "s055",
+  "why": "lộ mặt ông Bách"
+ },
+ {
+  "t": 87.4,
+  "name": "marker squeak",
+  "vol": 0.3,
+  "dur": 0.6,
+  "shot": "s059",
+  "why": "cắm ghim đầu gấu lên bản đồ"
+ },
+ {
+  "t": 89.6,
+  "name": "paper rustle",
+  "vol": 0.2,
+  "dur": 0.8,
+  "shot": "s061",
+  "why": "tay trượt trên bản đồ"
+ },
+ {
+  "t": 91.3,
+  "name": "metal clank",
+  "vol": 0.3,
+  "dur": 0.9,
+  "shot": "s062",
+  "why": "két nhô ra dưới băng"
+ },
+ {
+  "t": 93.9,
+  "name": "necklace chain jingle",
+  "vol": 0.3,
+  "dur": 0.9,
+  "shot": "s064",
+  "why": "dây chuyền nằm trên nắp két"
+ },
+ {
+  "t": 95.2,
+  "name": "gasp short",
+  "vol": 0.3,
+  "dur": 0.8,
+  "shot": "s065",
+  "why": "Gà nhận ra kỷ vật"
+ },
+ {
+  "t": 97.95,
+  "name": "whoosh",
+  "vol": 0.3,
+  "dur": 0.9,
+  "shot": "s066",
+  "why": "đổi sang phố"
+ },
+ {
+  "t": 103.65,
+  "name": "door slam",
+  "vol": 0.35,
+  "dur": 0.95,
+  "align": "peak",
+  "shot": "s071",
+  "why": "thị trưởng khép cửa"
+ },
+ {
+  "t": 104.4,
+  "name": "footsteps running pavement",
+  "vol": 0.3,
+  "dur": 1,
+  "shot": "s072",
+  "why": "thị trưởng chạy tới"
+ },
+ {
+  "t": 107.1,
+  "name": "pocket watch tick",
+  "vol": 0.3,
+  "dur": 1,
+  "shot": "s074",
+  "why": "đồng hồ trong hồi tưởng"
+ },
+ {
+  "t": 111.95,
+  "name": "whoosh",
+  "vol": 0.3,
+  "dur": 0.9,
+  "shot": "s078",
+  "why": "đổi sang nhà máy"
+ },
+ {
+  "t": 112.6,
+  "name": "glass window tap",
+  "vol": 0.3,
+  "dur": 0.6,
+  "align": "peak",
+  "shot": "s078",
+  "why": "thị trưởng sát kính"
+ },
+ {
+  "t": 114,
+  "name": "necklace chain jingle",
+  "vol": 0.25,
+  "dur": 0.8,
+  "shot": "s079",
+  "why": "Bách nhấc đồng hồ, xích thõng"
+ },
+ {
+  "t": 115.3,
+  "name": "gasp short",
+  "vol": 0.3,
+  "dur": 0.8,
+  "shot": "s080",
+  "why": "thị trưởng nhận ra đồng hồ"
+ },
+ {
+  "t": 119.4,
+  "name": "metal door slide",
+  "vol": 0.6,
+  "dur": 1.2,
+  "shot": "s083",
+  "why": "lính mở cửa kho"
+ },
+ {
+  "t": 124.7,
+  "name": "cricket",
+  "vol": 0.3,
+  "dur": 0.99,
+  "shot": "s088",
+  "why": "Bách im lặng"
+ },
+ {
+  "t": 126.3,
+  "name": "cardboard box thud",
+  "vol": 0.3,
+  "dur": 0.6,
+  "align": "peak",
+  "shot": "s090",
+  "why": "Bách bê thùng"
+ },
+ {
+  "t": 127.9,
+  "name": "cardboard box thud",
+  "vol": 0.4,
+  "dur": 0.6,
+  "align": "peak",
+  "shot": "s091",
+  "why": "đặt thùng lên chồng"
+ },
+ {
+  "t": 131.6,
+  "name": "necklace chain jingle",
+  "vol": 0.3,
+  "dur": 0.9,
+  "shot": "s095",
+  "why": "dây chuyền về tay Gà"
+ },
+ {
+  "t": 134.1,
+  "name": "safe door close",
+  "vol": 0.6,
+  "dur": 0.64,
+  "align": "peak",
+  "shot": "s097",
+  "why": "cất dây chuyền, đóng két"
+ },
+ {
+  "t": 134.5,
+  "name": "cloth rustle",
+  "vol": 0.25,
+  "dur": 0.8,
+  "shot": "s098",
+  "why": "Bắp nhích tới két"
+ },
+ {
+  "t": 135.5,
+  "name": "cloth rustle",
+  "vol": 0.25,
+  "dur": 0.8,
+  "shot": "s099",
+  "why": "Bắp nhấc két"
+ },
+ {
+  "t": 136.95,
+  "name": "thud soft",
+  "vol": 0.5,
+  "dur": 0.5,
+  "align": "peak",
+  "shot": "s101",
+  "why": "Bắp đặt két xuống"
+ },
+ {
+  "t": 138.7,
+  "name": "hollow pan bonk",
+  "vol": 0.9,
+  "dur": 0.9,
+  "align": "peak",
+  "shot": "s103",
+  "why": "Boang"
+ },
+ {
+  "t": 138.7,
+  "name": "cartoon boing",
+  "vol": 0.7,
+  "dur": 2.14,
+  "align": "peak",
+  "shot": "s103",
+  "why": "Boang đuôi lò xo"
+ }
+]

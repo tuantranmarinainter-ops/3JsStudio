@@ -1,0 +1,265 @@
+[
+ {
+  "t": 0.65,
+  "name": "door lock click",
+  "vol": 0.5,
+  "dur": 1.2,
+  "align": "peak",
+  "shot": "s001",
+  "why": "chốt cửa gài"
+ },
+ {
+  "t": 2,
+  "name": "soft magical chime",
+  "vol": 0.25,
+  "dur": 1,
+  "shot": "s002",
+  "why": "vòng bụi hình dây chuyền vừa mất"
+ },
+ {
+  "t": 4.75,
+  "name": "gasp short",
+  "vol": 0.3,
+  "dur": 0.8,
+  "shot": "s004",
+  "why": "chú bán bánh giật mình"
+ },
+ {
+  "t": 7.45,
+  "name": "magic poof",
+  "vol": 0.5,
+  "dur": 1.3,
+  "align": "peak",
+  "shot": "s007",
+  "why": "nhẫn trong hộp biến mất"
+ },
+ {
+  "t": 8.9,
+  "name": "squeaky toy",
+  "vol": 0.3,
+  "dur": 0.6,
+  "shot": "s008",
+  "why": "ông Bách trao gấu"
+ },
+ {
+  "t": 10.9,
+  "name": "squeaky toy",
+  "vol": 0.3,
+  "dur": 0.6,
+  "shot": "s009",
+  "why": "đứa nhỏ ôm gấu"
+ },
+ {
+  "t": 12.4,
+  "name": "paper rustle",
+  "vol": 0.3,
+  "dur": 0.9,
+  "shot": "s010",
+  "why": "giơ tờ khai"
+ },
+ {
+  "t": 14.4,
+  "name": "paper rustle",
+  "vol": 0.3,
+  "dur": 0.9,
+  "shot": "s011",
+  "why": "đặt tờ khai lên xấp"
+ },
+ {
+  "t": 18.2,
+  "name": "paper rustle",
+  "vol": 0.25,
+  "dur": 0.9,
+  "shot": "s013",
+  "why": "dân so phiếu báo mất"
+ },
+ {
+  "t": 22.5,
+  "name": "soft magical chime",
+  "vol": 0.3,
+  "dur": 1,
+  "shot": "s016",
+  "why": "tay chạm kệ trống, dây chuyền biến mất"
+ },
+ {
+  "t": 29.75,
+  "name": "glass clink table",
+  "vol": 0.25,
+  "dur": 0.8,
+  "align": "peak",
+  "shot": "s021",
+  "why": "đặt đồng hồ lên kệ"
+ },
+ {
+  "t": 31,
+  "name": "cloth rustle",
+  "vol": 0.2,
+  "dur": 0.8,
+  "shot": "s022",
+  "why": "kéo chăn giả ngủ"
+ },
+ {
+  "t": 38,
+  "name": "cloth rustle",
+  "vol": 0.2,
+  "dur": 0.8,
+  "shot": "s026",
+  "why": "Bắp ngồi dậy trong gương"
+ },
+ {
+  "t": 42.3,
+  "name": "cloth rustle",
+  "vol": 0.25,
+  "dur": 0.9,
+  "shot": "s029",
+  "why": "Bắp leo lên kệ"
+ },
+ {
+  "t": 43,
+  "name": "wood squeak",
+  "vol": 0.25,
+  "dur": 0.6,
+  "shot": "s029",
+  "why": "chân kệ kêu khi Bắp trèo"
+ },
+ {
+  "t": 44,
+  "name": "cloth rustle",
+  "vol": 0.25,
+  "dur": 0.9,
+  "shot": "s030",
+  "why": "Bắp ôm đồng hồ"
+ },
+ {
+  "t": 45.5,
+  "name": "book slide",
+  "vol": 0.5,
+  "dur": 1,
+  "shot": "s031",
+  "why": "kéo sách che chỗ trống"
+ },
+ {
+  "t": 46.8,
+  "name": "cloth rustle",
+  "vol": 0.3,
+  "dur": 0.6,
+  "shot": "s032",
+  "why": "Gà bật dậy"
+ },
+ {
+  "t": 47.35,
+  "name": "magic poof",
+  "vol": 0.5,
+  "dur": 1.3,
+  "align": "peak",
+  "shot": "s033",
+  "why": "Bắp biến mất"
+ },
+ {
+  "t": 49,
+  "name": "window open",
+  "vol": 0.5,
+  "dur": 1,
+  "shot": "s034",
+  "why": "Gà mở cửa sổ"
+ },
+ {
+  "t": 51.7,
+  "name": "soft whoosh",
+  "vol": 0.3,
+  "dur": 1,
+  "shot": "s036",
+  "why": "chuyển sang phố, đêm thứ hai"
+ },
+ {
+  "t": 53.15,
+  "name": "glass clink table",
+  "vol": 0.25,
+  "dur": 0.8,
+  "align": "peak",
+  "shot": "s037",
+  "why": "đặt nhẫn lên kệ"
+ },
+ {
+  "t": 58.7,
+  "name": "cloth rustle",
+  "vol": 0.25,
+  "dur": 0.6,
+  "shot": "s040",
+  "why": "Bắp chộp nhẫn"
+ },
+ {
+  "t": 59.15,
+  "name": "magic poof",
+  "vol": 0.6,
+  "dur": 1.3,
+  "align": "peak",
+  "shot": "s041",
+  "why": "Bắp và nhẫn biến mất"
+ },
+ {
+  "t": 66,
+  "name": "cloth rustle",
+  "vol": 0.2,
+  "dur": 0.8,
+  "shot": "s045",
+  "why": "Bắp tới ngã ba"
+ },
+ {
+  "t": 67,
+  "name": "cloth rustle",
+  "vol": 0.2,
+  "dur": 0.8,
+  "shot": "s046",
+  "why": "hai gấu nhập đường"
+ },
+ {
+  "t": 68.3,
+  "name": "cloth rustle",
+  "vol": 0.25,
+  "dur": 0.8,
+  "shot": "s047",
+  "why": "gấu ôm ví"
+ },
+ {
+  "t": 69.5,
+  "name": "thud soft",
+  "vol": 0.3,
+  "dur": 0.5,
+  "align": "peak",
+  "shot": "s048",
+  "why": "bao tiền quệt xuống đường"
+ },
+ {
+  "t": 70.45,
+  "name": "soft whoosh",
+  "vol": 0.3,
+  "dur": 1,
+  "shot": "s049",
+  "why": "tới nhà máy"
+ },
+ {
+  "t": 72,
+  "name": "cloth rustle",
+  "vol": 0.2,
+  "dur": 0.8,
+  "shot": "s049",
+  "why": "ba gấu chui hàng rào"
+ },
+ {
+  "t": 74.3,
+  "name": "wood squeak",
+  "vol": 0.3,
+  "dur": 0.6,
+  "shot": "s051",
+  "why": "Gà bước lên thùng gỗ"
+ },
+ {
+  "t": 76.2,
+  "name": "metal clank",
+  "vol": 0.2,
+  "dur": 0.7,
+  "shot": "s052",
+  "why": "băng chuyền thấy qua cửa kính"
+ }
+]
