@@ -43,7 +43,7 @@ export const GLB_KIT = {
   dong_ho_quyt: { id: 'nhap/dong-ho-qua-quyt', basis: [[1, 0, 0], [0, 0, -1], [0, 1, 0]], dims: [0.84, 0.177, 1.2], keep: [] },
   dong_ho_quyt_thi: { id: 'nhap/dong-ho-qua-quyt', basis: [[1, 0, 0], [0, 0, -1], [0, 1, 0]], dims: [0.84, 0.177, 1.2], keep: [] },
   // hộp nhẫn MỞ TRỐNG (kịch bản s006: "hộp nhẫn mở trống, cuộn chỉ") → bản hop-nhan-sang (rỗng); cuộn chỉ = model cuon-chi đặt bên phải như kit cũ
-  hop_nhan: { id: 'nhap/hop-nhan-sang', at: [-0.15, 0.05], keep: [], extra: ['nhap/cuon-chi'], ext: 'hopNhan' },
+  hop_nhan: { id: 'nhap/hop-nhan-sang', at: [-0.15, 0.05], keep: [], extra: ['nhap/cuon-chi', 'nhap/hop-nhan-co-nhan'], ext: 'hopNhan' },
   thung_go: { id: 'nhap/thung-go-dung', dims: [2.4, 2, 2.4], keep: [] },   // (factory: env tự dựng sẵn — coSan — nên chưa có tác dụng ở ep002)
   hang_rao: { id: 'nhap/hang-rao', dims: [8, 3.5, 0.3], keep: [] },        // (factory: coSan, như trên). Cổng 3.6 rộng bị kéo ngang ×2.2 — dùng khi env không dựng sẵn
   chan_tran: { id: 'nhap/ban-chan', keep: [], haiBan: 0.45, da: '#f0c89a' },
@@ -177,6 +177,7 @@ const EXT = {
       const b2 = new THREE.Box3().setFromObject(h), ct = b2.getCenter(new THREE.Vector3());
       h.position.set(0.3 - ct.x, -b2.min.y, 0.05 - ct.z); h.name = 'hop_nhan_chi_glb';
       g.add(h);
+      nhanFx(THREE, g);
     },
   },
   hocQuay: {
@@ -230,6 +231,47 @@ const EXT = {
     },
   },
 };
+
+// ---- nhẫn trong hộp nhẫn (s006: "hộp nhẫn có nhẫn → nhấp nháy → nhẫn biến mất") ----
+// Nhẫn = mesh thứ 4 (vật liệu DefaultMaterial) của hop-nhan-co-nhan.glb — cùng hộp bao với hop-nhan-sang nên khớp đúng chỗ. Mặc định ẨN (hộp rỗng);
+// nhóm 'hop_nhan_nhan'.userData.nhanFx(k) (k = 0..1 trong shot; gọi từ shot.fn của s006) đặt hiện/scale/phát sáng + chớp "poof" — HÀM THUẦN của k.
+const NHAN_SPARK = [0.2, 0.38, 0.56], NHAN_MAT = [0.66, 0.82];   // 3 nhịp lấp lánh; k bắt đầu mất → chớp tắt hẳn
+function nhanFx(THREE, g) {
+  const m2 = LIB.A.instance('nhap/hop-nhan-co-nhan', { name: 'hop_nhan_co_nhan' });
+  const w2 = khop(THREE, m2, GLB_KIT.hop_nhan);   // khớp trên model ĐỦ (hộp bao y như hộp rỗng), rồi mới tách nhẫn
+  g.add(w2); g.updateMatrixWorld(true);
+  const ring = [], tam = new THREE.Box3();
+  w2.traverse((m) => { if (m.isMesh && [].concat(m.material).some((x) => x && x.name === 'DefaultMaterial')) ring.push(m); });
+  if (!ring.length) { g.remove(w2); return; }
+  for (const m of ring) tam.union(new THREE.Box3().setFromObject(m));
+  const piv = new THREE.Group(); piv.name = 'hop_nhan_nhan'; piv.visible = false;
+  piv.position.copy(tam.getCenter(new THREE.Vector3())); g.add(piv); g.updateMatrixWorld(true);
+  const mats = [];
+  for (const m of ring) {
+    piv.attach(m);
+    m.material = m.material.clone(); mats.push(m.material);
+    m.material.emissive = new THREE.Color('#ffd870'); m.material.emissiveIntensity = 0;
+    m.castShadow = true; m.receiveShadow = true; m.userData.matKind = 'none'; m.userData.grungeKind = 'none';
+  }
+  g.remove(w2);
+  const flash = new THREE.Mesh(new THREE.SphereGeometry(1, 12, 8), new THREE.MeshBasicMaterial({ color: '#fff3c0', transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
+  flash.name = 'hop_nhan_chop'; flash.visible = false; flash.castShadow = false; flash.userData.matKind = 'none'; flash.position.copy(piv.position); g.add(flash);
+  const s0 = piv.scale.x;
+  piv.userData.nhanFx = (k) => {
+    k = Math.min(1, Math.max(0, k));
+    const [a, b] = NHAN_MAT;
+    if (k >= b) { piv.visible = false; flash.visible = false; return; }
+    let sp = 0; for (const c of NHAN_SPARK) sp = Math.max(sp, Math.max(0, 1 - Math.abs(k - c) / 0.07));
+    let sc = 1 + 0.14 * sp, em = 0.15 + 1.9 * sp, ch = 0;
+    if (k > a) {   // biến mất: phình nhẹ, sáng chói, rồi co về 0; chớp "poof" nở ra rồi tắt
+      const u = (k - a) / (b - a), v = Math.max(0, (u - 0.3) / 0.7);
+      sc = (u < 0.3 ? 1 + (u / 0.3) * 0.4 : 1.4 * (1 - v) * (1 - v)); em = 2.6; ch = Math.sin(Math.PI * Math.min(1, u * 1.15));
+    }
+    piv.visible = true; piv.scale.setScalar(s0 * Math.max(sc, 0.001));
+    for (const m of mats) m.emissiveIntensity = em;
+    flash.visible = ch > 0.01; flash.scale.setScalar(0.03 + 0.11 * ch); flash.material.opacity = 0.8 * ch;
+  };
+}
 
 // bọc model thành Group gốc đáy-giữa: xoay theo basis → co theo dims → đáy y=0, tâm xz = at
 function khop(THREE, model, cfg) {

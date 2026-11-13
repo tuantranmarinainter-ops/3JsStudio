@@ -246,7 +246,7 @@
   "label": "Tiếng động theo cảnh",
   "gain": 1.0,
   "src": "sfx_khoanh-khac.ogg",
-  "count": 36,
+  "count": 37,
   "missing": [],
   "items": [
    [
@@ -258,6 +258,11 @@
     4.734,
     "gasp short",
     "s005"
+   ],
+   [
+    6.149,
+    "magic poof",
+    "s006"
    ],
    [
     13.805,

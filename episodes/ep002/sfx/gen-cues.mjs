@@ -9,6 +9,7 @@ const nhip = JSON.parse(readFileSync('episodes/ep002/nguon/giong-moi/nhip.json',
 const C = [
   ['s003', 0.2, 'door lock click', 0.6, 1.2, 'peak', 'ổ khoá cửa còn nguyên'],
   ['s005', 0.1, 'gasp short', 0.3, 0.8, null, 'chú bán bánh giật mình'],
+  ['s006', 0.6, 'magic poof', 0.5, 1.3, 'peak', 'nhẫn trong hộp biến mất'],
   ['s013', 0.2, 'paper rustle', 0.3, 0.9, null, 'bảng tin dán kín giấy báo mất'],
   ['s016', 0.25, 'soft magical chime', 0.3, 1.0, null, 'dây chuyền của bà biến mất'],
   ['s021', 0.4, 'glass clink table', 0.25, 0.8, 'peak', 'Gà đặt đồng hồ lên kệ'],

@@ -17,6 +17,15 @@
   "why": "chú bán bánh giật mình"
  },
  {
+  "t": 6.149,
+  "name": "magic poof",
+  "vol": 0.5,
+  "dur": 1.3,
+  "align": "peak",
+  "shot": "s006",
+  "why": "nhẫn trong hộp biến mất"
+ },
+ {
   "t": 13.805,
   "name": "paper rustle",
   "vol": 0.3,
