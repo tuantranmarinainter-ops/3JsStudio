@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 14:05",
+ "capNhat": "2026-11-13 14:40",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -17,7 +17,7 @@
     {
      "ten": "11 đạo cụ Đợt 4 (kể cả hộp nhẫn sang)",
      "tt": "do",
-     "ghiChu": "đã nối: đồng hồ quả quýt, hộp nhẫn, cuộn chỉ; còn 6 model chưa có chỗ gắn (cửa kính, giường Gà, bàn tiệm may, bảng hiệu treo, đèn cửa, nhẫn)"
+     "ghiChu": "đã nối thêm bàn tiệm may, bảng hiệu treo, đèn cửa; còn cửa kính, giường Gà (bối cảnh tự dựng) chưa dùng"
     },
     {
      "ten": "Gấu Bắp có xương, lông mềm, nơ đã duyệt (3 màu)",
@@ -26,8 +26,8 @@
     },
     {
      "ten": "8 mục dựng riêng (bản đồ, 2 cụm thùng dấu gấu, 4 bảng hiệu, bảng bánh mì)",
-     "tt": "dang",
-     "ghiChu": "1 agent Sonnet đang dựng + đặt bàn tiệm may, bảng hiệu treo, đèn cửa"
+     "tt": "xong",
+     "ghiChu": "đã vào bản xem thử; bảng hiệu là bảng đứng trên trụ sau mỗi địa điểm; 2 cụm thùng chưa có shot nào quay tới"
     },
     {
      "ten": "Băng chuyền + kệ gấu trong nhà máy dùng model đã chọn",
@@ -37,7 +37,7 @@
     {
      "ten": "Sửa shot yếu: s037, s051, s032, s048, s044, s087, s114",
      "tt": "do",
-     "ghiChu": "đã sửa 17 shot (10 shot đã biết + 6 shot rà thêm + s061 một phần); còn s061 nửa sau chỉ thấy sàn tối (nghi lỗi bối cảnh nhà máy); chưa gộp vào bản xem thử, chưa chụp lại cả phim"
+     "ghiChu": "17 shot đã sửa và đã vào bản xem thử; chưa chụp lại cả phim"
     },
     {
      "ten": "Tiếng động + nhạc cho thời lượng mới (kể cả \"Boang\")",
@@ -62,7 +62,7 @@
     {
      "ten": "Lỗi đen màn hình sau khi phim kết thúc",
      "tt": "xong",
-     "ghiChu": "nguyên nhân: trình phát còn để thời lượng cũ 175,9 giây nên sau 124,5 giây màn hình đen 51 giây; đã sửa về 124,49, vào bản xem thử kế tiếp"
+     "ghiChu": "đã sửa và đã vào bản xem thử (thời lượng 124,49 giây)"
     },
     {
      "ten": "s006: hiệu ứng hộp có nhẫn → zoom → nhấp nháy → mất",
