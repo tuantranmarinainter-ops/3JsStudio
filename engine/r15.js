@@ -991,6 +991,7 @@ export function createR15(THREE, opts = {}) {
 
   // --- vật liệu ---
   const skinMat = new THREE.MeshStandardMaterial({ color: o.skin, roughness: 0.58, metalness: 0 });
+  skinMat.userData.daNhanVat = true;   // grunge.js: da dùng GRUNGE.skin thay lớp bẩn kiểu nhà (ô daTron)
   let atlasCanvas = null, atlasTex;
   if (o.outfitTexture) atlasTex = o.outfitTexture;
   else { atlasCanvas = paintOutfit(o, seed); atlasTex = new THREE.CanvasTexture(atlasCanvas); atlasTex.colorSpace = THREE.SRGBColorSpace; atlasTex.anisotropy = 8; }

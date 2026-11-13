@@ -10,7 +10,8 @@
 
 import { KHONG_GRUNGE } from './mat-khai-bao.js';
 
-export const GRUNGE = { char: { value: 1 }, build: { value: 1 }, aged: { value: 1 } };
+export const GRUNGE = { char: { value: 1 }, build: { value: 1 }, aged: { value: 1 }, skin: { value: 0 } };
+// skin: mức bẩn kiểu nhà trên DA nhân vật (vật liệu userData.daNhanVat) — 0 = da trơn (ô "daTron"), tránh tối mép khối đầu thành 2 vệt dọc cạnh mặt.
 // aged (v2, chỉ loại build): nhà "bán thực" — sơn tróc lộ gỗ bạc, sơn phai nắng, ố dưới mái, rêu/đất chân tường.
 // Chỉ ăn vào bề mặt SƠN MÀU (độ bão hoà cao) → đường, đá, cỏ xám gần như không đổi.
 
@@ -136,7 +137,7 @@ function patch(mat, kind, amount = 1, aged = false) {
   const prev = mat.onBeforeCompile;
   mat.onBeforeCompile = (sh, r) => {
     prev?.call(mat, sh, r);
-    sh.uniforms.uGrCh = GRUNGE.char; sh.uniforms.uGrBu = GRUNGE.build; sh.uniforms.uGrAged = GRUNGE.aged;
+    sh.uniforms.uGrCh = GRUNGE.char; sh.uniforms.uGrBu = mat.userData.daNhanVat ? GRUNGE.skin : GRUNGE.build; sh.uniforms.uGrAged = GRUNGE.aged;
     sh.uniforms.uGrKind = U.uGrKind; sh.uniforms.uGrAmt = U.uGrAmt; sh.uniforms.uGrAgedOn = U.uGrAgedOn;
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\n' + VERT_PARS)
       .replace('#include <begin_vertex>', '#include <begin_vertex>\n' + VERT_MAIN);
