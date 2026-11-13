@@ -10,6 +10,10 @@ KEEP = set(sys.argv[sys.argv.index('--keep') + 1].split(',')) if '--keep' in sys
 d = f'episodes/{ep}'
 src = open(f'{d}/shots.js', encoding='utf8').read()
 shots = [(m.group(1), int(m.group(2)), int(m.group(3))) for m in re.finditer(r"id: '([^']+)', f: \[(\d+), (\d+)\]", src)]
+if not shots:   # tập sinh từ storyboard: shot ghi `dur` (giây) nối tiếp nhau (engine/timeline.js) → đổi sang khung 30 fps
+    cur = 0.0
+    for m in re.finditer(r"id: ['\"]([^'\"]+)['\"], dur: ([0-9.]+)", src):
+        f0 = round(cur * 30); cur += float(m.group(2)); shots.append((m.group(1), f0, round(cur * 30) - 1))
 caps = json.loads(re.search(r'CAPTIONS = (\[.*\]);', open(f'{d}/captions.js', encoding='utf8').read(), re.S).group(1))
 FPS, MIN = 30, 1.15
 beats = []

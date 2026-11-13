@@ -49,3 +49,22 @@ export function applyLite(scene, on) {
     if (u._liteDrop) o.castShadow = on ? false : u._liteCast;
   });
 }
+
+// ---------- ĐÈN NHÂN VẬT (ô 'denNhanVat', globalThis.__autoFx.denNhanVat, mặc định BẬT) ----------
+// Đèn phụ bám CAMERA (hướng nhìn của camera, hơi chếch từ trên-trái xuống) để mặt nhân vật luôn đọc được kể cả ngược sáng.
+// Chỉ làm gì khi shot đi qua luồng time/weather (ctx.thoiTiet.denNV = { k, color } do engine/envs/gio-thoi-tiet.js trả):
+//   tập chỉ dùng `light:` tay (ep001) ⇒ không có ctx.thoiTiet ⇒ đèn KHÔNG được tạo ⇒ hình y hệt cũ. Tạo lười lần đầu cần; sau đó giữ
+//   mãi trong scene (cường độ 0 khi không dùng) để số đèn không đổi giữa các khung. Không đổ bóng; tất định theo camera.
+let _dnv = null;
+export function denNhanVat(THREE, scene, camera, spec, on = true) {
+  if (!_dnv) { if (!on || !spec || !(spec.k > 0)) return; _dnv = new THREE.DirectionalLight('#ffffff', 0); _dnv.name = 'den_nhan_vat'; scene.add(_dnv, _dnv.target); }
+  const act = on && spec && spec.k > 0; _dnv.intensity = act ? spec.k : 0;
+  if (!act) return;
+  _dnv.color.set(spec.color || '#fff0dc');
+  camera.updateMatrixWorld();
+  const e = camera.matrixWorld.elements, p = camera.position;
+  const rx = e[0], ry = e[1], rz = e[2], ux = e[4], uy = e[5], uz = e[6], fx = -e[8], fy = -e[9], fz = -e[10];   // phải, lên, tiến của camera
+  _dnv.position.set(p.x - rx * 3 + ux * 4, p.y - ry * 3 + uy * 4, p.z - rz * 3 + uz * 4);
+  _dnv.target.position.set(p.x + fx * 10, p.y + fy * 10, p.z + fz * 10);
+  _dnv.target.updateMatrixWorld();
+}

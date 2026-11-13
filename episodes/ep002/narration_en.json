@@ -1,0 +1,1395 @@
+{
+ "voice": "en-US-AndrewMultilingualNeural",
+ "source": "edge",
+ "total": 175.933,
+ "beats": [
+  {
+   "id": "b001",
+   "start": 0.0,
+   "end": 1.533,
+   "shots": [
+    "s001"
+   ],
+   "vi": "Ở thị trấn này, đồ đạc liên tục biến",
+   "en": "In this town,",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.654,
+   "slot": 1.413
+  },
+  {
+   "id": "b002",
+   "start": 1.533,
+   "end": 3.067,
+   "shots": [
+    "s002"
+   ],
+   "vi": "mất,",
+   "en": "things keep vanishing,",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.038,
+   "slot": 1.414
+  },
+  {
+   "id": "b003",
+   "start": 3.067,
+   "end": 5.267,
+   "shots": [
+    "s003"
+   ],
+   "vi": "dù căn phòng đã được khóa kín.",
+   "en": "even from locked rooms.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.173,
+   "slot": 2.08
+  },
+  {
+   "id": "b004",
+   "start": 5.267,
+   "end": 8.067,
+   "shots": [
+    "s004",
+    "s005"
+   ],
+   "vi": "Ban đầu là két tiền của chú bán bánh.",
+   "en": "First, the baker's cash box.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.948,
+   "slot": 2.68
+  },
+  {
+   "id": "b005",
+   "start": 8.067,
+   "end": 9.267,
+   "shots": [
+    "s006"
+   ],
+   "vi": "Rồi tới nhẫn cưới của cô",
+   "en": "Then the tailor's",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.911,
+   "slot": 1.08
+  },
+  {
+   "id": "b006",
+   "start": 9.267,
+   "end": 10.467,
+   "shots": [
+    "s007"
+   ],
+   "vi": "thợ may.",
+   "en": "wedding ring.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.502,
+   "slot": 1.08
+  },
+  {
+   "id": "b007",
+   "start": 10.467,
+   "end": 13.667,
+   "shots": [
+    "s008"
+   ],
+   "vi": "Ngay cả ông Bách, người hàng xóm thân thiện,",
+   "en": "Even Mr. Bach, the friendly neighbor,",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.916,
+   "slot": 3.08
+  },
+  {
+   "id": "b008",
+   "start": 13.667,
+   "end": 15.267,
+   "shots": [
+    "s009"
+   ],
+   "vi": "hay phát gấu bông miễn phí cho cả thị",
+   "en": "who gives free teddy bears",
+   "rate": 16,
+   "tempo": 1.0,
+   "dur": 1.414,
+   "slot": 1.48
+  },
+  {
+   "id": "b009",
+   "start": 15.267,
+   "end": 16.867,
+   "shots": [
+    "s010"
+   ],
+   "vi": "trấn,",
+   "en": "to the whole town,",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.862,
+   "slot": 1.48
+  },
+  {
+   "id": "b010",
+   "start": 16.867,
+   "end": 18.067,
+   "shots": [
+    "s011"
+   ],
+   "vi": "cũng báo mất đồ.",
+   "en": "reported thefts too.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.937,
+   "slot": 1.08
+  },
+  {
+   "id": "b011",
+   "start": 18.067,
+   "end": 20.367,
+   "shots": [
+    "s012"
+   ],
+   "vi": "Nhà ông còn báo mất nhiều nhất.",
+   "en": "His house reported the most.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.288,
+   "slot": 2.18
+  },
+  {
+   "id": "b012",
+   "start": 20.367,
+   "end": 21.867,
+   "shots": [
+    "s013"
+   ],
+   "vi": "Chỉ trong một tuần,",
+   "en": "In just one week,",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.766,
+   "slot": 1.38
+  },
+  {
+   "id": "b013",
+   "start": 21.867,
+   "end": 23.467,
+   "shots": [
+    "s014"
+   ],
+   "vi": "cả thị trấn đã có hàng chục nhà báo",
+   "en": "dozens of houses in town",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.301,
+   "slot": 1.48
+  },
+  {
+   "id": "b014",
+   "start": 23.467,
+   "end": 25.067,
+   "shots": [
+    "s015"
+   ],
+   "vi": "mất đồ.",
+   "en": "had lost things.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.803,
+   "slot": 1.48
+  },
+  {
+   "id": "b015",
+   "start": 25.067,
+   "end": 26.567,
+   "shots": [
+    "s016"
+   ],
+   "vi": "Rồi tới lượt tôi mất",
+   "en": "Then it was my turn:",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.807,
+   "slot": 1.38
+  },
+  {
+   "id": "b016",
+   "start": 26.567,
+   "end": 28.567,
+   "shots": [
+    "s017"
+   ],
+   "vi": "chiếc dây chuyền bà để lại.",
+   "en": "Grandma's necklace, gone.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.141,
+   "slot": 1.88
+  },
+  {
+   "id": "b017",
+   "start": 28.567,
+   "end": 30.367,
+   "shots": [
+    "s018",
+    "s019"
+   ],
+   "vi": "Đó là món tôi quý nhất.",
+   "en": "My most precious thing.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.947,
+   "slot": 1.68
+  },
+  {
+   "id": "b018",
+   "start": 30.367,
+   "end": 32.867,
+   "shots": [
+    "s020"
+   ],
+   "vi": "Tôi quyết điều tra vụ mất cắp này.",
+   "en": "I decided to investigate.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.274,
+   "slot": 2.38
+  },
+  {
+   "id": "b019",
+   "start": 32.867,
+   "end": 34.867,
+   "shots": [
+    "s021"
+   ],
+   "vi": "Tối đó, tôi đặt cái đồng hồ",
+   "en": "That night, I put my clock",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.184,
+   "slot": 1.88
+  },
+  {
+   "id": "b020",
+   "start": 34.867,
+   "end": 36.267,
+   "shots": [
+    "s022"
+   ],
+   "vi": "lên chỗ sợi dây chuyền rồi",
+   "en": "where the necklace was,",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.27,
+   "slot": 1.28
+  },
+  {
+   "id": "b021",
+   "start": 36.267,
+   "end": 37.633,
+   "shots": [
+    "s023"
+   ],
+   "vi": "giả vờ ngủ.",
+   "en": "and faked sleep.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.902,
+   "slot": 1.246
+  },
+  {
+   "id": "b022",
+   "start": 37.633,
+   "end": 39.867,
+   "shots": [
+    "s024"
+   ],
+   "vi": "Qua tấm gương đối diện giường,",
+   "en": "In the mirror facing my bed,",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.569,
+   "slot": 2.114
+  },
+  {
+   "id": "b023",
+   "start": 39.867,
+   "end": 41.567,
+   "shots": [
+    "s025"
+   ],
+   "vi": "tôi vẫn thấy rõ cái kệ.",
+   "en": "I could see the shelf.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.954,
+   "slot": 1.58
+  },
+  {
+   "id": "b024",
+   "start": 41.567,
+   "end": 43.667,
+   "shots": [
+    "s026"
+   ],
+   "vi": "Đợi tới lúc tôi sắp ngủ thật,",
+   "en": "I waited, nearly asleep,",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.474,
+   "slot": 1.98
+  },
+  {
+   "id": "b025",
+   "start": 43.667,
+   "end": 44.933,
+   "shots": [
+    "s027"
+   ],
+   "vi": "trong gương có thứ gì đó",
+   "en": "when something in the mirror",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.056,
+   "slot": 1.146
+  },
+  {
+   "id": "b026",
+   "start": 44.933,
+   "end": 46.267,
+   "shots": [
+    "s028"
+   ],
+   "vi": "ngồi dậy.",
+   "en": "sat up.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.307,
+   "slot": 1.214
+  },
+  {
+   "id": "b027",
+   "start": 46.267,
+   "end": 47.467,
+   "shots": [
+    "s029"
+   ],
+   "vi": "Là Bắp.",
+   "en": "It was Bap.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.565,
+   "slot": 1.08
+  },
+  {
+   "id": "b028",
+   "start": 47.467,
+   "end": 50.267,
+   "shots": [
+    "s030",
+    "s031"
+   ],
+   "vi": "Con gấu bông vẫn nằm ở cuối giường tôi.",
+   "en": "The teddy bear from the foot of my bed.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.437,
+   "slot": 2.68
+  },
+  {
+   "id": "b029",
+   "start": 50.267,
+   "end": 52.467,
+   "shots": [
+    "s032",
+    "s033"
+   ],
+   "vi": "Nó trèo lên kệ, ôm cái đồng hồ",
+   "en": "It climbed up, grabbed the clock,",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.392,
+   "slot": 2.08
+  },
+  {
+   "id": "b030",
+   "start": 52.467,
+   "end": 53.933,
+   "shots": [
+    "s034"
+   ],
+   "vi": "rồi kéo cuốn sách che đúng",
+   "en": "then slid a book across",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.102,
+   "slot": 1.346
+  },
+  {
+   "id": "b031",
+   "start": 53.933,
+   "end": 55.467,
+   "shots": [
+    "s035"
+   ],
+   "vi": "chỗ vừa lấy đồ.",
+   "en": "the spot it just emptied.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.016,
+   "slot": 1.414
+  },
+  {
+   "id": "b032",
+   "start": 55.467,
+   "end": 56.333,
+   "shots": [
+    "s036"
+   ],
+   "vi": "Tôi bật dậy.",
+   "en": "I jumped!",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.501,
+   "slot": 0.746
+  },
+  {
+   "id": "b033",
+   "start": 56.333,
+   "end": 58.333,
+   "shots": [
+    "s037",
+    "s038"
+   ],
+   "vi": "Bắp biến mất ngay trước mắt.",
+   "en": "Bap vanished before my eyes.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.617,
+   "slot": 1.88
+  },
+  {
+   "id": "b034",
+   "start": 58.333,
+   "end": 60.333,
+   "shots": [
+    "s039"
+   ],
+   "vi": "Tới lúc tôi mở được cửa sổ,",
+   "en": "When I got the window open,",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.017,
+   "slot": 1.88
+  },
+  {
+   "id": "b035",
+   "start": 60.333,
+   "end": 61.733,
+   "shots": [
+    "s040"
+   ],
+   "vi": "ngoài đường chẳng còn thấy bóng",
+   "en": "no sign of it",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.733,
+   "slot": 1.28
+  },
+  {
+   "id": "b036",
+   "start": 61.733,
+   "end": 63.133,
+   "shots": [
+    "s041"
+   ],
+   "vi": "nó đâu.",
+   "en": "on the street.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.564,
+   "slot": 1.28
+  },
+  {
+   "id": "b037",
+   "start": 63.133,
+   "end": 64.733,
+   "shots": [
+    "s042"
+   ],
+   "vi": "Tối hôm sau, tôi đặt một chiếc nhẫn lên",
+   "en": "The next night, a ring",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.976,
+   "slot": 1.48
+  },
+  {
+   "id": "b038",
+   "start": 64.733,
+   "end": 66.367,
+   "shots": [
+    "s043"
+   ],
+   "vi": "kệ.",
+   "en": "went on the shelf.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.738,
+   "slot": 1.514
+  },
+  {
+   "id": "b039",
+   "start": 66.367,
+   "end": 68.933,
+   "shots": [
+    "s044"
+   ],
+   "vi": "Lần này, tôi nấp sẵn ngoài ban công.",
+   "en": "This time, I hid on the balcony.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.535,
+   "slot": 2.446
+  },
+  {
+   "id": "b040",
+   "start": 68.933,
+   "end": 70.133,
+   "shots": [
+    "s045"
+   ],
+   "vi": "Bắp chộp chiếc nhẫn rồi biến",
+   "en": "Bap snatched the ring",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.965,
+   "slot": 1.08
+  },
+  {
+   "id": "b041",
+   "start": 70.133,
+   "end": 71.333,
+   "shots": [
+    "s046"
+   ],
+   "vi": "mất.",
+   "en": "and vanished.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.71,
+   "slot": 1.08
+  },
+  {
+   "id": "b042",
+   "start": 71.333,
+   "end": 73.833,
+   "shots": [
+    "s047"
+   ],
+   "vi": "Từ ban công, tôi thấy nó xuất hiện",
+   "en": "From the balcony, I saw it appear",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.74,
+   "slot": 2.38
+  },
+  {
+   "id": "b043",
+   "start": 73.833,
+   "end": 75.833,
+   "shots": [
+    "s048"
+   ],
+   "vi": "trên mái hiên nhà đối diện.",
+   "en": "on the roof across the street.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.536,
+   "slot": 1.88
+  },
+  {
+   "id": "b044",
+   "start": 75.833,
+   "end": 78.067,
+   "shots": [
+    "s049",
+    "s050"
+   ],
+   "vi": "Tôi chạy xuống đường bám theo.",
+   "en": "I ran down to follow.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.985,
+   "slot": 2.114
+  },
+  {
+   "id": "b045",
+   "start": 78.067,
+   "end": 79.433,
+   "shots": [
+    "s051"
+   ],
+   "vi": "Qua ngã ba, hai con gấu",
+   "en": "At the junction, two",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.206,
+   "slot": 1.246
+  },
+  {
+   "id": "b046",
+   "start": 79.433,
+   "end": 80.833,
+   "shots": [
+    "s052"
+   ],
+   "vi": "khác nhập vào.",
+   "en": "more bears joined.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.804,
+   "slot": 1.28
+  },
+  {
+   "id": "b047",
+   "start": 80.833,
+   "end": 81.833,
+   "shots": [
+    "s053"
+   ],
+   "vi": "Một con ôm ví,",
+   "en": "One, a wallet,",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.61,
+   "slot": 0.88
+  },
+  {
+   "id": "b048",
+   "start": 81.833,
+   "end": 83.733,
+   "shots": [
+    "s054"
+   ],
+   "vi": "một con kéo theo túi tiền.",
+   "en": "one dragging a money bag.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.163,
+   "slot": 1.78
+  },
+  {
+   "id": "b049",
+   "start": 83.733,
+   "end": 85.733,
+   "shots": [
+    "s055"
+   ],
+   "vi": "Cả ba biến mất sau hàng rào",
+   "en": "All three vanished behind the fence",
+   "rate": 19,
+   "tempo": 1.003,
+   "dur": 1.887,
+   "slot": 1.88
+  },
+  {
+   "id": "b050",
+   "start": 85.733,
+   "end": 87.533,
+   "shots": [
+    "s056"
+   ],
+   "vi": "của một nhà máy cuối phố.",
+   "en": "of a distant factory.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.108,
+   "slot": 1.68
+  },
+  {
+   "id": "b051",
+   "start": 87.533,
+   "end": 90.733,
+   "shots": [
+    "s057",
+    "s058",
+    "s059"
+   ],
+   "vi": "Tôi đứng lên thùng gỗ, ghé mắt qua cửa kính.",
+   "en": "I stood on a crate and peeked through the glass.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 2.131,
+   "slot": 3.08
+  },
+  {
+   "id": "b052",
+   "start": 90.733,
+   "end": 93.433,
+   "shots": [
+    "s060"
+   ],
+   "vi": "Bắp thả chiếc nhẫn xuống băng chuyền.",
+   "en": "Bap dropped the ring on the conveyor belt.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.824,
+   "slot": 2.58
+  },
+  {
+   "id": "b053",
+   "start": 93.433,
+   "end": 97.433,
+   "shots": [
+    "s061",
+    "s062",
+    "s063"
+   ],
+   "vi": "Đứng cuối băng, gom đồ vào thùng, là ông Bách.",
+   "en": "At the end of the belt, packing boxes: Mr. Bach.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 2.694,
+   "slot": 3.88
+  },
+  {
+   "id": "b054",
+   "start": 97.433,
+   "end": 100.633,
+   "shots": [
+    "s064",
+    "s065"
+   ],
+   "vi": "Sau lưng ông là cả một dãy gấu mới may xong.",
+   "en": "Behind him, a whole row of newly sewn bears.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 3.067,
+   "slot": 3.08
+  },
+  {
+   "id": "b055",
+   "start": 100.633,
+   "end": 101.933,
+   "shots": [
+    "s066"
+   ],
+   "vi": "Ông chỉ vào tấm bản đồ",
+   "en": "Pointing at a map",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.695,
+   "slot": 1.18
+  },
+  {
+   "id": "b056",
+   "start": 101.933,
+   "end": 103.433,
+   "shots": [
+    "s067"
+   ],
+   "vi": "trên tường.",
+   "en": "on the wall.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.489,
+   "slot": 1.38
+  },
+  {
+   "id": "b057",
+   "start": 103.433,
+   "end": 104.633,
+   "shots": [
+    "s068"
+   ],
+   "vi": "Nhà nào có gấu rồi thì",
+   "en": "\"Mark the houses",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.876,
+   "slot": 1.08
+  },
+  {
+   "id": "b058",
+   "start": 104.633,
+   "end": 105.833,
+   "shots": [
+    "s069"
+   ],
+   "vi": "đánh dấu.",
+   "en": "with bears.\"",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.72,
+   "slot": 1.08
+  },
+  {
+   "id": "b059",
+   "start": 105.833,
+   "end": 108.033,
+   "shots": [
+    "s070"
+   ],
+   "vi": "Mai phát tiếp mấy nhà còn lại.",
+   "en": "\"Tomorrow, we deliver to the rest.\"",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.894,
+   "slot": 2.08
+  },
+  {
+   "id": "b060",
+   "start": 108.033,
+   "end": 110.033,
+   "shots": [
+    "s071"
+   ],
+   "vi": "Dưới băng chuyền là két tiền",
+   "en": "Under the belt, the baker's",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.417,
+   "slot": 1.88
+  },
+  {
+   "id": "b061",
+   "start": 110.033,
+   "end": 111.333,
+   "shots": [
+    "s072"
+   ],
+   "vi": "của chú bán bánh.",
+   "en": "cash box.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.728,
+   "slot": 1.18
+  },
+  {
+   "id": "b062",
+   "start": 111.333,
+   "end": 114.533,
+   "shots": [
+    "s073",
+    "s074",
+    "s075"
+   ],
+   "vi": "Trên nắp két, tôi thấy sợi dây chuyền của bà.",
+   "en": "On its lid, I saw Grandma's necklace.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 2.246,
+   "slot": 3.08
+  },
+  {
+   "id": "b063",
+   "start": 114.533,
+   "end": 115.833,
+   "shots": [
+    "s076"
+   ],
+   "vi": "Tôi chạy thẳng tới nhà thị",
+   "en": "I ran straight to",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.835,
+   "slot": 1.18
+  },
+  {
+   "id": "b064",
+   "start": 115.833,
+   "end": 117.133,
+   "shots": [
+    "s077"
+   ],
+   "vi": "trưởng.",
+   "en": "the mayor's house.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.923,
+   "slot": 1.18
+  },
+  {
+   "id": "b065",
+   "start": 117.133,
+   "end": 118.633,
+   "shots": [
+    "s078"
+   ],
+   "vi": "Thị trưởng mở cửa, vẫn mặc",
+   "en": "The mayor opened up, still",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.296,
+   "slot": 1.38
+  },
+  {
+   "id": "b066",
+   "start": 118.633,
+   "end": 120.133,
+   "shots": [
+    "s079"
+   ],
+   "vi": "nguyên đồ ngủ.",
+   "en": "in his pajamas.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.877,
+   "slot": 1.38
+  },
+  {
+   "id": "b067",
+   "start": 120.133,
+   "end": 122.633,
+   "shots": [
+    "s080"
+   ],
+   "vi": "Nghe tới đoạn gấu bông đi ăn trộm,",
+   "en": "Hearing about the thieving teddy bears,",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 2.167,
+   "slot": 2.38
+  },
+  {
+   "id": "b068",
+   "start": 122.633,
+   "end": 124.533,
+   "shots": [
+    "s081"
+   ],
+   "vi": "chú nhìn tôi mất mấy giây.",
+   "en": "he just stared at me.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.72,
+   "slot": 1.78
+  },
+  {
+   "id": "b069",
+   "start": 124.533,
+   "end": 126.033,
+   "shots": [
+    "s082"
+   ],
+   "vi": "Tôi bảo: “Chú cứ qua nhìn",
+   "en": "I said, \"Just come",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.007,
+   "slot": 1.38
+  },
+  {
+   "id": "b070",
+   "start": 126.033,
+   "end": 127.533,
+   "shots": [
+    "s083"
+   ],
+   "vi": "một lần thôi.”",
+   "en": "look once.\"",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.635,
+   "slot": 1.38
+  },
+  {
+   "id": "b071",
+   "start": 127.533,
+   "end": 129.633,
+   "shots": [
+    "s084"
+   ],
+   "vi": "Chú gọi hai lính gác đi cùng.",
+   "en": "He brought two guards along.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.187,
+   "slot": 1.98
+  },
+  {
+   "id": "b072",
+   "start": 129.633,
+   "end": 131.433,
+   "shots": [
+    "s085"
+   ],
+   "vi": "Qua cửa kính, cả ba thấy",
+   "en": "Through the glass, we saw",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.189,
+   "slot": 1.68
+  },
+  {
+   "id": "b073",
+   "start": 131.433,
+   "end": 132.933,
+   "shots": [
+    "s086"
+   ],
+   "vi": "ông Bách rung chuông.",
+   "en": "Mr. Bach ring the bell.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.142,
+   "slot": 1.38
+  },
+  {
+   "id": "b074",
+   "start": 132.933,
+   "end": 134.433,
+   "shots": [
+    "s087"
+   ],
+   "vi": "Một con gấu biến mất.",
+   "en": "One bear vanished.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.924,
+   "slot": 1.38
+  },
+  {
+   "id": "b075",
+   "start": 134.433,
+   "end": 135.933,
+   "shots": [
+    "s088"
+   ],
+   "vi": "Vài giây sau, nó quay lại,",
+   "en": "Seconds later, it returned,",
+   "rate": 27,
+   "tempo": 1.0,
+   "dur": 1.329,
+   "slot": 1.38
+  },
+  {
+   "id": "b076",
+   "start": 135.933,
+   "end": 137.433,
+   "shots": [
+    "s089"
+   ],
+   "vi": "ôm một đôi dép.",
+   "en": "with a pair of slippers.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.027,
+   "slot": 1.38
+  },
+  {
+   "id": "b077",
+   "start": 137.433,
+   "end": 138.833,
+   "shots": [
+    "s090"
+   ],
+   "vi": "Thị trưởng cúi nhìn",
+   "en": "The mayor looked down",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.019,
+   "slot": 1.28
+  },
+  {
+   "id": "b078",
+   "start": 138.833,
+   "end": 140.833,
+   "shots": [
+    "s091"
+   ],
+   "vi": "hai bàn chân trần của mình.",
+   "en": "at his own bare feet.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.114,
+   "slot": 1.88
+  },
+  {
+   "id": "b079",
+   "start": 140.833,
+   "end": 142.433,
+   "shots": [
+    "s092"
+   ],
+   "vi": "Chú đi vội quá, để nguyên",
+   "en": "He'd rushed out so fast,",
+   "rate": 17,
+   "tempo": 1.017,
+   "dur": 1.505,
+   "slot": 1.48
+  },
+  {
+   "id": "b080",
+   "start": 142.433,
+   "end": 144.033,
+   "shots": [
+    "s093"
+   ],
+   "vi": "dép trước cửa nhà.",
+   "en": "slippers left behind.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.129,
+   "slot": 1.48
+  },
+  {
+   "id": "b081",
+   "start": 144.033,
+   "end": 145.533,
+   "shots": [
+    "s094"
+   ],
+   "vi": "Lính gác mở cửa kho.",
+   "en": "Guards opened the warehouse.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.266,
+   "slot": 1.38
+  },
+  {
+   "id": "b082",
+   "start": 145.533,
+   "end": 147.833,
+   "shots": [
+    "s095"
+   ],
+   "vi": "Thị trưởng nhìn sang chồng thùng",
+   "en": "The mayor eyed the stack of crates",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.678,
+   "slot": 2.18
+  },
+  {
+   "id": "b083",
+   "start": 147.833,
+   "end": 149.333,
+   "shots": [
+    "s096"
+   ],
+   "vi": "in tên tiệm ông Bách.",
+   "en": "printed with Bach's shop name.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.197,
+   "slot": 1.38
+  },
+  {
+   "id": "b084",
+   "start": 149.333,
+   "end": 150.833,
+   "shots": [
+    "s097"
+   ],
+   "vi": "Ủa, đây là mấy thùng",
+   "en": "\"Hey, aren't these the crates",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.111,
+   "slot": 1.38
+  },
+  {
+   "id": "b085",
+   "start": 150.833,
+   "end": 152.633,
+   "shots": [
+    "s098"
+   ],
+   "vi": "sáng nay ông báo mất mà?",
+   "en": "you reported stolen this morning?\"",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.664,
+   "slot": 1.68
+  },
+  {
+   "id": "b086",
+   "start": 152.633,
+   "end": 154.133,
+   "shots": [
+    "s099"
+   ],
+   "vi": "Ông Bách im luôn.",
+   "en": "Mr. Bach went silent.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.299,
+   "slot": 1.38
+  },
+  {
+   "id": "b087",
+   "start": 154.133,
+   "end": 155.133,
+   "shots": [
+    "s100"
+   ],
+   "vi": "Tôi mới hiểu.",
+   "en": "I finally understood.",
+   "rate": 26,
+   "tempo": 1.0,
+   "dur": 0.85,
+   "slot": 0.88
+  },
+  {
+   "id": "b088",
+   "start": 155.133,
+   "end": 157.333,
+   "shots": [
+    "s101"
+   ],
+   "vi": "Cứ mỗi lần cả thị trấn mất đồ,",
+   "en": "Every time the town lost things,",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.687,
+   "slot": 2.08
+  },
+  {
+   "id": "b089",
+   "start": 157.333,
+   "end": 158.633,
+   "shots": [
+    "s102"
+   ],
+   "vi": "ông lại giấu thêm",
+   "en": "he'd hide more",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.694,
+   "slot": 1.18
+  },
+  {
+   "id": "b090",
+   "start": 158.633,
+   "end": 161.433,
+   "shots": [
+    "s103",
+    "s104"
+   ],
+   "vi": "vài thùng hàng của mình rồi đi báo mất.",
+   "en": "of his own crates, then report them stolen.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 2.422,
+   "slot": 2.68
+  },
+  {
+   "id": "b091",
+   "start": 161.433,
+   "end": 164.433,
+   "shots": [
+    "s105",
+    "s106"
+   ],
+   "vi": "Ai mà nghi người than mất nhiều nhất chứ?",
+   "en": "Who would suspect the one complaining the most?",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 2.09,
+   "slot": 2.88
+  },
+  {
+   "id": "b092",
+   "start": 164.433,
+   "end": 165.933,
+   "shots": [
+    "s107"
+   ],
+   "vi": "Sáng hôm sau, tôi lấy lại",
+   "en": "Next morning, I got",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.831,
+   "slot": 1.38
+  },
+  {
+   "id": "b093",
+   "start": 165.933,
+   "end": 167.433,
+   "shots": [
+    "s108"
+   ],
+   "vi": "sợi dây chuyền.",
+   "en": "my necklace back.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.777,
+   "slot": 1.38
+  },
+  {
+   "id": "b094",
+   "start": 167.433,
+   "end": 169.433,
+   "shots": [
+    "s109"
+   ],
+   "vi": "Tôi cất dây chuyền vào két.",
+   "en": "I locked it in the safe.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.002,
+   "slot": 1.88
+  },
+  {
+   "id": "b095",
+   "start": 169.433,
+   "end": 170.933,
+   "shots": [
+    "s110"
+   ],
+   "vi": "Vừa quay lưng, Bắp đã ôm",
+   "en": "The moment I turned, Bap",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.105,
+   "slot": 1.38
+  },
+  {
+   "id": "b096",
+   "start": 170.933,
+   "end": 172.433,
+   "shots": [
+    "s111"
+   ],
+   "vi": "nguyên cái két.",
+   "en": "hugged the whole safe.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.891,
+   "slot": 1.38
+  },
+  {
+   "id": "b097",
+   "start": 172.433,
+   "end": 174.433,
+   "shots": [
+    "s112",
+    "s113"
+   ],
+   "vi": "“Bắp.” Nó đặt xuống",
+   "en": "\"Bap.\" It set it",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 1.138,
+   "slot": 1.88
+  },
+  {
+   "id": "b098",
+   "start": 174.433,
+   "end": 175.933,
+   "shots": [
+    "s114"
+   ],
+   "vi": "liền.",
+   "en": "right down.",
+   "rate": 8,
+   "tempo": 1.0,
+   "dur": 0.463,
+   "slot": 1.38
+  }
+ ]
+}

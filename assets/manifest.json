@@ -12490,5 +12490,131 @@
    "wheel-back-left",
    "wheel-back-right"
   ]
+ },
+ {
+  "id": "nhap/bang-chuyen",
+  "src": "assets/nhap/bang-chuyen.glb",
+  "source": "sketchfab.com/3d-models/conveyor-belt-55f0d0f9b3384ea4b49cfc8aef97dcf9",
+  "license": "CC BY 4.0",
+  "credit": "“Conveyor Belt” by Cianon (https://sketchfab.com/3d-models/conveyor-belt-55f0d0f9b3384ea4b49cfc8aef97dcf9), CC BY 4.0",
+  "title": "Conveyor Belt",
+  "author": "Cianon",
+  "scale": 1,
+  "bbox": [
+   2.046,
+   2.5,
+   24.471
+  ],
+  "nodes": [
+   "bang-chuyen"
+  ],
+  "loai": "lon",
+  "tris": 2876,
+  "tris_goc": 2876
+ },
+ {
+  "id": "nhap/may-khau",
+  "src": "assets/nhap/may-khau.glb",
+  "source": "sketchfab.com/3d-models/sewing-machine-58de43d2ae934e12a116ae6af412ab50",
+  "license": "CC BY 4.0",
+  "credit": "“Sewing Machine” by Karatecake69 (https://sketchfab.com/3d-models/sewing-machine-58de43d2ae934e12a116ae6af412ab50), CC BY 4.0",
+  "title": "Sewing Machine",
+  "author": "Karatecake69",
+  "scale": 1,
+  "bbox": [
+   2.097,
+   1.6,
+   0.752
+  ],
+  "nodes": [
+   "may-khau"
+  ],
+  "loai": "vua",
+  "tris": 2870,
+  "tris_goc": 2870
+ },
+ {
+  "id": "nhap/ket-sat",
+  "src": "assets/nhap/ket-sat.glb",
+  "source": "sketchfab.com/3d-models/cartoon-safe-e6cb405ef7e942459eec7307416dc528",
+  "license": "CC BY 4.0",
+  "credit": "“Cartoon Safe” by Adrian21 (https://sketchfab.com/3d-models/cartoon-safe-e6cb405ef7e942459eec7307416dc528), CC BY 4.0",
+  "title": "Cartoon Safe",
+  "author": "Adrian21",
+  "scale": 1,
+  "bbox": [
+   4.269,
+   3.5,
+   6.195
+  ],
+  "nodes": [
+   "ket-sat"
+  ],
+  "loai": "vua",
+  "tris": 2240,
+  "tris_goc": 2240
+ },
+ {
+  "id": "nhap/chuong",
+  "src": "assets/nhap/chuong.glb",
+  "source": "sketchfab.com/3d-models/hand-bell-15e050f94f7c401c88d203d66493921c",
+  "license": "CC BY 4.0",
+  "credit": "“Hand Bell” by YieldingMist206 (https://sketchfab.com/3d-models/hand-bell-15e050f94f7c401c88d203d66493921c), CC BY 4.0",
+  "title": "Hand Bell",
+  "author": "YieldingMist206",
+  "scale": 1,
+  "bbox": [
+   0.976,
+   2,
+   0.991
+  ],
+  "nodes": [
+   "chuong"
+  ],
+  "loai": "nho",
+  "tris": 1156,
+  "tris_goc": 1156
+ },
+ {
+  "id": "nhap/den-duong",
+  "src": "assets/nhap/den-duong.glb",
+  "source": "sketchfab.com/3d-models/low-poly-lamp-post-c466684e819a4428b6d8ed50537615e4",
+  "license": "CC BY 4.0",
+  "credit": "“Low-Poly Lamp Post” by Memorie (https://sketchfab.com/3d-models/low-poly-lamp-post-c466684e819a4428b6d8ed50537615e4), CC BY 4.0",
+  "title": "Low-Poly Lamp Post",
+  "author": "Memorie",
+  "scale": 1,
+  "bbox": [
+   3.015,
+   13,
+   1.195
+  ],
+  "nodes": [
+   "den-duong"
+  ],
+  "loai": "lon",
+  "tris": 1304,
+  "tris_goc": 1304
+ },
+ {
+  "id": "nhap/mu-linh",
+  "src": "assets/nhap/mu-linh.glb",
+  "source": "sketchfab.com/3d-models/police-hat-c9d5ffb346d44d64b009f2d0b16e4102",
+  "license": "CC BY 4.0",
+  "credit": "“Police Hat” by Dreadler (https://sketchfab.com/3d-models/police-hat-c9d5ffb346d44d64b009f2d0b16e4102), CC BY 4.0",
+  "title": "Police Hat",
+  "author": "Dreadler",
+  "scale": 1,
+  "bbox": [
+   3.305,
+   1.6,
+   3.869
+  ],
+  "nodes": [
+   "mu-linh"
+  ],
+  "loai": "phu-kien",
+  "tris": 581,
+  "tris_goc": 581
  }
 ]

@@ -61,6 +61,27 @@ function tintGio(L, time) {
   return o;
 }
 
+// ĐÊM dễ nhìn (chỉ luồng time:'dem'; preset LIGHTS.night/bedNight giữ nguyên cho tập đặt light: tay như ep001):
+//   ngoài trời = trăng định hướng lạnh, thấp hơn + mạnh hơn (tách khối, có bóng) + hemi đất ấm (bóng không bệt xanh);
+//   nhà máy = đèn trần ấm (hemi ấm) ; phòng ngủ = trăng qua cửa sổ + hemi tím nhạt. Giá trị đo trên ep002 (output/look/den-b).
+const DEM = {
+  ngoai: { top: '#0f1a52', bottom: '#4a5ca8', hemi: ['#a9b9ff', '#5a4a66', 1.45], sun: ['#c4d2ff', 2.5], dir: [-0.65, 0.7, 0.45], exposure: 1.15 },
+  factory: { hemi: ['#ffe2bc', '#7a6048', 1.5], sun: ['#ffd9a8', 0.9], dir: [0.4, 1, 0.7], exposure: 1.1 },
+  bedroom: { hemi: ['#b4bdff', '#5a4458', 1.5], sun: ['#c0caff', 2.0], dir: [-0.8, 0.7, 0.4], exposure: 1.12 },
+};
+function demAnhSang(env) {
+  if (env.name === 'factory') return DEM.factory;
+  if (env.name === 'bedroom') return DEM.bedroom;
+  if (NOI_THAT.has(env.name)) return {};
+  return DEM.ngoai;
+}
+// đèn nhân vật bám camera (engine/lights.js denNhanVat): đêm mạnh, nhà máy mạnh nhất (ngược sáng), bão vừa; còn lại 0
+function denNhanVat(time, weather, env) {
+  if (time === 'dem') return { k: env.name === 'factory' ? 1.5 : 1.0, color: env.name === 'factory' ? '#fff0dc' : '#e8ecff' };
+  if (weather === 'mua' || weather === 'giong' || weather === 'bao') return { k: 0.5, color: '#e8ecff' };
+  return null;
+}
+
 // thời tiết lên ánh sáng đã có (L = LIGHTS gốc + tint giờ)
 function tintThoiTiet(L, W) {
   const o = {};
@@ -89,6 +110,7 @@ export function gioThoiTiet(shot, env) {
     if (time && !dem && GIO_MAU[time] && !BAO.has(weather)) sky = { ...tintGio(seaPreset(id).L, time), ...(sky || {}) };
     out.seaWeather = sky ? { base: id, sky, ...extra } : id;
     out.light = null; out.lightOverride = {};
+    out.denNV = denNhanVat(time, weather, env);
     return out;
   }
 
@@ -98,9 +120,11 @@ export function gioThoiTiet(shot, env) {
   let L = { ...LIGHTS[light] };
   let o = {};
   if (time && !dem && !noiThat) { o = tintGio(L, time); L = { ...L, ...o }; }
+  if (dem && L.night) { o = demAnhSang(env); L = { ...L, ...o }; }
   const W = !noiThat && weather ? THOI_TIET_BANG[weather] : null;
   if (W) { o = { ...o, ...tintThoiTiet(L, W) }; }
   out.lightOverride = o;
+  out.denNV = denNhanVat(time, weather, env);
   if (W && W.hat) {
     const hat = {};
     if (W.hat.mua && !env.rain) { hat.mua = W.hat.mua; hat.slant = W.hat.slant; }

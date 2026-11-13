@@ -1,0 +1,1153 @@
+{
+ "nhomId": "dao-cu-thay",
+ "ten": "Đạo cụ — chọn model thay thế",
+ "mota": "26 đạo cụ tập 2: ảnh đầu mỗi khe là bản dựng hiện tại bằng code khối; chọn MỘT ứng viên cho mỗi khe (ứng viên đầu là khuyên dùng). Tất cả CC0 hoặc CC BY, trong ngưỡng tam giác. Họ dùng chung: kệ (ke_trong/ke_phong_ga/ke_gau), thùng (thung_dau_gau/thung_tiem_bach), két (ket_tien/ket_ga), bậc thềm (bac_them_dep/trong). Đề xuất dựng Blender: ban_do, chan_tran, hop_nhan.",
+ "khe": [
+  {
+   "id": "ke_trong",
+   "ten": "Kệ trống có vết bụi (ke_trong)",
+   "phu": "Kệ gỗ nhiều tầng, đồ trên kệ biến mất · vừa (≤3000) · dùng chung họ kệ với ke_phong_ga/ke_gau; vết bụi + món biến mất vẫn dựng bằng code",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_ke_trong.png",
+   "ungVien": [
+    {
+     "id": "ke_trong__1",
+     "ten": "Bookcase Closed Wide",
+     "anh": "output/ep002/ung-vien-dao-cu/ke_trong__1.jpg",
+     "link": "https://poly.pizza/m/dUd80gOqgO",
+     "nguon": "polypizza",
+     "uid": "dUd80gOqgO",
+     "tacGia": "Kenney",
+     "giayPhep": "CC0",
+     "tamGiac": 744,
+     "phu": "Tủ kệ gỗ 3 tầng màu gỗ sáng, mở, không đế; hợp nhất."
+    },
+    {
+     "id": "ke_trong__2",
+     "ten": "Shelf Tall",
+     "anh": "output/ep002/ung-vien-dao-cu/ke_trong__2.jpg",
+     "link": "https://poly.pizza/m/TDgvIuorcX",
+     "nguon": "polypizza",
+     "uid": "TDgvIuorcX",
+     "tacGia": "Quaternius",
+     "giayPhep": "CC0",
+     "tamGiac": 536,
+     "phu": "Kệ cao gỗ+xám 4 tầng, gọn, hơi giống kệ kim loại."
+    },
+    {
+     "id": "ke_trong__3",
+     "ten": "shelf",
+     "anh": "output/ep002/ung-vien-dao-cu/ke_trong__3.jpg",
+     "link": "https://sketchfab.com/3d-models/none-1cb3e79d710a45d889fc6d0c1ea65dcf",
+     "nguon": "sketchfab",
+     "uid": "1cb3e79d710a45d889fc6d0c1ea65dcf",
+     "tacGia": "zoroc",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 120,
+     "phu": "Kệ gỗ tối 5 tầng, 120 tam giác nhẹ nhất; màu tối."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "ke_phong_ga",
+   "ten": "Kệ phòng Gà cạnh cửa sổ (ke_phong_ga)",
+   "phu": "Kệ 2 tầng giữa bày dây chuyền/nhẫn · vừa (≤3000) · có thể dùng chung model với ke_trong",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_ke_phong_ga.png",
+   "ungVien": [
+    {
+     "id": "ke_phong_ga__1",
+     "ten": "Dark Wood Book Shelf",
+     "anh": "output/ep002/ung-vien-dao-cu/ke_phong_ga__1.jpg",
+     "link": "https://sketchfab.com/3d-models/none-2acda3ed2f9046129897f0f1e36092bd",
+     "nguon": "sketchfab",
+     "uid": "2acda3ed2f9046129897f0f1e36092bd",
+     "tacGia": "G1NGERBOY",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 232,
+     "phu": "Kệ gỗ tối 4 tầng, mộc, không đế."
+    },
+    {
+     "id": "ke_phong_ga__2",
+     "ten": "Game Ready Low Poly 4-Tier Wooden Shelf",
+     "anh": "output/ep002/ung-vien-dao-cu/ke_phong_ga__2.jpg",
+     "link": "https://sketchfab.com/3d-models/none-bd22e9a6cc34431e89d9a1e26c30db59",
+     "nguon": "sketchfab",
+     "uid": "bd22e9a6cc34431e89d9a1e26c30db59",
+     "tacGia": "Techpro-3d",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 414,
+     "phu": "Kệ gỗ nâu đậm 4 tầng, gọn."
+    },
+    {
+     "id": "ke_phong_ga__3",
+     "ten": "Low Poly Book Shelf",
+     "anh": "output/ep002/ung-vien-dao-cu/ke_phong_ga__3.jpg",
+     "link": "https://sketchfab.com/3d-models/none-9f9e0e532a5846c1acc252fcf664813b",
+     "nguon": "sketchfab",
+     "uid": "9f9e0e532a5846c1acc252fcf664813b",
+     "tacGia": "Nat",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 196,
+     "phu": "Tủ sách nhiều ngăn hẹp màu be; ngăn quá sát."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "ke_gau",
+   "ten": "Kệ gấu mới may (nhà máy) (ke_gau)",
+   "phu": "Kệ 3 tầng × 4 gấu bông · vừa (≤3000) · gấu đặt lên kệ bằng model gấu chung, chỉ cần kệ",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_ke_gau.png",
+   "ungVien": [
+    {
+     "id": "ke_gau__1",
+     "ten": "Store Shelf",
+     "anh": "output/ep002/ung-vien-dao-cu/ke_gau__1.jpg",
+     "link": "https://sketchfab.com/3d-models/none-1db84ebfb7d2474c9704c64ecc44fb13",
+     "nguon": "sketchfab",
+     "uid": "1db84ebfb7d2474c9704c64ecc44fb13",
+     "tacGia": "Jampre",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 816,
+     "phu": "Kệ trắng 3 tầng kiểu cửa hàng, nhẹ."
+    },
+    {
+     "id": "ke_gau__2",
+     "ten": "Shelf Tall",
+     "anh": "output/ep002/ung-vien-dao-cu/ke_gau__2.jpg",
+     "link": "https://poly.pizza/m/TDgvIuorcX",
+     "nguon": "polypizza",
+     "uid": "TDgvIuorcX",
+     "tacGia": "Quaternius",
+     "giayPhep": "CC0",
+     "tamGiac": 536,
+     "phu": "Kệ cao gỗ+xám 4 tầng, CC0."
+    },
+    {
+     "id": "ke_gau__3",
+     "ten": "Storage Shelf",
+     "anh": "output/ep002/ung-vien-dao-cu/ke_gau__3.jpg",
+     "link": "https://poly.pizza/m/6gKdASmfB9U",
+     "nguon": "polypizza",
+     "uid": "6gKdASmfB9U",
+     "tacGia": "Jarlan Perez",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 96,
+     "phu": "Kệ kho 3 tầng 96 tam giác."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "o_khoa",
+   "ten": "Ổ khoá / cửa gỗ khoá kín (o_khoa)",
+   "phu": "Cửa phòng khoá kín nhưng đồ vẫn mất · nhỏ (≤1500) · chọn ổ khoá gắn lên cửa dựng code, hoặc thay cả cửa bằng p35",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_o_khoa.png",
+   "ungVien": [
+    {
+     "id": "o_khoa__1",
+     "ten": "Cartoonish Lock",
+     "anh": "output/ep002/ung-vien-dao-cu/o_khoa__1.jpg",
+     "link": "https://poly.pizza/m/1EWXlRohqbL",
+     "nguon": "polypizza",
+     "uid": "1EWXlRohqbL",
+     "tacGia": "Bruno Oliveira",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 428,
+     "phu": "Ổ khoá hoạt hình xanh xám có lỗ khoá; đúng phong cách."
+    },
+    {
+     "id": "o_khoa__2",
+     "ten": "Door",
+     "anh": "output/ep002/ung-vien-dao-cu/o_khoa__2.jpg",
+     "link": "https://poly.pizza/m/a948jjnuaL",
+     "nguon": "polypizza",
+     "uid": "a948jjnuaL",
+     "tacGia": "Quaternius",
+     "giayPhep": "CC0",
+     "tamGiac": 848,
+     "phu": "CỬA gỗ tối có tay nắm 848 tam giác (nếu muốn thay cả cửa)."
+    },
+    {
+     "id": "o_khoa__3",
+     "ten": "Padlock_low",
+     "anh": "output/ep002/ung-vien-dao-cu/o_khoa__3.jpg",
+     "link": "https://sketchfab.com/3d-models/none-67d690a541894cbe8827507ac03b6bb3",
+     "nguon": "sketchfab",
+     "uid": "67d690a541894cbe8827507ac03b6bb3",
+     "tacGia": "stylo0",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 828,
+     "phu": "Ổ khoá vàng thật hơn."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "hoc_quay",
+   "ten": "Quầy tiệm bánh (hoc_quay)",
+   "phu": "Quầy bánh, hốc trống dưới quầy · lớn (≤6000) · hốc trống/bảng bánh mì dựng thêm bằng code hoặc Blender",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_hoc_quay.png",
+   "ungVien": [
+    {
+     "id": "hoc_quay__1",
+     "ten": "Market Stand",
+     "anh": "output/ep002/ung-vien-dao-cu/hoc_quay__1.jpg",
+     "link": "https://poly.pizza/m/DGIM5HGISb",
+     "nguon": "polypizza",
+     "uid": "DGIM5HGISb",
+     "tacGia": "Quaternius",
+     "giayPhep": "CC0",
+     "tamGiac": 1548,
+     "phu": "Sạp chợ mái sọc đỏ trắng, màu phẳng, hợp tiệm bánh."
+    },
+    {
+     "id": "hoc_quay__2",
+     "ten": "Counter Doors",
+     "anh": "output/ep002/ung-vien-dao-cu/hoc_quay__2.jpg",
+     "link": "https://poly.pizza/m/CBUx8ZMVAO",
+     "nguon": "polypizza",
+     "uid": "CBUx8ZMVAO",
+     "tacGia": "Quaternius",
+     "giayPhep": "CC0",
+     "tamGiac": 668,
+     "phu": "Quầy gỗ có cánh tủ, đơn giản."
+    },
+    {
+     "id": "hoc_quay__3",
+     "ten": "Low Poly Market Stall 1",
+     "anh": "output/ep002/ung-vien-dao-cu/hoc_quay__3.jpg",
+     "link": "https://sketchfab.com/3d-models/none-2735bf5e9dd84a50827496c755b313a8",
+     "nguon": "sketchfab",
+     "uid": "2735bf5e9dd84a50827496c755b313a8",
+     "tacGia": "jjmax30",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 200,
+     "phu": "Sạp mái sọc rất nhẹ, có đế mỏng."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "hop_nhan",
+   "ten": "Hộp nhẫn mở trống (hop_nhan)",
+   "phu": "Hộp nhẫn cưới cô thợ may · nhỏ (≤1500) · ít ứng viên đúng nghĩa; có thể dựng lại trong Blender (hộp nhỏ + nắp mở + gối nhung)",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_hop_nhan.png",
+   "ungVien": [
+    {
+     "id": "hop_nhan__1",
+     "ten": "Ring box",
+     "anh": "output/ep002/ung-vien-dao-cu/hop_nhan__1.jpg",
+     "link": "https://sketchfab.com/3d-models/none-4a80eed40ae84093bec69dbf6654c209",
+     "nguon": "sketchfab",
+     "uid": "4a80eed40ae84093bec69dbf6654c209",
+     "tacGia": "Staralighto",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 204,
+     "phu": "Hộp nhẫn nâu mở nắp, có nhẫn trong; đúng nghĩa nhất."
+    },
+    {
+     "id": "hop_nhan__2",
+     "ten": "Box",
+     "anh": "output/ep002/ung-vien-dao-cu/hop_nhan__2.jpg",
+     "link": "https://poly.pizza/m/ykZ23x9d6p",
+     "nguon": "polypizza",
+     "uid": "ykZ23x9d6p",
+     "tacGia": "Kay Lousberg",
+     "giayPhep": "CC0",
+     "tamGiac": 32,
+     "phu": "Hộp giấy trơn 32 tam giác (thay tạm)."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "thung_dau_gau",
+   "ten": "Thùng in dấu đầu gấu (thung_dau_gau)",
+   "phu": "Thùng hàng có dấu đầu gấu (manh mối) · vừa (≤3000) · dấu gấu in bằng decal/code",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_thung_dau_gau.png",
+   "ungVien": [
+    {
+     "id": "thung_dau_gau__1",
+     "ten": "Cube Crate",
+     "anh": "output/ep002/ung-vien-dao-cu/thung_dau_gau__1.jpg",
+     "link": "https://poly.pizza/m/YAghI6GBls",
+     "nguon": "polypizza",
+     "uid": "YAghI6GBls",
+     "tacGia": "Quaternius",
+     "giayPhep": "CC0",
+     "tamGiac": 264,
+     "phu": "Thùng gỗ chéo vuông vắn, CC0."
+    },
+    {
+     "id": "thung_dau_gau__2",
+     "ten": "Box",
+     "anh": "output/ep002/ung-vien-dao-cu/thung_dau_gau__2.jpg",
+     "link": "https://poly.pizza/m/HvjissDrdr",
+     "nguon": "polypizza",
+     "uid": "HvjissDrdr",
+     "tacGia": "Kenney",
+     "giayPhep": "CC0",
+     "tamGiac": 124,
+     "phu": "Thùng carton trơn, dễ dán decal."
+    },
+    {
+     "id": "thung_dau_gau__3",
+     "ten": "Stylized Crate",
+     "anh": "output/ep002/ung-vien-dao-cu/thung_dau_gau__3.jpg",
+     "link": "https://sketchfab.com/3d-models/none-e3af60c703a84826adfaf2934b7f8877",
+     "nguon": "sketchfab",
+     "uid": "e3af60c703a84826adfaf2934b7f8877",
+     "tacGia": "Voxelcubes Studios",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 132,
+     "phu": "Thùng gỗ cách điệu có đinh."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "thung_tiem_bach",
+   "ten": "Chồng thùng Tiệm gấu Bách (thung_tiem_bach)",
+   "phu": "Chồng thùng in logo, hàng ông Bách giấu · vừa (≤3000) · cùng họ thùng với thung_dau_gau",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_thung_tiem_bach.png",
+   "ungVien": [
+    {
+     "id": "thung_tiem_bach__1",
+     "ten": "Cardboard Boxes",
+     "anh": "output/ep002/ung-vien-dao-cu/thung_tiem_bach__1.jpg",
+     "link": "https://poly.pizza/m/V9KbWC8Vd6",
+     "nguon": "polypizza",
+     "uid": "V9KbWC8Vd6",
+     "tacGia": "Quaternius",
+     "giayPhep": "CC0",
+     "tamGiac": 432,
+     "phu": "Chồng thùng carton CC0, đúng dạng chồng."
+    },
+    {
+     "id": "thung_tiem_bach__2",
+     "ten": "Pile of boxes",
+     "anh": "output/ep002/ung-vien-dao-cu/thung_tiem_bach__2.jpg",
+     "link": "https://poly.pizza/m/e6ltACZnFSS",
+     "nguon": "polypizza",
+     "uid": "e6ltACZnFSS",
+     "tacGia": "David Jeffries",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 644,
+     "phu": "Đống thùng nhỏ, hơi lộn xộn."
+    },
+    {
+     "id": "thung_tiem_bach__3",
+     "ten": "Cardboard Box Set- Low Poly",
+     "anh": "output/ep002/ung-vien-dao-cu/thung_tiem_bach__3.jpg",
+     "link": "https://sketchfab.com/3d-models/none-5d3d508061e544739e37c685af235684",
+     "nguon": "sketchfab",
+     "uid": "5d3d508061e544739e37c685af235684",
+     "tacGia": "Nodeaxis Interactive",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 110,
+     "phu": "Bộ thùng carton nhẹ."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "bang_tin",
+   "ten": "Bảng tin thị trấn (bang_tin)",
+   "phu": "Bảng dán giấy báo mất đồ · vừa (≤3000) · giấy báo mất dán thêm bằng texture/code",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_bang_tin.png",
+   "ungVien": [
+    {
+     "id": "bang_tin__1",
+     "ten": "Notice board low-poly",
+     "anh": "output/ep002/ung-vien-dao-cu/bang_tin__1.jpg",
+     "link": "https://sketchfab.com/3d-models/none-c7253f06bb8c49b0afcd60a509a8240c",
+     "nguon": "sketchfab",
+     "uid": "c7253f06bb8c49b0afcd60a509a8240c",
+     "tacGia": "Viktor_",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 924,
+     "phu": "Bảng tin gỗ có mái đứng, có giấy dán; hợp nhất."
+    },
+    {
+     "id": "bang_tin__2",
+     "ten": "Wall Corkboard",
+     "anh": "output/ep002/ung-vien-dao-cu/bang_tin__2.jpg",
+     "link": "https://poly.pizza/m/U8yQZ9l0HZ",
+     "nguon": "polypizza",
+     "uid": "U8yQZ9l0HZ",
+     "tacGia": "CreativeTrio",
+     "giayPhep": "CC0",
+     "tamGiac": 218,
+     "phu": "Bảng ghim cork có giấy vàng, CC0."
+    },
+    {
+     "id": "bang_tin__3",
+     "ten": "Message board",
+     "anh": "output/ep002/ung-vien-dao-cu/bang_tin__3.jpg",
+     "link": "https://poly.pizza/m/fDpegPgEB0j",
+     "nguon": "polypizza",
+     "uid": "fDpegPgEB0j",
+     "tacGia": "Poly by Google",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 644,
+     "phu": "Bảng thông báo khung trắng có giấy."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "anh_ba",
+   "ten": "Ảnh bà đeo dây chuyền (khung đứng) (anh_ba)",
+   "phu": "Khung ảnh bà · nhỏ (≤1500) · ảnh người dựng bằng texture/code, chỉ cần khung",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_anh_ba.png",
+   "ungVien": [
+    {
+     "id": "anh_ba__1",
+     "ten": "Empty Picture Frame",
+     "anh": "output/ep002/ung-vien-dao-cu/anh_ba__1.jpg",
+     "link": "https://poly.pizza/m/ae-21UkVxCg",
+     "nguon": "polypizza",
+     "uid": "ae-21UkVxCg",
+     "tacGia": "Jarlan Perez",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 104,
+     "phu": "Khung trắng đứng, rỗng; gọn."
+    },
+    {
+     "id": "anh_ba__2",
+     "ten": "Picture frame",
+     "anh": "output/ep002/ung-vien-dao-cu/anh_ba__2.jpg",
+     "link": "https://poly.pizza/m/6FS0HuI4XXz",
+     "nguon": "polypizza",
+     "uid": "6FS0HuI4XXz",
+     "tacGia": "Gabriel Valdivia",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 112,
+     "phu": "Khung gỗ có tranh phong cảnh."
+    },
+    {
+     "id": "anh_ba__3",
+     "ten": "Photo Frame (Low Poly Speed Model)",
+     "anh": "output/ep002/ung-vien-dao-cu/anh_ba__3.jpg",
+     "link": "https://sketchfab.com/3d-models/none-3e6dc5d42e1a4e78a7bad4dac7754cb9",
+     "nguon": "sketchfab",
+     "uid": "3e6dc5d42e1a4e78a7bad4dac7754cb9",
+     "tacGia": "TheoClarke",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 100,
+     "phu": "Khung đứng gỗ nhỏ (ảnh chó, đổi texture được)."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "dong_ho",
+   "ten": "Đồng hồ báo thức đỏ 2 chuông (dong_ho)",
+   "phu": "Đồng hồ trên kệ phòng Gà · nhỏ (≤1500) · đúng mô tả đỏ 2 chuông",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_dong_ho.png",
+   "ungVien": [
+    {
+     "id": "dong_ho__1",
+     "ten": "Alarm Clock",
+     "anh": "output/ep002/ung-vien-dao-cu/dong_ho__1.jpg",
+     "link": "https://poly.pizza/m/y5f363OS9C",
+     "nguon": "polypizza",
+     "uid": "y5f363OS9C",
+     "tacGia": "CreativeTrio",
+     "giayPhep": "CC0",
+     "tamGiac": 458,
+     "phu": "Đồng hồ đỏ 2 chuông cách điệu, CC0; đúng nhất."
+    },
+    {
+     "id": "dong_ho__2",
+     "ten": "Alarm Clock: Household Props 10",
+     "anh": "output/ep002/ung-vien-dao-cu/dong_ho__2.jpg",
+     "link": "https://sketchfab.com/3d-models/none-b7832cf1396e4dcc9513e5e1acef182b",
+     "nguon": "sketchfab",
+     "uid": "b7832cf1396e4dcc9513e5e1acef182b",
+     "tacGia": "Daniel O'Neil",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 300,
+     "phu": "Đồng hồ đỏ chi tiết hơn."
+    },
+    {
+     "id": "dong_ho__3",
+     "ten": "LOW POLY ALARM CLOCK",
+     "anh": "output/ep002/ung-vien-dao-cu/dong_ho__3.jpg",
+     "link": "https://sketchfab.com/3d-models/none-f894dcdd739a47ad9563feda91d325e3",
+     "nguon": "sketchfab",
+     "uid": "f894dcdd739a47ad9563feda91d325e3",
+     "tacGia": "tonotq",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 280,
+     "phu": "Đồng hồ xanh ngọc low poly (khác màu)."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "guong",
+   "ten": "Gương đứng đối diện giường (guong)",
+   "phu": "Gương đứng · vừa (≤3000)",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_guong.png",
+   "ungVien": [
+    {
+     "id": "guong__1",
+     "ten": "Mirror",
+     "anh": "output/ep002/ung-vien-dao-cu/guong__1.jpg",
+     "link": "https://poly.pizza/m/3Cmxakw58Px",
+     "nguon": "polypizza",
+     "uid": "3Cmxakw58Px",
+     "tacGia": "Poly by Google",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 80,
+     "phu": "Gương đứng khung đen có chân."
+    },
+    {
+     "id": "guong__2",
+     "ten": "low poly stand mirror",
+     "anh": "output/ep002/ung-vien-dao-cu/guong__2.jpg",
+     "link": "https://sketchfab.com/3d-models/none-8b323fecce674e0fbc90c69f63ea0a8f",
+     "nguon": "sketchfab",
+     "uid": "8b323fecce674e0fbc90c69f63ea0a8f",
+     "tacGia": "MrPuppet",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 372,
+     "phu": "Gương oval đứng khung nâu."
+    },
+    {
+     "id": "guong__3",
+     "ten": "Mirror",
+     "anh": "output/ep002/ung-vien-dao-cu/guong__3.jpg",
+     "link": "https://poly.pizza/m/cjvm-bUFBAW",
+     "nguon": "polypizza",
+     "uid": "cjvm-bUFBAW",
+     "tacGia": "Poly by Google",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 52,
+     "phu": "Gương khung đỏ nâu, không chân."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "cuon_sach",
+   "ten": "Cuốn sách dựng đứng (cuon_sach)",
+   "phu": "Sách đặt trên kệ · nhỏ (≤1500)",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_cuon_sach.png",
+   "ungVien": [
+    {
+     "id": "cuon_sach__1",
+     "ten": "Book (Blue)",
+     "anh": "output/ep002/ung-vien-dao-cu/cuon_sach__1.jpg",
+     "link": "https://poly.pizza/m/8xQHBQezK-q",
+     "nguon": "polypizza",
+     "uid": "8xQHBQezK-q",
+     "tacGia": "Darwin Yamamoto",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 124,
+     "phu": "Sách xanh dương trơn dựng đứng."
+    },
+    {
+     "id": "cuon_sach__2",
+     "ten": "Simple Book",
+     "anh": "output/ep002/ung-vien-dao-cu/cuon_sach__2.jpg",
+     "link": "https://sketchfab.com/3d-models/none-74a744473c444f6089a1d49f6bfa3efc",
+     "nguon": "sketchfab",
+     "uid": "74a744473c444f6089a1d49f6bfa3efc",
+     "tacGia": "Jazz Vincent",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 264,
+     "phu": "Sách đỏ nâu cách điệu."
+    },
+    {
+     "id": "cuon_sach__3",
+     "ten": "Book Low Poly",
+     "anh": "output/ep002/ung-vien-dao-cu/cuon_sach__3.jpg",
+     "link": "https://sketchfab.com/3d-models/none-d6465435cb3241f9a550067e34c28918",
+     "nguon": "sketchfab",
+     "uid": "d6465435cb3241f9a550067e34c28918",
+     "tacGia": "DiegoVega",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 164,
+     "phu": "Sách đỏ hồng có dây buộc."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "nhan_moi",
+   "ten": "Chiếc nhẫn (trên gối nhung) (nhan_moi)",
+   "phu": "Nhẫn bị gấu lấy đi · nhỏ (≤1500) · gối nhung dựng bằng code",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_nhan_moi.png",
+   "ungVien": [
+    {
+     "id": "nhan_moi__1",
+     "ten": "Golden Ring",
+     "anh": "output/ep002/ung-vien-dao-cu/nhan_moi__1.jpg",
+     "link": "https://sketchfab.com/3d-models/none-33b897600fd34b53a639036a477a49cd",
+     "nguon": "sketchfab",
+     "uid": "33b897600fd34b53a639036a477a49cd",
+     "tacGia": "FishyBusiness",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 192,
+     "phu": "Nhẫn vàng khối low poly, màu phẳng."
+    },
+    {
+     "id": "nhan_moi__2",
+     "ten": "Ring_02",
+     "anh": "output/ep002/ung-vien-dao-cu/nhan_moi__2.jpg",
+     "link": "https://poly.pizza/m/ZgmJCVv48K",
+     "nguon": "polypizza",
+     "uid": "ZgmJCVv48K",
+     "tacGia": "Zsky",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 120,
+     "phu": "Nhẫn vàng có đá xanh lá."
+    },
+    {
+     "id": "nhan_moi__3",
+     "ten": "Diamond Ring",
+     "anh": "output/ep002/ung-vien-dao-cu/nhan_moi__3.jpg",
+     "link": "https://poly.pizza/m/klY4A6FGjz",
+     "nguon": "polypizza",
+     "uid": "klY4A6FGjz",
+     "tacGia": "mehreen1919",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 458,
+     "phu": "Nhẫn kim cương đá lớn."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "vi",
+   "ten": "Cái ví (vi)",
+   "phu": "Ví gấu nơ đỏ ôm · nhỏ (≤1500)",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_vi.png",
+   "ungVien": [
+    {
+     "id": "vi__1",
+     "ten": "A Wallet",
+     "anh": "output/ep002/ung-vien-dao-cu/vi__1.jpg",
+     "link": "https://poly.pizza/m/898ojWnA41a",
+     "nguon": "polypizza",
+     "uid": "898ojWnA41a",
+     "tacGia": "senior design",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 156,
+     "phu": "Ví nâu gập, màu phẳng."
+    },
+    {
+     "id": "vi__2",
+     "ten": "Wallet",
+     "anh": "output/ep002/ung-vien-dao-cu/vi__2.jpg",
+     "link": "https://poly.pizza/m/2rqMOZG3RU_",
+     "nguon": "polypizza",
+     "uid": "2rqMOZG3RU_",
+     "tacGia": "Poly by Google",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 840,
+     "phu": "Ví nâu gập chi tiết hơn."
+    },
+    {
+     "id": "vi__3",
+     "ten": "Wallet",
+     "anh": "output/ep002/ung-vien-dao-cu/vi__3.jpg",
+     "link": "https://sketchfab.com/3d-models/none-ccfcc4ae6efa44a2ba34c4c479be7daf",
+     "nguon": "sketchfab",
+     "uid": "ccfcc4ae6efa44a2ba34c4c479be7daf",
+     "tacGia": "apleesee",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 928,
+     "phu": "Ví da có khoá bấm."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "tui_tien",
+   "ten": "Túi tiền buộc dây (tui_tien)",
+   "phu": "Túi tiền gấu nơ vàng kéo · nhỏ (≤1500)",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_tui_tien.png",
+   "ungVien": [
+    {
+     "id": "tui_tien__1",
+     "ten": "Coin Pouch",
+     "anh": "output/ep002/ung-vien-dao-cu/tui_tien__1.jpg",
+     "link": "https://poly.pizza/m/pTZyPTMH88",
+     "nguon": "polypizza",
+     "uid": "pTZyPTMH88",
+     "tacGia": "Quaternius",
+     "giayPhep": "CC0",
+     "tamGiac": 414,
+     "phu": "Túi tiền nâu nhỏ, CC0."
+    },
+    {
+     "id": "tui_tien__2",
+     "ten": "Toon Money Bag",
+     "anh": "output/ep002/ung-vien-dao-cu/tui_tien__2.jpg",
+     "link": "https://sketchfab.com/3d-models/none-0d9ddfea069d4c47a07043642c3fbc07",
+     "nguon": "sketchfab",
+     "uid": "0d9ddfea069d4c47a07043642c3fbc07",
+     "tacGia": "Dary Muhammad",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 576,
+     "phu": "Túi tiền vàng có ký hiệu $."
+    },
+    {
+     "id": "tui_tien__3",
+     "ten": "Gunny Sack",
+     "anh": "output/ep002/ung-vien-dao-cu/tui_tien__3.jpg",
+     "link": "https://poly.pizza/m/fcE0hQK7uEt",
+     "nguon": "polypizza",
+     "uid": "fcE0hQK7uEt",
+     "tacGia": "Oliver Herklotz",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 86,
+     "phu": "Bao tải nâu rất nhẹ."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "bang_chuyen",
+   "ten": "Băng chuyền nhà máy (bang_chuyen)",
+   "phu": "Băng chuyền ngắn trong nhà máy gấu · lớn (≤6000)",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_bang_chuyen.png",
+   "ungVien": [
+    {
+     "id": "bang_chuyen__1",
+     "ten": "Conveyor Belt (đã nhập)",
+     "anh": "output/ep002/ung-vien-dao-cu/bang_chuyen__1.jpg",
+     "link": "https://sketchfab.com/3d-models/conveyor-belt-55f0d0f9b3384ea4b49cfc8aef97dcf9",
+     "nguon": "da-nhap",
+     "uid": "55f0d0f9b3384ea4b49cfc8aef97dcf9",
+     "tacGia": "Cianon",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 2876,
+     "phu": "Đã nhập sẵn: băng chuyền dài."
+    },
+    {
+     "id": "bang_chuyen__2",
+     "ten": "Conveyor Belt",
+     "anh": "output/ep002/ung-vien-dao-cu/bang_chuyen__2.jpg",
+     "link": "https://poly.pizza/m/1dFo1i3wR_T",
+     "nguon": "polypizza",
+     "uid": "1dFo1i3wR_T",
+     "tacGia": "Sierra Maple",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 1298,
+     "phu": "Băng chuyền đen có chân thép, gọn."
+    },
+    {
+     "id": "bang_chuyen__3",
+     "ten": "Conveyor",
+     "anh": "output/ep002/ung-vien-dao-cu/bang_chuyen__3.jpg",
+     "link": "https://poly.pizza/m/5f4he3uHyov",
+     "nguon": "polypizza",
+     "uid": "5f4he3uHyov",
+     "tacGia": "Josh",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 1112,
+     "phu": "Băng chuyền xám có chân."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "ban_do",
+   "ten": "Bản đồ thị trấn (treo tường) (ban_do)",
+   "phu": "Bản đồ nhà có gấu đánh dấu đỏ · nhỏ (≤1500) · ĐỀ XUẤT DỰNG LẠI TRONG BLENDER (tấm phẳng + texture thị trấn có chấm đỏ); ứng viên chỉ là giấy bản đồ/cuộn",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_ban_do.png",
+   "ungVien": [
+    {
+     "id": "ban_do__1",
+     "ten": "Pirate Map",
+     "anh": "output/ep002/ung-vien-dao-cu/ban_do__1.jpg",
+     "link": "https://sketchfab.com/3d-models/none-ba468f31212e4d79b69dd09a509c0fd3",
+     "nguon": "sketchfab",
+     "uid": "ba468f31212e4d79b69dd09a509c0fd3",
+     "tacGia": "3000volt",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 240,
+     "phu": "Bản đồ kho báu giấy cũ phẳng (texture thay được)."
+    },
+    {
+     "id": "ban_do__2",
+     "ten": "Time Hotel 7.08 Folded Map",
+     "anh": "output/ep002/ung-vien-dao-cu/ban_do__2.jpg",
+     "link": "https://poly.pizza/m/epfFQN0o5T6",
+     "nguon": "polypizza",
+     "uid": "epfFQN0o5T6",
+     "tacGia": "S. Paul Michael",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 708,
+     "phu": "Bản đồ gấp xanh lá."
+    },
+    {
+     "id": "ban_do__3",
+     "ten": "Map",
+     "anh": "output/ep002/ung-vien-dao-cu/ban_do__3.jpg",
+     "link": "https://poly.pizza/m/bU3B6P0ngfi",
+     "nguon": "polypizza",
+     "uid": "bU3B6P0ngfi",
+     "tacGia": "Poly by Google",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 480,
+     "phu": "Tấm bản đồ phẳng."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "ket_tien",
+   "ten": "Két tiền của chú bán bánh (ket_tien)",
+   "phu": "Két tiền, trên nắp có dây chuyền · vừa (≤3000) · dùng chung với ket_ga",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_ket_tien.png",
+   "ungVien": [
+    {
+     "id": "ket_tien__1",
+     "ten": "Cartoon Safe (đã nhập)",
+     "anh": "output/ep002/ung-vien-dao-cu/ket_tien__1.jpg",
+     "link": "https://sketchfab.com/3d-models/cartoon-safe-e6cb405ef7e942459eec7307416dc528",
+     "nguon": "da-nhap",
+     "uid": "e6cb405ef7e942459eec7307416dc528",
+     "tacGia": "Adrian21",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 2240,
+     "phu": "Đã nhập sẵn: két hoạt hình."
+    },
+    {
+     "id": "ket_tien__2",
+     "ten": "Safe",
+     "anh": "output/ep002/ung-vien-dao-cu/ket_tien__2.jpg",
+     "link": "https://poly.pizza/m/N4egHD2Vms",
+     "nguon": "polypizza",
+     "uid": "N4egHD2Vms",
+     "tacGia": "CreativeTrio",
+     "giayPhep": "CC0",
+     "tamGiac": 222,
+     "phu": "Két xám vuông, CC0, nắp phẳng."
+    },
+    {
+     "id": "ket_tien__3",
+     "ten": "Stylized safe (low poly)",
+     "anh": "output/ep002/ung-vien-dao-cu/ket_tien__3.jpg",
+     "link": "https://sketchfab.com/3d-models/none-4817cd0ee84d4f35814471e91f2267b3",
+     "nguon": "sketchfab",
+     "uid": "4817cd0ee84d4f35814471e91f2267b3",
+     "tacGia": "Polly Green",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 953,
+     "phu": "Két xanh xám có vô lăng."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "ket_ga",
+   "ten": "Két góc phòng Gà (ket_ga)",
+   "phu": "Két trong phòng Gà · vừa (≤3000) · dùng chung model với ket_tien",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_ket_ga.png",
+   "ungVien": [
+    {
+     "id": "ket_ga__1",
+     "ten": "Cartoon Safe (đã nhập)",
+     "anh": "output/ep002/ung-vien-dao-cu/ket_ga__1.jpg",
+     "link": "https://sketchfab.com/3d-models/cartoon-safe-e6cb405ef7e942459eec7307416dc528",
+     "nguon": "da-nhap",
+     "uid": "e6cb405ef7e942459eec7307416dc528",
+     "tacGia": "Adrian21",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 2240,
+     "phu": "Đã nhập sẵn: két hoạt hình."
+    },
+    {
+     "id": "ket_ga__2",
+     "ten": "Stylized safe (low poly)",
+     "anh": "output/ep002/ung-vien-dao-cu/ket_ga__2.jpg",
+     "link": "https://sketchfab.com/3d-models/none-4817cd0ee84d4f35814471e91f2267b3",
+     "nguon": "sketchfab",
+     "uid": "4817cd0ee84d4f35814471e91f2267b3",
+     "tacGia": "Polly Green",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 953,
+     "phu": "Két xanh xám có vô lăng."
+    },
+    {
+     "id": "ket_ga__3",
+     "ten": "Safe",
+     "anh": "output/ep002/ung-vien-dao-cu/ket_ga__3.jpg",
+     "link": "https://poly.pizza/m/N4egHD2Vms",
+     "nguon": "polypizza",
+     "uid": "N4egHD2Vms",
+     "tacGia": "CreativeTrio",
+     "giayPhep": "CC0",
+     "tamGiac": 222,
+     "phu": "Két xám vuông, CC0."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "day_chuyen",
+   "ten": "Dây chuyền của bà (day_chuyen)",
+   "phu": "Món bị mất, dây có mặt tròn đá đỏ · nhỏ (≤1500)",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_day_chuyen.png",
+   "ungVien": [
+    {
+     "id": "day_chuyen__1",
+     "ten": "Necklace_01",
+     "anh": "output/ep002/ung-vien-dao-cu/day_chuyen__1.jpg",
+     "link": "https://poly.pizza/m/DsIXLEBdP4",
+     "nguon": "polypizza",
+     "uid": "DsIXLEBdP4",
+     "tacGia": "Zsky",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 412,
+     "phu": "Dây vàng mặt tròn; gần mô tả nhất (đổi đá đỏ)."
+    },
+    {
+     "id": "day_chuyen__2",
+     "ten": "Necklace",
+     "anh": "output/ep002/ung-vien-dao-cu/day_chuyen__2.jpg",
+     "link": "https://poly.pizza/m/D0nIOgnzrK",
+     "nguon": "polypizza",
+     "uid": "D0nIOgnzrK",
+     "tacGia": "Zsky",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 816,
+     "phu": "Dây vàng mặt trái tim đỏ."
+    },
+    {
+     "id": "day_chuyen__3",
+     "ten": "Necklace",
+     "anh": "output/ep002/ung-vien-dao-cu/day_chuyen__3.jpg",
+     "link": "https://poly.pizza/m/Jvhs8DCNDZ",
+     "nguon": "polypizza",
+     "uid": "Jvhs8DCNDZ",
+     "tacGia": "Quaternius",
+     "giayPhep": "CC0",
+     "tamGiac": 824,
+     "phu": "Dây mặt đá xanh, CC0."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "chuong",
+   "ten": "Chuông tay (chuong)",
+   "phu": "Ông Bách rung chuông · nhỏ (≤1500)",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_chuong.png",
+   "ungVien": [
+    {
+     "id": "chuong__1",
+     "ten": "Hand Bell (đã nhập)",
+     "anh": "output/ep002/ung-vien-dao-cu/chuong__1.jpg",
+     "link": "https://sketchfab.com/3d-models/hand-bell-15e050f94f7c401c88d203d66493921c",
+     "nguon": "da-nhap",
+     "uid": "15e050f94f7c401c88d203d66493921c",
+     "tacGia": "YieldingMist206",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 1156,
+     "phu": "Đã nhập sẵn: chuông tay."
+    },
+    {
+     "id": "chuong__2",
+     "ten": "Bell",
+     "anh": "output/ep002/ung-vien-dao-cu/chuong__2.jpg",
+     "link": "https://poly.pizza/m/dYZz5rDiF7U",
+     "nguon": "polypizza",
+     "uid": "dYZz5rDiF7U",
+     "tacGia": "Poly by Google",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 784,
+     "phu": "Chuông tay cán gỗ."
+    },
+    {
+     "id": "chuong__3",
+     "ten": "Bell",
+     "anh": "output/ep002/ung-vien-dao-cu/chuong__3.jpg",
+     "link": "https://poly.pizza/m/cILuaO115Y",
+     "nguon": "polypizza",
+     "uid": "cILuaO115Y",
+     "tacGia": "Quaternius",
+     "giayPhep": "CC0",
+     "tamGiac": 779,
+     "phu": "Chuông treo vàng, CC0."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "doi_dep",
+   "ten": "Đôi dép của thị trưởng (doi_dep)",
+   "phu": "Dép lê xanh, bị gấu mang đi · nhỏ (≤1500) · cần đổi màu xanh",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_doi_dep.png",
+   "ungVien": [
+    {
+     "id": "doi_dep__1",
+     "ten": "Slippers",
+     "anh": "output/ep002/ung-vien-dao-cu/doi_dep__1.jpg",
+     "link": "https://poly.pizza/m/XV1WqNYen3",
+     "nguon": "polypizza",
+     "uid": "XV1WqNYen3",
+     "tacGia": "Isa Lousberg",
+     "giayPhep": "CC0",
+     "tamGiac": 360,
+     "phu": "Dép đi trong nhà màu vàng, CC0."
+    },
+    {
+     "id": "doi_dep__2",
+     "ten": "Slippers",
+     "anh": "output/ep002/ung-vien-dao-cu/doi_dep__2.jpg",
+     "link": "https://poly.pizza/m/2wR1M99UwP",
+     "nguon": "polypizza",
+     "uid": "2wR1M99UwP",
+     "tacGia": "J-Toastie",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 560,
+     "phu": "Dép xám."
+    },
+    {
+     "id": "doi_dep__3",
+     "ten": "flip flops",
+     "anh": "output/ep002/ung-vien-dao-cu/doi_dep__3.jpg",
+     "link": "https://poly.pizza/m/aVbWCpQLno8",
+     "nguon": "polypizza",
+     "uid": "aVbWCpQLno8",
+     "tacGia": "Tiff Eidmann",
+     "giayPhep": "CC-BY 3.0",
+     "tamGiac": 252,
+     "phu": "Dép xỏ ngón tím."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "chan_tran",
+   "ten": "Hai bàn chân trần dưới gấu quần ngủ (chan_tran)",
+   "phu": "Dấu vết chân trần của thị trưởng · nhỏ (≤1500) · ĐỀ XUẤT DỰNG LẠI TRONG BLENDER (2 chân da + ống quần xanh); ứng viên chỉ là 1 bàn chân trắng",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_chan_tran.png",
+   "ungVien": [
+    {
+     "id": "chan_tran__1",
+     "ten": "Low poly foot.",
+     "anh": "output/ep002/ung-vien-dao-cu/chan_tran__1.jpg",
+     "link": "https://sketchfab.com/3d-models/none-3da0b3a74a8d41d286f026e17557c227",
+     "nguon": "sketchfab",
+     "uid": "3da0b3a74a8d41d286f026e17557c227",
+     "tacGia": "EV1LL",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 260,
+     "phu": "Bàn chân trắng low poly (1 chân; phải nhân đôi, đổi màu da)."
+    },
+    {
+     "id": "chan_tran__2",
+     "ten": "Foot Low Poly",
+     "anh": "output/ep002/ung-vien-dao-cu/chan_tran__2.jpg",
+     "link": "https://sketchfab.com/3d-models/none-0a2829421709406b84d72647b2f0e0e9",
+     "nguon": "sketchfab",
+     "uid": "0a2829421709406b84d72647b2f0e0e9",
+     "tacGia": "gaelinix",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 697,
+     "phu": "Bàn chân có băng cổ chân."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "bac_them_dep",
+   "ten": "Bậc thềm 2 bậc + đôi dép (bac_them_dep)",
+   "phu": "Bậc thềm nhà thị trưởng, dép cạnh bậc · lớn (≤6000) · ghép với model dép của doi_dep",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_bac_them_dep.png",
+   "ungVien": [
+    {
+     "id": "bac_them_dep__1",
+     "ten": "Stairs",
+     "anh": "output/ep002/ung-vien-dao-cu/bac_them_dep__1.jpg",
+     "link": "https://poly.pizza/m/yJJ5pH2NWs",
+     "nguon": "polypizza",
+     "uid": "yJJ5pH2NWs",
+     "tacGia": "Quaternius",
+     "giayPhep": "CC0",
+     "tamGiac": 212,
+     "phu": "Bậc thềm 3 bậc xám, CC0."
+    },
+    {
+     "id": "bac_them_dep__2",
+     "ten": "Steps",
+     "anh": "output/ep002/ung-vien-dao-cu/bac_them_dep__2.jpg",
+     "link": "https://poly.pizza/m/2cghwnOqEX",
+     "nguon": "polypizza",
+     "uid": "2cghwnOqEX",
+     "tacGia": "Kenney",
+     "giayPhep": "CC0",
+     "tamGiac": 84,
+     "phu": "Bậc cam, CC0."
+    },
+    {
+     "id": "bac_them_dep__3",
+     "ten": "Stairs Closed Short",
+     "anh": "output/ep002/ung-vien-dao-cu/bac_them_dep__3.jpg",
+     "link": "https://poly.pizza/m/1avwhsrpwU",
+     "nguon": "polypizza",
+     "uid": "1avwhsrpwU",
+     "tacGia": "Kenney",
+     "giayPhep": "CC0",
+     "tamGiac": 76,
+     "phu": "Bậc thang gọn, CC0."
+    }
+   ],
+   "ungVienNang": []
+  },
+  {
+   "id": "bac_them_trong",
+   "ten": "Bậc thềm 2 bậc không dép (bac_them_trong)",
+   "phu": "Bậc thềm khi dép biến mất · lớn (≤6000) · cùng model với bac_them_dep, bỏ dép",
+   "anhHienTai": "output/ep002/duyet-tai-san/o/prop_bac_them_trong.png",
+   "ungVien": [
+    {
+     "id": "bac_them_trong__1",
+     "ten": "Stairs",
+     "anh": "output/ep002/ung-vien-dao-cu/bac_them_trong__1.jpg",
+     "link": "https://poly.pizza/m/yJJ5pH2NWs",
+     "nguon": "polypizza",
+     "uid": "yJJ5pH2NWs",
+     "tacGia": "Quaternius",
+     "giayPhep": "CC0",
+     "tamGiac": 212,
+     "phu": "Bậc thềm 3 bậc xám, CC0."
+    },
+    {
+     "id": "bac_them_trong__2",
+     "ten": "Steps",
+     "anh": "output/ep002/ung-vien-dao-cu/bac_them_trong__2.jpg",
+     "link": "https://poly.pizza/m/2cghwnOqEX",
+     "nguon": "polypizza",
+     "uid": "2cghwnOqEX",
+     "tacGia": "Kenney",
+     "giayPhep": "CC0",
+     "tamGiac": 84,
+     "phu": "Bậc cam, CC0."
+    },
+    {
+     "id": "bac_them_trong__3",
+     "ten": "Stairs Closed Short",
+     "anh": "output/ep002/ung-vien-dao-cu/bac_them_trong__3.jpg",
+     "link": "https://poly.pizza/m/1avwhsrpwU",
+     "nguon": "polypizza",
+     "uid": "1avwhsrpwU",
+     "tacGia": "Kenney",
+     "giayPhep": "CC0",
+     "tamGiac": 76,
+     "phu": "Bậc thang gọn, CC0."
+    }
+   ],
+   "ungVienNang": []
+  }
+ ]
+}

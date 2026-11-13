@@ -35,3 +35,7 @@ feedback/*
 # ảnh vân Poly Haven: chỉ commit bản 512webp (bản 1k/512 jpg để so ở mat-lab trên máy)
 assets/polyhaven-tex/*/1k/
 assets/polyhaven-tex/*/512/
+
+# khoá API cục bộ
+.env.local
+.env

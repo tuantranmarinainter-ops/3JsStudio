@@ -38,6 +38,27 @@ Mỗi bước chạy lại CHỈ khi đầu vào đổi (hash): sửa kịch b�
 7. **3f am-thanh** (tiếng động nền/bước chân/khoảnh khắc + nhạc + phụ đề + ghi công `ghi-cong.mjs`) → **gop** (chỉ `bundle.mjs` — bản nháp `--out dist/<ep>_xem-thu.html`; KHÔNG `build.mjs all`, lớp `tieng-anh` không chạy trong dây chuyền, lớp `nhac` chỉ khi có `music/plan.json`; rồi `theo-doi.mjs`). Ghi công `ghi-cong.mjs` mã 3 (trời chưa rõ): bản nháp chỉ cảnh báo, bản cuối chặn trừ khi `--cho-phep-troi`.
 8. Cuối: đưa link (xem "Giao sản phẩm").
 
+## Chuẩn ep001 — mọi tập mới PHẢI có (người dùng chốt 2026-11-13)
+ep002 bản đầu xấu vì bỏ qua chồng tính năng đã tinh chỉnh cho ep001 (xem `docs/so-sanh-ep001-ep002.md`). Trước MỐC DUYỆT 2 và trước khi gộp, kiểm đủ bảng này; thiếu mục nào thì sửa `episodes/_template/index.html` (để tập sau thừa hưởng) chứ không vá riêng một tập. Mọi mục đều có công tắc trong trình phát.
+
+| Lớp | Phải có | Ở đâu | Công tắc |
+|---|---|---|---|
+| Vật liệu | `applyMaterials` + `await MATS.ready` sau khi đạo cụ vào scene (~38 loại shader + 9 ảnh vân Poly Haven) | `engine/materials.js`, `docs/vat-lieu.md` | `mats`, `matTex` |
+| Bụi/cũ | `applyGrunge` TRƯỚC `applyMaterials`; `EPISODE.wear` tuỳ chọn | `engine/grunge.js` | `worn`, `grime`, `aged` |
+| IBL, trời, mô hình quét | tự có qua `engine/envs.js` — đừng tắt | `engine/ibl.js`, `skies.js`, `scans.js` | `ibl`, `skybox`, `scans` |
+| Hậu kỳ | `createPost` + `post.set({faceLive, tangXa})` | `engine/post.js`, skill `hieu-ung-hinh` | `grade`, `bloom`, `dof`, `vignette`, `outline` |
+| Đèn nhân vật | tự bật cho shot khai `time`/`weather` (đêm 1.0, nhà máy 1.5); mặt cận cảnh phải đọc được (luma vùng giữa ≥ 90) | `engine/lights.js` `denNhanVat`, `engine/envs/gio-thoi-tiet.js` | `denNhanVat` |
+| Ánh sáng | đêm vẫn tách khối (trăng lạnh + đèn ấm); luma TB shot đêm ≥ 70, không shot nào > 170; `lint.py` W01 cảnh báo > 50% shot đêm, W02 một địa điểm > 30% shot → sửa KỊCH BẢN, đừng để 3/4 phim là đêm | `gio-thoi-tiet.js`, `tools/kb/lint.py` | — |
+| Bối cảnh | dùng kho 16+ env (`engine/envs/*.js`, `cong-thuc.js`), đổi cảnh mỗi 3–8 shot; không dồn cả phim vào 2–3 căn phòng | `docs/boi-canh-tang.md` | — |
+| Âm thanh | bản gộp phải chứa đủ track có file: `narration`, `sfx_nen`, `sfx_khoanh-khac`, `music_nhac` (+ `sfx_buoc-chan` nếu có tiếng). Sau `gop`: `grep -c sfx_nen dist/<ep>*.html` > 0 | tập mẫu `addAudioLayers()` | từng lớp trong trình phát |
+| Tiếng động | ≥ 20 cue/phút, không khoảng trống > 10 s; nền đổi theo bối cảnh, thấp hơn lời ≥ 10 LU | skill `tieng-dong` | — |
+| Giọng | NHẸ: Việt 1 giọng `BV075_streaming` (Thanh Niên Tự Tin), Anh 1 giọng `en-US-AndrewMultilingualNeural`; không vai phụ, không bộ nhiều giọng (bộ 25 giọng là riêng ep001). Câu không cắt giữa mệnh đề | skill `giong-doc` | `lang`, `voice`, `subs` |
+| Nhân vật | mỗi vai phụ một dấu hiệu nhận ra từ xa (tóc/mũ/đồng phục/đạo cụ), không hai vai chỉ khác màu; không lệch phong cách khối | `episode.js` actors | — |
+| Model | 1–3 vật "chủ đạo" mỗi tập; thiếu model → trạm nhập `node tools/nhap-model.mjs tim|nhap|kiem` (Blender **5.1.2**, chỉ CC0/CC BY, **ưu tiên low poly** theo ngưỡng trong `docs/nhap-model.md`; không có low poly → HỎI người dùng, không tự lấy model nặng) rồi mới tới dựng bằng code (`ref-model`) | `docs/nhap-model.md` | — |
+
+Số kiểm nhanh sau khi gộp (ghi vào báo cáo): luma TB cả phim (ep001 = 119; < 95 là tối), `node tools/shaders.mjs <trang>` (vật liệu làm `__ready` chậm ~20 s — ep001 dùng `warmEnv` để dịch dần), số track trong bản gộp, số cue/phút.
+Chưa vào tập mẫu (riêng ep001, làm tay khi cần): phụ đề từng chữ + `cap.y`, `warmEnv`, nhà có chân/bưu thiếp.
+
 ## Khi nào gọi người dùng (mục 8; ngưỡng ở `episodes/<ep>/quy-trinh.json`, mặc định `tools/kiem/mac-dinh.json`)
 - Sau 2 vòng còn > 10 shot lỗi, hoặc 1 luật lỗi ở > 15% số shot → gửi bảng số + `output/<ep>/duyet/02_loi/` + `luoi-loi.jpg`.
 - Lỗi không tự sửa: thiếu mô hình/animation, kịch bản mâu thuẫn hình, vật liệu chưa duyệt, silhouette (L10) không đạt sau 2 vòng, tất định (`--det`) lỗi, L5/L9/L12.

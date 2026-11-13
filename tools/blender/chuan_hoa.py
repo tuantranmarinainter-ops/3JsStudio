@@ -1,0 +1,188 @@
+# chuan_hoa.py — chuẩn hoá 1 model glTF/GLB tải từ mạng thành GLB "khối vuông" của repo (Blender headless).
+#   "S:/Program Files/Blender Foundation/Blender 5.1/blender.exe" -b --factory-startup -P tools/blender/chuan_hoa.py -- \
+#       <vao.glb|gltf> <ra.glb> [--cao 3.0] [--tam-giac-toi-da 8000] [--tex 512] [--ao] [--mau-dinh] [--xoay 90] [--ten x]
+# Kết quả: 1 mesh gộp, đã áp transform, Y lên (khi xuất), gốc ở tâm đáy (chân y=0), cao = --cao stud (không có thì giữ cỡ gốc,
+# 1 đv = 1 m nguồn), decimate nếu quá ngân sách, vật liệu chỉ giữ màu/ảnh màu gốc (≤ --tex px), bỏ normal/roughness/metal.
+# Đầu vào là dữ liệu KHÔNG tin cậy: chỉ import glTF (không chạy gì trong file). In 1 dòng `NHAP_JSON {...}` cho tools/nhap-model.mjs.
+# Tất định: không ngẫu nhiên (AO dùng hướng lấy mẫu cố định).
+import bpy, bmesh, sys, os, json, math, argparse
+from mathutils import Matrix, Vector
+from mathutils.bvhtree import BVHTree
+
+argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
+ap = argparse.ArgumentParser()
+ap.add_argument('vao'); ap.add_argument('ra')
+ap.add_argument('--cao', type=float, default=0)
+ap.add_argument('--tam-giac-toi-da', type=int, default=8000)
+ap.add_argument('--tex', type=int, default=512)
+ap.add_argument('--ao', action='store_true')
+ap.add_argument('--mau-dinh', action='store_true', help='thay ảnh màu bằng màu trung bình (phong cách khối)')
+ap.add_argument('--xoay', type=float, default=0, help='xoay quanh trục đứng (độ) để mặt trước nhìn +Z')
+ap.add_argument('--ten', default='model')
+A = ap.parse_args(argv)
+
+def say(*a): print('[chuan_hoa]', *a, flush=True)
+
+# ---------- nhập ----------
+bpy.ops.wm.read_factory_settings(use_empty=True)
+bpy.ops.import_scene.gltf(filepath=A.vao)
+sc = bpy.context.scene
+objs = list(bpy.data.objects)
+meshes = [o for o in objs if o.type == 'MESH']
+# Mesh nằm trong collection ẩn "glTF_not_exported" là vật phụ không thuộc cảnh (vd. icosphere hình xương) → bỏ, trừ khi không còn gì.
+_that = [o for o in meshes if not all(c.name.startswith('glTF_not_exported') for c in o.users_collection)]
+if _that: meshes = _that
+if not meshes:
+    print('NHAP_LOI khong co mesh'); sys.exit(2)
+
+# ---------- gộp về 1 gốc, áp transform ----------
+for o in meshes:
+    for m in list(o.modifiers):
+        if m.type == 'ARMATURE': o.modifiers.remove(m)      # tĩnh: bỏ xương (giữ tư thế nhập)
+    o.data = o.data.copy()                                   # mỗi object 1 mesh riêng (instance → thật)
+    mw = o.matrix_world.copy()
+    o.parent = None
+    o.data.transform(mw)
+    o.matrix_world = Matrix.Identity(4)
+    if mw.determinant() < 0: o.data.flip_normals()
+    for vg in list(o.vertex_groups): o.vertex_groups.remove(vg)
+for o in objs:
+    if o.type != 'MESH': bpy.data.objects.remove(o, do_unlink=True)
+
+for o in sc.objects: o.select_set(False)
+main = meshes[0]
+with bpy.context.temp_override(active_object=main, object=main, selected_objects=meshes, selected_editable_objects=meshes):
+    if len(meshes) > 1: bpy.ops.object.join()
+main.name = A.ten; main.data.name = A.ten
+# Một số GLB để nút ngoài scene → importer xếp vào collection ẩn "glTF_not_exported" → xuất ra GLB rỗng. Đưa về collection của scene.
+for c in list(main.users_collection): c.objects.unlink(main)
+sc.collection.objects.link(main)
+for c in list(bpy.data.collections):
+    if c.name.startswith('glTF_not_exported'): bpy.data.collections.remove(c)
+me = main.data
+
+# ---------- tam giác trước ----------
+def tris(mesh):
+    mesh.calc_loop_triangles(); return len(mesh.loop_triangles)
+bm = bmesh.new(); bm.from_mesh(me)
+bmesh.ops.triangulate(bm, faces=bm.faces[:])
+bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=1e-5)
+bm.to_mesh(me); bm.free()
+tri_truoc = tris(me)
+
+# ---------- decimate ----------
+if tri_truoc > A.tam_giac_toi_da:
+    md = main.modifiers.new('dec', 'DECIMATE'); md.ratio = max(0.02, A.tam_giac_toi_da / tri_truoc); md.use_collapse_triangulate = True
+    dg = bpy.context.evaluated_depsgraph_get()
+    new = bpy.data.meshes.new_from_object(main.evaluated_get(dg))
+    main.modifiers.remove(md); old = main.data; main.data = new; bpy.data.meshes.remove(old); me = new; me.name = A.ten
+tri_sau = tris(me)
+
+# ---------- xoay / căn chỉnh / scale ----------
+def bbox():
+    cs = [v.co for v in me.vertices]
+    mn = Vector((min(c.x for c in cs), min(c.y for c in cs), min(c.z for c in cs)))
+    mx = Vector((max(c.x for c in cs), max(c.y for c in cs), max(c.z for c in cs)))
+    return mn, mx
+if A.xoay: me.transform(Matrix.Rotation(math.radians(A.xoay), 4, 'Z'))
+mn, mx = bbox()
+cao_nguon = mx.z - mn.z
+k = (A.cao / cao_nguon) if (A.cao > 0 and cao_nguon > 1e-9) else 1.0
+cx, cy = (mn.x + mx.x) / 2, (mn.y + mx.y) / 2
+me.transform(Matrix.Scale(k, 4) @ Matrix.Translation((-cx, -cy, -mn.z)))
+mn, mx = bbox()
+size = mx - mn      # Blender (x, y, z) -> glTF (x, z, -y): hộp bao three = (x, z, y)
+
+# ---------- vật liệu ----------
+TEX = A.tex
+def upstream_image(sock, depth=0):
+    if depth > 6 or not sock.is_linked: return None
+    n = sock.links[0].from_node
+    if n.type == 'TEX_IMAGE': return n
+    for i in n.inputs:
+        r = upstream_image(i, depth + 1)
+        if r: return r
+    return None
+def mean_color(img):
+    import numpy as np
+    w, h = img.size
+    if w * h == 0: return None
+    a = np.empty(w * h * 4, dtype=np.float32); img.pixels.foreach_get(a)
+    a = a.reshape(-1, 4); return tuple(float(x) for x in a.mean(axis=0))
+n_mat = 0; img_dung = set(); tex_info = []
+for mat in me.materials:
+    if not mat: continue
+    n_mat += 1
+    if not mat.use_nodes or not mat.node_tree: continue
+    nt = mat.node_tree
+    bsdf = next((n for n in nt.nodes if n.type == 'BSDF_PRINCIPLED'), None)
+    if not bsdf: continue
+    for name in ('Normal', 'Roughness', 'Metallic', 'Specular IOR Level', 'Coat Weight', 'Sheen Weight', 'Transmission Weight', 'Emission Strength'):
+        s = bsdf.inputs.get(name)
+        if s is None: continue
+        for l in list(s.links): nt.links.remove(l)
+    for name, v in (('Roughness', 0.85), ('Metallic', 0.0), ('Specular IOR Level', 0.2), ('Coat Weight', 0.0), ('Sheen Weight', 0.0), ('Transmission Weight', 0.0), ('Emission Strength', 0.0)):
+        s = bsdf.inputs.get(name)
+        if s is not None: s.default_value = v
+    bc = bsdf.inputs['Base Color']
+    tn = upstream_image(bc)
+    if tn and tn.image:
+        img = tn.image
+        if A.mau_dinh:
+            c = mean_color(img)
+            if c:
+                for l in list(bc.links): nt.links.remove(l)
+                bc.default_value = (c[0], c[1], c[2], 1.0)
+                al = bsdf.inputs['Alpha']
+                for l in list(al.links): nt.links.remove(l)
+                al.default_value = 1.0
+                continue
+        w, h = img.size
+        m = max(w, h)
+        if m > TEX:
+            f = TEX / m; img.scale(max(1, int(w * f)), max(1, int(h * f)))
+        al_linked = bsdf.inputs['Alpha'].is_linked
+        img.file_format = 'PNG' if al_linked else 'JPEG'
+        img_dung.add(img.name); tex_info.append((img.name, img.size[0], img.size[1]))
+    for l in list(bsdf.inputs['Normal'].links): nt.links.remove(l)
+    # Emission map -> bỏ (phong cách khối)
+    for l in list(bsdf.inputs['Emission Color'].links): nt.links.remove(l)
+
+# ---------- AO nướng vào màu đỉnh (tuỳ chọn) ----------
+if A.ao:
+    me.calc_loop_triangles(); me.calc_normals() if hasattr(me, 'calc_normals') else None
+    bvh = BVHTree.FromObject(main, bpy.context.evaluated_depsgraph_get())
+    diag = (mx - mn).length; R = 0.35 * diag; eps = 1e-3 * diag
+    N = 24; golden = math.pi * (3 - math.sqrt(5))
+    local = [Vector((math.cos(golden * i) * math.sqrt(1 - ((i + .5) / N) ** 2), math.sin(golden * i) * math.sqrt(1 - ((i + .5) / N) ** 2), (i + .5) / N)) for i in range(N)]
+    ao = [0.0] * len(me.vertices)
+    for v in me.vertices:
+        n = v.normal.normalized()
+        t = (Vector((0, 0, 1)) if abs(n.z) < 0.9 else Vector((1, 0, 0))).cross(n).normalized(); b = n.cross(t)
+        hit = 0
+        for d in local:
+            w = t * d.x + b * d.y + n * d.z
+            if bvh.ray_cast(v.co + n * eps, w, R)[0] is not None: hit += 1
+        ao[v.index] = hit / N
+    for ca in list(me.color_attributes): me.color_attributes.remove(ca)
+    ca = me.color_attributes.new('AO', 'BYTE_COLOR', 'CORNER')
+    for li, lp in enumerate(me.loops):
+        g = 1.0 - 0.75 * ao[lp.vertex_index]; ca.data[li].color = (g, g, g, 1.0)
+    me.color_attributes.active_color = ca
+elif len(me.color_attributes):
+    pass   # giữ màu đỉnh gốc (nhiều model low-poly tô màu bằng đỉnh)
+
+# ---------- xuất ----------
+os.makedirs(os.path.dirname(os.path.abspath(A.ra)), exist_ok=True)
+props = bpy.ops.export_scene.gltf.get_rna_type().properties.keys()
+want = dict(filepath=A.ra, export_format='GLB', export_yup=True, export_apply=True, export_cameras=False, export_lights=False,
+            export_animations=False, export_skins=False, export_morph=False, export_extras=False, export_normals=True,
+            export_texcoords=True, export_materials='EXPORT', export_image_format='AUTO', export_jpeg_quality=80,
+            export_draco_mesh_compression_enable=False, use_selection=False)
+if 'export_vertex_color' in props: want['export_vertex_color'] = 'ACTIVE' if (A.ao or len(me.color_attributes)) else 'NONE'
+bpy.ops.export_scene.gltf(**{k: v for k, v in want.items() if k in props})
+
+print('NHAP_JSON ' + json.dumps({
+    'ten': A.ten, 'bbox_stud': [round(size.x, 3), round(size.z, 3), round(size.y, 3)],   # (x, cao, sâu) kiểu three
+    'tam_giac_truoc': tri_truoc, 'tam_giac_sau': tri_sau, 'vat_lieu': n_mat, 'anh': tex_info,
+    'cao_nguon_m': round(cao_nguon, 4), 'he_so': round(k, 5), 'bytes': os.path.getsize(A.ra)}))

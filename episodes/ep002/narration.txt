@@ -1,8 +1,6 @@
 # Món đồ biến mất trong phòng khóa kín — lời kể từ storyboard (kich-ban.md). @at = giây shot đầu tiên của câu bắt đầu (tools/tts.py canh đúng mốc).
 @source capcut
 @narrator BV075_streaming
-@voice bach capcut:multi_male_felipe_uranus_bigtts
-@voice mayor capcut:multi_female_xinwenjieshuo_uranus_bigtts
 
 @at 0.05 Ở thị trấn này, đồ đạc liên tục biến mất,
 @at 3.10 dù căn phòng đã được khóa kín.
@@ -51,8 +49,8 @@
 @at 97.50 Sau lưng ông là cả một dãy gấu
 @at 99.70 mới may xong.
 @at 100.70 Ông chỉ vào tấm bản đồ trên tường.
-@at 103.50 [bach] Nhà nào có gấu rồi thì đánh dấu.
-@at 105.90 [bach] Mai phát tiếp mấy nhà còn lại.
+@at 103.50 Nhà nào có gấu rồi thì đánh dấu.
+@at 105.90 Mai phát tiếp mấy nhà còn lại.
 @at 108.10 Dưới băng chuyền là két tiền
 @at 110.10 của chú bán bánh.
 @at 111.40 Trên nắp két, tôi thấy
@@ -73,8 +71,8 @@
 @at 144.10 Lính gác mở cửa kho.
 @at 145.60 Thị trưởng nhìn sang chồng thùng
 @at 147.90 in tên tiệm ông Bách.
-@at 149.40 [mayor] Ủa, đây là mấy thùng
-@at 150.90 [mayor] sáng nay ông báo mất mà?
+@at 149.40 Ủa, đây là mấy thùng
+@at 150.90 sáng nay ông báo mất mà?
 @at 152.70 Ông Bách im luôn.
 @at 154.20 Tôi mới hiểu.
 @at 155.20 Cứ mỗi lần cả thị trấn mất đồ,

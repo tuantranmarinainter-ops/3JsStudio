@@ -116,9 +116,9 @@
       await MATS.ready;   // ảnh vân CC0 (gỗ/ngói/đá/đất/cát/vải) tải xong trước khi vẽ
       const tl = buildTimeline(SHOTS, 30);
       // GHI CÔNG cuối phim (engine/credits.js): ảnh episodes/<ep>/ghi-cong.png (tools/ghi-cong.mjs) phủ lên 3 giây cuối, tắt được (?credits=0|1 hoặc setOptions({ credits })).
-      // Mặc định bật khi EPISODE.credits !== false và có file ảnh.
+      // Mặc định TẮT (người dùng chốt 2026-11-13); bật bằng EPISODE.credits = true, ?credits=1 hoặc công tắc trình phát.
       const credits = await createCredits({ root: document.getElementById('root'), src: '/episodes/ep001/ghi-cong.png', total: tl.total,
-        on: q.get('credits') !== null ? q.get('credits') !== '0' : EPISODE.credits !== false });
+        on: q.get('credits') !== null ? q.get('credits') !== '0' : EPISODE.credits === true });
       window.__credits = credits;   // tools/export-ui.js vẽ ảnh này vào khung xuất MP4
       const director = createDirector({ THREE, stage, envs, K, actors, houses, props, fx });
       // Hiệu ứng hình (engine/post.js), mỗi cái bật/tắt riêng: ?fx=grade,bloom  (danh sách bật) hoặc ?fx=none

@@ -71,6 +71,22 @@ class TestLint(unittest.TestCase):
         self.assertEqual(len(j['can_dung']), 2)
         self.assertEqual(j['meta']['ep'], 'ep998')
 
+    def test_canh_bao_dem_va_dia_diem(self):
+        head = '| id | giay | loi ke | loai | ở đâu | giờ |\n|---|---|---|---|---|---|\n'
+        rows = ''.join(f'| {i} | 1.5 | | crowd | square | dem |\n' for i in range(1, 7))
+        p = tmp_md(head + '| 0 | 1.5 | Ở thị trấn này. | establish | shop | dem |\n' + rows)
+        ma = {c for _, c, _ in lint.canh_bao(p)}
+        self.assertEqual(ma, {'W01', 'W02'})
+        self.assertNotIn('W01', {c for _, c, _ in lint.lint(p)})   # cảnh báo không lẫn vào lỗi
+        r = subprocess.run([sys.executable, str(KB / 'lint.py'), str(p)], capture_output=True)
+        self.assertIn('W01', r.stdout.decode('utf-8'))
+
+    def test_khong_canh_bao_khi_can_bang(self):
+        head = '| id | giay | loi ke | loai | ở đâu | giờ |\n|---|---|---|---|---|---|\n'
+        ats = ['a', 'b', 'c', 'd', 'a', 'b', 'c', 'd']
+        rows = ''.join(f'| {i} | 1.5 | | crowd | {a} | {"dem" if i % 4 == 0 else "sang"} |\n' for i, a in enumerate(ats, 1))
+        self.assertEqual(lint.canh_bao(tmp_md(head + rows)), [])
+
     def test_k01_noi_tiep_khong_loi(self):
         p = tmp_md(HEAD_NGAN + '| 1 | 1.5 | Ở thị trấn này. | establish | square | |\n| 2 | 1 | | crowd | | |\n| 3 | 1 | | crowd | | |\n')
         self.assertNotIn('K01', {c for _, c, _ in lint.lint(p)})

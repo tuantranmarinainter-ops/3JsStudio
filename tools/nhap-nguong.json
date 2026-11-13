@@ -1,0 +1,12 @@
+{
+ "_ghiChu": "Ngưỡng low poly theo số tam giác của model GỐC (trước giảm lưới). Người dùng chốt 2026-11-13. Vượt tối đa => dừng hỏi người dùng.",
+ "mac_dinh": "vua",
+ "loai": {
+  "nho":      { "ten": "đạo cụ nhỏ (cầm tay, đặt bàn)",             "min": 100,  "lyTuong": 600,  "toiDa": 1500 },
+  "phu-kien": { "ten": "phụ kiện nhân vật (mũ, tóc, túi)",          "min": 200,  "lyTuong": 800,  "toiDa": 2000 },
+  "vua":      { "ten": "đạo cụ vừa (nội thất, máy móc nhỏ)",        "min": 300,  "lyTuong": 1500, "toiDa": 3000 },
+  "lon":      { "ten": "vật lớn (nhà, xe, băng chuyền, cây to)",    "min": 500,  "lyTuong": 3000, "toiDa": 6000 },
+  "chu-dao":  { "ten": "vật chủ đạo của tập",                       "min": 2000, "lyTuong": 6000, "toiDa": 12000 }
+ },
+ "phongCach": { "vatLieuToiDa": 6, "anhToiDaPx": 512, "manhLuoiToiDa": 10 }
+}

@@ -1,0 +1,849 @@
+{
+ "so": 1,
+ "ngay": "2026-11-13",
+ "tieuDe": "Tài sản ep002 + gấu bông + ánh sáng",
+ "tomTat": "Duyệt tài sản (nhân vật, đạo cụ, bối cảnh, model mới nhập), chọn gấu bông và so ánh sáng trước/sau.",
+ "token": {
+  "tong": 1272832,
+  "chiTiet": [
+   {
+    "viec": "so sánh âm thanh",
+    "token": 108668,
+    "model": "sonnet"
+   },
+   {
+    "viec": "so sánh mô hình/bối cảnh",
+    "token": 99774,
+    "model": "sonnet"
+   },
+   {
+    "viec": "so sánh nhân vật",
+    "token": 126758,
+    "model": "sonnet"
+   },
+   {
+    "viec": "rà repo",
+    "token": 131459,
+    "model": "sonnet"
+   },
+   {
+    "viec": "tra phí nguồn model",
+    "token": 96071,
+    "model": "sonnet"
+   },
+   {
+    "viec": "chuẩn ep001 cho tập mẫu",
+    "token": 130994,
+    "model": "sonnet"
+   },
+   {
+    "viec": "đèn nhân vật + đêm",
+    "token": 131221,
+    "model": "sonnet"
+   },
+   {
+    "viec": "trạm nhập model",
+    "token": 151941,
+    "model": "sonnet"
+   },
+   {
+    "viec": "ngưỡng low poly",
+    "token": 143050,
+    "model": "sonnet"
+   },
+   {
+    "viec": "bảng duyệt tài sản + gấu bông",
+    "token": 152896,
+    "model": "sonnet"
+   }
+  ],
+  "ghiChu": "chưa gồm token của phiên điều phối"
+ },
+ "nhom": [
+  {
+   "id": "gau",
+   "ten": "Gấu bông — chọn ứng viên",
+   "mota": "Thẻ nét đứt là gấu hiện tại để so (bóng mịn, lệch phong cách khối). Chọn MỘT ứng viên, hoặc chọn mục cuối nếu không cái nào hợp. Tất cả đều giấy phép CC Attribution (phải ghi công).",
+   "kieu": "chon",
+   "anh": [],
+   "hienTai": {
+    "ten": "Gấu hiện tại (bear.js)",
+    "phu": "bóng mịn, lệch phong cách khối · ~34,6 nghìn mặt",
+    "anh": "output/ep002/duyet-tai-san/o/gau_hien_tai.png"
+   },
+   "muc": [
+    {
+     "id": "gau-1",
+     "ten": "#1 Cubed Bear",
+     "phu": "296 mặt · không xương · khối vuông, màu phẳng, tay chân tách rời — tôi xếp đầu",
+     "anh": "output/ep002/duyet-tai-san/gau/26647ba33a564a7da57a6b166152f4bc.jpg",
+     "link": "https://sketchfab.com/3d-models/cubed-bear-26647ba33a564a7da57a6b166152f4bc",
+     "linkTen": "Mở trên Sketchfab",
+     "nguon": "Sketchfab",
+     "tacGia": "CubedBear",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 296
+    },
+    {
+     "id": "gau-2",
+     "ten": "#2 Teddy Bear_ Low Poly",
+     "phu": "1.892 mặt · vải sờn, tối",
+     "anh": "output/ep002/duyet-tai-san/gau/bbbbc762ea4844519380c113cb1a61ed.jpg",
+     "link": "https://sketchfab.com/3d-models/teddy-bear--low-poly-bbbbc762ea4844519380c113cb1a61ed",
+     "linkTen": "Mở trên Sketchfab",
+     "nguon": "Sketchfab",
+     "tacGia": "FZNinetyNine",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 1892
+    },
+    {
+     "id": "gau-3",
+     "ten": "#3 Low-Poly Toy Pack",
+     "phu": "2.332 mặt · ấm, mềm kiểu thực",
+     "anh": "output/ep002/duyet-tai-san/gau/af885d4dd3514cc09ad6bdd446d2888c.jpg",
+     "link": "https://sketchfab.com/3d-models/low-poly-toy-pack-teddy-bear-rubber-duck-af885d4dd3514cc09ad6bdd446d2888c",
+     "linkTen": "Mở trên Sketchfab",
+     "nguon": "Sketchfab",
+     "tacGia": "Renend Studio",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 2332
+    },
+    {
+     "id": "gau-4",
+     "ten": "#4 Basic Teddy Bear (Low-Poly)",
+     "phu": "3.388 mặt · ngồi một dáng",
+     "anh": "output/ep002/duyet-tai-san/gau/d17dc46e40e547b5808384b22deaf696.jpg",
+     "link": "https://sketchfab.com/3d-models/basic-teddy-bear-low-poly-version-d17dc46e40e547b5808384b22deaf696",
+     "linkTen": "Mở trên Sketchfab",
+     "nguon": "Sketchfab",
+     "tacGia": "Karl Hõbelaid",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 3388
+    },
+    {
+     "id": "gau-6",
+     "ten": "#6 Sugar Teddy Bear",
+     "phu": "3.872 mặt · có xương + 10 animation · hồng tím — tôi xếp nhì",
+     "anh": "output/ep002/duyet-tai-san/gau/8fbc11e8876d4ac7b22190c07e96726b.jpg",
+     "link": "https://sketchfab.com/3d-models/sugar-teddy-bear-8fbc11e8876d4ac7b22190c07e96726b",
+     "linkTen": "Mở trên Sketchfab",
+     "nguon": "Sketchfab",
+     "tacGia": "Suvalien",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 3872
+    },
+    {
+     "id": "gau-7",
+     "ten": "#7 Lil' Bear",
+     "phu": "3.928 mặt · có xương · gấu mặc áo mưa",
+     "anh": "output/ep002/duyet-tai-san/gau/55ee397cf40c4f86af1ee31fb2096d82.jpg",
+     "link": "https://sketchfab.com/3d-models/lil-bear-55ee397cf40c4f86af1ee31fb2096d82",
+     "linkTen": "Mở trên Sketchfab",
+     "nguon": "Sketchfab",
+     "tacGia": "Cherryvania",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 3928
+    },
+    {
+     "id": "gau-8",
+     "ten": "#8 Mister Bear",
+     "phu": "4.672 mặt · có xương + 6 animation · mũ và khăn",
+     "anh": "output/ep002/duyet-tai-san/gau/47e7ee6daff54b018dcd55caaec755f0.jpg",
+     "link": "https://sketchfab.com/3d-models/mister-bear-47e7ee6daff54b018dcd55caaec755f0",
+     "linkTen": "Mở trên Sketchfab",
+     "nguon": "Sketchfab",
+     "tacGia": "cheb_max",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 4672
+    },
+    {
+     "id": "gau-11",
+     "ten": "#11 Bear Figure",
+     "phu": "5.970 mặt · tượng sứ trắng",
+     "anh": "output/ep002/duyet-tai-san/gau/ee70a460b9dc485f81eed2dc0ebf8619.jpg",
+     "link": "https://sketchfab.com/3d-models/bear-figure-ee70a460b9dc485f81eed2dc0ebf8619",
+     "linkTen": "Mở trên Sketchfab",
+     "nguon": "Sketchfab",
+     "tacGia": "CrisLArt",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 5970
+    },
+    {
+     "id": "gau-khoi",
+     "ten": "Dựng gấu khối bằng bộ xương nhân vật của phim",
+     "phu": "không tải model: tai + mõm + nơ trên thân khối, dùng được mọi animation sẵn có"
+    },
+    {
+     "id": "gau-khong",
+     "ten": "Không cái nào hợp — tìm tiếp",
+     "phu": "ghi chú kiểu gấu bạn muốn"
+    }
+   ]
+  },
+  {
+   "id": "nhan-vat",
+   "ten": "Nhân vật",
+   "mota": "11 diễn viên có tên + 3 người đám đông mẫu.",
+   "anh": [],
+   "muc": [
+    {
+     "id": "nv-hero",
+     "ten": "Gà (nhân vật chính)",
+     "phu": "~38 nghìn mặt, nặng",
+     "anh": "output/ep002/duyet-tai-san/o/nv_hero.png",
+     "nguon": "dựng bằng code (engine)",
+     "tamGiac": 38040
+    },
+    {
+     "id": "nv-bach",
+     "ten": "Ông Bách",
+     "phu": "tóc + râu xám che mặt",
+     "anh": "output/ep002/duyet-tai-san/o/nv_bach.png",
+     "nguon": "dựng bằng code (engine)",
+     "tamGiac": 14480
+    },
+    {
+     "id": "nv-mayor",
+     "ten": "Thị trưởng",
+     "phu": "áo quần cùng một màu",
+     "anh": "output/ep002/duyet-tai-san/o/nv_mayor.png",
+     "nguon": "dựng bằng code (engine)",
+     "tamGiac": 8256
+    },
+    {
+     "id": "nv-guard1",
+     "ten": "Lính gác 1",
+     "phu": "chỉ khác lính 2 ở màu mũ",
+     "anh": "output/ep002/duyet-tai-san/o/nv_guard1.png",
+     "nguon": "dựng bằng code (engine)",
+     "tamGiac": 7764
+    },
+    {
+     "id": "nv-guard2",
+     "ten": "Lính gác 2",
+     "phu": "",
+     "anh": "output/ep002/duyet-tai-san/o/nv_guard2.png",
+     "nguon": "dựng bằng code (engine)",
+     "tamGiac": 7764
+    },
+    {
+     "id": "nv-baker",
+     "ten": "Chú bán bánh",
+     "phu": "",
+     "anh": "output/ep002/duyet-tai-san/o/nv_baker.png",
+     "nguon": "dựng bằng code (engine)",
+     "tamGiac": 4604
+    },
+    {
+     "id": "nv-tailor",
+     "ten": "Cô thợ may",
+     "phu": "",
+     "anh": "output/ep002/duyet-tai-san/o/nv_tailor.png",
+     "nguon": "dựng bằng code (engine)",
+     "tamGiac": 14848
+    },
+    {
+     "id": "nv-kid1",
+     "ten": "Đứa bé",
+     "phu": "",
+     "anh": "output/ep002/duyet-tai-san/o/nv_kid1.png",
+     "nguon": "dựng bằng code (engine)",
+     "tamGiac": 4604
+    },
+    {
+     "id": "nv-bap",
+     "ten": "Gấu Bắp (hiện tại)",
+     "phu": "~34,6 nghìn mặt",
+     "anh": "output/ep002/duyet-tai-san/o/nv_bap.png",
+     "nguon": "dựng bằng code (engine)",
+     "tamGiac": 34584
+    },
+    {
+     "id": "nv-bear2",
+     "ten": "Gấu 2",
+     "phu": "",
+     "anh": "output/ep002/duyet-tai-san/o/nv_bear2.png",
+     "nguon": "dựng bằng code (engine)",
+     "tamGiac": 34584
+    },
+    {
+     "id": "nv-bear3",
+     "ten": "Gấu 3",
+     "phu": "",
+     "anh": "output/ep002/duyet-tai-san/o/nv_bear3.png",
+     "nguon": "dựng bằng code (engine)",
+     "tamGiac": 34584
+    },
+    {
+     "id": "nv-crowd1",
+     "ten": "Đám đông 1",
+     "phu": "mẫu ngẫu nhiên theo seed",
+     "anh": "output/ep002/duyet-tai-san/o/nv_crowd1.png",
+     "nguon": "dựng bằng code (engine)",
+     "tamGiac": 4604
+    },
+    {
+     "id": "nv-crowd2",
+     "ten": "Đám đông 2",
+     "phu": "mẫu ngẫu nhiên theo seed",
+     "anh": "output/ep002/duyet-tai-san/o/nv_crowd2.png",
+     "nguon": "dựng bằng code (engine)",
+     "tamGiac": 7764
+    },
+    {
+     "id": "nv-crowd3",
+     "ten": "Đám đông 3",
+     "phu": "mẫu ngẫu nhiên theo seed",
+     "anh": "output/ep002/duyet-tai-san/o/nv_crowd3.png",
+     "nguon": "dựng bằng code (engine)",
+     "tamGiac": 7764
+    }
+   ]
+  },
+  {
+   "id": "dao-cu",
+   "ten": "Đạo cụ (26, dựng bằng code)",
+   "mota": "Mỗi thẻ ghi kích thước và số tam giác.",
+   "anh": [],
+   "muc": [
+    {
+     "id": "dc-ke_trong",
+     "ten": "ke_trong",
+     "phu": "4.09×5×3.41 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_ke_trong.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 108
+    },
+    {
+     "id": "dc-o_khoa",
+     "ten": "o_khoa",
+     "phu": "2.87×6.8×2.14 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_o_khoa.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 492
+    },
+    {
+     "id": "dc-hoc_quay",
+     "ten": "hoc_quay",
+     "phu": "5.26×3.5×4.47 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_hoc_quay.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 60
+    },
+    {
+     "id": "dc-hop_nhan",
+     "ten": "hop_nhan",
+     "phu": "1×0.55×0.82 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_hop_nhan.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 288
+    },
+    {
+     "id": "dc-thung_dau_gau",
+     "ten": "thung_dau_gau",
+     "phu": "3.34×2.07×3.34 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_thung_dau_gau.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 676
+    },
+    {
+     "id": "dc-bang_tin",
+     "ten": "bang_tin",
+     "phu": "4.38×6×3.19 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_bang_tin.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 72
+    },
+    {
+     "id": "dc-ke_phong_ga",
+     "ten": "ke_phong_ga",
+     "phu": "4.1×6×3.43 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_ke_phong_ga.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 132
+    },
+    {
+     "id": "dc-anh_ba",
+     "ten": "anh_ba",
+     "phu": "1.15×1.5×0.91 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_anh_ba.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 768
+    },
+    {
+     "id": "dc-dong_ho",
+     "ten": "dong_ho",
+     "phu": "0.84×1.03×0.74 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_dong_ho.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 1768
+    },
+    {
+     "id": "dc-guong",
+     "ten": "guong",
+     "phu": "2.7×7×2.02 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_guong.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 74
+    },
+    {
+     "id": "dc-cuon_sach",
+     "ten": "cuon_sach",
+     "phu": "0.87×1.3×1.04 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_cuon_sach.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 48
+    },
+    {
+     "id": "dc-nhan_moi",
+     "ten": "nhan_moi",
+     "phu": "0.83×0.6×0.83 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_nhan_moi.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 968
+    },
+    {
+     "id": "dc-vi",
+     "ten": "vi",
+     "phu": "1.01×0.14×0.96 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_vi.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 36
+    },
+    {
+     "id": "dc-tui_tien",
+     "ten": "tui_tien",
+     "phu": "1.66×1.4×1.65 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_tui_tien.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 1196
+    },
+    {
+     "id": "dc-bang_chuyen",
+     "ten": "bang_chuyen",
+     "phu": "9.61×3×7.63 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_bang_chuyen.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 256
+    },
+    {
+     "id": "dc-ke_gau",
+     "ten": "ke_gau",
+     "phu": "7.51×6×5.84 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_ke_gau.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 23988
+    },
+    {
+     "id": "dc-ban_do",
+     "ten": "ban_do",
+     "phu": "4.18×3.5×2.91 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_ban_do.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 134
+    },
+    {
+     "id": "dc-ket_tien",
+     "ten": "ket_tien",
+     "phu": "2.95×2.2×2.89 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_ket_tien.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 796
+    },
+    {
+     "id": "dc-day_chuyen",
+     "ten": "day_chuyen",
+     "phu": "0.96×0.13×0.89 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_day_chuyen.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 1164
+    },
+    {
+     "id": "dc-chuong",
+     "ten": "chuong",
+     "phu": "0.89×0.93×0.89 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_chuong.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 1116
+    },
+    {
+     "id": "dc-doi_dep",
+     "ten": "doi_dep",
+     "phu": "1.68×0.38×1.65 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_doi_dep.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 840
+    },
+    {
+     "id": "dc-chan_tran",
+     "ten": "chan_tran",
+     "phu": "1.93×0.7×1.84 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_chan_tran.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 6192
+    },
+    {
+     "id": "dc-bac_them_dep",
+     "ten": "bac_them_dep",
+     "phu": "7.14×1.02×5.87 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_bac_them_dep.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 900
+    },
+    {
+     "id": "dc-bac_them_trong",
+     "ten": "bac_them_trong",
+     "phu": "6.13×1.02×5.74 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_bac_them_trong.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 60
+    },
+    {
+     "id": "dc-thung_tiem_bach",
+     "ten": "thung_tiem_bach",
+     "phu": "5.37×4.5×4.64 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_thung_tiem_bach.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 2064
+    },
+    {
+     "id": "dc-ket_ga",
+     "ten": "ket_ga",
+     "phu": "2.67×2×2.61 (rộng×cao×sâu)",
+     "anh": "output/ep002/duyet-tai-san/o/prop_ket_ga.png",
+     "nguon": "dựng bằng code (props-kb.js)",
+     "tamGiac": 1180
+    }
+   ]
+  },
+  {
+   "id": "boi-canh",
+   "ten": "Bối cảnh",
+   "mota": "3 bối cảnh × góc rộng/cận × ngày/đêm. Ảnh này chụp TRƯỚC khi chỉnh ánh sáng đêm (xem mục Ánh sáng bên dưới). Mỗi thẻ có 4 ảnh: rộng/cận × ngày/đêm.",
+   "anh": [],
+   "muc": [
+    {
+     "id": "bc-town",
+     "ten": "Thị trấn (kenneyTown)",
+     "phu": "góc cận có vật lam nhọn lạ",
+     "anh": [
+      "output/ep002/duyet/mau/env_town_rong_sang.jpg",
+      "output/ep002/duyet/mau/env_town_can_sang.jpg",
+      "output/ep002/duyet/mau/env_town_rong_dem.jpg",
+      "output/ep002/duyet/mau/env_town_can_dem.jpg"
+     ],
+     "links": [
+      {
+       "ten": "ảnh lớn: rộng ngày",
+       "href": "output/ep002/duyet/mau/env_town_rong_sang.jpg"
+      },
+      {
+       "ten": "ảnh lớn: cận ngày",
+       "href": "output/ep002/duyet/mau/env_town_can_sang.jpg"
+      },
+      {
+       "ten": "ảnh lớn: rộng đêm",
+       "href": "output/ep002/duyet/mau/env_town_rong_dem.jpg"
+      },
+      {
+       "ten": "ảnh lớn: cận đêm",
+       "href": "output/ep002/duyet/mau/env_town_can_dem.jpg"
+      }
+     ],
+     "nguon": "dựng bằng code (engine/envs)"
+    },
+    {
+     "id": "bc-bedroom",
+     "ten": "Phòng ngủ",
+     "phu": "mảng vàng phẳng lớn ở sàn",
+     "anh": [
+      "output/ep002/duyet/mau/env_bedroom_rong_sang.jpg",
+      "output/ep002/duyet/mau/env_bedroom_can_sang.jpg",
+      "output/ep002/duyet/mau/env_bedroom_rong_dem.jpg",
+      "output/ep002/duyet/mau/env_bedroom_can_dem.jpg"
+     ],
+     "links": [
+      {
+       "ten": "ảnh lớn: rộng ngày",
+       "href": "output/ep002/duyet/mau/env_bedroom_rong_sang.jpg"
+      },
+      {
+       "ten": "ảnh lớn: cận ngày",
+       "href": "output/ep002/duyet/mau/env_bedroom_can_sang.jpg"
+      },
+      {
+       "ten": "ảnh lớn: rộng đêm",
+       "href": "output/ep002/duyet/mau/env_bedroom_rong_dem.jpg"
+      },
+      {
+       "ten": "ảnh lớn: cận đêm",
+       "href": "output/ep002/duyet/mau/env_bedroom_can_dem.jpg"
+      }
+     ],
+     "nguon": "dựng bằng code (engine/envs)"
+    },
+    {
+     "id": "bc-factory",
+     "ten": "Nhà máy",
+     "phu": "đêm gần như giống ngày",
+     "anh": [
+      "output/ep002/duyet/mau/env_factory_rong_trua.jpg",
+      "output/ep002/duyet/mau/env_factory_can_trua.jpg",
+      "output/ep002/duyet/mau/env_factory_rong_dem.jpg",
+      "output/ep002/duyet/mau/env_factory_can_dem.jpg"
+     ],
+     "links": [
+      {
+       "ten": "ảnh lớn: rộng ngày",
+       "href": "output/ep002/duyet/mau/env_factory_rong_trua.jpg"
+      },
+      {
+       "ten": "ảnh lớn: cận ngày",
+       "href": "output/ep002/duyet/mau/env_factory_can_trua.jpg"
+      },
+      {
+       "ten": "ảnh lớn: rộng đêm",
+       "href": "output/ep002/duyet/mau/env_factory_rong_dem.jpg"
+      },
+      {
+       "ten": "ảnh lớn: cận đêm",
+       "href": "output/ep002/duyet/mau/env_factory_can_dem.jpg"
+      }
+     ],
+     "nguon": "dựng bằng code (engine/envs)"
+    }
+   ]
+  },
+  {
+   "id": "model-moi",
+   "ten": "Model mới nhập (Sketchfab, CC BY 4.0)",
+   "mota": "Đã qua Blender 5.1.2, đứng cạnh nhân vật để so cỡ. Chưa gắn vào cảnh nào.",
+   "anh": [],
+   "muc": [
+    {
+     "id": "mm-bang-chuyen",
+     "ten": "Băng chuyền",
+     "phu": "2.876 tam giác · rất dài",
+     "anh": "output/ep002/duyet-tai-san/o/nhap_bang-chuyen.png",
+     "links": [
+      {
+       "ten": "Mở trên Sketchfab",
+       "href": "https://sketchfab.com/3d-models/conveyor-belt-55f0d0f9b3384ea4b49cfc8aef97dcf9"
+      },
+      {
+       "ten": "ảnh lớn",
+       "href": "output/ep002/duyet-tai-san/o/nhap_bang-chuyen.png"
+      }
+     ],
+     "nguon": "Sketchfab",
+     "tacGia": "Cianon",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 2876
+    },
+    {
+     "id": "mm-may-khau",
+     "ten": "Máy khâu",
+     "phu": "2.870 tam giác",
+     "anh": "output/ep002/duyet-tai-san/o/nhap_may-khau.png",
+     "links": [
+      {
+       "ten": "Mở trên Sketchfab",
+       "href": "https://sketchfab.com/3d-models/sewing-machine-58de43d2ae934e12a116ae6af412ab50"
+      },
+      {
+       "ten": "ảnh lớn",
+       "href": "output/ep002/duyet-tai-san/o/nhap_may-khau.png"
+      }
+     ],
+     "nguon": "Sketchfab",
+     "tacGia": "Karatecake69",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 2870
+    },
+    {
+     "id": "mm-ket-sat",
+     "ten": "Két sắt",
+     "phu": "2.240 tam giác · xanh dương chói",
+     "anh": "output/ep002/duyet-tai-san/o/nhap_ket-sat.png",
+     "links": [
+      {
+       "ten": "Mở trên Sketchfab",
+       "href": "https://sketchfab.com/3d-models/cartoon-safe-e6cb405ef7e942459eec7307416dc528"
+      },
+      {
+       "ten": "ảnh lớn",
+       "href": "output/ep002/duyet-tai-san/o/nhap_ket-sat.png"
+      }
+     ],
+     "nguon": "Sketchfab",
+     "tacGia": "Adrian21",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 2240
+    },
+    {
+     "id": "mm-chuong",
+     "ten": "Chuông",
+     "phu": "1.156 tam giác",
+     "anh": "output/ep002/duyet-tai-san/o/nhap_chuong.png",
+     "links": [
+      {
+       "ten": "Mở trên Sketchfab",
+       "href": "https://sketchfab.com/3d-models/hand-bell-15e050f94f7c401c88d203d66493921c"
+      },
+      {
+       "ten": "ảnh lớn",
+       "href": "output/ep002/duyet-tai-san/o/nhap_chuong.png"
+      }
+     ],
+     "nguon": "Sketchfab",
+     "tacGia": "YieldingMist206",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 1156
+    },
+    {
+     "id": "mm-den-duong",
+     "ten": "Đèn đường",
+     "phu": "1.304 tam giác · ảnh màu 1024 px",
+     "anh": "output/ep002/duyet-tai-san/o/nhap_den-duong.png",
+     "links": [
+      {
+       "ten": "Mở trên Sketchfab",
+       "href": "https://sketchfab.com/3d-models/low-poly-lamp-post-c466684e819a4428b6d8ed50537615e4"
+      },
+      {
+       "ten": "ảnh lớn",
+       "href": "output/ep002/duyet-tai-san/o/nhap_den-duong.png"
+      }
+     ],
+     "nguon": "Sketchfab",
+     "tacGia": "Memorie",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 1304
+    },
+    {
+     "id": "mm-mu-linh",
+     "ten": "Mũ lính (Police Hat)",
+     "phu": "581 tam giác · hơi to",
+     "anh": "output/ep002/duyet-tai-san/o/nhap_mu-linh.png",
+     "links": [
+      {
+       "ten": "Mở trên Sketchfab",
+       "href": "https://sketchfab.com/3d-models/police-hat-c9d5ffb346d44d64b009f2d0b16e4102"
+      },
+      {
+       "ten": "ảnh lớn",
+       "href": "output/ep002/duyet-tai-san/o/nhap_mu-linh.png"
+      }
+     ],
+     "nguon": "Sketchfab",
+     "tacGia": "Dreadler",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 581
+    }
+   ]
+  },
+  {
+   "id": "anh-sang",
+   "ten": "Ánh sáng: trước / sau (12 shot)",
+   "mota": "12 shot ep002. Độ sáng trung bình 62 → 112; mặt cận cảnh trong nhà máy 17–28 → 109–118.",
+   "kieu": "cap",
+   "anh": [],
+   "nhan": [
+    "Trước",
+    "Sau (đèn nhân vật + đêm mới)"
+   ],
+   "muc": [
+    {
+     "id": "as-s017",
+     "ten": "Shot s017",
+     "phu": "giây 27,55",
+     "anhTruoc": "output/look/den-b/truoc/t0027.55_s017.png",
+     "anhSau": "output/look/den-b/sau/t0027.55_s017.png"
+    },
+    {
+     "id": "as-s031",
+     "ten": "Shot s031",
+     "phu": "giây 49,55",
+     "anhTruoc": "output/look/den-b/truoc/t0049.55_s031.png",
+     "anhSau": "output/look/den-b/sau/t0049.55_s031.png"
+    },
+    {
+     "id": "as-s034",
+     "ten": "Shot s034",
+     "phu": "giây 53,20",
+     "anhTruoc": "output/look/den-b/truoc/t0053.20_s034.png",
+     "anhSau": "output/look/den-b/sau/t0053.20_s034.png"
+    },
+    {
+     "id": "as-s040",
+     "ten": "Shot s040",
+     "phu": "giây 61,05",
+     "anhTruoc": "output/look/den-b/truoc/t0061.05_s040.png",
+     "anhSau": "output/look/den-b/sau/t0061.05_s040.png"
+    },
+    {
+     "id": "as-s048",
+     "ten": "Shot s048",
+     "phu": "giây 74,85",
+     "anhTruoc": "output/look/den-b/truoc/t0074.85_s048.png",
+     "anhSau": "output/look/den-b/sau/t0074.85_s048.png"
+    },
+    {
+     "id": "as-s056",
+     "ten": "Shot s056",
+     "phu": "giây 86,65",
+     "anhTruoc": "output/look/den-b/truoc/t0086.65_s056.png",
+     "anhSau": "output/look/den-b/sau/t0086.65_s056.png"
+    },
+    {
+     "id": "as-s062",
+     "ten": "Shot s062",
+     "phu": "giây 96,25",
+     "anhTruoc": "output/look/den-b/truoc/t0096.25_s062.png",
+     "anhSau": "output/look/den-b/sau/t0096.25_s062.png"
+    },
+    {
+     "id": "as-s066",
+     "ten": "Shot s066",
+     "phu": "giây 101,30",
+     "anhTruoc": "output/look/den-b/truoc/t0101.30_s066.png",
+     "anhSau": "output/look/den-b/sau/t0101.30_s066.png"
+    },
+    {
+     "id": "as-s078",
+     "ten": "Shot s078",
+     "phu": "giây 117,90",
+     "anhTruoc": "output/look/den-b/truoc/t0117.90_s078.png",
+     "anhSau": "output/look/den-b/sau/t0117.90_s078.png"
+    },
+    {
+     "id": "as-s083",
+     "ten": "Shot s083",
+     "phu": "giây 126,80",
+     "anhTruoc": "output/look/den-b/truoc/t0126.80_s083.png",
+     "anhSau": "output/look/den-b/sau/t0126.80_s083.png"
+    },
+    {
+     "id": "as-s093",
+     "ten": "Shot s093",
+     "phu": "giây 143,25",
+     "anhTruoc": "output/look/den-b/truoc/t0143.25_s093.png",
+     "anhSau": "output/look/den-b/sau/t0143.25_s093.png"
+    },
+    {
+     "id": "as-s098",
+     "ten": "Shot s098",
+     "phu": "giây 151,75",
+     "anhTruoc": "output/look/den-b/truoc/t0151.75_s098.png",
+     "anhSau": "output/look/den-b/sau/t0151.75_s098.png"
+    }
+   ]
+  }
+ ],
+ "lienKet": [
+  {
+   "ten": "Bản phim xem thử",
+   "href": "ep002_xem-thu.html"
+  }
+ ]
+}

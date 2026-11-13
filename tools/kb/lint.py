@@ -1,4 +1,4 @@
-"""Kiểm kich-ban.md (11 mã lỗi K00–K11).
+"""Kiểm kich-ban.md (11 mã lỗi K00–K11 + cảnh báo W01–W02, không đổi mã thoát).
 
   python tools/kb/lint.py <kich-ban.md> [--json]     in `kich-ban.md:<dòng>: <MÃ> <thông báo>`; thoát 0 = sạch, 1 = có lỗi.
 
@@ -17,6 +17,8 @@ ACTION_TYPES = {'chase', 'fall', 'hug', 'walkBy', 'follow', 'sinkTilt'}
 TOTAL_RANGE = (120, 180)
 TWIST_RANGE = (40, 85)
 MAX_SHOTS_PER_LINE = 3
+MAX_DEM = 0.5            # CẢNH BÁO W01: quá nửa số shot là đêm → phim tối, khó đọc mặt
+MAX_DIA_DIEM = 0.3       # CẢNH BÁO W02: một địa điểm chiếm quá 30% số shot → đơn điệu
 
 
 def min_dur(shot):
@@ -90,6 +92,25 @@ def lint(path):
     return errs
 
 
+def canh_bao(path):
+    """CẢNH BÁO (không phải lỗi, không đổi mã thoát): W01 > 50% shot là đêm; W02 một địa điểm > 30% số shot."""
+    d = kichban.doc(path)
+    sh = d['shots']; n = len(sh); out = []
+    if n < 5: return out
+    mac_dinh = str(d['meta'].get('time') or d['meta'].get('gio') or '').strip()
+    dem = [x for x in sh if (x.get('time') or mac_dinh) == 'dem']
+    if len(dem) / n > MAX_DEM:
+        out.append((1, 'W01', f'{len(dem)}/{n} shot ({len(dem) * 100 // n}%) là đêm (> {int(MAX_DEM * 100)}%): phim sẽ tối, xen thêm cảnh ngày/trong nhà sáng'))
+    dd = {}
+    for x in sh:
+        k = x.get('at_hd') or x.get('env_hd')
+        if k: dd.setdefault(k, []).append(x)
+    for k, v in sorted(dd.items(), key=lambda kv: -len(kv[1])):
+        if len(v) / n > MAX_DIA_DIEM:
+            out.append((v[0]['_dong'], 'W02', f'địa điểm "{k}" chiếm {len(v)}/{n} shot ({len(v) * 100 // n}%, > {int(MAX_DIA_DIEM * 100)}%): đổi cảnh/góc cho đỡ đơn điệu'))
+    return out
+
+
 def main(argv):
     if hasattr(sys.stdout, 'reconfigure'): sys.stdout.reconfigure(encoding='utf-8')
     if hasattr(sys.stderr, 'reconfigure'): sys.stderr.reconfigure(encoding='utf-8')
@@ -100,10 +121,13 @@ def main(argv):
     try: errs = lint(p)
     except OSError:
         print(f'{args[0]}: K00 không đọc được file', file=sys.stderr); return 2
+    try: ws = canh_bao(p)
+    except Exception: ws = []
     if '--json' in argv:
-        print(json.dumps([{'dong': n, 'ma': c, 'msg': m} for n, c, m in errs], ensure_ascii=False, indent=2))
+        print(json.dumps([{'dong': n, 'ma': c, 'msg': m} for n, c, m in errs + ws], ensure_ascii=False, indent=2))
     else:
         for n, c, m in errs: print(f'{p.name}:{n}: {c} {m}')
+        for n, c, m in ws: print(f'{p.name}:{n}: {c} (cảnh báo) {m}')
     return 1 if errs else 0
 
 

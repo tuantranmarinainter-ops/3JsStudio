@@ -1,0 +1,17 @@
+[package]
+name = "sky-extract"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+rbx_mesh = { version = "0.8.2", default-features = false, features = ["mesh", "mesh-v1"] }
+serde_json = "1"
+draco-core = { version = "2.3.3", default-features = false, features = ["decoder", "edgebreaker_valence_decode", "legacy_bitstream_decode", "point_cloud_decode"] }
+eframe = { version = "0.37.0", default-features = false, features = ["default_fonts", "glow"] }
+image = { version = "0.25.10", default-features = false, features = ["jpeg", "png", "webp"] }
+rbx_binary = "3.0.1"
+rbx_dom_weak = "4.2.0"
+rbx_xml = "3.0.1"
+rfd = { version = "0.18.0", default-features = false }
+serde = { version = "1.0.229", features = ["derive"] }
+ureq = { version = "2", features = ["json"] }

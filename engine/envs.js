@@ -42,7 +42,7 @@ import { ganTang, layersOf, TANG } from './envs/tang.js';
 import { CAR_ASSETS } from './townlife.js';
 import { taoHatThoiTiet } from './envs/gio-thoi-tiet.js';
 
-import { LIGHTS, applyLite } from './lights.js';
+import { LIGHTS, applyLite, denNhanVat } from './lights.js';
 export { LIGHTS };
 const SU_SONG = ['dan', 'xe', 'chim', 'song', 'co-gio'];   // tên nhóm sự sống hợp lệ của env.suSong
 export { ganTang };   // gắn tầng (front|mid|back) cho vật trong env — docs/boi-canh-tang.md
@@ -320,6 +320,7 @@ export function createEnvs(THREE, stage, K0, A = null) {
     if (ctx.seaWeather) applySeaWeather(e, ctx.seaWeather, t, ctx);
     const L = { ...LIGHTS[ctx.light || e.light], ...(ctx.lightOverride || {}) };
     applyLight(L, ctx.flash || 0);
+    denNhanVat(THREE, scene, stage.camera, ctx.thoiTiet?.denNV, globalThis.__autoFx?.denNhanVat ?? true);   // đèn nhân vật bám camera (engine/lights.js; chỉ luồng time/weather)
     { const key = ctx.light || e.light, on = (globalThis.__autoFx?.ibl ?? true);
       scene.environment = on ? ibl.get(key) : null; scene.environmentIntensity = ibl.intensity(key);
       if (on) stage.hemi.intensity *= IBL_HEMI_SCALE; }

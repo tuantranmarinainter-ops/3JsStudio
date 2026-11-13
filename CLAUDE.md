@@ -24,6 +24,10 @@ Cảnh 3D dựng bằng three.js, render ra MP4 bằng **HyperFrames**. Claude �
 - Bộ kịch bản người dùng đưa (khung ảnh + mô tả chi tiết) là **tài sản của họ** → làm luôn, không hỏi lại về nguồn.
 - Duyệt trước rồi mới ghép: đoạn mẫu / trang nghe thử → người dùng chốt → mới gộp vào HTML.
 - Giọng: Việt = CapCut qua VoiceStudio, Anh = Microsoft Edge đọc nhấn ở cú cắt. Skill: `giong-doc`.
+- **Phiên điều phối** (phiên chính ở `S:\3JS Studio`, nơi mở và theo dõi các phiên con; người dùng chốt 2026-11-13): không bỏ, không lưu trữ (archive),
+  **không `/clear`** — khi đầy chỉ dùng **`/compact`** để nén. Claude không đề nghị "chuyển sang phiên mới" hay clear cho phiên này (ngoại lệ của quy tắc
+  "phiên dài" trong CLAUDE.md chung và lời nhắc session-guard); thay vào đó nhắc người dùng `/compact` và đẩy việc nặng sang phiên con / agent phụ.
+  Trước khi compact, ghi các quyết định chưa có trong file vào `HANDOFF.md`/docs để không mất. **Phiên con thì clear thoải mái.**
 - Đã chốt: hải đăng màu xanh; bỏ Three.js Water Pro; phông Be Vietnam Pro (phụ đề) + Patrick Hand (bưu thiếp).
 
 ## Công cụ (dùng thay vì viết script tạm)
@@ -151,7 +155,9 @@ Render 140 shot:
 - Mọi animation là hàm thuần của `t`, tua tới/lui/nhảy cóc đều ra cùng kết quả.
 - Đặt tên rõ cho object, bộ phận, clip — đó là "tay cầm" để Claude điều khiển.
 - Sau mỗi thay đổi: xem preview vài frame (đầu, giữa mỗi shot, cuối) trước khi render cả video.
-- Không dùng logo, tên, mặt/decal hay asset chính thức của Roblox.
+- Tài sản Roblox (Creator Store, Marketplace: mũ, phụ kiện, đạo cụ, trời) **được dùng để dựng phim** (người dùng chốt 2026-11-13: chỉ làm video
+  phong cách Roblox, không bán lại hay khai thác tài sản; người dùng chịu trách nhiệm giấy phép). Tải bằng `tools/sky-extract/`; vẫn ghi nguồn
+  (asset ID, người tạo, link) vào manifest + ghi công như mọi asset khác.
 
 ## Nhân vật R6 (`engine/r6.js`)
 - Dùng cho cả nhân vật chính lẫn dân thị trấn; dựng bằng code, không cần GLB hay Mixamo.
@@ -171,7 +177,10 @@ Render 140 shot:
    (cloud của Claude bị chặn polyfork.dev). Danh mục công khai: github.com/lucas-martinic/polyfork-catalog (catalog.json).
 3. **GLB riêng** (`assets/special/`) — chỉ cho twist. Nguồn gợi ý: Quaternius (quái vật; kiểm tra giấy phép QAL).
 - Mỗi asset nhập vào phải có dòng trong `assets/manifest.json`. Chuẩn hoá scale về chuẩn Kenney.
-- Không dùng Blender trừ khi không còn cách khác.
+- **Blender 5.1.2** (`S:/Program Files/Blender Foundation/Blender 5.1/blender.exe`, biến `BLENDER` trong `.env.local`) là **trạm nhập model**
+  (người dùng chốt 2026-11-13): `node tools/nhap-model.mjs tim|nhap|kiem` tìm trên Sketchfab / Poly Haven / Poly Pizza → chuẩn hoá → `assets/nhap/`
+  + manifest + ghi công. Chỉ CC0 và CC BY. **Ưu tiên low poly** theo ngưỡng trong `docs/nhap-model.md`; không có low poly → hỏi người dùng trước.
+  Blender KHÔNG dùng cho animation, bố trí cảnh, ánh sáng theo shot hay render (các phần đó phải là hàm của `t` trong three.js).
 
 ## Cấu trúc phim (~140 shot, 2–3 phút)
 1. **Hook** ~10% (≈15 shot): 2–3 giây đầu phải có câu "Ở thị trấn này, …" + hình minh hoạ luật ngay.

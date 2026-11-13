@@ -1,0 +1,9 @@
+# Model nhập từ mạng (assets/nhap/) — ghi công
+CC BY: BẮT BUỘC ghi đủ tên model, tác giả, nguồn, giấy phép khi đăng video. Dán vào mô tả video / màn hình cuối.
+
+- [nhap/bang-chuyen] "Conveyor Belt" (https://sketchfab.com/3d-models/conveyor-belt-55f0d0f9b3384ea4b49cfc8aef97dcf9) by Cianon (https://sketchfab.com/Cianon), licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/). Đã chuẩn hoá bằng Blender (gộp mesh, giảm tam giác, nén ảnh).
+- [nhap/chuong] "Hand Bell" (https://sketchfab.com/3d-models/hand-bell-15e050f94f7c401c88d203d66493921c) by YieldingMist206 (https://sketchfab.com/YieldingMist206), licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/). Đã chuẩn hoá bằng Blender (gộp mesh, giảm tam giác, nén ảnh).
+- [nhap/den-duong] "Low-Poly Lamp Post" (https://sketchfab.com/3d-models/low-poly-lamp-post-c466684e819a4428b6d8ed50537615e4) by Memorie (https://sketchfab.com/Memorie), licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/). Đã chuẩn hoá bằng Blender (gộp mesh, giảm tam giác, nén ảnh).
+- [nhap/ket-sat] "Cartoon Safe" (https://sketchfab.com/3d-models/cartoon-safe-e6cb405ef7e942459eec7307416dc528) by Adrian21 (https://sketchfab.com/Adrian21), licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/). Đã chuẩn hoá bằng Blender (gộp mesh, giảm tam giác, nén ảnh).
+- [nhap/may-khau] "Sewing Machine" (https://sketchfab.com/3d-models/sewing-machine-58de43d2ae934e12a116ae6af412ab50) by Karatecake69 (https://sketchfab.com/Karatecake69), licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/). Đã chuẩn hoá bằng Blender (gộp mesh, giảm tam giác, nén ảnh).
+- [nhap/mu-linh] "Police Hat" (https://sketchfab.com/3d-models/police-hat-c9d5ffb346d44d64b009f2d0b16e4102) by Dreadler (https://sketchfab.com/Dreadler), licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/). Đã chuẩn hoá bằng Blender (gộp mesh, nén ảnh).
