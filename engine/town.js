@@ -80,7 +80,7 @@ export const TOWN_ASSETS = [
 export function buildTown(THREE, A, opts = {}) {
   const { seed = 1, blocks = 3, block = 5, tile = 16, houseSize = 28, name = 'town', ground = '#6fae55' } = opts;
   const Q = typeof location !== 'undefined' ? new URLSearchParams(location.search) : new URLSearchParams();
-  const kieu = opts.kieu || Q.get('nha') || null;            // TẮT mặc định: không khai → nhà giữ màu Kenney gốc
+  const kieu = Q.get('nha') || opts.kieu || null;            // TẮT mặc định: không khai → nhà giữ màu Kenney gốc
   const R = rng(seed * 7919 + 13);
   const pick = (arr) => arr[Math.floor(R() * arr.length)];
   const g = new THREE.Group(); g.name = name;

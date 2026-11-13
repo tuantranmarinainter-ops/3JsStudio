@@ -31,3 +31,13 @@ test('nhà có vai khai tay được giữ nguyên (sau lệch sáng ±5%)', () 
   assert.equal(m[5].tuongGoc, '#336699'); assert.equal(m[5].maiGoc, '#cc3333');
 });
 test('bam: [0,1) và tất định', () => { for (let i = 0; i < 200; i++) { const v = bam(5, i); assert.ok(v >= 0 && v < 1); assert.equal(v, bam(5, i)); } });
+
+test('11 bảng, mỗi bảng đủ vai màu, màu nhấn không nằm trong bảng tường, mỗi tường có ≥ 1 mái hợp lệ', () => {
+  assert.equal(KIEU.length, 11);
+  for (const k of ['keo-ngot', 'dia-trung-hai', 'rung-thu', 'sa-mac', 'dem-neon', 'nhat-ban']) assert.ok(KIEU.includes(k), k);
+  for (const [k, st] of Object.entries(STYLES)) {
+    for (const f of ['tuong', 'mai', 'vien', 'cua', 'nhan']) assert.ok(st[f].length >= 3, `${k}.${f}`);
+    for (const n of st.nhan) assert.ok(!st.tuong.some(([c]) => c === n.tuong), `${k}: nhấn trùng tường ${n.tuong}`);
+    for (const [t] of st.tuong) assert.ok(st.mai.some(([m]) => capHopLe(st, t, m)), `${k}: tường ${t} không có mái hợp lệ`);
+  }
+});

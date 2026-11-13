@@ -4,7 +4,8 @@ Mỗi nhà Kenney một màu có chủ đích, tất định theo seed. **TẮT 
 
 ## Bật
 - `EPISODE.town = { blocks: 3, kieu: 'pastel' }` hoặc thử nhanh `?nha=pastel` (không cần sửa episode.js).
-- Bảng: `pastel` (tươi vui) · `ven-bien` (trắng–xanh–cam đất) · `lang-go` (gỗ ấm) · `pho-cu` (gạch đỏ–xám) · `tuyet` (lạnh nhạt).
+- Bảng: `pastel` (tươi vui) · `ven-bien` (trắng–xanh–cam đất) · `lang-go` (gỗ ấm) · `pho-cu` (gạch đỏ–xám) · `tuyet` (lạnh nhạt) · `keo-ngot` (kẹo sặc sỡ) · `dia-trung-hai` (trắng + cô-ban + cam đất) · `rung-thu` (cam, đỏ gạch, mù tạt, nâu) · `sa-mac` (cát, đất nung, xanh ngọc) · `dem-neon` (tường tối, viền/cửa neon — cảnh đêm) · `nhat-ban` (gỗ sẫm, kem, đỏ son, rêu).
+  `?nha=<bảng>` luôn thắng `EPISODE.town.kieu` (để so bảng mà không sửa episode.js). Ảnh so 11 bảng: `output/look/bang-nha/luoi.jpg`.
 - Nhà có vai (tiệm, thị trưởng…): `vai: ['bakery','tailor','mayor','bearshop']` (hoặc `?vai=bakery,tailor`). Mặc định chỉ `home`, `shop`.
   Mỗi vai lấy 1 nhà: `home`/`shop` = nhà đó của town.js; vai khác = nhà gần `places.street` nhất chưa có vai;
   ép nhà bằng `nhaViTri: { bakery: 'house7' }`. Vai chưa khai màu → màu NHẤN riêng của bảng (không nằm trong bảng tường thường → nổi hẳn hàng xóm).
