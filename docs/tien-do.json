@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 20:00",
+ "capNhat": "2026-11-13 20:10",
  "nhom": [
   {
    "ten": "Tập 3",
@@ -449,7 +449,6 @@
   }
  ],
  "canBan": [
-  "Cung cấp thông tin tập 3 trong phiên \"Tập 3\" (kịch bản / câu luật, giọng mẫu nếu có)",
   "R6: Gà có thêm thân hình R6, hay chỉ dân làng đổi sang R6?",
   "Khi rảnh: kiểm 20 góp ý tập 2 trên bản xem thử (thẻ Làm dở), duyệt 11 bảng màu nhà (Đợt 6), nghe lại âm nền",
   "Điền khoá vào S:\u0003JS Studio\\.env.local rồi chạy: node tools/kiem-khoa.mjs"
