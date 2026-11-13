@@ -31,7 +31,6 @@ Làm repo nhẹ hơn, công cụ chạy nhanh hơn, ít token hơn — theo 8 đ
    lệch tới 0,13%), nén, so `--ref`, rồi so riêng từng model bằng `tools/xem-model.html`. Chậu cây còn 4,0 MB lưới (114 nghìn đỉnh): muốn giảm
    nữa phải dùng meshopt (đưa `meshopt_decoder.module.js` vào `vendor/three/addons/libs/` + `loader.setMeshoptDecoder` trong `engine/assets.js`,
    `engine/r15.js`, `engine/ga-rig.js`) hoặc giảm lưới (đổi hình → cần người dùng duyệt).
-   CHƯA commit: phần móc nén trong `tools/nhap-model.mjs` (file đang có thay đổi dở của phiên khác) — phiên đó commit kèm.
 2. **Mục 6b — gộp không cần mở trang**: `tools/bundle.mjs` lưu danh sách file đã ghi (kèm mtime của shots.js/episode.js/manifest) để lần sau bỏ
    bước mở trình duyệt. Với `PROFILE=1` bước này đã ngắn hẳn — đo lại trước khi quyết có đáng làm không.
 3. **Mục 4b — giảm số shader ở gốc** (`docs/shaders.md`): ep002 có 105 program, 73 cái không có khoá dùng chung; 1 shader bóng mất 9 s;
