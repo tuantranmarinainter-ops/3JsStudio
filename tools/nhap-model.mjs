@@ -224,7 +224,8 @@ export function ghiManifest(entry, file = MANIFEST) {
 export function dongGhiCong(info, ten) {
   const gp = info.gp;
   const tg = info.tacGiaUrl ? `${info.tacGia} (${info.tacGiaUrl})` : info.tacGia;
-  return `- [nhap/${ten}] "${info.ten}" (${info.url}) by ${tg}, licensed under ${gp.ten} (${gp.url})${gp.cc0 ? ' — CC0, không bắt buộc ghi công' : ''}. Đã chuẩn hoá bằng Blender (gộp mesh, nén ảnh).`;
+  const them = (info.them || []).map((g) => ` Ghép thêm: "${g.ten}" (${g.url}) by ${g.tacGiaUrl ? `${g.tacGia} (${g.tacGiaUrl})` : g.tacGia}, licensed under ${g.gp.ten} (${g.gp.url}).`).join('');
+  return `- [nhap/${ten}] "${info.ten}" (${info.url}) by ${tg}, licensed under ${gp.ten} (${gp.url})${gp.cc0 ? ' — CC0, không bắt buộc ghi công' : ''}. Đã chuẩn hoá bằng Blender (gộp mesh, nén ảnh).${them}`;
 }
 export function ghiCredits(info, ten, file = CREDITS) {
   let lines = fs.existsSync(file) ? fs.readFileSync(file, 'utf8').split(/\r?\n/) : [
@@ -296,6 +297,8 @@ function chayBlender(vao, ra, a, ten) {
   if (a.sang) ps.push('--sang', String(a.sang));
   if (a.xam) ps.push('--xam', String(a.xam));
   if (a['mau-dinh']) ps.push('--mau-dinh');
+  for (const k of ['mau', 'bo']) if (typeof a[k] === 'string') ps.push('--' + k, a[k]);
+  for (const g of [].concat(a.ghep || [])) ps.push('--ghep', g);
   const r = spawnSync(exe, ps, { encoding: 'utf8', maxBuffer: 1 << 26, timeout: 300000 });
   const out = (r.stdout || '') + (r.stderr || '');
   const m = out.match(/^NHAP_JSON (.*)$/m);
@@ -314,10 +317,18 @@ async function cmdNhap(a) {
   if (!/^[a-z0-9][a-z0-9_-]*$/.test(ten)) loi('--ten bắt buộc, chỉ a-z 0-9 _ - (vd bang-chuyen)');
   if (!nguonOK.includes(nguon)) loi('nguồn lạ: ' + nguon);
   if (!/^[A-Za-z0-9_.-]+$/.test(id)) loi('id lạ');
-  let info;
-  if (nguon === 'sketchfab') info = await layDuLieuSketchfab(id);
-  else if (nguon === 'polyhaven') info = phThongTin(id, await http(`${PH}/info/${encodeURIComponent(id)}`));
-  else info = ENV.POLY_PIZZA_API_KEY ? ppThongTin(await http(`${PP}/model/${encodeURIComponent(id)}`, { headers: ppHead() })) : await ppTuTrang(id);
+  const layInfo = async (ng, i) => (ng === 'sketchfab' ? layDuLieuSketchfab(i)
+    : ng === 'polyhaven' ? phThongTin(i, await http(`${PH}/info/${encodeURIComponent(i)}`))
+      : ENV.POLY_PIZZA_API_KEY ? ppThongTin(await http(`${PP}/model/${encodeURIComponent(i)}`, { headers: ppHead() })) : await ppTuTrang(i));
+  const info = await layInfo(nguon, id);
+  // --ghep-nguon <nguon>:<id>: vật ghép vào (--ghep) cũng phải CC0/CC BY, được ghi công chung trong manifest + CREDITS
+  if (a['ghep-nguon']) {
+    for (const gn of String(a['ghep-nguon']).split(',')) {
+      const gk = gn.indexOf(':'); const gi = await layInfo(gn.slice(0, gk), gn.slice(gk + 1));
+      if (!gi.gp || gi.ai) loi(`vật ghép ${gn}: giấy phép "${gi.gpRaw}" / AI không hợp lệ — từ chối`);
+      (info.them = info.them || []).push(gi);
+    }
+  }
   if (!info.gp) loi(`giấy phép "${info.gpRaw}" không phải CC0/CC BY — từ chối`);
   if (info.ai) loi('model gắn nhãn AI-generated — từ chối');
   const ng = NGUONG.loai[loai];
@@ -333,9 +344,11 @@ async function cmdNhap(a) {
   const nang = phanLoai(r.tam_giac_truoc, loai) === 'vuot';
   if (nang && lyDo === null) tuChoi(r.tam_giac_truoc);
   fs.copyFileSync(raTam, ra);
+  // nén bằng glTF-Transform (bỏ trùng, lượng tử hoá lưới, ảnh vân WebP ≤ 1k) — tắt bằng --khong-nen
+  if (!a['khong-nen']) { const { nenModel } = await import('./nen-model.mjs'); const n = await nenModel(ra, { luuGoc: false }); if (!n.boQua) r.bytes = n.sau; }
   ghiManifest({
     id: `nhap/${ten}`, src: `assets/nhap/${ten}.glb`, source: info.url.replace(/^https?:\/\//, ''), license: info.gp.ma,
-    credit: `“${info.ten}” by ${info.tacGia} (${info.url}), ${info.gp.ma}`, title: info.ten, author: info.tacGia,
+    credit: `“${info.ten}” by ${info.tacGia} (${info.url}), ${info.gp.ma}` + (info.them || []).map((g) => `; “${g.ten}” by ${g.tacGia} (${g.url}), ${g.gp.ma}`).join(''), title: info.ten, author: info.tacGia,
     scale: 1, bbox: r.bbox_stud, nodes: [ten], loai, tris: r.tam_giac_sau, tris_goc: r.tam_giac_truoc,
     ...(nang ? { duyetNang: lyDo } : {}),
   });
@@ -343,7 +356,30 @@ async function cmdNhap(a) {
   console.log(JSON.stringify({ model: `nhap/${ten}`, loai, ...(nang ? { duyetNang: lyDo } : {}), nguon: `${nguon}:${id}`, tacGia: info.tacGia, giayPhep: info.gp.ma, ...r, kb: Math.round(r.bytes / 1024) }));
 }
 
-// Đọc phần JSON của GLB + cỡ ảnh nhúng (PNG/JPEG) để soi tiêu chí phong cách.
+// `tai`: chỉ tải bản gốc (giữ nguyên xương + animation) vào .cache/nhap-model/<nguon>-<id>/, in thông tin + đường dẫn. Dùng cho nhap_rig.py.
+async function cmdTai(a) {
+  const spec = a._[0] || ''; const k = spec.indexOf(':');
+  if (k < 1) loi('dạng đúng: tai <nguon>:<id>');
+  const nguon = spec.slice(0, k), id = spec.slice(k + 1);
+  if (nguon !== 'sketchfab') loi('tai: hiện chỉ hỗ trợ sketchfab');
+  const info = await layDuLieuSketchfab(id);
+  if (!info.gp) loi(`giấy phép "${info.gpRaw}" không phải CC0/CC BY — từ chối`);
+  if (info.ai) loi('model gắn nhãn AI-generated — từ chối');
+  const dir = path.join(CACHE, `${nguon}-${id}`); fs.mkdirSync(dir, { recursive: true });
+  const f = await taiSketchfab(id, dir);
+  fs.writeFileSync(path.join(dir, 'meta.json'), JSON.stringify({ ...info, gp: info.gp.ma }, null, 1));
+  console.log(JSON.stringify({ file: f, ten: info.ten, tacGia: info.tacGia, url: info.url, giayPhep: info.gp.ma, tamGiac: info.tamGiac }));
+}
+
+// Cạnh dài của ảnh WebP (VP8X / VP8L / VP8).
+function coWebp(d) {
+  const k = d.toString('latin1', 12, 16);
+  if (k === 'VP8X') return Math.max(1 + d.readUIntLE(24, 3), 1 + d.readUIntLE(27, 3));
+  if (k === 'VP8L') { const v = d.readUInt32LE(21); return Math.max(1 + (v & 0x3fff), 1 + ((v >> 14) & 0x3fff)); }
+  if (k === 'VP8 ') return Math.max(d.readUInt16LE(26) & 0x3fff, d.readUInt16LE(28) & 0x3fff);
+  return 0;
+}
+// Đọc phần JSON của GLB + cỡ ảnh nhúng (PNG/JPEG/WebP) để soi tiêu chí phong cách.
 export function docGlb(file) {
   const b = fs.readFileSync(file);
   if (b.length < 20 || b.readUInt32LE(0) !== 0x46546c67) return null;
@@ -354,6 +390,7 @@ export function docGlb(file) {
     if (!bin || im.bufferView === undefined) return 0;
     const v = j.bufferViews[im.bufferView]; const d = bin.slice(v.byteOffset || 0, (v.byteOffset || 0) + v.byteLength);
     if (d.readUInt32BE(0) === 0x89504e47) return Math.max(d.readUInt32BE(16), d.readUInt32BE(20));
+    if (d.length > 30 && d.toString('latin1', 0, 4) === 'RIFF' && d.toString('latin1', 8, 12) === 'WEBP') return coWebp(d);
     let p = 2;
     while (p + 9 < d.length) {
       if (d[p] !== 0xff) { p++; continue; }
@@ -411,6 +448,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] || '').href) {
     if (cmd === 'tim') await cmdTim(a);
     else if (cmd === 'nhap') await cmdNhap(a);
     else if (cmd === 'kiem') cmdKiem();
-    else console.log('Dùng: tim <từ khoá> [--loai L] [--ca-nang] [--nguon …] [--toi-da N] | nhap <nguon>:<id> --ten <ten> [--loai L] [--cho-phep-nang "lý do"] [--cao stud] [--tam-giac-toi-da N] [--ao] [--mau-dinh] [--sang 0..1] [--xam 0..1] [--xoay độ] | kiem');
+    else if (cmd === 'tai') await cmdTai(a);
+    else console.log('Dùng: tim <từ khoá> [--loai L] [--ca-nang] [--nguon …] [--toi-da N] | nhap <nguon>:<id> --ten <ten> [--loai L] [--cho-phep-nang "lý do"] [--cao stud] [--tam-giac-toi-da N] [--ao] [--mau-dinh] [--sang 0..1] [--xam 0..1] [--xoay độ] [--khong-nen] | tai <nguon>:<id> (chỉ tải glTF gốc vào .cache, giữ xương/animation, in info) | kiem');
   } catch (e) { loi(e.message); }
 }

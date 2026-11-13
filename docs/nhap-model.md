@@ -7,6 +7,7 @@ Khoá đọc từ `.env.local` (đã gitignore): `SKETCHFAB_API_TOKEN`, `POLY_PI
 ```
 node tools/nhap-model.mjs tim "sewing machine" --loai vua [--ca-nang] [--nguon sketchfab|polyhaven|polypizza] [--toi-da 10]
 node tools/nhap-model.mjs nhap sketchfab:<uid> --ten may-khau --loai vua --cao 1.6 [--cho-phep-nang "<lý do>"] [--tam-giac-toi-da N] [--ao] [--mau-dinh] [--sang 0.4] [--xam 1] [--xoay 90] [--tex 512]
+node tools/nhap-model.mjs tai sketchfab:<uid>     # chỉ tải glTF gốc (giữ xương/animation) vào .cache/nhap-model/, in đường dẫn — dùng với tools/blender/nhap_rig.py
 node tools/nhap-model.mjs kiem          # thiếu manifest/ghi công/giấy phép/loai, vượt ngưỡng không duyệt → mã thoát 1; phong cách vượt → chỉ cảnh báo
 node output/nhap-model/chup.mjs [ten1,ten2…] [ra.png]   # lưới ảnh kiểm chiều/cỡ/màu (nhân vật cam cao 5.2 stud để so)
 ```
@@ -40,6 +41,16 @@ Phong cách sau chuẩn hoá (chỉ cảnh báo trong `kiem`): ≤ 6 vật liệ
 3. Xuất `assets/nhap/<ten>.glb`, thêm dòng `nhap/<ten>` vào `assets/manifest.json` (chỉ thêm; chạy lại cùng tên thì thay đúng dòng đó),
    ghi `assets/nhap/CREDITS.md` (tên, tác giả, URL, giấy phép). Nhớ dán CREDITS vào mô tả video khi dùng model CC BY.
 
+## Tô màu theo mesh, bỏ mesh, ghép vật (`nhap`)
+- `--mau "obj:<glob tên mesh>=#hex,mat:<tên|chỉ số vật liệu>=#hex"`: đổi sang màu PHẲNG (vd model voxel dùng 1 ảnh bảng màu → phải tô theo mesh: `obj:Object_5=#e0b030`). Tên mesh xem bằng Blender (`bpy.data.objects`) hoặc dòng `[chuan_hoa] mau …`.
+- `--bo "Object_31,Object_33"`: bỏ mesh theo tên (glob) TRƯỚC khi gộp — vd bỏ cái nhẫn trong hộp nhẫn.
+- `--ghep "duong.glb;kich;x,y,z;rx"` (+ `--ghep-nguon sketchfab:<uid>` để ghi công cả vật ghép): ghép một GLB đã chuẩn hoá vào model; `kich` = cạnh dài nhất (stud), `x,y,z` kiểu three (gốc = tâm đáy model chính) là tâm đáy vật ghép, `rx` xoay quanh X (độ) trước khi đặt. Ví dụ hộp nhẫn sang:
+  `nhap sketchfab:4a80eed40ae84093bec69dbf6654c209 --ten hop-nhan-co-nhan --loai nho --cao 0.7 --bo "Object_31,Object_33,Object_35,Object_37" --mau "obj:Object_5=#e0b030,…,obj:Object_29=#172a5c" --ghep-nguon sketchfab:b2a6277f29d94226bbb2f38eb27ca9b9 --ghep "assets/nhap/nhan-dep.glb;0.2;0,0.16,0.05;-90"`.
+  (`hop-nhan` = gốc, `hop-nhan-sang` = hộp rỗng, `hop-nhan-co-nhan` = có nhẫn Decorated Ring dựng đứng.)
+
+## Model CÓ XƯƠNG: `tools/blender/nhap_rig.py`
+`nhap` vẫn bỏ xương. Với nhân vật có rig dùng `tai` rồi `nhap_rig.py` (xem `assets/characters/bap/README.md`): giữ armature + skin + animation, xoá shape key, nướng rest pose theo `idly@0`, scale đúng cả xương lẫn key, `--bo` bỏ mũ/khăn, `--long` đổi màu lông, `--no` gắn nơ cổ. Chế độ `--chi-xem` in JSON xương/action/tam giác.
+
 ## Poly Pizza không cần khoá
 `POLY_PIZZA_API_KEY` rỗng → `nhap polypizza:<id>` đọc trang công khai `poly.pizza/m/<id>` (JSON `__SERVER_APP_STATE__`: tên, tác giả, giấy phép, tam giác, `ResourceID`) và tải `static.poly.pizza/<ResourceID>.glb`. Vẫn lọc CC0/CC BY. `tim polypizza` vẫn cần khoá.
 
@@ -52,5 +63,5 @@ Phong cách sau chuẩn hoá (chỉ cảnh báo trong `kiem`): ≤ 6 vật liệ
 ## Giới hạn
 - Hướng "mặt trước" không tự nhận được: xem lưới ảnh, sai thì nhập lại với `--xoay`.
 - Model nhiều phần rời / có đế trưng bày / nhiều bản trong một file sẽ bị gộp nguyên: chọn model khác hoặc thêm bước cắt tay.
-- Bỏ xương/animation (chỉ tĩnh). Vật liệu trong suốt giữ alpha nhưng chưa kiểm kỹ.
+- `nhap` bỏ xương/animation (chỉ tĩnh); model có rig dùng `nhap_rig.py`. Vật liệu trong suốt giữ alpha nhưng chưa kiểm kỹ.
 - Hạn mức Sketchfab Download API có giới hạn; lỗi in nguyên văn (đã che khoá).

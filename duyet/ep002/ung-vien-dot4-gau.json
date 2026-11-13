@@ -1,0 +1,163 @@
+{
+ "nhomId": "gau-bap",
+ "ten": "Gấu Bắp — theo mô tả kịch bản mới",
+ "mota": "Kịch bản: \"gấu bông stylized Roblox, đầu hơi to, thân bo nhẹ; rig riêng đầu, hai tay, hai chân đủ để ngồi, trèo, ôm két; nơ xanh; 3 biến thể màu\". Chọn lại có chủ ý (không tính là trùng Đợt 3). Mỗi thẻ ghi: đầu to / thân bo / tay chân tách hay có xương / nơ.",
+ "khe": [
+  {
+   "id": "gau_bap_kich_ban_moi",
+   "chuDe": "gau-bap-kich-ban-moi",
+   "ten": "Gấu Bắp (và hai gấu trộm, dãy gấu xưởng — nhân bản đổi màu)",
+   "phu": "chủ đạo ≤6000 tam giác · 3 biến thể màu · Bắp ngồi, trèo, ôm két",
+   "ungVien": [
+    {
+     "id": "gau6",
+     "ten": "Sugar Teddy Bear",
+     "anh": "output/ep002/duyet-tai-san/gau/8fbc11e8876d4ac7b22190c07e96726b.jpg",
+     "link": "https://sketchfab.com/3d-models/8fbc11e8876d4ac7b22190c07e96726b",
+     "nguon": "sketchfab",
+     "uid": "8fbc11e8876d4ac7b22190c07e96726b",
+     "tacGia": "Suvalien",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 3872,
+     "phu": "KHUYÊN · đầu to: CÓ · thân bo: CÓ · tay chân: CÓ XƯƠNG sẵn (+10 animation) · nơ: KHÔNG (gắn thêm) · màu hồng tím, đổi 3 biến thể được (Đợt 1: xếp nhì)"
+    },
+    {
+     "id": "gau1",
+     "ten": "Cubed Bear",
+     "anh": "output/ep002/duyet-tai-san/gau/26647ba33a564a7da57a6b166152f4bc.jpg",
+     "link": "https://sketchfab.com/3d-models/26647ba33a564a7da57a6b166152f4bc",
+     "nguon": "sketchfab",
+     "uid": "26647ba33a564a7da57a6b166152f4bc",
+     "tacGia": "CubedBear",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 296,
+     "phu": "đầu to: tương đối · thân bo: KHÔNG (khối vuông) · tay chân: TÁCH RỜI từng khối, không xương (gắn pivot dễ) · nơ: KHÔNG · rất nhẹ, hợp phong cách khối (Đợt 1: xếp đầu)"
+    },
+    {
+     "id": "gau-rb1",
+     "ten": "Giant Teddy Bear (Roblox) — BẠN ĐÃ CHỌN Ở ĐỢT 3",
+     "anh": "output/ep002/ung-vien-roblox/rb-gau-bong__1.png",
+     "link": "https://create.roblox.com/store/asset/12549476788",
+     "nguon": "Roblox Creator Store",
+     "tacGia": "Astrra",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "tamGiac": 2344,
+     "phu": "bạn đã chọn ở Đợt 3 · đầu to: vừa · thân bo: CÓ · dáng ngồi một tư thế, chưa rõ có tách tay chân/xương hay là một khối liền · nơ: KHÔNG"
+    },
+    {
+     "id": "gau-moi1",
+     "ten": "Teddy",
+     "anh": "output/ep002/ung-vien-dot4/gau_moi__1.jpg",
+     "link": "https://sketchfab.com/3d-models/8bca03af2c114cd28a16f49277eb88f0",
+     "nguon": "sketchfab",
+     "uid": "8bca03af2c114cd28a16f49277eb88f0",
+     "tacGia": "rudolfs",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 936,
+     "phu": "đầu to: CÓ · thân bo: CÓ · tay chân: dang chữ T, chưa kiểm có tách/xương · nơ: hình như có ở cổ (nhìn ảnh, chưa xác minh)"
+    },
+    {
+     "id": "gau-moi2",
+     "ten": "Cute Bear",
+     "anh": "output/ep002/ung-vien-dot4/gau_moi__2.jpg",
+     "link": "https://sketchfab.com/3d-models/aa95e34bb635444581932be54d6c453a",
+     "nguon": "sketchfab",
+     "uid": "aa95e34bb635444581932be54d6c453a",
+     "tacGia": "Ching",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 2080,
+     "phu": "đầu to: vừa · thân bo: CÓ · CÓ XƯƠNG (1 animation) · nơ: KHÔNG"
+    },
+    {
+     "id": "gau-moi3",
+     "ten": "Low-Poly Bear Plushie",
+     "anh": "output/ep002/ung-vien-dot4/gau_moi__3.jpg",
+     "link": "https://sketchfab.com/3d-models/3c24fa7d1a424fe9aed83991dc2a40a0",
+     "nguon": "sketchfab",
+     "uid": "3c24fa7d1a424fe9aed83991dc2a40a0",
+     "tacGia": "mimoryhead",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 800,
+     "phu": "đầu to: CÓ · thân bo: CÓ · dáng ngồi, chưa rõ tách tay chân/xương · nơ: KHÔNG · rất nhẹ"
+    },
+    {
+     "id": "gau-moi4",
+     "ten": "Bernard Bear (Rigged)",
+     "anh": "output/ep002/ung-vien-dot4/gau_moi__4.jpg",
+     "link": "https://sketchfab.com/3d-models/93e9a14124e4454293387343cffed99e",
+     "nguon": "sketchfab",
+     "uid": "93e9a14124e4454293387343cffed99e",
+     "tacGia": "Poyo20",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 1826,
+     "phu": "đầu to: CÓ · thân bo: CÓ · tên ghi \"Rigged\" (chưa kiểm xương) · nơ: KHÔNG · dáng cao như nhân vật hoạt hình, không phải gấu bông"
+    },
+    {
+     "id": "gau8",
+     "ten": "Mister Bear",
+     "anh": "output/ep002/duyet-tai-san/gau/47e7ee6daff54b018dcd55caaec755f0.jpg",
+     "link": "https://sketchfab.com/3d-models/47e7ee6daff54b018dcd55caaec755f0",
+     "nguon": "sketchfab",
+     "uid": "47e7ee6daff54b018dcd55caaec755f0",
+     "tacGia": "cheb_max",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 4672,
+     "phu": "đầu to: vừa · thân bo: CÓ · CÓ XƯƠNG (+6 animation) · mũ và khăn (tháo được) · nơ: KHÔNG"
+    },
+    {
+     "id": "gau7",
+     "ten": "Lil' Bear",
+     "anh": "output/ep002/duyet-tai-san/gau/55ee397cf40c4f86af1ee31fb2096d82.jpg",
+     "link": "https://sketchfab.com/3d-models/55ee397cf40c4f86af1ee31fb2096d82",
+     "nguon": "sketchfab",
+     "uid": "55ee397cf40c4f86af1ee31fb2096d82",
+     "tacGia": "Cherryvania",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 3928,
+     "phu": "đầu to: vừa · CÓ XƯƠNG · mặc áo mưa (khó đổi màu) · nơ: KHÔNG"
+    },
+    {
+     "id": "gau3",
+     "ten": "Low-Poly Toy Pack (Teddy Bear)",
+     "anh": "output/ep002/duyet-tai-san/gau/af885d4dd3514cc09ad6bdd446d2888c.jpg",
+     "link": "https://sketchfab.com/3d-models/af885d4dd3514cc09ad6bdd446d2888c",
+     "nguon": "sketchfab",
+     "uid": "af885d4dd3514cc09ad6bdd446d2888c",
+     "tacGia": "Renend Studio",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 2332,
+     "phu": "đầu vừa · thân bo: CÓ · ngồi một dáng, không xương · nơ: KHÔNG"
+    },
+    {
+     "id": "gau4",
+     "ten": "Basic Teddy Bear (Low-Poly)",
+     "anh": "output/ep002/duyet-tai-san/gau/d17dc46e40e547b5808384b22deaf696.jpg",
+     "link": "https://sketchfab.com/3d-models/d17dc46e40e547b5808384b22deaf696",
+     "nguon": "sketchfab",
+     "uid": "d17dc46e40e547b5808384b22deaf696",
+     "tacGia": "Karl Hõbelaid",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 3388,
+     "phu": "đầu vừa · thân bo: CÓ · ngồi một dáng, không xương · nơ: KHÔNG"
+    },
+    {
+     "id": "gau2",
+     "ten": "Teddy Bear_ Low Poly",
+     "anh": "output/ep002/duyet-tai-san/gau/bbbbc762ea4844519380c113cb1a61ed.jpg",
+     "link": "https://sketchfab.com/3d-models/bbbbc762ea4844519380c113cb1a61ed",
+     "nguon": "sketchfab",
+     "uid": "bbbbc762ea4844519380c113cb1a61ed",
+     "tacGia": "FZNinetyNine",
+     "giayPhep": "CC BY 4.0",
+     "tamGiac": 1892,
+     "phu": "vải sờn, tối · ngồi một dáng, không xương · nơ: KHÔNG — kém hợp phong cách"
+    },
+    {
+     "id": "gau-code",
+     "ten": "Dựng gấu khối riêng bằng code/Blender theo đúng mô tả",
+     "phu": "không tải model · đầu to + thân bo nhẹ + 5 khớp (đầu, 2 tay, 2 chân) đủ ngồi/trèo/ôm két · nơ xanh · 3 biến thể màu thân/nơ bằng đổi màu · tai gắn theo đầu · đúng 100% mô tả kịch bản, không vướng giấy phép"
+    }
+   ]
+  }
+ ]
+}

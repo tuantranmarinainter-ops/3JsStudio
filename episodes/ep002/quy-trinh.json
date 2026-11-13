@@ -1,9 +1,13 @@
 {
  "goi": {
-  "vongMax": 0,
+  "vongMax": 2,
   "chapNhanNhap": true
  },
  "ghiCong": {
   "choPhepTroi": true
+ },
+ "L11": {
+  "closeup": 0.5,
+  "macDinh": 0.5
  }
 }

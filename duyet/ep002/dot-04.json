@@ -1,0 +1,995 @@
+{
+ "so": 4,
+ "ngay": "2026-11-13",
+ "tieuDe": "Làm lại theo kịch bản mới: đạo cụ mới, gấu Bắp, thứ bỏ đi",
+ "tomTat": "Kịch bản mới (episodes/ep002/nguon/kich-ban-goc.md) bỏ chuông, đôi dép, chân trần, bậc thềm và thêm đồng hồ quả quýt, thùng gỗ, cửa kính, hàng rào, bảng hiệu… Đợt này chỉ hỏi phần MỚI; những gì bạn đã chọn ở Đợt 2–3 được giữ nguyên và thu gọn ở cuối.",
+ "token": {
+  "tong": 1053598,
+  "chiTiet": [
+   {
+    "viec": "Đợt 4: đạo cụ mới + gấu theo kịch bản",
+    "token": 186239,
+    "model": "sonnet"
+   },
+   {
+    "viec": "Bảng màu nhà theo seed",
+    "token": 211199,
+    "model": "sonnet"
+   },
+   {
+    "viec": "Gắn model đã duyệt vào cảnh",
+    "token": 254762,
+    "model": "sonnet"
+   },
+   {
+    "viec": "Sửa nút gửi + chống trùng đợt",
+    "token": 192975,
+    "model": "sonnet"
+   },
+   {
+    "viec": "Giọng từ kịch bản mới + dò mốc giọng mẫu",
+    "token": 208423,
+    "model": "sonnet"
+   }
+  ],
+  "ghiChu": ""
+ },
+ "nhom": [
+  {
+   "id": "dao-cu-moi",
+   "ten": "Đạo cụ MỚI theo kịch bản (chọn model)",
+   "mota": "Chỉ những vật kịch bản mới có mà chưa từng duyệt. Ứng viên đầu là khuyên dùng; chỉ CC0 / CC BY, trong ngưỡng tam giác. Chọn MỘT ứng viên hoặc \"Không cái nào\" mỗi khe. Vật không có ứng viên low poly nằm ở nhóm \"Dựng riêng\".",
+   "kieu": "ung-vien",
+   "anh": [],
+   "muc": [
+    {
+     "id": "dong_ho_qua_quyt",
+     "ten": "Đồng hồ quả quýt nắp vàng + dây xích ngắn (thị trưởng)",
+     "phu": "đạo cụ nhỏ ≤1500 · khác đồng hồ báo thức của Gà · đổi vàng/xích ngắn nếu cần",
+     "ungVien": [
+      {
+       "id": "dong_ho_qua_quyt__1",
+       "ten": "Pocket watch low poly",
+       "anh": "output/ep002/ung-vien-dot4/dong_ho_qua_quyt__1.jpg",
+       "link": "https://sketchfab.com/3d-models/e2ec9ccd24ad4d398f7d388780f5de17",
+       "nguon": "sketchfab",
+       "uid": "e2ec9ccd24ad4d398f7d388780f5de17",
+       "tacGia": "Timmy Turner",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 904,
+       "phu": "vàng, có vòng dây xích gắn — gần nhất với \"nắp vàng + dây xích ngắn\""
+      },
+      {
+       "id": "dong_ho_qua_quyt__2",
+       "ten": "Pocket Watch",
+       "anh": "output/ep002/ung-vien-dot4/dong_ho_qua_quyt__2.jpg",
+       "link": "https://sketchfab.com/3d-models/c7efa84bf7ab4265a75084f3d57eb259",
+       "nguon": "sketchfab",
+       "uid": "c7efa84bf7ab4265a75084f3d57eb259",
+       "tacGia": "jiro.delacruz",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 494,
+       "phu": "nắp mở, mặt số rõ, màu đồng sẫm; thiếu dây xích rõ"
+      },
+      {
+       "id": "dong_ho_qua_quyt__3",
+       "ten": "Low poly Pocket watch",
+       "anh": "output/ep002/ung-vien-dot4/dong_ho_qua_quyt__3.jpg",
+       "link": "https://sketchfab.com/3d-models/77acae16af38486b961591c1cb628211",
+       "nguon": "sketchfab",
+       "uid": "77acae16af38486b961591c1cb628211",
+       "tacGia": "kotelev",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 498,
+       "phu": "bạc, có vòng; màu phải đổi vàng"
+      }
+     ]
+    },
+    {
+     "id": "thung_go_dung",
+     "ten": "Thùng gỗ để Gà đứng lên (nhà máy)",
+     "phu": "đạo cụ vừa ≤3000 · cao khoảng 2–3 stud, đứng lên được",
+     "ungVien": [
+      {
+       "id": "thung_go_dung__1",
+       "ten": "Crate",
+       "anh": "output/ep002/ung-vien-dot4/thung_go_dung__1.jpg",
+       "link": "https://poly.pizza/m/3OEFd1AWfa",
+       "nguon": "polypizza",
+       "uid": "3OEFd1AWfa",
+       "tacGia": "Quaternius",
+       "giayPhep": "CC0",
+       "tamGiac": 784,
+       "phu": "thùng gỗ kín nắp, kiểu hoạt hình đặc, đứng lên được; CC0"
+      },
+      {
+       "id": "thung_go_dung__2",
+       "ten": "Wooden Crate Low-poly PBR",
+       "anh": "output/ep002/ung-vien-dot4/thung_go_dung__2.jpg",
+       "link": "https://sketchfab.com/3d-models/f8fb4c96211d475b9370d1c403273fc6",
+       "nguon": "sketchfab",
+       "uid": "f8fb4c96211d475b9370d1c403273fc6",
+       "tacGia": "MaX3Dd",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 268,
+       "phu": "thùng kín nhỏ gọn, rất nhẹ"
+      },
+      {
+       "id": "thung_go_dung__3",
+       "ten": "[Low-Poly] Simple Wooden Crate",
+       "anh": "output/ep002/ung-vien-dot4/thung_go_dung__3.jpg",
+       "link": "https://sketchfab.com/3d-models/a155dc6e4cb34582be2a4db5920acbee",
+       "nguon": "sketchfab",
+       "uid": "a155dc6e4cb34582be2a4db5920acbee",
+       "tacGia": "yakuphan",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 296,
+       "phu": "thùng nan thưa, mở miệng; nhìn rõ chất gỗ"
+      }
+     ]
+    },
+    {
+     "id": "hop_nhan_rieng",
+     "ten": "Hộp nhẫn mở (tiệm may)",
+     "phu": "đạo cụ nhỏ ≤1500 · bạn ghi chú Đợt 2: \"tìm hộp riêng\"",
+     "ungVien": [
+      {
+       "id": "hop_nhan_rieng__1",
+       "ten": "Ring box",
+       "anh": "output/ep002/ung-vien-dot4/hop_nhan_rieng__1.jpg",
+       "link": "https://sketchfab.com/3d-models/4a80eed40ae84093bec69dbf6654c209",
+       "nguon": "sketchfab",
+       "uid": "4a80eed40ae84093bec69dbf6654c209",
+       "tacGia": "Staralighto",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 204,
+       "phu": "hộp nhẫn nắp mở có nhẫn trong gối — đúng \"hộp nhẫn mở\""
+      },
+      {
+       "id": "hop_nhan_rieng__2",
+       "ten": "Gordon George Ring Box",
+       "anh": "output/ep002/ung-vien-dot4/hop_nhan_rieng__2.jpg",
+       "link": "https://sketchfab.com/3d-models/952d06e1d8fc46d69162fb3726c394fa",
+       "nguon": "sketchfab",
+       "uid": "952d06e1d8fc46d69162fb3726c394fa",
+       "tacGia": "Wayne Pearce",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 44,
+       "phu": "hộp nhẫn đóng, 2 khối trắng, cực nhẹ (44 tam giác); cần nắp mở dựng thêm"
+      }
+     ]
+    },
+    {
+     "id": "nhan_rieng",
+     "ten": "Chiếc nhẫn riêng (Bắp chộp, thả xuống băng chuyền)",
+     "phu": "đạo cụ nhỏ ≤1500 · bạn ghi chú Đợt 2: \"nhẫn riêng để duyệt\" · Đợt 3 đã nhập \"nhẫn trên gối nhung\", khe này là nhẫn rời",
+     "ungVien": [
+      {
+       "id": "nhan_rieng__1",
+       "ten": "Gold Ring",
+       "anh": "output/ep002/ung-vien-dot4/nhan_rieng__1.jpg",
+       "link": "https://sketchfab.com/3d-models/7565f8283ad84caeab80f9e44ad2c215",
+       "nguon": "sketchfab",
+       "uid": "7565f8283ad84caeab80f9e44ad2c215",
+       "tacGia": "Doğancan ÖZGÖKÇELER",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 320,
+       "phu": "nhẫn vàng trơn sáng, đọc rõ từ xa"
+      },
+      {
+       "id": "nhan_rieng__2",
+       "ten": "Gold Band Ring",
+       "anh": "output/ep002/ung-vien-dot4/nhan_rieng__2.jpg",
+       "link": "https://sketchfab.com/3d-models/e30b4da9ebdb41e997fd8bc455d43e0b",
+       "nguon": "sketchfab",
+       "uid": "e30b4da9ebdb41e997fd8bc455d43e0b",
+       "tacGia": "GetDeadEntertainment",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 384,
+       "phu": "nhẫn cưới vàng trơn, màu đồng cổ"
+      },
+      {
+       "id": "nhan_rieng__3",
+       "ten": "Decorated Ring",
+       "anh": "output/ep002/ung-vien-dot4/nhan_rieng__3.jpg",
+       "link": "https://sketchfab.com/3d-models/b2a6277f29d94226bbb2f38eb27ca9b9",
+       "nguon": "sketchfab",
+       "uid": "b2a6277f29d94226bbb2f38eb27ca9b9",
+       "tacGia": "Loïc",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 1004,
+       "phu": "nhẫn vàng khắc, nạm đá đỏ; nặng hơn"
+      }
+     ]
+    },
+    {
+     "id": "cua_kinh_nha_may",
+     "ten": "Cửa kính nhà máy (Gà ghé mắt nhìn qua)",
+     "phu": "vật lớn ≤6000 · cần mặt kính để thấy băng chuyền phía sau",
+     "ungVien": [
+      {
+       "id": "cua_kinh_nha_may__1",
+       "ten": "Minimilist Glass Door",
+       "anh": "output/ep002/ung-vien-dot4/cua_kinh_nha_may__1.jpg",
+       "link": "https://sketchfab.com/3d-models/96ab19bb28d94f6a934d7449bc765b88",
+       "nguon": "sketchfab",
+       "uid": "96ab19bb28d94f6a934d7449bc765b88",
+       "tacGia": "NGibson",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 448,
+       "phu": "cửa kính khung nâu tối, gọn — hợp nhà máy"
+      },
+      {
+       "id": "cua_kinh_nha_may__2",
+       "ten": "Old factory window",
+       "anh": "output/ep002/ung-vien-dot4/cua_kinh_nha_may__2.jpg",
+       "link": "https://sketchfab.com/3d-models/a9cd2da56155418098f548d819eb5c67",
+       "nguon": "sketchfab",
+       "uid": "a9cd2da56155418098f548d819eb5c67",
+       "tacGia": "skaliarius",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 516,
+       "phu": "khung cửa sổ nhà máy cũ, ô kính chia lưới"
+      },
+      {
+       "id": "cua_kinh_nha_may__3",
+       "ten": "Wooden Door with Glass Window",
+       "anh": "output/ep002/ung-vien-dot4/cua_kinh_nha_may__3.jpg",
+       "link": "https://sketchfab.com/3d-models/acd35785615b4c27b88c84c7f6efa75f",
+       "nguon": "sketchfab",
+       "uid": "acd35785615b4c27b88c84c7f6efa75f",
+       "tacGia": "Gambit1",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 772,
+       "phu": "cửa gỗ nửa kính, kiểu nhà phố hơn nhà máy"
+      }
+     ]
+    },
+    {
+     "id": "hang_rao_nha_may",
+     "ten": "Hàng rào / cổng nhà máy cuối phố",
+     "phu": "vật lớn ≤6000 · nhân bản được thành hàng",
+     "ungVien": [
+      {
+       "id": "hang_rao_nha_may__1",
+       "ten": "Metal Fence",
+       "anh": "output/ep002/ung-vien-dot4/hang_rao_nha_may__1.jpg",
+       "link": "https://poly.pizza/m/qWKhREFj7H",
+       "nguon": "polypizza",
+       "uid": "qWKhREFj7H",
+       "tacGia": "Quaternius",
+       "giayPhep": "CC0",
+       "tamGiac": 218,
+       "phu": "tấm lưới thép B40, cực nhẹ; CC0 — nhân bản thành hàng rào"
+      },
+      {
+       "id": "hang_rao_nha_may__2",
+       "ten": "Fence Gate",
+       "anh": "output/ep002/ung-vien-dot4/hang_rao_nha_may__2.jpg",
+       "link": "https://poly.pizza/m/h5P9Kuk0V5",
+       "nguon": "polypizza",
+       "uid": "h5P9Kuk0V5",
+       "tacGia": "Kay Lousberg",
+       "giayPhep": "CC0",
+       "tamGiac": 620,
+       "phu": "cổng sắt nhọn có hai trụ — dùng làm cổng nhà máy; CC0"
+      },
+      {
+       "id": "hang_rao_nha_may__3",
+       "ten": "psx style chain fence gate",
+       "anh": "output/ep002/ung-vien-dot4/hang_rao_nha_may__3.jpg",
+       "link": "https://sketchfab.com/3d-models/02fb75f229fa47b5a5d59f7409e2f4c1",
+       "nguon": "sketchfab",
+       "uid": "02fb75f229fa47b5a5d59f7409e2f4c1",
+       "tacGia": "valse kamerplant",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 170,
+       "phu": "cổng lưới kiểu PSX, rất nhẹ"
+      }
+     ]
+    },
+    {
+     "id": "cuon_chi",
+     "ten": "Cuộn chỉ (tiệm may)",
+     "phu": "đạo cụ nhỏ ≤1500 · vài cuộn đặt trên bàn",
+     "ungVien": [
+      {
+       "id": "cuon_chi__1",
+       "ten": "Needle and Thread",
+       "anh": "output/ep002/ung-vien-dot4/cuon_chi__1.jpg",
+       "link": "https://sketchfab.com/3d-models/ceb3fe47e449495a869b6cb93baac746",
+       "nguon": "sketchfab",
+       "uid": "ceb3fe47e449495a869b6cb93baac746",
+       "tacGia": "kel",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 404,
+       "phu": "cuộn chỉ đỏ + kim — cuộn gỗ rõ nghĩa"
+      },
+      {
+       "id": "cuon_chi__2",
+       "ten": "Thread_and_Needle with UV´S",
+       "anh": "output/ep002/ung-vien-dot4/cuon_chi__2.jpg",
+       "link": "https://sketchfab.com/3d-models/6a19a667d80b42bb921cbd845c5225bd",
+       "nguon": "sketchfab",
+       "uid": "6a19a667d80b42bb921cbd845c5225bd",
+       "tacGia": "ailyn_10_lowpoly",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 472,
+       "phu": "cuộn chỉ vàng cam + kim, đứng thẳng"
+      }
+     ]
+    },
+    {
+     "id": "ban_tiem_may",
+     "ten": "Bàn tiệm may",
+     "phu": "đạo cụ vừa ≤3000 · hộp nhẫn mở + cuộn chỉ đặt lên",
+     "ungVien": [
+      {
+       "id": "ban_tiem_may__1",
+       "ten": "Table",
+       "anh": "output/ep002/ung-vien-dot4/ban_tiem_may__1.jpg",
+       "link": "https://poly.pizza/m/KndwzSWSHR",
+       "nguon": "polypizza",
+       "uid": "KndwzSWSHR",
+       "tacGia": "CreativeTrio",
+       "giayPhep": "CC0",
+       "tamGiac": 86,
+       "phu": "bàn gỗ trơn, 86 tam giác; hộp nhẫn và cuộn chỉ đặt lên; CC0"
+      },
+      {
+       "id": "ban_tiem_may__2",
+       "ten": "workbench",
+       "anh": "output/ep002/ung-vien-dot4/ban_tiem_may__2.jpg",
+       "link": "https://sketchfab.com/3d-models/b43527005e6b4ae1b3e83663688a7531",
+       "nguon": "sketchfab",
+       "uid": "b43527005e6b4ae1b3e83663688a7531",
+       "tacGia": "JonhGillessen",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 570,
+       "phu": "bàn thợ gỗ chắc, có thể đặt nhiều đồ"
+      },
+      {
+       "id": "ban_tiem_may__3",
+       "ten": "Workbench - Low Poly Medieval, CC0",
+       "anh": "output/ep002/ung-vien-dot4/ban_tiem_may__3.jpg",
+       "link": "https://sketchfab.com/3d-models/9e18d937e18240d8ac1eb98c43d54d9a",
+       "nguon": "sketchfab",
+       "uid": "9e18d937e18240d8ac1eb98c43d54d9a",
+       "tacGia": "Avramania",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 1064,
+       "phu": "bàn thợ kiểu cổ có sẵn dụng cụ; CC0"
+      }
+     ]
+    },
+    {
+     "id": "bang_hieu_treo",
+     "ten": "Bảng hiệu trống dùng chung (mọi nhà)",
+     "phu": "đạo cụ vừa ≤3000 · mặt bảng trống để dán chữ/biểu tượng từng nhà; đổi màu mặt tiền",
+     "ungVien": [
+      {
+       "id": "bang_hieu_treo__1",
+       "ten": "Wooden Sign",
+       "anh": "output/ep002/ung-vien-dot4/bang_hieu_treo__1.jpg",
+       "link": "https://poly.pizza/m/jNdZygn3uR",
+       "nguon": "polypizza",
+       "uid": "jNdZygn3uR",
+       "tacGia": "iPoly3D",
+       "giayPhep": "CC0",
+       "tamGiac": 228,
+       "phu": "bảng treo trên trụ — mặt bảng trống để dán chữ; CC0"
+      },
+      {
+       "id": "bang_hieu_treo__2",
+       "ten": "Wooden Sign",
+       "anh": "output/ep002/ung-vien-dot4/bang_hieu_treo__2.jpg",
+       "link": "https://poly.pizza/m/mxyDWLsKer",
+       "nguon": "polypizza",
+       "uid": "mxyDWLsKer",
+       "tacGia": "iPoly3D",
+       "giayPhep": "CC0",
+       "tamGiac": 298,
+       "phu": "bảng gỗ cắm trụ, mặt trống; CC0"
+      },
+      {
+       "id": "bang_hieu_treo__3",
+       "ten": "Low Poly Sign Board | Stylized Wooden Sign",
+       "anh": "output/ep002/ung-vien-dot4/bang_hieu_treo__3.jpg",
+       "link": "https://sketchfab.com/3d-models/47606ca864584360aa594ccbf7b668b7",
+       "nguon": "sketchfab",
+       "uid": "47606ca864584360aa594ccbf7b668b7",
+       "tacGia": "GAME LANCER",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 672,
+       "phu": "bảng gỗ cắm trụ nhỏ"
+      }
+     ]
+    },
+    {
+     "id": "den_cua_thi_truong",
+     "ten": "Đèn cửa nhà thị trưởng",
+     "phu": "đạo cụ nhỏ ≤1500 · gắn cạnh cửa",
+     "ungVien": [
+      {
+       "id": "den_cua_thi_truong__1",
+       "ten": "Wall Lantern",
+       "anh": "output/ep002/ung-vien-dot4/den_cua_thi_truong__1.jpg",
+       "link": "https://sketchfab.com/3d-models/1546fb8de7fe4328b5de5324a70c6e35",
+       "nguon": "sketchfab",
+       "uid": "1546fb8de7fe4328b5de5324a70c6e35",
+       "tacGia": "RobloxRob",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 360,
+       "phu": "đèn lồng treo tường, đã có ánh vàng; tên \"Wall Lantern\""
+      },
+      {
+       "id": "den_cua_thi_truong__2",
+       "ten": "Low-Poly Lantern",
+       "anh": "output/ep002/ung-vien-dot4/den_cua_thi_truong__2.jpg",
+       "link": "https://sketchfab.com/3d-models/e8a9b72425e148e48364bc0d3d05da13",
+       "nguon": "sketchfab",
+       "uid": "e8a9b72425e148e48364bc0d3d05da13",
+       "tacGia": "Emma-Lie Kamping",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 138,
+       "phu": "đèn hộp gắn tường, kính cam, cực nhẹ"
+      },
+      {
+       "id": "den_cua_thi_truong__3",
+       "ten": "Hanging Lantern",
+       "anh": "output/ep002/ung-vien-dot4/den_cua_thi_truong__3.jpg",
+       "link": "https://poly.pizza/m/3jzk3YShv1",
+       "nguon": "polypizza",
+       "uid": "3jzk3YShv1",
+       "tacGia": "Kay Lousberg",
+       "giayPhep": "CC0",
+       "tamGiac": 472,
+       "phu": "đèn lồng treo dây xích — treo dưới hiên; CC0"
+      },
+      {
+       "id": "den_cua_thi_truong__4",
+       "ten": "Psx Wall Lantern",
+       "anh": "output/ep002/ung-vien-dot4/den_cua_thi_truong__4.jpg",
+       "link": "https://sketchfab.com/3d-models/4848fe6aae1e491db1bb6cc6716b8d67",
+       "nguon": "sketchfab",
+       "uid": "4848fe6aae1e491db1bb6cc6716b8d67",
+       "tacGia": "bigctheman345",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 76,
+       "phu": "đèn sắt đen kiểu PSX, 76 tam giác"
+      }
+     ]
+    },
+    {
+     "id": "giuong_ga",
+     "ten": "Giường của Gà",
+     "phu": "vật lớn ≤6000 · chưa có trong bảng quyết định hiện hành; Bắp nằm cuối giường",
+     "ungVien": [
+      {
+       "id": "giuong_ga__1",
+       "ten": "Bed Single",
+       "anh": "output/ep002/ung-vien-dot4/giuong_ga__1.jpg",
+       "link": "https://poly.pizza/m/sn8az3odMR",
+       "nguon": "polypizza",
+       "uid": "sn8az3odMR",
+       "tacGia": "Kenney",
+       "giayPhep": "CC0",
+       "tamGiac": 264,
+       "phu": "giường đơn khối vuông, chăn đỏ — hợp phong cách khối; CC0"
+      },
+      {
+       "id": "giuong_ga__2",
+       "ten": "Bed - Low Poly Medieval, CC0",
+       "anh": "output/ep002/ung-vien-dot4/giuong_ga__2.jpg",
+       "link": "https://sketchfab.com/3d-models/24704040010a42ceaeffb1631ed1ae9b",
+       "nguon": "sketchfab",
+       "uid": "24704040010a42ceaeffb1631ed1ae9b",
+       "tacGia": "Avramania",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 1056,
+       "phu": "giường gỗ chăn sọc xanh trắng; CC0"
+      },
+      {
+       "id": "giuong_ga__3",
+       "ten": "Bed Twin",
+       "anh": "output/ep002/ung-vien-dot4/giuong_ga__3.jpg",
+       "link": "https://poly.pizza/m/9N9rYOD8On",
+       "nguon": "polypizza",
+       "uid": "9N9rYOD8On",
+       "tacGia": "Quaternius",
+       "giayPhep": "CC0",
+       "tamGiac": 757,
+       "phu": "giường đơn tím, chân cao hơn; CC0"
+      },
+      {
+       "id": "giuong_ga__4",
+       "ten": "Bed Low Poly",
+       "anh": "output/ep002/ung-vien-dot4/giuong_ga__4.jpg",
+       "link": "https://sketchfab.com/3d-models/d58eea1a6ee746d29fd18f2d9e1a559d",
+       "nguon": "sketchfab",
+       "uid": "d58eea1a6ee746d29fd18f2d9e1a559d",
+       "tacGia": "mezuna",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 719,
+       "phu": "giường gỗ chăn cam, vuông vắn"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "gau-bap",
+   "ten": "Gấu Bắp — theo mô tả kịch bản mới",
+   "mota": "Kịch bản: \"gấu bông stylized Roblox, đầu hơi to, thân bo nhẹ; rig riêng đầu, hai tay, hai chân đủ để ngồi, trèo, ôm két; nơ xanh; 3 biến thể màu\". Chọn lại có chủ ý (không tính là trùng Đợt 3). Mỗi thẻ ghi: đầu to / thân bo / tay chân tách hay có xương / nơ.",
+   "kieu": "ung-vien",
+   "anh": [],
+   "muc": [
+    {
+     "id": "gau_bap_kich_ban_moi",
+     "chuDe": "gau-bap-kich-ban-moi",
+     "ten": "Gấu Bắp (và hai gấu trộm, dãy gấu xưởng — nhân bản đổi màu)",
+     "phu": "chủ đạo ≤6000 tam giác · 3 biến thể màu · Bắp ngồi, trèo, ôm két",
+     "ungVien": [
+      {
+       "id": "gau6",
+       "ten": "Sugar Teddy Bear",
+       "anh": "output/ep002/duyet-tai-san/gau/8fbc11e8876d4ac7b22190c07e96726b.jpg",
+       "link": "https://sketchfab.com/3d-models/8fbc11e8876d4ac7b22190c07e96726b",
+       "nguon": "sketchfab",
+       "uid": "8fbc11e8876d4ac7b22190c07e96726b",
+       "tacGia": "Suvalien",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 3872,
+       "phu": "KHUYÊN · đầu to: CÓ · thân bo: CÓ · tay chân: CÓ XƯƠNG sẵn (+10 animation) · nơ: KHÔNG (gắn thêm) · màu hồng tím, đổi 3 biến thể được (Đợt 1: xếp nhì)"
+      },
+      {
+       "id": "gau1",
+       "ten": "Cubed Bear",
+       "anh": "output/ep002/duyet-tai-san/gau/26647ba33a564a7da57a6b166152f4bc.jpg",
+       "link": "https://sketchfab.com/3d-models/26647ba33a564a7da57a6b166152f4bc",
+       "nguon": "sketchfab",
+       "uid": "26647ba33a564a7da57a6b166152f4bc",
+       "tacGia": "CubedBear",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 296,
+       "phu": "đầu to: tương đối · thân bo: KHÔNG (khối vuông) · tay chân: TÁCH RỜI từng khối, không xương (gắn pivot dễ) · nơ: KHÔNG · rất nhẹ, hợp phong cách khối (Đợt 1: xếp đầu)"
+      },
+      {
+       "id": "gau-rb1",
+       "ten": "Giant Teddy Bear (Roblox) — BẠN ĐÃ CHỌN Ở ĐỢT 3",
+       "anh": "output/ep002/ung-vien-roblox/rb-gau-bong__1.png",
+       "link": "https://create.roblox.com/store/asset/12549476788",
+       "nguon": "Roblox Creator Store",
+       "tacGia": "Astrra",
+       "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+       "tamGiac": 2344,
+       "phu": "bạn đã chọn ở Đợt 3 · đầu to: vừa · thân bo: CÓ · dáng ngồi một tư thế, chưa rõ có tách tay chân/xương hay là một khối liền · nơ: KHÔNG"
+      },
+      {
+       "id": "gau-moi1",
+       "ten": "Teddy",
+       "anh": "output/ep002/ung-vien-dot4/gau_moi__1.jpg",
+       "link": "https://sketchfab.com/3d-models/8bca03af2c114cd28a16f49277eb88f0",
+       "nguon": "sketchfab",
+       "uid": "8bca03af2c114cd28a16f49277eb88f0",
+       "tacGia": "rudolfs",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 936,
+       "phu": "đầu to: CÓ · thân bo: CÓ · tay chân: dang chữ T, chưa kiểm có tách/xương · nơ: hình như có ở cổ (nhìn ảnh, chưa xác minh)"
+      },
+      {
+       "id": "gau-moi2",
+       "ten": "Cute Bear",
+       "anh": "output/ep002/ung-vien-dot4/gau_moi__2.jpg",
+       "link": "https://sketchfab.com/3d-models/aa95e34bb635444581932be54d6c453a",
+       "nguon": "sketchfab",
+       "uid": "aa95e34bb635444581932be54d6c453a",
+       "tacGia": "Ching",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 2080,
+       "phu": "đầu to: vừa · thân bo: CÓ · CÓ XƯƠNG (1 animation) · nơ: KHÔNG"
+      },
+      {
+       "id": "gau-moi3",
+       "ten": "Low-Poly Bear Plushie",
+       "anh": "output/ep002/ung-vien-dot4/gau_moi__3.jpg",
+       "link": "https://sketchfab.com/3d-models/3c24fa7d1a424fe9aed83991dc2a40a0",
+       "nguon": "sketchfab",
+       "uid": "3c24fa7d1a424fe9aed83991dc2a40a0",
+       "tacGia": "mimoryhead",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 800,
+       "phu": "đầu to: CÓ · thân bo: CÓ · dáng ngồi, chưa rõ tách tay chân/xương · nơ: KHÔNG · rất nhẹ"
+      },
+      {
+       "id": "gau-moi4",
+       "ten": "Bernard Bear (Rigged)",
+       "anh": "output/ep002/ung-vien-dot4/gau_moi__4.jpg",
+       "link": "https://sketchfab.com/3d-models/93e9a14124e4454293387343cffed99e",
+       "nguon": "sketchfab",
+       "uid": "93e9a14124e4454293387343cffed99e",
+       "tacGia": "Poyo20",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 1826,
+       "phu": "đầu to: CÓ · thân bo: CÓ · tên ghi \"Rigged\" (chưa kiểm xương) · nơ: KHÔNG · dáng cao như nhân vật hoạt hình, không phải gấu bông"
+      },
+      {
+       "id": "gau8",
+       "ten": "Mister Bear",
+       "anh": "output/ep002/duyet-tai-san/gau/47e7ee6daff54b018dcd55caaec755f0.jpg",
+       "link": "https://sketchfab.com/3d-models/47e7ee6daff54b018dcd55caaec755f0",
+       "nguon": "sketchfab",
+       "uid": "47e7ee6daff54b018dcd55caaec755f0",
+       "tacGia": "cheb_max",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 4672,
+       "phu": "đầu to: vừa · thân bo: CÓ · CÓ XƯƠNG (+6 animation) · mũ và khăn (tháo được) · nơ: KHÔNG"
+      },
+      {
+       "id": "gau7",
+       "ten": "Lil' Bear",
+       "anh": "output/ep002/duyet-tai-san/gau/55ee397cf40c4f86af1ee31fb2096d82.jpg",
+       "link": "https://sketchfab.com/3d-models/55ee397cf40c4f86af1ee31fb2096d82",
+       "nguon": "sketchfab",
+       "uid": "55ee397cf40c4f86af1ee31fb2096d82",
+       "tacGia": "Cherryvania",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 3928,
+       "phu": "đầu to: vừa · CÓ XƯƠNG · mặc áo mưa (khó đổi màu) · nơ: KHÔNG"
+      },
+      {
+       "id": "gau3",
+       "ten": "Low-Poly Toy Pack (Teddy Bear)",
+       "anh": "output/ep002/duyet-tai-san/gau/af885d4dd3514cc09ad6bdd446d2888c.jpg",
+       "link": "https://sketchfab.com/3d-models/af885d4dd3514cc09ad6bdd446d2888c",
+       "nguon": "sketchfab",
+       "uid": "af885d4dd3514cc09ad6bdd446d2888c",
+       "tacGia": "Renend Studio",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 2332,
+       "phu": "đầu vừa · thân bo: CÓ · ngồi một dáng, không xương · nơ: KHÔNG"
+      },
+      {
+       "id": "gau4",
+       "ten": "Basic Teddy Bear (Low-Poly)",
+       "anh": "output/ep002/duyet-tai-san/gau/d17dc46e40e547b5808384b22deaf696.jpg",
+       "link": "https://sketchfab.com/3d-models/d17dc46e40e547b5808384b22deaf696",
+       "nguon": "sketchfab",
+       "uid": "d17dc46e40e547b5808384b22deaf696",
+       "tacGia": "Karl Hõbelaid",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 3388,
+       "phu": "đầu vừa · thân bo: CÓ · ngồi một dáng, không xương · nơ: KHÔNG"
+      },
+      {
+       "id": "gau2",
+       "ten": "Teddy Bear_ Low Poly",
+       "anh": "output/ep002/duyet-tai-san/gau/bbbbc762ea4844519380c113cb1a61ed.jpg",
+       "link": "https://sketchfab.com/3d-models/bbbbc762ea4844519380c113cb1a61ed",
+       "nguon": "sketchfab",
+       "uid": "bbbbc762ea4844519380c113cb1a61ed",
+       "tacGia": "FZNinetyNine",
+       "giayPhep": "CC BY 4.0",
+       "tamGiac": 1892,
+       "phu": "vải sờn, tối · ngồi một dáng, không xương · nơ: KHÔNG — kém hợp phong cách"
+      },
+      {
+       "id": "gau-code",
+       "ten": "Dựng gấu khối riêng bằng code/Blender theo đúng mô tả",
+       "phu": "không tải model · đầu to + thân bo nhẹ + 5 khớp (đầu, 2 tay, 2 chân) đủ ngồi/trèo/ôm két · nơ xanh · 3 biến thể màu thân/nơ bằng đổi màu · tai gắn theo đầu · đúng 100% mô tả kịch bản, không vướng giấy phép"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "dung-rieng",
+   "ten": "Dựng riêng (Blender / code)",
+   "mota": "Không có model sẵn hoặc chưa tìm được bản low poly hợp. Bấm Duyệt = đồng ý dựng riêng; Cần sửa = ghi chú muốn khác.",
+   "anh": [],
+   "muc": [
+    {
+     "id": "db-ban_do",
+     "ten": "Bản đồ thị trấn có nhà đánh dấu đỏ (trên tường nhà máy)",
+     "phu": "dựng tấm phẳng + ảnh bản đồ thị trấn vẽ bằng code, chấm đỏ ở nhà đã có gấu; không có model sẵn"
+    },
+    {
+     "id": "db-thung_dan_mat",
+     "ten": "Thùng in dấu đầu gấu — cụm đồ dân mất",
+     "phu": "dựng bằng code: cụm thùng carton/gỗ có dấu đầu gấu, chứa két, ví, túi tiền, dây chuyền; bạn ghi chú Đợt 3 \"lấy mẫu trong chồng thùng tiệm gấu Bách\" nên dùng cùng kiểu thùng"
+    },
+    {
+     "id": "db-thung_bach_giau",
+     "ten": "Thùng in dấu đầu gấu — cụm hàng ông Bách tự giấu",
+     "phu": "dựng bằng code: chồng thùng cùng kiểu, in tên tiệm ông Bách, cao hơn và xếp ngay ngắn để phân biệt với cụm đồ dân mất"
+    },
+    {
+     "id": "db-bang_hieu_tiem_gau",
+     "ten": "Bảng hiệu: Tiệm gấu (ông Bách)",
+     "phu": "dựng bằng code: tấm bảng lớn trên mặt tiền, chữ + hình đầu gấu, màu mặt tiền riêng"
+    },
+    {
+     "id": "db-bang_hieu_tiem_banh",
+     "ten": "Bảng hiệu: Tiệm bánh",
+     "phu": "dựng bằng code: bảng lớn, chữ + màu mặt tiền riêng"
+    },
+    {
+     "id": "db-bang_hieu_tiem_may",
+     "ten": "Bảng hiệu: Tiệm may",
+     "phu": "dựng bằng code: bảng lớn, chữ + hình kim chỉ, màu mặt tiền riêng"
+    },
+    {
+     "id": "db-bang_hieu_thi_truong",
+     "ten": "Bảng hiệu: Nhà thị trưởng",
+     "phu": "dựng bằng code: bảng lớn, gắn đèn cửa (xem khe đèn ở nhóm đạo cụ mới)"
+    },
+    {
+     "id": "db-bang_hieu_banh_mi",
+     "ten": "Bảng hình bánh mì (trong tiệm bánh)",
+     "phu": "không có model bảng bánh mì low poly sẵn: dựng tấm bảng gỗ + ổ bánh khối; nếu cần mẫu ổ bánh, Poly Pizza \"Bread\" (Kenney, 116 tam giác, CC0) gắn lên bảng"
+    }
+   ]
+  },
+  {
+   "id": "khong-dung",
+   "ten": "Không còn dùng theo kịch bản mới",
+   "mota": "Kịch bản mới bỏ đoạn chuông / đôi dép / chân trần / bậc thềm. Bấm Duyệt = đồng ý bỏ.",
+   "anh": [],
+   "muc": [
+    {
+     "id": "bo-chuong",
+     "ten": "Chuông tay",
+     "phu": "đã bỏ khỏi kịch bản (kit cũ không còn dùng)",
+     "anh": "output/ep002/da-nhap/chuong-tay.jpg",
+     "chuDe": "bo-chuong"
+    },
+    {
+     "id": "bo-doi_dep",
+     "ten": "Đôi dép của thị trưởng",
+     "phu": "đã bỏ khỏi kịch bản (kit cũ không còn dùng)",
+     "anh": "output/ep002/da-nhap/dep-xo-ngon.jpg",
+     "chuDe": "bo-doi_dep"
+    },
+    {
+     "id": "bo-chan_tran",
+     "ten": "Hai bàn chân trần",
+     "phu": "đã bỏ khỏi kịch bản (kit cũ không còn dùng)",
+     "anh": "output/ep002/da-nhap/ban-chan.jpg",
+     "chuDe": "bo-chan_tran"
+    },
+    {
+     "id": "bo-bac_them_dep",
+     "ten": "Bậc thềm 2 bậc + đôi dép",
+     "phu": "đã bỏ khỏi kịch bản (kit cũ không còn dùng)",
+     "anh": "output/ep002/da-nhap/bac-them.jpg",
+     "chuDe": "bo-bac_them_dep"
+    },
+    {
+     "id": "bo-bac_them_trong",
+     "ten": "Bậc thềm trống",
+     "phu": "đã bỏ khỏi kịch bản (kit cũ không còn dùng)",
+     "anh": "output/ep002/da-nhap/bac-them.jpg",
+     "chuDe": "bo-bac_them_trong"
+    },
+    {
+     "id": "bo-rb-chuong",
+     "ten": "Chuông (lựa chọn Roblox Đợt 3)",
+     "phu": "đã bỏ khỏi kịch bản (kit cũ không còn dùng)",
+     "anh": "output/ep002/ung-vien-roblox/rb-chuong__1.png",
+     "chuDe": "bo-rb-chuong"
+    },
+    {
+     "id": "bo-rb-dep",
+     "ten": "Dép (lựa chọn Roblox Đợt 3)",
+     "phu": "đã bỏ khỏi kịch bản (kit cũ không còn dùng)",
+     "anh": "output/ep002/ung-vien-roblox/rb-dep__2.png",
+     "chuDe": "bo-rb-dep"
+    }
+   ]
+  },
+  {
+   "id": "da-quyet",
+   "ten": "Đã quyết ở Đợt 2–3 — giữ nguyên",
+   "mota": "Chỉ để bạn biết; không phải bấm gì. Bấm \"Chọn lại\" trong khối \"Đã quyết ở đợt trước\" nếu muốn đổi.",
+   "anh": [],
+   "muc": [
+    {
+     "id": "dq-anh_ba",
+     "chuDe": "anh_ba",
+     "ten": "Ảnh bà đeo dây chuyền",
+     "phu": ""
+    },
+    {
+     "id": "dq-bang_chuyen",
+     "chuDe": "bang_chuyen",
+     "ten": "Băng chuyền nhà máy",
+     "phu": ""
+    },
+    {
+     "id": "dq-bang_tin",
+     "chuDe": "bang_tin",
+     "ten": "Bảng tin thị trấn",
+     "phu": ""
+    },
+    {
+     "id": "dq-cuon_sach",
+     "chuDe": "cuon_sach",
+     "ten": "Cuốn sách dựng đứng",
+     "phu": ""
+    },
+    {
+     "id": "dq-day_chuyen",
+     "chuDe": "day_chuyen",
+     "ten": "Dây chuyền của bà",
+     "phu": ""
+    },
+    {
+     "id": "dq-dong_ho",
+     "chuDe": "dong_ho",
+     "ten": "Đồng hồ báo thức của Gà",
+     "phu": ""
+    },
+    {
+     "id": "dq-guong",
+     "chuDe": "guong",
+     "ten": "Gương đối diện giường",
+     "phu": ""
+    },
+    {
+     "id": "dq-hoc_quay",
+     "chuDe": "hoc_quay",
+     "ten": "Quầy tiệm bánh",
+     "phu": ""
+    },
+    {
+     "id": "dq-ke",
+     "chuDe": "ke",
+     "ten": "Kệ (phòng Gà, nhà máy, tủ)",
+     "phu": ""
+    },
+    {
+     "id": "dq-ket",
+     "chuDe": "ket",
+     "ten": "Két tiền / két của Gà",
+     "phu": ""
+    },
+    {
+     "id": "dq-kinh",
+     "chuDe": "kinh",
+     "ten": "Kính",
+     "phu": ""
+    },
+    {
+     "id": "dq-may_khau",
+     "chuDe": "may_khau",
+     "ten": "Máy khâu",
+     "phu": ""
+    },
+    {
+     "id": "dq-mu_dau_bep",
+     "chuDe": "mu_dau_bep",
+     "ten": "Mũ đầu bếp",
+     "phu": ""
+    },
+    {
+     "id": "dq-mu_linh",
+     "chuDe": "mu_linh",
+     "ten": "Mũ lính gác",
+     "phu": ""
+    },
+    {
+     "id": "dq-mu_luoi_trai",
+     "chuDe": "mu_luoi_trai",
+     "ten": "Mũ lưỡi trai",
+     "phu": ""
+    },
+    {
+     "id": "dq-mu_phot",
+     "chuDe": "mu_phot",
+     "ten": "Mũ phớt",
+     "phu": ""
+    },
+    {
+     "id": "dq-mu_top_hat",
+     "chuDe": "mu_top_hat",
+     "ten": "Mũ chóp cao",
+     "phu": ""
+    },
+    {
+     "id": "dq-no_toc",
+     "chuDe": "no_toc",
+     "ten": "Nơ tóc",
+     "phu": ""
+    },
+    {
+     "id": "dq-o_khoa",
+     "chuDe": "o_khoa",
+     "ten": "Ổ khoá / cửa gỗ",
+     "phu": ""
+    },
+    {
+     "id": "dq-thung_tiem_bach",
+     "chuDe": "thung_tiem_bach",
+     "ten": "Chồng thùng tiệm gấu Bách",
+     "phu": ""
+    },
+    {
+     "id": "dq-thuoc_keo",
+     "chuDe": "thuoc_keo",
+     "ten": "Kéo",
+     "phu": ""
+    },
+    {
+     "id": "dq-tui_tien",
+     "chuDe": "tui_tien",
+     "ten": "Túi tiền",
+     "phu": ""
+    },
+    {
+     "id": "dq-vi",
+     "chuDe": "vi",
+     "ten": "Cái ví",
+     "phu": ""
+    }
+   ]
+  },
+  {
+   "id": "nha",
+   "ten": "Bảng màu nhà thị trấn",
+   "mota": "Mỗi nhà một màu có chủ đích (tất định theo seed, hàng xóm không trùng, tiệm có vai nổi hơn). Bật bằng EPISODE.town.kieu hoặc ?nha=<bảng>; hình mỗi bảng: ngày (2 góc) + đêm.",
+   "kieu": "ung-vien",
+   "anh": [],
+   "muc": [
+    {
+     "id": "nha-bang-mau",
+     "ten": "Bảng màu cho thị trấn tập 2",
+     "phu": "chọn 1",
+     "anhHienTai": "output/look/nha/hien-tai.jpg",
+     "ungVien": [
+      {
+       "id": "nha-pastel",
+       "ten": "Pastel",
+       "anh": "output/look/nha/bang-pastel.jpg",
+       "link": "output/look/nha/bang-pastel.jpg",
+       "nguon": "dựng trong engine",
+       "phu": "thị trấn tươi vui: kem, hồng phấn, xanh trời, bạc hà, đào, tím nhạt"
+      },
+      {
+       "id": "nha-ven-bien",
+       "ten": "Ven biển",
+       "anh": "output/look/nha/bang-ven-bien.jpg",
+       "link": "output/look/nha/bang-ven-bien.jpg",
+       "nguon": "dựng trong engine",
+       "phu": "trắng, trắng xanh, cát, đất nung; mái xanh biển / navy / cam đất"
+      },
+      {
+       "id": "nha-lang-go",
+       "ten": "Làng gỗ",
+       "anh": "output/look/nha/bang-lang-go.jpg",
+       "link": "output/look/nha/bang-lang-go.jpg",
+       "nguon": "dựng trong engine",
+       "phu": "gỗ mật, nâu, be; mái nâu đậm / rêu / đỏ sẫm, ấm"
+      },
+      {
+       "id": "nha-pho-cu",
+       "ten": "Phố cũ",
+       "anh": "output/look/nha/bang-pho-cu.jpg",
+       "link": "output/look/nha/bang-pho-cu.jpg",
+       "nguon": "dựng trong engine",
+       "phu": "gạch đỏ, xám đá, be đá; mái than / xanh đen"
+      },
+      {
+       "id": "nha-tuyet",
+       "ten": "Tuyết lạnh",
+       "anh": "output/look/nha/bang-tuyet.jpg",
+       "link": "output/look/nha/bang-tuyet.jpg",
+       "nguon": "dựng trong engine",
+       "phu": "trắng xanh, xám lam; mái lam xám, cửa đỏ/xanh điểm xuyết"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "lienKet": []
+}

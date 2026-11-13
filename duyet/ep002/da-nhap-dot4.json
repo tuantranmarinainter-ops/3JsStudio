@@ -1,0 +1,128 @@
+{
+ "id": "da-nhap-dot4",
+ "ten": "Đạo cụ mới đã nhập (xem cỡ và màu)",
+ "mota": "11 đạo cụ bạn chọn ở Đợt 4 đã có model thật (12 file GLB gồm hop-nhan-sang rỗng), ảnh cạnh nhân vật cam cao 5.2 stud để so cỡ. Hộp nhẫn đã làm sang theo ghi chú của bạn: nhung đỏ đậm + viền vàng + gối navy, bỏ nhẫn cũ, ghép nhẫn Decorated Ring (ảnh trước | sau | ghép). Model CC BY: ghi công trong assets/nhap/CREDITS.md.",
+ "muc": [
+  {
+   "id": "dn4-dong_ho_qua_quyt",
+   "ten": "Pocket watch low poly (dong_ho_qua_quyt)",
+   "phu": "904 tam giác · cao 0.9 stud, hộp 0.63×0.9×0.133 · 210 KB · đồng hồ quả quýt vàng, vòng dây xích gắn liền; mặt số nhìn +Z; có vân ảnh mặt số",
+   "anh": "output/ep002/da-nhap-dot4/dong-ho-qua-quyt.jpg",
+   "link": "https://sketchfab.com/3d-models/e2ec9ccd24ad4d398f7d388780f5de17",
+   "nguon": "sketchfab",
+   "tacGia": "Timmy Turner",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 904
+  },
+  {
+   "id": "dn4-thung_go",
+   "ten": "Crate (thung_go)",
+   "phu": "784 tam giác · cao 2.2 stud, hộp 2.2×2.2×2.2 · 30 KB · thùng gỗ kín 2.2 cạnh, đứng lên được (mặt nắp phẳng)",
+   "anh": "output/ep002/da-nhap-dot4/thung-go-dung.jpg",
+   "link": "https://poly.pizza/m/3OEFd1AWfa",
+   "nguon": "polypizza",
+   "tacGia": "Quaternius",
+   "giayPhep": "CC0",
+   "tamGiac": 784
+  },
+  {
+   "id": "dn4-hop_nhan",
+   "ten": "Ring box (hop_nhan)",
+   "phu": "1160 tam giác · cao 0.7 stud, hộp 0.457×0.7×0.591 · 379 KB · hộp nhẫn sang: nhung đỏ đậm, viền vàng, gối navy, nhẫn Decorated Ring dựng đứng trong hộp; mở nắp, mặt trước nhìn +Z; có bản hop-nhan-sang (hộp rỗng) và hop-nhan (gốc, để so)",
+   "anh": "output/ep002/da-nhap-dot4/hop-nhan-truoc-sau.jpg",
+   "link": "https://sketchfab.com/3d-models/4a80eed40ae84093bec69dbf6654c209",
+   "nguon": "sketchfab",
+   "tacGia": "Staralighto",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 156
+  },
+  {
+   "id": "dn4-nhan_dep",
+   "ten": "Decorated Ring (nhan_dep)",
+   "phu": "1004 tam giác · cao 0.123 stud, hộp 0.371×0.123×0.407 · 365 KB · nhẫn vàng khắc nạm đá đỏ, nằm ngang (trục nhẫn = trục đứng), đường kính 0.4",
+   "anh": "output/ep002/da-nhap-dot4/nhan-dep.jpg",
+   "link": "https://sketchfab.com/3d-models/b2a6277f29d94226bbb2f38eb27ca9b9",
+   "nguon": "sketchfab",
+   "tacGia": "Loïc",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 1004
+  },
+  {
+   "id": "dn4-cua_kinh_nha_may",
+   "ten": "Old factory window (cua_kinh_nha_may)",
+   "phu": "516 tam giác · cao 5 stud, hộp 6.567×5×0.539 · 513 KB · khung cửa sổ ô kính lưới 6.6×5, vân ảnh gỗ cũ (không phẳng); chỉ là khung, kính chưa trong",
+   "anh": "output/ep002/da-nhap-dot4/cua-kinh-nha-may.jpg",
+   "link": "https://sketchfab.com/3d-models/a9cd2da56155418098f548d819eb5c67",
+   "nguon": "sketchfab",
+   "tacGia": "skaliarius",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 516
+  },
+  {
+   "id": "dn4-hang_rao",
+   "ten": "psx style chain fence gate (hang_rao)",
+   "phu": "170 tam giác · cao 5 stud, hộp 3.567×5×0.129 · 138 KB · cổng lưới B40 cao 5, rộng 3.6, rất mỏng 0.13 (hai mặt)",
+   "anh": "output/ep002/da-nhap-dot4/hang-rao.jpg",
+   "link": "https://sketchfab.com/3d-models/02fb75f229fa47b5a5d59f7409e2f4c1",
+   "nguon": "sketchfab",
+   "tacGia": "valse kamerplant",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 170
+  },
+  {
+   "id": "dn4-cuon_chi",
+   "ten": "Thread_and_Needle with UV´S (cuon_chi)",
+   "phu": "469 tam giác · cao 0.6 stud, hộp 0.38×0.6×0.231 · 42 KB · cuộn chỉ vàng cam đứng + kim kèm theo, cao 0.6",
+   "anh": "output/ep002/da-nhap-dot4/cuon-chi.jpg",
+   "link": "https://sketchfab.com/3d-models/6a19a667d80b42bb921cbd845c5225bd",
+   "nguon": "sketchfab",
+   "tacGia": "ailyn_10_lowpoly",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 469
+  },
+  {
+   "id": "dn4-ban_tiem_may",
+   "ten": "Workbench - Low Poly Medieval, CC0 (ban_tiem_may)",
+   "phu": "1048 tam giác · cao 2.6 stud, hộp 4.139×2.6×2.168 · 79 KB · bàn thợ cao 2.6, có sẵn dụng cụ trên mặt bàn (kẹp, cưa, khối gỗ)",
+   "anh": "output/ep002/da-nhap-dot4/ban-tiem-may.jpg",
+   "link": "https://sketchfab.com/3d-models/9e18d937e18240d8ac1eb98c43d54d9a",
+   "nguon": "sketchfab",
+   "tacGia": "Avramania",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 1048
+  },
+  {
+   "id": "dn4-bang_hieu_treo",
+   "ten": "Wooden Sign (bang_hieu_treo)",
+   "phu": "644 tam giác · cao 4 stud, hộp 2.985×4×0.671 · 41 KB · bảng trống treo xà trụ, cao 4 rộng 3; mặt bảng quay +Z; có cọng cỏ ở chân trụ",
+   "anh": "output/ep002/da-nhap-dot4/bang-hieu-treo.jpg",
+   "link": "https://poly.pizza/m/jNdZygn3uR",
+   "nguon": "polypizza",
+   "tacGia": "iPoly3D",
+   "giayPhep": "CC0",
+   "tamGiac": 644
+  },
+  {
+   "id": "dn4-den_cua",
+   "ten": "Hanging Lantern (den_cua)",
+   "phu": "472 tam giác · cao 1.2 stud, hộp 0.545×1.2×0.545 · 27 KB · đèn lồng treo dây xích 1.2, ô sáng cam",
+   "anh": "output/ep002/da-nhap-dot4/den-cua.jpg",
+   "link": "https://poly.pizza/m/3jzk3YShv1",
+   "nguon": "polypizza",
+   "tacGia": "Kay Lousberg",
+   "giayPhep": "CC0",
+   "tamGiac": 472
+  },
+  {
+   "id": "dn4-giuong_ga",
+   "ten": "Bed Single (giuong_ga)",
+   "phu": "214 tam giác · cao 2.5 stud, hộp 3.807×2.5×7.5 · 17 KB · giường đơn dài 7.5, chăn đỏ; đầu giường (gối) ở +Z",
+   "anh": "output/ep002/da-nhap-dot4/giuong-ga.jpg",
+   "link": "https://poly.pizza/m/sn8az3odMR",
+   "nguon": "polypizza",
+   "tacGia": "Kenney",
+   "giayPhep": "CC0",
+   "tamGiac": 214
+  }
+ ]
+}

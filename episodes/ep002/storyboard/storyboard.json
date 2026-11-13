@@ -1,0 +1,1330 @@
+{
+ "episode": {
+  "id": "ep002",
+  "title": "Món đồ biến mất trong phòng khóa kín",
+  "fps": 30,
+  "seed": 21,
+  "rule": "Ở thị trấn này, đồ đạc liên tục biến mất dù phòng đã khóa kín.",
+  "weakness": "Tôi mất sợi dây chuyền bà để lại — món tôi quý nhất.",
+  "twist": "Gấu bông ông Bách phát miễn phí là kẻ trộm; ông còn tự giấu hàng mình rồi báo mất để không ai nghi.",
+  "solution": "Tôi dẫn thị trưởng cùng lính gác tới nhà máy; kho hàng giấu của ông Bách lộ ra, tôi lấy lại dây chuyền, Bắp ôm luôn cái két nhưng chịu đặt xuống.",
+  "env": "kenneyTown",
+  "light": "day",
+  "town": {
+   "blocks": 3
+  },
+  "actors": {
+   "hero": {
+    "ga": 1
+   },
+   "bach": {
+    "shirt": "#f2e3c6",
+    "pants": "#6d4c41",
+    "hair": "short",
+    "hairColor": "#9e9e9e",
+    "beard": true
+   },
+   "bach_xuong": {
+    "shirt": "#8fb0c9",
+    "sleeves": "#f2e3c6",
+    "pants": "#6d4c41",
+    "hair": "short",
+    "hairColor": "#9e9e9e",
+    "beard": true
+   },
+   "mayor": {
+    "shirt": "#37474f",
+    "pants": "#263238",
+    "hat": "tophat",
+    "hatColor": "#111111",
+    "hair": "short",
+    "hairColor": "#3e2723",
+    "skin": "#f0c89a"
+   },
+   "mayor_ngu": {
+    "shirt": "#90caf9",
+    "shirtPattern": "stripes",
+    "shirtPattern2": "#ffffff",
+    "pants": "#90caf9",
+    "hat": "beanie",
+    "hatColor": "#e3f2fd",
+    "hair": "short",
+    "hairColor": "#3e2723",
+    "skin": "#f0c89a"
+   },
+   "guard1": {
+    "shirt": "#1f3a68",
+    "pants": "#1f3a68",
+    "hat": "cap",
+    "hatColor": "#c0392b",
+    "shoes": "#111111"
+   },
+   "guard2": {
+    "shirt": "#2e5a3a",
+    "pants": "#2e5a3a",
+    "hat": "cap",
+    "hatColor": "#f1c40f",
+    "shoes": "#111111",
+    "beard": "#3e2723"
+   },
+   "baker": {
+    "shirt": "#ffffff",
+    "pants": "#795548",
+    "hat": "tophat",
+    "hatColor": "#ffffff"
+   },
+   "tailor": {
+    "shirt": "#e91e63",
+    "skirt": "#4a148c",
+    "hair": "braids",
+    "lashes": true
+   },
+   "kid1": {
+    "shirt": "#4caf50",
+    "pants": "#1565c0"
+   },
+   "bap": {
+    "bear": 1,
+    "bow": "#2e86de"
+   },
+   "bear2": {
+    "bear": 1,
+    "bow": "#e74c3c"
+   },
+   "bear3": {
+    "bear": 1,
+    "bow": "#f1c40f"
+   },
+   "crowd": {
+    "count": 8
+   }
+  },
+  "places": {
+   "bakery": {
+    "pos": [
+     18.0,
+     0,
+     -6.0
+    ],
+    "ry": 0
+   },
+   "tailor": {
+    "pos": [
+     26.0,
+     0,
+     -6.0
+    ],
+    "ry": 0
+   },
+   "bearshop": {
+    "pos": [
+     -8.0,
+     0,
+     -6.0
+    ],
+    "ry": 0
+   },
+   "mayor": {
+    "pos": [
+     34.0,
+     0,
+     -6.0
+    ],
+    "ry": 0
+   },
+   "balcony": {
+    "pos": [
+     0.0,
+     0,
+     -4.0
+    ],
+    "ry": 0
+   },
+   "roof": {
+    "pos": [
+     0.0,
+     0,
+     8.0
+    ],
+    "ry": 0
+   },
+   "factory": {
+    "pos": [
+     60.0,
+     0,
+     -20.0
+    ],
+    "ry": 0
+   },
+   "bedroom_in": {
+    "pos": [
+     4,
+     0,
+     3
+    ],
+    "ry": 0
+   },
+   "factory_in": {
+    "pos": [
+     0,
+     0,
+     3
+    ],
+    "ry": 0
+   }
+  },
+  "props": {
+   "ke_trong": {
+    "kit": "ke_trong",
+    "at": "home"
+   },
+   "o_khoa": {
+    "kit": "o_khoa",
+    "at": "home"
+   },
+   "hoc_quay": {
+    "kit": "hoc_quay",
+    "at": "bakery"
+   },
+   "hop_nhan": {
+    "kit": "hop_nhan",
+    "at": "tailor"
+   },
+   "thung_dau_gau": {
+    "kit": "thung_dau_gau",
+    "at": "bearshop"
+   },
+   "bang_tin": {
+    "kit": "bang_tin",
+    "at": "square"
+   },
+   "ke_phong_ga": {
+    "kit": "ke_phong_ga",
+    "at": "bedroom"
+   },
+   "anh_ba": {
+    "kit": "anh_ba",
+    "at": "bedroom"
+   },
+   "dong_ho": {
+    "kit": "dong_ho",
+    "at": "bedroom",
+    "on": "ke_phong_ga"
+   },
+   "guong": {
+    "kit": "guong",
+    "at": "bedroom"
+   },
+   "cuon_sach": {
+    "kit": "cuon_sach",
+    "at": "bedroom"
+   },
+   "nhan_moi": {
+    "kit": "nhan_moi",
+    "at": "bedroom",
+    "on": "ke_phong_ga"
+   },
+   "vi": {
+    "kit": "vi",
+    "at": "crossroad",
+    "hold": true
+   },
+   "tui_tien": {
+    "kit": "tui_tien",
+    "at": "crossroad",
+    "hold": true
+   },
+   "bang_chuyen": {
+    "kit": "bang_chuyen",
+    "at": "factory"
+   },
+   "ke_gau": {
+    "kit": "ke_gau",
+    "at": "factory"
+   },
+   "ban_do": {
+    "kit": "ban_do",
+    "at": "factory"
+   },
+   "ket_tien": {
+    "kit": "ket_tien",
+    "at": "factory"
+   },
+   "day_chuyen": {
+    "kit": "day_chuyen",
+    "at": "factory",
+    "on": "ket_tien"
+   },
+   "dong_ho_quyt_thi": {
+    "kit": "dong_ho_quyt_thi",
+    "at": "mayor"
+   },
+   "dong_ho_quyt": {
+    "kit": "dong_ho_quyt",
+    "at": "factory",
+    "on": "bang_chuyen"
+   },
+   "thung_tiem_bach": {
+    "kit": "thung_tiem_bach",
+    "at": "factory"
+   },
+   "ket_ga": {
+    "kit": "ket_ga",
+    "at": "bedroom"
+   }
+  }
+ },
+ "shots": [
+  {
+   "id": "s001",
+   "t0": 0.0,
+   "t1": 1.3,
+   "img": null,
+   "type": "establish",
+   "note": "máy: lia chậm, kéo ra",
+   "text": "Đồ đạc liên tục biến mất",
+   "line": "Ở thị trấn này, đồ đạc liên tục biến mất, dù căn phòng đã được khóa kín."
+  },
+  {
+   "id": "s002",
+   "t0": 1.3,
+   "t1": 2.5,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:ke_trong — kệ trống, vết bụi hình món đồ",
+   "text": "",
+   "line": "Ở thị trấn này, đồ đạc liên tục biến mất, dù căn phòng đã được khóa kín."
+  },
+  {
+   "id": "s003",
+   "t0": 2.5,
+   "t1": 3.7,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:o_khoa — ổ khoá cửa còn nguyên",
+   "text": "",
+   "line": "Ở thị trấn này, đồ đạc liên tục biến mất, dù căn phòng đã được khóa kín."
+  },
+  {
+   "id": "s004",
+   "t0": 3.7,
+   "t1": 4.6,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:hoc_quay — hốc trống dưới quầy, bảng hình bánh mì",
+   "text": "",
+   "line": "Ban đầu là két tiền của chú bán bánh."
+  },
+  {
+   "id": "s005",
+   "t0": 4.6,
+   "t1": 5.5,
+   "img": null,
+   "type": "reaction",
+   "note": "máy: đẩy vào; diễn: scared",
+   "text": "",
+   "line": "Ban đầu là két tiền của chú bán bánh."
+  },
+  {
+   "id": "s006",
+   "t0": 5.5,
+   "t1": 6.4,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:hop_nhan — hộp nhẫn mở trống, cuộn chỉ",
+   "text": "",
+   "line": "Rồi tới nhẫn cưới của cô thợ may."
+  },
+  {
+   "id": "s007",
+   "t0": 6.4,
+   "t1": 7.3,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: idle",
+   "text": "",
+   "line": "Rồi tới nhẫn cưới của cô thợ may."
+  },
+  {
+   "id": "s008",
+   "t0": 7.3,
+   "t1": 9.1,
+   "img": null,
+   "type": "dialogue",
+   "note": "máy: kéo ra; diễn: wave; ông Bách phát gấu bông cho 2 đứa nhỏ ở quầy ngoài hiên tiệm gấu",
+   "text": "",
+   "line": "Ngay cả ông Bách, người hàng xóm thân thiện hay phát gấu bông miễn phí cho cả thị trấn, cũng báo mất đồ."
+  },
+  {
+   "id": "s010",
+   "t0": 9.1,
+   "t1": 10.5,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:thung_dau_gau — thùng in dấu đầu gấu (cài manh mối 1)",
+   "text": "",
+   "line": "Ngay cả ông Bách, người hàng xóm thân thiện hay phát gấu bông miễn phí cho cả thị trấn, cũng báo mất đồ."
+  },
+  {
+   "id": "s011",
+   "t0": 10.5,
+   "t1": 12.1,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: idle; ông than mất đồ, mặt buồn",
+   "text": "",
+   "line": "Ngay cả ông Bách, người hàng xóm thân thiện hay phát gấu bông miễn phí cho cả thị trấn, cũng báo mất đồ."
+  },
+  {
+   "id": "s012",
+   "t0": 12.1,
+   "t1": 13.6,
+   "img": null,
+   "type": "reaction",
+   "note": "máy: đẩy vào; diễn: point; chỉ vào chỗ thùng trống (cài manh mối 2: nhà ông mất nhiều nhất)",
+   "text": "",
+   "line": "Nhà ông còn báo mất nhiều nhất."
+  },
+  {
+   "id": "s013",
+   "t0": 13.6,
+   "t1": 15.1,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; bảng tin dán kín giấy báo mất",
+   "text": "7 ngày",
+   "line": "Chỉ trong một tuần, cả thị trấn đã có hàng chục nhà báo mất đồ."
+  },
+  {
+   "id": "s014",
+   "t0": 15.1,
+   "t1": 16.7,
+   "img": null,
+   "type": "crowd",
+   "note": "máy: kéo ra; diễn: panic; dân xúm lại bảng tin",
+   "text": "",
+   "line": "Chỉ trong một tuần, cả thị trấn đã có hàng chục nhà báo mất đồ."
+  },
+  {
+   "id": "s14a",
+   "t0": 16.7,
+   "t1": 17.7,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: idle; giới thiệu Gà (Gà nhìn máy quay)",
+   "text": "",
+   "line": "Còn tôi là Gà."
+  },
+  {
+   "id": "s14b",
+   "t0": 17.7,
+   "t1": 19.0,
+   "img": null,
+   "type": "establish",
+   "note": "máy: kéo ra, cẩu lên; nhà Gà sát tiệm gấu ông Bách",
+   "text": "",
+   "line": "Nhà tôi sát tiệm ông Bách."
+  },
+  {
+   "id": "s016",
+   "t0": 19.0,
+   "t1": 20.3,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:ke_phong_ga — kệ trống chỗ dây chuyền",
+   "text": "",
+   "line": "Rồi một sáng, chiếc dây chuyền bà để lại cũng biến mất."
+  },
+  {
+   "id": "s017",
+   "t0": 20.3,
+   "t1": 21.6,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: idle",
+   "text": "",
+   "line": "Rồi một sáng, chiếc dây chuyền bà để lại cũng biến mất."
+  },
+  {
+   "id": "s018",
+   "t0": 21.6,
+   "t1": 22.8,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:anh_ba — ảnh bà đeo dây chuyền",
+   "text": "",
+   "line": "Đó là món tôi quý nhất."
+  },
+  {
+   "id": "s020",
+   "t0": 22.8,
+   "t1": 24.6,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào nhanh; diễn: point",
+   "text": "Điều tra!",
+   "line": "Tôi quyết điều tra vụ mất cắp này."
+  },
+  {
+   "id": "s021",
+   "t0": 24.6,
+   "t1": 25.7,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: hold; Gà cầm đồng hồ báo thức",
+   "text": "",
+   "line": "Tối đó, tôi đặt cái đồng hồ lên chỗ sợi dây chuyền rồi giả vờ ngủ."
+  },
+  {
+   "id": "s022",
+   "t0": 25.7,
+   "t1": 26.8,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:dong_ho trên kệ",
+   "text": "",
+   "line": "Tối đó, tôi đặt cái đồng hồ lên chỗ sợi dây chuyền rồi giả vờ ngủ."
+  },
+  {
+   "id": "s023",
+   "t0": 26.8,
+   "t1": 27.95,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: lie",
+   "text": "",
+   "line": "Tối đó, tôi đặt cái đồng hồ lên chỗ sợi dây chuyền rồi giả vờ ngủ."
+  },
+  {
+   "id": "s024",
+   "t0": 27.95,
+   "t1": 29.25,
+   "img": null,
+   "type": "overShoulder",
+   "note": "máy: đẩy vào; diễn: lie; qua vai Gà nằm nhìn gương",
+   "text": "",
+   "line": "Qua tấm gương đối diện giường, tôi vẫn thấy rõ cái kệ."
+  },
+  {
+   "id": "s025",
+   "t0": 29.25,
+   "t1": 30.59,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:guong — trong gương thấy kệ + đồng hồ",
+   "text": "",
+   "line": "Qua tấm gương đối diện giường, tôi vẫn thấy rõ cái kệ."
+  },
+  {
+   "id": "s026",
+   "t0": 30.59,
+   "t1": 31.79,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào chậm; diễn: lie",
+   "text": "",
+   "line": "Đợi tới lúc tôi sắp ngủ thật, trong gương có thứ gì đó ngồi dậy."
+  },
+  {
+   "id": "s027",
+   "t0": 31.79,
+   "t1": 32.69,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; diễn: sitUp; obj:guong — bóng Bắp ngồi dậy trong gương",
+   "text": "",
+   "line": "Đợi tới lúc tôi sắp ngủ thật, trong gương có thứ gì đó ngồi dậy."
+  },
+  {
+   "id": "s028",
+   "t0": 32.69,
+   "t1": 33.55,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào nhanh; diễn: lie",
+   "text": "",
+   "line": "Đợi tới lúc tôi sắp ngủ thật, trong gương có thứ gì đó ngồi dậy."
+  },
+  {
+   "id": "s029",
+   "t0": 33.55,
+   "t1": 34.11,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: idle; Bắp ngồi ở chân giường",
+   "text": "Bắp",
+   "line": "Là Bắp."
+  },
+  {
+   "id": "s030",
+   "t0": 34.11,
+   "t1": 35.99,
+   "img": null,
+   "type": "insert",
+   "note": "máy: kéo ra; diễn: idle; hồi tưởng ban ngày: Bắp ngồi ở chân giường",
+   "text": "",
+   "line": "Con gấu bông vẫn nằm ở cuối giường tôi."
+  },
+  {
+   "id": "s032",
+   "t0": 35.99,
+   "t1": 37.19,
+   "img": null,
+   "type": "follow",
+   "note": "máy: bám theo, cẩu lên; diễn: climb",
+   "text": "",
+   "line": "Nó trèo lên kệ, ôm cái đồng hồ rồi kéo cuốn sách che đúng chỗ vừa lấy đồ."
+  },
+  {
+   "id": "s033",
+   "t0": 37.19,
+   "t1": 38.39,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; diễn: hug; Bắp ôm đồng hồ",
+   "text": "",
+   "line": "Nó trèo lên kệ, ôm cái đồng hồ rồi kéo cuốn sách che đúng chỗ vừa lấy đồ."
+  },
+  {
+   "id": "s034",
+   "t0": 38.39,
+   "t1": 39.73,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; diễn: drag; obj:cuon_sach che đúng chỗ vừa lấy đồ",
+   "text": "",
+   "line": "Nó trèo lên kệ, ôm cái đồng hồ rồi kéo cuốn sách che đúng chỗ vừa lấy đồ."
+  },
+  {
+   "id": "s036",
+   "t0": 39.73,
+   "t1": 40.45,
+   "img": null,
+   "type": "reaction",
+   "note": "máy: rung, kéo ra; diễn: sitUp",
+   "text": "",
+   "line": "Tôi bật dậy."
+  },
+  {
+   "id": "s037",
+   "t0": 40.45,
+   "t1": 41.74,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; diễn: vanish",
+   "text": "",
+   "line": "Bắp biến mất ngay trước mắt."
+  },
+  {
+   "id": "s039",
+   "t0": 41.74,
+   "t1": 42.94,
+   "img": null,
+   "type": "follow",
+   "note": "máy: bám theo; diễn: run",
+   "text": "",
+   "line": "Tới lúc tôi mở được cửa sổ, ngoài đường chẳng còn thấy bóng nó đâu."
+  },
+  {
+   "id": "s040",
+   "t0": 42.94,
+   "t1": 44.14,
+   "img": null,
+   "type": "establish",
+   "note": "máy: kéo ra",
+   "text": "",
+   "line": "Tới lúc tôi mở được cửa sổ, ngoài đường chẳng còn thấy bóng nó đâu."
+  },
+  {
+   "id": "s041",
+   "t0": 44.14,
+   "t1": 45.12,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: lookAround; Gà nhoài ra cửa sổ",
+   "text": "",
+   "line": "Tới lúc tôi mở được cửa sổ, ngoài đường chẳng còn thấy bóng nó đâu."
+  },
+  {
+   "id": "s042",
+   "t0": 45.12,
+   "t1": 46.22,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:nhan_moi trên kệ",
+   "text": "",
+   "line": "Tối hôm sau, tôi đặt một chiếc nhẫn lên kệ."
+  },
+  {
+   "id": "s043",
+   "t0": 46.22,
+   "t1": 47.35,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: hold",
+   "text": "",
+   "line": "Tối hôm sau, tôi đặt một chiếc nhẫn lên kệ."
+  },
+  {
+   "id": "s044",
+   "t0": 47.35,
+   "t1": 49.42,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: cower; ban công nhà Gà, nấp nhìn qua cửa kính vào kệ",
+   "text": "",
+   "line": "Lần này, tôi nấp sẵn ngoài ban công."
+  },
+  {
+   "id": "s045",
+   "t0": 49.42,
+   "t1": 50.14,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; diễn: hold; Bắp chộp nhẫn",
+   "text": "",
+   "line": "Bắp chộp chiếc nhẫn rồi biến mất."
+  },
+  {
+   "id": "s046",
+   "t0": 50.14,
+   "t1": 50.86,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; diễn: vanish",
+   "text": "",
+   "line": "Bắp chộp chiếc nhẫn rồi biến mất."
+  },
+  {
+   "id": "s047",
+   "t0": 50.86,
+   "t1": 52.36,
+   "img": null,
+   "type": "overShoulder",
+   "note": "máy: đẩy vào; diễn: point",
+   "text": "",
+   "line": "Từ ban công, tôi thấy nó xuất hiện trên mái hiên nhà đối diện."
+  },
+  {
+   "id": "s048",
+   "t0": 52.36,
+   "t1": 53.79,
+   "img": null,
+   "type": "establish",
+   "note": "máy: kéo ra; diễn: idle; mái thấp đối diện, nơ xanh nổi trong đêm",
+   "text": "",
+   "line": "Từ ban công, tôi thấy nó xuất hiện trên mái hiên nhà đối diện."
+  },
+  {
+   "id": "s049",
+   "t0": 53.79,
+   "t1": 55.19,
+   "img": null,
+   "type": "follow",
+   "note": "máy: bám theo; diễn: run",
+   "text": "",
+   "line": "Tôi chạy xuống đường bám theo."
+  },
+  {
+   "id": "s051",
+   "t0": 55.19,
+   "t1": 56.29,
+   "img": null,
+   "type": "walkBy",
+   "note": "máy: lia; diễn: run; Bắp + gấu2 + gấu3 gặp nhau ở ngã ba",
+   "text": "",
+   "line": "Qua ngã ba, hai con gấu khác nhập vào."
+  },
+  {
+   "id": "s052",
+   "t0": 56.29,
+   "t1": 57.33,
+   "img": null,
+   "type": "reaction",
+   "note": "máy: đẩy vào; diễn: cower",
+   "text": "",
+   "line": "Qua ngã ba, hai con gấu khác nhập vào."
+  },
+  {
+   "id": "s053",
+   "t0": 57.33,
+   "t1": 58.33,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; diễn: hug; gấu nơ đỏ ôm ví",
+   "text": "",
+   "line": "Một con ôm ví, một con kéo theo túi tiền."
+  },
+  {
+   "id": "s054",
+   "t0": 58.33,
+   "t1": 59.7,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; diễn: drag; gấu nơ vàng kéo túi tiền",
+   "text": "",
+   "line": "Một con ôm ví, một con kéo theo túi tiền."
+  },
+  {
+   "id": "s055",
+   "t0": 59.7,
+   "t1": 61.1,
+   "img": null,
+   "type": "follow",
+   "note": "máy: bám theo; diễn: run; chui qua hàng rào",
+   "text": "",
+   "line": "Cả ba biến mất sau hàng rào của một nhà máy cuối phố."
+  },
+  {
+   "id": "s056",
+   "t0": 61.1,
+   "t1": 62.53,
+   "img": null,
+   "type": "reveal",
+   "note": "máy: cẩu lên, kéo ra; diễn: idle",
+   "text": "",
+   "line": "Cả ba biến mất sau hàng rào của một nhà máy cuối phố."
+  },
+  {
+   "id": "s057",
+   "t0": 62.53,
+   "t1": 63.73,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: climb; Gà trèo lên thùng gỗ",
+   "text": "",
+   "line": "Tôi đứng lên thùng gỗ, ghé mắt qua cửa kính."
+  },
+  {
+   "id": "s058",
+   "t0": 63.73,
+   "t1": 64.92,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: peek; mặt Gà sau kính",
+   "text": "",
+   "line": "Tôi đứng lên thùng gỗ, ghé mắt qua cửa kính."
+  },
+  {
+   "id": "s060",
+   "t0": 64.92,
+   "t1": 66.53,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; diễn: putDown; obj:bang_chuyen — Bắp thả nhẫn xuống băng chuyền",
+   "text": "",
+   "line": "Bắp thả chiếc nhẫn xuống băng chuyền."
+  },
+  {
+   "id": "s061",
+   "t0": 66.53,
+   "t1": 68.13,
+   "img": null,
+   "type": "reveal",
+   "note": "máy: từ sau lưng, kéo ra; diễn: hold; twist — bóng người gom đồ cuối băng, chưa thấy mặt",
+   "text": "",
+   "line": "Đứng cuối băng, gom đồ vào thùng, là ông Bách."
+  },
+  {
+   "id": "s062",
+   "t0": 68.13,
+   "t1": 69.14,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào nhanh; diễn: hold",
+   "text": "",
+   "line": "Đứng cuối băng, gom đồ vào thùng, là ông Bách."
+  },
+  {
+   "id": "s064",
+   "t0": 69.14,
+   "t1": 70.41,
+   "img": null,
+   "type": "establish",
+   "note": "máy: kéo ra; dãy gấu mới may trên kệ, pose tĩnh",
+   "text": "",
+   "line": "Sau lưng ông là cả một dãy gấu mới may xong."
+  },
+  {
+   "id": "s065",
+   "t0": 70.41,
+   "t1": 71.41,
+   "img": null,
+   "type": "insert",
+   "note": "máy: lia; obj:ke_gau — gấu 3 biến thể màu nơ",
+   "text": "",
+   "line": "Sau lưng ông là cả một dãy gấu mới may xong."
+  },
+  {
+   "id": "s066",
+   "t0": 71.41,
+   "t1": 73.11,
+   "img": null,
+   "type": "reaction",
+   "note": "máy: đẩy vào; diễn: point; Bách chỉ tấm bản đồ",
+   "text": "",
+   "line": "Ông chỉ vào tấm bản đồ trên tường."
+  },
+  {
+   "id": "s068",
+   "t0": 73.11,
+   "t1": 74.01,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: point",
+   "text": "",
+   "line": "Nhà nào có gấu rồi thì đánh dấu."
+  },
+  {
+   "id": "s069",
+   "t0": 74.01,
+   "t1": 74.86,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:ban_do — dấu X đỏ mới",
+   "text": "",
+   "line": "Nhà nào có gấu rồi thì đánh dấu."
+  },
+  {
+   "id": "s070",
+   "t0": 74.86,
+   "t1": 76.36,
+   "img": null,
+   "type": "dialogue",
+   "note": "máy: kéo ra; diễn: wave",
+   "text": "",
+   "line": "Mai phát tiếp mấy nhà còn lại."
+  },
+  {
+   "id": "s071",
+   "t0": 76.36,
+   "t1": 77.4,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:ket_tien — két của chú bán bánh dưới băng chuyền",
+   "text": "",
+   "line": "Dưới băng chuyền là két tiền của chú bán bánh."
+  },
+  {
+   "id": "s072",
+   "t0": 77.4,
+   "t1": 78.4,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: peek",
+   "text": "",
+   "line": "Dưới băng chuyền là két tiền của chú bán bánh."
+  },
+  {
+   "id": "s074",
+   "t0": 78.4,
+   "t1": 79.9,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:day_chuyen trên nắp két",
+   "text": "",
+   "line": "Trên nắp két, tôi thấy sợi dây chuyền của bà."
+  },
+  {
+   "id": "s075",
+   "t0": 79.9,
+   "t1": 80.71,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: peek",
+   "text": "",
+   "line": "Trên nắp két, tôi thấy sợi dây chuyền của bà."
+  },
+  {
+   "id": "s076",
+   "t0": 80.71,
+   "t1": 82.45,
+   "img": null,
+   "type": "follow",
+   "note": "máy: bám theo; diễn: run",
+   "text": "",
+   "line": "Tôi chạy thẳng tới nhà thị trưởng."
+  },
+  {
+   "id": "s077",
+   "t0": 82.45,
+   "t1": 83.65,
+   "img": null,
+   "type": "dialogue",
+   "note": "máy: kéo ra; diễn: point; Gà gõ cửa; thị trưởng mặc đồ ngủ, mũ ngủ, mắt lờ đờ",
+   "text": "",
+   "line": "Tôi bảo thị trưởng: Chú qua nhìn một lần thôi!"
+  },
+  {
+   "id": "s078",
+   "t0": 83.65,
+   "t1": 84.86,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: point",
+   "text": "",
+   "line": "Tôi bảo thị trưởng: Chú qua nhìn một lần thôi!"
+  },
+  {
+   "id": "s079",
+   "t0": 84.86,
+   "t1": 85.69,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: sleepy; thị trưởng lắc đầu",
+   "text": "",
+   "line": "Chú lắc đầu."
+  },
+  {
+   "id": "s080",
+   "t0": 85.69,
+   "t1": 86.73,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: sleepy",
+   "text": "",
+   "line": "Báo đời báo đốm."
+  },
+  {
+   "id": "s081",
+   "t0": 86.73,
+   "t1": 87.6,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: point",
+   "text": "",
+   "line": "Về ngủ đi!"
+  },
+  {
+   "id": "s082",
+   "t0": 87.6,
+   "t1": 88.8,
+   "img": null,
+   "type": "establish",
+   "note": "máy: kéo ra; sáng hôm sau, trước nhà Gà",
+   "text": "",
+   "line": "Sáng hôm sau, chính chú chạy qua tìm tôi."
+  },
+  {
+   "id": "s083",
+   "t0": 88.8,
+   "t1": 89.95,
+   "img": null,
+   "type": "follow",
+   "note": "máy: bám theo; diễn: run; thị trưởng đồ thường, mũ cao, chạy tìm Gà",
+   "text": "",
+   "line": "Sáng hôm sau, chính chú chạy qua tìm tôi."
+  },
+  {
+   "id": "s084",
+   "t0": 89.95,
+   "t1": 91.15,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:dong_ho_quyt_thi — đồng hồ quả quýt nắp vàng + dây xích (khác đồng hồ của Gà)",
+   "text": "",
+   "line": "Chiếc đồng hồ quả quýt cha để lại cho chú đã biến mất."
+  },
+  {
+   "id": "s085",
+   "t0": 91.15,
+   "t1": 92.39,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: lookAround; thị trưởng sờ túi áo, túi trống",
+   "text": "",
+   "line": "Chiếc đồng hồ quả quýt cha để lại cho chú đã biến mất."
+  },
+  {
+   "id": "s086",
+   "t0": 92.39,
+   "t1": 93.59,
+   "img": null,
+   "type": "dialogue",
+   "note": "máy: kéo ra; diễn: point; thị trưởng gọi lính gác",
+   "text": "",
+   "line": "Lần này, chú gọi hai lính gác đi cùng tôi."
+  },
+  {
+   "id": "s087",
+   "t0": 93.59,
+   "t1": 94.76,
+   "img": null,
+   "type": "walkBy",
+   "note": "máy: lia, kéo ra; diễn: walk; cả nhóm đi cùng nhau: Gà + thị trưởng + 2 lính gác",
+   "text": "",
+   "line": "Lần này, chú gọi hai lính gác đi cùng tôi."
+  },
+  {
+   "id": "s088",
+   "t0": 94.76,
+   "t1": 95.96,
+   "img": null,
+   "type": "overShoulder",
+   "note": "máy: đẩy vào; diễn: idle; nhìn qua cửa kính nhà máy ban ngày",
+   "text": "",
+   "line": "Qua cửa kính nhà máy, chú thấy ông Bách nhặt chiếc đồng hồ của mình khỏi băng chuyền."
+  },
+  {
+   "id": "s089",
+   "t0": 95.96,
+   "t1": 97.26,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:dong_ho_quyt trên băng chuyền",
+   "text": "",
+   "line": "Qua cửa kính nhà máy, chú thấy ông Bách nhặt chiếc đồng hồ của mình khỏi băng chuyền."
+  },
+  {
+   "id": "s090",
+   "t0": 97.26,
+   "t1": 98.44,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: hold; Bách nhặt đồng hồ khỏi băng chuyền",
+   "text": "",
+   "line": "Qua cửa kính nhà máy, chú thấy ông Bách nhặt chiếc đồng hồ của mình khỏi băng chuyền."
+  },
+  {
+   "id": "s091",
+   "t0": 98.44,
+   "t1": 99.81,
+   "img": null,
+   "type": "dialogue",
+   "note": "máy: kéo ra; diễn: point; thị trưởng quay sang 2 lính gác",
+   "text": "",
+   "line": "Chú quay sang hai lính gác."
+  },
+  {
+   "id": "s092",
+   "t0": 99.81,
+   "t1": 101.0,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào nhanh; diễn: point",
+   "text": "",
+   "line": "Mở cửa kho."
+  },
+  {
+   "id": "s093",
+   "t0": 101.0,
+   "t1": 102.32,
+   "img": null,
+   "type": "reaction",
+   "note": "máy: kéo ra; diễn: hold; 2 lính gác kéo cửa kho",
+   "text": "",
+   "line": "Lính gác mở cửa kho."
+  },
+  {
+   "id": "s094",
+   "t0": 102.32,
+   "t1": 102.98,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: lookAround",
+   "text": "",
+   "line": "Thị trưởng nhìn sang chồng thùng in tên tiệm ông Bách."
+  },
+  {
+   "id": "s095",
+   "t0": 102.98,
+   "t1": 104.48,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; cụm thùng hàng ông Bách tự giấu",
+   "text": "Tiệm gấu Bách",
+   "line": "Thị trưởng nhìn sang chồng thùng in tên tiệm ông Bách."
+  },
+  {
+   "id": "s096",
+   "t0": 104.48,
+   "t1": 105.68,
+   "img": null,
+   "type": "dialogue",
+   "note": "máy: kéo ra; diễn: point",
+   "text": "",
+   "line": "Ủa, đây là mấy thùng sáng nay ông báo mất mà?"
+  },
+  {
+   "id": "s097",
+   "t0": 105.68,
+   "t1": 106.9,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: point",
+   "text": "",
+   "line": "Ủa, đây là mấy thùng sáng nay ông báo mất mà?"
+  },
+  {
+   "id": "s098",
+   "t0": 106.9,
+   "t1": 107.89,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đứng yên; diễn: idle; ông Bách đứng cứng, im lặng",
+   "text": "",
+   "line": "Ông Bách im luôn."
+  },
+  {
+   "id": "s099",
+   "t0": 107.89,
+   "t1": 108.64,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: idle",
+   "text": "",
+   "line": "Tôi mới hiểu."
+  },
+  {
+   "id": "s100",
+   "t0": 108.64,
+   "t1": 109.94,
+   "img": null,
+   "type": "crowd",
+   "note": "máy: kéo ra; diễn: panic; hồi tưởng: dân báo mất đồ",
+   "text": "",
+   "line": "Cứ mỗi lần cả thị trấn mất đồ, ông lại giấu thêm vài thùng hàng của mình rồi đi báo mất."
+  },
+  {
+   "id": "s101",
+   "t0": 109.94,
+   "t1": 111.34,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; diễn: hold; hồi tưởng: Bách khiêng thùng ra cửa sau",
+   "text": "",
+   "line": "Cứ mỗi lần cả thị trấn mất đồ, ông lại giấu thêm vài thùng hàng của mình rồi đi báo mất."
+  },
+  {
+   "id": "s102",
+   "t0": 111.34,
+   "t1": 112.62,
+   "img": null,
+   "type": "dialogue",
+   "note": "máy: kéo ra; diễn: panic; hồi tưởng: Bách than với thị trưởng",
+   "text": "",
+   "line": "Cứ mỗi lần cả thị trấn mất đồ, ông lại giấu thêm vài thùng hàng của mình rồi đi báo mất."
+  },
+  {
+   "id": "s103",
+   "t0": 112.62,
+   "t1": 113.52,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: idle; mặt Bách đắc ý",
+   "text": "",
+   "line": "Ai mà nghi người than mất nhiều nhất chứ?"
+  },
+  {
+   "id": "s104",
+   "t0": 113.52,
+   "t1": 114.39,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: idle",
+   "text": "",
+   "line": "Ai mà nghi người than mất nhiều nhất chứ?"
+  },
+  {
+   "id": "s105",
+   "t0": 114.39,
+   "t1": 115.64,
+   "img": null,
+   "type": "establish",
+   "note": "máy: kéo ra",
+   "text": "",
+   "line": "Sáng hôm sau, tôi lấy lại sợi dây chuyền."
+  },
+  {
+   "id": "s106",
+   "t0": 115.64,
+   "t1": 116.64,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: hold; Gà cầm lại dây chuyền",
+   "text": "",
+   "line": "Sáng hôm sau, tôi lấy lại sợi dây chuyền."
+  },
+  {
+   "id": "s107",
+   "t0": 116.64,
+   "t1": 117.88,
+   "img": null,
+   "type": "insert",
+   "note": "máy: đẩy vào; obj:ket_ga — két góc phòng, cùng bố cục cảnh đầu",
+   "text": "",
+   "line": "Tôi cất dây chuyền vào két."
+  },
+  {
+   "id": "s108",
+   "t0": 117.88,
+   "t1": 118.88,
+   "img": null,
+   "type": "walkBy",
+   "note": "máy: lia; diễn: walk",
+   "text": "",
+   "line": "Vừa quay lưng, Bắp đã ôm nguyên cái két."
+  },
+  {
+   "id": "s109",
+   "t0": 118.88,
+   "t1": 120.03,
+   "img": null,
+   "type": "reveal",
+   "note": "máy: kéo ra; diễn: hug; Bắp ôm nguyên cái két",
+   "text": "",
+   "line": "Vừa quay lưng, Bắp đã ôm nguyên cái két."
+  },
+  {
+   "id": "s110",
+   "t0": 120.03,
+   "t1": 120.53,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào; diễn: idle",
+   "text": "Bắp.",
+   "line": "Bắp."
+  },
+  {
+   "id": "s111",
+   "t0": 120.53,
+   "t1": 121.59,
+   "img": null,
+   "type": "insert",
+   "note": "máy: kéo ra; diễn: putDown",
+   "text": "",
+   "line": "Nó đặt xuống liền."
+  },
+  {
+   "id": "s112",
+   "t0": 121.59,
+   "t1": 122.59,
+   "img": null,
+   "type": "overShoulder",
+   "note": "máy: đẩy vào; diễn: point; Gà giơ tay gõ đầu Bắp",
+   "text": "",
+   "line": "Tôi gõ nhẹ lên đầu Bắp một cái."
+  },
+  {
+   "id": "s113",
+   "t0": 122.59,
+   "t1": 123.38,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đẩy vào nhanh; diễn: idle; Boang! — đầu Bắp bật lên",
+   "text": "",
+   "line": "Tôi gõ nhẹ lên đầu Bắp một cái."
+  },
+  {
+   "id": "s114",
+   "t0": 123.38,
+   "t1": 124.48,
+   "img": null,
+   "type": "closeup",
+   "note": "máy: đứng yên; diễn: idle; CẮT ĐEN sau Boang (123,29 s): màn hình đen, giữ ~1 s",
+   "text": "",
+   "line": "Tôi gõ nhẹ lên đầu Bắp một cái."
+  }
+ ],
+ "source": "kich-ban.md"
+}

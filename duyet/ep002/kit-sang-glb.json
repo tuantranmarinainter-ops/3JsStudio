@@ -286,5 +286,137 @@
    2.5
   ],
   "ghiChu": "dùng chung bac-them với bac_them_dep; cần co dãn ngang ×2 (kit rộng 5)"
+ },
+ "dong_ho_qua_quyt": {
+  "glb": "assets/nhap/dong-ho-qua-quyt.glb",
+  "manifestId": "nhap/dong-ho-qua-quyt",
+  "cao": 0.9,
+  "xoay": 0,
+  "bbox": [
+   0.63,
+   0.9,
+   0.133
+  ],
+  "ghiChu": "đồng hồ quả quýt vàng, vòng dây xích gắn liền; mặt số nhìn +Z; có vân ảnh mặt số"
+ },
+ "thung_go": {
+  "glb": "assets/nhap/thung-go-dung.glb",
+  "manifestId": "nhap/thung-go-dung",
+  "cao": 2.2,
+  "xoay": 0,
+  "bbox": [
+   2.2,
+   2.2,
+   2.2
+  ],
+  "ghiChu": "thùng gỗ kín 2.2 cạnh, đứng lên được (mặt nắp phẳng)"
+ },
+ "hop_nhan": {
+  "glb": "assets/nhap/hop-nhan-co-nhan.glb",
+  "manifestId": "nhap/hop-nhan-co-nhan",
+  "cao": 0.7,
+  "xoay": 0,
+  "bbox": [
+   0.457,
+   0.7,
+   0.591
+  ],
+  "ghiChu": "hộp nhẫn sang: nhung đỏ đậm, viền vàng, gối navy, nhẫn Decorated Ring dựng đứng trong hộp; mở nắp, mặt trước nhìn +Z; có bản hop-nhan-sang (hộp rỗng) và hop-nhan (gốc, để so)"
+ },
+ "nhan_dep": {
+  "glb": "assets/nhap/nhan-dep.glb",
+  "manifestId": "nhap/nhan-dep",
+  "cao": 0.123,
+  "xoay": 0,
+  "bbox": [
+   0.371,
+   0.123,
+   0.407
+  ],
+  "ghiChu": "nhẫn vàng khắc nạm đá đỏ, nằm ngang (trục nhẫn = trục đứng), đường kính 0.4"
+ },
+ "cua_kinh_nha_may": {
+  "glb": "assets/nhap/cua-kinh-nha-may.glb",
+  "manifestId": "nhap/cua-kinh-nha-may",
+  "cao": 5,
+  "xoay": 0,
+  "bbox": [
+   6.567,
+   5,
+   0.539
+  ],
+  "ghiChu": "khung cửa sổ ô kính lưới 6.6×5, vân ảnh gỗ cũ (không phẳng); chỉ là khung, kính chưa trong"
+ },
+ "hang_rao": {
+  "glb": "assets/nhap/hang-rao.glb",
+  "manifestId": "nhap/hang-rao",
+  "cao": 5,
+  "xoay": 0,
+  "bbox": [
+   3.567,
+   5,
+   0.129
+  ],
+  "ghiChu": "cổng lưới B40 cao 5, rộng 3.6, rất mỏng 0.13 (hai mặt)"
+ },
+ "cuon_chi": {
+  "glb": "assets/nhap/cuon-chi.glb",
+  "manifestId": "nhap/cuon-chi",
+  "cao": 0.6,
+  "xoay": 0,
+  "bbox": [
+   0.38,
+   0.6,
+   0.231
+  ],
+  "ghiChu": "cuộn chỉ vàng cam đứng + kim kèm theo, cao 0.6"
+ },
+ "ban_tiem_may": {
+  "glb": "assets/nhap/ban-tiem-may.glb",
+  "manifestId": "nhap/ban-tiem-may",
+  "cao": 2.6,
+  "xoay": 0,
+  "bbox": [
+   4.139,
+   2.6,
+   2.168
+  ],
+  "ghiChu": "bàn thợ cao 2.6, có sẵn dụng cụ trên mặt bàn (kẹp, cưa, khối gỗ)"
+ },
+ "bang_hieu_treo": {
+  "glb": "assets/nhap/bang-hieu-treo.glb",
+  "manifestId": "nhap/bang-hieu-treo",
+  "cao": 4,
+  "xoay": 0,
+  "bbox": [
+   2.985,
+   4,
+   0.671
+  ],
+  "ghiChu": "bảng trống treo xà trụ, cao 4 rộng 3; mặt bảng quay +Z; có cọng cỏ ở chân trụ"
+ },
+ "den_cua": {
+  "glb": "assets/nhap/den-cua.glb",
+  "manifestId": "nhap/den-cua",
+  "cao": 1.2,
+  "xoay": 0,
+  "bbox": [
+   0.545,
+   1.2,
+   0.545
+  ],
+  "ghiChu": "đèn lồng treo dây xích 1.2, ô sáng cam"
+ },
+ "giuong_ga": {
+  "glb": "assets/nhap/giuong-ga.glb",
+  "manifestId": "nhap/giuong-ga",
+  "cao": 2.5,
+  "xoay": 0,
+  "bbox": [
+   3.807,
+   2.5,
+   7.5
+  ],
+  "ghiChu": "giường đơn dài 7.5, chăn đỏ; đầu giường (gối) ở +Z"
  }
 }

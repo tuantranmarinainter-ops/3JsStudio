@@ -300,6 +300,19 @@ export const PROPS_KB = {
     lamDoc(D);
     return K.g;
   },
+  dong_ho_quyt: (THREE) => {   // đồng hồ quả quýt nắp vàng + dây xích ngắn (của thị trưởng; khác đồng hồ báo thức của Gà) — nằm nghiêng, nắp mở, xích vắt bên cạnh
+    const K = bo(THREE, 'dong_ho_quyt'), V = { metalness: 0.85, roughness: 0.25 };
+    const than = K.cyl(0.42, 0.42, 0.12, '#f2c230', 0, 0.08, 0, 'nap_vang', null, V);   // nắp/thân vàng
+    const mat = K.cyl(0.34, 0.34, 0.02, '#fffde7', 0, 0.15, 0, 'mat'); mat.rotation.y = 0;
+    K.tor(0.4, 0.04, '#d4a017', 0, 0.15, 0, 'vien', null, V).rotation.x = PI / 2;
+    K.box(0.04, 0.26, 0.02, '#212121', 0, 0.17, -0.1, 'kim_gio'); const kp = K.box(0.03, 0.2, 0.02, '#212121', 0.08, 0.17, 0.02, 'kim_phut'); kp.rotation.y = -1.1;
+    for (const a of [0, 1, 2, 3]) K.box(a % 2 ? 0.06 : 0.03, 0.02, a % 2 ? 0.03 : 0.06, '#212121', Math.sin(a * PI / 2) * 0.29, 0.165, -Math.cos(a * PI / 2) * 0.29, 'vach');
+    K.cyl(0.07, 0.07, 0.14, '#f2c230', 0, 0.08, -0.5, 'nut_cuon', null, V);   // núm lên dây
+    K.tor(0.1, 0.025, '#d4a017', 0, 0.1, -0.62, 'khuyen', null, V).rotation.x = PI / 2;
+    for (let i = 0; i < 7; i++) K.tor(0.07, 0.02, '#d4a017', 0.12 + i * 0.12, 0.1, -0.62 + Math.sin(i * 0.9) * 0.1, 'xich' + i, null, V).rotation.x = i % 2 ? 0 : PI / 2;   // xích ngắn vắt sang phải
+    return K.g;
+  },
+  dong_ho_quyt_thi: (THREE) => PROPS_KB.dong_ho_quyt(THREE),   // bản thứ hai (đặt ở nhà thị trưởng) — cùng một model
   vi: (THREE) => {         // cái ví
     const K = bo(THREE, 'vi');
     K.box(0.8, 0.12, 0.6, '#6d4c41', 0, 0.06, 0, 'vi'); K.box(0.82, 0.02, 0.1, '#a1887f', 0, 0.06, 0.26, 'chi_may');
@@ -378,6 +391,8 @@ export const PROP_INFO = {
   ket_ga: { size: [2, 2, 1.8], base: 'floor', fixed: true, surfaces: [[0, 2, 0]] },
   bang_tin: { size: [5, 6, 0.45], base: 'floor', fixed: true },
   thung_tiem_bach: { size: [5, 4.5, 2.2], base: 'floor', fixed: true },
+  dong_ho_quyt: { size: [1.5, 0.3, 1.5], base: 'surface' },
+  dong_ho_quyt_thi: { size: [1.5, 0.3, 1.5], base: 'surface' },
   vi: { size: [0.8, 0.15, 0.6], base: 'surface' },
   tui_tien: { size: [1.2, 1.4, 1.2], base: 'floor' },
   doi_dep: { size: [1.4, 0.35, 1.2], base: 'floor' },

@@ -1,0 +1,52 @@
+{
+ "so": 5,
+ "ngay": "2026-11-13",
+ "tieuDe": "Đợt 5",
+ "tomTat": "",
+ "token": {
+  "tong": 0,
+  "chiTiet": [],
+  "ghiChu": ""
+ },
+ "nhom": [
+  {
+   "id": "no-gau",
+   "ten": "Nơ cho gấu Bắp",
+   "mota": "Nơ lấy từ nguồn ngoài, ghép vào cổ gấu Mister Bear, chỉ đổi màu (Bắp xanh, hai gấu kia đỏ và vàng). Chọn 1.",
+   "kieu": "ung-vien",
+   "anh": [],
+   "muc": [
+    {
+     "id": "no_gau_bap",
+     "chuDe": "no-gau-bap",
+     "ten": "Nơ cổ gấu Bắp",
+     "phu": "phụ kiện ≤2000 tam giác · gắn vào thân, không nhún theo đầu",
+     "ungVien": [
+      {
+       "id": "no_poly_pizza",
+       "ten": "Bowtie (jeremy, Poly Pizza) — 104 tam giác",
+       "anh": "output/ep002/gau-bap/no/no1.jpg",
+       "link": "https://poly.pizza/m/fQGdyazJ-2m",
+       "phu": "CC BY 3.0 · nơ phẳng kiểu khối"
+      },
+      {
+       "id": "no_sketchfab",
+       "ten": "Bow Tie (Peakz, Sketchfab) — 1036 tam giác",
+       "anh": "output/ep002/gau-bap/no/no2.jpg",
+       "link": "https://sketchfab.com/3d-models/bow-tie-9e1b78768e4447f4befbcc2211bfe1d0",
+       "phu": "CC BY 4.0 · nơ phồng có hai dải rủ"
+      },
+      {
+       "id": "khan_goc",
+       "ten": "Khăn cổ + cà vạt gốc của Mister Bear",
+       "anh": "output/ep002/gau-bap/no/khan.jpg",
+       "link": "https://sketchfab.com/3d-models/mister-bear-47e7ee6daff54b018dcd55caaec755f0",
+       "phu": "CC BY 4.0 · phụ kiện có sẵn của model, đã bỏ mũ"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "lienKet": []
+}

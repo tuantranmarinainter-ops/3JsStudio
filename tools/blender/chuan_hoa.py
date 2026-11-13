@@ -20,6 +20,9 @@ ap.add_argument('--mau-dinh', action='store_true', help='thay ảnh màu bằng 
 ap.add_argument('--xoay', type=float, default=0, help='xoay quanh trục đứng (độ) để mặt trước nhìn +Z')
 ap.add_argument('--sang', type=float, default=0, help='làm sáng màu: trộn k (0..1) về trắng (ảnh màu, màu nền, màu đỉnh)')
 ap.add_argument('--xam', type=float, default=0, help='khử bão hoà k (0..1, 1 = xám giữ độ sáng); chạy trước --sang')
+ap.add_argument('--mau', default='', help='đổi màu phẳng: "sel=#hex,sel=#hex"; sel = obj:<glob tên mesh> | mat:<tên vật liệu hoặc chỉ số> (không tiền tố = vật liệu)')
+ap.add_argument('--bo', default='', help='bỏ mesh theo tên (glob, cách nhau dấu phẩy) trước khi gộp, vd "Object_31,Object_33"')
+ap.add_argument('--ghep', action='append', default=[], help='ghép GLB đã chuẩn hoá: "duong.glb;kich;x,y,z;rx" — kich = cạnh dài nhất sau scale (stud), x,y,z (kiểu three, gốc tâm đáy model chính) = vị trí tâm đáy của vật ghép, rx = độ xoay quanh X trước khi đặt')
 ap.add_argument('--ten', default='model')
 A = ap.parse_args(argv)
 
@@ -37,6 +40,40 @@ if _that: meshes = _that
 if not meshes:
     print('NHAP_LOI khong co mesh'); sys.exit(2)
 
+# ---------- bỏ mesh theo tên / tô màu phẳng theo mesh ----------
+import fnmatch
+def hex_lin(h):
+    h = h.lstrip('#'); c = [int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)]
+    return [x / 12.92 if x <= 0.04045 else ((x + 0.055) / 1.055) ** 2.4 for x in c]
+def mat_phang(hexs, base=None):
+    m = bpy.data.materials.new('mau_' + hexs.lstrip('#'))
+    m.use_nodes = True
+    b = next(n for n in m.node_tree.nodes if n.type == 'BSDF_PRINCIPLED')
+    b.inputs['Base Color'].default_value = (*hex_lin(hexs), 1.0)
+    b.inputs['Roughness'].default_value = 0.85
+    return m
+MAU = []
+for it in [x for x in A.mau.split(',') if x.strip()]:
+    sel, _, hx = it.rpartition('=')
+    if not sel or not hx: say('--mau sai:', it); sys.exit(2)
+    MAU.append((sel.strip(), hx.strip()))
+_bo = [x.strip() for x in A.bo.split(',') if x.strip()]
+if _bo:
+    for o in list(meshes):
+        if any(fnmatch.fnmatch(o.name, g) for g in _bo):
+            bpy.data.objects.remove(o, do_unlink=True); meshes.remove(o)
+    say('đã bỏ mesh theo --bo; còn', len(meshes))
+    if not meshes: print('NHAP_LOI --bo bỏ hết mesh'); sys.exit(2)
+_mat_cache = {}
+for sel, hx in MAU:
+    if not sel.startswith('obj:'): continue
+    n = 0
+    for o in meshes:
+        if fnmatch.fnmatch(o.name, sel[4:]):
+            if hx not in _mat_cache: _mat_cache[hx] = mat_phang(hx)
+            o.data = o.data.copy(); o.data.materials.clear(); o.data.materials.append(_mat_cache[hx]); n += 1
+    say('mau', sel, hx, '->', n, 'mesh')
+
 # ---------- gộp về 1 gốc, áp transform ----------
 for o in meshes:
     for m in list(o.modifiers):
@@ -48,7 +85,7 @@ for o in meshes:
     o.matrix_world = Matrix.Identity(4)
     if mw.determinant() < 0: o.data.flip_normals()
     for vg in list(o.vertex_groups): o.vertex_groups.remove(vg)
-for o in objs:
+for o in list(bpy.data.objects):
     if o.type != 'MESH': bpy.data.objects.remove(o, do_unlink=True)
 
 for o in sc.objects: o.select_set(False)
@@ -94,6 +131,47 @@ cx, cy = (mn.x + mx.x) / 2, (mn.y + mx.y) / 2
 me.transform(Matrix.Scale(k, 4) @ Matrix.Translation((-cx, -cy, -mn.z)))
 mn, mx = bbox()
 size = mx - mn      # Blender (x, y, z) -> glTF (x, z, -y): hộp bao three = (x, z, y)
+
+# ---------- tô màu theo vật liệu (--mau mat:… / tên / chỉ số) ----------
+for sel, hx in MAU:
+    if sel.startswith('obj:'): continue
+    key = sel[4:] if sel.startswith('mat:') else sel
+    n = 0
+    for i, mat in enumerate(me.materials):
+        if mat and (mat.name == key or str(i) == key):
+            me.materials[i] = mat_phang(hx); n += 1
+    say('mau vat lieu', key, hx, '->', n)
+
+# ---------- ghép vật khác đã chuẩn hoá ----------
+for gs in A.ghep:
+    pth, kich, pos, rx = (gs.split(';') + ['0', '0,0,0', '0'])[:4]
+    pre = set(bpy.data.objects.keys())
+    bpy.ops.import_scene.gltf(filepath=pth)
+    nw = [o for o in bpy.data.objects if o.name not in pre]
+    ms = [o for o in nw if o.type == 'MESH']
+    for o in ms:
+        mw = o.matrix_world.copy(); o.parent = None; o.data = o.data.copy(); o.data.transform(mw); o.matrix_world = Matrix.Identity(4)
+    for o in nw:
+        if o.type != 'MESH': bpy.data.objects.remove(o, do_unlink=True)
+    for o in ms:
+        for c in list(o.users_collection): c.objects.unlink(o)
+        sc.collection.objects.link(o)
+    if not ms: say('ghép: không có mesh trong', pth); sys.exit(2)
+    with bpy.context.temp_override(active_object=ms[0], object=ms[0], selected_objects=ms, selected_editable_objects=ms):
+        if len(ms) > 1: bpy.ops.object.join()
+    g = ms[0]; gm = g.data
+    gm.transform(Matrix.Rotation(math.radians(float(rx)), 4, 'X'))
+    cs = [v.co for v in gm.vertices]
+    gmn = Vector((min(c.x for c in cs), min(c.y for c in cs), min(c.z for c in cs))); gmx = Vector((max(c.x for c in cs), max(c.y for c in cs), max(c.z for c in cs)))
+    gk = float(kich) / max(gmx.x - gmn.x, gmx.y - gmn.y, gmx.z - gmn.z)
+    px, py, pz = [float(v) for v in pos.split(',')]
+    tgt = Vector((px, -pz, py))   # three (x, cao, sâu) -> Blender (x, -sâu, cao)
+    gm.transform(Matrix.Translation(tgt) @ Matrix.Scale(gk, 4) @ Matrix.Translation(Vector((-(gmn.x + gmx.x) / 2, -(gmn.y + gmx.y) / 2, -gmn.z))))
+    with bpy.context.temp_override(active_object=main, object=main, selected_objects=[main, g], selected_editable_objects=[main, g]):
+        bpy.ops.object.join()
+    me = main.data
+    say('ghép', os.path.basename(pth), 'kich', kich, 'tại', pos)
+tri_sau = tris(me)
 
 # ---------- vật liệu ----------
 TEX = A.tex

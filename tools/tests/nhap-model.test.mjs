@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { chuanGiayPhep, giayPhepHopLe, ghiManifest, ghiCredits, kiem, docEnv, che, ppTuHtml } from '../nhap-model.mjs';
+import { chuanGiayPhep, giayPhepHopLe, ghiManifest, ghiCredits, dongGhiCong, kiem, docEnv, che, ppTuHtml } from '../nhap-model.mjs';
 
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'nhap-'));
 
@@ -133,4 +133,12 @@ test('Poly Pizza không khoá: đọc model + URL GLB từ trang công khai', ()
   assert.equal(i.tamGiac, 52); assert.equal(i.tacGia, 'Poly by Google'); assert.equal(i.gp.ma, 'CC BY 3.0');
   assert.throws(() => ppTuHtml('<html></html>', 'x'), /không có dữ liệu/);
   assert.throws(() => ppTuHtml(html.replace(rid, '../etc'), 'x'), /ResourceID/);
+});
+
+test('dongGhiCong: model ghép (--ghep-nguon) được ghi công chung và vẫn qua kiểm ghi công', () => {
+  const a = { ten: 'Ring box', tacGia: 'A', url: 'https://x/a', gp: chuanGiayPhep('CC Attribution') };
+  const b = { ten: 'Ring', tacGia: 'B', url: 'https://x/b', gp: chuanGiayPhep('CC Attribution') };
+  const d = dongGhiCong({ ...a, them: [b] }, 'hop');
+  assert.match(d, /Ring box.*by A, licensed under/); assert.match(d, /Ghép thêm: "Ring" \(https:\/\/x\/b\) by B, licensed under/);
+  assert.equal(dongGhiCong(a, 'hop').includes('Ghép thêm'), false);
 });

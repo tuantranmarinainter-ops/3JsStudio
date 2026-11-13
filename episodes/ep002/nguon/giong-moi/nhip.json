@@ -1,0 +1,57 @@
+{
+ "thoiLuong": 123.292,
+ "tuMoiGiay": 5.01,
+ "doan": [
+  {
+   "ten": "0:00-0:28 Mở đầu",
+   "start": 0.0,
+   "end": 24.25,
+   "startMau": 0.0,
+   "lech": 0.0
+  },
+  {
+   "ten": "0:28-0:53 Đêm đầu",
+   "start": 24.651,
+   "end": 44.765,
+   "startMau": 24.4,
+   "lech": 0.25
+  },
+  {
+   "ten": "0:53-1:14 Đêm hai",
+   "start": 45.166,
+   "end": 62.176,
+   "startMau": 45.1,
+   "lech": 0.07
+  },
+  {
+   "ten": "1:14-1:38 Nhà máy",
+   "start": 62.577,
+   "end": 82.095,
+   "startMau": 61.8,
+   "lech": 0.78
+  },
+  {
+   "ten": "1:38-1:59 Méc thị trưởng",
+   "start": 82.495,
+   "end": 100.647,
+   "startMau": 80.7,
+   "lech": 1.8
+  },
+  {
+   "ten": "1:59-2:20 Chuyện ông Bách",
+   "start": 101.047,
+   "end": 122.991,
+   "startMau": 98.2,
+   "lech": 2.85
+  }
+ ],
+ "lang": {
+  "cauTB": 0.181,
+  "cauMax": 0.181,
+  "doanTB": 0.401
+ },
+ "boang": 123.04,
+ "catDen": 123.29,
+ "tocDoCapCut": "không đổi được: CapCut bỏ qua tham số tốc độ của BV075 (0/15/30/50/100 cùng thời lượng); @narrator ... 0",
+ "atempo": 1.08
+}

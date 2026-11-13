@@ -13099,5 +13099,424 @@
   "loai": "vua",
   "tris": 2240,
   "tris_goc": 2240
+ },
+ {
+  "id": "nhap/dong-ho-qua-quyt",
+  "src": "assets/nhap/dong-ho-qua-quyt.glb",
+  "source": "sketchfab.com/3d-models/pocket-watch-low-poly-e2ec9ccd24ad4d398f7d388780f5de17",
+  "license": "CC BY 4.0",
+  "credit": "“Pocket watch low poly” by Timmy Turner (https://sketchfab.com/3d-models/pocket-watch-low-poly-e2ec9ccd24ad4d398f7d388780f5de17), CC BY 4.0",
+  "title": "Pocket watch low poly",
+  "author": "Timmy Turner",
+  "scale": 1,
+  "bbox": [
+   0.63,
+   0.9,
+   0.133
+  ],
+  "nodes": [
+   "dong-ho-qua-quyt"
+  ],
+  "loai": "nho",
+  "tris": 904,
+  "tris_goc": 904
+ },
+ {
+  "id": "nhap/thung-go-dung",
+  "src": "assets/nhap/thung-go-dung.glb",
+  "source": "poly.pizza/m/3OEFd1AWfa",
+  "license": "CC0",
+  "credit": "“Crate” by Quaternius (https://poly.pizza/m/3OEFd1AWfa), CC0",
+  "title": "Crate",
+  "author": "Quaternius",
+  "scale": 1,
+  "bbox": [
+   2.2,
+   2.2,
+   2.2
+  ],
+  "nodes": [
+   "thung-go-dung"
+  ],
+  "loai": "vua",
+  "tris": 784,
+  "tris_goc": 784
+ },
+ {
+  "id": "nhap/hop-nhan",
+  "src": "assets/nhap/hop-nhan.glb",
+  "source": "sketchfab.com/3d-models/ring-box-4a80eed40ae84093bec69dbf6654c209",
+  "license": "CC BY 4.0",
+  "credit": "“Ring box” by Staralighto (https://sketchfab.com/3d-models/ring-box-4a80eed40ae84093bec69dbf6654c209), CC BY 4.0",
+  "title": "Ring box",
+  "author": "Staralighto",
+  "scale": 1,
+  "bbox": [
+   0.457,
+   0.7,
+   0.591
+  ],
+  "nodes": [
+   "hop-nhan"
+  ],
+  "loai": "nho",
+  "tris": 204,
+  "tris_goc": 204
+ },
+ {
+  "id": "nhap/nhan-dep",
+  "src": "assets/nhap/nhan-dep.glb",
+  "source": "sketchfab.com/3d-models/decorated-ring-b2a6277f29d94226bbb2f38eb27ca9b9",
+  "license": "CC BY 4.0",
+  "credit": "“Decorated Ring” by Loïc (https://sketchfab.com/3d-models/decorated-ring-b2a6277f29d94226bbb2f38eb27ca9b9), CC BY 4.0",
+  "title": "Decorated Ring",
+  "author": "Loïc",
+  "scale": 1,
+  "bbox": [
+   0.371,
+   0.123,
+   0.407
+  ],
+  "nodes": [
+   "nhan-dep"
+  ],
+  "loai": "nho",
+  "tris": 1004,
+  "tris_goc": 1004
+ },
+ {
+  "id": "nhap/cua-kinh-nha-may",
+  "src": "assets/nhap/cua-kinh-nha-may.glb",
+  "source": "sketchfab.com/3d-models/old-factory-window-a9cd2da56155418098f548d819eb5c67",
+  "license": "CC BY 4.0",
+  "credit": "“Old factory window” by skaliarius (https://sketchfab.com/3d-models/old-factory-window-a9cd2da56155418098f548d819eb5c67), CC BY 4.0",
+  "title": "Old factory window",
+  "author": "skaliarius",
+  "scale": 1,
+  "bbox": [
+   6.567,
+   5,
+   0.539
+  ],
+  "nodes": [
+   "cua-kinh-nha-may"
+  ],
+  "loai": "lon",
+  "tris": 516,
+  "tris_goc": 516
+ },
+ {
+  "id": "nhap/hang-rao",
+  "src": "assets/nhap/hang-rao.glb",
+  "source": "sketchfab.com/3d-models/psx-style-chain-fence-gate-02fb75f229fa47b5a5d59f7409e2f4c1",
+  "license": "CC BY 4.0",
+  "credit": "“psx style chain fence gate” by valse kamerplant (https://sketchfab.com/3d-models/psx-style-chain-fence-gate-02fb75f229fa47b5a5d59f7409e2f4c1), CC BY 4.0",
+  "title": "psx style chain fence gate",
+  "author": "valse kamerplant",
+  "scale": 1,
+  "bbox": [
+   3.567,
+   5,
+   0.129
+  ],
+  "nodes": [
+   "hang-rao"
+  ],
+  "loai": "lon",
+  "tris": 170,
+  "tris_goc": 170
+ },
+ {
+  "id": "nhap/cuon-chi",
+  "src": "assets/nhap/cuon-chi.glb",
+  "source": "sketchfab.com/3d-models/thread-and-needle-with-uv-s-6a19a667d80b42bb921cbd845c5225bd",
+  "license": "CC BY 4.0",
+  "credit": "“Thread_and_Needle with UV´S” by ailyn_10_lowpoly (https://sketchfab.com/3d-models/thread-and-needle-with-uv-s-6a19a667d80b42bb921cbd845c5225bd), CC BY 4.0",
+  "title": "Thread_and_Needle with UV´S",
+  "author": "ailyn_10_lowpoly",
+  "scale": 1,
+  "bbox": [
+   0.38,
+   0.6,
+   0.231
+  ],
+  "nodes": [
+   "cuon-chi"
+  ],
+  "loai": "nho",
+  "tris": 469,
+  "tris_goc": 469
+ },
+ {
+  "id": "nhap/ban-tiem-may",
+  "src": "assets/nhap/ban-tiem-may.glb",
+  "source": "sketchfab.com/3d-models/workbench-low-poly-medieval-cc0-9e18d937e18240d8ac1eb98c43d54d9a",
+  "license": "CC0",
+  "credit": "“Workbench - Low Poly Medieval, CC0” by Avramania (https://sketchfab.com/3d-models/workbench-low-poly-medieval-cc0-9e18d937e18240d8ac1eb98c43d54d9a), CC0",
+  "title": "Workbench - Low Poly Medieval, CC0",
+  "author": "Avramania",
+  "scale": 1,
+  "bbox": [
+   4.139,
+   2.6,
+   2.168
+  ],
+  "nodes": [
+   "ban-tiem-may"
+  ],
+  "loai": "vua",
+  "tris": 1048,
+  "tris_goc": 1048
+ },
+ {
+  "id": "nhap/bang-hieu-treo",
+  "src": "assets/nhap/bang-hieu-treo.glb",
+  "source": "poly.pizza/m/jNdZygn3uR",
+  "license": "CC0",
+  "credit": "“Wooden Sign” by iPoly3D (https://poly.pizza/m/jNdZygn3uR), CC0",
+  "title": "Wooden Sign",
+  "author": "iPoly3D",
+  "scale": 1,
+  "bbox": [
+   2.985,
+   4,
+   0.671
+  ],
+  "nodes": [
+   "bang-hieu-treo"
+  ],
+  "loai": "vua",
+  "tris": 644,
+  "tris_goc": 644
+ },
+ {
+  "id": "nhap/den-cua",
+  "src": "assets/nhap/den-cua.glb",
+  "source": "poly.pizza/m/3jzk3YShv1",
+  "license": "CC0",
+  "credit": "“Hanging Lantern” by Kay Lousberg (https://poly.pizza/m/3jzk3YShv1), CC0",
+  "title": "Hanging Lantern",
+  "author": "Kay Lousberg",
+  "scale": 1,
+  "bbox": [
+   0.545,
+   1.2,
+   0.545
+  ],
+  "nodes": [
+   "den-cua"
+  ],
+  "loai": "nho",
+  "tris": 472,
+  "tris_goc": 472
+ },
+ {
+  "id": "nhap/giuong-ga",
+  "src": "assets/nhap/giuong-ga.glb",
+  "source": "poly.pizza/m/sn8az3odMR",
+  "license": "CC0",
+  "credit": "“Bed Single” by Kenney (https://poly.pizza/m/sn8az3odMR), CC0",
+  "title": "Bed Single",
+  "author": "Kenney",
+  "scale": 1,
+  "bbox": [
+   3.807,
+   2.5,
+   7.5
+  ],
+  "nodes": [
+   "giuong-ga"
+  ],
+  "loai": "lon",
+  "tris": 214,
+  "tris_goc": 214
+ },
+ {
+  "id": "nhap/hop-nhan-sang",
+  "src": "assets/nhap/hop-nhan-sang.glb",
+  "source": "sketchfab.com/3d-models/ring-box-4a80eed40ae84093bec69dbf6654c209",
+  "license": "CC BY 4.0",
+  "credit": "“Ring box” by Staralighto (https://sketchfab.com/3d-models/ring-box-4a80eed40ae84093bec69dbf6654c209), CC BY 4.0",
+  "title": "Ring box",
+  "author": "Staralighto",
+  "scale": 1,
+  "bbox": [
+   0.457,
+   0.7,
+   0.591
+  ],
+  "nodes": [
+   "hop-nhan-sang"
+  ],
+  "loai": "nho",
+  "tris": 156,
+  "tris_goc": 156
+ },
+ {
+  "id": "nhap/hop-nhan-co-nhan",
+  "src": "assets/nhap/hop-nhan-co-nhan.glb",
+  "source": "sketchfab.com/3d-models/ring-box-4a80eed40ae84093bec69dbf6654c209",
+  "license": "CC BY 4.0",
+  "credit": "“Ring box” by Staralighto (https://sketchfab.com/3d-models/ring-box-4a80eed40ae84093bec69dbf6654c209), CC BY 4.0; “Decorated Ring” by Loïc (https://sketchfab.com/3d-models/decorated-ring-b2a6277f29d94226bbb2f38eb27ca9b9), CC BY 4.0",
+  "title": "Ring box",
+  "author": "Staralighto",
+  "scale": 1,
+  "bbox": [
+   0.457,
+   0.7,
+   0.591
+  ],
+  "nodes": [
+   "hop-nhan-co-nhan"
+  ],
+  "loai": "nho",
+  "tris": 1160,
+  "tris_goc": 156
+ },
+ {
+  "id": "characters/bap",
+  "src": "assets/characters/bap/bap.glb",
+  "source": "sketchfab.com/3d-models/mister-bear-47e7ee6daff54b018dcd55caaec755f0",
+  "url": "https://sketchfab.com/3d-models/mister-bear-47e7ee6daff54b018dcd55caaec755f0",
+  "title": "Mister Bear",
+  "author": "cheb_max",
+  "license": "CC BY 4.0",
+  "credit": "\"Mister Bear\" by cheb_max (https://sketchfab.com/3d-models/mister-bear-47e7ee6daff54b018dcd55caaec755f0), CC BY 4.0",
+  "scale": 1,
+  "bbox": [
+   1.37,
+   2.6,
+   1.03
+  ],
+  "tris": 4342,
+  "anim": [
+   "bear_slide",
+   "die",
+   "idly",
+   "run",
+   "sleep",
+   "start_dance"
+  ],
+  "note": "Gấu Bắp (nâu mật, nơ xanh #2e86de): có xương (20) + 6 animation, cao 2.6, chân y=0, mặt +Z; đã bỏ mũ/khăn/shape key; xem assets/characters/bap/README.md"
+ },
+ {
+  "id": "characters/bap2",
+  "src": "assets/characters/bap/bap2.glb",
+  "source": "sketchfab.com/3d-models/mister-bear-47e7ee6daff54b018dcd55caaec755f0",
+  "url": "https://sketchfab.com/3d-models/mister-bear-47e7ee6daff54b018dcd55caaec755f0",
+  "title": "Mister Bear",
+  "author": "cheb_max",
+  "license": "CC BY 4.0",
+  "credit": "\"Mister Bear\" by cheb_max (https://sketchfab.com/3d-models/mister-bear-47e7ee6daff54b018dcd55caaec755f0), CC BY 4.0",
+  "scale": 1,
+  "bbox": [
+   1.37,
+   2.6,
+   1.03
+  ],
+  "tris": 4342,
+  "anim": [
+   "bear_slide",
+   "die",
+   "idly",
+   "run",
+   "sleep",
+   "start_dance"
+  ],
+  "note": "Gấu Bắp (kem, nơ đỏ #d63031): có xương (20) + 6 animation, cao 2.6, chân y=0, mặt +Z; đã bỏ mũ/khăn/shape key; xem assets/characters/bap/README.md"
+ },
+ {
+  "id": "characters/bap3",
+  "src": "assets/characters/bap/bap3.glb",
+  "source": "sketchfab.com/3d-models/mister-bear-47e7ee6daff54b018dcd55caaec755f0",
+  "url": "https://sketchfab.com/3d-models/mister-bear-47e7ee6daff54b018dcd55caaec755f0",
+  "title": "Mister Bear",
+  "author": "cheb_max",
+  "license": "CC BY 4.0",
+  "credit": "\"Mister Bear\" by cheb_max (https://sketchfab.com/3d-models/mister-bear-47e7ee6daff54b018dcd55caaec755f0), CC BY 4.0",
+  "scale": 1,
+  "bbox": [
+   1.37,
+   2.6,
+   1.03
+  ],
+  "tris": 4342,
+  "anim": [
+   "bear_slide",
+   "die",
+   "idly",
+   "run",
+   "sleep",
+   "start_dance"
+  ],
+  "note": "Gấu Bắp (nâu sẫm, nơ vàng #f1c40f): có xương (20) + 6 animation, cao 2.6, chân y=0, mặt +Z; đã bỏ mũ/khăn/shape key; xem assets/characters/bap/README.md"
+ },
+ {
+  "id": "characters/bap_co_mu_khan",
+  "src": "assets/characters/bap/bap_co_mu_khan.glb",
+  "source": "sketchfab.com/3d-models/mister-bear-47e7ee6daff54b018dcd55caaec755f0",
+  "url": "https://sketchfab.com/3d-models/mister-bear-47e7ee6daff54b018dcd55caaec755f0",
+  "title": "Mister Bear",
+  "author": "cheb_max",
+  "license": "CC BY 4.0",
+  "credit": "\"Mister Bear\" by cheb_max (https://sketchfab.com/3d-models/mister-bear-47e7ee6daff54b018dcd55caaec755f0), CC BY 4.0",
+  "scale": 1,
+  "bbox": [
+   1.37,
+   2.6,
+   1.03
+  ],
+  "tris": 4708,
+  "anim": [
+   "bear_slide",
+   "die",
+   "idly",
+   "run",
+   "sleep",
+   "start_dance"
+  ],
+  "note": "Bản còn mũ chóp + khăn đỏ (tuỳ chọn), nơ xanh"
+ },
+ {
+  "id": "nhap/no-gau-1",
+  "src": "assets/nhap/no-gau-1.glb",
+  "source": "poly.pizza/m/fQGdyazJ-2m",
+  "license": "CC BY 3.0",
+  "credit": "“Bowtie” by jeremy (https://poly.pizza/m/fQGdyazJ-2m), CC BY 3.0",
+  "title": "Bowtie",
+  "author": "jeremy",
+  "scale": 1,
+  "bbox": [
+   1.45,
+   0.5,
+   0.18
+  ],
+  "nodes": [
+   "no-gau-1"
+  ],
+  "loai": "phu-kien",
+  "tris": 104,
+  "tris_goc": 104
+ },
+ {
+  "id": "nhap/no-gau-2",
+  "src": "assets/nhap/no-gau-2.glb",
+  "source": "sketchfab.com/3d-models/bow-tie-9e1b78768e4447f4befbcc2211bfe1d0",
+  "license": "CC BY 4.0",
+  "credit": "“Bow Tie” by Peakz (https://sketchfab.com/3d-models/bow-tie-9e1b78768e4447f4befbcc2211bfe1d0), CC BY 4.0",
+  "title": "Bow Tie",
+  "author": "Peakz",
+  "scale": 1,
+  "bbox": [
+   0.714,
+   0.5,
+   0.244
+  ],
+  "nodes": [
+   "no-gau-2"
+  ],
+  "loai": "phu-kien",
+  "tris": 1036,
+  "tris_goc": 1036
  }
 ]

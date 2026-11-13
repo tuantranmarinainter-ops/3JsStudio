@@ -173,8 +173,15 @@ def cache_key(dry, it):
     return hashlib.sha256(json.dumps(sig, ensure_ascii=False).encode()).hexdigest()[:20]
 
 
+ATEMPO = 1.0   # --atempo: tăng tốc mọi câu sau khi tạo (khi dịch vụ bỏ qua tham số tốc độ)
+TRIM = False   # --trim: cắt lặng đầu/cuối mỗi câu (CapCut chèn ~0,25 s) để khoảng lặng chỉ do --gap/--para-gap quyết định
+
+
 def to_wav(src, dst):
-    run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-ac", "1", "-ar", str(SR), "-c:a", "pcm_s16le", str(dst)])
+    sr = "silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.02:detection=peak"
+    chain = ([f"{sr},areverse,{sr},areverse"] if TRIM else []) + ([f"atempo={ATEMPO}"] if ATEMPO != 1.0 else [])
+    af = ["-af", ",".join(chain)] if chain else []
+    run(["ffmpeg", "-v", "error", "-y", "-i", str(src), *af, "-ac", "1", "-ar", str(SR), "-c:a", "pcm_s16le", str(dst)])
     return (dst.stat().st_size - 44) / 2 / SR          # số mẫu thật → thời lượng chính xác tới mẫu
 
 
@@ -288,6 +295,8 @@ def main():
     p.add_argument("--volume", type=int, default=0, help="âm lượng %% (Edge -100..100; CapCut không hỗ trợ)")
     p.add_argument("--gap", type=float, default=0.25, help="lặng giữa 2 câu (giây)")
     p.add_argument("--para-gap", type=float, default=0.6, help="lặng giữa 2 đoạn (giây)")
+    p.add_argument("--atempo", type=float, default=1.0, help="tăng tốc mọi câu (1.0 = giữ nguyên)")
+    p.add_argument("--trim", action="store_true", help="cắt lặng đầu/cuối mỗi câu (mặc định tắt)")
     p.add_argument("--lead", type=float, default=0.3, help="lặng đầu phim (giây)")
     p.add_argument("--tail", type=float, default=0.8, help="lặng cuối phim (giây)")
     p.add_argument("--workers", type=int, default=2, help="số câu tạo song song (Edge tối đa 3, CapCut tối đa 2)")
@@ -295,6 +304,10 @@ def main():
     p.add_argument("--dry", action="store_true", help="không gọi dịch vụ, chỉ ước lượng thời lượng")
     p.add_argument("--list-voices", nargs="?", const="", metavar="LOCALE", help="liệt kê giọng (vd: vi, en-US)")
     args = p.parse_args()
+    global TRIM
+    TRIM = args.trim
+    global ATEMPO
+    ATEMPO = args.atempo
     if args.list_voices is not None:
         return list_voices(args)
     if not args.script:

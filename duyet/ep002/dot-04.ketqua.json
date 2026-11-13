@@ -1,0 +1,70 @@
+{
+ "tap": "ep002",
+ "dot": 4,
+ "luc": "2026-11-13T03:23:05.923Z",
+ "gau": null,
+ "duyet": [
+  "db-ban_do",
+  "db-thung_dan_mat",
+  "db-thung_bach_giau",
+  "db-bang_hieu_tiem_gau",
+  "db-bang_hieu_tiem_banh",
+  "db-bang_hieu_tiem_may",
+  "db-bang_hieu_thi_truong",
+  "db-bang_hieu_banh_mi"
+ ],
+ "sua": [],
+ "chuaChon": [
+  "bo-chuong",
+  "bo-doi_dep",
+  "bo-chan_tran",
+  "bo-bac_them_dep",
+  "bo-bac_them_trong",
+  "bo-rb-chuong",
+  "bo-rb-dep"
+ ],
+ "chon": {
+  "dong_ho_qua_quyt": "dong_ho_qua_quyt__1",
+  "thung_go_dung": "thung_go_dung__1",
+  "hop_nhan_rieng": "hop_nhan_rieng__1",
+  "nhan_rieng": "nhan_rieng__3",
+  "cua_kinh_nha_may": "cua_kinh_nha_may__2",
+  "hang_rao_nha_may": "hang_rao_nha_may__3",
+  "cuon_chi": "cuon_chi__2",
+  "ban_tiem_may": "ban_tiem_may__3",
+  "bang_hieu_treo": "bang_hieu_treo__1",
+  "den_cua_thi_truong": "den_cua_thi_truong__3",
+  "giuong_ga": "giuong_ga__1",
+  "gau_bap_kich_ban_moi": "gau8",
+  "nha-bang-mau": "nha-pastel"
+ },
+ "ghiChu": {
+  "hop_nhan_rieng": "cần thay đổi texture để sang trọng hơn, bỏ nhẫn nauyf thay nhẫn xịn vào"
+ },
+ "doiTuDot": {},
+ "giuTuDot": {
+  "dq-anh_ba": 3,
+  "dq-bang_chuyen": 3,
+  "dq-bang_tin": 3,
+  "dq-cuon_sach": 3,
+  "dq-day_chuyen": 3,
+  "dq-dong_ho": 3,
+  "dq-guong": 3,
+  "dq-hoc_quay": 3,
+  "dq-ke": 3,
+  "dq-ket": 3,
+  "dq-kinh": 3,
+  "dq-may_khau": 3,
+  "dq-mu_dau_bep": 3,
+  "dq-mu_linh": 3,
+  "dq-mu_luoi_trai": 3,
+  "dq-mu_phot": 3,
+  "dq-mu_top_hat": 3,
+  "dq-no_toc": 3,
+  "dq-o_khoa": 3,
+  "dq-thung_tiem_bach": 3,
+  "dq-thuoc_keo": 3,
+  "dq-tui_tien": 3,
+  "dq-vi": 3
+ }
+}
