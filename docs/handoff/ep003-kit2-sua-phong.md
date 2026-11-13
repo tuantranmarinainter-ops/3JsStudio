@@ -26,3 +26,9 @@ File sửa: `kich-ban/ep003-kit2/kit-phong.json` (chỉ 11 shot được giao; 2
 - CẦN ENGINE: bối cảnh phòng không có cách ẩn núm cửa tròn dưới chốt (S001); cửa nâu thay vì xanh xám.
 - CẦN ENGINE: gương cố định ở góc đông-nam nên cảnh trong gương luôn là tường tây-bắc; muốn "cửa sổ + kệ + Bắp trên giường" cùng khung như ảnh S026 cần cho phép đặt Bắp/giường ảnh riêng shot hoặc dời gương.
 - CẦN ENGINE: không có tư thế "hai tay ôm vật" khép bàn tay (S021/S095); tay R6 chỉ xoay quanh vai.
+
+## Bổ sung S100, S101 (người dùng yêu cầu)
+| shot | trước | sau | khung engine giờ thấy gì | còn lệch gì |
+|---|---|---|---|---|
+| S100 | tam (khối đầu ~38% khung, nhìn thẳng) | dat | đặc tả mặt Gà góc 3/4 (Gà [-5,4, 0, 4,6] `ry_do` 48 như S099), máy ở phía đông ngang mắt, fov 30→28, đầu ~60% cao khung, liếc sang Bắp | không có Bắp trong khung (không cần); ảnh gốc có cổ áo/cửa sổ nền |
+| S101 | tam (máy y 2,1, két to che Bắp) | dat | máy thấp y 0,8 cùng phía S099 (-1,0,0,8,1,6), Bắp [-3,35, 0, 6,9] đứng dang tay, két hạ `ketY` 0,55→0 chạm sàn bên phải | két cắt mép phải khung; Bắp không ở bên trái cửa sổ như ảnh |
