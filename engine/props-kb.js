@@ -410,6 +410,30 @@ export const PROPS_KB = {
     for (const [i, r] of [0, PI / 4, PI / 2, -PI / 4].entries()) { const t = K.box(0.34, 0.006, 0.014, '#ffffff', 0, 0.16, 0.32, 'lap_lanh' + i, null, { emissive: '#ffffff', emissiveIntensity: 1 }); t.rotation.y = r; }
     return K.g;
   },
+  // ---- tập 3 (thiết kế gói kịch bản ep003; chất liệu khai ngay trên mesh, xem docs/vat-lieu.md) ----
+  day_chuyen_bac: (THREE) => {   // dây chuyền BẠC của bà, mặt giọt nước xanh ngọc, dáng TREO (vòng dây ở trên, mặt dây lủng lẳng). Gốc ở đáy mặt dây; cầm thì ghi hold.at y ≈ −0.95 để đỉnh dây nằm ở tay
+    const K = bo(THREE, 'day_chuyen_bac'), BAC = { metalness: 0.9, roughness: 0.22 }, NGOC = { roughness: 0.12, metalness: 0.1, emissive: '#1f6f63', emissiveIntensity: 0.35 };
+    const d = K.tor(0.21, 0.014, '#cfd6d8', 0, 0.67, 0, 'day', null, BAC); d.scale.set(1, 1.55, 1);
+    K.cyl(0.03, 0.03, 0.07, '#cfd6d8', 0, 0.32, 0, 'khoen', null, BAC);
+    const t = K.cyl(0.006, 0.085, 0.16, '#4fb3a2', 0, 0.24, 0, 'mat_giot_dinh', null, NGOC); t.scale.z = 0.6;
+    const n = K.sph(0.105, '#4fb3a2', 0, 0.12, 0, 'mat_giot', null, NGOC); n.scale.set(1, 1.15, 0.6);
+    K.g.traverse((m) => { if (m.isMesh) { m.userData.matKind = /mat_giot/.test(m.name) ? 'enamel' : 'chrome'; m.userData.grungeKind = 'none'; } });
+    return K.g;
+  },
+  nhan_bac: (THREE) => {         // nhẫn bạc trơn, dựng đứng trên mép (gốc ở đáy)
+    const K = bo(THREE, 'nhan_bac');
+    const r = K.tor(0.19, 0.036, '#c9ced3', 0, 0.226, 0, 'nhan', null, { metalness: 0.92, roughness: 0.2 }); const r2 = K.tor(0.158, 0.012, '#eef1f4', 0, 0.226, 0, 'nhan_long', null, { metalness: 0.92, roughness: 0.12 });   // lòng nhẫn sáng hơn
+    for (const m of [r, r2]) { m.userData.matKind = 'chrome'; m.userData.grungeKind = 'none'; }
+    return K.g;
+  },
+  sach_reu: (THREE) => {         // cuốn sách bìa xanh rêu, mép bạc màu, dựng đứng (bìa quay +Z, gáy bên −X)
+    const K = bo(THREE, 'sach_reu');
+    K.box(0.86, 1.5, 0.1, '#42532d', 0, 0.75, 0.2, 'bia_truoc'); K.box(0.86, 1.5, 0.1, '#42532d', 0, 0.75, -0.2, 'bia_sau'); K.box(0.1, 1.5, 0.5, '#3a4a28', -0.43, 0.75, 0, 'gay');
+    K.box(0.78, 1.42, 0.32, '#d8c89d', 0.03, 0.75, 0, 'giay');
+    for (const y of [0.03, 1.47]) K.box(0.87, 0.06, 0.11, '#7b8a5c', 0, y, 0.2, 'mep_bac'); K.box(0.11, 0.3, 0.51, '#7b8a5c', -0.43, 0.2, 0, 'gay_tray');
+    K.g.traverse((m) => { if (m.isMesh) { m.userData.matKind = /giay/.test(m.name) ? 'paper' : 'fabric'; m.userData.grungeKind = 'none'; } });
+    return K.g;
+  },
   chuong: (THREE) => {     // chuông tay
     const K = bo(THREE, 'chuong');
     K.cyl(0.1, 0.3, 0.5, '#ffb300', 0, 0.27, 0, 'than', null, { metalness: 0.75, roughness: 0.3 });
@@ -624,6 +648,9 @@ export const PROP_INFO = {
   ban_do: { size: [5, 3.5, 0.15], base: 'wall', fixed: true },
   ket_tien: { size: [2.2, 2.2, 2.1], base: 'floor', fixed: true, surfaces: [[0, 2.2, 0]] },
   day_chuyen: { size: [0.8, 0.12, 0.65], base: 'surface' },
+  day_chuyen_bac: { size: [0.45, 0.95, 0.1], base: 'surface' },
+  nhan_bac: { size: [0.45, 0.45, 0.1], base: 'surface' },
+  sach_reu: { size: [0.87, 1.5, 0.5], base: 'surface' },
   chuong: { size: [0.6, 0.93, 0.6], base: 'surface' },
   chan_tran: { size: [1.6, 0.7, 1.2], base: 'floor' },
   ket_ga: { size: [2, 2, 1.8], base: 'floor', fixed: true, surfaces: [[0, 2, 0]] },

@@ -1,90 +1,102 @@
-// Bối cảnh 'e3-phong' — PHÒNG CỦA GÀ (tập 3, set `bedroom`; cả đêm lẫn sáng). Nội thất kín 34×30×13 stud, dựng bằng khối + canvas (không GLB).
-// Sửa bối cảnh này CHỈ trong file này. Được episodes/<ep>/index.html nạp động khi shot ghi `env: "e3-phong"` → build(g, e, H).
-// Thiết kế: kich-ban/ep003-goi/Thiet_ke_chung.md (bedroom) + episodes/ep003/nguon/thiet-ke-hinh.md §3 + kich-ban/ep003-goi/boi-canh/Boi_canh_02.jpg.
+// Bối cảnh 'e3-phong' — PHÒNG CỦA GÀ (tập 3, set `bedroom`; đêm lẫn sáng). Bản 2 (13/11): dựng lại ĐÚNG TỈ LỆ theo số Codex đo trên khung kịch bản
+// (kich-ban/ep003-goi2/Bo_canh_kich_thuoc.json, G = chiều cao Gà = 5,2 stud): phòng rộng 2,8G × sâu 3,4G × cao 1,8G = 14,56 × 17,68 × 9,36 stud.
+// Sửa bối cảnh này CHỈ trong file này. Trang tập nạp động khi shot ghi `env: "e3-phong"` → build(g, e, H).
 //
-// QUY ƯỚC HƯỚNG: BẮC = −Z, ĐÔNG = +X, +Y lên; 1 stud; Gà cao ≈ 5,3. Phòng x −17..17, z −15..15, trần y=13. Tâm phòng = gốc (0,0,0).
-//   (bắc)  z=−15   ┌───────────────────────────────────────┐
-//          nightstand+đèn (−15.6,−13.9)  cửa sổ 3×2 ô (x −3.5)   kệ gỗ 2 ngăn (x 5.5)   cửa ban công (z −10) ┐
-//   (tây)  giường đơn sát tường tây, đầu bắc, Bắp ở chân giường (z −6)                                    ĐÔNG x=17
-//          thảm kem giữa phòng (1, 1)                                         gương đứng (13.9, 4.5) xoay về đầu giường
-//          két teal (−15.6, 12.8) ── cửa phòng gỗ + chốt đồng (x −8.5) ──
-//   (nam)  z=+15   └───────────────────────────────────────┘     camera "từ cửa vào" đứng ở khoảng (−8.5, 6, 13) nhìn về bắc.
+// QUY ƯỚC: BẮC = −Z, ĐÔNG = +X, +Y lên; gốc (0,0,0) = tâm sàn. Tường A = bắc, B = đông, C = nam, D = tây (ký hiệu của Codex).
+//   A (bắc, z −8,84): tủ đèn sau đầu giường (góc tây) · cửa sổ khung kem (x −3,85…0,10, bậu y 3,38) · kệ gỗ thấp (x 0,72…5,87, mặt y 3,22)
+//   B (đông, x 7,28): cửa kính ra ban công (z −8,42…−4,78) · gương đứng (gần góc đông–nam, xoay mặt về tây-bắc)
+//   C (nam, z 8,84):  cửa phòng (x −2,60…0,94, bản lề phía tây, mở vào trong) · két teal ở góc tây–nam, mặt số quay bắc
+//   D (tây, x −7,28): giường đơn dọc tường (x −6,86…−2,76; z −7,07…0,63; đầu giường phía bắc; mặt chăn y 2,24)
 //
-// ĐIỂM CÓ TÊN (toạ độ env; y = mặt đứng/mặt đặt) — export PHONG_DIEM:
-//   phong_giua [0,0,2]  giuong_nam [-15,2.95,-11] (Gà nằm, đầu trên gối, mặt chăn)  giuong_chan [-15,2.95,-6] (Bắp ngồi mép chân giường)
-//   truoc_ke [5.5,0,-11]  truoc_cua_so [-3.5,0,-12]  truoc_guong [10.7,0,3]  cua_phong [-8.5,0,12.8]  truoc_ket [-12,0,12.8]
-//   cua_ban_cong [14.5,0,-10]
-// SLOT ĐẠO CỤ (PROP_SLOTS.byName; [x,y,z,ry]): ke_phong = mặt trên kệ [5.5,3.6,-13.9]; ket_ga = két teal ĐÃ DỰNG SẴN (coSan) [-15.6,0,12.8].
-// ĐÊM / SÁNG: env tự đọc ánh sáng của shot (ctx.light; shot ghi time:'dem' → 'bedNight', còn lại → 'interior'): đêm = đèn bàn hổ phách + trăng xanh
-//   lạnh qua cửa sổ; sáng = nắng vàng qua cửa sổ, đèn tắt. Không cần tham số riêng. Cửa phòng mở/đóng: e.setCuaPhong(0..1) (mặc định 0 = đóng).
+// ĐIỂM CÓ TÊN (PHONG_DIEM, toạ độ thế giới; y = mặt đứng / mặt đặt) — shot dùng trực tiếp, đừng gõ lại số:
+//   giuong_nam (gốc Gà khi nằm: chân; đầu về bắc) · giuong_ngoi (Gà ngồi dậy giữa giường) · giuong_chan (Bắp ngồi ở chân giường)
+//   truoc_ke · ke_mat (tâm mặt kệ) · ke_dong_ho · ke_sach · ke_vet_day (vết dây chuyền trên bụi) · truoc_cua_so · cua_phong (ngưỡng) · chot_cua (chốt đồng)
+//   truoc_ket · ket (tâm đáy két) · ket_trong (lòng két) · truoc_guong · guong (tâm kính) · cua_ban_cong · phong_giua
+// THAM SỐ THEO SHOT (shot.envArg, số hoặc [đầu, cuối]): cuaPhong 0..1 (mở cửa phòng) · cuaSo 0..1 (mở cánh trái cửa sổ ra ngoài)
+//   ketMo 0..1 (mở cửa két) · ketY (nhấc két lên, stud) · guong 0 = tắt phản chiếu thật (về mặt kính giả) · guongRy (xoay gương riêng cho shot, rad)
+//   guongSang (nhân độ sáng ảnh trong gương, mặc định 1) · chanPhu 1 = chăn phủ lên người đang nằm (Gà nằm trong chăn, chỉ lộ đầu trên gối).
+// VẬT LIỆU: mọi khối khai loại ở userData.matKind (docs/vat-lieu.md) → engine/materials.js vá vân thật; lớp bụi (grunge) tắt cho nội thất.
+// ĐÊM / SÁNG: đọc ánh sáng của shot (time:'dem' → bedNight; còn lại → interior): đêm = đèn bàn hổ phách + trăng lam qua cửa sổ; sáng = nắng qua cửa sổ.
 export const LIGHT = 'bedNight';
 export const ASSETS = [];
+const G = 5.2, W = 14.56, D = 17.68, HH = 9.36, HX = W / 2, HZ = D / 2;
+const BX = -4.81, BED_Z0 = -7.07, BED_Z1 = 0.63, BED_W = 4.1, BED_TOP = 2.24;          // giường
+const KX = 3.3, KZ = -8.14, KW = 5.15, KD = 1.4, KH = 3.22;                            // kệ gỗ thấp
+const WIN = { c: -1.875, hw: 1.975, y0: 3.38, y1: 8.11 };                              // cửa sổ (tường bắc)
+const DOOR = { c: -0.83, hw: 1.77, h: 6.5 };                                           // cửa phòng (tường nam), toạ độ thế giới
+const BAL = { c: -6.6, hw: 1.82, h: 6.66 };                                            // cửa kính ban công (tường đông), c = z
+const KET = { x: -5.12, z: 7.23, w: 2.44, d: 1.98, h: 2.65 };                          // két teal
+const GUONG = { x: 5.9, z: 6.3, ry: -2.7, w: 4.06, h: 6.6, nga: 0.1 };                 // gương đứng; ry −2,70 = nằm trên gối nhìn vào thấy đồng hồ trên kệ
 export const PHONG_DIEM = {
-  phong_giua: [0, 0, 2], giuong_nam: [-15, 2.95, -11], giuong_chan: [-15, 2.95, -6], truoc_ke: [5.5, 0, -11], truoc_cua_so: [-3.5, 0, -12],
-  truoc_guong: [10.7, 0, 3], cua_phong: [-8.5, 0, 12.8], truoc_ket: [-12, 0, 12.8], cua_ban_cong: [14.5, 0, -10],
+  phong_giua: [1.0, 0, 1.2], giuong_nam: [BX, BED_TOP + 0.9, -0.9], giuong_ngoi: [BX, BED_TOP, -3.6], giuong_chan: [BX, BED_TOP, -0.35],
+  truoc_ke: [KX, 0, KZ + 2.3], ke_mat: [KX, KH, KZ], ke_dong_ho: [KX + 0.55, KH, KZ + 0.05], ke_sach: [KX + 1.75, KH, KZ - 0.05], ke_vet_day: [KX - 0.75, KH, KZ + 0.1],
+  truoc_cua_so: [-1.1, 0, -7.4], cua_phong: [DOOR.c, 0, HZ - 0.6], chot_cua: [DOOR.c + DOOR.hw - 0.55, 3.9, HZ - 0.2],
+  truoc_ket: [KET.x + 0.3, 0, KET.z - 3.0], ket: [KET.x, 0, KET.z], ket_trong: [KET.x, 1.0, KET.z], truoc_guong: [3.6, 0, 4.2], guong: [GUONG.x, 3.5, GUONG.z],
+  cua_ban_cong: [HX - 1.4, 0, BAL.c],
 };
 export const PROP_SLOTS = {
-  byName: { ke_phong: [5.5, 3.6, -13.9, 0], ket_ga: [-15.6, 0, 12.8, Math.PI / 2] },
+  byName: { ke_phong: [KX, KH, KZ, 0], ket_ga: [KET.x, 0, KET.z, Math.PI] },
   coSan: ['ket_ga'],
-  floor: [[0, 0.05, 3, 0], [8, 0.05, 6, 0], [-6, 0.05, 4, 0]], wall: [[11, 7.5, -14.9, 0], [-9, 7.5, -14.9, 0]],
-  camMax: 26,
+  floor: [[1.0, 0.05, 1.2, 0], [3.2, 0.05, 3.5, 0]], wall: [[4.5, 6.6, -HZ + 0.1, 0]],
+  camMax: 14,
 };
+
+// GƯƠNG cho shot: tâm kính + pháp tuyến (ry = góc xoay gương, mặc định như dựng) và ảnh đối xứng của một điểm qua mặt gương —
+// shot nhìn vật QUA GƯƠNG thì đặt máy nhìn vào phongPhanChieu(điểm vật).
+export function phongGuong(ry = GUONG.ry) {
+  const c = Math.cos(GUONG.nga), s = Math.sin(GUONG.nga), y = 0.5 + GUONG.h / 2, zl = -y * s + 0.1 * c, yl = y * c + 0.1 * s;
+  return { tam: [GUONG.x + zl * Math.sin(ry), yl, GUONG.z + zl * Math.cos(ry)], n: [c * Math.sin(ry), s, c * Math.cos(ry)], t: [Math.cos(ry), 0, -Math.sin(ry)] };   // t = chiều ngang của mặt gương
+}
+export function phongPhanChieu(P, ry) {
+  const { tam, n } = phongGuong(ry), d = (P[0] - tam[0]) * n[0] + (P[1] - tam[1]) * n[1] + (P[2] - tam[2]) * n[2];
+  return [P[0] - 2 * d * n[0], P[1] - 2 * d * n[1], P[2] - 2 * d * n[2]];
+}
 
 import { createPuffy } from '../cloth.js';
 
 export default function build(g, e, H) {
-  const { ganTang, THREE, K, hash, LIGHTS, scene } = H;
+  const { ganTang, THREE, hash, LIGHTS, scene } = H;
   e.skybox = null; e.skyboxNight = null;   // nội thất: không dùng hộp trời
   e.diem = PHONG_DIEM;
   const R = e.room = new THREE.Group(); R.name = 'e3_phong_room'; g.add(R);
-  const W = 34, D = 30, HH = 13, HX = W / 2, HZ = D / 2;
   const grp = (name, tang) => { const o = new THREE.Group(); o.name = name; R.add(ganTang(o, tang)); return o; };
   const F = grp('phong_vo', 'back'), mid = grp('phong_do_go', 'mid'), front = grp('phong_do_truoc', 'front');
-  const std = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.85, ...o });
-  const BOX = new THREE.BoxGeometry(1, 1, 1), SPH = new THREE.SphereGeometry(1, 14, 10), CYL = new THREE.CylinderGeometry(1, 1, 1, 14);
-  const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _eu = new THREE.Euler(), _p = new THREE.Vector3(), _s = new THREE.Vector3(), _c = new THREE.Color();
-  const inst = (parent, name, geo, material, items, shadow = true) => {   // InstancedMesh tất định {p,s,r,c}
-    const im = new THREE.InstancedMesh(geo, material, items.length); im.name = name;
-    items.forEach((it, i) => { _eu.set(...(it.r || [0, 0, 0])); _q.setFromEuler(_eu); _p.set(...it.p); _s.set(...(it.s || [1, 1, 1])); im.setMatrixAt(i, _m.compose(_p, _q, _s)); if (it.c) im.setColorAt(i, _c.set(it.c)); });
-    im.instanceMatrix.needsUpdate = true; if (im.instanceColor) im.instanceColor.needsUpdate = true;
-    im.castShadow = shadow; im.receiveShadow = true; im.computeBoundingBox?.(); im.computeBoundingSphere?.(); parent.add(im); return im;
-  };
-  const white = std('#ffffff');
-  const bb = (arr, w, h, d, x, yb, z, c, ry = 0) => arr.push({ p: [x, yb + h / 2, z], s: [w, h, d], r: [0, ry, 0], c });   // hộp theo ĐÁY
   const canvasTex = (w, h, draw) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
-  const WOOD = '#7A4A28', WOOD2 = '#8A5A33', CREAM = '#E8D8C0', INDIGO = '#3A2E6A';
+  // ---- khối có KHAI vật liệu: mỗi khối là một Mesh thường (InstancedMesh bị lớp vật liệu bỏ qua); vật liệu dùng chung theo (màu, loại) ----
+  const MATS = new Map();
+  const mat = (c, kind, o = {}) => { const k = c + '|' + kind + '|' + JSON.stringify(o); if (!MATS.has(k)) MATS.set(k, new THREE.MeshStandardMaterial({ color: c, roughness: 0.85, ...o })); return MATS.get(k); };
+  const tag = (m, kind, shadow = true) => { m.userData.matKind = kind; m.userData.grungeKind = 'none'; m.castShadow = shadow; m.receiveShadow = true; return m; };
+  const box = (parent, name, w, h, d, x, yb, z, c, kind, o) => { const m = tag(new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat(c, kind, o)), kind); m.name = name; m.position.set(x, yb + h / 2, z); parent.add(m); return m; };   // hộp đặt theo ĐÁY
+  const cyl = (parent, name, r0, r1, h, x, yb, z, c, kind, o, seg = 16) => { const m = tag(new THREE.Mesh(new THREE.CylinderGeometry(r0, r1, h, seg), mat(c, kind, o)), kind); m.name = name; m.position.set(x, yb + h / 2, z); parent.add(m); return m; };
+  const none = (m) => { m.userData.matKind = 'none'; m.userData.grungeKind = 'none'; m.castShadow = false; return m; };   // mặt phát sáng / ảnh nền / kính trong
+  const WOOD = '#8a5a33', WOOD_D = '#6e4423', CREAM = '#eadcc4', INDIGO = '#3b3470', TEAL = '#3a6a60', BRASS = '#c58b3c';
 
-  // ---- chất liệu / texture ----
-  const wallMat = std('#9a9ea8', { roughness: 0.92 });
-  const floorTex = canvasTex(1024, 1024, (c, w, h) => {   // ván sàn chạy theo trục z (bắc–nam), mỗi ván một sắc
-    const n = 17, pw = w / n; c.fillStyle = '#835428'; c.fillRect(0, 0, w, h);
-    for (let i = 0; i < n; i++) {
-      let y = 0, k = 0;
-      while (y < h) { const len = (0.35 + hash(i * 40 + k, 7) * 0.65) * h * 0.7; const sh = 0.9 + hash(i * 40 + k, 8) * 0.2; c.fillStyle = `rgb(${Math.round(132 * sh)},${Math.round(86 * sh)},${Math.round(50 * sh)})`; c.fillRect(i * pw + 1, y, pw - 2, len - 2); y += len; k++; }
-    }
-    c.strokeStyle = 'rgba(40,22,10,0.55)'; c.lineWidth = 2; for (let i = 0; i <= n; i++) { c.beginPath(); c.moveTo(i * pw, 0); c.lineTo(i * pw, h); c.stroke(); }
+  // ---- ảnh vẽ ----
+  const floorTex = canvasTex(1024, 1024, (c, w, h) => {   // ván sàn chạy bắc–nam
+    const n = 16, pw = w / n; c.fillStyle = '#835428'; c.fillRect(0, 0, w, h);
+    for (let i = 0; i < n; i++) { let y = 0, k = 0; while (y < h) { const len = (0.35 + hash(i * 40 + k, 7) * 0.65) * h * 0.7, sh = 0.9 + hash(i * 40 + k, 8) * 0.2; c.fillStyle = `rgb(${Math.round(140 * sh)},${Math.round(92 * sh)},${Math.round(54 * sh)})`; c.fillRect(i * pw + 1, y, pw - 2, len - 2); y += len; k++; } }
+    c.strokeStyle = 'rgba(40,22,10,0.5)'; c.lineWidth = 2; for (let i = 0; i <= n; i++) { c.beginPath(); c.moveTo(i * pw, 0); c.lineTo(i * pw, h); c.stroke(); }
   });
-  const rugTex = canvasTex(512, 384, (c, w, h) => {
-    c.fillStyle = '#d2c0a4'; c.fillRect(0, 0, w, h); c.strokeStyle = '#eee2cc'; c.lineWidth = 7; c.strokeRect(20, 20, w - 40, h - 40); c.lineWidth = 3; c.strokeRect(38, 38, w - 76, h - 76);
-    c.strokeStyle = 'rgba(120,96,64,0.10)'; c.lineWidth = 1; for (let i = 0; i < w; i += 16) { c.beginPath(); c.moveTo(i, 0); c.lineTo(i, h); c.stroke(); } for (let i = 0; i < h; i += 16) { c.beginPath(); c.moveTo(0, i); c.lineTo(w, i); c.stroke(); }
+  const rugTex = canvasTex(512, 640, (c, w, h) => {
+    c.fillStyle = '#cdbb9f'; c.fillRect(0, 0, w, h); c.strokeStyle = '#ece0ca'; c.lineWidth = 8; c.strokeRect(22, 22, w - 44, h - 44); c.lineWidth = 3; c.strokeRect(42, 42, w - 84, h - 84);
+    c.strokeStyle = 'rgba(120,96,64,0.12)'; c.lineWidth = 1; for (let i = 0; i < w; i += 12) { c.beginPath(); c.moveTo(i, 0); c.lineTo(i, h); c.stroke(); } for (let i = 0; i < h; i += 12) { c.beginPath(); c.moveTo(0, i); c.lineTo(w, i); c.stroke(); }
   });
-  const plaidTex = canvasTex(256, 256, (c, w, h) => {   // ca-rô nhạt trên chăn chàm (nền trong suốt)
-    c.clearRect(0, 0, w, h); c.fillStyle = 'rgba(150,140,220,0.30)'; for (let i = 0; i < 6; i++) { c.fillRect(i * 43 + 6, 0, 10, h); c.fillRect(0, i * 43 + 6, w, 10); }
-    c.fillStyle = 'rgba(10,8,40,0.18)'; for (let i = 0; i < 6; i++) { c.fillRect(i * 43 + 24, 0, 5, h); c.fillRect(0, i * 43 + 24, w, 5); }
+  const plaidTex = canvasTex(256, 256, (c, w, h) => {   // chăn chàm ca-rô
+    c.fillStyle = INDIGO; c.fillRect(0, 0, w, h); c.fillStyle = 'rgba(130,122,210,0.34)'; for (let i = 0; i < 4; i++) { c.fillRect(i * 64 + 8, 0, 14, h); c.fillRect(0, i * 64 + 8, w, 14); }
+    c.fillStyle = 'rgba(14,10,46,0.28)'; for (let i = 0; i < 4; i++) { c.fillRect(i * 64 + 38, 0, 6, h); c.fillRect(0, i * 64 + 38, w, 6); }
   });
+  plaidTex.wrapS = plaidTex.wrapT = THREE.RepeatWrapping;
   const softTex = (rgb) => canvasTex(128, 128, (c, w, h) => { const gr = c.createRadialGradient(w / 2, h / 2, 2, w / 2, h / 2, w / 2); gr.addColorStop(0, `rgba(${rgb},1)`); gr.addColorStop(0.5, `rgba(${rgb},0.45)`); gr.addColorStop(1, `rgba(${rgb},0)`); c.fillStyle = gr; c.fillRect(0, 0, w, h); });
   const viewTexOf = (night) => canvasTex(512, 512, (c, w, h) => {   // cảnh ngoài cửa: phố khối vuông
     const gr = c.createLinearGradient(0, 0, 0, h);
-    if (night) { gr.addColorStop(0, '#080d2c'); gr.addColorStop(1, '#2c3b78'); } else { gr.addColorStop(0, '#76bdf0'); gr.addColorStop(1, '#e6f6ff'); }
+    if (night) { gr.addColorStop(0, '#0a1034'); gr.addColorStop(1, '#2c3b78'); } else { gr.addColorStop(0, '#76bdf0'); gr.addColorStop(1, '#e6f6ff'); }
     c.fillStyle = gr; c.fillRect(0, 0, w, h);
     if (night) {
       c.fillStyle = '#e8eeff'; for (let i = 0; i < 46; i++) c.fillRect(hash(i, 1) * w, hash(i, 2) * h * 0.5, 2 + (i % 3 === 0), 2);
-      const mg = c.createRadialGradient(w * 0.72, h * 0.2, 6, w * 0.72, h * 0.2, 90); mg.addColorStop(0, 'rgba(207,224,255,0.9)'); mg.addColorStop(0.25, 'rgba(160,190,255,0.25)'); mg.addColorStop(1, 'rgba(160,190,255,0)'); c.fillStyle = mg; c.fillRect(0, 0, w, h);
-      c.fillStyle = '#CFE0FF'; c.beginPath(); c.arc(w * 0.72, h * 0.2, 28, 0, 7); c.fill();
-    } else {
-      c.fillStyle = 'rgba(255,255,255,0.9)'; for (let i = 0; i < 5; i++) { const x = hash(i, 11) * w, y = 40 + hash(i, 12) * 160, r = 16 + hash(i, 13) * 16; for (let k = 0; k < 4; k++) { c.beginPath(); c.arc(x + k * r * 0.8, y + (k % 2) * -r * 0.3, r, 0, 7); c.fill(); } }
-    }
-    for (let i = 0; i < 9; i++) {   // khối nhà + cây phía xa
+      const mg = c.createRadialGradient(w * 0.66, h * 0.2, 6, w * 0.66, h * 0.2, 90); mg.addColorStop(0, 'rgba(207,224,255,0.9)'); mg.addColorStop(0.25, 'rgba(160,190,255,0.25)'); mg.addColorStop(1, 'rgba(160,190,255,0)'); c.fillStyle = mg; c.fillRect(0, 0, w, h);
+      c.fillStyle = '#CFE0FF'; c.beginPath(); c.arc(w * 0.66, h * 0.2, 26, 0, 7); c.fill();
+    } else { c.fillStyle = 'rgba(255,255,255,0.9)'; for (let i = 0; i < 5; i++) { const x = hash(i, 11) * w, y = 40 + hash(i, 12) * 160, r = 16 + hash(i, 13) * 16; for (let k = 0; k < 4; k++) { c.beginPath(); c.arc(x + k * r * 0.8, y + (k % 2) * -r * 0.3, r, 0, 7); c.fill(); } } }
+    for (let i = 0; i < 9; i++) {
       const bw = 40 + hash(i, 21) * 50, bh = 90 + hash(i, 22) * 130, bx = i * 62 - 20 + hash(i, 23) * 20;
       c.fillStyle = night ? ['#0d1634', '#101c3e', '#0b1230'][i % 3] : ['#d7c3a6', '#c9d3e0', '#e3cfcf'][i % 3]; c.fillRect(bx, h - bh - 40, bw, bh + 40);
       for (let wy = 0; wy < 5; wy++) for (let wx = 0; wx < 2; wx++) { const lit = hash(i * 10 + wy * 3 + wx, 31) > 0.6; c.fillStyle = night ? (lit ? '#ffb347' : '#16224a') : '#9ec4e6'; c.fillRect(bx + 8 + wx * (bw / 2 - 4), h - bh - 28 + wy * 22, 11, 11); }
@@ -92,159 +104,214 @@ export default function build(g, e, H) {
     for (let i = 0; i < 6; i++) { const tx = 20 + i * 90 + hash(i, 41) * 30, th = 50 + hash(i, 42) * 40; c.fillStyle = night ? '#0a1a2a' : '#4E7A32'; c.fillRect(tx, h - th - 10, 46, th + 10); }
     c.fillStyle = night ? '#141a30' : '#8f8d96'; c.fillRect(0, h - 22, w, 22);
   });
-  const viewNight = viewTexOf(true), viewDay = viewTexOf(false);
-  const viewMats = [];   // vật liệu cảnh ngoài (đổi texture theo đêm/ngày)
+  const viewNight = viewTexOf(true), viewDay = viewTexOf(false), viewMats = [];
   const viewMat = () => { const m = new THREE.MeshBasicMaterial({ map: viewNight, fog: false }); viewMats.push(m); return m; };
+  const glassMat = new THREE.MeshBasicMaterial({ color: '#dff0ff', transparent: true, opacity: 0.1, depthWrite: false });
 
-  // ---- tường = tấm phẳng có lỗ, mặt nhìn VÀO trong (FrontSide) → camera ngoài tường nhìn xuyên được. Cục bộ: x ngang, y cao, +z vào phòng ----
+  // ---- VỎ PHÒNG: tường = tấm phẳng có lỗ, mặt nhìn VÀO trong → máy đứng ngoài tường vẫn nhìn xuyên vào được. Cục bộ: x ngang, y cao, +z vào phòng ----
+  const wallMat = mat('#8b90a2', 'plaster', { roughness: 0.92 });
   const wallGeo = (len, holes) => {
-    const sh = new THREE.Shape(); sh.moveTo(-len / 2 - 2, 0); sh.lineTo(len / 2 + 2, 0); sh.lineTo(len / 2 + 2, HH); sh.lineTo(-len / 2 - 2, HH); sh.closePath();
+    const sh = new THREE.Shape(); sh.moveTo(-len / 2, 0); sh.lineTo(len / 2, 0); sh.lineTo(len / 2, HH); sh.lineTo(-len / 2, HH); sh.closePath();
     for (const h of holes) { const p = new THREE.Path(); p.moveTo(h.c - h.hw, h.y0); p.lineTo(h.c - h.hw, h.y1); p.lineTo(h.c + h.hw, h.y1); p.lineTo(h.c + h.hw, h.y0); p.closePath(); sh.holes.push(p); }
     return new THREE.ShapeGeometry(sh);
   };
-  // cục bộ → thế giới: bắc (ry 0, x→x) · nam (ry π, x→−x) · tây (ry π/2, x→−z) · đông (ry −π/2, x→+z)
+  // cục bộ → thế giới: bắc (ry 0: x→x) · nam (ry π: x→−x) · tây (ry π/2: x→−z) · đông (ry −π/2: x→+z)
   const WALLS = {
-    north: { p: [0, -HZ], ry: 0, len: W, holes: [{ c: -3.5, hw: 3.3, y0: 4.8, y1: 10.6 }] },
-    south: { p: [0, HZ], ry: Math.PI, len: W, holes: [{ c: 8.5, hw: 2.2, y0: 0, y1: 8.2 }] },
+    north: { p: [0, -HZ], ry: 0, len: W, holes: [{ c: WIN.c, hw: WIN.hw, y0: WIN.y0, y1: WIN.y1 }] },
+    south: { p: [0, HZ], ry: Math.PI, len: W, holes: [{ c: -DOOR.c, hw: DOOR.hw, y0: 0, y1: DOOR.h }] },
     west: { p: [-HX, 0], ry: Math.PI / 2, len: D, holes: [] },
-    east: { p: [HX, 0], ry: -Math.PI / 2, len: D, holes: [{ c: -10, hw: 3, y0: 0, y1: 8.6 }] },
+    east: { p: [HX, 0], ry: -Math.PI / 2, len: D, holes: [{ c: BAL.c, hw: BAL.hw, y0: 0, y1: BAL.h }] },
   };
   const WG = {};
   for (const [side, Wd] of Object.entries(WALLS)) {
     const gw = new THREE.Group(); gw.name = 'phong_tuong_' + side; gw.position.set(Wd.p[0], 0, Wd.p[1]); gw.rotation.y = Wd.ry; F.add(gw); WG[side] = gw;
-    const wm = new THREE.Mesh(wallGeo(Wd.len, Wd.holes), wallMat); wm.name = 'phong_tuong'; wm.receiveShadow = true; gw.add(wm);
+    const wm = tag(new THREE.Mesh(wallGeo(Wd.len, Wd.holes), wallMat), 'plaster', false); wm.name = 'phong_tuong'; gw.add(wm);
   }
-  const fl = new THREE.Mesh(new THREE.PlaneGeometry(W, D), new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.7 })); fl.rotation.x = -Math.PI / 2; fl.position.y = 0.01; fl.name = 'phong_san'; fl.receiveShadow = true; F.add(fl);
-  const ceMat = std('#dcb894', { emissive: new THREE.Color('#8a5a34'), emissiveIntensity: 0.3 }); const ce = new THREE.Mesh(new THREE.PlaneGeometry(W, D), ceMat); ce.rotation.x = Math.PI / 2; ce.position.y = HH; ce.name = 'phong_tran'; F.add(ce);
+  { // mặt NGOÀI tường bắc (ván xanh xô thơm của nhà Gà) — chỉ thấy khi máy đứng ngoài nhìn vào cửa sổ (s035)
+    const om = tag(new THREE.Mesh(wallGeo(W + 8, WALLS.north.holes), mat('#8fa67a', 'woodpaint', { side: THREE.BackSide })), 'woodpaint', false); om.name = 'phong_tuong_ngoai_bac'; om.position.z = -0.3; WG.north.add(om);
+  }
+  const fl = tag(new THREE.Mesh(new THREE.PlaneGeometry(W, D), new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.7 })), 'wood', false); fl.rotation.x = -Math.PI / 2; fl.position.y = 0.01; fl.name = 'phong_san'; F.add(fl);
+  const ce = tag(new THREE.Mesh(new THREE.PlaneGeometry(W, D), mat('#e2c39e', 'plaster', { emissive: new THREE.Color('#8a5a34'), emissiveIntensity: 0.25 })), 'plaster', false); ce.rotation.x = Math.PI / 2; ce.position.y = HH; ce.name = 'phong_tran'; F.add(ce);
+  // ốp chân tường + phào trần (gỗ sơn kem), chừa chỗ cửa
+  const dai = (name, x0, x1, z0, z1, yb, h) => box(F, name, Math.max(0.24, x1 - x0), h, Math.max(0.24, z1 - z0), (x0 + x1) / 2, yb, (z0 + z1) / 2, CREAM, 'woodpaint').castShadow = false;
+  dai('phong_chan_tuong_bac', -HX, HX, -HZ, -HZ + 0.24, 0, 0.7); dai('phong_chan_tuong_tay', -HX, -HX + 0.24, -HZ, HZ, 0, 0.7);
+  dai('phong_chan_tuong_nam_a', -HX, DOOR.c - DOOR.hw - 0.4, HZ - 0.24, HZ, 0, 0.7); dai('phong_chan_tuong_nam_b', DOOR.c + DOOR.hw + 0.4, HX, HZ - 0.24, HZ, 0, 0.7);
+  dai('phong_chan_tuong_dong_a', HX - 0.24, HX, -HZ, BAL.c - BAL.hw - 0.4, 0, 0.7); dai('phong_chan_tuong_dong_b', HX - 0.24, HX, BAL.c + BAL.hw + 0.4, HZ, 0, 0.7);
+  dai('phong_phao_bac', -HX, HX, -HZ, -HZ + 0.32, HH - 0.55, 0.55); dai('phong_phao_nam', -HX, HX, HZ - 0.32, HZ, HH - 0.55, 0.55);
+  dai('phong_phao_tay', -HX, -HX + 0.32, -HZ, HZ, HH - 0.55, 0.55); dai('phong_phao_dong', HX - 0.32, HX, -HZ, HZ, HH - 0.55, 0.55);
 
-  // ---- ốp chân tường + phào trần (kem), chừa chỗ cửa ----
-  const trim = [];
-  const seg = (a, b, gaps) => { let cur = [[a, b]]; for (const [g0, g1] of gaps) cur = cur.flatMap(([x0, x1]) => { if (g1 <= x0 || g0 >= x1) return [[x0, x1]]; const o = []; if (g0 > x0) o.push([x0, g0]); if (g1 < x1) o.push([g1, x1]); return o; }); return cur; };
-  for (const [x0, x1] of seg(-HX, HX, [])) { bb(trim, x1 - x0, 0.9, 0.3, (x0 + x1) / 2, 0, -HZ + 0.15, CREAM); bb(trim, x1 - x0, 0.7, 0.4, (x0 + x1) / 2, HH - 0.7, -HZ + 0.2, CREAM); }
-  for (const [x0, x1] of seg(-HX, HX, [[-10.9, -6.1]])) { bb(trim, x1 - x0, 0.9, 0.3, (x0 + x1) / 2, 0, HZ - 0.15, CREAM); }
-  bb(trim, W, 0.7, 0.4, 0, HH - 0.7, HZ - 0.2, CREAM);
-  for (const [z0, z1] of seg(-HZ, HZ, [])) { bb(trim, 0.3, 0.9, z1 - z0, -HX + 0.15, 0, (z0 + z1) / 2, CREAM); bb(trim, 0.4, 0.7, z1 - z0, -HX + 0.2, HH - 0.7, (z0 + z1) / 2, CREAM); }
-  for (const [z0, z1] of seg(-HZ, HZ, [[-13.2, -6.8]])) { bb(trim, 0.3, 0.9, z1 - z0, HX - 0.15, 0, (z0 + z1) / 2, CREAM); }
-  bb(trim, 0.4, 0.7, D, HX - 0.2, HH - 0.7, 0, CREAM);
-  inst(F, 'phong_phao_kem', BOX, white, trim, false);
-
-  // ---- CỬA SỔ BẮC 3×2 ô (khung kem) + cảnh ngoài ----
-  { const gw = WG.north, h = WALLS.north.holes[0], cx = h.c, wd = h.hw * 2, ht = h.y1 - h.y0, cy = (h.y0 + h.y1) / 2, it = [];
-    bb(it, wd + 1.0, 0.45, 0.8, cx, h.y0 - 0.45, 0.35, CREAM); bb(it, wd + 0.8, 0.4, 0.5, cx, h.y1, 0.15, CREAM);                    // bậu + lanh tô
-    bb(it, 0.5, ht + 0.4, 0.5, cx - h.hw - 0.2, h.y0 - 0.2, 0.15, CREAM); bb(it, 0.5, ht + 0.4, 0.5, cx + h.hw + 0.2, h.y0 - 0.2, 0.15, CREAM);
-    bb(it, 0.22, ht, 0.3, cx - wd / 6, h.y0, 0.0, CREAM); bb(it, 0.22, ht, 0.3, cx + wd / 6, h.y0, 0.0, CREAM); bb(it, wd, 0.22, 0.3, cx, cy - 0.1, 0.0, CREAM);
-    const im = inst(gw, 'phong_khung_cua_so', BOX, white, it, false);
-    const out = new THREE.Mesh(new THREE.PlaneGeometry(wd + 10, ht + 10), viewMat()); out.position.set(cx, cy, -5); out.name = 'phong_canh_ngoai_cua_so'; gw.add(out);
-    const glass = new THREE.Mesh(new THREE.PlaneGeometry(wd, ht), new THREE.MeshBasicMaterial({ color: '#dff0ff', transparent: true, opacity: 0.1, depthWrite: false })); glass.position.set(cx, cy, 0.03); glass.name = 'phong_kinh_cua_so'; gw.add(glass);
+  // ---- CỬA SỔ BẮC: khung kem, 2 cánh × 3 ô; cánh TRÁI (phía tây) mở ra ngoài theo ctx.cuaSo ----
+  const winLeft = new THREE.Group(); winLeft.name = 'phong_canh_cua_so_trai';
+  { const gw = WG.north, wd = WIN.hw * 2, ht = WIN.y1 - WIN.y0, cy = (WIN.y0 + WIN.y1) / 2;
+    box(gw, 'phong_bau_cua_so', wd + 0.9, 0.36, 0.7, WIN.c, WIN.y0 - 0.36, 0.28, CREAM, 'woodpaint'); box(gw, 'phong_lanh_to_cua_so', wd + 0.7, 0.34, 0.4, WIN.c, WIN.y1, 0.12, CREAM, 'woodpaint');
+    for (const sx of [-1, 1]) box(gw, 'phong_ne_cua_so', 0.36, ht + 0.3, 0.4, WIN.c + sx * (WIN.hw + 0.18), WIN.y0 - 0.15, 0.12, CREAM, 'woodpaint');
+    const canh = (parent, x0) => {   // một cánh rộng wd/2, gốc cục bộ ở mép x0
+      const cw = wd / 2;
+      for (const x of [0.09, cw - 0.09]) box(parent, 'phong_cua_so_do_dung', 0.18, ht, 0.16, x0 + x, WIN.y0, 0, CREAM, 'woodpaint').castShadow = false;
+      for (const y of [0, ht / 3, (2 * ht) / 3, ht - 0.16]) box(parent, 'phong_cua_so_do_ngang', cw, 0.16, 0.16, x0 + cw / 2, WIN.y0 + y, 0, CREAM, 'woodpaint').castShadow = false;
+      const gl = none(new THREE.Mesh(new THREE.PlaneGeometry(cw, ht), glassMat)); gl.position.set(x0 + cw / 2, cy, 0); gl.name = 'phong_kinh_cua_so'; parent.add(gl);
+    };
+    winLeft.position.set(WIN.c - WIN.hw, 0, 0.02); gw.add(winLeft); canh(winLeft, 0);
+    const right = new THREE.Group(); right.name = 'phong_canh_cua_so_phai'; right.position.set(WIN.c, 0, 0.02); gw.add(right); canh(right, 0);
+    const out = none(new THREE.Mesh(new THREE.PlaneGeometry(wd + 16, ht + 12), viewMat())); out.position.set(WIN.c, cy + 0.5, -7); out.name = 'phong_canh_ngoai_cua_so'; gw.add(out);
   }
-  // ---- CỬA KÍNH BAN CÔNG (tường đông, đoạn bắc; khung kem 2 ô) + ban công ngoài ----
-  { const gw = WG.east, h = WALLS.east.holes[0], cx = h.c, wd = h.hw * 2, ht = h.y1 - h.y0, it = [], rail = [];
-    bb(it, 0.5, ht + 0.4, 0.55, cx - h.hw - 0.2, 0, 0.15, CREAM); bb(it, 0.5, ht + 0.4, 0.55, cx + h.hw + 0.2, 0, 0.15, CREAM); bb(it, wd + 1, 0.45, 0.55, cx, h.y1, 0.15, CREAM);
-    bb(it, 0.3, ht, 0.35, cx, 0, 0.0, CREAM); bb(it, wd, 0.3, 0.35, cx, 4.2, 0.0, CREAM); bb(it, wd, 0.3, 0.35, cx, 0.6, 0.0, CREAM);   // 2 ô ngang, 2 tầng kính
-    inst(gw, 'phong_khung_cua_ban_cong', BOX, white, it, false);
-    inst(gw, 'phong_tay_nam_cua_ban_cong', BOX, std('#3a3d44', { metalness: 0.5, roughness: 0.4 }), [{ p: [cx + 0.45, 4.2, 0.28], s: [0.18, 1.4, 0.2] }, { p: [cx - 0.45, 4.2, 0.28], s: [0.18, 1.4, 0.2] }], false);
-    const glass = new THREE.Mesh(new THREE.PlaneGeometry(wd, ht), new THREE.MeshBasicMaterial({ color: '#dff0ff', transparent: true, opacity: 0.1, depthWrite: false })); glass.position.set(cx, ht / 2, 0.03); glass.name = 'phong_kinh_ban_cong'; gw.add(glass);
-    const bal = new THREE.Mesh(new THREE.PlaneGeometry(wd + 4, 5), std('#6E5A44')); bal.rotation.x = -Math.PI / 2; bal.position.set(cx, 0.0, -2.5); bal.name = 'phong_san_ban_cong'; gw.add(bal);
-    const RC = '#2F5F4F';   // lan can xanh dầu khối dày
-    bb(rail, wd + 4.4, 0.5, 0.5, cx, 3.0, -5.0, RC); bb(rail, 0.5, 0.5, 5, cx - h.hw - 2.2, 3.0, -2.5, RC); bb(rail, 0.5, 0.5, 5, cx + h.hw + 2.2, 3.0, -2.5, RC);
-    for (let i = 0; i <= 8; i++) bb(rail, 0.3, 3.0, 0.3, cx - h.hw - 2.2 + i * ((wd + 4.4) / 8), 0, -5.0, RC);
-    bb(rail, 0.4, 3.0, 0.4, cx - h.hw - 2.2, 0, -0.2, RC); bb(rail, 0.4, 3.0, 0.4, cx + h.hw + 2.2, 0, -0.2, RC);
-    inst(gw, 'phong_lan_can', BOX, white, rail, false);
-    const out = new THREE.Mesh(new THREE.PlaneGeometry(90, 40), viewMat()); out.position.set(cx, 14, -22); out.name = 'phong_canh_ngoai_ban_cong'; gw.add(out);
+  // ---- CỬA KÍNH BAN CÔNG (tường đông, sát góc bắc) + ban công nhìn qua kính ----
+  { const gw = WG.east, wd = BAL.hw * 2, c = BAL.c;
+    for (const sx of [-1, 1]) box(gw, 'phong_ne_cua_ban_cong', 0.36, BAL.h + 0.3, 0.42, c + sx * (BAL.hw + 0.18), 0, 0.12, CREAM, 'woodpaint');
+    box(gw, 'phong_lanh_to_cua_ban_cong', wd + 0.72, 0.36, 0.42, c, BAL.h, 0.12, CREAM, 'woodpaint');
+    for (const x of [c - BAL.hw + 0.1, c - 0.1, c + 0.1, c + BAL.hw - 0.1]) box(gw, 'phong_cua_ban_cong_do_dung', 0.2, BAL.h, 0.18, x, 0, 0.02, CREAM, 'woodpaint').castShadow = false;
+    for (const y of [0, 0.75, 3.5, BAL.h - 0.2]) box(gw, 'phong_cua_ban_cong_do_ngang', wd, 0.2, 0.18, c, y, 0.02, CREAM, 'woodpaint').castShadow = false;
+    for (const sx of [-1, 1]) box(gw, 'phong_tay_nam_cua_ban_cong', 0.14, 0.9, 0.16, c + sx * 0.32, 3.0, 0.2, '#3a3d44', 'chrome', { metalness: 0.6, roughness: 0.4 });
+    const gl = none(new THREE.Mesh(new THREE.PlaneGeometry(wd, BAL.h), glassMat)); gl.position.set(c, BAL.h / 2, 0.02); gl.name = 'phong_kinh_ban_cong'; gw.add(gl);
+    box(gw, 'phong_san_ban_cong', 7.0, 0.3, 4.2, c + 0.6, -0.3, -2.1, '#6e5a44', 'tile').castShadow = false;
+    const RC = '#39466a';   // lan can xanh lam sẫm, trụ dày
+    box(gw, 'phong_lan_can_tay_vin', 7.2, 0.36, 0.4, c + 0.6, 3.07, -4.0, RC, 'woodpaint');
+    for (let i = 0; i <= 8; i++) box(gw, 'phong_lan_can_song', i % 4 === 0 ? 0.42 : 0.2, 3.07, i % 4 === 0 ? 0.42 : 0.2, c + 0.6 - 3.5 + i * 0.875, 0, -4.0, RC, 'woodpaint').castShadow = false;
+    const out = none(new THREE.Mesh(new THREE.PlaneGeometry(70, 34), viewMat())); out.position.set(c, 10, -20); out.name = 'phong_canh_ngoai_ban_cong'; gw.add(out);
   }
-  // ---- CỬA PHÒNG (tường nam) + chốt đồng nằm ngang + hành lang tối sau cửa ----
+  // ---- CỬA PHÒNG (tường nam): cánh gỗ treo bản lề phía TÂY, mở vào trong; chốt đồng nằm ngang gài vào ngàm trên nẹp phía đông; hành lang tối sau cửa ----
   const doorPivot = new THREE.Group(); doorPivot.name = 'phong_cua_phong';
-  { const gw = WG.south, h = WALLS.south.holes[0], c = h.c, it = [];
-    bb(it, 0.5, 8.5, 0.6, c - 2.45, 0, 0.1, CREAM); bb(it, 0.5, 8.5, 0.6, c + 2.45, 0, 0.1, CREAM); bb(it, 5.4, 0.5, 0.6, c, 8.2, 0.1, CREAM);
-    inst(gw, 'phong_khung_cua_phong', BOX, white, it, false);
-    const back = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 8.2), new THREE.MeshBasicMaterial({ color: '#3a2e28' })); back.position.set(c, 4.1, -0.9); back.name = 'phong_hanh_lang_toi'; gw.add(back);
-    const slit = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 0.45), new THREE.MeshBasicMaterial({ color: '#ffd9a0' })); slit.position.set(c, 0.22, -0.7); slit.name = 'phong_khe_sang_duoi_cua'; gw.add(slit);
-    // cánh cửa treo bản lề ở mép x = c + 2.1 (cục bộ); đóng: nằm trong lỗ (trong tường), mặt trong +z
-    doorPivot.position.set(c + 2.1, 0, 0.0); gw.add(doorPivot);
-    const leaf = new THREE.Group(); leaf.name = 'phong_canh_cua'; doorPivot.add(leaf);   // leaf cục bộ: x∈[−4.2,0]
-    K.box(4.2, 7.95, 0.3, '#6A3F22', -2.1, 0.25 + 3.975, -0.05, 'phong_canh_cua_go', leaf);
-    for (const y of [2.2, 5.8]) K.box(3.2, 2.7, 0.1, '#58331a', -2.1, y + 0.25, 0.12, 'phong_cua_o', leaf);
-    const knob = new THREE.Mesh(new THREE.SphereGeometry(0.42, 12, 8), std('#1b1b1e', { roughness: 0.4, metalness: 0.4 })); knob.position.set(-3.5, 4.0, 0.5); knob.name = 'phong_nam_cua'; leaf.add(knob);
-    // CHỐT ĐỒNG nằm ngang (S001): đế + thanh trượt đang GÀI vào móc + núm kéo
-    const brass = std('#C58B3C', { metalness: 0.75, roughness: 0.32 });
-    const plate = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.9, 0.12), brass); plate.position.set(-2.0, 5.2, 0.2); plate.name = 'phong_chot_de'; leaf.add(plate);
-    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 2.4, 12), brass); rod.rotation.z = Math.PI / 2; rod.position.set(-2.4, 5.2, 0.36); rod.name = 'phong_chot_thanh'; leaf.add(rod);
-    const nub = new THREE.Mesh(new THREE.SphereGeometry(0.26, 10, 8), brass); nub.position.set(-1.35, 5.2, 0.5); nub.name = 'phong_chot_num'; leaf.add(nub);
-    const keeper = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.7, 0.14), brass); keeper.position.set(-3.9, 5.2, 0.2); keeper.name = 'phong_chot_moc'; leaf.add(keeper);
-    const slot = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.55, 0.12), std('#2a1a0e')); slot.position.set(-3.65, 5.2, 0.28); slot.name = 'phong_chot_ranh'; leaf.add(slot);
+  { const x0 = DOOR.c - DOOR.hw, x1 = DOOR.c + DOOR.hw, dw = DOOR.hw * 2, z = HZ;
+    box(F, 'phong_ne_cua_phong', 0.4, DOOR.h + 0.3, 0.5, x0 - 0.2, 0, z - 0.1, CREAM, 'woodpaint'); box(F, 'phong_ne_cua_phong', 0.4, DOOR.h + 0.3, 0.5, x1 + 0.2, 0, z - 0.1, CREAM, 'woodpaint');
+    box(F, 'phong_lanh_to_cua_phong', dw + 0.8, 0.4, 0.5, DOOR.c, DOOR.h, z - 0.1, CREAM, 'woodpaint');
+    const back = none(new THREE.Mesh(new THREE.PlaneGeometry(dw + 3, DOOR.h + 2), new THREE.MeshBasicMaterial({ color: '#3a2e28' }))); back.rotation.y = Math.PI; back.position.set(DOOR.c, DOOR.h / 2, z + 1.6); back.name = 'phong_hanh_lang_toi'; F.add(back);
+    doorPivot.position.set(x0, 0, z - 0.05); F.add(doorPivot);   // cánh cục bộ: x ∈ [0, dw], mặt trong = −z
+    box(doorPivot, 'phong_canh_cua_go', dw - 0.06, DOOR.h - 0.12, 0.26, dw / 2, 0.08, 0, '#6a3f22', 'wood');
+    for (const y of [0.7, 3.6]) box(doorPivot, 'phong_cua_o', dw - 1.0, 2.4, 0.08, dw / 2, y, -0.15, '#58331a', 'wood').castShadow = false;
+    const knob = tag(new THREE.Mesh(new THREE.SphereGeometry(0.3, 14, 10), mat('#1d1d20', 'chrome', { roughness: 0.4, metalness: 0.5 })), 'chrome'); knob.position.set(dw - 0.5, 3.05, -0.42); knob.name = 'phong_nam_cua'; doorPivot.add(knob);
+    box(doorPivot, 'phong_nam_cua_de', 0.5, 0.9, 0.06, dw - 0.5, 2.6, -0.17, '#2a2a2e', 'chrome', { roughness: 0.45, metalness: 0.5 });
+    // CHỐT ĐỒNG (S001): đế trên cánh + thanh trượt đang GÀI + núm kéo; ngàm nằm trên nẹp cửa phía đông
+    const bm = { metalness: 0.6, roughness: 0.34, emissive: new THREE.Color('#5a3c12'), emissiveIntensity: 0.55 }, cy = PHONG_DIEM.chot_cua[1];   // đồng: giữ sắc vàng cả khi đêm lam
+    box(doorPivot, 'phong_chot_de', 1.5, 0.62, 0.08, dw - 0.95, cy - 0.31, -0.17, BRASS, 'chrome', bm);
+    const rod = cyl(doorPivot, 'phong_chot_thanh', 0.11, 0.11, 1.9, dw - 0.55, cy - 0.95, -0.27, BRASS, 'chrome', bm, 14); rod.rotation.z = Math.PI / 2; rod.position.y = cy;
+    for (const x of [dw - 1.45, dw - 0.6]) box(doorPivot, 'phong_chot_dai', 0.2, 0.42, 0.22, x, cy - 0.21, -0.25, BRASS, 'chrome', bm);
+    const nub = tag(new THREE.Mesh(new THREE.SphereGeometry(0.15, 12, 8), mat(BRASS, 'chrome', bm)), 'chrome'); nub.position.set(dw - 1.05, cy, -0.42); nub.name = 'phong_chot_num'; doorPivot.add(nub);
+    box(F, 'phong_chot_ngam', 0.36, 0.56, 0.24, x1 + 0.2, cy - 0.28, z - 0.42, BRASS, 'chrome', bm);
+    box(F, 'phong_chot_ngam_ranh', 0.1, 0.3, 0.2, x1 + 0.04, cy - 0.15, z - 0.42, '#2a1a0e', 'chrome', bm);
   }
-  const setCuaPhong = (k) => { doorPivot.rotation.y = -k * Math.PI * 0.45; };   // mở vào trong phòng (+z cục bộ) khi k>0 — chỉ để đạo diễn dùng, mặc định 0
-  e.setCuaPhong = setCuaPhong; e.cuaPhong = doorPivot;
-
-  // ---- ĐỒ GỖ (một InstancedMesh khối + chi tiết riêng) ----
-  const furn = [], front2 = [];
-  // giường đơn sát tường tây, đầu bắc
-  bb(furn, 3.8, 1.3, 7.6, -15, 0.45, -8.65, WOOD); for (const [lx, lz] of [[-16.7, -12.3], [-13.3, -12.3], [-16.7, -5.0], [-13.3, -5.0]]) bb(furn, 0.4, 0.5, 0.4, lx, 0, lz, '#5a3418');
-  bb(furn, 3.5, 0.8, 7.2, -15, 1.75, -8.65, '#EDE3CF');                      // đệm (trắng kem), mặt đệm y 2.55
-  bb(furn, 3.9, 3.5, 0.4, -15, 0.4, -12.65, WOOD); bb(furn, 3.9, 1.7, 0.35, -15, 0.4, -4.7, WOOD);   // đầu giường cao, chân giường thấp
-  bb(furn, 3.7, 0.45, 5.6, -15, 2.5, -7.3, INDIGO); bb(furn, 0.14, 1.3, 5.6, -16.86, 1.65, -7.3, INDIGO); bb(furn, 0.14, 1.3, 5.6, -13.14, 1.65, -7.3, INDIGO); bb(furn, 3.7, 0.5, 0.35, -15, 2.5, -4.45, INDIGO);   // chăn chàm
-  bb(furn, 3.7, 0.55, 0.8, -15, 2.5, -10.35, '#EDE3CF');                    // mép ga gấp gần gối
-  // tủ nhỏ đầu giường (góc tây–bắc), ngăn kéo hướng đông
-  bb(furn, 2.6, 2.8, 2.2, -15.6, 0, -13.9, WOOD2); bb(furn, 0.08, 0.95, 1.9, -14.27, 1.45, -13.9, '#6E4423'); bb(furn, 0.08, 0.95, 1.9, -14.27, 0.35, -13.9, '#6E4423'); bb(furn, 3.0, 0.2, 2.5, -15.5, 2.8, -13.85, WOOD2);
-  // kệ gỗ thấp 2 ngăn bên phải cửa sổ (mặt trên y 3.6)
-  const KX = 5.5, KZ = -13.9;
-  bb(furn, 0.3, 3.6, 2.2, KX - 3.1, 0, KZ, WOOD2); bb(furn, 0.3, 3.6, 2.2, KX + 3.1, 0, KZ, WOOD2); bb(furn, 6.5, 0.3, 2.2, KX, 3.3, KZ, WOOD2);
-  bb(furn, 6.0, 0.25, 2.0, KX, 1.65, KZ + 0.05, '#7d4f2b'); bb(furn, 6.0, 0.25, 2.0, KX, 0.15, KZ + 0.05, '#7d4f2b'); bb(furn, 6.0, 3.0, 0.12, KX, 0.3, -14.9, '#6e4423');
-  // KÉT teal (coSan) góc tây–nam, mặt/núm quay hướng đông
-  bb(furn, 2.6, 3.3, 3.0, -15.6, 0.25, 12.8, '#3a6a60'); bb(furn, 0.12, 2.8, 2.5, -14.27, 0.45, 12.8, '#315a51'); bb(furn, 0.14, 0.18, 0.18, -14.2, 0.2, 11.6, '#1b2e2a');
-  for (const [lx, lz] of [[-16.6, 11.5], [-14.6, 11.5], [-16.6, 14.1], [-14.6, 14.1]]) bb(furn, 0.5, 0.25, 0.5, lx, 0, lz, '#1b2e2a');
-  inst(mid, 'phong_khoi_go', BOX, white, furn);
-  const brass2 = std('#C9A24A', { metalness: 0.7, roughness: 0.35 });
-  { const dial = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.22, 16), brass2); dial.rotation.z = Math.PI / 2; dial.position.set(-14.15, 2.1, 12.8); dial.name = 'ket_nup_xoay_dong'; mid.add(dial);
-    const nb = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.9, 0.18), brass2); nb.position.set(-14.1, 2.1, 12.8); nb.name = 'ket_kim_chi'; mid.add(nb);
-    const hd = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.9), brass2); hd.position.set(-14.1, 1.0, 13.5); hd.name = 'ket_tay_cam'; mid.add(hd);
-    const knobD = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.28, 0.28), brass2); knobD.position.set(-14.1, 2.1, 11.7); knobD.name = 'ket_ban_le'; mid.add(knobD);
-    for (const nm of ['nightstand_knob_a', 'nightstand_knob_b']) { const k = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 6), brass2); k.name = nm; k.position.set(-14.18, nm.endsWith('a') ? 1.45 : 0.35, -13.9); mid.add(k); }
+  // ---- GIƯỜNG ĐƠN (dọc tường tây, đầu bắc): khung gỗ, đệm kem, chăn chàm ca-rô, gối ----
+  { const zc = (BED_Z0 + BED_Z1) / 2, len = BED_Z1 - BED_Z0;
+    box(mid, 'phong_giuong_khung', BED_W, 0.9, len, BX, 0.35, zc, WOOD, 'wood');
+    for (const [lx, lz] of [[-1, BED_Z0 + 0.3], [1, BED_Z0 + 0.3], [-1, BED_Z1 - 0.3], [1, BED_Z1 - 0.3]]) box(mid, 'phong_giuong_chan', 0.4, 0.35, 0.4, BX + lx * (BED_W / 2 - 0.25), 0, lz, WOOD_D, 'wood');
+    box(mid, 'phong_giuong_dau', BED_W, 3.5, 0.32, BX, 0, BED_Z0 + 0.16, WOOD, 'wood'); box(mid, 'phong_giuong_cuoi', BED_W, 1.75, 0.3, BX, 0, BED_Z1 - 0.15, WOOD, 'wood');
+    box(mid, 'phong_dem', BED_W - 0.3, 0.75, len - 0.6, BX, 1.25, zc, '#ede3cf', 'fabric');
+    const chanMat = () => { const t = plaidTex.clone(); t.needsUpdate = true; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.95 }); };
+    const cz0 = BED_Z0 + 2.5, cz1 = BED_Z1 - 0.32, cm = chanMat(); cm.map.repeat.set(2, 2.6);
+    const ch = tag(new THREE.Mesh(new THREE.BoxGeometry(BED_W - 0.1, 0.26, cz1 - cz0), cm), 'fabric'); ch.name = 'phong_chan'; ch.position.set(BX, BED_TOP - 0.13, (cz0 + cz1) / 2); mid.add(ch);
+    const cs = chanMat(); cs.map.repeat.set(2.6, 0.5);
+    for (const sx of [-1, 1]) { const m = tag(new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.0, cz1 - cz0), cs), 'fabric'); m.name = 'phong_chan_ru'; m.position.set(BX + sx * (BED_W / 2 - 0.02), BED_TOP - 0.6, (cz0 + cz1) / 2); mid.add(m); }
+    box(mid, 'phong_ga_gap', BED_W - 0.2, 0.3, 0.7, BX, BED_TOP - 0.2, cz0 - 0.3, '#ede3cf', 'fabric');
+    const cp = chanMat(); cp.map.repeat.set(2, 2.4);   // chăn PHỦ NGƯỜI (ctx.chanPhu): gò chăn che thân Gà đang nằm
+    const phu = tag(new THREE.Mesh(new THREE.BoxGeometry(BED_W - 0.5, 1.5, 3.5), cp), 'fabric'); phu.name = 'phong_chan_phu'; phu.position.set(BX, BED_TOP + 0.62, -2.5); phu.visible = false; mid.add(phu); e.chanPhu = phu;   // z −4,25…−0,75: phủ từ vai tới chân Gà, chừa góc chân giường cho Bắp
+    const pil = createPuffy(THREE, { a: 1.35, b: 0.42, c: 0.85, ex: 0.6, dent: 0.2, pinch: 0.5, seed: 3, name: 'phong_goi', color: '#EDE3CF' }); pil.position.set(BX, BED_TOP + 0.12, BED_Z0 + 1.35); mid.add(pil);
+    pil.traverse((o) => { if (o.isMesh && o.material) { o.material = o.material.clone(); o.material.color.set('#ede3cf'); tag(o, 'fabric'); } });
   }
-  // chăn ca-rô (tấm mỏng phủ mặt chăn) + gối bằng vải liền
-  { const pl = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 5.5), new THREE.MeshStandardMaterial({ map: plaidTex, transparent: true, roughness: 0.95, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 })); pl.rotation.x = -Math.PI / 2; pl.position.set(-15, 2.96, -7.3); pl.name = 'phong_chan_ca_ro'; mid.add(pl);
-    const pil = createPuffy(THREE, { a: 1.3, b: 0.42, c: 0.9, ex: 0.6, dent: 0.2, pinch: 0.5, seed: 3, name: 'phong_goi', color: '#EDE3CF' }); pil.position.set(-15, 3.0, -11.4); pil.rotation.y = 0.04; mid.add(pil);
-    pil.traverse((o) => { if (o.isMesh && o.material) { o.material = o.material.clone(); o.material.color.set('#EDE3CF'); } });
+  // ---- TỦ ĐÈN sau đầu giường (góc tây–bắc) + đèn bàn hổ phách ----
+  const NX = -6.2, NZ = -HZ + 0.8, NH = 2.55;
+  box(mid, 'phong_tu_den', 1.66, NH, 1.5, NX, 0, NZ, WOOD, 'wood'); box(mid, 'phong_tu_den_mat', 1.86, 0.16, 1.66, NX, NH, NZ, WOOD_D, 'wood');
+  const shadeMat = new THREE.MeshStandardMaterial({ color: '#ffb347', emissive: new THREE.Color('#ffb347'), emissiveIntensity: 1.1, roughness: 0.6, side: THREE.DoubleSide });
+  cyl(front, 'den_ban_de', 0.4, 0.5, 0.26, NX, NH + 0.16, NZ, '#3b2a1c', 'wood'); cyl(front, 'den_ban_than', 0.08, 0.08, 1.0, NX, NH + 0.42, NZ, '#3b2a1c', 'wood', {}, 8);
+  { const sh = none(new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.78, 1.2, 4, 1, true), shadeMat)); sh.rotation.y = Math.PI / 4; sh.position.set(NX, NH + 1.9, NZ); sh.name = 'den_ban_chup'; front.add(sh);
+    const bulb = none(new THREE.Mesh(new THREE.SphereGeometry(0.3, 10, 8), new THREE.MeshBasicMaterial({ color: '#fff0c8' }))); bulb.position.set(NX, NH + 1.8, NZ); bulb.name = 'den_ban_bong'; front.add(bulb); e.bulb = bulb; }
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex('255,176,80'), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 0.3, fog: false })); glow.scale.set(3.6, 3.6, 1); glow.position.set(NX + 0.2, NH + 1.9, NZ + 0.4); glow.name = 'den_ban_quang'; front.add(glow);
+  // ---- KỆ GỖ THẤP 2 ngăn (bên phải cửa sổ) + lớp bụi có VẾT DÂY CHUYỀN (S002, S016–S019) ----
+  { const x0 = KX - KW / 2, x1 = KX + KW / 2;
+    for (const x of [x0 + 0.12, x1 - 0.12]) box(mid, 'phong_ke_hong', 0.24, KH - 0.22, KD, x, 0, KZ, WOOD, 'wood');
+    box(mid, 'phong_ke_mat', KW + 0.16, 0.22, KD + 0.12, KX, KH - 0.22, KZ + 0.03, WOOD, 'wood');
+    box(mid, 'phong_ke_tang_giua', KW - 0.4, 0.18, KD - 0.1, KX, 1.5, KZ, WOOD_D, 'wood'); box(mid, 'phong_ke_day', KW - 0.4, 0.2, KD - 0.1, KX, 0.12, KZ, WOOD_D, 'wood');
+    box(mid, 'phong_ke_lung', KW - 0.3, KH - 0.4, 0.1, KX, 0.12, KZ - KD / 2 + 0.06, WOOD_D, 'wood').castShadow = false;
+    const dust = canvasTex(512, 256, (c, w, h) => {   // bụi mỏng; vết sạch: vòng dây cong + giọt mặt dây
+      c.clearRect(0, 0, w, h); c.fillStyle = 'rgba(214,202,180,0.5)'; c.fillRect(0, 0, w, h);
+      for (let i = 0; i < 260; i++) { c.fillStyle = `rgba(232,222,204,${0.1 + hash(i, 51) * 0.25})`; c.fillRect(hash(i, 52) * w, hash(i, 53) * h, 2 + hash(i, 54) * 3, 2); }
+      c.globalCompositeOperation = 'destination-out'; c.lineCap = 'round'; c.lineWidth = 15; c.strokeStyle = 'rgba(0,0,0,0.95)';
+      c.beginPath(); c.moveTo(w * 0.16, h * 0.34); c.bezierCurveTo(w * 0.3, h * 0.92, w * 0.5, h * 0.9, w * 0.62, h * 0.4); c.stroke();
+      c.beginPath(); c.moveTo(w * 0.62, h * 0.4); c.bezierCurveTo(w * 0.66, h * 0.24, w * 0.56, h * 0.16, w * 0.48, h * 0.26); c.stroke();
+      c.beginPath(); c.ellipse(w * 0.33, h * 0.66, 20, 27, 0.3, 0, 7); c.fill(); c.globalCompositeOperation = 'source-over';
+    });
+    const dm = none(new THREE.Mesh(new THREE.PlaneGeometry(2.3, 1.15), new THREE.MeshStandardMaterial({ map: dust, transparent: true, roughness: 1, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }))); dm.receiveShadow = true;
+    dm.rotation.x = -Math.PI / 2; dm.position.set(PHONG_DIEM.ke_vet_day[0], KH + 0.012, PHONG_DIEM.ke_vet_day[2]); dm.name = 'phong_ke_vet_day'; mid.add(dm); e.vetDay = dm;
   }
-  // thảm kem giữa phòng
-  { const rg = new THREE.Mesh(new THREE.PlaneGeometry(14, 9.5), new THREE.MeshStandardMaterial({ map: rugTex, roughness: 1 })); rg.rotation.x = -Math.PI / 2; rg.position.set(1, 0.045, 1); rg.name = 'phong_tham'; rg.receiveShadow = true; front.add(rg); }
-  // đèn bàn hổ phách trên tủ đầu giường
-  const shadeMat = new THREE.MeshStandardMaterial({ color: '#FFB347', emissive: new THREE.Color('#FFB347'), emissiveIntensity: 1.1, roughness: 0.6 });
-  { const lb = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.65, 0.3, 14), std('#3b2a1c')); lb.position.set(-15.6, 3.05, -13.9); lb.name = 'den_ban_de'; front.add(lb);
-    const ls = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 1.3, 8), std('#3b2a1c')); ls.position.set(-15.6, 3.8, -13.9); ls.name = 'den_ban_than'; front.add(ls);
-    const sh = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.95, 1.5, 4, 1, true), shadeMat); sh.rotation.y = Math.PI / 4; sh.position.set(-15.6, 5.0, -13.9); sh.name = 'den_ban_chup'; shadeMat.side = THREE.DoubleSide; front.add(sh);
-    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.42, 10, 8), new THREE.MeshBasicMaterial({ color: '#fff0c8' })); bulb.position.set(-15.6, 4.9, -13.9); bulb.name = 'den_ban_bong'; front.add(bulb); e.bulb = bulb;
+  // ---- KÉT TEAL (góc tây–nam, mặt số quay BẮC): thân rỗng + cửa bản lề phía TÂY + lòng két có đệm sẫm; nhấc/mở theo ctx ----
+  const ket = new THREE.Group(); ket.name = 'phong_ket'; ket.position.set(KET.x, 0, KET.z); mid.add(ket);
+  const ketDoor = new THREE.Group(); ketDoor.name = 'phong_ket_cua';
+  { const { w, d, h } = KET, tm = { metalness: 0.45, roughness: 0.5 }, TD = '#2f574e', y0 = 0.2, t = 0.16;
+    box(ket, 'ket_lung', w, h - y0, t, 0, y0, d / 2 - t / 2, TEAL, 'metalpaint', tm); box(ket, 'ket_noc', w, t, d, 0, h - t, 0, TEAL, 'metalpaint', tm); box(ket, 'ket_day', w, t, d, 0, y0, 0, TEAL, 'metalpaint', tm);
+    for (const sx of [-1, 1]) box(ket, 'ket_hong', t, h - y0, d, sx * (w / 2 - t / 2), y0, 0, TEAL, 'metalpaint', tm);
+    for (const [lx, lz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(ket, 'ket_chan', 0.34, y0, 0.34, lx * (w / 2 - 0.3), 0, lz * (d / 2 - 0.3), '#1b2e2a', 'metalpaint', tm);
+    box(ket, 'ket_long_dem', w - 0.4, 0.2, d - 0.4, 0, y0 + t, 0.02, '#2a1f2e', 'fabric').castShadow = false;
+    const ins = none(new THREE.Mesh(new THREE.BoxGeometry(w - 0.34, h - y0 - 0.34, d - 0.34), new THREE.MeshBasicMaterial({ color: '#141a1c', side: THREE.BackSide }))); ins.position.set(0, (h + y0) / 2, 0); ins.name = 'ket_long_toi'; ket.add(ins);
+    ketDoor.position.set(-w / 2 + 0.02, 0, -d / 2); ket.add(ketDoor);   // bản lề ở mép TÂY mặt trước (mặt trước = −z); cánh cục bộ x ∈ [0, w]
+    box(ketDoor, 'ket_cua', w - 0.06, h - y0 - 0.06, 0.16, w / 2, y0 + 0.03, -0.06, TD, 'metalpaint', tm);
+    const dial = cyl(ketDoor, 'ket_nup_xoay', 0.36, 0.36, 0.14, w * 0.6, 0, -0.2, '#c9a24a', 'chrome', { metalness: 0.75, roughness: 0.32 }, 20); dial.rotation.x = Math.PI / 2; dial.position.y = h * 0.6;
+    box(ketDoor, 'ket_kim_chi', 0.07, 0.34, 0.05, w * 0.6, h * 0.6 - 0.05, -0.29, '#2a2014', 'chrome', { metalness: 0.6, roughness: 0.4 });
+    box(ketDoor, 'ket_tay_cam', 0.7, 0.16, 0.2, w * 0.28, h * 0.34, -0.24, '#c9a24a', 'chrome', { metalness: 0.75, roughness: 0.32 });
+    for (const y of [h * 0.3, h * 0.78]) box(ketDoor, 'ket_ban_le', 0.2, 0.36, 0.22, 0.05, y, -0.1, '#1b2e2a', 'metalpaint', tm);
   }
-  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex('255,176,80'), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 0.55, fog: false })); glow.scale.set(7, 7, 1); glow.position.set(-15.2, 5.0, -13.4); glow.name = 'den_ban_quang'; front.add(glow);
-  // GƯƠNG ĐỨNG khung gỗ, dựa tường đông (đoạn nam), xoay nghiêng về đầu giường. Kính = mặt sáng giả phản chiếu (không có đồ vật cố định trong gương).
-  const mirror = new THREE.Group(); mirror.name = 'phong_guong'; mirror.position.set(13.9, 0, 4.5); mirror.rotation.y = -2.004; front.add(mirror);
-  { const lean = new THREE.Group(); lean.rotation.x = -0.17; mirror.add(lean);
-    const fr = []; const MH = 10.4, MW = 4.4; bb(fr, 0.42, MH, 0.5, -MW / 2 + 0.21, 0, 0, WOOD2); bb(fr, 0.42, MH, 0.5, MW / 2 - 0.21, 0, 0, WOOD2); bb(fr, MW, 0.42, 0.5, 0, 0, 0, WOOD2); bb(fr, MW, 0.42, 0.5, 0, MH - 0.42, 0, WOOD2); bb(fr, MW - 0.6, MH - 0.6, 0.12, 0, 0.3, -0.12, '#5a3a1e');
-    inst(lean, 'phong_khung_guong', BOX, white, fr);
-    const gtex = canvasTex(128, 256, (c, w, h) => { const gr = c.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#7c88a6'); gr.addColorStop(0.45, '#5f6a88'); gr.addColorStop(1, '#8a7c78'); c.fillStyle = gr; c.fillRect(0, 0, w, h); c.fillStyle = 'rgba(255,255,255,0.12)'; c.beginPath(); c.moveTo(w * 0.1, h); c.lineTo(w * 0.3, 0); c.lineTo(w * 0.45, 0); c.lineTo(w * 0.25, h); c.fill(); });
-    const gl = new THREE.Mesh(new THREE.PlaneGeometry(MW - 0.8, MH - 0.8), new THREE.MeshStandardMaterial({ map: gtex, roughness: 0.45, metalness: 0.0, emissive: new THREE.Color('#aab4d4'), emissiveMap: gtex, emissiveIntensity: 0.45 })); gl.position.set(0, MH / 2, 0.27); gl.name = 'phong_guong_kinh'; lean.add(gl); }
-
+  // ---- THẢM KEM giữa phòng ----
+  { const rg = tag(new THREE.Mesh(new THREE.PlaneGeometry(6.0, 7.8), new THREE.MeshStandardMaterial({ map: rugTex, roughness: 1 })), 'knit', false); rg.rotation.x = -Math.PI / 2; rg.position.set(1.0, 0.04, 1.2); rg.name = 'phong_tham'; front.add(rg); }
+  // ---- GƯƠNG ĐỨNG khung gỗ (gần góc đông–nam, mặt quay về tây-bắc: nằm trên giường nhìn vào thấy kệ) — PHẢN CHIẾU THẬT ----
+  const mirror = new THREE.Group(); mirror.name = 'phong_guong'; mirror.position.set(GUONG.x, 0, GUONG.z); mirror.rotation.y = GUONG.ry; front.add(mirror);
+  const lean = new THREE.Group(); lean.rotation.x = -GUONG.nga; mirror.add(lean);
+  const MW = GUONG.w, MH = GUONG.h, MY = 0.5;
+  for (const sx of [-1, 1]) box(lean, 'phong_guong_khung', 0.34, MH, 0.36, sx * (MW / 2 - 0.17), MY, 0, WOOD, 'wood');
+  box(lean, 'phong_guong_khung', MW, 0.34, 0.36, 0, MY, 0, WOOD, 'wood'); box(lean, 'phong_guong_khung', MW, 0.34, 0.36, 0, MY + MH - 0.34, 0, WOOD, 'wood');
+  box(lean, 'phong_guong_lung', MW - 0.3, MH - 0.3, 0.1, 0, MY + 0.15, -0.14, WOOD_D, 'wood').castShadow = false;
+  const gtex = canvasTex(128, 256, (c, w, h) => { const gr = c.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#7c88a6'); gr.addColorStop(0.45, '#5f6a88'); gr.addColorStop(1, '#8a7c78'); c.fillStyle = gr; c.fillRect(0, 0, w, h); c.fillStyle = 'rgba(255,255,255,0.12)'; c.beginPath(); c.moveTo(w * 0.1, h); c.lineTo(w * 0.3, 0); c.lineTo(w * 0.45, 0); c.lineTo(w * 0.25, h); c.fill(); });
+  const fakeMat = new THREE.MeshStandardMaterial({ map: gtex, roughness: 0.45, emissive: new THREE.Color('#aab4d4'), emissiveMap: gtex, emissiveIntensity: 0.45 });
+  // gương thật: vẽ cảnh từ máy đối xứng qua mặt gương vào ảnh trung gian rồi chiếu lên mặt kính (cùng cách với Reflector của three.js; hàm thuần của trạng thái cảnh)
+  const rt = new THREE.WebGLRenderTarget(576, 936, { samples: 4, type: THREE.HalfFloatType });
+  const texM = new THREE.Matrix4(), vcam = new THREE.PerspectiveCamera();
+  const refMat = new THREE.ShaderMaterial({
+    uniforms: { tDiffuse: { value: rt.texture }, textureMatrix: { value: texM }, tint: { value: new THREE.Color('#d3d9e6') } },
+    vertexShader: 'uniform mat4 textureMatrix; varying vec4 vUv; void main() { vUv = textureMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: 'uniform sampler2D tDiffuse; uniform vec3 tint; varying vec4 vUv;\nvoid main() { vec4 c = texture2DProj(tDiffuse, vUv); gl_FragColor = vec4(c.rgb * tint, 1.0);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}',
+  });
+  const glassM = none(new THREE.Mesh(new THREE.PlaneGeometry(MW - 0.66, MH - 0.66), refMat)); glassM.position.set(0, MY + MH / 2, 0.1); glassM.name = 'phong_guong_kinh'; lean.add(glassM);
+  { const P = new THREE.Vector3(), N = new THREE.Vector3(), C = new THREE.Vector3(), V = new THREE.Vector3(), T = new THREE.Vector3(), rotM = new THREE.Matrix4(), plane = new THREE.Plane(), clip = new THREE.Vector4(), q = new THREE.Vector4();
+    let busy = false;
+    glassM.onBeforeRender = (renderer, sc, camera) => {
+      if (busy || glassM.material !== refMat) return;
+      P.setFromMatrixPosition(glassM.matrixWorld); C.setFromMatrixPosition(camera.matrixWorld); rotM.extractRotation(glassM.matrixWorld); N.set(0, 0, 1).applyMatrix4(rotM);
+      V.subVectors(P, C); if (V.dot(N) > 0) return;   // máy ở sau gương
+      V.reflect(N).negate().add(P);
+      rotM.extractRotation(camera.matrixWorld); T.set(0, 0, -1).applyMatrix4(rotM).add(C); T.subVectors(P, T).reflect(N).negate().add(P);
+      vcam.position.copy(V); vcam.up.set(0, 1, 0).applyMatrix4(rotM).reflect(N); vcam.lookAt(T); vcam.near = camera.near; vcam.far = camera.far; vcam.updateMatrixWorld(); vcam.projectionMatrix.copy(camera.projectionMatrix);
+      texM.set(0.5, 0, 0, 0.5, 0, 0.5, 0, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0, 1); texM.multiply(vcam.projectionMatrix); texM.multiply(vcam.matrixWorldInverse); texM.multiply(glassM.matrixWorld);
+      plane.setFromNormalAndCoplanarPoint(N, P); plane.applyMatrix4(vcam.matrixWorldInverse); clip.set(plane.normal.x, plane.normal.y, plane.normal.z, plane.constant);   // cắt xiên: bỏ mọi thứ nằm SAU mặt gương
+      const pm = vcam.projectionMatrix; q.x = (Math.sign(clip.x) + pm.elements[8]) / pm.elements[0]; q.y = (Math.sign(clip.y) + pm.elements[9]) / pm.elements[5]; q.z = -1; q.w = (1 + pm.elements[10]) / pm.elements[14];
+      clip.multiplyScalar(2 / clip.dot(q)); pm.elements[2] = clip.x; pm.elements[6] = clip.y; pm.elements[10] = clip.z + 1 - 0.003; pm.elements[14] = clip.w;
+      busy = true; mirror.visible = false;
+      const prt = renderer.getRenderTarget(), pxr = renderer.xr.enabled, psh = renderer.shadowMap.autoUpdate;
+      renderer.xr.enabled = false; renderer.shadowMap.autoUpdate = false; renderer.setRenderTarget(rt); renderer.state.buffers.depth.setMask(true); if (renderer.autoClear === false) renderer.clear(); renderer.render(sc, vcam);
+      renderer.xr.enabled = pxr; renderer.shadowMap.autoUpdate = psh; renderer.setRenderTarget(prt); const vp = camera.viewport; if (vp !== undefined) renderer.state.viewport(vp);
+      mirror.visible = true; busy = false;
+    };
+  }
   // ---- vệt sáng trăng / nắng trên sàn (cộng sáng) ----
-  const patchMat = new THREE.MeshBasicMaterial({ map: softTex('255,255,255'), color: '#9fb8ff', transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending, depthWrite: false, fog: false });
-  const patches = [[-1.5, -7.5, 8, 6.5, 0], [11.5, -9.5, 7, 7.5, 0]].map(([x, z, w, d, ry], i) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), patchMat); m.rotation.x = -Math.PI / 2; m.rotation.z = ry; m.position.set(x, 0.06, z); m.name = 'phong_vet_sang_' + i; front.add(m); return m; });
+  const patchMat = new THREE.MeshBasicMaterial({ map: softTex('255,255,255'), color: '#9fb8ff', transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthWrite: false, fog: false });
+  for (const [i, [x, z, w, d]] of [[-1.2, -4.6, 4.6, 5.2], [4.6, -6.4, 4.4, 4.2]].entries()) { const m = none(new THREE.Mesh(new THREE.PlaneGeometry(w, d), patchMat)); m.rotation.x = -Math.PI / 2; m.position.set(x, 0.06, z); m.name = 'phong_vet_sang_' + i; front.add(m); }
 
-  // mọi vật trong env: không để lớp vật liệu/bụi vá lên (màu theo bảng thiết kế); tường/trần không đổ bóng
-  R.traverse((o) => { if (!o.isMesh) return; o.userData.matKind = 'none'; o.userData.grungeKind = 'none'; if (/^phong_(tuong|tran|san|canh_ngoai|kinh|hanh_lang|khe|vet_sang)/.test(o.name)) o.castShadow = false; });
-
-  // ---- đêm / sáng ----
-  e.pointSpec = { color: '#ffb25a', intensity: 4.0, distance: 55, decay: 1.2, pos: [-13.5, 5.6, -11.5] };
+  // ---- đêm / sáng + tham số theo shot ----
+  const DEM = { color: '#ffb25a', intensity: 3.2, distance: 34, decay: 1.2, pos: [NX + 1.2, NH + 2.2, NZ + 1.6] }, SANG = { color: '#fff1d0', intensity: 1.0, distance: 40, decay: 1.2, pos: [WIN.c, 7.2, -4.5] };
+  e.pointSpec = DEM;
   const pool = scene.getObjectByName('interior_point');
   let nightNow = null;
   const setNight = (night) => {
     if (nightNow === night) return; nightNow = night;
     for (const m of viewMats) m.map = night ? viewNight : viewDay;
-    shadeMat.emissiveIntensity = night ? 1.1 : 0.12; shadeMat.color.set(night ? '#FFB347' : '#d9a050'); e.bulb.material.color.set(night ? '#fff0c8' : '#d8c8a0'); glow.visible = night;
-    wallMat.color.set(night ? '#9a9ea8' : '#b4b9cc'); patchMat.color.set(night ? '#9fb8ff' : '#fff0c0'); patchMat.opacity = night ? 0.22 : 0.4;
-    e.pointSpec = night ? { color: '#ffb25a', intensity: 4.0, distance: 55, decay: 1.2, pos: [-13.5, 5.6, -11.5] } : { color: '#fff1d0', intensity: 1.1, distance: 60, decay: 1.2, pos: [-3.5, 9.5, -9] };
+    shadeMat.emissiveIntensity = night ? 1.1 : 0.1; shadeMat.color.set(night ? '#ffb347' : '#d9a050'); e.bulb.material.color.set(night ? '#fff0c8' : '#d8c8a0'); glow.visible = night;
+    wallMat.color.set(night ? '#8b90a2' : '#a9b0bb'); patchMat.color.set(night ? '#9fb8ff' : '#fff0c0'); patchMat.opacity = night ? 0.22 : 0.4;
+    e.pointSpec = night ? DEM : SANG;
   };
   setNight(true);
+  const num = (v, d) => (typeof v === 'number' ? v : d);
   return { suSong: [], update(t, ctx) {
-    const L = LIGHTS[(ctx && ctx.light) || e.light]; setNight(!!(L && L.night));
+    const c = ctx || {}, L = LIGHTS[c.light || e.light]; setNight(!!(L && L.night));
+    doorPivot.rotation.y = num(c.cuaPhong, 0) * 1.75;                 // mở vào trong, cánh quay về phía bắc–tây
+    winLeft.rotation.y = num(c.cuaSo, 0) * 1.9;                       // cánh trái mở ra ngoài
+    ketDoor.rotation.y = num(c.ketMo, 0) * 1.9; ket.position.y = num(c.ketY, 0);
+    glassM.material = c.guong === 0 ? fakeMat : refMat; mirror.rotation.y = num(c.guongRy, GUONG.ry); refMat.uniforms.tint.value.set('#d3d9e6').multiplyScalar(num(c.guongSang, 1));
+    e.chanPhu.visible = !!c.chanPhu;
     if (pool && e.pointSpec) { const s = e.pointSpec; pool.color.set(s.color); pool.intensity = s.intensity; pool.distance = s.distance; pool.decay = s.decay; pool.position.set(...s.pos); }   // áp ngay trong khung này (applyPool chạy trước update)
   } };
 }
