@@ -6,6 +6,7 @@
 - Thêm **chế độ 3D** bên cạnh chế độ Phim: như một phần mềm 3D, xem được thành phố bố trí ra sao, nhân vật đứng đâu; với từng shot thì thấy camera, địa điểm, phối cảnh.
 - Bắt lỗi theo **shot** là chính, theo frame khi cần chi tiết (đã làm, commit 716eb58).
 - Khung studio PC: viền kéo co giãn, cột thẻ dọc, timeline rê theo frame, marker phím M, bánh răng cài đặt, Gửi tới Claude (bản mẫu v2 đã duyệt; đang đưa vào trình phát thật).
+- Cột shot: shot đang chọn có nút ▶ (phát riêng shot đó) và ✎ (ghi chú cho shot đó); lưu xong tự sang shot kế để nhập lần lượt (đã giao agent khung studio 2026-11-13).
 - Tách khung studio khỏi nội dung tập để mỗi tập nhẹ hơn (chưa làm).
 
 ## Đề xuất của Claude cho chế độ 3D (chưa được duyệt — chưa code)
