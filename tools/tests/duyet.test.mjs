@@ -116,3 +116,99 @@ test('mo: Host lạ bị từ chối', async () => {
     assert.equal(st, 403);
   } finally { s.p.kill(); fs.rmSync(goc, { recursive: true, force: true }); }
 });
+
+// ---- CORS cho file://, /ping ----
+function yeuCau(cong, method, p, { origin, body, hdr = {} } = {}) {
+  return new Promise((ok, loi) => {
+    const h = { ...hdr }; if (origin !== undefined) h.Origin = origin; if (body !== undefined) { h['Content-Type'] = 'application/json'; h['Content-Length'] = Buffer.byteLength(body); }
+    const r = http.request({ host: '127.0.0.1', port: cong, path: p, method, headers: h }, res => { let t = ''; res.on('data', c => t += c); res.on('end', () => ok({ st: res.statusCode, h: res.headers, t })); });
+    r.on('error', loi); if (body !== undefined) r.write(body); r.end();
+  });
+}
+
+test('mo: /ping, Origin null (file://) được nhận kèm CORS, preflight 204, origin web lạ 403', async () => {
+  const goc = taoGoc(), s = khoiDong(goc);
+  try {
+    const cong = await s.san;
+    const pg = await yeuCau(cong, 'GET', '/ping', { origin: 'null' });
+    assert.equal(pg.st, 200); assert.deepEqual(JSON.parse(pg.t), { ung: 'duyet', ep: 't' }); assert.equal(pg.h['access-control-allow-origin'], 'null');
+    assert.equal((await yeuCau(cong, 'GET', '/ping')).h['access-control-allow-origin'], '*'); // không có Origin (Chrome từ file://)
+    assert.equal((await yeuCau(cong, 'GET', '/ping', { origin: 'file://' })).h['access-control-allow-origin'], 'file://');
+    const pf = await yeuCau(cong, 'OPTIONS', '/gui', { origin: 'null', hdr: { 'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Headers': 'content-type', 'Access-Control-Request-Private-Network': 'true' } });
+    assert.equal(pf.st, 204); assert.equal(pf.h['access-control-allow-origin'], 'null'); assert.match(pf.h['access-control-allow-methods'], /POST/); assert.match(pf.h['access-control-allow-headers'], /Content-Type/i); assert.equal(pf.h['access-control-allow-private-network'], 'true');
+    assert.equal((await yeuCau(cong, 'OPTIONS', '/gui', { origin: 'https://example.com' })).st, 403);
+    assert.equal((await yeuCau(cong, 'GET', '/ping', { origin: 'https://example.com' })).st, 403);
+    assert.equal((await yeuCau(cong, 'POST', '/gui', { origin: 'https://example.com', body: JSON.stringify({ tap: 't', dot: 1 }) })).st, 403);
+    const lanh = await yeuCau(cong, 'POST', '/gui', { origin: 'http://localhost:' + cong, body: JSON.stringify({ tap: 'khac', dot: 1 }) });
+    assert.equal(lanh.st, 422); assert.equal(lanh.h['access-control-allow-origin'], 'http://localhost:' + cong); // lỗi vẫn có CORS để trang đọc được
+    const kq = path.join(goc, 'duyet', 't', 'dot-01.ketqua.json');
+    assert.equal((await yeuCau(cong, 'POST', '/gui', { origin: 'null', body: JSON.stringify({ tap: 'khac', dot: 1 }) })).st, 422);
+    assert.equal((await yeuCau(cong, 'POST', '/gui', { origin: 'null', body: JSON.stringify({ tap: 't', dot: 9 }) })).st, 422);
+    assert.ok(!fs.existsSync(kq));
+    const ok = await yeuCau(cong, 'POST', '/gui', { origin: 'null', body: JSON.stringify({ tap: 't', dot: 1, duyet: ['m1'], sua: [], chon: {} }) });
+    assert.equal(ok.st, 200); assert.equal(ok.h['access-control-allow-origin'], 'null'); assert.ok(fs.existsSync(kq));
+  } finally { s.p.kill(); fs.rmSync(goc, { recursive: true, force: true }); }
+});
+
+// ---- chống trùng giữa các đợt ----
+import { tongHop, timTrung } from '../duyet.mjs';
+
+function taoHaiDot() {
+  const goc = fs.mkdtempSync(path.join(os.tmpdir(), 'duyet-'));
+  fs.mkdirSync(path.join(goc, 'x'), { recursive: true }); fs.writeFileSync(path.join(goc, 'x', 'a.png'), PNG);
+  const uvk = (id, ten, n) => ({ id, ten, anhHienTai: 'x/a.png', ungVien: Array.from({ length: n }, (_, i) => ({ id: id + '__' + (i + 1), ten: ten + ' U' + (i + 1), anh: 'x/a.png', link: 'https://sketchfab.com/3d-models/q' })) });
+  const d1 = moi('t', 'Đợt 1', goc), d2 = moi('t', 'Đợt 2', goc);
+  const j1 = JSON.parse(fs.readFileSync(d1, 'utf8')); j1.nhom = [{ id: 'a', ten: 'A', kieu: 'ung-vien', muc: [uvk('ket_tien', 'Két tiền', 2), uvk('chuong', 'Chuông', 2), uvk('ke_trong', 'Kệ', 2), uvk('guong', 'Gương', 2)] }]; fs.writeFileSync(d1, JSON.stringify(j1));
+  const j2 = JSON.parse(fs.readFileSync(d2, 'utf8'));
+  j2.nhom = [{ id: 'b', ten: 'B', kieu: 'ung-vien', muc: [uvk('rb-ket-sat', 'Két Roblox', 2), uvk('rb-chuong', 'Chuông Roblox', 2), uvk('rb-ke-go', 'Kệ gỗ', 2), uvk('rb-guong', 'Gương Roblox', 2), uvk('rb-moi', 'Mới hoàn toàn', 2)] },
+    { id: 'c', ten: 'C', muc: [{ id: 'dn-ke_trong', ten: 'Kệ đã nhập', anh: 'x/a.png' }, { id: 'tu-chon', chuDe: 'chuong', ten: 'Chuông ghi tay' }] }];
+  fs.writeFileSync(d2, JSON.stringify(j2));
+  // đợt 1: chọn két U2, chuông U1, kệ: Không cái nào, gương chưa quyết
+  fs.writeFileSync(path.join(goc, 'duyet', 't', 'dot-01.ketqua.json'), JSON.stringify({ tap: 't', dot: 1, chon: { ket_tien: 'ket_tien__2', chuong: 'chuong__1', ke_trong: null }, ghiChu: { chuong: 'to hơn' }, chuaChon: ['guong'] }));
+  return goc;
+}
+
+test('chống trùng: đợt 2 đánh dấu mục đã quyết ở đợt 1, "không cái nào"/chưa quyết không tính', () => {
+  const goc = taoHaiDot();
+  const o = dung('t', { goc, log() {} });
+  const html = fs.readFileSync(o.out, 'utf8');
+  const du = JSON.parse(html.match(/<script type="application\/json" id="du-lieu">([\s\S]*?)<\/script>/)[1]);
+  const b = du.dots[1].nhom[0].muc, c = du.dots[1].nhom[1].muc, by = id => [...b, ...c].find(m => m.id === id);
+  assert.equal(by('rb-ket-sat').chuDe, 'ket'); assert.deepEqual([by('rb-ket-sat').daQuyet[0].dot, by('rb-ket-sat').daQuyet[0].ten, by('rb-ket-sat').daQuyet[0].id], [1, 'Két tiền U2', 'ket_tien']);
+  assert.equal(by('rb-chuong').daQuyet[0].ten, 'Chuông U1'); assert.equal(by('tu-chon').daQuyet[0].ten, 'Chuông U1'); // chuDe ghi tay
+  assert.equal(by('rb-ke-go').daQuyet, undefined, 'đợt 1 chọn "Không cái nào" cho kệ → chưa coi là đã quyết');
+  assert.equal(by('dn-ke_trong').daQuyet, undefined);
+  assert.equal(by('rb-guong').daQuyet, undefined, 'gương chưa quyết');
+  assert.equal(by('rb-moi').daQuyet, undefined);
+  assert.equal(o.trung, 3);
+  assert.match(html, /Đã quyết ở đợt trước/); assert.match(html, /doiTuDot/);
+  assert.equal(du.dots[0].nhom[0].muc[0].daQuyet, undefined);
+  fs.rmSync(goc, { recursive: true, force: true });
+});
+
+test('tong-hop: đợt sau ghi đè đợt trước theo chủ đề; timTrung báo đúng', () => {
+  const goc = taoHaiDot();
+  // đợt 2: duyệt kệ đã nhập, chọn két Roblox U1 (ghi đè), chuông ghi tay "sua"
+  fs.writeFileSync(path.join(goc, 'duyet', 't', 'dot-02.ketqua.json'), JSON.stringify({ tap: 't', dot: 2, chon: { 'rb-ket-sat': 'rb-ket-sat__1' }, duyet: ['dn-ke_trong'], sua: ['tu-chon'], ghiChu: {} }));
+  const th = tongHop('t', goc);
+  assert.deepEqual([th.ket.dot, th.ket.id, th.ket.trangThai, th.ket.ten, th.ket.truoc.dot], [2, 'rb-ket-sat', 'chon', 'Két Roblox U1', 1]);
+  assert.equal(th.chuong.dot, 2); assert.equal(th.chuong.trangThai, 'sua'); assert.equal(th.chuong.truoc.trangThai, 'chon'); // đợt 2 "sua" ghi đè, giữ vết đợt trước
+  assert.deepEqual([th.ke.dot, th.ke.trangThai], [2, 'duyet']);
+  assert.equal(th.guong, undefined); // chưa quyết ở đâu
+  const tr = timTrung('t', 2, [{ id: 'rb-chuong' }, { id: 'rb-guong' }, { id: 'rb-ke-go' }], goc);
+  assert.deepEqual(tr.map(x => x.item.id), ['rb-chuong']);
+  fs.rmSync(goc, { recursive: true, force: true });
+});
+
+test('them-ung-vien: báo TRÙNG và --bo-trung bỏ khe trùng', () => {
+  const goc = taoHaiDot();
+  const uv = { nhomId: 'moi', ten: 'Mới', khe: ['rb-ket-sat', 'rb-chuong', 'rb-khac'].map(id => ({ id, ten: id, ungVien: [{ id: id + '__1', ten: 'U', anh: 'x/a.png' }] })) };
+  const f = path.join(goc, 'uv.json'); fs.writeFileSync(f, JSON.stringify(uv));
+  const nhat = []; themUngVien('t', 3, f, goc, { log: m => nhat.push(m) });
+  assert.equal(nhat.filter(m => m.startsWith('TRÙNG:')).length, 2); assert.ok(nhat.some(m => /TRÙNG: rb-ket-sat ↔ Đợt 1 ket_tien = Két tiền U2/.test(m)));
+  assert.equal(danhSachDot('t', goc).find(d => d.so === 3).nhom[0].muc.length, 3);
+  const nhat2 = []; themUngVien('t', 3, f, goc, { boTrung: true, log: m => nhat2.push(m) });
+  assert.deepEqual(danhSachDot('t', goc).find(d => d.so === 3).nhom[0].muc.map(k => k.id), ['rb-khac']);
+  assert.ok(nhat2.some(m => /bỏ 2 khe/.test(m)));
+  fs.rmSync(goc, { recursive: true, force: true });
+});

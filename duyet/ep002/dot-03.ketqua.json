@@ -1,0 +1,67 @@
+{
+ "tap": "ep002",
+ "dot": 3,
+ "luc": "2026-11-13T02:36:20.344Z",
+ "gau": null,
+ "duyet": [
+  "dn-ke_trong",
+  "dn-ke_phong_ga",
+  "dn-ke_gau",
+  "dn-o_khoa",
+  "dn-thung_tiem_bach",
+  "dn-bang_tin",
+  "dn-anh_ba",
+  "dn-dong_ho",
+  "dn-guong",
+  "dn-cuon_sach",
+  "dn-nhan_moi",
+  "dn-vi",
+  "dn-tui_tien",
+  "dn-bang_chuyen",
+  "dn-ket_tien",
+  "dn-ket_ga",
+  "dn-day_chuyen",
+  "dn-chuong",
+  "dn-doi_dep",
+  "dn-chan_tran",
+  "dn-bac_them_dep",
+  "dn-bac_them_trong"
+ ],
+ "sua": [
+  "dn-hoc_quay",
+  "dn-thung_dau_gau"
+ ],
+ "chuaChon": [
+  "rb-mu-len",
+  "rb-bang-chuyen",
+  "rb-bang-tin"
+ ],
+ "chon": {
+  "rb-mu-linh": "rb-mu-linh__1",
+  "rb-mu-dau-bep": "rb-mu-dau-bep__1",
+  "rb-mu-top-hat": "rb-mu-top-hat__3",
+  "rb-mu-phot": "rb-mu-phot__3",
+  "rb-kinh": "rb-kinh__1",
+  "rb-no-toc": "rb-no-toc__3",
+  "rb-thuoc-keo": "rb-thuoc-keo__2",
+  "rb-mu-luoi-trai": "rb-mu-luoi-trai__1",
+  "rb-gau-bong": "rb-gau-bong__1",
+  "rb-ket-sat": "rb-ket-sat__3",
+  "rb-may-khau": "rb-may-khau__1",
+  "rb-chuong": "rb-chuong__1",
+  "rb-o-khoa": "rb-o-khoa__2",
+  "rb-ke-go": "rb-ke-go__1",
+  "rb-dong-ho": "rb-dong-ho__1",
+  "rb-guong": "rb-guong__3",
+  "rb-vi": "rb-vi__2",
+  "rb-tui-tien": "rb-tui-tien__1",
+  "rb-day-chuyen": "rb-day-chuyen__1",
+  "rb-dep": "rb-dep__2",
+  "rb-quay-banh": "rb-quay-banh__1"
+ },
+ "ghiChu": {
+  "dn-hoc_quay": "tiệm bánh quá nhỏ",
+  "dn-thung_dau_gau": "lấy mẫu trong chồng thùng tiệm gấu bách",
+  "rb-mu-len": "nhan vật gà ko cần mũ"
+ }
+}

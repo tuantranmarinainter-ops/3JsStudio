@@ -1,0 +1,55 @@
+{
+ "nhomId": "nha",
+ "ten": "Bảng màu nhà thị trấn",
+ "mota": "Mỗi nhà một màu có chủ đích (tất định theo seed, hàng xóm không trùng, tiệm có vai nổi hơn). Bật bằng EPISODE.town.kieu hoặc ?nha=<bảng>; hình mỗi bảng: ngày (2 góc) + đêm.",
+ "khe": [
+  {
+   "id": "nha-bang-mau",
+   "ten": "Bảng màu cho thị trấn tập 2",
+   "phu": "chọn 1",
+   "anhHienTai": "output/look/nha/hien-tai.jpg",
+   "ungVien": [
+    {
+     "id": "nha-pastel",
+     "ten": "Pastel",
+     "anh": "output/look/nha/bang-pastel.jpg",
+     "link": "output/look/nha/bang-pastel.jpg",
+     "nguon": "dựng trong engine",
+     "phu": "thị trấn tươi vui: kem, hồng phấn, xanh trời, bạc hà, đào, tím nhạt"
+    },
+    {
+     "id": "nha-ven-bien",
+     "ten": "Ven biển",
+     "anh": "output/look/nha/bang-ven-bien.jpg",
+     "link": "output/look/nha/bang-ven-bien.jpg",
+     "nguon": "dựng trong engine",
+     "phu": "trắng, trắng xanh, cát, đất nung; mái xanh biển / navy / cam đất"
+    },
+    {
+     "id": "nha-lang-go",
+     "ten": "Làng gỗ",
+     "anh": "output/look/nha/bang-lang-go.jpg",
+     "link": "output/look/nha/bang-lang-go.jpg",
+     "nguon": "dựng trong engine",
+     "phu": "gỗ mật, nâu, be; mái nâu đậm / rêu / đỏ sẫm, ấm"
+    },
+    {
+     "id": "nha-pho-cu",
+     "ten": "Phố cũ",
+     "anh": "output/look/nha/bang-pho-cu.jpg",
+     "link": "output/look/nha/bang-pho-cu.jpg",
+     "nguon": "dựng trong engine",
+     "phu": "gạch đỏ, xám đá, be đá; mái than / xanh đen"
+    },
+    {
+     "id": "nha-tuyet",
+     "ten": "Tuyết lạnh",
+     "anh": "output/look/nha/bang-tuyet.jpg",
+     "link": "output/look/nha/bang-tuyet.jpg",
+     "nguon": "dựng trong engine",
+     "phu": "trắng xanh, xám lam; mái lam xám, cửa đỏ/xanh điểm xuyết"
+    }
+   ]
+  }
+ ]
+}

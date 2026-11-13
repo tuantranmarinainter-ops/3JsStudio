@@ -12,6 +12,60 @@
 //   square: giữa quảng trường lát gạch.   crossroad: ngã tư giữa thị trấn.   park: bãi cỏ nhiều cây.
 // Đơn vị: 1 ô đường Kenney = `tile` stud (mặc định 16). Nhân vật R15 cao ~5.2 stud.
 import { rng } from './stage.js';
+import { ganMau } from './town-styles.js';
+
+// ---- tô màu nhà Kenney theo bảng kiểu (engine/town-styles.js; docs/nha-thi-tran.md). Chỉ chạy khi khai kiểu: EPISODE.town.kieu hoặc ?nha=<kiểu> ----
+// GLB nhà: 1 mesh + 1 vật liệu 'colormap'; ảnh 512² chia ô 64×128 (nửa trái phẳng, nửa phải dốc sáng→tối). Ô (3,2)=tường, (0,1)=mái xanh, (1,2)=cửa,
+// (0,2)=xám đá: đế (chạm đất, giữ), viền cửa sổ (cụm nhỏ), mái/tầng trên kiểu phẳng (cụm lớn). Ô khác (kính, bụi cây, lối đi) giữ nguyên.
+// Vai trò theo ĐỈNH → dời UV sang ô trắng (3,2) (giữ độ dốc sáng) + màu đỉnh = màu đích. Hình học dùng chung, chỉ thêm 1 thuộc tính màu mỗi nhà; 1 vật liệu chung.
+const VT = { KHONG: 0, TUONG: 1, MAI: 2, VIEN: 3, CUA: 4 };
+const phanTich = new WeakMap();
+function phanTichHinh(geo) {
+  if (phanTich.has(geo)) return phanTich.get(geo);
+  const pos = geo.attributes.position, uv = geo.attributes.uv, idx = geo.index, nT = idx.count / 3;
+  geo.computeBoundingBox(); const H = geo.boundingBox.max.y - geo.boundingBox.min.y, y0 = geo.boundingBox.min.y;
+  const ô = new Array(nT), vt = new Uint8Array(pos.count), dX = new Float32Array(pos.count), dY = new Float32Array(pos.count);
+  const tamUV = (t) => { let u = 0, v = 0; for (let k = 0; k < 3; k++) { u += uv.getX(idx.getX(t * 3 + k)); v += uv.getY(idx.getX(t * 3 + k)); } return [Math.floor(u / 3 * 512 / 64), Math.floor(v / 3 * 512 / 128)]; };
+  const hàn = new Map(), vid = new Int32Array(pos.count), cha = [];
+  for (let i = 0; i < pos.count; i++) { const k = `${Math.round(pos.getX(i) * 1000)},${Math.round(pos.getY(i) * 1000)},${Math.round(pos.getZ(i) * 1000)}`; if (!hàn.has(k)) { hàn.set(k, cha.length); cha.push(cha.length); } vid[i] = hàn.get(k); }
+  const goc = (x) => { while (cha[x] !== x) { cha[x] = cha[cha[x]]; x = cha[x]; } return x; };
+  for (let t = 0; t < nT; t++) { ô[t] = tamUV(t); if (ô[t][0] === 0 && ô[t][1] === 2) { const a = vid[idx.getX(t * 3)], b = vid[idx.getX(t * 3 + 1)], c = vid[idx.getX(t * 3 + 2)]; cha[goc(a)] = goc(b); cha[goc(b)] = goc(c); } }
+  const cum = new Map();   // cụm xám đá: số tam giác + y thấp nhất
+  for (let t = 0; t < nT; t++) if (ô[t][0] === 0 && ô[t][1] === 2) {
+    const r = goc(vid[idx.getX(t * 3)]), c = cum.get(r) || { n: 0, y: 1e9 }; c.n++;
+    for (let k = 0; k < 3; k++) c.y = Math.min(c.y, pos.getY(idx.getX(t * 3 + k))); cum.set(r, c);
+  }
+  for (let t = 0; t < nT; t++) {
+    const [cx, cy] = ô[t]; let r = VT.KHONG;
+    if (cx === 3 && cy === 2) r = VT.TUONG; else if (cx === 0 && cy === 1) r = VT.MAI; else if (cx === 1 && cy === 2) r = VT.CUA;
+    else if (cx === 0 && cy === 2) { const c = cum.get(goc(vid[idx.getX(t * 3)])); r = c.y < y0 + 0.04 * H ? VT.KHONG : c.n >= 100 ? VT.MAI : VT.VIEN; }
+    if (r === VT.KHONG) continue;
+    for (let k = 0; k < 3; k++) { const i = idx.getX(t * 3 + k); vt[i] = r; dX[i] = (192 - 64 * cx) / 512; dY[i] = (256 - 128 * cy) / 512; }
+  }
+  const uvMoi = new Float32Array(pos.count * 2);
+  for (let i = 0; i < pos.count; i++) { const doi = vt[i] !== VT.KHONG && vt[i] !== VT.TUONG; uvMoi[i * 2] = uv.getX(i) + (doi ? dX[i] : 0); uvMoi[i * 2 + 1] = uv.getY(i) + (doi ? dY[i] : 0); }
+  const kq = { vt, uv: uvMoi }; phanTich.set(geo, kq); return kq;
+}
+const BU = { sat: 1.3, mai: 1.45, vien: 1.2, cua: 1.3 };
+const matChung = new WeakMap();
+function toMauNha(THREE, nhaGroup, mau) {
+  const C = {}; for (const k of ['tuong', 'mai', 'vien', 'cua']) C[k] = new THREE.Color(mau[k]);
+  const hsl = {}; C.tuong.getHSL(hsl); C.tuong.setHSL(hsl.h, Math.min(1, hsl.s * BU.sat), hsl.l);   // lớp grade/ánh sáng làm nhạt màu → tăng bão hoà tường
+  C.mai.multiplyScalar(BU.mai); C.vien.multiplyScalar(BU.vien); C.cua.multiplyScalar(BU.cua);   // bù độ tối của ô trắng-dốc + ánh sáng cảnh
+  const theoVT = [null, C.tuong, C.mai, C.vien, C.cua];
+  nhaGroup.traverse((o) => {
+    if (!o.isMesh || Array.isArray(o.material) || !o.material.map || !o.geometry.index || !o.geometry.attributes.uv) return;
+    const m0 = o.material, mp = m0.map;
+    if (mp.repeat.x !== 1 || mp.repeat.y !== 1 || mp.offset.x !== 0 || mp.offset.y !== 0) return;
+    const A = phanTichHinh(o.geometry), g0 = o.geometry, n = g0.attributes.position.count, col = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) { const c = theoVT[A.vt[i]]; col[i * 3] = c ? c.r : 1; col[i * 3 + 1] = c ? c.g : 1; col[i * 3 + 2] = c ? c.b : 1; }
+    const g = new THREE.BufferGeometry(); g.index = g0.index;
+    for (const k of Object.keys(g0.attributes)) g.setAttribute(k, k === 'uv' ? (A.uvAttr || (A.uvAttr = new THREE.BufferAttribute(A.uv, 2))) : g0.attributes[k]);
+    g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.boundingBox = g0.boundingBox; g.boundingSphere = g0.boundingSphere;
+    if (!matChung.has(m0)) { const m = m0.clone(); m.vertexColors = true; matChung.set(m0, m); }
+    o.geometry = g; o.material = matChung.get(m0);
+  });
+}
 
 const SUB = (n) => `city-kit-suburban/${n}`, RD = (n) => `city-kit-roads/${n}`;
 const HOUSES = 'abcdefghijklmnopqrstu'.split('').map((c) => SUB(`building-type-${c}`));
@@ -25,6 +79,8 @@ export const TOWN_ASSETS = [
 
 export function buildTown(THREE, A, opts = {}) {
   const { seed = 1, blocks = 3, block = 5, tile = 16, houseSize = 28, name = 'town', ground = '#6fae55' } = opts;
+  const Q = typeof location !== 'undefined' ? new URLSearchParams(location.search) : new URLSearchParams();
+  const kieu = opts.kieu || Q.get('nha') || null;            // TẮT mặc định: không khai → nhà giữ màu Kenney gốc
   const R = rng(seed * 7919 + 13);
   const pick = (arr) => arr[Math.floor(R() * arr.length)];
   const g = new THREE.Group(); g.name = name;
@@ -144,8 +200,25 @@ export function buildTown(THREE, A, opts = {}) {
   places.center = { pos: [0, 0, 0], ry: 0 };
   for (const p of Object.values(places)) p.pos = p.pos.map((v) => Math.round(v * 100) / 100);
 
+  // tô màu nhà theo bảng kiểu (chỉ khi bật khoá). Không dùng R() → vị trí/đạo cụ/cây của thị trấn không đổi.
+  let nhaInfo = null;
+  if (kieu) {
+    const idxOf = (n) => { const p = places[n]; return p ? houses.find((h) => h.pos === p.pos || (h.pos[0] === p.pos[0] && h.pos[2] === p.pos[2]))?.idx : undefined; };
+    const dsVai = opts.vai || (Q.get('vai') ? Q.get('vai').split(',') : ['home', 'shop']);
+    const st = places.street.pos, dung = new Set(), vai = [];
+    const homeI = houses.find((h) => h.house === home?.house)?.idx, shopI = houses.find((h) => h.house === shop?.house)?.idx;
+    const gan = (ten, i) => { if (i != null && !dung.has(i)) { dung.add(i); vai.push({ ten, idx: i }); } };
+    for (const ten of dsVai) { const ov = (opts.nhaViTri || {})[ten]; if (ov) gan(ten, idxOf(ov) ?? houses.find((h) => `house${h.idx}` === ov)?.idx); else if (ten === 'home') gan(ten, homeI); else if (ten === 'shop') gan(ten, shopI); }
+    const gan2 = houses.filter((h) => !dung.has(h.idx) && h.idx !== homeI && h.idx !== shopI).sort((a, b) => Math.hypot(a.pos[0] - st[0], a.pos[2] - st[2]) - Math.hypot(b.pos[0] - st[0], b.pos[2] - st[2]) || a.idx - b.idx);
+    for (const ten of dsVai) if (!vai.some((v) => v.ten === ten) && gan2.length) gan(ten, gan2.shift().idx);
+    const mau = ganMau(kieu, houses.map((h) => ({ idx: h.idx, x: h.house.position.x, z: h.house.position.z })), { seed, vai, nha: opts.nha || {} });
+    for (const h of houses) if (mau[h.idx]) toMauNha(THREE, h.house, mau[h.idx]);
+    nhaInfo = { kieu, mau, houses: houses.map((h) => ({ idx: h.idx, id: h.id, x: h.house.position.x, z: h.house.position.z })) };
+    globalThis.__nhaInfo = nhaInfo;
+  }
+
   g.traverse((o) => { if (o.isMesh) { o.castShadow = o.castShadow !== false; o.receiveShadow = true; } });
-  return { group: g, places, houses, size: W, seed, setNight() {}, update: null };
+  return { group: g, places, houses, size: W, seed, nha: nhaInfo, setNight() {}, update: null };
 }
 
 // Gắn thị trấn vào engine/envs.js như một env thường (envs.use(name) bật/tắt, preset ánh sáng LIGHTS[light]).

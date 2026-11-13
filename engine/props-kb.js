@@ -12,6 +12,10 @@
 // LÀM ĐẸP một đạo cụ: sửa hàm của nó, GIỮ tên khoá + kích thước (+ surfaces nếu có). tools/kb/asset-plan.mjs đọc khoá của bảng.
 // Chữ trên vật: canvas (Be Vietnam Pro / Patrick Hand — index.html nạp phông trước khi dựng); không có document (Node) → bỏ chữ.
 
+import { glbPreload, glbWrap, glbOn, GLB_INFO } from './props-glb.js';
+// GLB low-poly thay khối code (engine/props-glb.js): tải xong trước __ready (top-level await, chỉ trình duyệt; ?propsGlb=0 → không tải).
+await glbPreload();
+
 const PI = Math.PI;
 export const ASPECT = 9 / 16;
 export const STAND_H = 2.6;      // bàn bày (đồ nhỏ ở thị trấn) cao ngang quầy
@@ -384,7 +388,7 @@ export const PROP_INFO = {
   ban_bay: { size: [3, 2.6, 2], base: 'floor', fixed: true, surfaces: [[0, 2.6, 0]] },
 };
 const INFO_LA = { size: [1.2, 1.2, 1.2], base: 'floor' };   // kit lạ (propKit / chưa có): khung giả định
-export const infoOf = (kit) => PROP_INFO[kit] || INFO_LA;
+export const infoOf = (kit) => (glbOn() && GLB_INFO[kit] ? { ...PROP_INFO[kit], ...GLB_INFO[kit] } : PROP_INFO[kit] || INFO_LA);
 
 // ĐIỂM BÀY theo env (toạ độ của env; env dựng tại gốc). byName: chỗ riêng cho tên đạo cụ [x, y, z, ry];
 // floor / wall: chỗ chung lần lượt; camMax: khoảng lùi camera tối đa (phòng kín); coSan: đạo cụ env ĐÃ DỰNG SẴN (không dựng thêm —
@@ -493,7 +497,7 @@ export function buildPropsKB(THREE, ten = [], { K = null, dat = {}, warn = (m) =
     const kit = (p && p.kit) || name, root = new THREE.Group(); root.name = name;
     let o = null;
     if (dat[name]?.coSan) { o = new THREE.Group(); o.name = name + '_co_san'; root.add(o); root.userData.kit = kit; root.userData.coSan = true; out[name] = root; continue; }
-    if (PROPS_KB[kit]) o = PROPS_KB[kit](THREE);
+    if (PROPS_KB[kit]) { o = PROPS_KB[kit](THREE); o = glbWrap(THREE, kit, o) || o; }
     else if (K && typeof K[kit] === 'function') { o = K[kit](); o.name = (o.name || kit) + '_goc'; }
     else {
       warn(`[props-kb] đạo cụ "${name}": kit "${kit}" chưa có trong PROPS_KB / propKit → khối giữ chỗ`);

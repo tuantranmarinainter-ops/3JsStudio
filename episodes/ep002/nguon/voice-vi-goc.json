@@ -1,0 +1,558 @@
+{
+ "nguon": "episodes/ep002/nguon/voice-vi-goc.mp3",
+ "thoiLuong": 123.559,
+ "model": "large-v3",
+ "cau": [
+  {
+   "i": 1,
+   "phan": "0:00–0:28",
+   "vai": "ga",
+   "text": "Ở thị trấn này, đồ đạc liên tục biến mất, dù căn phòng đã được khóa kín.",
+   "start": 0.0,
+   "end": 3.34
+  },
+  {
+   "i": 2,
+   "phan": "0:00–0:28",
+   "vai": "ga",
+   "text": "Ban đầu là két tiền của chú bán bánh.",
+   "start": 3.54,
+   "end": 5.28
+  },
+  {
+   "i": 3,
+   "phan": "0:00–0:28",
+   "vai": "ga",
+   "text": "Rồi tới nhẫn cưới của cô thợ may.",
+   "start": 5.32,
+   "end": 6.92
+  },
+  {
+   "i": 4,
+   "phan": "0:00–0:28",
+   "vai": "ga",
+   "text": "Ngay cả ông Bách, người hàng xóm thân thiện hay phát gấu bông miễn phí cho cả thị trấn, cũng báo mất đồ.",
+   "start": 7.22,
+   "end": 11.74
+  },
+  {
+   "i": 5,
+   "phan": "0:00–0:28",
+   "vai": "ga",
+   "text": "Nhà ông còn báo mất nhiều nhất.",
+   "start": 11.94,
+   "end": 13.26
+  },
+  {
+   "i": 6,
+   "phan": "0:00–0:28",
+   "vai": "ga",
+   "text": "Chỉ trong một tuần, cả thị trấn đã có hàng chục nhà báo mất đồ.",
+   "start": 13.46,
+   "end": 16.32
+  },
+  {
+   "i": 7,
+   "phan": "0:00–0:28",
+   "vai": "ga",
+   "text": "Còn tôi là Gà.",
+   "start": 16.52,
+   "end": 17.42
+  },
+  {
+   "i": 8,
+   "phan": "0:00–0:28",
+   "vai": "ga",
+   "text": "Nhà tôi sát tiệm ông Bách.",
+   "start": 17.62,
+   "end": 18.86
+  },
+  {
+   "i": 9,
+   "phan": "0:00–0:28",
+   "vai": "ga",
+   "text": "Rồi một sáng, chiếc dây chuyền bà để lại cũng biến mất.",
+   "start": 19.02,
+   "end": 21.44
+  },
+  {
+   "i": 10,
+   "phan": "0:00–0:28",
+   "vai": "ga",
+   "text": "Đó là món tôi quý nhất.",
+   "start": 21.56,
+   "end": 22.72
+  },
+  {
+   "i": 11,
+   "phan": "0:00–0:28",
+   "vai": "ga",
+   "text": "Tôi quyết điều tra vụ mất cắp này.",
+   "start": 22.84,
+   "end": 24.26
+  },
+  {
+   "i": 12,
+   "phan": "0:28–0:53 · Đêm đầu tiên",
+   "vai": "ga",
+   "text": "Tối đó, tôi đặt cái đồng hồ lên chỗ sợi dây chuyền rồi giả vờ ngủ.",
+   "start": 24.44,
+   "end": 27.8
+  },
+  {
+   "i": 13,
+   "phan": "0:28–0:53 · Đêm đầu tiên",
+   "vai": "ga",
+   "text": "Qua tấm gương đối diện giường, tôi vẫn thấy rõ cái kệ.",
+   "start": 27.92,
+   "end": 30.38
+  },
+  {
+   "i": 14,
+   "phan": "0:28–0:53 · Đêm đầu tiên",
+   "vai": "ga",
+   "text": "Đợi tới lúc tôi sắp ngủ thật, trong gương có thứ gì đó ngồi dậy.",
+   "start": 30.42,
+   "end": 33.48
+  },
+  {
+   "i": 15,
+   "phan": "0:28–0:53 · Đêm đầu tiên",
+   "vai": "ga",
+   "text": "Là Bắp.",
+   "start": 33.58,
+   "end": 34.18
+  },
+  {
+   "i": 16,
+   "phan": "0:28–0:53 · Đêm đầu tiên",
+   "vai": "ga",
+   "text": "Con gấu bông vẫn nằm ở cuối giường tôi.",
+   "start": 34.26,
+   "end": 35.9
+  },
+  {
+   "i": 17,
+   "phan": "0:28–0:53 · Đêm đầu tiên",
+   "vai": "ga",
+   "text": "Nó trèo lên kệ, ôm cái đồng hồ rồi kéo cuốn sách che đúng chỗ vừa lấy đồ.",
+   "start": 36.1,
+   "end": 39.96
+  },
+  {
+   "i": 18,
+   "phan": "0:28–0:53 · Đêm đầu tiên",
+   "vai": "ga",
+   "text": "Tôi bật dậy.",
+   "start": 40.04,
+   "end": 40.76
+  },
+  {
+   "i": 19,
+   "phan": "0:28–0:53 · Đêm đầu tiên",
+   "vai": "ga",
+   "text": "Bắp biến mất ngay trước mắt.",
+   "start": 40.82,
+   "end": 41.96
+  },
+  {
+   "i": 20,
+   "phan": "0:28–0:53 · Đêm đầu tiên",
+   "vai": "ga",
+   "text": "Tới lúc tôi mở được cửa sổ, ngoài đường chẳng còn thấy bóng nó đâu.",
+   "start": 42.1,
+   "end": 44.84
+  },
+  {
+   "i": 21,
+   "phan": "0:53–1:14 · Đêm thứ hai",
+   "vai": "ga",
+   "text": "Tối hôm sau, tôi đặt một chiếc nhẫn lên kệ.",
+   "start": 45.1,
+   "end": 47.1
+  },
+  {
+   "i": 22,
+   "phan": "0:53–1:14 · Đêm thứ hai",
+   "vai": "ga",
+   "text": "Lần này, tôi nấp sẵn ngoài ban công.",
+   "start": 47.18,
+   "end": 48.88
+  },
+  {
+   "i": 23,
+   "phan": "0:53–1:14 · Đêm thứ hai",
+   "vai": "ga",
+   "text": "Bắp chộp chiếc nhẫn rồi biến mất.",
+   "start": 49.08,
+   "end": 50.68
+  },
+  {
+   "i": 24,
+   "phan": "0:53–1:14 · Đêm thứ hai",
+   "vai": "ga",
+   "text": "Từ ban công, tôi thấy nó xuất hiện trên mái hiên nhà đối diện.",
+   "start": 50.68,
+   "end": 53.42
+  },
+  {
+   "i": 25,
+   "phan": "0:53–1:14 · Đêm thứ hai",
+   "vai": "ga",
+   "text": "Tôi chạy xuống đường bám theo.",
+   "start": 53.5,
+   "end": 54.64
+  },
+  {
+   "i": 26,
+   "phan": "0:53–1:14 · Đêm thứ hai",
+   "vai": "ga",
+   "text": "Qua ngã ba, hai con gấu khác nhập vào.",
+   "start": 54.82,
+   "end": 56.64
+  },
+  {
+   "i": 27,
+   "phan": "0:53–1:14 · Đêm thứ hai",
+   "vai": "ga",
+   "text": "Một con ôm ví, một con kéo theo túi tiền.",
+   "start": 56.86,
+   "end": 59.08
+  },
+  {
+   "i": 28,
+   "phan": "0:53–1:14 · Đêm thứ hai",
+   "vai": "ga",
+   "text": "Cả ba biến mất sau hàng rào của một nhà máy cuối phố.",
+   "start": 59.22,
+   "end": 61.68
+  },
+  {
+   "i": 29,
+   "phan": "1:14–1:38 · Bên trong nhà máy",
+   "vai": "ga",
+   "text": "Tôi đứng lên thùng gỗ, ghé mắt qua cửa kính.",
+   "start": 61.8,
+   "end": 63.96
+  },
+  {
+   "i": 30,
+   "phan": "1:14–1:38 · Bên trong nhà máy",
+   "vai": "ga",
+   "text": "Bắp thả chiếc nhẫn xuống băng chuyền.",
+   "start": 64.12,
+   "end": 65.62
+  },
+  {
+   "i": 31,
+   "phan": "1:14–1:38 · Bên trong nhà máy",
+   "vai": "ga",
+   "text": "Đứng cuối băng, gom đồ vào thùng, là ông Bách.",
+   "start": 65.74,
+   "end": 67.96
+  },
+  {
+   "i": 32,
+   "phan": "1:14–1:38 · Bên trong nhà máy",
+   "vai": "ga",
+   "text": "Sau lưng ông là cả một dãy gấu mới may xong.",
+   "start": 68.1,
+   "end": 70.16
+  },
+  {
+   "i": 33,
+   "phan": "1:14–1:38 · Bên trong nhà máy",
+   "vai": "ga",
+   "text": "Ông chỉ vào tấm bản đồ trên tường.",
+   "start": 70.28,
+   "end": 71.8
+  },
+  {
+   "i": 34,
+   "phan": "1:14–1:38 · Bên trong nhà máy",
+   "vai": "bach",
+   "text": "“Nhà nào có gấu rồi thì đánh dấu. Mai phát tiếp mấy nhà còn lại.”",
+   "start": 71.96,
+   "end": 74.98
+  },
+  {
+   "i": 35,
+   "phan": "1:14–1:38 · Bên trong nhà máy",
+   "vai": "ga",
+   "text": "Dưới băng chuyền là két tiền của chú bán bánh.",
+   "start": 75.12,
+   "end": 77.02
+  },
+  {
+   "i": 36,
+   "phan": "1:14–1:38 · Bên trong nhà máy",
+   "vai": "ga",
+   "text": "Trên nắp két, tôi thấy sợi dây chuyền của bà.",
+   "start": 77.14,
+   "end": 79.1
+  },
+  {
+   "i": 37,
+   "phan": "1:14–1:38 · Bên trong nhà máy",
+   "vai": "ga",
+   "text": "Tôi chạy thẳng tới nhà thị trưởng.",
+   "start": 79.2,
+   "end": 80.62
+  },
+  {
+   "i": 38,
+   "phan": "1:38–1:59 · Méc thị trưởng",
+   "vai": "ga",
+   "text": "Tôi bảo thị trưởng:",
+   "start": 80.7,
+   "end": 81.52
+  },
+  {
+   "i": 39,
+   "phan": "1:38–1:59 · Méc thị trưởng",
+   "vai": "ga",
+   "text": "“Chú qua nhìn một lần thôi!”",
+   "start": 81.58,
+   "end": 82.64
+  },
+  {
+   "i": 40,
+   "phan": "1:38–1:59 · Méc thị trưởng",
+   "vai": "ga",
+   "text": "Chú lắc đầu.",
+   "start": 82.88,
+   "end": 83.56
+  },
+  {
+   "i": 41,
+   "phan": "1:38–1:59 · Méc thị trưởng",
+   "vai": "mayor",
+   "text": "“Báo đời báo đốm. Về ngủ đi!”",
+   "start": 83.72,
+   "end": 85.34
+  },
+  {
+   "i": 42,
+   "phan": "1:38–1:59 · Méc thị trưởng",
+   "vai": "ga",
+   "text": "Sáng hôm sau, chính chú chạy qua tìm tôi.",
+   "start": 85.72,
+   "end": 87.64
+  },
+  {
+   "i": 43,
+   "phan": "1:38–1:59 · Méc thị trưởng",
+   "vai": "ga",
+   "text": "Chiếc đồng hồ quả quýt cha để lại cho chú đã biến mất.",
+   "start": 87.86,
+   "end": 90.22
+  },
+  {
+   "i": 44,
+   "phan": "1:38–1:59 · Méc thị trưởng",
+   "vai": "ga",
+   "text": "Lần này, chú gọi hai lính gác đi cùng tôi.",
+   "start": 90.32,
+   "end": 92.32
+  },
+  {
+   "i": 45,
+   "phan": "1:38–1:59 · Méc thị trưởng",
+   "vai": "ga",
+   "text": "Qua cửa kính nhà máy, chú thấy ông Bách nhặt chiếc đồng hồ của mình khỏi băng chuyền.",
+   "start": 92.54,
+   "end": 95.88
+  },
+  {
+   "i": 46,
+   "phan": "1:38–1:59 · Méc thị trưởng",
+   "vai": "ga",
+   "text": "Chú quay sang hai lính gác.",
+   "start": 95.88,
+   "end": 97.26
+  },
+  {
+   "i": 47,
+   "phan": "1:38–1:59 · Méc thị trưởng",
+   "vai": "mayor",
+   "text": "“Mở cửa kho.”",
+   "start": 97.34,
+   "end": 98.04
+  },
+  {
+   "i": 48,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "ga",
+   "text": "Lính gác mở cửa kho.",
+   "start": 98.2,
+   "end": 99.3
+  },
+  {
+   "i": 49,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "ga",
+   "text": "Thị trưởng nhìn sang chồng thùng in tên tiệm ông Bách.",
+   "start": 99.44,
+   "end": 101.62
+  },
+  {
+   "i": 50,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "mayor",
+   "text": "“Ủa, đây là mấy thùng sáng nay ông báo mất mà?”",
+   "start": 101.76,
+   "end": 103.88
+  },
+  {
+   "i": 51,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "ga",
+   "text": "Ông Bách im luôn.",
+   "start": 104.1,
+   "end": 104.96
+  },
+  {
+   "i": 52,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "ga",
+   "text": "Tôi mới hiểu.",
+   "start": 105.16,
+   "end": 106.0
+  },
+  {
+   "i": 53,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "ga",
+   "text": "Cứ mỗi lần cả thị trấn mất đồ, ông lại giấu thêm vài thùng hàng của mình rồi đi báo mất.",
+   "start": 106.02,
+   "end": 110.0
+  },
+  {
+   "i": 54,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "ga",
+   "text": "Ai mà nghi người than mất nhiều nhất chứ?",
+   "start": 110.04,
+   "end": 111.86
+  },
+  {
+   "i": 55,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "ga",
+   "text": "Thế là ông Bách bị bắt ngay sau đó, để lại một đống điệp viên gấu chưa thu hồi.",
+   "start": 111.96,
+   "end": 115.54,
+   "giongThem": true
+  },
+  {
+   "i": 56,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "ga",
+   "text": "Sáng hôm sau, tôi lấy lại sợi dây chuyền.",
+   "start": 115.64,
+   "end": 117.68
+  },
+  {
+   "i": 57,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "ga",
+   "text": "Tôi cất dây chuyền vào két.",
+   "start": 117.68,
+   "end": 119.06
+  },
+  {
+   "i": 58,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "ga",
+   "text": "Vừa quay lưng, Bắp đã ôm nguyên cái két.",
+   "start": 119.12,
+   "end": 121.34
+  },
+  {
+   "i": 59,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "ga",
+   "text": "“Bắp.”",
+   "start": 121.34,
+   "end": 121.547,
+   "khopKem": true
+  },
+  {
+   "i": 60,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "ga",
+   "text": "Nó đặt xuống liền.",
+   "start": 121.547,
+   "end": 122.169,
+   "khopKem": true
+  },
+  {
+   "i": 61,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "ga",
+   "text": "Tôi gõ nhẹ lên đầu Bắp một cái.",
+   "start": 122.169,
+   "end": 123.24,
+   "khopKem": true
+  },
+  {
+   "i": 62,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "sfx",
+   "text": "Boang!",
+   "loai": "sfx",
+   "start": 123.24,
+   "end": 123.24,
+   "uocLuong": true
+  },
+  {
+   "i": 63,
+   "phan": "1:59–2:20 · Chuyện nhà ông Bách mất đồ",
+   "vai": "sfx",
+   "text": "Cắt đen.",
+   "loai": "canh",
+   "start": 123.24,
+   "end": 123.24,
+   "uocLuong": true
+  }
+ ],
+ "lang": [
+  {
+   "tu": 3.48,
+   "den": 3.83
+  },
+  {
+   "tu": 13.32,
+   "den": 13.68
+  },
+  {
+   "tu": 16.37,
+   "den": 16.76
+  },
+  {
+   "tu": 24.37,
+   "den": 24.76
+  },
+  {
+   "tu": 34.21,
+   "den": 34.56
+  },
+  {
+   "tu": 45.0,
+   "den": 45.36
+  },
+  {
+   "tu": 68.0,
+   "den": 68.37
+  },
+  {
+   "tu": 85.51,
+   "den": 85.89
+  },
+  {
+   "tu": 117.77,
+   "den": 118.12
+  }
+ ],
+ "langGhiChu": "khoảng lặng > 0,35 s đo bằng năng lượng (< -45 dBFS, khung 10 ms)"
+}
