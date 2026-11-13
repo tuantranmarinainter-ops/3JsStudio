@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 18:30",
+ "capNhat": "2026-11-13 19:10",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -133,21 +133,22 @@
     },
     {
      "ten": "Thị trấn: trời thật (mây, trăng, sao) theo giờ và thời tiết",
-     "tt": "dang",
-     "pt": 15,
-     "ghiChu": "17 shot đêm hiện chỉ có nền màu phẳng; 1 agent Sonnet đang làm"
+     "tt": "xong",
+     "ghiChu": "ngày có mây thật, đêm có sao; đã vào bản xem thử; hình tập 1 không đổi",
+     "tok": 85
     },
     {
      "ten": "Thị trấn ban đêm: cửa sổ nhà sáng, đèn đường",
-     "tt": "dang",
-     "pt": 15,
-     "ghiChu": "cùng agent"
+     "tt": "xong",
+     "ghiChu": "458 cửa sổ sáng + 18 đèn đường (quầng sáng); vệt sáng dưới đường còn mờ",
+     "tok": 85
     },
     {
      "ten": "Thị trấn: núi/rừng xa, bóng mây; xe và dân đi bộ nếu dùng lại được của tập 1",
-     "tt": "dang",
-     "pt": 10,
-     "ghiChu": "cùng agent; phần xe/dân đi bộ có thể để sau"
+     "tt": "do",
+     "pt": 70,
+     "ghiChu": "núi xa, rừng xa, bóng mây đã có; xe và dân đi bộ CHƯA (làn xe của tập 1 không khớp lưới phố mới, xe sẽ xuyên qua nhân vật)",
+     "tok": 43
     },
     {
      "ten": "Phụ đề từng chữ chưa chạy ở tập 2 (bật mà không có tác dụng)",
