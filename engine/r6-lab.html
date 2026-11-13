@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><title>R6 lab — bảng mẫu nhân vật thân R6</title>
+<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
+<style>html,body{margin:0;background:#cfd6dc}canvas{display:block}</style></head>
+<body><canvas id="c"></canvas>
+<script type="module">
+// ?looks=ga,bach&anim=idle&t=0&view=fb|34&face=24&cols=7   → window.__ready = true khi vẽ xong
+import * as THREE from 'three';
+import { loadEmoteFaces } from './r15.js';
+import './anim-them.js';
+import { createR6Rig } from './r6-rig.js';
+import { R6_LOOKS } from './r6-looks.js';
+const q = new URLSearchParams(location.search);
+const names = (q.get('looks') || Object.keys(R6_LOOKS).join(',')).split(',');
+const anim = q.get('anim') || 'idle', t = +(q.get('t') || 0), view = q.get('view') || 'fb', face = q.get('face');
+const faces = (q.get('faces') || '').split(',').filter(Boolean);
+const CW = 5.0, RH = 7.4, rows = view === 'fb' ? 2 : 1, cols = names.length;
+const W = Math.round(cols * CW * 62), H = Math.round(rows * RH * 62);
+const cv = document.getElementById('c'); const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H); renderer.setPixelRatio(1); renderer.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#cfd6dc');
+scene.add(new THREE.HemisphereLight('#ffffff', '#8a8f98', 1.5)); const d = new THREE.DirectionalLight('#fff4e0', 1.9); d.position.set(4, 9, 8); scene.add(d);
+const cam = new THREE.OrthographicCamera(-cols * CW / 2, cols * CW / 2, rows * RH / 2, -rows * RH / 2, 0.1, 100); cam.position.set(0, 0, 40);
+const faceSet = await loadEmoteFaces(THREE);
+names.forEach((n, i) => {
+  for (let r = 0; r < rows; r++) {
+    const a = createR6Rig(THREE, { name: n + r, ...R6_LOOKS[n], faceSet });
+    a.root.position.set((i - (cols - 1) / 2) * CW, (rows === 2 ? (r ? -RH : 0) + RH / 2 : 0) - RH / 2 + 0.5, 0);
+    a.root.rotation.y = view === '34' ? -0.6 : r ? Math.PI : 0;
+    a.animate(anim, t + (view === '34' ? i * 0.13 : 0)); const f = faces[i] || face; if (f) a.setFace(f);
+    scene.add(a.root);
+  }
+});
+window.THREE = THREE; window.__scene = scene;
+renderer.render(scene, cam); window.__ready = true;
+</script></body></html>

@@ -3,7 +3,7 @@
 //   actors: { hero: { shirt:'#e74c3c', face:'smile', hat:'beanie' }, mom: { shirt:'#8e44ad', hair:'braids' }, crowd: { count: 12 } }
 // Mỗi khoá (trừ crowd) = tuỳ chọn createR15 (engine/r15.js: skin, shirt, pants, hat, hatColor, hair, skirt, scarf…).
 // crowd.count → dân thị trấn crowd1…crowdN, màu áo/quần/mũ chọn theo seed (tất định).
-import { createR15, loadR15Body, loadCharacterTextures, loadGaFaces, FACE_PRESETS, GA_FACES, GA_FACE_MAP } from './r15.js';
+import { createR15, loadR15Body, loadCharacterTextures, loadGaFaces, loadEmoteFaces, FACE_PRESETS, GA_FACES, GA_FACE_MAP } from './r15.js';
 // Gà (engine/ga-rig.js) nạp ĐỘNG khi có diễn viên ga:1 — tập không dùng Gà không phụ thuộc file này
 import { createBear } from './bear.js';
 import { createBearGlb, bearGlbPreload, bearGlbOn, bearGlbWanted } from './bear-glb.js';   // gấu GLB có xương (bật: EPISODE.bearGlb / ?bearGlb=1; tắt → gấu khối)
@@ -29,8 +29,8 @@ export const toFlag = (v) => v === true || v === 1 || (typeof v === 'string' && 
 const isFalseish = (v) => v === undefined || v === null || v === false || v === 0 || (typeof v === 'string' && BOOL_F.has(v.trim().toLowerCase()));
 export const BEARD_FALLBACK = '#9e9e9e';
 export function normalizeActorOpts(o = {}) {
-  const { ga, bear, ...rest } = o || {};
-  const kind = toFlag(ga) ? 'ga' : toFlag(bear) ? 'bear' : 'r15';
+  const { ga, bear, r6, ...rest } = o || {};
+  const kind = toFlag(r6) ? 'r6' : toFlag(ga) ? 'ga' : toFlag(bear) ? 'bear' : 'r15';   // r6:1 → thân R6 (engine/r6-rig.js, look:'<tên trong r6-looks.js>')
   if ('beard' in rest) {
     const b = rest.beard;
     if (isFalseish(b)) delete rest.beard;
@@ -67,13 +67,17 @@ export async function buildCast(THREE, actors = {}, { seed = 1 } = {}) {
   let createGa = null;
   if (plan.some((p) => p.kind === 'ga')) { const G = await import('./ga-rig.js'); createGa = G.createGa; const { loadGaAtlas, loadGaHood } = G; gaRes = { faceSet: await loadGaFaces(THREE), atlas: await loadGaAtlas(THREE), hood: await loadGaHood(THREE) }; }
   if (plan.some((p) => p.kind === 'bear') && bearGlbWanted()) await bearGlbPreload();
+  // Thân R6 (r6:1): nạp ĐỘNG rig + thư viện ngoại hình + bộ 37 mặt emote (một lần cho cả tập)
+  let r6Res = null;
+  if (plan.some((p) => p.kind === 'r6')) { const [RG, LK] = await Promise.all([import('./r6-rig.js'), import('./r6-looks.js')]); r6Res = { create: RG.createR6Rig, looks: LK.R6_LOOKS, faceSet: await loadEmoteFaces(THREE) }; }
   let bearIdx = 0;
   const make = async (name, o, kind = 'r15') => {
     let a;
-    if (kind === 'ga') a = wrapFaces(createGa(THREE, { name, face: 'smile', ...o, ...gaRes }), GA_KNOWN);
+    if (kind === 'r6') a = wrapFaces(r6Res.create(THREE, { name, ...(r6Res.looks[o.look] || {}), ...o, faceSet: r6Res.faceSet }), () => true);
+    else if (kind === 'ga') a = wrapFaces(createGa(THREE, { name, face: 'smile', ...o, ...gaRes }), GA_KNOWN);
     else if (kind === 'bear') { const bi = bearIdx++; a = wrapFaces((bearGlbOn() && createBearGlb(THREE, { name, glbIndex: bi, ...o })) || createBear(THREE, { name, ...o }), () => true); }
     else a = wrapFaces(createR15(THREE, { name, face: 'smile', ...o, body, textures: await loadCharacterTextures(THREE, name) }), R15_KNOWN);
-    a._defaultFace = o.face || 'smile';
+    a._defaultFace = o.face || (kind === 'r6' && a.options.face) || 'smile';
     out[name] = a;
   };
   for (const p of plan) await make(p.name, p.opts, p.kind);

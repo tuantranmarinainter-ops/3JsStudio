@@ -5,10 +5,35 @@
    "ten": "Tập 3",
    "viec": [
     {
-     "ten": "Mở phiên riêng cho tập 3, chờ người dùng cung cấp thông tin",
-     "tt": "dang",
-     "pt": 5,
-     "ghiChu": "phiên mới đã mở; đầu vào: kịch bản, nhân vật chính Gà, dân làng R6"
+     "ten": "Nhận gói kịch bản 104 shot (2:20) + ảnh + giọng",
+     "tt": "xong",
+     "ghiChu": "kich-ban/ep003-goi; đặc tả màu/hình: episodes/ep003/nguon/thiet-ke-hinh.md"
+    },
+    {
+     "ten": "Lõi nhân vật thân R6 + 37 mặt emote (engine/r6-rig.js, r6-looks.js, nối cast.js)",
+     "tt": "xong",
+     "ghiChu": "13 nhân vật; bảng mẫu output/ep003/mau-r6/"
+    },
+    {
+     "ten": "Duyệt mẫu 13 nhân vật R6",
+     "tt": "cho",
+     "ghiChu": "chờ người dùng xem truoc-sau.jpg"
+    },
+    {
+     "ten": "Bối cảnh mới: phòng Gà + ban công, phố + ngã ba + các tiệm, nhà máy (ngoài/trong/kho), hiên thị trưởng",
+     "tt": "chua"
+    },
+    {
+     "ten": "Nhập 104 shot + giọng 2:20 + phụ đề từng chữ",
+     "tt": "chua"
+    },
+    {
+     "ten": "Dựng shot theo khung, rà lỗi, âm thanh",
+     "tt": "chua"
+    },
+    {
+     "ten": "Gộp dist/ep003_xem-thu.html, kiểm, xuất thử",
+     "tt": "chua"
     }
    ]
   },
