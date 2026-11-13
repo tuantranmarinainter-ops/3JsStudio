@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 19:40",
+ "capNhat": "2026-11-13 20:00",
  "nhom": [
   {
    "ten": "Tập 3",
@@ -35,7 +35,8 @@
      "ten": "Gộp dist/ep003_xem-thu.html, kiểm, xuất thử",
      "tt": "chua"
     }
-   ]
+   ],
+   "tap": "Tập 3"
   },
   {
    "ten": "Tập 2 — TẠM GÁC từ 13/11 (xem docs/handoff/ep002-tam-gac.md)",
@@ -132,7 +133,8 @@
      "tt": "chua",
      "ghiChu": "sửa sau khi agent thị trấn xong"
     }
-   ]
+   ],
+   "tap": "Tập 2"
   },
   {
    "ten": "Chuyển nhân vật sang R6 (thay đổi lớn)",
@@ -359,7 +361,8 @@
      "pt": 90,
      "tok": 19
     }
-   ]
+   ],
+   "tap": "Tập 2"
   },
   {
    "ten": "Studio (trình phát)",

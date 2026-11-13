@@ -1,8 +1,8 @@
-// node tools/tien-do.mjs  — dựng dist/tien-do.html từ docs/tien-do.json (bảng tiến độ để người dùng tự xem, không phải hỏi).
-// Trạng thái (tt): xong | dang (đang làm) | do (làm dở, còn bước) | chua | cho (chờ người dùng / chờ việc khác).
+// node tools/tien-do.mjs            — dựng trang tiến độ từ docs/tien-do.json → dist/tien-do.html (máy tính) + output/artifact/tien-do.html (đăng Artifact)
+// node tools/tien-do.mjs nhan [--mot-lan] — máy nhận ô "Trả lời Claude" (cổng 8793) → nối vào docs/tien-do-tra-loi.md
+// Việc: { ten, tt: xong|dang|do|chua|cho, ghiChu, pt: 0..100 (phần trăm, Claude ước lượng), tok: nghìn token agent đã dùng }
 import fs from 'node:fs'; import path from 'node:path'; import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-// node tools/tien-do.mjs nhan [--mot-lan]  — máy nhận ô "Trả lời Claude" của trang (cổng 8793) → nối vào docs/tien-do-tra-loi.md
 if (process.argv[2] === 'nhan') {
   const http = await import('node:http'); const once = process.argv.includes('--mot-lan');
   const H = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'content-type', 'Access-Control-Allow-Methods': 'GET,POST,OPTIONS', 'Access-Control-Allow-Private-Network': 'true' };
@@ -18,37 +18,97 @@ if (process.argv[2] === 'nhan') {
   }).listen(8793, '127.0.0.1', () => console.log('MO http://127.0.0.1:8793 (chờ trả lời từ trang tiến độ)'));
   await new Promise(() => {});
 }
+
 const d = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs/tien-do.json'), 'utf8'));
-const TT = { xong: ['Xong', '#3ecf8e'], dang: ['Đang làm', '#4da3ff'], do: ['Làm dở', '#f5b84a'], chua: ['Chưa làm', '#8b96a8'], cho: ['Đang chờ', '#c48bff'] };
+const TT = { dang: ['Đang làm', 'run'], do: ['Làm dở', 'part'], chua: ['Chưa làm', 'todo'], cho: ['Đang chờ', 'wait'], xong: ['Xong', 'ok'] };
 const e = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const o = (nhan) => `<input class="o" data-k="${e(nhan)}" placeholder="trả lời / đổi ý…">`;
-const all = d.nhom.flatMap((n) => n.viec); const dem = (k) => all.filter((v) => v.tt === k).length;
-const html = `<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>Tiến độ 3JS Studio</title><meta name="viewport" content="width=device-width,initial-scale=1">
-<style>body{margin:0;background:#0e1116;color:#e8ecf2;font:14px/1.5 "Be Vietnam Pro","Segoe UI",system-ui,sans-serif}main{max-width:1180px;margin:0 auto;padding:22px 16px 60px}
-h1{font-size:20px;margin:0 0 4px}h2{font-size:13px;letter-spacing:.8px;text-transform:uppercase;color:#8b96a8;margin:26px 0 8px}.mu{color:#8b96a8}
-.sum{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.sum span,.tag{padding:3px 10px;border-radius:99px;border:1px solid;font-size:12px;font-weight:700;white-space:nowrap}
-.bar{height:8px;border-radius:4px;background:#1d2430;overflow:hidden;display:flex}.bar i{display:block;height:100%}
-.v{display:grid;grid-template-columns:96px 1fr 300px;gap:12px;padding:9px 12px;background:#161b23;border:1px solid #2a3342;border-radius:8px;margin-bottom:6px;align-items:start}
-.v small{display:block;color:#8b96a8}a{color:#4da3ff}.ch{background:#161b23;border:1px solid #2a3342;border-radius:8px;padding:4px 12px}.o{background:#0e1116;color:#e8ecf2;border:1px solid #2a3342;border-radius:6px;padding:5px 8px;font:inherit;min-width:0;width:100%;align-self:center}.o:focus{border-color:#4da3ff;outline:0}.o.co{border-color:#f5b84a}@media(max-width:760px){.v,.ch div{grid-template-columns:1fr!important}}.ch div{display:grid;grid-template-columns:86px 1fr 300px;gap:12px;padding:6px 0;border-bottom:1px solid #2a334288}.ch div:last-child{border:0}.ch b{color:#8b96a8;font-weight:600}textarea{width:100%;height:110px;background:#161b23;color:#e8ecf2;border:1px solid #2a3342;border-radius:8px;padding:10px;font:inherit;resize:vertical}button{background:#1d2430;color:#e8ecf2;border:1px solid #2a3342;border-radius:6px;padding:7px 12px;font:inherit;cursor:pointer}button.main{background:#1f6fd1;border-color:#4da3ff;font-weight:700}.lk{display:flex;gap:14px;flex-wrap:wrap}</style></head><body><main>
-<h1>Tiến độ 3JS Studio</h1><div class="mu">Cập nhật: ${e(d.capNhat)} · trang này chỉ mới khi Claude vừa xong một lượt làm việc (tải lại trang để xem bản mới)</div>
-<div class="sum">${Object.entries(TT).map(([k, [t, c]]) => `<span style="color:${c};border-color:${c}55">${t}: ${dem(k)}</span>`).join('')}</div>
-<div class="bar">${Object.entries(TT).map(([k, [, c]]) => `<i style="width:${dem(k) / all.length * 100}%;background:${c}"></i>`).join('')}</div>
-${(d.canBan || []).length ? `<h2 style="color:#f5b84a">Cần bạn làm / trả lời</h2>` + d.canBan.map((x) => `<div class="v" style="grid-template-columns:1fr 300px;border-color:#f5b84a55"><div>${e(x)}</div>${o('CẦN: ' + x)}</div>`).join('') : ''}
-<h2 style="color:#3ecf8e">Đã chốt (${(d.daChot || []).length})</h2><div class="ch">${(d.daChot || []).map(([k, t]) => `<div><b>${e(k)}</b><span>${e(t)}</span>${o('ĐÃ CHỐT: ' + t)}</div>`).join('')}</div>
-<h2>Trả lời Claude</h2><div class="mu" style="margin-bottom:6px">Mỗi dòng trong trang có một ô bên phải: ghi câu trả lời hoặc điều muốn đổi vào đó. Nút Gửi gom tất cả các ô đã ghi cùng ô lớn dưới đây.</div><textarea id="tl" placeholder="Ghi câu trả lời, quyết định mới hoặc việc muốn thêm…"></textarea>
-<div class="lk" style="align-items:center;margin-top:8px"><button id="gui" class="main">➤ Gửi tới Claude</button><button id="chep">Chép để dán vào chat</button><span id="st" class="mu"></span></div>
-<h2>Mở nhanh</h2><div class="lk">${(d.link || []).map((l) => `<a href="${e(l.href)}">${e(l.ten)}</a>`).join('')}</div>
-${d.nhom.map((n) => `<h2>${e(n.ten)}</h2>` + n.viec.map((v) => { const [t, c] = TT[v.tt] || TT.chua; return `<div class="v"><span class="tag" style="color:${c};border-color:${c}55;text-align:center">${t}</span><div>${e(v.ten)}${v.ghiChu ? `<small>${e(v.ghiChu)}</small>` : ''}</div>${o('VIỆC: ' + v.ten)}</div>`; }).join('')).join('')}
-</main><script>
-const $ = (i) => document.getElementById(i), tl = $('tl'), st = $('st'), U = 'http://127.0.0.1:8793';
-try { tl.value = localStorage.getItem('tien-do-tl') || ''; } catch {}
-tl.oninput = () => { try { localStorage.setItem('tien-do-tl', tl.value); } catch {} };
-fetch(U + '/ping').then(() => { st.textContent = 'Claude đang chờ nhận'; }).catch(() => { st.textContent = 'Máy nhận chưa bật → dùng nút Chép rồi dán vào chat'; });
-const os = [...document.querySelectorAll('.o')]; let luu = {}; try { luu = JSON.parse(localStorage.getItem('tien-do-o') || '{}'); } catch {}
-os.forEach((x) => { x.value = luu[x.dataset.k] || ''; x.classList.toggle('co', !!x.value); x.oninput = () => { luu[x.dataset.k] = x.value; x.classList.toggle('co', !!x.value); try { localStorage.setItem('tien-do-o', JSON.stringify(luu)); } catch {} }; });
+const all = d.nhom.flatMap((n) => n.viec.map((v) => ({ ...v, nhom: n.ten, tap: n.tap || '' })));
+const ptOf = (v) => v.tt === 'xong' ? 100 : Math.max(0, Math.min(99, v.pt ?? ({ dang: 40, do: 70, chua: 0, cho: 0 }[v.tt] ?? 0)));
+const dem = (k) => all.filter((v) => v.tt === k).length;
+const tongPt = Math.round(all.reduce((s, v) => s + ptOf(v), 0) / Math.max(1, all.length));
+const tongTok = all.reduce((s, v) => s + (v.tok || 0), 0);
+const fTok = (k) => k >= 1000 ? (k / 1000).toFixed(1).replace('.', ',') + ' triệu' : Math.round(k) + ' nghìn';
+let id = 0; const o = (nhan) => `<input class="o" id="o${++id}" data-k="${e(nhan)}" placeholder="trả lời / đổi ý…" aria-label="Trả lời: ${e(nhan)}">`;
+const dong = (v) => { const [t, c] = TT[v.tt] || TT.chua, p = ptOf(v); return `<div class="v" data-tt="${v.tt}" data-tap="${e(v.tap)}"><div class="hd"><span class="tag ${c}">${t}</span><span class="k">${e(v.nhom)}</span></div><div>${e(v.ten)}${v.ghiChu ? `<small>${e(v.ghiChu)}</small>` : ''}</div>` +
+  (v.tt === 'dang' || v.tt === 'do' ? `<div class="pr"><div class="bar ${c}"><i style="width:${p}%"></i></div><span class="num">${p}%</span>${v.tok ? `<span class="num mu">· ${fTok(v.tok)} token</span>` : ''}</div>` : (v.tok ? `<div class="mu num">${fTok(v.tok)} token</div>` : '')) + o('VIỆC: ' + v.ten) + '</div>'; };
+const the = [['can', `Cần bạn`, (d.canBan || []).length], ...Object.entries(TT).map(([k, [t]]) => [k, t, dem(k)]), ['chot', 'Đã chốt', (d.daChot || []).length], ['tatca', 'Tất cả', all.length],
+  ...[...new Set(d.nhom.map((n) => n.tap).filter(Boolean))].map((t) => ['tap:' + t, t, all.filter((v) => v.tap === t).length])];   // mỗi tập một thẻ riêng (khoá `tap` của nhóm)
+const macDinh = dem('dang') ? 'dang' : 'can';
+
+const than = (artifact) => `
+<main>
+<h1>Tiến độ 3JS Studio</h1>
+<div class="mu">Cập nhật ${e(d.capNhat)} · trang chỉ mới khi Claude vừa xong một lượt làm việc${artifact ? '' : ' (tải lại để xem bản mới)'}</div>
+<section class="tong">
+  <div class="pr"><b>Tổng</b><div class="bar ok"><i style="width:${tongPt}%"></i></div><span class="num">${tongPt}%</span></div>
+  <div class="mu num">${dem('xong')}/${all.length} việc xong · ${dem('dang')} đang làm · agent phụ đã dùng khoảng ${fTok(tongTok)} token cho các việc có ghi số${d.tokenGhiChu ? ' · ' + e(d.tokenGhiChu) : ''}</div>
+</section>
+<nav class="tabs" role="tablist">${the.map(([k, t, n]) => `<button role="tab" data-tab="${k}" aria-selected="${k === macDinh}">${t} <span class="num">${n}</span></button>`).join('')}</nav>
+<div class="list" id="ds">
+${(d.canBan || []).map((x) => `<div class="v can" data-tt="can"><div>${e(x)}</div>${o('CẦN: ' + x)}</div>`).join('')}
+${Object.keys(TT).map((k) => all.filter((v) => v.tt === k).map(dong).join('')).join('')}
+${(d.daChot || []).map(([k, t]) => `<div class="v" data-tt="chot"><div class="hd"><span class="k">${e(k)}</span></div><div>${e(t)}</div>${o('ĐÃ CHỐT: ' + t)}</div>`).join('')}
+<div class="v trong" id="trong" hidden>Không có mục nào trong thẻ này.</div>
+</div>
+${(d.link || []).length && !artifact ? `<h2>Mở nhanh</h2><div class="lk">${d.link.map((l) => `<a href="${e(l.href)}">${e(l.ten)}</a>`).join('')}</div>` : ''}
+<h2>Ghi chú chung</h2>
+<textarea id="tl" placeholder="Quyết định mới hoặc việc muốn thêm…" aria-label="Ghi chú chung"></textarea>
+<div class="send">${artifact ? '' : '<button id="gui">➤ Gửi tới Claude</button>'}<button id="chep" class="${artifact ? '' : 'phu'}">Chép tất cả câu trả lời</button><span id="st" class="mu">${artifact ? 'Chép xong thì dán vào chat với Claude' : ''}</span></div>
+</main>`;
+
+const css = `
+:root { --bg:#f3f5f8; --panel:#ffffff; --line:#d5dbe5; --fg:#17202c; --mu:#5d6a7e; --acc:#1f6fd1; --ok:#14804a; --run:#1f6fd1; --part:#9a6200; --todo:#5d6a7e; --wait:#7a3fc4; --warn:#9a6200; --font:"Be Vietnam Pro","Segoe UI",system-ui,sans-serif; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0e1116; --panel:#161b23; --line:#2a3342; --fg:#e8ecf2; --mu:#8b96a8; --acc:#4da3ff; --ok:#3ecf8e; --run:#4da3ff; --part:#f5b84a; --todo:#8b96a8; --wait:#c48bff; --warn:#f5b84a; color-scheme: dark } }
+:root[data-theme="dark"] { --bg:#0e1116; --panel:#161b23; --line:#2a3342; --fg:#e8ecf2; --mu:#8b96a8; --acc:#4da3ff; --ok:#3ecf8e; --run:#4da3ff; --part:#f5b84a; --todo:#8b96a8; --wait:#c48bff; --warn:#f5b84a; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--font); margin: 0; padding-block: 18px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+main { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+h1 { font-size: 21px; font-weight: 800; margin: 0; } h2 { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--mu); margin: 14px 0 0; font-weight: 600; }
+.mu { color: var(--mu); font-size: 13px; } .num { font-variant-numeric: tabular-nums; }
+.tong { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+.pr { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; } .pr .bar { flex: 1; min-width: 120px; }
+.bar { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; } .bar i { display: block; height: 100%; background: currentColor; border-radius: 4px; }
+.ok { color: var(--ok); } .run { color: var(--run); } .part { color: var(--part); } .todo { color: var(--todo); } .wait { color: var(--wait); }
+.pr > .num, .pr > b { color: var(--fg); }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg); padding-block: 8px; z-index: 2; }
+.tabs button { background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 99px; padding: 6px 12px; font: inherit; font-weight: 600; cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--acc); border-color: var(--acc); color: #fff; }
+.tabs button .num { opacity: .75; font-weight: 400; }
+.list { display: flex; flex-direction: column; gap: 6px; }
+.v { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.v.can { border-color: var(--warn); } .v.trong { color: var(--mu); text-align: center; }
+.v .hd { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; } .v small { display: block; color: var(--mu); font-size: 13px; }
+.tag { padding: 2px 9px; border-radius: 99px; border: 1px solid currentColor; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.k { color: var(--mu); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.o, textarea { width: 100%; box-sizing: border-box; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; font: inherit; }
+.o:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--acc); outline-offset: 1px; } .o.co { border-color: var(--warn); }
+textarea { height: 100px; resize: vertical; }
+.send { position: sticky; bottom: env(safe-area-inset-bottom, 0px); background: var(--bg); padding-block: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; border-top: 1px solid var(--line); }
+.send button { background: var(--acc); color: #fff; border: 0; border-radius: 8px; padding: 10px 16px; font: inherit; font-weight: 600; cursor: pointer; } .send button.phu { background: var(--panel); color: var(--fg); border: 1px solid var(--line); }
+[hidden] { display: none !important; }
+.lk { display: flex; gap: 14px; flex-wrap: wrap; } a { color: var(--acc); }`;
+
+const js = (artifact) => `
+const os = [...document.querySelectorAll('.o')], tl = document.getElementById('tl'), st = document.getElementById('st');
+let luu = {}; try { luu = JSON.parse(localStorage.getItem('td') || '{}'); } catch {}
+const ghi = () => { try { localStorage.setItem('td', JSON.stringify(luu)); } catch {} };
+os.forEach((x) => { x.value = luu[x.dataset.k] || ''; x.classList.toggle('co', !!x.value); x.oninput = () => { luu[x.dataset.k] = x.value; x.classList.toggle('co', !!x.value); ghi(); }; });
+tl.value = luu.__tl || ''; tl.oninput = () => { luu.__tl = tl.value; ghi(); };
+const chon = (k) => { let n = 0; document.querySelectorAll('#ds .v[data-tt]').forEach((v) => { const on = k.startsWith('tap:') ? v.dataset.tap === k.slice(4) : k === 'tatca' ? (v.dataset.tt !== 'chot' && v.dataset.tt !== 'can') : v.dataset.tt === k; v.hidden = !on; if (on) n++; });
+  document.getElementById('trong').hidden = n > 0; document.querySelectorAll('.tabs button').forEach((b) => b.setAttribute('aria-selected', b.dataset.tab === k)); luu.__tab = k; ghi(); };
+document.querySelectorAll('.tabs button').forEach((b) => { b.onclick = () => chon(b.dataset.tab); });
+chon(${JSON.stringify(macDinh)});
 const gom = () => [...os.filter((x) => x.value.trim()).map((x) => '- ' + x.dataset.k + ' → ' + x.value.trim()), tl.value.trim()].filter(Boolean).join('\\n');
-$('gui').onclick = async () => { const nd = gom(); if (!nd) return; try { const r = await fetch(U + '/tra-loi', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text: nd }) }); if (!r.ok) throw 0; st.textContent = 'Đã gửi tới Claude lúc ' + new Date().toLocaleTimeString('vi'); tl.value = ''; os.forEach((x) => { x.value = ''; x.classList.remove('co'); }); try { localStorage.removeItem('tien-do-tl'); localStorage.removeItem('tien-do-o'); } catch {} } catch { st.textContent = 'Không gửi được (máy nhận chưa bật) → bấm Chép rồi dán vào chat'; } };
-$('chep').onclick = async () => { try { await navigator.clipboard.writeText(gom()); st.textContent = 'Đã chép'; } catch { tl.select(); st.textContent = 'Bấm Ctrl+C để chép'; } };
-</script></body></html>`;
-fs.mkdirSync(path.join(ROOT, 'dist'), { recursive: true }); fs.writeFileSync(path.join(ROOT, 'dist/tien-do.html'), html);
-console.log(`dist/tien-do.html: ${all.length} việc — ` + Object.entries(TT).map(([k, [t]]) => `${t} ${dem(k)}`).join(', '));
+const xoa = () => { os.forEach((x) => { x.value = ''; x.classList.remove('co'); }); tl.value = ''; luu = { __tab: luu.__tab }; ghi(); };
+document.getElementById('chep').onclick = async () => { const t = gom(); if (!t) { st.textContent = 'Chưa có ô nào được ghi'; return; }
+  try { await navigator.clipboard.writeText(t); st.textContent = 'Đã chép ' + t.split('\\n').length + ' dòng — dán vào chat với Claude'; } catch { tl.value = t; tl.focus(); tl.select(); st.textContent = 'Không chép tự động được: đã gom vào ô ghi chú, hãy chọn và chép tay'; } };
+${artifact ? '' : `const U = 'http://127.0.0.1:8793';
+fetch(U + '/ping').then(() => { st.textContent = 'Claude đang chờ nhận'; }).catch(() => { st.textContent = 'Máy nhận chưa bật → dùng nút Chép rồi dán vào chat'; });
+document.getElementById('gui').onclick = async () => { const nd = gom(); if (!nd) { st.textContent = 'Chưa có ô nào được ghi'; return; }
+  try { const r = await fetch(U + '/tra-loi', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text: nd }) }); if (!r.ok) throw 0; st.textContent = 'Đã gửi tới Claude lúc ' + new Date().toLocaleTimeString('vi'); xoa(); }
+  catch { st.textContent = 'Không gửi được (máy nhận chưa bật) → bấm Chép rồi dán vào chat'; } };`}`;
+
+const font = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap">';
+fs.mkdirSync(path.join(ROOT, 'dist'), { recursive: true }); fs.mkdirSync(path.join(ROOT, 'output/artifact'), { recursive: true });
+fs.writeFileSync(path.join(ROOT, 'dist/tien-do.html'), `<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>Tiến độ 3JS Studio</title><meta name="viewport" content="width=device-width,initial-scale=1">${font}<style>${css}</style></head><body>${than(false)}<script>${js(false)}</script></body></html>`);
+fs.writeFileSync(path.join(ROOT, 'output/artifact/tien-do.html'), `<title>Tiến độ 3JS Studio</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n${font}\n<style>${css}</style>${than(true)}<script>${js(true)}</script>\n`);
+console.log(`tien-do: ${all.length} việc, tổng ${tongPt}% — ` + Object.entries(TT).map(([k, [t]]) => `${t} ${dem(k)}`).join(', ') + ` · token ${fTok(tongTok)}`);
