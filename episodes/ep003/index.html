@@ -122,7 +122,7 @@
       for (const n of [...new Set(SHOTS.map((s) => s.env).filter(Boolean))]) {
         if (n === townEnv || n === 'kenneyTown') continue;
         let m = null;
-        try { m = await import(`/engine/envs/${n}.js`); } catch (e) { if (!envs.envs[n]) console.warn(`[env] chưa có engine/envs/${n}.js → env tạm (sàn trống):`, e?.message || e); }
+        try { m = await import(`../../engine/envs/${n}.js`)   /* đường dẫn TƯƠNG ĐỐI: esbuild (tools/bundle.mjs) mới gộp được env nạp động vào bản dist */; } catch (e) { if (!envs.envs[n]) console.warn(`[env] chưa có engine/envs/${n}.js → env tạm (sàn trống):`, e?.message || e); }
         if (m?.PROP_SLOTS) slots[n] = { ...(slots[n] || {}), ...m.PROP_SLOTS };
         if (envs.envs[n]) continue;
         if (m?.ASSETS?.length) await A.load(m.ASSETS);
