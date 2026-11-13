@@ -25,6 +25,8 @@ for (const s of kit.shots || []) {
     if (d.giu_trai !== undefined) a.holdL = d.giu_trai;   // cầm ở tay trái
     if (d.pose !== undefined) a.pose = d.pose;        // pose thô của engine: { head: { x }, rightArm: { x, z }, … } (rad)
     if (d.mat_engine) a.face = d.mat_engine;
+    if (d.ry2_do !== undefined) a.ry2 = rad(d.ry2_do);   // xoay người trong shot: ry_do → ry2_do (độ)
+    if (d.them) Object.assign(a, d.them);               // trường thô của diễn viên: from, mixWin, amp, speed, win, ease… (pose dạng [đầu, cuối] = cử động theo tiến độ shot)
     cast[n] = a;
   }
   const props = {};

@@ -1,7 +1,7 @@
 // SINH TỰ ĐỘNG bởi tools/kb/kit2-sang-shot.mjs từ kich-ban/ep003-kit2/kit-phong.json — đừng sửa tay; sửa kit.json rồi chạy lại.
 export const KIT2 = {
   s001: {"boi_canh":null,"cam":{"p":[-0.4,4.3,4.4],"l":[0.6,4.25,8.7],"fov":32,"p2":[-0.2,4.3,4.4]},"cast":{},"props":{}},
-  s002: {"boi_canh":null,"cam":{"p":[4.8,5.15,-5.3],"l":[2.05,3.4,-8.04],"fov":53},"cast":{},"props":{}},
+  s002: {"boi_canh":null,"cam":{"p":[4.8,5.15,-5.3],"l":[2.05,3.4,-8.04],"fov":53,"p2":[3.31,4.52,-6.29]},"cast":{},"props":{}},
   s016: {"boi_canh":null,"cam":{"p":[-3.3,4.6,2.9],"l":[1.15,2.9,-6.9],"fov":65,"p2":[-3.1,4.6,2.6],"l2":[1.2,2.9,-6.9]},"cast":{"hero":{"at":[0.85,0,-6.25],"ry":0.3491,"anim":"idle","pose":{"leftArm":{"x":-1.3,"z":-0.45}}}},"props":{}},
   s017: {"boi_canh":null,"cam":{"p":[-0.1,4.5,-5.6],"l":[2.15,3.45,-8.04],"fov":60},"cast":{"hero":{"at":[4.2,0,-6.35],"ry":3.1416,"anim":"idle","pose":{"leftArm":{"x":-1.3,"z":-0.2}}}},"props":{},"them":{"props":{"sach_reu":{"at":[1.2,3.22,-8.44],"ry":0.3}}}},
   s018: {"boi_canh":"bedroom","cam":{"p":[6.1,4.6,3.5],"l":[1.3,3.9,-5.5],"fov":34,"p2":[5.9,4.6,3.2]},"cast":{"hero":{"at":[1.3,0,-5.5],"ry":0.7854,"anim":"idle","hold":null}},"props":{}},

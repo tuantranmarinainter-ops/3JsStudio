@@ -19,48 +19,48 @@
       },
       "cam2": {
         "p": [
-          -3.5,
-          5,
-          34
+          -4.98,
+          5.36,
+          29.96
         ],
         "l": [
           -14,
           7,
           7
         ],
-        "fov": 54
+        "fov": 50
       },
       "dien_vien": [],
       "trang_thai": "tam",
-      "ghi_chu": "Pho va bien gau ro. Thieu canh cua mo va tay nam tien canh."
+      "ghi_chu": "Thieu canh cua mo va tay nam."
     },
     {
       "id": "S004",
       "cam": {
         "p": [
-          2,
-          6.4,
-          1
+          1.2,
+          6.2,
+          1.2
         ],
         "l": [
-          0.5,
-          4.4,
-          -8
+          1.4,
+          4,
+          -7.8
         ],
-        "fov": 66
+        "fov": 60
       },
       "cam2": {
         "p": [
-          1.8,
-          6.4,
-          0.6
+          1.25,
+          5.2,
+          -0.1
         ],
         "l": [
-          0.5,
-          4.4,
-          -8
+          1.4,
+          3.8,
+          -7.8
         ],
-        "fov": 66
+        "fov": 56
       },
       "dien_vien": [
         {
@@ -70,41 +70,68 @@
             0,
             -7.9
           ],
-          "ry_do": 0,
+          "ry_do": -8,
           "tu_the": "idle",
-          "thay_tu": "tu mu den quan"
+          "thay_tu": "tu nguc len, cui nhin duoi quay",
+          "pose": {
+            "torso": {
+              "x": [
+                0,
+                0.25
+              ]
+            },
+            "head": {
+              "x": [
+                0.05,
+                0.32
+              ]
+            },
+            "rightArm": {
+              "x": [
+                -0.25,
+                -0.85
+              ]
+            },
+            "leftArm": {
+              "x": [
+                -0.25,
+                -0.85
+              ]
+            }
+          },
+          "ry2_do": 10
         }
       ],
       "trang_thai": "tam",
-      "ghi_chu": "Tho banh va gio banh tren quay. Quay con che than; ke banh chua ro."
+      "ghi_chu": "Quay va gio che mot phan nguoi; banh tren ke chua ro. | MVP20 14/11: sua theo ra loi"
     },
     {
       "id": "S005",
       "cam": {
         "p": [
           4.8,
-          2.15,
-          0.7
+          2.6,
+          -1
         ],
         "l": [
           4.8,
-          1.75,
+          0.1,
           -5.5
         ],
-        "fov": 54.4
+        "fov": 54
       },
       "cam2": {
         "p": [
           4.8,
-          2.15,
-          0.5
+          1.85,
+          -2.9
         ],
         "l": [
           4.8,
-          1.75,
+          0.1,
           -5.5
         ],
-        "fov": 54.4
+        "fov": 48
       },
       "dien_vien": [
         {
@@ -120,71 +147,83 @@
         }
       ],
       "trang_thai": "hong",
-      "ghi_chu": "Goc thay khoang trong duoi quay va mot phan tay. Hoc xuyen suot, thieu lung va vet bot."
+      "ghi_chu": "Thieu lung hoc, vet bot va tay tren mep quay. | MVP20 14/11: sua theo ra loi"
     },
     {
       "id": "S006",
       "cam": {
         "p": [
           105.9,
-          3.9,
-          -3.5
+          4.4,
+          -3.6
         ],
         "l": [
-          103.5,
-          3.8,
-          -8
+          104,
+          3.7,
+          -8.6
         ],
-        "fov": 65
+        "fov": 58
       },
       "cam2": {
         "p": [
-          105.6,
-          3.9,
-          -3.8
+          105.48,
+          4.25,
+          -4.7
         ],
         "l": [
-          103.5,
-          3.8,
-          -8
+          104,
+          3.7,
+          -8.6
         ],
-        "fov": 65
+        "fov": 58
       },
       "dien_vien": [
         {
           "ai": "TAILOR",
           "pos": [
-            102.8,
+            103.8,
             0,
-            -9.4
+            -9.7
           ],
-          "ry_do": 15,
+          "ry_do": 10,
           "tu_the": "idle",
           "thay_tu": "dau den eo",
           "pose": {
             "head": {
-              "x": 0.35,
-              "y": 0.12
+              "x": [
+                0.1,
+                0.45
+              ],
+              "y": [
+                0.2,
+                0
+              ]
             },
             "torso": {
-              "x": 0.15
+              "x": [
+                0.04,
+                0.14
+              ]
             },
             "leftArm": {
-              "x": -1.4,
-              "z": -0.3
+              "x": [
+                -0.25,
+                -1.35
+              ],
+              "z": 0
             }
           }
         }
       ],
       "trang_thai": "tam",
-      "ghi_chu": "Tho may va hop mo ro tren ban, khong bi cuon chi che. Hop nho, thieu cua so va ma no canh.",
+      "ghi_chu": "Thieu cua so va ma no canh trong nen. | MVP20 14/11: sua theo ra loi",
       "them": {
         "props": {
           "hop_nhan": {
             "at": [
-              104.5,
+              104.2,
               2.8,
-              -7
+              -8
             ],
             "ry": 0
           }
@@ -195,40 +234,40 @@
       "id": "S007",
       "cam": {
         "p": [
-          104.5,
-          5.15,
-          -6.5
+          104.2,
+          6.2,
+          -7.85
         ],
         "l": [
-          104.5,
+          104.2,
           2.8,
-          -7
+          -8
         ],
-        "fov": 48
+        "fov": 40
       },
       "cam2": {
         "p": [
-          104.5,
-          5,
-          -6.5
+          104.2,
+          6.2,
+          -7.85
         ],
         "l": [
-          104.5,
+          104.2,
           2.8,
-          -7
+          -8
         ],
-        "fov": 48
+        "fov": 31
       },
       "dien_vien": [],
       "trang_thai": "tam",
-      "ghi_chu": "Hop mo o gan giua khung nhin tu tren. Thieu ranh nhan, cuon chi tim va vai o mep khung.",
+      "ghi_chu": "Long hop khac mau, thieu ranh, cuon chi va vai ngoai khung. | MVP20 14/11: sua theo ra loi",
       "them": {
         "props": {
           "hop_nhan": {
             "at": [
-              104.5,
+              104.2,
               2.8,
-              -7
+              -8
             ],
             "ry": 0
           }
@@ -239,27 +278,27 @@
       "id": "S008",
       "cam": {
         "p": [
-          -6,
-          5,
-          10
+          -10.4,
+          5.2,
+          13.2
         ],
         "l": [
-          -11.6,
-          4.5,
-          1
+          -11.8,
+          4.9,
+          1.2
         ],
-        "fov": 70
+        "fov": 64
       },
       "cam2": {
         "p": [
-          -6,
-          5,
-          10.4
+          -10.3,
+          5.4,
+          14.8
         ],
         "l": [
-          -11.6,
-          4.5,
-          1
+          -11.8,
+          4.9,
+          1.2
         ],
         "fov": 70
       },
@@ -272,7 +311,33 @@
             1.4
           ],
           "ry_do": 45,
-          "tu_the": "hold"
+          "tu_the": "idle",
+          "pose": {
+            "torso": {
+              "x": [
+                0,
+                0.35
+              ]
+            },
+            "head": {
+              "x": [
+                0,
+                0.3
+              ]
+            },
+            "rightArm": {
+              "x": [
+                -0.5,
+                -1.25
+              ]
+            },
+            "leftArm": {
+              "x": [
+                -0.5,
+                -1.25
+              ]
+            }
+          }
         },
         {
           "ai": "CHILD_A",
@@ -282,67 +347,89 @@
             1.2
           ],
           "ry_do": -45,
-          "tu_the": "hug"
+          "tu_the": "hug",
+          "them": {
+            "from": "idle",
+            "mixWin": [
+              0.45,
+              0.8
+            ]
+          }
         },
         {
           "ai": "CHILD_B",
           "pos": [
-            -9.2,
+            -8.3,
             0.4,
-            -2
+            0
           ],
-          "ry_do": -45,
-          "tu_the": "idle"
+          "ry_do": -30,
+          "tu_the": "idle",
+          "ry2_do": -80,
+          "pose": {
+            "head": {
+              "y": [
+                0.3,
+                -0.2
+              ]
+            }
+          }
         },
         {
           "ai": "BEAR_BAG",
           "pos": [
-            -11.2,
+            -13,
             3,
-            2.3
+            1.6
           ],
-          "ry_do": 25,
-          "tu_the": "idle"
+          "ry_do": 70,
+          "tu_the": "idle",
+          "pos2": [
+            -10.9,
+            2.6,
+            1.4
+          ],
+          "ry2_do": 20
         }
       ],
       "trang_thai": "tam",
-      "ghi_chu": "Bach, hai be va gau tai quay. Bach bi quay che; gau chua gan tay, bien gau bi cat."
+      "ghi_chu": "Quay che than Bach; gau chua gan tay, bien gau ngoai khung. | MVP20 14/11: sua theo ra loi"
     },
     {
       "id": "S009",
       "cam": {
         "p": [
-          -14.8,
-          5,
-          5.5
+          -11,
+          4.7,
+          7.6
         ],
         "l": [
           -9.4,
-          3.7,
-          0.6
+          2.9,
+          0.4
         ],
-        "fov": 70
+        "fov": 58
       },
       "cam2": {
         "p": [
-          -14.6,
-          5,
-          5.3
+          -10.65,
+          4.3,
+          6.02
         ],
         "l": [
           -9.4,
-          3.7,
-          0.6
+          2.9,
+          0.4
         ],
-        "fov": 70
+        "fov": 52
       },
       "dien_vien": [
         {
           "ai": "BACH",
           "pos": [
-            -14.7,
+            -13.2,
             0.4,
-            3.6
+            3
           ],
           "ry_do": 90,
           "tu_the": "hold",
@@ -355,60 +442,77 @@
             0.4,
             -0.8
           ],
-          "ry_do": -45,
-          "tu_the": "hug"
+          "ry_do": -25,
+          "tu_the": "hug",
+          "them": {
+            "amp": 1.6
+          }
         },
         {
           "ai": "CHILD_B",
           "pos": [
-            -9,
+            -7.7,
             0.4,
-            2
+            -0.7
           ],
-          "ry_do": -75,
-          "tu_the": "idle"
+          "ry_do": -100,
+          "tu_the": "idle",
+          "pose": {
+            "rightArm": {
+              "x": [
+                -0.1,
+                -1.45
+              ]
+            },
+            "head": {
+              "x": [
+                0,
+                0.2
+              ]
+            }
+          }
         },
         {
           "ai": "BEAR_BAG",
           "pos": [
-            -9.65,
+            -9.5,
             2.1,
-            -0.8
+            -0.1
           ],
           "ry_do": -60,
           "tu_the": "idle"
         }
       ],
-      "trang_thai": "tam",
-      "ghi_chu": "Hai be va gau truoc nguc, mot phan vai Bach. Gau nho, Bach thieu dau, toc che mat be vang."
+      "trang_thai": "hong",
+      "ghi_chu": "Gau bi che, thieu dau Bach, be bi toc che mat. | MVP20 14/11: sua theo ra loi"
     },
     {
       "id": "S010",
       "cam": {
         "p": [
-          -5.5,
-          5.4,
-          7
+          -10.6,
+          5.3,
+          12.6
         ],
         "l": [
-          -11.7,
-          4,
-          1.4
+          -12,
+          3.9,
+          2.4
         ],
-        "fov": 65
+        "fov": 66
       },
       "cam2": {
         "p": [
-          -5.8,
-          5.4,
-          6.7
+          -10.88,
+          5.02,
+          10.56
         ],
         "l": [
-          -11.7,
-          4,
-          1.4
+          -12,
+          3.9,
+          2.4
         ],
-        "fov": 65
+        "fov": 62
       },
       "dien_vien": [
         {
@@ -418,23 +522,68 @@
             0.4,
             1.4
           ],
-          "ry_do": 45,
+          "ry_do": 30,
           "tu_the": "hold",
-          "giu": "to_khai"
+          "giu": {
+            "name": "to_khai",
+            "at": [
+              0,
+              -2,
+              -0.15
+            ],
+            "rot": [
+              1.15,
+              0,
+              0
+            ]
+          },
+          "pose": {
+            "rightArm": {
+              "x": [
+                -0.95,
+                -1.35
+              ],
+              "z": 0.15
+            },
+            "head": {
+              "x": [
+                0,
+                0.15
+              ],
+              "y": [
+                0.25,
+                0
+              ]
+            }
+          },
+          "ry2_do": 55
         },
         {
           "ai": "TOWN_A",
           "pos": [
             -9.5,
             0.4,
-            1.4
+            3.7
           ],
-          "ry_do": 35,
-          "tu_the": "idle"
+          "ry_do": -5,
+          "tu_the": "idle",
+          "pose": {
+            "head": {
+              "x": [
+                0,
+                0.2
+              ],
+              "z": [
+                0,
+                0.15
+              ]
+            }
+          },
+          "ry2_do": -35
         }
       ],
       "trang_thai": "hong",
-      "ghi_chu": "Bach va nguoi ao xanh deu thay mat. Khong doc duoc to danh sach tren tay.",
+      "ghi_chu": "To khai cam tay thanh khoi toi, khong thay danh sach. | MVP20 14/11: sua theo ra loi",
       "them": {
         "props": {}
       }
@@ -443,29 +592,29 @@
       "id": "S011",
       "cam": {
         "p": [
-          -6,
-          6.2,
-          5.8
+          -5.4,
+          4.9,
+          3
         ],
         "l": [
-          -12.3,
-          3.5,
+          -12.5,
+          3.8,
           1.4
         ],
-        "fov": 60
+        "fov": 58
       },
       "cam2": {
         "p": [
-          -6.3,
-          6.1,
-          5.5
+          -6.6,
+          4.7,
+          2.75
         ],
         "l": [
-          -12.3,
-          3.5,
+          -12.5,
+          3.75,
           1.4
         ],
-        "fov": 60
+        "fov": 58
       },
       "dien_vien": [
         {
@@ -478,14 +627,46 @@
           "ry_do": 90,
           "tu_the": "hold",
           "thay_tu": "mot phan tien canh",
-          "giu": "to_khai"
+          "giu": {
+            "name": "to_khai",
+            "at": [
+              0,
+              -2,
+              -0.15
+            ],
+            "rot": [
+              0.95,
+              0,
+              0
+            ]
+          },
+          "pose": {
+            "rightArm": {
+              "x": [
+                -1.25,
+                -0.7
+              ]
+            },
+            "head": {
+              "x": [
+                0.1,
+                0.35
+              ]
+            },
+            "torso": {
+              "x": [
+                0,
+                0.15
+              ]
+            }
+          }
         },
         {
           "ai": "TOWN_A",
           "pos": [
             -9,
             0.4,
-            7
+            4.7
           ],
           "ry_do": -90,
           "tu_the": "idle",
@@ -493,7 +674,7 @@
         }
       ],
       "trang_thai": "tam",
-      "ghi_chu": "Bach va xap giay tren quay. Nguoi nhan gan nhu ngoai khung; mai hien che dau Bach.",
+      "ghi_chu": "Khong thay dau nguoi nhan; giay cam toi. | MVP20 14/11: sua theo ra loi",
       "them": {
         "props": {
           "xap_to_khai": {
@@ -511,29 +692,29 @@
       "id": "S012",
       "cam": {
         "p": [
-          -5.8,
-          5.5,
-          21
+          -3.2,
+          5.6,
+          19.5
         ],
         "l": [
-          -10,
-          3.7,
-          5
+          -10.2,
+          3.6,
+          2
         ],
-        "fov": 65
+        "fov": 52
       },
       "cam2": {
         "p": [
-          -6,
-          5.5,
-          20.5
+          -3.6,
+          5.6,
+          15.5
         ],
         "l": [
-          -10,
-          3.7,
-          5
+          -9.6,
+          3.6,
+          -3
         ],
-        "fov": 65
+        "fov": 52
       },
       "dien_vien": [
         {
@@ -541,66 +722,165 @@
           "pos": [
             -10,
             0.4,
-            12
+            6.5
           ],
-          "ry_do": 45,
+          "ry_do": 70,
           "tu_the": "hold",
-          "giu": "to_khai"
+          "giu": {
+            "name": "to_khai",
+            "at": [
+              0,
+              -2,
+              -0.15
+            ],
+            "rot": [
+              1.25,
+              0,
+              0
+            ]
+          },
+          "pose": {
+            "rightArm": {
+              "x": [
+                -1,
+                -1.5
+              ]
+            },
+            "head": {
+              "x": [
+                0.15,
+                -0.05
+              ]
+            }
+          },
+          "them": {
+            "win": [
+              0,
+              0.5
+            ]
+          },
+          "ry2_do": 100
         },
         {
           "ai": "TOWN_B",
           "pos": [
-            -10,
+            -9.3,
             0.4,
             1
           ],
-          "ry_do": 45,
+          "ry_do": 70,
           "tu_the": "hold",
-          "giu": "to_khai_2"
+          "giu": {
+            "name": "to_khai_2",
+            "at": [
+              0,
+              -2,
+              -0.15
+            ],
+            "rot": [
+              1.25,
+              0,
+              0
+            ]
+          },
+          "pose": {
+            "rightArm": {
+              "x": [
+                -1,
+                -1.5
+              ]
+            },
+            "head": {
+              "x": [
+                0.15,
+                -0.05
+              ]
+            }
+          },
+          "them": {
+            "win": [
+              0.2,
+              0.7
+            ]
+          },
+          "ry2_do": 100
         },
         {
           "ai": "TOWN_C",
           "pos": [
-            -10,
+            -9.3,
             0.4,
             -11.2
           ],
-          "ry_do": 45,
+          "ry_do": 70,
           "tu_the": "hold",
-          "giu": "to_khai_3"
+          "giu": {
+            "name": "to_khai_3",
+            "at": [
+              0,
+              -2,
+              -0.15
+            ],
+            "rot": [
+              1.25,
+              0,
+              0
+            ]
+          },
+          "pose": {
+            "rightArm": {
+              "x": [
+                -1,
+                -1.5
+              ]
+            },
+            "head": {
+              "x": [
+                0.15,
+                -0.05
+              ]
+            }
+          },
+          "them": {
+            "win": [
+              0.4,
+              0.95
+            ]
+          },
+          "ry2_do": 100
         }
       ],
-      "trang_thai": "hong",
-      "ghi_chu": "Ba nguoi noi nhau tren via he. Giay cam thanh khoi toi, hai nguoi sau bi che.",
+      "trang_thai": "tam",
+      "ghi_chu": "Giay cam toi va nguoi sau nho, chua dung bac cua. | MVP20 14/11: sua theo ra loi",
       "them": {}
     },
     {
       "id": "S013",
       "cam": {
         "p": [
-          -12,
-          15,
-          24
+          -10.5,
+          13,
+          23
         ],
         "l": [
-          -3,
-          1,
+          -1.5,
+          1.2,
           6
         ],
-        "fov": 70
+        "fov": 56
       },
       "cam2": {
         "p": [
-          -11.8,
-          15,
-          23.7
+          -8.7,
+          9.14,
+          19.6
         ],
         "l": [
-          -3,
-          1,
+          -1.5,
+          1.2,
           6
         ],
-        "fov": 70
+        "fov": 56
       },
       "dien_vien": [
         {
@@ -612,7 +892,27 @@
           ],
           "ry_do": 135,
           "tu_the": "hold",
-          "giu": "to_khai"
+          "giu": {
+            "name": "to_khai",
+            "at": [
+              0,
+              -2,
+              -0.15
+            ],
+            "rot": [
+              1.25,
+              0,
+              0
+            ]
+          },
+          "pose": {
+            "rightArm": {
+              "x": [
+                -1,
+                -1.5
+              ]
+            }
+          }
         },
         {
           "ai": "BAKER",
@@ -622,71 +922,113 @@
             13
           ],
           "ry_do": -45,
-          "tu_the": "idle"
+          "tu_the": "point"
         },
         {
           "ai": "TOWN_B",
           "pos": [
-            0,
+            1.5,
             0.4,
-            7
+            6
           ],
           "ry_do": -45,
           "tu_the": "hold",
-          "giu": "to_khai_2"
+          "giu": {
+            "name": "to_khai_2",
+            "at": [
+              0,
+              -2,
+              -0.15
+            ],
+            "rot": [
+              1.25,
+              0,
+              0
+            ]
+          },
+          "pose": {
+            "rightArm": {
+              "x": [
+                -1,
+                -1.5
+              ]
+            }
+          }
         },
         {
           "ai": "TAILOR",
           "pos": [
-            2.8,
+            4.8,
             0.4,
             4
           ],
           "ry_do": -135,
-          "tu_the": "idle"
+          "tu_the": "lookAround"
         },
         {
           "ai": "TOWN_C",
           "pos": [
-            -5,
+            -3.2,
             0.4,
-            -2
+            -3.5
           ],
-          "ry_do": 0,
-          "tu_the": "hold",
-          "giu": "to_khai_3"
+          "ry_do": 15,
+          "tu_the": "walk",
+          "giu": {
+            "name": "to_khai_3",
+            "at": [
+              0,
+              -2,
+              -0.15
+            ],
+            "rot": [
+              1.3,
+              0,
+              0
+            ]
+          },
+          "pose": {
+            "rightArm": {
+              "x": -1.3
+            }
+          },
+          "pos2": [
+            -1.8,
+            0.4,
+            1.5
+          ]
         }
       ],
       "trang_thai": "tam",
-      "ghi_chu": "Ba nhom tren pho nhin tu tren. Khong co khung cua so; giay qua lon va nguoc."
+      "ghi_chu": "Thieu khung cua so; giay cam qua lon va nguoc. | MVP20 14/11: sua theo ra loi"
     },
     {
       "id": "S014",
       "cam": {
         "p": [
-          -3.2,
-          5.2,
+          -3.4,
+          5,
           29
         ],
         "l": [
           -11.2,
-          4.5,
+          4.1,
           29
         ],
-        "fov": 39.6
+        "fov": 40
       },
       "cam2": {
         "p": [
-          -3.8,
-          5.2,
+          -5.3,
+          4.95,
           29
         ],
         "l": [
           -11.2,
-          4.5,
+          4.35,
           29
         ],
-        "fov": 39.6
+        "fov": 40
       },
       "dien_vien": [
         {
@@ -700,50 +1042,64 @@
           "tu_the": "idle",
           "pose": {
             "rightArm": {
-              "x": -1.1,
-              "z": 0.4
+              "x": [
+                -0.2,
+                -0.8
+              ],
+              "z": [
+                0.1,
+                0.6
+              ]
+            },
+            "head": {
+              "x": [
+                0,
+                0.1
+              ],
+              "y": 0
             }
-          }
+          },
+          "mat_engine": "cuoi_guong"
         }
       ],
       "trang_thai": "tam",
-      "ghi_chu": "C?n G? tr?c di?n, m?t kh?ng che; tay ??a ra nh?ng ch?a ch?m ng?c do kh?p R6."
+      "ghi_chu": "C?n G? tr?c di?n, m?t kh?ng che; tay ??a ra nh?ng ch?a ch?m ng?c do kh?p R6. | MVP20 14/11: sua theo ra loi"
     },
     {
       "id": "S015",
       "cam": {
         "p": [
-          3,
-          6.5,
-          36
+          5,
+          5.5,
+          34
         ],
         "l": [
           -14,
-          8,
-          22
+          7,
+          18
         ],
-        "fov": 78
+        "fov": 74
       },
       "cam2": {
         "p": [
-          2.8,
-          6.5,
-          35.5
+          4.5,
+          5.5,
+          33.6
         ],
         "l": [
           -14,
-          8,
-          22
+          7,
+          18
         ],
-        "fov": 78
+        "fov": 74
       },
       "dien_vien": [
         {
           "ai": "GA",
           "pos": [
-            -1,
+            0,
             0.4,
-            31
+            30
           ],
           "ry_do": -90,
           "tu_the": "idle",
@@ -751,7 +1107,7 @@
         }
       ],
       "trang_thai": "tam",
-      "ghi_chu": "Sau lung Ga, nha Ga va bien tiem gau. Cot den van giua khung, Ga lech phai."
+      "ghi_chu": "Cot den van lon; bo cuc nha chua truc dien."
     },
     {
       "id": "S036",
@@ -832,7 +1188,7 @@
         }
       ],
       "trang_thai": "tam",
-      "ghi_chu": "Ga ngoi tren ban cong, mat nhin duoc. Khong thay cua mo va den tuong, khong thay cot tien canh."
+      "ghi_chu": "Thieu cua mo, den va cot lan can tien canh."
     },
     {
       "id": "S042",
@@ -886,7 +1242,7 @@
         }
       ],
       "trang_thai": "tam",
-      "ghi_chu": "Sau lung Ga, Bap nho tren mai doi dien. Dau Ga lon; nha may va ong khoi bi day nha che.",
+      "ghi_chu": "Dau Ga lon; khong thay nha may va ong khoi.",
       "them": {
         "lightOverride": {
           "exposure": 0.4
@@ -897,29 +1253,29 @@
       "id": "S043",
       "cam": {
         "p": [
-          12,
+          8.2,
           10.7,
-          29.1
+          30.3
         ],
         "l": [
           9.8,
-          10.5,
+          10.3,
           27
         ],
-        "fov": 53
+        "fov": 44
       },
       "cam2": {
         "p": [
-          11.8,
+          8.4,
           10.7,
-          28.9
+          30
         ],
         "l": [
           9.8,
-          10.5,
+          10.3,
           27
         ],
-        "fov": 53
+        "fov": 44
       },
       "dien_vien": [
         {
@@ -929,16 +1285,26 @@
             9.2,
             27
           ],
-          "ry_do": 45,
+          "ry_do": -20,
           "tu_the": "sit",
-          "giu": "nhan_moi"
+          "giu": null
         }
       ],
-      "trang_thai": "hong",
-      "ghi_chu": "Can Bap ngoi tren mai. Nhan tach khoi tay va khoi khung; mep mai chua ro.",
+      "trang_thai": "tam",
+      "ghi_chu": "Nhan lon va khong nam trong hai tay, mat gau khac mau.",
       "them": {
         "lightOverride": {
           "exposure": 0.45
+        },
+        "props": {
+          "nhan_moi": {
+            "at": [
+              9.6,
+              9.8,
+              27.6
+            ],
+            "ry": 0
+          }
         }
       }
     },
@@ -1565,7 +1931,7 @@
           "pos": [
             -15.2,
             2.8,
-            -70
+            -69.9
           ],
           "ry_do": 90,
           "tu_the": "idle",
@@ -1581,156 +1947,156 @@
         }
       },
       "trang_thai": "tam",
-      "ghi_chu": "Ga quay lung truoc cua; cua chua khep hep va thieu vet sang do fn shot goc."
+      "ghi_chu": "Cua chua co khe sang hep, thi truong lo nhieu."
     },
     {
       "id": "S072",
       "cam": {
         "p": [
-          -7,
-          5.2,
-          36
+          4,
+          5.5,
+          29
         ],
         "l": [
-          -7.5,
-          3.8,
-          26
+          -8.5,
+          4,
+          22.5
         ],
-        "fov": 70
+        "fov": 65
       },
       "cam2": {
         "p": [
-          -7,
-          5.2,
-          35
+          3.5,
+          5.5,
+          29
         ],
         "l": [
-          -7.5,
-          3.8,
-          26
+          -8.5,
+          4,
+          22.5
         ],
-        "fov": 70
+        "fov": 65
       },
       "dien_vien": [
         {
           "ai": "GA",
           "pos": [
-            -8.6,
-            1.3,
-            25
+            -11,
+            0.4,
+            21
           ],
-          "ry_do": 55,
+          "ry_do": 75,
           "tu_the": "idle"
         },
         {
           "ai": "MAYOR",
           "pos": [
-            -5,
-            0.4,
-            28
-          ],
-          "pos2": [
-            -7,
+            -3,
             0.4,
             26
           ],
-          "ry_do": -80,
+          "pos2": [
+            -7.5,
+            0.4,
+            24
+          ],
+          "ry_do": -120,
           "tu_the": "run"
         }
       ],
       "them": {},
-      "trang_thai": "tam",
-      "ghi_chu": "Thi truong chay toi Ga, thay mat nghieng; cot che mot phan, cua va bac chua ro."
+      "trang_thai": "hong",
+      "ghi_chu": "Thi truong che mat Ga, quay lung may; chua thay dung bac cua."
     },
     {
       "id": "S073",
       "cam": {
         "p": [
-          -7,
-          5.2,
-          36
+          3,
+          5.5,
+          29
         ],
         "l": [
-          -7.5,
-          3.8,
-          26
+          -9,
+          4,
+          22.5
         ],
-        "fov": 70
+        "fov": 65
       },
       "cam2": {
         "p": [
-          -7,
-          5.2,
-          35
+          3.5,
+          5.5,
+          29.2
         ],
         "l": [
-          -7.5,
-          3.8,
-          26
+          -9,
+          4,
+          22.5
         ],
-        "fov": 70
+        "fov": 65
       },
       "dien_vien": [
         {
           "ai": "GA",
           "pos": [
-            -8.6,
-            1.3,
-            25
+            -11,
+            0.4,
+            21
           ],
-          "ry_do": 55,
+          "ry_do": 80,
           "tu_the": "idle"
         },
         {
           "ai": "MAYOR",
           "pos": [
-            -7,
+            -7.5,
             0.4,
-            26
+            24
           ],
-          "ry_do": -80,
+          "ry_do": -130,
           "tu_the": "point"
         }
       ],
       "them": {},
-      "trang_thai": "tam",
-      "ghi_chu": "Hai nguoi dung gan va huong vao nhau; mat gan cham nhau, cot che va cua chua ro."
+      "trang_thai": "hong",
+      "ghi_chu": "Thi truong che mat Ga, thu tu va goc nhin chua dung."
     },
     {
       "id": "S074",
       "cam": {
         "p": [
-          -3,
-          4.7,
-          35
+          -3.5,
+          4.4,
+          27.5
         ],
         "l": [
-          -7.3,
-          3.7,
-          32.3
+          -6.8,
+          3.5,
+          24.8
         ],
-        "fov": 52
+        "fov": 48
       },
       "cam2": {
         "p": [
-          -3.4,
-          4.7,
-          34.7
+          -3.7,
+          4.4,
+          27.3
         ],
         "l": [
-          -7.3,
-          3.7,
-          32.3
+          -6.8,
+          3.5,
+          24.8
         ],
-        "fov": 52
+        "fov": 48
       },
       "dien_vien": [
         {
           "ai": "MAYOR",
           "pos": [
-            -8,
+            -7.5,
             0.4,
-            32
+            24
           ],
           "ry_do": 45,
           "tu_the": "hold",
@@ -1747,52 +2113,52 @@
         "props": {
           "dong_ho_quyt": {
             "at": [
-              -7,
-              3.6,
-              32.6
+              -6.5,
+              3.4,
+              24.7
             ],
             "ry": 0
           }
         }
       },
       "trang_thai": "hong",
-      "ghi_chu": "Dong ho nam ngang, tach tay va thieu xich; canh chua du can."
+      "ghi_chu": "Thieu tay va xich, dong ho khong treo doc."
     },
     {
       "id": "S075",
       "cam": {
         "p": [
-          -3,
+          -3.5,
           4.3,
-          35
+          28.5
         ],
         "l": [
-          -7.8,
-          3.3,
-          32
+          -7.9,
+          3.65,
+          24.4
         ],
-        "fov": 49
+        "fov": 56
       },
       "cam2": {
         "p": [
-          -3.3,
-          4.3,
-          34.7
+          -3.8,
+          4.25,
+          28.2
         ],
         "l": [
-          -7.8,
-          3.3,
-          32
+          -7.9,
+          3.65,
+          24.4
         ],
-        "fov": 49
+        "fov": 56
       },
       "dien_vien": [
         {
           "ai": "MAYOR",
           "pos": [
-            -8,
+            -7.5,
             0.4,
-            32
+            24
           ],
           "ry_do": 45,
           "tu_the": "hold",
@@ -1800,7 +2166,7 @@
           "pose": {
             "rightArm": {
               "x": -1.4,
-              "z": -0.5
+              "z": 0.4
             }
           }
         }
@@ -1811,63 +2177,63 @@
         }
       },
       "trang_thai": "hong",
-      "ghi_chu": "Can than ao va mot phan tay thi truong. Thieu mieng tui mo, tay chua ven tui va con lo cam."
+      "ghi_chu": "Tay khong cham tui; khong co mieng tui mo."
     },
     {
       "id": "S076",
       "cam": {
         "p": [
-          -7,
-          5.5,
-          43
+          -2,
+          6,
+          45
         ],
         "l": [
-          -5,
-          3.5,
-          25
+          -6.2,
+          3.7,
+          26
         ],
-        "fov": 76
+        "fov": 75
       },
       "cam2": {
         "p": [
-          -7.3,
-          5.5,
-          43.4
+          -2,
+          6,
+          46
         ],
         "l": [
-          -5,
-          3.5,
-          25
+          -6.2,
+          3.7,
+          26
         ],
-        "fov": 76
+        "fov": 75
       },
       "dien_vien": [
         {
           "ai": "GA",
           "pos": [
-            -10.8,
+            -10,
             0.4,
-            28
+            29
           ],
-          "ry_do": 90,
+          "ry_do": 75,
           "tu_the": "idle"
         },
         {
           "ai": "MAYOR",
           "pos": [
-            -6,
+            -5,
             0.4,
-            33
+            34
           ],
-          "ry_do": 180,
+          "ry_do": 170,
           "tu_the": "wave"
         },
         {
           "ai": "GUARD_A",
           "pos": [
-            -3,
+            -4,
             0.4,
-            23
+            22
           ],
           "ry_do": 0,
           "tu_the": "idle"
@@ -1875,58 +2241,58 @@
         {
           "ai": "GUARD_B",
           "pos": [
-            1.5,
+            1,
             0.4,
-            23
+            22
           ],
           "ry_do": 0,
           "tu_the": "idle"
         }
       ],
       "them": {},
-      "trang_thai": "hong",
-      "ghi_chu": "Thi truong quay lung, Ga o ria trai va hai linh tren pho. Ga bi cat, mot linh bi che, nha may khong thay."
+      "trang_thai": "tam",
+      "ghi_chu": "Ga bi vat chan mot phan; nha may va ong khoi khong thay."
     },
     {
       "id": "S077",
       "cam": {
         "p": [
-          -5,
-          5,
-          47
+          -4.8,
+          4.8,
+          44
         ],
         "l": [
-          -5.5,
+          -3.8,
           3.7,
-          23
+          22
         ],
-        "fov": 73
+        "fov": 68
       },
       "cam2": {
         "p": [
-          -5,
-          5,
-          43
+          -4.8,
+          4.8,
+          41
         ],
         "l": [
-          -5.5,
+          -3.8,
           3.7,
-          23
+          22
         ],
-        "fov": 73
+        "fov": 68
       },
       "dien_vien": [
         {
           "ai": "GA",
           "pos": [
-            -2.8,
+            -2,
             0.4,
-            21
+            23
           ],
           "pos2": [
-            -2.8,
+            -2,
             0.4,
-            17
+            19
           ],
           "ry_do": 180,
           "tu_the": "walk"
@@ -1949,14 +2315,14 @@
         {
           "ai": "GUARD_A",
           "pos": [
-            -9,
+            -8.5,
             0.4,
-            34
+            32
           ],
           "pos2": [
-            -9,
+            -8.5,
             0.4,
-            30
+            28
           ],
           "ry_do": 180,
           "tu_the": "walk"
@@ -1964,70 +2330,70 @@
         {
           "ai": "GUARD_B",
           "pos": [
-            -2,
+            -0.5,
             0.4,
-            34
+            32
           ],
           "pos2": [
-            -2,
+            -0.5,
             0.4,
-            30
+            28
           ],
           "ry_do": 180,
           "tu_the": "walk"
         }
       ],
       "them": {},
-      "trang_thai": "hong",
-      "ghi_chu": "Nhom di tren pho nhin tu sau. Ga bi linh che, nha may khong thay, hai linh bi cat mep."
+      "trang_thai": "tam",
+      "ghi_chu": "Thieu nha may, ong khoi va hang rao."
     },
     {
       "id": "S092",
       "cam": {
         "p": [
-          -2,
+          -4,
           7,
-          -68
+          -78
         ],
         "l": [
-          -13,
+          -13.7,
           5.8,
-          -68
+          -67.5
         ],
-        "fov": 68
+        "fov": 75
       },
       "cam2": {
         "p": [
-          -1.7,
+          -3.6,
           7,
-          -68
+          -78.3
         ],
         "l": [
-          -13,
+          -13.7,
           5.8,
-          -68
+          -67.5
         ],
-        "fov": 68
+        "fov": 75
       },
       "dien_vien": [
         {
           "ai": "BACH",
           "pos": [
-            -11.5,
+            -12,
             2.8,
-            -66.2
+            -66
           ],
-          "ry_do": 180,
-          "tu_the": "wave"
+          "ry_do": -140,
+          "tu_the": "hold"
         },
         {
           "ai": "MAYOR",
           "pos": [
             -15.2,
             2.8,
-            -69
+            -69.2
           ],
-          "ry_do": 55,
+          "ry_do": 45,
           "tu_the": "idle"
         }
       ],
@@ -2036,8 +2402,8 @@
           "cuaThiTruong": 1
         }
       },
-      "trang_thai": "tam",
-      "ghi_chu": "Bach va thi truong doi dien tai cua; Bach bi cat mep, mat nghieng kho doc."
+      "trang_thai": "hong",
+      "ghi_chu": "Cot che gan het thi truong, hai mat chua cung ro."
     },
     {
       "id": "S093",
@@ -2075,7 +2441,7 @@
             2.8,
             -66.2
           ],
-          "ry_do": 160,
+          "ry_do": 165,
           "tu_the": "idle",
           "pose": {
             "rightArm": {
@@ -2092,7 +2458,7 @@
         }
       },
       "trang_thai": "tam",
-      "ghi_chu": "Can Bach nhin sang phai; toc va kinh che mat, tay chua cham nguc."
+      "ghi_chu": "Toc che mot phan kinh va mat."
     }
   ]
 }

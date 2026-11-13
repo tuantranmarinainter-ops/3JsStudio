@@ -155,6 +155,9 @@ export default function build(g, e, H) {
       for (let j = 0; j < 3; j++) breadAt(loaves, ox - 10.4 + j * 1.0, y + 0.22, -12.0, lv * 11 + j + 40); });
     // quầy gỗ: mặt cao 3,15; HỐC dưới quầy x 3..6.6 xuyên suốt (hoc_ket_banh)
     bb(boxes, 18, 0.4, 3.6, ox + 0.75, 2.75, -5.5, '#9a6a3a'); bb(boxes, 11, 2.75, 2.9, ox - 2.5, 0, -5.5, WOOD); bb(boxes, 2.9, 2.75, 2.9, ox + 8.05, 0, -5.5, WOOD);
+    // lớp bột mỏng trong hốc + ô vuông SẠCH ở giữa (chỗ két vừa mất, s005): 4 dải bột quanh ô 1,6 × 1,6, thêm vệt bột tràn ra trước hốc
+    for (const [w, d, x, z] of [[1.0, 2.9, 3.5, -5.5], [1.0, 2.9, 6.1, -5.5], [1.6, 0.65, 4.8, -4.375], [1.6, 0.65, 4.8, -6.625], [2.6, 0.7, 4.8, -3.7]]) bb(boxes, w, 0.03, d, ox + x, 0.005, z, '#efe7d8');
+    bb(boxes, 1.6, 0.012, 1.6, ox + 4.8, 0.004, -5.5, '#5a3a22');
     bb(boxes, 11.2, 0.2, 0.15, ox - 2.5, 1.55, -4.0, '#6e4423'); bb(boxes, 11.2, 0.2, 0.15, ox - 2.5, 0.5, -4.0, '#6e4423'); bb(boxes, 2.9, 0.2, 0.15, ox + 8.05, 1.55, -4.0, '#6e4423');
     // trên quầy: giỏ + ổ bánh + sừng bò
     basket(boxes, ox - 5.5, 3.15, -5.5, 2.6, 1.8); for (let j = 0; j < 3; j++) breadAt(loaves, ox - 6.2 + j * 0.9, 4.3, -5.5, j + 60);

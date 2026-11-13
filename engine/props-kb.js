@@ -815,7 +815,8 @@ export function buildPropsKB(THREE, ten = [], { K = null, dat = {}, warn = (m) =
       n2.position.y = 1.25; n2.name = name + '_giu_cho_nap'; o.add(n2);
     }
     const st = dat[name]?.stand;
-    if (st === 'table') { const t = PROPS_KB.ban_bay(THREE); t.name = name + '_ban_bay'; root.add(t); o.position.y = STAND_H; }
+    // đồ CẦM TAY (hold: true) không kèm bàn bày — trước đây bàn bay theo tay (ep003 s010–s013)
+    if (st === 'table' && !p?.hold) { const t = PROPS_KB.ban_bay(THREE); t.name = name + '_ban_bay'; root.add(t); o.position.y = STAND_H; }
     if (st === 'easel') {
       const e = new THREE.Group(); e.name = name + '_gia_do';
       for (const x of [-1.2, 1.2]) { const l = new THREE.Mesh(new THREE.BoxGeometry(0.18, EASEL_H + 1.2, 0.18), new THREE.MeshStandardMaterial({ color: '#5d4037', roughness: 0.8 })); l.position.set(x, (EASEL_H + 1.2) / 2, -0.12); l.name = name + '_chan_gia'; e.add(l); }
