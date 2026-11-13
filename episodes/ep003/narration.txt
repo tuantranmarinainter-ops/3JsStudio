@@ -1,0 +1,65 @@
+# Ở thị trấn này — Món đồ biến mất trong phòng khóa kín — lời kể từ storyboard (storyboard.json). @at = giây shot đầu tiên của câu bắt đầu (tools/tts.py canh đúng mốc).
+@source capcut
+@narrator BV075_streaming
+
+@at 0.05 Ở thị trấn này, đồ đạc liên tục biến mất, dù căn phòng đã được khóa kín.
+@at 4.27 Ban đầu là két tiền của chú bán bánh.
+@at 6.35 Rồi tới nhẫn cưới của cô thợ may.
+@at 8.33 Ngay cả ông Bách, người hàng xóm thân thiện hay phát gấu bông miễn phí cho cả thị trấn, cũng báo mất đồ.
+@at 13.83 Nhà ông còn báo mất nhiều nhất.
+@at 15.50 Chỉ trong một tuần, cả thị trấn đã có hàng chục nhà báo mất đồ.
+@at 19.04 Còn tôi là Gà.
+@at 20.16 Nhà tôi sát tiệm ông Bách.
+@at 21.59 Rồi một sáng, chiếc dây chuyền bà để lại cũng biến mất.
+@at 24.55 Đó là món tôi quý nhất.
+@at 25.96 Tôi quyết điều tra vụ mất cắp này.
+@at 28.05 Tối đó, tôi đặt cái đồng hồ lên chỗ sợi dây chuyền rồi giả vờ ngủ.
+@at 32.13 Qua tấm gương đối diện giường, tôi vẫn thấy rõ cái kệ.
+@at 35.35 Đợi tới lúc tôi sắp ngủ thật, trong gương có thứ gì đó ngồi dậy.
+@at 38.96 Là Bắp.
+@at 39.64 Con gấu bông vẫn nằm ở cuối giường tôi.
+@at 41.93 Nó trèo lên kệ, ôm cái đồng hồ rồi kéo cuốn sách che đúng chỗ vừa lấy đồ.
+@at 46.49 Tôi bật dậy.
+@at 47.37 Bắp biến mất ngay trước mắt.
+@at 48.93 Tới lúc tôi mở được cửa sổ, ngoài đường chẳng còn thấy bóng nó đâu.
+@at 53.05 Tối hôm sau, tôi đặt một chiếc nhẫn lên kệ.
+@at 55.74 Lần này, tôi nấp sẵn ngoài ban công.
+@at 58.23 Bắp chộp chiếc nhẫn rồi biến mất.
+@at 59.98 Từ ban công, tôi thấy nó xuất hiện trên mái hiên nhà đối diện.
+@at 63.51 Tôi chạy xuống đường bám theo.
+@at 65.20 Qua ngã ba, hai con gấu khác nhập vào.
+@at 67.78 Một con ôm ví, một con kéo theo túi tiền.
+@at 70.64 Cả ba biến mất sau hàng rào của một nhà máy cuối phố.
+@at 74.05 Tôi đứng lên thùng gỗ, ghé mắt qua cửa kính.
+@at 76.93 Bắp thả chiếc nhẫn xuống băng chuyền.
+@at 78.88 Đứng cuối băng, gom đồ vào thùng, là ông Bách.
+@at 82.02 Sau lưng ông là cả một dãy gấu mới may xong.
+@at 84.75 Ông chỉ vào tấm bản đồ trên tường.
+@at 86.80 Nhà nào có gấu rồi thì đánh dấu.
+@at 88.91 Mai phát tiếp mấy nhà còn lại.
+@at 90.72 Dưới băng chuyền là két tiền của chú bán bánh.
+@at 93.17 Trên nắp két, tôi thấy sợi dây chuyền của bà.
+@at 95.95 Tôi chạy thẳng tới nhà thị trưởng.
+@at 98.05 Tôi bảo thị trưởng: Chú qua nhìn một lần thôi!
+@at 100.79 Chú lắc đầu.
+@at 101.72 Báo đời báo đốm.
+@at 102.90 Về ngủ đi!
+@at 103.89 Sáng hôm sau, chính chú chạy qua tìm tôi.
+@at 106.55 Chiếc đồng hồ quả quýt cha để lại cho chú đã biến mất.
+@at 109.30 Lần này, chú gọi hai lính gác đi cùng tôi.
+@at 111.99 Qua cửa kính nhà máy, chú thấy ông Bách nhặt chiếc đồng hồ của mình khỏi băng chuyền.
+@at 116.16 Chú quay sang hai lính gác.
+@at 117.71 Mở cửa kho.
+@at 119.05 Lính gác mở cửa kho.
+@at 120.23 Thị trưởng nhìn sang chồng thùng in tên tiệm ông Bách.
+@at 122.17 Ủa, đây là mấy thùng sáng nay ông báo mất mà?
+@at 124.34 Ông Bách im luôn.
+@at 125.23 Tôi mới hiểu.
+@at 125.90 Cứ mỗi lần cả thị trấn mất đồ, ông lại giấu thêm vài thùng hàng của mình rồi đi báo mất.
+@at 129.46 Ai mà nghi người than mất nhiều nhất chứ?
+@at 131.05 Sáng hôm sau, tôi lấy lại sợi dây chuyền.
+@at 133.06 Tôi cất dây chuyền vào két.
+@at 134.17 Vừa quay lưng, Bắp đã ôm nguyên cái két.
+@at 136.10 Bắp.
+@at 136.55 Nó đặt xuống liền.
+@at 137.37 Tôi gõ nhẹ lên đầu Bắp một cái.

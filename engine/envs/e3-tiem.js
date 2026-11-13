@@ -1,0 +1,226 @@
+// Bối cảnh 'e3-tiem' — HAI GIAN NỘI THẤT NHỎ của tập 3, đặt cách nhau 100 stud theo trục X (ngoài tầm nhìn của nhau):
+//   TIỆM BÁNH (set `bakery`, gốc x=0) và TIỆM MAY (set `tailor`, gốc x=100). Mỗi gian kín 30×26×12 stud (x ±15, z ±13 quanh gốc, trần y=12), dựng bằng khối + canvas.
+// Sửa bối cảnh này CHỈ trong file này. Được episodes/<ep>/index.html nạp động khi shot ghi `env: "e3-tiem"` → build(g, e, H).
+// Thiết kế: episodes/ep003/nguon/thiet-ke-hinh.md §3 (bakery, tailor) + khung shot S004–S007. Quy ước: BẮC = −Z (tường sau), ĐÔNG = +X, camera/khách đứng phía +Z (nam).
+//
+//   TIỆM BÁNH (gốc 0)                                           TIỆM MAY (gốc 100)
+//   tường bắc z=−13: kệ 3 tầng bánh (x −9.5) · biển ổ bánh (x −1)    tường bắc: kệ cao góc phải (x 109.5) có hộp mây/giấy
+//   quầy gỗ x −8..9.5, z −5.5, mặt cao 3,15; HỐC dưới quầy x 3..6.6      bàn gỗ x 98.5..107.5, z −7 (mặt cao 2,8), 3 cuộn chỉ tím + 1 cuộn kem
+//   bàn bày bánh (x −6, z −0.5) · cửa sổ tường đông (z −6)               ma-nơ-canh kem (x 110, z −10.5) · cửa sổ tường tây (z −5)
+//   cửa + cửa kính mặt tiền tường nam                                    cửa gỗ tường nam (x 107)
+//
+// ĐIỂM CÓ TÊN (toạ độ env; y = mặt đứng/mặt đặt) — export TIEM_DIEM:
+//   banh_quay [-1,0,-8.2]   chỗ chú bán bánh đứng sau quầy (mặt về +z)       banh_giua [0,0,2]   giữa gian phía khách
+//   may_ban   [102,0,-9.9]  chỗ cô thợ may đứng sau bàn (mặt về +z)          may_giua  [100,0,2]  giữa gian phía khách
+// SLOT ĐẠO CỤ (PROP_SLOTS.byName; [x,y,z,ry]): hoc_ket_banh = hốc trống dưới quầy [4.8,0,-5.5] (két đã mất; chỗ có vệt bột sạch);
+//   hop_nhan = trên bàn tiệm may [104.5,2.8,-7]. (Két tiền, hộp nhẫn do hệ đạo cụ đặt — env không dựng.)
+// ĐÊM / SÁNG: env tự đọc ctx.light (shot time:'dem' → 'bedNight', còn lại → 'interior'): đêm = đèn treo hổ phách + cửa sổ xanh lam; sáng = nắng xanh lục qua cửa sổ.
+//   Đèn điểm dùng chung bám theo gian mà camera đang đứng (camera x < 50 → tiệm bánh, ngược lại → tiệm may).
+export const LIGHT = 'interior';
+export const ASSETS = [];
+export const TIEM_DIEM = { banh_quay: [-1, 0, -8.2], banh_giua: [0, 0, 2], may_ban: [102, 0, -9.9], may_giua: [100, 0, 2] };
+export const PROP_SLOTS = {
+  byName: { hoc_ket_banh: [4.8, 0, -5.5, 0], hop_nhan: [104.5, 2.8, -7, 0] },
+  floor: [[-8, 0.05, 3, 0], [108, 0.05, 3, 0]], wall: [[-6, 7, -12.9, 0], [106, 7, -12.9, 0]],
+  camMax: 18,
+};
+
+export default function build(g, e, H) {
+  const { ganTang, THREE, K, hash, LIGHTS, scene, stage } = H;
+  e.skybox = null; e.skyboxNight = null;
+  e.diem = TIEM_DIEM;
+  const R = e.room = new THREE.Group(); R.name = 'e3_tiem_room'; g.add(R);
+  const W = 30, D = 26, HH = 12, HX = W / 2, HZ = D / 2;
+  const grp = (name, tang) => { const o = new THREE.Group(); o.name = name; R.add(ganTang(o, tang)); return o; };
+  const F = grp('tiem_vo', 'back'), mid = grp('tiem_do_go', 'mid'), front = grp('tiem_do_truoc', 'front');
+  const std = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.85, ...o });
+  const BOX = new THREE.BoxGeometry(1, 1, 1), SPH = new THREE.SphereGeometry(1, 12, 8), CYL = new THREE.CylinderGeometry(1, 1, 1, 14);
+  const ARC = new THREE.TorusGeometry(0.5, 0.2, 6, 10, Math.PI);   // sừng bò (croissant)
+  const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _eu = new THREE.Euler(), _p = new THREE.Vector3(), _s = new THREE.Vector3(), _c = new THREE.Color();
+  const inst = (parent, name, geo, material, items, shadow = true) => {
+    const im = new THREE.InstancedMesh(geo, material, items.length); im.name = name;
+    items.forEach((it, i) => { _eu.set(...(it.r || [0, 0, 0])); _q.setFromEuler(_eu); _p.set(...it.p); _s.set(...(it.s || [1, 1, 1])); im.setMatrixAt(i, _m.compose(_p, _q, _s)); if (it.c) im.setColorAt(i, _c.set(it.c)); });
+    im.instanceMatrix.needsUpdate = true; if (im.instanceColor) im.instanceColor.needsUpdate = true;
+    im.castShadow = shadow; im.receiveShadow = true; im.computeBoundingBox?.(); im.computeBoundingSphere?.(); parent.add(im); return im;
+  };
+  const white = std('#ffffff');
+  const bb = (arr, w, h, d, x, yb, z, c, ry = 0) => arr.push({ p: [x, yb + h / 2, z], s: [w, h, d], r: [0, ry, 0], c });
+  const cyl = (arr, r, h, x, yb, z, c, rot) => arr.push({ p: [x, yb + h / 2, z], s: [r, h, r], r: rot || [0, 0, 0], c });
+  const canvasTex = (w, h, draw) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
+  const WOOD = '#8A5A33', CREAM = '#E8D8C0';
+
+  // ---- texture ----
+  // tường: UV của ShapeGeometry = đơn vị stud (x, y) → mỗi ô lặp rộng 1,2 stud × cao 12 stud (canvas 128×1024; đáy canvas = chân tường)
+  const wallTex = (draw) => { const t = canvasTex(128, 1024, draw); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(1 / 1.2, 1 / HH); return t; };
+  const sy = (c, y) => 1024 * (1 - y / HH);   // y stud → toạ độ canvas
+  const bakeryWall = wallTex((c, w, h) => {
+    c.fillStyle = '#E8D3AE'; c.fillRect(0, 0, w, h);
+    c.fillStyle = '#8A5A33'; c.fillRect(0, sy(c, 3.4), w, h - sy(c, 3.4)); c.fillStyle = '#6e4423'; c.fillRect(0, sy(c, 3.65), w, sy(c, 3.4) - sy(c, 3.65));
+    c.strokeStyle = 'rgba(50,28,12,0.7)'; c.lineWidth = 3; c.beginPath(); c.moveTo(1, sy(c, 3.4)); c.lineTo(1, h); c.moveTo(w / 2, sy(c, 3.4)); c.lineTo(w / 2, h); c.stroke();
+    c.fillStyle = '#c8a26e'; c.fillRect(0, 0, w, sy(c, 11.4)); c.fillStyle = '#d9bf90'; c.fillRect(0, sy(c, 11.4), w, 8);
+  });
+  const tailorWall = wallTex((c, w, h) => {
+    c.fillStyle = '#46576C'; c.fillRect(0, 0, w, h); c.strokeStyle = '#34445a'; c.lineWidth = 4; c.beginPath(); c.moveTo(2, 0); c.lineTo(2, h); c.stroke();
+    c.strokeStyle = 'rgba(255,255,255,0.05)'; c.lineWidth = 3; c.beginPath(); c.moveTo(w / 2, 0); c.lineTo(w / 2, h); c.stroke();
+    c.fillStyle = CREAM; c.fillRect(0, sy(c, 0.9), w, h - sy(c, 0.9)); c.fillStyle = '#cdbd9f'; c.fillRect(0, sy(c, 0.95), w, 6); c.fillStyle = CREAM; c.fillRect(0, 0, w, sy(c, 11.4));
+  });
+  const floorTex = (base, vary) => canvasTex(1024, 1024, (c, w, h) => {   // ván sàn chạy theo trục z
+    const n = 15, pw = w / n; c.fillStyle = base; c.fillRect(0, 0, w, h);
+    for (let i = 0; i < n; i++) { let y = 0, k = 0; while (y < h) { const len = (0.3 + hash(i * 37 + k, 17) * 0.7) * h * 0.7; const sh = 0.88 + hash(i * 37 + k, 18) * 0.24; const [r, gg, b] = vary; c.fillStyle = `rgb(${Math.round(r * sh)},${Math.round(gg * sh)},${Math.round(b * sh)})`; c.fillRect(i * pw + 1, y, pw - 2, len - 2); y += len; k++; } }
+    c.strokeStyle = 'rgba(40,22,10,0.5)'; c.lineWidth = 2; for (let i = 0; i <= n; i++) { c.beginPath(); c.moveTo(i * pw, 0); c.lineTo(i * pw, h); c.stroke(); }
+  });
+  const softTex = (rgb) => canvasTex(128, 128, (c, w, h) => { const gr = c.createRadialGradient(w / 2, h / 2, 2, w / 2, h / 2, w / 2); gr.addColorStop(0, `rgba(${rgb},1)`); gr.addColorStop(0.5, `rgba(${rgb},0.45)`); gr.addColorStop(1, `rgba(${rgb},0)`); c.fillStyle = gr; c.fillRect(0, 0, w, h); });
+  const viewTexOf = (night) => canvasTex(512, 512, (c, w, h) => {   // cảnh ngoài cửa sổ: sân cây xanh (ngày) / phố xanh lam có cửa sổ ấm (đêm)
+    const gr = c.createLinearGradient(0, 0, 0, h);
+    if (night) { gr.addColorStop(0, '#0a1034'); gr.addColorStop(1, '#2c3b78'); } else { gr.addColorStop(0, '#8fd0f5'); gr.addColorStop(1, '#e8f6e0'); }
+    c.fillStyle = gr; c.fillRect(0, 0, w, h);
+    if (night) { c.fillStyle = '#e8eeff'; for (let i = 0; i < 40; i++) c.fillRect(hash(i, 3) * w, hash(i, 4) * h * 0.45, 2, 2); c.fillStyle = '#CFE0FF'; c.beginPath(); c.arc(w * 0.78, h * 0.18, 24, 0, 7); c.fill(); }
+    for (let i = 0; i < 8; i++) { const bw = 50 + hash(i, 5) * 50, bh = 80 + hash(i, 6) * 120, bx = i * 70 - 20; c.fillStyle = night ? '#0d1634' : ['#d7c3a6', '#c9d3e0', '#e3cfcf'][i % 3]; c.fillRect(bx, h - bh - 50, bw, bh + 50);
+      for (let wy = 0; wy < 4; wy++) { const lit = hash(i * 7 + wy, 8) > 0.55; c.fillStyle = night ? (lit ? '#ffb347' : '#16224a') : '#a8cbe8'; c.fillRect(bx + 10, h - bh - 38 + wy * 26, 12, 12); c.fillRect(bx + bw - 24, h - bh - 38 + wy * 26, 12, 12); } }
+    for (let i = 0; i < 12; i++) { const tx = hash(i, 9) * w, tr = 28 + hash(i, 10) * 26, ty = h - 70 + hash(i, 11) * 40; c.fillStyle = night ? '#0a2218' : ['#4E7A32', '#5d9040', '#3f6a2a'][i % 3]; c.beginPath(); c.arc(tx, ty, tr, 0, 7); c.fill(); }
+    c.fillStyle = night ? '#141a30' : '#6fa054'; c.fillRect(0, h - 30, w, 30);
+  });
+  const viewNight = viewTexOf(true), viewDay = viewTexOf(false), viewMats = [], lampMats = [], patchMats = [];
+  const viewMat = () => { const m = new THREE.MeshBasicMaterial({ map: viewDay, fog: false }); viewMats.push(m); return m; };
+  const patchMat = new THREE.MeshBasicMaterial({ map: softTex('255,255,255'), color: '#fff0c0', transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false, fog: false });
+
+  // ---- vỏ gian: tường có lỗ, sàn, trần ----
+  const wallGeo = (len, holes) => {
+    const sh = new THREE.Shape(); sh.moveTo(-len / 2 - 2, 0); sh.lineTo(len / 2 + 2, 0); sh.lineTo(len / 2 + 2, HH); sh.lineTo(-len / 2 - 2, HH); sh.closePath();
+    for (const h of holes) { const p = new THREE.Path(); p.moveTo(h.c - h.hw, h.y0); p.lineTo(h.c - h.hw, h.y1); p.lineTo(h.c + h.hw, h.y1); p.lineTo(h.c + h.hw, h.y0); p.closePath(); sh.holes.push(p); }
+    return new THREE.ShapeGeometry(sh);
+  };
+  // cục bộ → thế giới: bắc (x→x) · nam (x→−x) · tây (x→−z) · đông (x→+z)
+  const SIDE = { north: { p: [0, -HZ], ry: 0, len: W }, south: { p: [0, HZ], ry: Math.PI, len: W }, west: { p: [-HX, 0], ry: Math.PI / 2, len: D }, east: { p: [HX, 0], ry: -Math.PI / 2, len: D } };
+  const winFrame = (gw, h, color, cols, rows, view) => {   // khung cửa sổ + chấn song + cảnh ngoài + kính
+    const cx = h.c, wd = h.hw * 2, ht = h.y1 - h.y0, it = [];
+    bb(it, wd + 1.0, 0.45, 0.8, cx, h.y0 - 0.45, 0.35, color); bb(it, wd + 0.8, 0.4, 0.5, cx, h.y1, 0.15, color);
+    bb(it, 0.5, ht + 0.4, 0.5, cx - h.hw - 0.2, h.y0 - 0.2, 0.15, color); bb(it, 0.5, ht + 0.4, 0.5, cx + h.hw + 0.2, h.y0 - 0.2, 0.15, color);
+    for (let i = 1; i < cols; i++) bb(it, 0.22, ht, 0.3, cx - h.hw + i * wd / cols, h.y0, 0.0, color);
+    for (let i = 1; i < rows; i++) bb(it, wd, 0.22, 0.3, cx, h.y0 + i * ht / rows - 0.11, 0.0, color);
+    inst(gw, 'tiem_khung_cua_so', BOX, white, it, false);
+    const out = new THREE.Mesh(new THREE.PlaneGeometry(wd + 10, ht + 10), viewMat()); out.position.set(cx, (h.y0 + h.y1) / 2, -5); out.name = 'tiem_canh_ngoai'; gw.add(out);
+    const glass = new THREE.Mesh(new THREE.PlaneGeometry(wd, ht), new THREE.MeshBasicMaterial({ color: '#dff0ff', transparent: true, opacity: 0.1, depthWrite: false })); glass.position.set(cx, (h.y0 + h.y1) / 2, 0.03); glass.name = 'tiem_kinh'; gw.add(glass);
+  };
+  const doorFrame = (gw, h, frameC, leafC, glass) => {
+    const c = h.c, it = [];
+    bb(it, 0.5, h.y1 + 0.5, 0.6, c - h.hw - 0.25, 0, 0.1, frameC); bb(it, 0.5, h.y1 + 0.5, 0.6, c + h.hw + 0.25, 0, 0.1, frameC); bb(it, h.hw * 2 + 1, 0.5, 0.6, c, h.y1, 0.1, frameC);
+    inst(gw, 'tiem_khung_cua', BOX, white, it, false);
+    K.box(h.hw * 2, h.y1 - 0.25, 0.3, leafC, c, (h.y1 - 0.25) / 2 + 0.25, -0.05, 'tiem_canh_cua', gw);
+    const dk = '#' + new THREE.Color(leafC).multiplyScalar(0.78).getHexString();
+    if (glass) { K.box(h.hw * 1.4, h.y1 * 0.45, 0.1, '#b9d8ea', c, h.y1 * 0.64, 0.12, 'tiem_cua_kinh', gw); K.box(h.hw * 1.6, 2.0, 0.1, dk, c, 1.9, 0.12, 'tiem_cua_o', gw); }
+    else { K.box(h.hw * 1.5, 2.6, 0.1, dk, c, 5.3, 0.12, 'tiem_cua_o', gw); K.box(h.hw * 1.5, 2.6, 0.1, dk, c, 2.0, 0.12, 'tiem_cua_o', gw); }
+    K.box(0.4, 0.4, 0.4, '#2a2f38', c - h.hw + 0.7, 3.6, 0.35, 'tiem_nam_cua', gw);
+  };
+  const shell = (P) => {
+    const ox = P.ox, S = grp('tiem_vo_' + P.name, 'back'); F.add(S);
+    for (const [side, Wd] of Object.entries(SIDE)) {
+      const gw = new THREE.Group(); gw.name = `tiem_tuong_${P.name}_${side}`; gw.position.set(ox + Wd.p[0], 0, Wd.p[1]); gw.rotation.y = Wd.ry; S.add(gw);
+      const holes = P.holes[side] || [];
+      const wm = new THREE.Mesh(wallGeo(Wd.len, holes), P.wallMat); wm.name = 'tiem_tuong'; wm.receiveShadow = true; gw.add(wm);
+      for (const h of holes) (h.door ? doorFrame(gw, h, P.frameC, P.doorC, P.doorGlass) : winFrame(gw, h, P.winC, h.cols || 2, h.rows || 3));
+      if (P.extra?.[side]) P.extra[side](gw);
+    }
+    const fl = new THREE.Mesh(new THREE.PlaneGeometry(W, D), new THREE.MeshStandardMaterial({ map: P.floorTex, roughness: 0.7 })); fl.rotation.x = -Math.PI / 2; fl.position.set(ox, 0.01, 0); fl.name = 'tiem_san'; fl.receiveShadow = true; S.add(fl);
+    const ce = new THREE.Mesh(new THREE.PlaneGeometry(W, D), std(P.ceil, { emissive: new THREE.Color('#8a6a44'), emissiveIntensity: 0.5 })); ce.rotation.x = Math.PI / 2; ce.position.set(ox, HH, 0); ce.name = 'tiem_tran'; S.add(ce);
+    for (const [wx, wz, w0, d0] of P.patches || []) { const m = new THREE.Mesh(new THREE.PlaneGeometry(w0, d0), patchMat); m.rotation.x = -Math.PI / 2; m.position.set(ox + wx, 0.06, wz); m.name = 'tiem_vet_sang'; S.add(m); }
+  };
+  const lamp = (parent, x, z) => {   // đèn treo chụp nón hổ phách
+    inst(parent, 'tiem_day_den', BOX, white, [{ p: [x, 11.0, z], s: [0.12, 2.0, 0.12], c: '#222' }], false);
+    const lm = new THREE.MeshStandardMaterial({ color: '#3b3733', emissive: new THREE.Color('#ffd27a'), emissiveIntensity: 0.4, side: THREE.DoubleSide }); lampMats.push(lm);
+    inst(parent, 'tiem_den_treo', new THREE.CylinderGeometry(0.5, 1.8, 1.3, 14, 1, true), lm, [{ p: [x, 9.4, z] }], false);
+    inst(parent, 'tiem_den_bong', SPH, new THREE.MeshBasicMaterial({ color: '#fff3cc' }), [{ p: [x, 9.0, z], s: [0.45, 0.45, 0.45] }], false);
+  };
+  const BR = ['#d9964a', '#c47a35', '#e8b66a', '#b86a2c', '#C98038'];
+  const breadAt = (loaves, x, y, z, i, s = 1) => loaves.push({ p: [x, y, z], s: [0.95 * s, 0.5 * s, 0.65 * s], r: [0, hash(i, 91) * 3, 0], c: BR[i % 5] });
+  const basket = (boxes, x, yb, z, w = 2.2, d = 1.6) => { bb(boxes, w, 0.8, d, x, yb, z, '#B8864A'); bb(boxes, w + 0.2, 0.14, d + 0.2, x, yb + 0.8, z, '#a07038'); };
+
+  // ================= TIỆM BÁNH (gốc x=0) =================
+  { const ox = 0, boxes = [], loaves = [], arcs = [], longs = [];
+    const P = { name: 'banh', ox, wallMat: std('#ffffff', { map: bakeryWall, roughness: 0.9 }), floorTex: floorTex('#9a6c3e', [168, 122, 74]), ceil: '#f4e4c4', winC: WOOD, frameC: '#6e4423', doorC: '#8A5A33', doorGlass: true,
+      holes: { east: [{ c: -6, hw: 3.6, y0: 3.4, y1: 9.4, cols: 2, rows: 4 }], south: [{ c: 8, hw: 2.2, y0: 0, y1: 7.6, door: true }, { c: -5, hw: 4.5, y0: 3.2, y1: 9, cols: 4, rows: 3 }] },
+      patches: [[11.5, -6, 6, 8]],
+      extra: { north: (gw) => {   // biển ổ bánh (x −1, y 8.8) + khung
+        const tex = canvasTex(1024, 576, (c, w, h) => { c.clearRect(0, 0, w, h); const sc = (x, y, rx, ry) => { c.beginPath(); c.ellipse(x, y, rx, ry, 0, 0, 7); c.fill(); };
+          c.fillStyle = '#7A4A2A'; sc(w / 2, h / 2, w * 0.43, h * 0.4); for (let i = 0; i < 10; i++) { const a = i / 10 * 6.283; sc(w / 2 + Math.cos(a) * w * 0.42, h / 2 + Math.sin(a) * h * 0.39, 62, 56); } c.fillRect(w * 0.1, h * 0.12, w * 0.8, h * 0.76);
+          c.strokeStyle = '#a87040'; c.lineWidth = 8; c.strokeRect(w * 0.1 + 14, h * 0.12 + 14, w * 0.8 - 28, h * 0.76 - 28);
+          c.fillStyle = '#E0A030'; c.beginPath(); c.ellipse(w / 2, h / 2, w * 0.27, h * 0.2, -0.35, 0, 7); c.fill(); c.strokeStyle = '#7A4A2A'; c.lineWidth = 12; for (let k = -1; k <= 1; k++) { c.beginPath(); c.moveTo(w / 2 + k * 80 - 30, h / 2 - 60 + k * 14); c.lineTo(w / 2 + k * 80 + 20, h / 2 + 50 + k * 14); c.stroke(); } });
+        const pm = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 3.6), new THREE.MeshStandardMaterial({ map: tex, transparent: true, alphaTest: 0.5, roughness: 0.8 })); pm.position.set(-1, 8.8, 0.1); pm.name = 'tiem_bien_o_banh'; gw.add(pm);
+      } } };
+    shell(P);
+    // kệ 3 tầng bánh ở tường bắc (trái), baskets + ổ bánh + bánh sừng bò
+    bb(boxes, 0.4, 7.6, 1.8, ox - 13.6, 0.4, -12.1, '#8a5a33'); bb(boxes, 0.4, 7.6, 1.8, ox - 9.5, 0.4, -12.1, '#8a5a33'); bb(boxes, 0.4, 7.6, 1.8, ox - 5.4, 0.4, -12.1, '#8a5a33');
+    [3.4, 6.0, 8.6].forEach((y, lv) => { bb(boxes, 8.6, 0.35, 1.9, ox - 9.5, y - 0.35, -12.1, '#a8703c');
+      [-12.4, -7.4].forEach((bx, k) => { basket(boxes, ox + bx, y, -12.1, 3.0, 1.5); for (let j = 0; j < 3; j++) breadAt(loaves, ox + bx - 0.9 + j * 0.9, y + 1.15, -12.1, lv * 9 + k * 3 + j, 0.9); });
+      for (let j = 0; j < 3; j++) breadAt(loaves, ox - 10.4 + j * 1.0, y + 0.22, -12.0, lv * 11 + j + 40); });
+    // quầy gỗ: mặt cao 3,15; HỐC dưới quầy x 3..6.6 xuyên suốt (hoc_ket_banh)
+    bb(boxes, 18, 0.4, 3.6, ox + 0.75, 2.75, -5.5, '#9a6a3a'); bb(boxes, 11, 2.75, 2.9, ox - 2.5, 0, -5.5, WOOD); bb(boxes, 2.9, 2.75, 2.9, ox + 8.05, 0, -5.5, WOOD);
+    bb(boxes, 11.2, 0.2, 0.15, ox - 2.5, 1.55, -4.0, '#6e4423'); bb(boxes, 11.2, 0.2, 0.15, ox - 2.5, 0.5, -4.0, '#6e4423'); bb(boxes, 2.9, 0.2, 0.15, ox + 8.05, 1.55, -4.0, '#6e4423');
+    // trên quầy: giỏ + ổ bánh + sừng bò
+    basket(boxes, ox - 5.5, 3.15, -5.5, 2.6, 1.8); for (let j = 0; j < 3; j++) breadAt(loaves, ox - 6.2 + j * 0.9, 4.3, -5.5, j + 60);
+    basket(boxes, ox - 1.2, 3.15, -4.9, 2.6, 1.8); for (let j = 0; j < 3; j++) arcs.push({ p: [ox - 2.0 + j * 0.85, 4.45, -4.9], s: [1, 1, 1], r: [Math.PI / 2 * 0 - 0.4, 0.6 + j, 0], c: '#C98038' });
+    // bàn bày bánh bên khách (x −6, z −0.5): mặt cao 2,5 phủ khăn kem, 3 giỏ
+    bb(boxes, 7, 0.35, 2.6, ox - 6, 2.2, -0.5, '#a8703c'); bb(boxes, 7.3, 0.12, 2.9, ox - 6, 2.55, -0.5, '#f4ece0');
+    for (const [dx, dz] of [[-3.1, -1], [3.1, -1], [-3.1, 1], [3.1, 1]]) bb(boxes, 0.4, 2.2, 0.4, ox - 6 + dx, 0, -0.5 + dz, '#7a4528');
+    [[-8, 0.2], [-6, -0.8], [-4, 0.1]].forEach(([bx, dz], k) => { basket(boxes, ox + bx, 2.67, -0.5 + dz, 1.9, 1.5); for (let j = 0; j < 2; j++) breadAt(loaves, ox + bx - 0.45 + j * 0.9, 3.9, -0.5 + dz, 80 + k * 2 + j, 0.95); });
+    arcs.push({ p: [ox - 6.5, 3.95, -0.6], s: [1, 1, 1], r: [-0.3, 0.2, 0], c: '#C98038' }, { p: [ox - 4.4, 3.95, 0], s: [1, 1, 1], r: [-0.3, 1.8, 0], c: '#d08a40' });
+    // bánh mì dài dựng trong giỏ gần cửa sổ (đối trọng bên phải)
+    bb(boxes, 3.0, 1.3, 2.0, ox + 12.5, 0, 3.5, '#B8864A'); for (let j = 0; j < 4; j++) longs.push({ p: [ox + 11.7 + j * 0.55, 2.2, 3.5], s: [0.3, 1.9, 0.3], r: [0, 0, (j - 1.5) * 0.12], c: BR[1 + (j % 3)] });
+    inst(mid, 'tiem_banh_khoi_go', BOX, white, boxes); inst(mid, 'tiem_banh_o', SPH, white, loaves); inst(mid, 'tiem_banh_sung_bo', ARC, white, arcs); inst(mid, 'tiem_banh_dai', CYL, white, longs);
+    lamp(front, ox - 5, -2); lamp(front, ox + 5, -2);
+  }
+
+  // ================= TIỆM MAY (gốc x=100) =================
+  { const ox = 100, boxes = [], spools = [];
+    const P = { name: 'may', ox, wallMat: std('#ffffff', { map: tailorWall, roughness: 0.9 }), floorTex: floorTex('#7a5636', [120, 84, 52]), ceil: '#f4eadb', winC: CREAM, frameC: CREAM, doorC: '#7A4A28', doorGlass: false,
+      holes: { west: [{ c: 5, hw: 3.6, y0: 3.4, y1: 9.4, cols: 2, rows: 3 }], south: [{ c: -7, hw: 2.2, y0: 0, y1: 7.6, door: true }] },
+      patches: [[-11, -5, 6, 8]] };
+    shell(P);
+    // bàn gỗ (x 98.5..107.5, z −7, mặt cao 2,8) + 3 cuộn chỉ tím + 1 cuộn kem
+    bb(boxes, 9.4, 0.4, 4.0, ox + 3, 2.4, -7, '#8A5A33'); bb(boxes, 8.6, 0.8, 0.2, ox + 3, 1.6, -5.1, '#6e4423'); bb(boxes, 8.6, 0.8, 0.2, ox + 3, 1.6, -8.9, '#6e4423');
+    for (const [dx, dz] of [[-1.7, -1.6], [7.7, -1.6], [-1.7, 1.6], [7.7, 1.6]]) bb(boxes, 0.55, 2.4, 0.55, ox + dx, 0, -7 + dz, '#6e4423');
+    // tấm vải trải góc bàn + cuộn chỉ
+    bb(boxes, 3.0, 0.06, 2.0, ox + 0.8, 2.8, -7.2, '#D9C9A8');
+    [[0.2, -5.7, '#9A74B5'], [1.5, -5.4, '#9A74B5'], [2.7, -5.8, '#9A74B5']].forEach(([dx, z, c]) => { cyl(spools, 0.6, 1.6, ox + dx - 0.6, 2.8, z, c); cyl(spools, 0.78, 0.14, ox + dx - 0.6, 2.8, z, '#D9C9A8'); cyl(spools, 0.78, 0.14, ox + dx - 0.6, 4.26, z, '#D9C9A8'); });
+    cyl(spools, 0.5, 1.4, ox - 0.3, 2.8, -8.2, '#D9C9A8'); cyl(spools, 0.66, 0.12, ox - 0.3, 2.8, -8.2, '#c4b08a'); cyl(spools, 0.66, 0.12, ox - 0.3, 4.08, -8.2, '#c4b08a');
+    // kệ gỗ cao góc phải tường bắc (x 105..114, y 8) + hộp mây / hộp giấy kem
+    bb(boxes, 9.4, 0.4, 2.2, ox + 9.5, 7.8, -11.9, '#8A5A33'); bb(boxes, 0.3, 0.9, 1.6, ox + 6, 6.9, -12.1, '#6e4423'); bb(boxes, 0.3, 0.9, 1.6, ox + 13, 6.9, -12.1, '#6e4423');
+    [[6.8, '#B8864A', 2.4, 1.5], [9.4, '#D9C9A8', 2.2, 1.7], [12.0, '#B8864A', 2.0, 1.4]].forEach(([dx, c, w, h]) => { bb(boxes, w, h, 1.7, ox + dx + 1, 8.2, -11.9, c); bb(boxes, w + 0.15, 0.2, 1.85, ox + dx + 1, 8.2 + h, -11.9, c === '#B8864A' ? '#a07038' : '#c8b898'); });
+    bb(boxes, 1.8, 1.0, 1.4, ox + 7.5, 10.4, -11.9, '#D9C9A8'); bb(boxes, 2.0, 0.9, 1.5, ox + 11.2, 10.4, -11.9, '#B8864A');
+    // cuộn vải pastel trên giá tường đông (x 114.4)
+    bb(boxes, 0.5, 4.8, 5.4, ox + 14.6, 0, -2, '#8A5A33'); bb(boxes, 1.2, 0.2, 5.4, ox + 14.2, 2.4, -2, '#6e4423');
+    [['#9A74B5', 3.4], ['#D9C9A8', 3.4], ['#d8a0b4', 3.4], ['#7fa0c4', 4.7], ['#e8d28a', 4.7]].forEach(([c, y], i) => cyl(spools, 0.55, 3.8, ox + 14.1, y - 0.6, -3.7 + i * 0.95 - (y > 4 ? 0.5 : 0), c, [Math.PI / 2, 0, 0]));
+    inst(mid, 'tiem_may_khoi_go', BOX, white, boxes); inst(mid, 'tiem_may_cuon', CYL, white, spools);
+    // ma-nơ-canh kem, chân gỗ (x 110, z −10.5)
+    { const mq = new THREE.Group(); mq.name = 'tiem_ma_no_canh'; mq.position.set(ox + 10, 0, -10.5); mid.add(mq); const kr = std('#D9C9A8', { roughness: 0.9 }), wd = std('#6e4423');
+      const b1 = new THREE.Mesh(CYL, wd); b1.scale.set(1.4, 0.3, 1.4); b1.position.y = 0.15; b1.name = 'ma_no_de'; mq.add(b1);
+      const pl = new THREE.Mesh(CYL, wd); pl.scale.set(0.16, 3.4, 0.16); pl.position.y = 1.9; pl.name = 'ma_no_cot'; mq.add(pl);
+      const tr = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.35, 3.0, 14), kr); tr.position.y = 4.9; tr.name = 'ma_no_than'; mq.add(tr);
+      const sh = new THREE.Mesh(SPH, kr); sh.scale.set(1.15, 0.55, 0.8); sh.position.y = 6.3; sh.name = 'ma_no_vai'; mq.add(sh);
+      const nk = new THREE.Mesh(CYL, wd); nk.scale.set(0.3, 0.6, 0.3); nk.position.y = 6.7; nk.name = 'ma_no_co'; mq.add(nk);
+      const kn = new THREE.Mesh(SPH, wd); kn.scale.set(0.34, 0.34, 0.34); kn.position.y = 7.15; kn.name = 'ma_no_nut'; mq.add(kn);
+      mq.traverse((o) => { if (o.isMesh) o.castShadow = true; }); }
+    lamp(front, ox - 3, -3); lamp(front, ox + 5, -3);
+  }
+
+  R.traverse((o) => { if (!o.isMesh) return; o.userData.matKind = 'none'; o.userData.grungeKind = 'none'; if (/^tiem_(tuong|tran|san|canh_ngoai|kinh|vet_sang)/.test(o.name)) o.castShadow = false; });
+
+  // ---- đêm / sáng + đèn điểm bám theo gian camera đang đứng ----
+  const SPEC = { day: { color: '#ffe2b0', intensity: 1.3, distance: 60, decay: 1.2 }, night: { color: '#ffb25a', intensity: 3.2, distance: 55, decay: 1.2 } };
+  const pool = scene.getObjectByName('interior_point');
+  let nightNow = null;
+  const setNight = (night) => {
+    if (nightNow === night) return; nightNow = night;
+    for (const m of viewMats) m.map = night ? viewNight : viewDay;
+    for (const m of lampMats) m.emissiveIntensity = night ? 1.0 : 0.4;
+    patchMat.color.set(night ? '#9fb8ff' : '#fff0c0'); patchMat.opacity = night ? 0.2 : 0.4;
+  };
+  setNight(true);
+  e.pointSpec = { ...SPEC.day, pos: [0, 9.5, -3] };
+  return { suSong: [], update(t, ctx) {
+    const L = LIGHTS[(ctx && ctx.light) || e.light]; const night = !!(L && L.night); setNight(night);
+    const ox = stage.camera.position.x < 50 ? 0 : 100;
+    e.pointSpec = { ...(night ? SPEC.night : SPEC.day), pos: [ox, 9.5, -3] };
+    if (pool) { const s = e.pointSpec; pool.color.set(s.color); pool.intensity = s.intensity; pool.distance = s.distance; pool.decay = s.decay; pool.position.set(...s.pos); }
+  } };
+}

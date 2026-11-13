@@ -1,0 +1,370 @@
+{
+ "lines": [
+  {
+   "text": "Ở thị trấn này, đồ đạc liên tục biến mất, dù căn phòng đã được khóa kín.",
+   "start": 0,
+   "end": 4.02,
+   "line": 1
+  },
+  {
+   "text": "Ban đầu là két tiền của chú bán bánh.",
+   "start": 4.225,
+   "end": 6.098,
+   "line": 2
+  },
+  {
+   "text": "Rồi tới nhẫn cưới của cô thợ may.",
+   "start": 6.303,
+   "end": 8.073,
+   "line": 3
+  },
+  {
+   "text": "Ngay cả ông Bách, người hàng xóm thân thiện hay phát gấu bông miễn phí cho cả thị trấn, cũng báo mất đồ.",
+   "start": 8.278,
+   "end": 13.576,
+   "line": 4
+  },
+  {
+   "text": "Nhà ông còn báo mất nhiều nhất.",
+   "start": 13.781,
+   "end": 15.248,
+   "line": 5
+  },
+  {
+   "text": "Chỉ trong một tuần, cả thị trấn đã có hàng chục nhà báo mất đồ.",
+   "start": 15.453,
+   "end": 18.785,
+   "line": 6
+  },
+  {
+   "text": "Còn tôi là Gà.",
+   "start": 18.99,
+   "end": 19.908,
+   "line": 7
+  },
+  {
+   "text": "Nhà tôi sát tiệm ông Bách.",
+   "start": 20.114,
+   "end": 21.337,
+   "line": 8
+  },
+  {
+   "text": "Rồi một sáng, chiếc dây chuyền bà để lại cũng biến mất.",
+   "start": 21.543,
+   "end": 24.291,
+   "line": 9
+  },
+  {
+   "text": "Đó là món tôi quý nhất.",
+   "start": 24.497,
+   "end": 25.704,
+   "line": 10
+  },
+  {
+   "text": "Tôi quyết điều tra vụ mất cắp này.",
+   "start": 25.91,
+   "end": 27.545,
+   "line": 11
+  },
+  {
+   "text": "Tối đó, tôi đặt cái đồng hồ lên chỗ sợi dây chuyền rồi giả vờ ngủ.",
+   "start": 28,
+   "end": 31.862,
+   "line": 12
+  },
+  {
+   "text": "Qua tấm gương đối diện giường, tôi vẫn thấy rõ cái kệ.",
+   "start": 32.082,
+   "end": 35.078,
+   "line": 13
+  },
+  {
+   "text": "Đợi tới lúc tôi sắp ngủ thật, trong gương có thứ gì đó ngồi dậy.",
+   "start": 35.297,
+   "end": 38.686,
+   "line": 14
+  },
+  {
+   "text": "Là Bắp.",
+   "start": 38.907,
+   "end": 39.369,
+   "line": 15
+  },
+  {
+   "text": "Con gấu bông vẫn nằm ở cuối giường tôi.",
+   "start": 39.588,
+   "end": 41.663,
+   "line": 16
+  },
+  {
+   "text": "Nó trèo lên kệ, ôm cái đồng hồ rồi kéo cuốn sách che đúng chỗ vừa lấy đồ.",
+   "start": 41.883,
+   "end": 46.216,
+   "line": 17
+  },
+  {
+   "text": "Tôi bật dậy.",
+   "start": 46.437,
+   "end": 47.096,
+   "line": 18
+  },
+  {
+   "text": "Bắp biến mất ngay trước mắt.",
+   "start": 47.316,
+   "end": 48.664,
+   "line": 19
+  },
+  {
+   "text": "Tới lúc tôi mở được cửa sổ, ngoài đường chẳng còn thấy bóng nó đâu.",
+   "start": 48.885,
+   "end": 52.511,
+   "line": 20
+  },
+  {
+   "text": "Tối hôm sau, tôi đặt một chiếc nhẫn lên kệ.",
+   "start": 53,
+   "end": 55.475,
+   "line": 21
+  },
+  {
+   "text": "Lần này, tôi nấp sẵn ngoài ban công.",
+   "start": 55.693,
+   "end": 57.968,
+   "line": 22
+  },
+  {
+   "text": "Bắp chộp chiếc nhẫn rồi biến mất.",
+   "start": 58.185,
+   "end": 59.715,
+   "line": 23
+  },
+  {
+   "text": "Từ ban công, tôi thấy nó xuất hiện trên mái hiên nhà đối diện.",
+   "start": 59.933,
+   "end": 63.244,
+   "line": 24
+  },
+  {
+   "text": "Tôi chạy xuống đường bám theo.",
+   "start": 63.462,
+   "end": 64.935,
+   "line": 25
+  },
+  {
+   "text": "Qua ngã ba, hai con gấu khác nhập vào.",
+   "start": 65.153,
+   "end": 67.51,
+   "line": 26
+  },
+  {
+   "text": "Một con ôm ví, một con kéo theo túi tiền.",
+   "start": 67.728,
+   "end": 70.372,
+   "line": 27
+  },
+  {
+   "text": "Cả ba biến mất sau hàng rào của một nhà máy cuối phố.",
+   "start": 70.589,
+   "end": 73.516,
+   "line": 28
+  },
+  {
+   "text": "Tôi đứng lên thùng gỗ, ghé mắt qua cửa kính.",
+   "start": 74,
+   "end": 76.662,
+   "line": 29
+  },
+  {
+   "text": "Bắp thả chiếc nhẫn xuống băng chuyền.",
+   "start": 76.879,
+   "end": 78.606,
+   "line": 30
+  },
+  {
+   "text": "Đứng cuối băng, gom đồ vào thùng, là ông Bách.",
+   "start": 78.825,
+   "end": 81.753,
+   "line": 31
+  },
+  {
+   "text": "Sau lưng ông là cả một dãy gấu mới may xong.",
+   "start": 81.971,
+   "end": 84.485,
+   "line": 32
+  },
+  {
+   "text": "Ông chỉ vào tấm bản đồ trên tường.",
+   "start": 84.702,
+   "end": 86.528,
+   "line": 33
+  },
+  {
+   "text": "Nhà nào có gấu rồi thì đánh dấu.",
+   "start": 86.746,
+   "end": 88.642,
+   "line": 34
+  },
+  {
+   "text": "Mai phát tiếp mấy nhà còn lại.",
+   "start": 88.861,
+   "end": 90.45,
+   "line": 35
+  },
+  {
+   "text": "Dưới băng chuyền là két tiền của chú bán bánh.",
+   "start": 90.668,
+   "end": 92.904,
+   "line": 36
+  },
+  {
+   "text": "Trên nắp két, tôi thấy sợi dây chuyền của bà.",
+   "start": 93.122,
+   "end": 95.687,
+   "line": 37
+  },
+  {
+   "text": "Tôi chạy thẳng tới nhà thị trưởng.",
+   "start": 95.905,
+   "end": 97.518,
+   "line": 38
+  },
+  {
+   "text": "Tôi bảo thị trưởng: Chú qua nhìn một lần thôi!",
+   "start": 98,
+   "end": 100.532,
+   "line": 39
+  },
+  {
+   "text": "Chú lắc đầu.",
+   "start": 100.737,
+   "end": 101.465,
+   "line": 40
+  },
+  {
+   "text": "Báo đời báo đốm.",
+   "start": 101.67,
+   "end": 102.644,
+   "line": 41
+  },
+  {
+   "text": "Về ngủ đi!",
+   "start": 102.849,
+   "end": 103.633,
+   "line": 42
+  },
+  {
+   "text": "Sáng hôm sau, chính chú chạy qua tìm tôi.",
+   "start": 103.836,
+   "end": 106.293,
+   "line": 43
+  },
+  {
+   "text": "Chiếc đồng hồ quả quýt cha để lại cho chú đã biến mất.",
+   "start": 106.498,
+   "end": 109.048,
+   "line": 44
+  },
+  {
+   "text": "Lần này, chú gọi hai lính gác đi cùng tôi.",
+   "start": 109.253,
+   "end": 111.741,
+   "line": 45
+  },
+  {
+   "text": "Qua cửa kính nhà máy, chú thấy ông Bách nhặt chiếc đồng hồ của mình khỏi băng chuyền.",
+   "start": 111.945,
+   "end": 115.905,
+   "line": 46
+  },
+  {
+   "text": "Chú quay sang hai lính gác.",
+   "start": 116.11,
+   "end": 117.453,
+   "line": 47
+  },
+  {
+   "text": "Mở cửa kho.",
+   "start": 117.658,
+   "end": 118.547,
+   "line": 48
+  },
+  {
+   "text": "Lính gác mở cửa kho.",
+   "start": 119,
+   "end": 120.021,
+   "line": 49
+  },
+  {
+   "text": "Thị trưởng nhìn sang chồng thùng in tên tiệm ông Bách.",
+   "start": 120.183,
+   "end": 121.955,
+   "line": 50
+  },
+  {
+   "text": "Ủa, đây là mấy thùng sáng nay ông báo mất mà?",
+   "start": 122.117,
+   "end": 124.128,
+   "line": 51
+  },
+  {
+   "text": "Ông Bách im luôn.",
+   "start": 124.289,
+   "end": 125.014,
+   "line": 52
+  },
+  {
+   "text": "Tôi mới hiểu.",
+   "start": 125.176,
+   "end": 125.687,
+   "line": 53
+  },
+  {
+   "text": "Cứ mỗi lần cả thị trấn mất đồ, ông lại giấu thêm vài thùng hàng của mình rồi đi báo mất.",
+   "start": 125.849,
+   "end": 129.252,
+   "line": 54
+  },
+  {
+   "text": "Ai mà nghi người than mất nhiều nhất chứ?",
+   "start": 129.414,
+   "end": 130.839,
+   "line": 55
+  },
+  {
+   "text": "Sáng hôm sau, tôi lấy lại sợi dây chuyền.",
+   "start": 131.001,
+   "end": 132.85,
+   "line": 56
+  },
+  {
+   "text": "Tôi cất dây chuyền vào két.",
+   "start": 133.011,
+   "end": 133.958,
+   "line": 57
+  },
+  {
+   "text": "Vừa quay lưng, Bắp đã ôm nguyên cái két.",
+   "start": 134.12,
+   "end": 135.886,
+   "line": 58
+  },
+  {
+   "text": "Bắp.",
+   "start": 136.048,
+   "end": 136.206,
+   "line": 59
+  },
+  {
+   "text": "Nó đặt xuống liền.",
+   "start": 136.368,
+   "end": 137.158,
+   "line": 60
+  },
+  {
+   "text": "Tôi gõ nhẹ lên đầu Bắp một cái.",
+   "start": 137.32,
+   "end": 138.657,
+   "line": 61
+  }
+ ]
+}

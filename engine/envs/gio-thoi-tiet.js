@@ -13,7 +13,7 @@ import { seaPreset } from '../seaweather.js';
 
 export const GIO = ['sang', 'trua', 'chieu', 'hoang-hon', 'dem'];
 export const THOI_TIET = ['nang', 'may', 'mua', 'giong', 'bao', 'tuyet', 'suong'];   // = WEATHER_OK trong tools/kb/kichban.py
-const NOI_THAT = new Set(['kitchen', 'bedroom', 'shop-in']);
+const NOI_THAT = new Set(['kitchen', 'bedroom', 'shop-in', 'e3-phong', 'e3-tiem']);
 
 // ---- màu ----
 const hex = (s) => { const n = parseInt(s.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };

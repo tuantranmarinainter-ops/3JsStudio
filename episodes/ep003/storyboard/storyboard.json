@@ -1,0 +1,1178 @@
+{
+ "episode": {
+  "id": "ep003",
+  "title": "Ở thị trấn này — Món đồ biến mất trong phòng khóa kín",
+  "fps": 30,
+  "seed": 7,
+  "rule": "Ở thị trấn này, đồ đạc liên tục biến mất, dù căn phòng đã được khóa kín.",
+  "weakness": "Tôi mất sợi dây chuyền bà để lại — và con gấu bông tôi tin nhất lại là kẻ lấy.",
+  "twist": "Ông Bách hiền lành phát gấu miễn phí chính là chủ mưu: gấu bông đi trộm về nhà máy; ông tự báo mất để che mắt.",
+  "solution": "Tôi giả vờ ngủ, soi qua gương, bám theo Bắp tới nhà máy rồi dẫn thị trưởng tới bắt quả tang.",
+  "env": "e3-pho",
+  "light": "day",
+  "town": {
+   "blocks": 3
+  },
+  "actors": {
+   "hero": {
+    "r6": 1,
+    "look": "ga"
+   },
+   "bach": {
+    "r6": 1,
+    "look": "bach"
+   },
+   "mayor": {
+    "r6": 1,
+    "look": "mayor"
+   },
+   "mayor_ngu": {
+    "r6": 1,
+    "look": "mayor_ngu"
+   },
+   "linh_a": {
+    "r6": 1,
+    "look": "linh_a"
+   },
+   "linh_b": {
+    "r6": 1,
+    "look": "linh_b"
+   },
+   "banh": {
+    "r6": 1,
+    "look": "banh"
+   },
+   "may": {
+    "r6": 1,
+    "look": "may"
+   },
+   "be_vang": {
+    "r6": 1,
+    "look": "be_vang"
+   },
+   "be_ngoc": {
+    "r6": 1,
+    "look": "be_ngoc"
+   },
+   "dan_a": {
+    "r6": 1,
+    "look": "dan_a"
+   },
+   "dan_b": {
+    "r6": 1,
+    "look": "dan_b"
+   },
+   "dan_c": {
+    "r6": 1,
+    "look": "dan_c"
+   },
+   "bap": {
+    "bear": 1,
+    "bow": "#2a3fb0",
+    "fur": "#b8651f"
+   },
+   "gau_vi": {
+    "bear": 1,
+    "bow": "#f08a1a",
+    "fur": "#9a9a9c"
+   },
+   "gau_tui": {
+    "bear": 1,
+    "bow": "#d8402a",
+    "fur": "#6b3523"
+   }
+  },
+  "places": {
+   "e3-phong_in": {
+    "pos": [
+     0,
+     0,
+     0
+    ],
+    "ry": 0
+   },
+   "e3_pho": "town:center",
+   "e3-tiem_in": {
+    "pos": [
+     0,
+     0,
+     0
+    ],
+    "ry": 0
+   },
+   "e3-nha-may_in": {
+    "pos": [
+     0,
+     0,
+     0
+    ],
+    "ry": 0
+   }
+  },
+  "props": {
+   "nhan": {
+    "kit": "nhan",
+    "at": "e3_pho",
+    "hold": true
+   },
+   "dong_ho": {
+    "kit": "dong_ho",
+    "at": "e3-phong",
+    "hold": true
+   },
+   "vi": {
+    "kit": "vi",
+    "at": "e3_pho",
+    "hold": true
+   },
+   "ket": {
+    "kit": "ket",
+    "at": "e3-phong",
+    "hold": true
+   }
+  }
+ },
+ "shots": [
+  {
+   "id": "s001",
+   "t0": 0.0,
+   "t1": 1.485,
+   "img": "s001.jpg",
+   "type": "establish",
+   "note": "máy: Đặc tả ngang mặt chốt, 85 mm, nhìn xiên từ phía trong; trượt ngang rất nhẹ.; diễn: Chốt cửa đang gài lấp kín rãnh; khe sáng mảnh dưới cánh cửa giữ khung hình yên.; Cửa vẫn khóa · set:bedroom · đêm",
+   "text": "",
+   "line": "Ở thị trấn này, đồ đạc liên tục biến mất, dù căn phòng đã được khóa kín."
+  },
+  {
+   "id": "s002",
+   "t0": 1.485,
+   "t1": 2.854,
+   "img": "s002.jpg",
+   "type": "closeup",
+   "note": "máy: Cận cao 45°, 50 mm, trục chéo mép kệ; giữ tĩnh.; diễn: Ánh sáng từ cửa sổ quét qua vòng bụi hình sợi dây ở kệ, dựng cảm giác có vật vừa rời đi.; Khoảng trống có hình · set:bedroom · đêm",
+   "text": "",
+   "line": "Ở thị trấn này, đồ đạc liên tục biến mất, dù căn phòng đã được khóa kín."
+  },
+  {
+   "id": "s003",
+   "t0": 2.854,
+   "t1": 4.224,
+   "img": "s003.jpg",
+   "type": "establish",
+   "note": "máy: Toàn dài 55 mm từ chân vỉa hè, nén các lớp mái hiên; khóa máy.; diễn: Cửa các nhà đã đóng. Phố còn im; mép một cửa tối ở tiền cảnh làm khung.; Phố vẫn im · set:street",
+   "text": "",
+   "line": "Ở thị trấn này, đồ đạc liên tục biến mất, dù căn phòng đã được khóa kín."
+  },
+  {
+   "id": "s004",
+   "t0": 4.224,
+   "t1": 5.264,
+   "img": "s004.jpg",
+   "type": "reaction",
+   "note": "máy: Trung cảnh 35 mm từ phía khách, ngang quầy; tịnh tiến ngắn theo vai.; diễn: Chú bán bánh chống tay lên quầy, cúi xuống nhìn dưới quầy. Bánh và biểu tượng ổ bánh khóa địa điểm.; Chú bán bánh cúi tìm · set:bakery",
+   "text": "",
+   "line": "Ban đầu là két tiền của chú bán bánh."
+  },
+  {
+   "id": "s005",
+   "t0": 5.264,
+   "t1": 6.303,
+   "img": "s005.jpg",
+   "type": "chase",
+   "note": "máy: Cận thấp 35 mm ngay sát sàn, nhìn vào hốc vuông dưới quầy; máy đứng yên.; diễn: Vùng sạch hình vuông nằm giữa lớp bột mỏng. Tay chú bán bánh giữ mép quầy ở rìa ảnh.; Hốc két trống · set:bakery",
+   "text": "",
+   "line": "Ban đầu là két tiền của chú bán bánh."
+  },
+  {
+   "id": "s006",
+   "t0": 6.303,
+   "t1": 7.291,
+   "img": "s006.jpg",
+   "type": "closeup",
+   "note": "máy: Trung cận nghiêng 50 mm qua trục cuộn chỉ, ngang mắt; kéo nét sang cô thợ may.; diễn: Cô thợ may sững bên bàn, tay lơ lửng trên hộp nhỏ. Cuộn chỉ tiền cảnh che vừa đủ để chưa thấy lòng hộp.; Cô thợ may dừng tay · set:tailor",
+   "text": "",
+   "line": "Rồi tới nhẫn cưới của cô thợ may."
+  },
+  {
+   "id": "s007",
+   "t0": 7.291,
+   "t1": 8.279,
+   "img": "s007.jpg",
+   "type": "establish",
+   "note": "máy: Đặc tả thẳng từ trên 90°, 85 mm; cắt trên động tác mở hộp.; diễn: Khe nhung nhỏ trong hộp nhẫn rỗng rõ ràng. Chỉ và mép vải làm khung.; Ổ nhẫn rỗng · set:tailor",
+   "text": "",
+   "line": "Rồi tới nhẫn cưới của cô thợ may."
+  },
+  {
+   "id": "s008",
+   "t0": 8.279,
+   "t1": 10.342,
+   "img": "s008.jpg",
+   "type": "chase",
+   "note": "máy: Toàn vừa 28 mm chếch từ dưới mái hiên, trục theo mép quầy; tiến ngắn.; diễn: Ông Bách cúi trao gấu trên quầy cho đứa nhỏ gần nhất. Đứa nhỏ thứ hai nhìn theo. Biển đầu gấu treo cao.; Gấu bông miễn phí · set:bear-shop",
+   "text": "",
+   "line": "Ngay cả ông Bách, người hàng xóm thân thiện hay phát gấu bông miễn phí cho cả thị trấn, cũng báo mất đồ."
+  },
+  {
+   "id": "s009",
+   "t0": 10.342,
+   "t1": 11.947,
+   "img": "s009.jpg",
+   "type": "overShoulder",
+   "note": "máy: Cận 55 mm từ phía trong hiên qua vai Bách; hạ máy tới tay hai nhân vật.; diễn: Một đứa ôm gấu mới vào ngực; đứa kia đã tựa tay trên mép quầy đợi đến lượt.; Bàn tay nhận gấu · set:bear-shop",
+   "text": "",
+   "line": "Ngay cả ông Bách, người hàng xóm thân thiện hay phát gấu bông miễn phí cho cả thị trấn, cũng báo mất đồ."
+  },
+  {
+   "id": "s010",
+   "t0": 11.947,
+   "t1": 13.781,
+   "img": "s010.jpg",
+   "type": "reaction",
+   "note": "máy: Trung cảnh 50 mm ngang mắt từ mép vỉa hè; đứng máy theo trục quầy.; diễn: Ông Bách giơ tờ khai về phía một dân phố; đổi từ thân thiện sang vẻ khổ sở vừa phải.; Ông Bách trình báo · set:bear-shop",
+   "text": "",
+   "line": "Ngay cả ông Bách, người hàng xóm thân thiện hay phát gấu bông miễn phí cho cả thị trấn, cũng báo mất đồ."
+  },
+  {
+   "id": "s011",
+   "t0": 13.781,
+   "t1": 15.453,
+   "img": "s011.jpg",
+   "type": "overShoulder",
+   "note": "máy: Cận qua vai người nhận 50 mm, hơi chếch xuống; trượt dọc xấp giấy.; diễn: Ông Bách đặt tờ khai mới lên xấp dày; bàn tay người đối diện ở mép bàn làm mốc.; Nhiều nhất phố · set:bear-shop",
+   "text": "",
+   "line": "Nhà ông còn báo mất nhiều nhất."
+  },
+  {
+   "id": "s012",
+   "t0": 15.453,
+   "t1": 17.165,
+   "img": "s012.jpg",
+   "type": "reaction",
+   "note": "máy: Toàn chéo 32 mm nhìn từ cao 3 m dọc mặt phố; pan ngắn qua các cửa.; diễn: Ba cư dân tại ba cửa khác màu giơ hoặc so phiếu báo mất. Sự lặp lại cho thấy hiện tượng lan ra nhiều nhà.; Nhiều nhà cùng báo · set:street",
+   "text": "",
+   "line": "Chỉ trong một tuần, cả thị trấn đã có hàng chục nhà báo mất đồ."
+  },
+  {
+   "id": "s013",
+   "t0": 17.165,
+   "t1": 18.99,
+   "img": "s013.jpg",
+   "type": "reaction",
+   "note": "máy: Toàn trên cao 28 mm từ cửa sổ tầng hai, nhìn dọc về ngã ba; hạ máy nhẹ.; diễn: Nhóm dân chia thành cụm nhỏ ở ngã ba. Cử chỉ so phiếu lặp ở ba vị trí, đủ đọc trong một nhịp.; Cả phố xôn xao · set:junction",
+   "text": "",
+   "line": "Chỉ trong một tuần, cả thị trấn đã có hàng chục nhà báo mất đồ."
+  },
+  {
+   "id": "s014",
+   "t0": 18.99,
+   "t1": 20.114,
+   "img": "s014.jpg",
+   "type": "closeup",
+   "note": "máy: Trung cận trực diện 50 mm tầm mắt ở bậc thềm; đứng máy.; diễn: Gà nhìn thẳng máy, tự giới thiệu, một tay chạm ngực. Mảng tường nhà làm nền nhẹ.; Còn tôi là Gà · set:street",
+   "text": "",
+   "line": "Còn tôi là Gà."
+  },
+  {
+   "id": "s015",
+   "t0": 20.114,
+   "t1": 21.543,
+   "img": "s015.jpg",
+   "type": "reaction",
+   "note": "máy: Toàn thấp sau vai Gà 28 mm, máy ở lòng đường; nghiêng lên từ vai tới hai mái.; diễn: Lưng Gà và nút băng đỏ tạo tiền cảnh. Mặt tiền nhà Gà và tiệm gấu đứng chung khung, sát vách.; Hai nhà sát vách · set:street",
+   "text": "",
+   "line": "Nhà tôi sát tiệm ông Bách."
+  },
+  {
+   "id": "s016",
+   "t0": 21.543,
+   "t1": 23.02,
+   "img": "s016.jpg",
+   "type": "reaction",
+   "note": "máy: Trung toàn 30 mm qua chân giường về phía cửa sổ; pan nhẹ theo Gà.; diễn: Gà đến kệ và vươn tay theo thói quen. Khi tay chạm mặt kệ trống, người khựng lại.; Buổi sáng mất dây chuyền · set:bedroom",
+   "text": "",
+   "line": "Rồi một sáng, chiếc dây chuyền bà để lại cũng biến mất."
+  },
+  {
+   "id": "s017",
+   "t0": 23.02,
+   "t1": 24.498,
+   "img": "s017.jpg",
+   "type": "closeup",
+   "note": "máy: Cận 65 mm đặt sát mặt kệ, nhìn lướt ngang về bàn tay Gà; máy đứng.; diễn: Bàn tay Gà chạm vùng trống, dừng cạnh vệt sạch cong. Cuốn sách và cạnh cửa sổ giữ định hướng.; Vết dây trên kệ · set:bedroom",
+   "text": "",
+   "line": "Rồi một sáng, chiếc dây chuyền bà để lại cũng biến mất."
+  },
+  {
+   "id": "s018",
+   "t0": 24.498,
+   "t1": 25.91,
+   "img": "s018.jpg",
+   "type": "closeup",
+   "note": "máy: Cận 65 mm ở ngang mặt, nhìn Gà chếch 3/4 từ phía kệ; tiến rất nhẹ.; diễn: Gà hạ mắt rồi áp bàn tay trống vào ngực. Ánh cửa sổ lướt qua mặt để giữ đoạn cảm xúc.; Món bà để lại · set:bedroom",
+   "text": "",
+   "line": "Đó là món tôi quý nhất."
+  },
+  {
+   "id": "s019",
+   "t0": 25.91,
+   "t1": 28.0,
+   "img": "s019.jpg",
+   "type": "closeup",
+   "note": "máy: Trung cận hơi thấp 40 mm từ đầu kệ, máy tiến tới dừng ở mắt.; diễn: Gà ngẩng đầu, nắm tay cạnh ngực, nhìn thẳng vào chỗ đồ đã mất. Mép kệ dẫn mắt từ dưới lên.; Quyết điều tra · set:bedroom",
+   "text": "",
+   "line": "Tôi quyết điều tra vụ mất cắp này."
+  },
+  {
+   "id": "s020",
+   "t0": 28.0,
+   "t1": 29.34,
+   "img": "s020.jpg",
+   "type": "establish",
+   "note": "máy: Toàn cảnh 24mm, máy ở ngưỡng cửa phòng nhìn chéo qua giường đến kệ và cửa sổ, dolly vào chậm; diễn: Gà vừa bước tới kệ với đồng hồ để bàn trong tay. Vệt trăng dẫn mắt tới mặt kệ, giường và gương ở hai phía đối diện.; Mồi nhử trong phòng · set:bedroom",
+   "text": "",
+   "line": "Tối đó, tôi đặt cái đồng hồ lên chỗ sợi dây chuyền rồi giả vờ ngủ."
+  },
+  {
+   "id": "s021",
+   "t0": 29.34,
+   "t1": 30.681,
+   "img": "s021.jpg",
+   "type": "reaction",
+   "note": "máy: Đặc tả 75mm, nhìn chéo từ trên xuống mặt kệ, máy tĩnh; diễn: Hai bàn tay vàng đặt đồng hồ chính xác vào khoảng gỗ trống của sợi dây chuyền. Cuốn sách bìa xanh rêu bạc mép đứng sát bên.; Đồng hồ thay dây chuyền · set:bedroom",
+   "text": "",
+   "line": "Tối đó, tôi đặt cái đồng hồ lên chỗ sợi dây chuyền rồi giả vờ ngủ."
+  },
+  {
+   "id": "s022",
+   "t0": 30.681,
+   "t1": 32.082,
+   "img": "s022.jpg",
+   "type": "reaction",
+   "note": "máy: Trung cảnh 50mm, máy sát cạnh giường ngang tầm gối, cố định; diễn: Gà kéo chăn đến ngang vai, nghiêng đầu về phía gương, giả vờ nhắm mắt. Bắp nằm thẳng ở cuối giường, nơ xanh lam cobalt lộ rõ.; Giả vờ ngủ · set:bedroom · đêm",
+   "text": "",
+   "line": "Tối đó, tôi đặt cái đồng hồ lên chỗ sợi dây chuyền rồi giả vờ ngủ."
+  },
+  {
+   "id": "s023",
+   "t0": 32.082,
+   "t1": 33.665,
+   "img": "s023.jpg",
+   "type": "overShoulder",
+   "note": "máy: Qua vai 35mm, từ bên gối nhìn tới gương đối diện, đẩy nhẹ 30cm; diễn: Băng trán Gà mờ sát máy, đường nhìn hướng vào gương, mặt kệ và đồng hồ nhìn rõ trong vùng phản chiếu.; Đường nhìn qua gương · set:bedroom · đêm",
+   "text": "",
+   "line": "Qua tấm gương đối diện giường, tôi vẫn thấy rõ cái kệ."
+  },
+  {
+   "id": "s024",
+   "t0": 33.665,
+   "t1": 35.297,
+   "img": "s024.jpg",
+   "type": "establish",
+   "note": "máy: POV 55mm từ tầm mắt nằm, lấy nét ở ảnh gương, máy tĩnh; diễn: Giữ mặt kính và một đoạn khung gương trong hình để người xem đọc được hình phản chiếu. Đồng hồ đứng yên cạnh sách.; Kệ trong phản chiếu · set:bedroom · đêm",
+   "text": "",
+   "line": "Qua tấm gương đối diện giường, tôi vẫn thấy rõ cái kệ."
+  },
+  {
+   "id": "s025",
+   "t0": 35.297,
+   "t1": 37.359,
+   "img": "s025.jpg",
+   "type": "reaction",
+   "note": "máy: Đặc tả 85mm, góc ngang trên gối, giữ chậm theo nhịp thở; diễn: Mí mắt Gà hạ gần kín, đầu chìm vào gối, miệng hé nhẹ. Một góc gương mờ còn ló phía xa.; Mí mắt trĩu xuống · set:bedroom · đêm",
+   "text": "",
+   "line": "Đợi tới lúc tôi sắp ngủ thật, trong gương có thứ gì đó ngồi dậy."
+  },
+  {
+   "id": "s026",
+   "t0": 37.359,
+   "t1": 38.907,
+   "img": "s026.jpg",
+   "type": "reaction",
+   "note": "máy: POV 55mm, từ gối theo trục S024, giữ khóa vào gương; diễn: Ở chân giường trong phản chiếu, hai tai gấu nhô lên và thân gập thẳng. Đồng hồ còn ở vị trí cũ cạnh sách.; Bóng ngồi dậy trong gương · set:bedroom · đêm",
+   "text": "",
+   "line": "Đợi tới lúc tôi sắp ngủ thật, trong gương có thứ gì đó ngồi dậy."
+  },
+  {
+   "id": "s027",
+   "t0": 38.907,
+   "t1": 39.588,
+   "img": "s027.jpg",
+   "type": "closeup",
+   "note": "máy: Cận 70mm ở đúng tầm mắt gấu, góc 3/4 chính diện từ mép nệm, cắt vào ngay chữ Bắp; diễn: Gương không còn trong khung, trăng bắt đường viền tai. Nơ xanh xác nhận danh tính của Bắp.; Là Bắp · set:bedroom · đêm",
+   "text": "",
+   "line": "Là Bắp."
+  },
+  {
+   "id": "s028",
+   "t0": 39.588,
+   "t1": 41.883,
+   "img": "s028.jpg",
+   "type": "reaction",
+   "note": "máy: Toàn thấp 32mm nhìn ngang giường từ gần chân, đẩy rất nhẹ; diễn: Bắp vẫn ở cuối giường, vừa ngồi dậy, còn Gà nằm im giả ngủ ở đầu giường. Khoảng cách từ Bắp tới kệ hiện rõ.; Gấu bông ở cuối giường · set:bedroom · đêm",
+   "text": "",
+   "line": "Con gấu bông vẫn nằm ở cuối giường tôi."
+  },
+  {
+   "id": "s029",
+   "t0": 41.883,
+   "t1": 43.344,
+   "img": "s029.jpg",
+   "type": "reaction",
+   "note": "máy: Góc thấp 35mm sát hông kệ, máy ngửa 25°, bám lên theo hai tay gấu; diễn: Bắp bám mép kệ bằng hai tay, bàn chân đạp vào chân kệ. Mép đồng hồ lộ trên cao.; Leo lên kệ · set:bedroom · đêm",
+   "text": "",
+   "line": "Nó trèo lên kệ, ôm cái đồng hồ rồi kéo cuốn sách che đúng chỗ vừa lấy đồ."
+  },
+  {
+   "id": "s030",
+   "t0": 43.344,
+   "t1": 44.805,
+   "img": "s030.jpg",
+   "type": "closeup",
+   "note": "máy: Cận 58mm ngang mặt kệ, máy ở đầu bên cuốn sách, trượt ngắn dọc mép gỗ; diễn: Bắp đã đứng trên kệ, ôm đồng hồ sát ngực, chừa cuốn sách đứng nguyên ở cạnh.; Ôm đồng hồ · set:bedroom · đêm",
+   "text": "",
+   "line": "Nó trèo lên kệ, ôm cái đồng hồ rồi kéo cuốn sách che đúng chỗ vừa lấy đồ."
+  },
+  {
+   "id": "s031",
+   "t0": 44.805,
+   "t1": 46.437,
+   "img": "s031.jpg",
+   "type": "closeup",
+   "note": "máy: Cận cao 55mm, chếch xuống khoảng 55°, cắt theo tay kéo; diễn: Một tay Bắp ghì đồng hồ sát người, tay kia kéo sách đứng che đúng dấu vị trí cũ. Hướng kéo dọc cạnh kệ.; Cuốn sách che vết trống · set:bedroom · đêm",
+   "text": "",
+   "line": "Nó trèo lên kệ, ôm cái đồng hồ rồi kéo cuốn sách che đúng chỗ vừa lấy đồ."
+  },
+  {
+   "id": "s032",
+   "t0": 46.437,
+   "t1": 47.316,
+   "img": "s032.jpg",
+   "type": "closeup",
+   "note": "máy: Trung cận 45mm sát giường, nhìn từ phía chân giường, cắt mạnh theo cú ngồi bật; diễn: Chăn rơi xuống khuỷu tay. Gà mở lớn hai mắt, nhìn ngay về kệ thật, không nhìn gương nữa.; Gà bật dậy · set:bedroom · đêm",
+   "text": "",
+   "line": "Tôi bật dậy."
+  },
+  {
+   "id": "s033",
+   "t0": 47.316,
+   "t1": 48.885,
+   "img": "s033.jpg",
+   "type": "overShoulder",
+   "note": "máy: Qua vai 45mm từ giường hướng thẳng kệ thật, khóa khung cho match cut; diễn: Gà nhìn thẳng chỗ Bắp vừa đứng. Sách xanh rêu vẫn đúng chỗ vừa kéo, Bắp và đồng hồ đã biến mất.; Kệ trống ngay trước mắt · set:bedroom · đêm",
+   "text": "",
+   "line": "Bắp biến mất ngay trước mắt."
+  },
+  {
+   "id": "s034",
+   "t0": 48.885,
+   "t1": 50.345,
+   "img": "s034.jpg",
+   "type": "reaction",
+   "note": "máy: Trung 38mm trong phòng, góc 3/4 sau vai từ bên giường, kéo theo Gà tới chốt cửa sổ; diễn: Gà kéo cánh cửa sổ mở ra và nghiêng đầu ra ngoài. Sách xanh rêu còn trên kệ ngay cạnh cửa.; Gà mở cửa sổ · set:bedroom · đêm",
+   "text": "",
+   "line": "Tới lúc tôi mở được cửa sổ, ngoài đường chẳng còn thấy bóng nó đâu."
+  },
+  {
+   "id": "s035",
+   "t0": 50.345,
+   "t1": 51.807,
+   "img": "s035.jpg",
+   "type": "closeup",
+   "note": "máy: Cận 55mm ngoài mặt tiền ngang tầng cửa sổ, góc nghiêng 3/4 nhìn vào; diễn: Gà nhô đầu trong ô cửa, mắt nhìn chéo xuống đường. Ánh ấm phòng ngủ viền vai, phố xanh phản vào mặt.; Ngó xuống từ cửa sổ · set:bedroom · đêm",
+   "text": "",
+   "line": "Tới lúc tôi mở được cửa sổ, ngoài đường chẳng còn thấy bóng nó đâu."
+  },
+  {
+   "id": "s036",
+   "t0": 51.807,
+   "t1": 53.0,
+   "img": "s036.jpg",
+   "type": "establish",
+   "note": "máy: POV 28mm nhìn từ cửa sổ tầng hai chúc 35° xuống phố, hạ nhẹ rồi giữ; diễn: Bệ cửa là tiền cảnh sát đáy khung, vỉa hè và mái hiên đối diện trống. Khóa một nhịp trước khi chuyển đêm thứ hai.; Phố trống · set:street · đêm",
+   "text": "",
+   "line": "Tới lúc tôi mở được cửa sổ, ngoài đường chẳng còn thấy bóng nó đâu."
+  },
+  {
+   "id": "s037",
+   "t0": 53.0,
+   "t1": 54.328,
+   "img": "s037.jpg",
+   "type": "closeup",
+   "note": "máy: Cận chèn 65 mm nhìn chếch xuống từ phía giường. Máy đứng.; diễn: Tay Gà đặt một chiếc nhẫn bạc trơn cạnh gáy sách trên kệ dưới cửa sổ.; Đặt nhẫn làm mồi · set:bedroom · đêm",
+   "text": "",
+   "line": "Tối hôm sau, tôi đặt một chiếc nhẫn lên kệ."
+  },
+  {
+   "id": "s038",
+   "t0": 54.328,
+   "t1": 55.693,
+   "img": "s038.jpg",
+   "type": "reaction",
+   "note": "máy: Trung ngang tầm kệ, chéo từ phía cửa sổ về cửa ban công, chuyển nét từ nhẫn sang Gà.; diễn: Nhẫn ở tiền cảnh. Gà lùi về cửa ban công và liếc lại phía mồi.; Gà lùi khỏi kệ · set:bedroom · đêm",
+   "text": "",
+   "line": "Tối hôm sau, tôi đặt một chiếc nhẫn lên kệ."
+  },
+  {
+   "id": "s039",
+   "t0": 55.693,
+   "t1": 58.185,
+   "img": "s039.jpg",
+   "type": "closeup",
+   "note": "máy: Cận nửa người từ ngoài lan can, máy đứng nép sát trụ.; diễn: Gà ép người sau trụ, mắt liếc qua khe cửa ban công vào phòng.; Nấp ngoài ban công · set:balcony · đêm",
+   "text": "",
+   "line": "Lần này, tôi nấp sẵn ngoài ban công."
+  },
+  {
+   "id": "s040",
+   "t0": 58.185,
+   "t1": 59.058,
+   "img": "s040.jpg",
+   "type": "closeup",
+   "note": "máy: Cận ngang mặt kệ 70 mm, máy khóa góc cho cú cắt S041.; diễn: Bắp vươn khỏi gờ kệ, bàn chân vải kẹp nhẫn nhấc lên. Sách đứng yên.; Bắp chộp nhẫn · set:bedroom · đêm",
+   "text": "",
+   "line": "Bắp chộp chiếc nhẫn rồi biến mất."
+  },
+  {
+   "id": "s041",
+   "t0": 59.058,
+   "t1": 59.932,
+   "img": "s041.jpg",
+   "type": "closeup",
+   "note": "máy: Cận khóa máy khớp S040. Cắt thẳng.; diễn: Bắp và nhẫn biến mất. Giữ nguyên gáy sách, vệt sáng và hình mép kệ.; Kệ trống trong chớp mắt · set:bedroom · đêm",
+   "text": "",
+   "line": "Bắp chộp chiếc nhẫn rồi biến mất."
+  },
+  {
+   "id": "s042",
+   "t0": 59.932,
+   "t1": 61.738,
+   "img": "s042.jpg",
+   "type": "overShoulder",
+   "note": "máy: Qua vai sau Gà, chéo xuống lòng đường và mái hiên bên kia. Máy đổi nét ra xa.; diễn: Nút băng đỏ ở tiền cảnh. Bắp nhỏ rõ trên mái đối diện, lòng đường nằm giữa hai nơi.; Tìm Bắp bên kia đường · set:balcony · đêm",
+   "text": "",
+   "line": "Từ ban công, tôi thấy nó xuất hiện trên mái hiên nhà đối diện."
+  },
+  {
+   "id": "s043",
+   "t0": 61.738,
+   "t1": 63.462,
+   "img": "s043.jpg",
+   "type": "reaction",
+   "note": "máy: Trung thấp ngang mép mái, chếch về hướng ngã ba. Đẩy nhẹ.; diễn: Bắp trên mái hiên đối diện, ôm nhẫn ở ngực và chồm theo hướng ngã ba.; Bắp hiện trên mái hiên · set:opposite-awning · đêm",
+   "text": "",
+   "line": "Từ ban công, tôi thấy nó xuất hiện trên mái hiên nhà đối diện."
+  },
+  {
+   "id": "s044",
+   "t0": 63.462,
+   "t1": 65.153,
+   "img": "s044.jpg",
+   "type": "chase",
+   "note": "máy: Trung toàn góc thấp ngang bậc cuối, bám ngang cùng hướng đuổi.; diễn: Gà vừa qua bậc cuối của cầu thang nhà mình, thân đổ về ngã ba, một chân sắp chạm mặt đường.; Gà lao xuống phố · set:street · đêm",
+   "text": "",
+   "line": "Tôi chạy xuống đường bám theo."
+  },
+  {
+   "id": "s045",
+   "t0": 65.153,
+   "t1": 66.476,
+   "img": "s045.jpg",
+   "type": "reaction",
+   "note": "máy: Toàn thấp dọc lề đường, phía sau Bắp. Giữ chiều tiến về nhà máy.; diễn: Bắp tiến tới điểm giao. Hai gấu thấp thoáng từ hai nhánh đi vào, bóng Gà còn xa.; Bắp chạm ngã ba · set:junction · đêm",
+   "text": "",
+   "line": "Qua ngã ba, hai con gấu khác nhập vào."
+  },
+  {
+   "id": "s046",
+   "t0": 66.476,
+   "t1": 67.728,
+   "img": "s046.jpg",
+   "type": "reaction",
+   "note": "máy: Toàn cao chéo 55 độ từ mép mái phía nam. Khóa bố cục theo nút giao.; diễn: Hai gấu nhập vào sau Bắp thành hình chữ Y. Gà còn cách một quãng ở nhánh cũ.; Ba gấu nhập đường · set:junction · đêm",
+   "text": "",
+   "line": "Qua ngã ba, hai con gấu khác nhập vào."
+  },
+  {
+   "id": "s047",
+   "t0": 67.728,
+   "t1": 68.935,
+   "img": "s047.jpg",
+   "type": "closeup",
+   "note": "máy: Cận thấp ngang ngực gấu, bám cùng chiều chạy.; diễn: Gấu xám ôm chiếc ví gập sát ngực bằng hai chân trước. Nơ cam và khóa ví bắt sáng.; Chiếc ví dưới tay gấu · set:junction · đêm",
+   "text": "",
+   "line": "Một con ôm ví, một con kéo theo túi tiền."
+  },
+  {
+   "id": "s048",
+   "t0": 68.935,
+   "t1": 70.589,
+   "img": "s048.jpg",
+   "type": "reaction",
+   "note": "máy: Đặc tả sát đất 35 mm, trượt bám ngang cùng chiều S047.; diễn: Gấu nâu sẫm kéo bao vải buộc dây. Đáy bao sượt mặt đường, tạo một nhịp nặng hơn chiếc ví.; Bao tiền quệt đường · set:junction · đêm",
+   "text": "",
+   "line": "Một con ôm ví, một con kéo theo túi tiền."
+  },
+  {
+   "id": "s049",
+   "t0": 70.589,
+   "t1": 72.276,
+   "img": "s049.jpg",
+   "type": "reaction",
+   "note": "máy: Toàn thấp từ mép đường ngoài hàng rào, lấy chéo đầu rào. Máy dừng ở mép rào.; diễn: Ba gấu vừa khuất lần lượt ở đầu rào nhà máy. Còn thấy thoáng ba màu và các đạo cụ đúng chủ.; Ba bóng qua hàng rào · set:factory-exterior · đêm",
+   "text": "",
+   "line": "Cả ba biến mất sau hàng rào của một nhà máy cuối phố."
+  },
+  {
+   "id": "s050",
+   "t0": 72.276,
+   "t1": 74.0,
+   "img": "s050.jpg",
+   "type": "reaction",
+   "note": "máy: Toàn qua lưng Gà, thấp hơn vai, đứng ngoài rào. Đẩy nhẹ vào cửa kính.; diễn: Lối ba gấu vừa qua đã trống. Gà nép lại ngoài hàng rào và nhìn tới thùng gỗ dưới cửa kính.; Gà đến nhà máy · set:factory-exterior · đêm",
+   "text": "",
+   "line": "Cả ba biến mất sau hàng rào của một nhà máy cuối phố."
+  },
+  {
+   "id": "s051",
+   "t0": 74.0,
+   "t1": 75.445,
+   "img": "s051.jpg",
+   "type": "reaction",
+   "note": "máy: Toàn hẹp 28 mm, đặt sau mép hàng rào nhìn chéo lên mặt nhà máy, tiến nhẹ theo Gà.; diễn: Gà bước lên thùng ngoài cửa kính. Khung hé mái và hàng rào để nối với đuổi bắt, xưởng vẫn chưa lộ. Thùng luôn nằm dưới cửa kính phía tây.; Mượn thùng gỗ làm bậc · set:factory-exterior · đêm",
+   "text": "",
+   "line": "Tôi đứng lên thùng gỗ, ghé mắt qua cửa kính."
+  },
+  {
+   "id": "s052",
+   "t0": 75.445,
+   "t1": 76.879,
+   "img": "s052.jpg",
+   "type": "overShoulder",
+   "note": "máy: Cận 70 mm từ ngoài, ngang mép dưới kính, qua vai hẹp của Gà, giữ tĩnh.; diễn: Gà nhô mắt qua gờ cửa và nhìn dọc băng chuyền. Chỉ ló một bên mặt, hai chân vẫn trên thùng. Thùng luôn nằm dưới cửa kính phía tây.; Mắt ngang mép cửa · set:factory-exterior · đêm",
+   "text": "",
+   "line": "Tôi đứng lên thùng gỗ, ghé mắt qua cửa kính."
+  },
+  {
+   "id": "s053",
+   "t0": 76.879,
+   "t1": 78.825,
+   "img": "s053.jpg",
+   "type": "closeup",
+   "note": "máy: Đặc tả 85 mm ngang cao su, máy vuông góc cạnh đầu băng.; diễn: Bắp thả nhẫn mồi, chụp khoảnh khắc vòng nhẫn còn lơ lửng ngay trên cao su. Băng chạy tây → đông.; Nhẫn rơi xuống băng · set:factory-interior · đêm",
+   "text": "",
+   "line": "Bắp thả chiếc nhẫn xuống băng chuyền."
+  },
+  {
+   "id": "s054",
+   "t0": 78.825,
+   "t1": 80.754,
+   "img": "s054.jpg",
+   "type": "reaction",
+   "note": "máy: Trung 35 mm gần sát con lăn, máy dọc băng nhìn về đầu nhận hàng.; diễn: Nhẫn mồi lăn gần miệng thùng mở. Bách xuất hiện lần đầu qua tay áo và tạp dề, đầu còn khuất. Băng chạy tây → đông.; Chiếc nhẫn trôi về cuối băng · set:factory-interior · đêm",
+   "text": "",
+   "line": "Đứng cuối băng, gom đồ vào thùng, là ông Bách."
+  },
+  {
+   "id": "s055",
+   "t0": 80.754,
+   "t1": 81.971,
+   "img": "s055.jpg",
+   "type": "closeup",
+   "note": "máy: Trung cận 55 mm từ góc chéo đầu nhận hàng, nâng máy từ tay lên mặt.; diễn: Gương mặt ông hàng xóm hiện rõ khi ông trút đồ vào thùng. Băng và một góc thùng giữ trong khung. Băng chạy tây → đông.; Lộ mặt ông Bách · set:factory-interior · đêm",
+   "text": "",
+   "line": "Đứng cuối băng, gom đồ vào thùng, là ông Bách."
+  },
+  {
+   "id": "s056",
+   "t0": 81.971,
+   "t1": 83.499,
+   "img": "s056.jpg",
+   "type": "reaction",
+   "note": "máy: Toàn hẹp 32 mm đặt từ phía đối diện đầu nhận, lia ngang theo mép kệ.; diễn: Một dãy gấu mới may chiếm chiều dọc khung. Bách mờ ở góc trước tạo quan hệ trước–sau. Giữ kệ gấu và bản đồ trên tường bắc.; Cả dãy gấu vừa may · set:factory-interior · đêm",
+   "text": "",
+   "line": "Sau lưng ông là cả một dãy gấu mới may xong."
+  },
+  {
+   "id": "s057",
+   "t0": 83.499,
+   "t1": 84.702,
+   "img": "s057.jpg",
+   "type": "closeup",
+   "note": "máy: Cận 70 mm tầm mặt gấu, nhìn xiên qua hai đầu nơ.; diễn: Một hàng nơ và đường ráp vải đều nhau, gấu ngồi trơ như món hàng. Giữ kệ gấu và bản đồ trên tường bắc.; Dấu vết vừa xuất xưởng · set:factory-interior · đêm",
+   "text": "",
+   "line": "Sau lưng ông là cả một dãy gấu mới may xong."
+  },
+  {
+   "id": "s058",
+   "t0": 84.702,
+   "t1": 86.746,
+   "img": "s058.jpg",
+   "type": "overShoulder",
+   "note": "máy: Trung cận 45 mm qua vai Bách, nhìn hơi ngước, đẩy nhẹ tới đầu ngón tay.; diễn: Bách xoay khỏi thùng rồi chỉ vào bản đồ phân phát gấu. Giữ kệ gấu và bản đồ trên tường bắc.; Tấm bản đồ trên tường · set:factory-interior · đêm",
+   "text": "",
+   "line": "Ông chỉ vào tấm bản đồ trên tường."
+  },
+  {
+   "id": "s059",
+   "t0": 86.746,
+   "t1": 87.834,
+   "img": "s059.jpg",
+   "type": "reaction",
+   "note": "máy: Đặc tả 75 mm hơi chúc xuống mặt bản đồ.; diễn: Một dấu đầu gấu được gắn lên biểu tượng nhà, sát dãy ô đã đánh dấu. Giữ kệ gấu và bản đồ trên tường bắc.; Nhà nào có gấu thì đánh dấu · set:factory-interior · đêm",
+   "text": "",
+   "line": "Nhà nào có gấu rồi thì đánh dấu."
+  },
+  {
+   "id": "s060",
+   "t0": 87.834,
+   "t1": 88.861,
+   "img": "s060.jpg",
+   "type": "closeup",
+   "note": "máy: Trung 50 mm tầm ngực, góc ba phần tư từ cạnh kệ nhìn lại.; diễn: Ông Bách chỉ vào cụm nhà đã đánh dấu trong khi nói. Bắp đứng ở đầu băng nhìn theo. Băng chạy tây → đông. Giữ kệ gấu và bản đồ trên tường bắc.; Lệnh phát gấu có chủ đích · set:factory-interior · đêm",
+   "text": "",
+   "line": "Nhà nào có gấu rồi thì đánh dấu."
+  },
+  {
+   "id": "s061",
+   "t0": 88.861,
+   "t1": 90.668,
+   "img": "s061.jpg",
+   "type": "closeup",
+   "note": "máy: Cận 58 mm nhìn xiên dọc mặt bản đồ, thay nét từ mặt Bách tới nhà chưa đánh dấu.; diễn: Bách trượt tay đến nhóm biểu tượng mái trống, giữ tay lơ lửng trên đích mới. Giữ kệ gấu và bản đồ trên tường bắc.; Mai phát tiếp mấy nhà còn lại · set:factory-interior · đêm",
+   "text": "",
+   "line": "Mai phát tiếp mấy nhà còn lại."
+  },
+  {
+   "id": "s062",
+   "t0": 90.668,
+   "t1": 91.919,
+   "img": "s062.jpg",
+   "type": "establish",
+   "note": "máy: Toàn thấp 26 mm, hạ tới gầm băng, máy nhìn song song nền.; diễn: Một thân két thấp nhô ra từ dưới băng. Kết cấu con lăn làm khung trên để nhấn đồ giấu. Băng chạy tây → đông.; Bí mật ở dưới băng · set:factory-interior · đêm",
+   "text": "",
+   "line": "Dưới băng chuyền là két tiền của chú bán bánh."
+  },
+  {
+   "id": "s063",
+   "t0": 91.919,
+   "t1": 93.122,
+   "img": "s063.jpg",
+   "type": "closeup",
+   "note": "máy: Cận 55 mm từ góc gần nhất của thân két, tiến vào đặc điểm nhận dạng.; diễn: Dấu ổ bánh giống biểu tượng tiệm ở đoạn mở, giúp nhận ra két của chú bán bánh. Nắp vẫn chỉ lộ viền. Băng chạy tây → đông.; Két của chú bán bánh · set:factory-interior · đêm",
+   "text": "",
+   "line": "Dưới băng chuyền là két tiền của chú bán bánh."
+  },
+  {
+   "id": "s064",
+   "t0": 93.122,
+   "t1": 94.929,
+   "img": "s064.jpg",
+   "type": "establish",
+   "note": "máy: Đặc tả 90 mm chúc khoảng 35 độ ngang mép băng; giữ nét vào mặt dây.; diễn: Mặt dây nằm trên nắp két. Đèn chiếu một vệt nhỏ trên mặt giọt nước. Đây là lần đầu dây chuyền hiện rõ, để khớp lần nhận lại ở S095. Băng chạy tây → đông.; Dây chuyền của bà · set:factory-interior · đêm",
+   "text": "",
+   "line": "Trên nắp két, tôi thấy sợi dây chuyền của bà."
+  },
+  {
+   "id": "s065",
+   "t0": 94.929,
+   "t1": 95.905,
+   "img": "s065.jpg",
+   "type": "closeup",
+   "note": "máy: Cận 85 mm từ phía kính nhìn ra, không đổi vị trí Gà trên thùng.; diễn: Gà nhận ra sợi dây chuyền, mắt mở to, giật nhẹ một bàn tay khỏi gờ cửa. Thùng luôn nằm dưới cửa kính phía tây.; Gà nhận ra kỷ vật · set:factory-exterior · đêm",
+   "text": "",
+   "line": "Trên nắp két, tôi thấy sợi dây chuyền của bà."
+  },
+  {
+   "id": "s066",
+   "t0": 95.905,
+   "t1": 98.0,
+   "img": "s066.jpg",
+   "type": "reaction",
+   "note": "máy: Toàn dọc 28 mm từ sau hàng rào nhìn xuống đường, kéo nhẹ theo lưng Gà.; diễn: Gà rời thùng, chạy ngược đường đến nhà thị trưởng. Nút băng đỏ chỉ hướng chuyển động, nhà máy lùi phía sau. Thùng luôn nằm dưới cửa kính phía tây. Chạy về nam ngược hướng đuổi gấu ở S045–S050; trong khung quay ngang, chạy phải → trái.; Chạy thẳng đi báo · set:factory-exterior · đêm",
+   "text": "",
+   "line": "Tôi chạy thẳng tới nhà thị trưởng."
+  },
+  {
+   "id": "s067",
+   "t0": 98.0,
+   "t1": 99.363,
+   "img": "s067.jpg",
+   "type": "reaction",
+   "note": "máy: Trung toàn 32 mm từ ngoài hiên, thấp ngang vai Gà, máy đứng bên trái trục nói chuyện và tiến nhẹ qua mép bậc.; diễn: Gà dừng ngay dưới bậc, người vẫn hướng tới nhà máy, rồi ngẩng lên khi thị trưởng mở hé cửa. Gà thấp trái, thị trưởng cao phải dưới đèn hiên.; Gà tìm tới thị trưởng · set:mayor-door · đêm",
+   "text": "",
+   "line": "Tôi bảo thị trưởng: Chú qua nhìn một lần thôi!"
+  },
+  {
+   "id": "s068",
+   "t0": 99.363,
+   "t1": 100.737,
+   "img": "s068.jpg",
+   "type": "overShoulder",
+   "note": "máy: Trung cận 55 mm qua vai thị trưởng từ trong ngưỡng cửa, góc nhìn hơi dốc xuống Gà. Vai tiền cảnh mờ cạnh phải.; diễn: Gà nhìn thẳng vào người lớn, nâng một bàn tay mở để mời chú đi cùng. Đèn cửa soi rõ mắt long lanh và miệng nhỏ, động tác dừng đúng cuối câu.; Chú qua nhìn một lần thôi · set:mayor-door · đêm",
+   "text": "",
+   "line": "Tôi bảo thị trưởng: Chú qua nhìn một lần thôi!"
+  },
+  {
+   "id": "s069",
+   "t0": 100.737,
+   "t1": 101.67,
+   "img": "s069.jpg",
+   "type": "overShoulder",
+   "note": "máy: Cận 70 mm đảo qua vai Gà, cùng phía trục đối thoại, khuôn cửa đứng thẳng phía sau thị trưởng. Máy tĩnh.; diễn: Thị trưởng nghiêng đầu sang một bên, một bên mày nhướng, mắt liếc xuống Gà. Đầu và vai Gà làm tiền cảnh thấp ở mép trái.; Chú lắc đầu · set:mayor-door · đêm",
+   "text": "",
+   "line": "Chú lắc đầu."
+  },
+  {
+   "id": "s070",
+   "t0": 101.67,
+   "t1": 102.849,
+   "img": "s070.jpg",
+   "type": "closeup",
+   "note": "máy: Cận 55 mm ngang ngực thị trưởng, nhìn chéo qua khuôn cửa từ ngoài hiên, dịch máy ngắn về phía câu quát.; diễn: Thị trưởng hơi cúi ra, mày xiên, miệng mở xéo theo mặt quát. Một tay giữ cạnh cửa. Gà ở ngoài khung.; Báo đời báo đốm · set:mayor-door · đêm",
+   "text": "",
+   "line": "Báo đời báo đốm."
+  },
+  {
+   "id": "s071",
+   "t0": 102.849,
+   "t1": 103.836,
+   "img": "s071.jpg",
+   "type": "reaction",
+   "note": "máy: Trung toàn 35 mm cố định, đối xứng tương đối qua mặt cửa, nhìn từ sau Gà về bậc hiên.; diễn: Thị trưởng ra hiệu về nhà rồi khép cửa, để lộ vệt đèn hẹp dần. Gà đứng yên ở dưới bậc, lưng khom nhẹ, nút băng đỏ thấy rõ để nối với mặt cửa nhà Gà khi trời sáng.; Về ngủ đi · set:mayor-door · đêm",
+   "text": "",
+   "line": "Về ngủ đi!"
+  },
+  {
+   "id": "s072",
+   "t0": 103.836,
+   "t1": 105.196,
+   "img": "s072.jpg",
+   "type": "reaction",
+   "note": "máy: Trung toàn 35 mm thẳng từ vỉa hè nhìn về cửa nhà Gà, giữ tỉ lệ khung cửa gần giống S071 để cắt nối đổi vai.; diễn: Gà ở trên bậc, nghiêng đầu nhìn xuống. Thị trưởng mặc đồ thường từ đường chạy lên gấp, đổi vị trí trên/dưới của hai người so với đêm trước.; Sáng hôm sau, chú chạy tới tìm tôi · set:street",
+   "text": "",
+   "line": "Sáng hôm sau, chính chú chạy qua tìm tôi."
+  },
+  {
+   "id": "s073",
+   "t0": 105.196,
+   "t1": 106.498,
+   "img": "s073.jpg",
+   "type": "insert",
+   "note": "máy: Trung cận đôi 50 mm nhìn ngang dọc bậc hiên, một vai Gà cao ở trái và gương mặt thị trưởng thấp ở phải.; diễn: Thị trưởng dừng lại, cúi người lấy hơi rồi chỉ vào túi áo, còn Gà cúi đầu lắng nghe. Nhịp chuyển từ chạy sang đứng yên.; Người cần giúp đã đổi vai · set:street",
+   "text": "",
+   "line": "Sáng hôm sau, chính chú chạy qua tìm tôi."
+  },
+  {
+   "id": "s074",
+   "t0": 106.498,
+   "t1": 107.853,
+   "img": "s074.jpg",
+   "type": "reaction",
+   "note": "máy: Đặc tả 85 mm chếch xuống túi áo thị trưởng, máy tĩnh, vân vải sắc nét. Hồi tưởng vật thể rất ngắn cùng trục với shot sau.; diễn: Trong hình ảnh hồi tưởng theo lời kể, đồng hồ quả quýt nắp vàng và dây xích ngắn hiện trên bàn tay thị trưởng ngay trước túi áo. Một rãnh viền tròn giúp nhận ra vật về sau.; Chiếc đồng hồ cha để lại · set:street",
+   "text": "",
+   "line": "Chiếc đồng hồ quả quýt cha để lại cho chú đã biến mất."
+  },
+  {
+   "id": "s075",
+   "t0": 107.853,
+   "t1": 109.253,
+   "img": "s075.jpg",
+   "type": "reaction",
+   "note": "máy: Đặc tả 85 mm cùng hướng, chiều cao và điểm nét với S074, sau đó có thể dịch nét từ mép túi sang bàn tay trống.; diễn: Trở về hiện tại, thị trưởng vén miệng túi áo trống ra. Giữ đường may túi tại đúng vị trí của S074 để khán giả đọc ra sự biến mất ngay khi cắt.; Túi trống · set:street",
+   "text": "",
+   "line": "Chiếc đồng hồ quả quýt cha để lại cho chú đã biến mất."
+  },
+  {
+   "id": "s076",
+   "t0": 109.253,
+   "t1": 110.616,
+   "img": "s076.jpg",
+   "type": "chase",
+   "note": "máy: Trung toàn 35 mm từ dưới mép hiên, hướng máy chéo ra đường, thấy đội hình theo ba lớp.; diễn: Thị trưởng giơ tay gọi ở tiền cảnh. Hai lính gác quay cùng hướng nhìn từ phía vỉa hè, Gà chờ cạnh cửa nhà và chuẩn bị dẫn đi.; Gọi hai lính gác · set:street",
+   "text": "",
+   "line": "Lần này, chú gọi hai lính gác đi cùng tôi."
+  },
+  {
+   "id": "s077",
+   "t0": 110.616,
+   "t1": 111.945,
+   "img": "s077.jpg",
+   "type": "reaction",
+   "note": "máy: Toàn 32 mm nhìn từ sau đoàn ở mép vỉa hè, máy theo nhẹ ngang tầm lưng Gà, dùng đường dẫn dọc chiều sâu phố.; diễn: Gà dẫn đầu về nhà máy, thị trưởng đi sát theo, hai lính gác nối sau. Hướng đi ổn định theo trục phố đã thiết lập ở cuộc bám đuôi đêm hai.; Gà dẫn cả nhóm · set:street",
+   "text": "",
+   "line": "Lần này, chú gọi hai lính gác đi cùng tôi."
+  },
+  {
+   "id": "s078",
+   "t0": 111.945,
+   "t1": 113.303,
+   "img": "s078.jpg",
+   "type": "reaction",
+   "note": "máy: Trung toàn 35 mm chếch từ ngoài tường nhà máy dọc mặt kính, đặt máy cùng mặt tường với chỗ Gà từng rình.; diễn: Thị trưởng tiến sát kính để nhìn, Gà chỉ nhẹ vào phía trong. Hai lính gác lùi một bước chừa đường quan sát. Thùng gỗ cũ vẫn ở chân cửa kính.; Cùng nhìn qua cửa kính · set:factory-exterior",
+   "text": "",
+   "line": "Qua cửa kính nhà máy, chú thấy ông Bách nhặt chiếc đồng hồ của mình khỏi băng chuyền."
+  },
+  {
+   "id": "s079",
+   "t0": 113.303,
+   "t1": 114.774,
+   "img": "s079.jpg",
+   "type": "closeup",
+   "note": "máy: Trung cận 50 mm từ phía trong, trục dọc băng chuyền, mép kính xa mờ phía sau. Góc thấp sát mặt băng, lấy nét vào tay và vật chứng.; diễn: Ông Bách nhấc đồng hồ quả quýt nắp vàng khỏi đầu nhận băng chuyền. Dây xích ngắn thõng xuống trên băng. Bách nhìn vật trong tay, chưa biết có người bên cửa kính.; Ông Bách nhặt đúng chiếc đồng hồ · set:factory-interior",
+   "text": "",
+   "line": "Qua cửa kính nhà máy, chú thấy ông Bách nhặt chiếc đồng hồ của mình khỏi băng chuyền."
+  },
+  {
+   "id": "s080",
+   "t0": 114.774,
+   "t1": 116.11,
+   "img": "s080.jpg",
+   "type": "insert",
+   "note": "máy: Cận đôi 65 mm ngoài cửa kính, ngang mắt thị trưởng. Máy ở cùng phía tường như S078, kính và ánh mắt tạo một đường chéo.; diễn: Thị trưởng mở to mắt khi thấy đồng hồ. Gà sau vai chú im lặng, nhìn từ vật chứng sang chú. Giữ nhịp ngắn để phản ứng lên trước mệnh lệnh.; Thị trưởng nhận ra vật chứng · set:factory-exterior",
+   "text": "",
+   "line": "Qua cửa kính nhà máy, chú thấy ông Bách nhặt chiếc đồng hồ của mình khỏi băng chuyền."
+  },
+  {
+   "id": "s081",
+   "t0": 116.11,
+   "t1": 117.658,
+   "img": "s081.jpg",
+   "type": "reaction",
+   "note": "máy: Trung toàn 35 mm chếch từ đầu hồi phía nam, thấy ô kính phía tây và hướng thị trưởng ra hiệu vòng sang phía cửa kho ở phía đông. Lia nhẹ theo đầu và vai.; diễn: Thị trưởng rời mắt khỏi ô kính phía tây, xoay người về phía hai lính và chỉ đường vòng về cửa kho phía đông. Gà lùi nửa bước để mở lối, lính bắt gặp tín hiệu.; Quay sang hai lính gác · set:factory-exterior",
+   "text": "",
+   "line": "Chú quay sang hai lính gác."
+  },
+  {
+   "id": "s082",
+   "t0": 117.658,
+   "t1": 119.0,
+   "img": "s082.jpg",
+   "type": "chase",
+   "note": "máy: Trung cận 50 mm từ gần chốt cửa kho nhìn ngược về thị trưởng, chốt chiếm góc dưới, máy giữ tĩnh để cắt đúng động tác sang S083.; diễn: Thị trưởng dứt khoát ra lệnh. Lính thứ nhất đưa tay tới ngay trước chốt, lính thứ hai giữ sát mép cửa. Cánh cửa vẫn khép ở khung này.; Mở cửa kho · set:factory-exterior",
+   "text": "",
+   "line": "Mở cửa kho."
+  },
+  {
+   "id": "s083",
+   "t0": 119.0,
+   "t1": 120.183,
+   "img": "s083.jpg",
+   "type": "reaction",
+   "note": "máy: Toàn 3/4 từ sát ngưỡng, 27 mm; máy đứng ngoài, đẩy 15 cm vào trục cửa.; diễn: Lính 1 bên trái nâng chốt, lính 2 bên phải kéo tay nắm; khe cửa mở hé về chồng thùng, Gà và thị trưởng lùi nửa bước cho hai lính thao tác.; Hai lính mở kho · set:factory-storage",
+   "text": "",
+   "line": "Lính gác mở cửa kho."
+  },
+  {
+   "id": "s084",
+   "t0": 120.183,
+   "t1": 120.774,
+   "img": "s084.jpg",
+   "type": "reaction",
+   "note": "máy: Trung 3/4 sau vai thị trưởng, 50 mm; máy giữ phía ngưỡng, đổi nét từ vai tới thùng.; diễn: Thị trưởng hướng mắt về chồng thùng còn nguyên; Gà dừng sau vai chú.; Ánh mắt chạm chồng thùng · set:factory-storage",
+   "text": "",
+   "line": "Thị trưởng nhìn sang chồng thùng in tên tiệm ông Bách."
+  },
+  {
+   "id": "s085",
+   "t0": 120.774,
+   "t1": 122.117,
+   "img": "s085.jpg",
+   "type": "closeup",
+   "note": "máy: Cận vật 85 mm ngang tầm thùng, chéo dọc mép carton, máy tĩnh.; diễn: Ba mặt thùng cùng lặp một dấu đầu gấu, một góc thùng bắt sáng. Đây là thùng hàng của tiệm.; Dấu đầu gấu · set:factory-storage",
+   "text": "",
+   "line": "Thị trưởng nhìn sang chồng thùng in tên tiệm ông Bách."
+  },
+  {
+   "id": "s086",
+   "t0": 122.117,
+   "t1": 123.194,
+   "img": "s086.jpg",
+   "type": "closeup",
+   "note": "máy: Cận vừa ngang mắt 55 mm nhìn chéo từ phía chồng thùng, máy tĩnh.; diễn: Thị trưởng giữ một tay ngang dấu đầu gấu, bắt đầu hỏi; Gà theo mắt chú.; Thị trưởng hỏi về thùng · set:factory-storage",
+   "text": "",
+   "line": "Ủa, đây là mấy thùng sáng nay ông báo mất mà?"
+  },
+  {
+   "id": "s087",
+   "t0": 123.194,
+   "t1": 124.289,
+   "img": "s087.jpg",
+   "type": "reaction",
+   "note": "máy: Trung hai người 50 mm từ trong kho nhìn xéo ra, cắt trên đường nhìn hợp trục.; diễn: Thị trưởng xoay mắt từ dấu sang Bách, chỉ vào thùng. Bách né ánh nhìn nhưng chưa nói.; Ông đã báo mất chúng · set:factory-storage",
+   "text": "",
+   "line": "Ủa, đây là mấy thùng sáng nay ông báo mất mà?"
+  },
+  {
+   "id": "s088",
+   "t0": 124.289,
+   "t1": 125.176,
+   "img": "s088.jpg",
+   "type": "closeup",
+   "note": "máy: Cận chính diện hơi lệch 70 mm; máy tĩnh, lấy nét mắt.; diễn: Bách khựng, môi khép, tay hạ xuống sát tạp dề xưởng.; Ông Bách im lặng · set:factory-storage",
+   "text": "",
+   "line": "Ông Bách im luôn."
+  },
+  {
+   "id": "s089",
+   "t0": 125.176,
+   "t1": 125.849,
+   "img": "s089.jpg",
+   "type": "closeup",
+   "note": "máy: Cận 3/4 từ sát vai Bách, 70 mm, nhích vào mắt Gà.; diễn: Gà ngẩng khỏi dấu đầu gấu, nhìn Bách rồi nhận ra điều bất thường.; Gà chắp nối manh mối · set:factory-storage",
+   "text": "",
+   "line": "Tôi mới hiểu."
+  },
+  {
+   "id": "s090",
+   "t0": 125.849,
+   "t1": 127.014,
+   "img": "s090.jpg",
+   "type": "closeup",
+   "note": "máy: Trung rộng cạnh sàn kho, 35 mm, máy đặt thấp nhìn xiên theo đường Bách đi.; diễn: Trong hồi tưởng, Bách một mình bê thùng dấu đầu gấu vào cụm hàng tự giấu.; Chính tay Bách bê thùng · set:factory-storage",
+   "text": "",
+   "line": "Cứ mỗi lần cả thị trấn mất đồ, ông lại giấu thêm vài thùng hàng của mình rồi đi báo mất."
+  },
+  {
+   "id": "s091",
+   "t0": 127.014,
+   "t1": 128.268,
+   "img": "s091.jpg",
+   "type": "closeup",
+   "note": "máy: Cận ngang mép chồng 70 mm, động tác hạ theo góc thùng, máy tĩnh.; diễn: Hai tay Bách đặt thùng vừa bê lên chồng thùng của tiệm rồi rút tay.; Thùng hàng tự giấu · set:factory-storage",
+   "text": "",
+   "line": "Cứ mỗi lần cả thị trấn mất đồ, ông lại giấu thêm vài thùng hàng của mình rồi đi báo mất."
+  },
+  {
+   "id": "s092",
+   "t0": 128.268,
+   "t1": 129.414,
+   "img": "s092.jpg",
+   "type": "reaction",
+   "note": "máy: Trung đôi từ bên mép cửa nhà thị trưởng, 45 mm, giữ trục giữa hai người.; diễn: Bách ở ngoài hiên vờ sốt ruột, chìa tay báo mất. Thị trưởng đứng ngay trong cửa lắng nghe.; Rồi ra báo mất · set:mayor-door",
+   "text": "",
+   "line": "Cứ mỗi lần cả thị trấn mất đồ, ông lại giấu thêm vài thùng hàng của mình rồi đi báo mất."
+  },
+  {
+   "id": "s093",
+   "t0": 129.414,
+   "t1": 130.222,
+   "img": "s093.jpg",
+   "type": "closeup",
+   "note": "máy: Cận vừa nhìn chính diện ông Bách, 60 mm, giữ mép cửa như khung trong khung.; diễn: Bách diễn vẻ đáng thương trước người tiếp nhận; ông ép vai xuống, mắt rưng.; Người báo mất nhiều nhất · set:mayor-door",
+   "text": "",
+   "line": "Ai mà nghi người than mất nhiều nhất chứ?"
+  },
+  {
+   "id": "s094",
+   "t0": 130.222,
+   "t1": 131.001,
+   "img": "s094.jpg",
+   "type": "reaction",
+   "note": "máy: Trung 3/4 sau một góc thùng, 50 mm; trở về cùng phía kho lúc mở.; diễn: Gà đứng cạnh chồng thùng nhìn Bách, thị trưởng chờ câu trả lời. Bách tránh nhìn cả hai.; Ánh nhìn hiểu chuyện · set:factory-storage",
+   "text": "",
+   "line": "Ai mà nghi người than mất nhiều nhất chứ?"
+  },
+  {
+   "id": "s095",
+   "t0": 131.001,
+   "t1": 132.118,
+   "img": "s095.jpg",
+   "type": "closeup",
+   "note": "máy: Cận tay 70 mm từ trên chếch 35°, máy tĩnh.; diễn: Sáng hôm sau, Gà mở hai bàn tay để lộ sợi dây chuyền vừa lấy lại của bà.; Dây chuyền trở về tay Gà · set:bedroom",
+   "text": "",
+   "line": "Sáng hôm sau, tôi lấy lại sợi dây chuyền."
+  },
+  {
+   "id": "s096",
+   "t0": 132.118,
+   "t1": 133.011,
+   "img": "s096.jpg",
+   "type": "closeup",
+   "note": "máy: Trung cận ngang ngực 55 mm, góc 3/4 từ phía cửa sổ phòng.; diễn: Gà đứng cạnh két riêng, cúi nhìn dây chuyền rồi thở phào.; Gà nhìn món của bà · set:bedroom",
+   "text": "",
+   "line": "Sáng hôm sau, tôi lấy lại sợi dây chuyền."
+  },
+  {
+   "id": "s097",
+   "t0": 133.011,
+   "t1": 134.12,
+   "img": "s097.jpg",
+   "type": "closeup",
+   "note": "máy: Cận vật sát góc két, 65 mm, nhìn từ ngang bản lề vào trong.; diễn: Gà đặt dây chuyền lên đáy két mở, tay còn giữ dây trước lúc đóng.; Cất dây chuyền vào két riêng · set:bedroom",
+   "text": "",
+   "line": "Tôi cất dây chuyền vào két."
+  },
+  {
+   "id": "s098",
+   "t0": 134.12,
+   "t1": 135.017,
+   "img": "s098.jpg",
+   "type": "reaction",
+   "note": "máy: Trung rộng ngang hông 35 mm, chếch từ chân giường, máy tĩnh.; diễn: Cửa két đã khép. Gà quay lưng tiến nửa bước, Bắp nhích đến két sau lưng Gà.; Gà vừa quay lưng · set:bedroom",
+   "text": "",
+   "line": "Vừa quay lưng, Bắp đã ôm nguyên cái két."
+  },
+  {
+   "id": "s099",
+   "t0": 135.017,
+   "t1": 136.048,
+   "img": "s099.jpg",
+   "type": "closeup",
+   "note": "máy: Trung thấp 45 mm, nhìn chéo cạnh két, máy tĩnh.; diễn: Bắp ôm cả két đã đóng bằng hai tay, nhấc đáy lên một đoạn. Gà khựng ngoài rìa ảnh.; Bắp ôm nguyên cái két · set:bedroom",
+   "text": "",
+   "line": "Vừa quay lưng, Bắp đã ôm nguyên cái két."
+  },
+  {
+   "id": "s100",
+   "t0": 136.048,
+   "t1": 136.496,
+   "img": "s100.jpg",
+   "type": "reaction",
+   "note": "máy: Đặc tả mặt Gà 80 mm, góc 3/4 ngược đường nhìn với Bắp.; diễn: Gà chỉ liếc sang Bắp và gọi đúng một tiếng, vai giữ yên.; “Bắp.” · set:bedroom",
+   "text": "",
+   "line": "Bắp."
+  },
+  {
+   "id": "s101",
+   "t0": 136.496,
+   "t1": 137.32,
+   "img": "s101.jpg",
+   "type": "closeup",
+   "note": "máy: Cận vừa ngang sàn 45 mm, cùng phía máy của cảnh nhấc, hạ máy nhẹ theo két.; diễn: Bắp hạ két xuống ngay ngắn, buông hai tay khi đáy chạm sàn.; Bắp đặt xuống ngay · set:bedroom",
+   "text": "",
+   "line": "Nó đặt xuống liền."
+  },
+  {
+   "id": "s102",
+   "t0": 137.32,
+   "t1": 138.216,
+   "img": "s102.jpg",
+   "type": "reaction",
+   "note": "máy: Trung đôi 50 mm đặt ngang mặt Bắp, máy tĩnh.; diễn: Gà hơi cúi, tay dừng phía trên đầu Bắp. Bắp nhìn lên, két đã ở sàn cạnh hai nhân vật.; Gà đưa tay gõ nhẹ · set:bedroom",
+   "text": "",
+   "line": "Tôi gõ nhẹ lên đầu Bắp một cái."
+  },
+  {
+   "id": "s103",
+   "t0": 138.216,
+   "t1": 138.925,
+   "img": "s103.jpg",
+   "type": "reaction",
+   "note": "máy: Đặc tả 75 mm ngang mắt Bắp, máy tĩnh; nhấn tại khung hình tiếp xúc.; diễn: Tay Gà chạm rất nhẹ đỉnh đầu Bắp. Hai tai gấu nảy một nhịp, tiếng “Boang!” vào đúng điểm chạm.; Chạm nhẹ · Boang! · set:bedroom",
+   "text": "",
+   "line": "Tôi gõ nhẹ lên đầu Bắp một cái."
+  },
+  {
+   "id": "s104",
+   "t0": 138.925,
+   "t1": 140.0,
+   "img": "s104.jpg",
+   "type": "establish",
+   "note": "máy: Cắt thẳng sang đen toàn khung.; diễn: Giữ đen ngay sau tiếng “Boang!”, kết tập.; Cắt đen · set:black",
+   "text": "",
+   "line": "Tôi gõ nhẹ lên đầu Bắp một cái."
+  }
+ ],
+ "source": "storyboard.json"
+}

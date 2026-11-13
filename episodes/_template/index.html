@@ -24,6 +24,7 @@
         -webkit-text-stroke: 14px #15121c; paint-order: stroke fill; text-shadow: 0 6px 0 rgba(0,0,0,0.35);
       }
       #cap { top: 1250px; font-size: 84px; transform-origin: 50% 60%; }
+      #cap .w { color: #c4bfd6; } #cap .w.on { color: #fff; }   /* ô FX chuTungChu: chữ đang đọc sáng hơn */
       #title { top: 260px; font-size: 104px; color: #ffe066; transform-origin: 50% 50%; }   /* chữ nổi đặc biệt: trường `text` của shot */
     </style>
   </head>
@@ -147,6 +148,10 @@
       // shot ngắn theo loại → cam/cast đầy đủ (liên tục địa điểm + vị trí diễn viên giữa các shot); noiNhom: nhóm (bears) chạy cùng, stance, camera trong phòng
       const shots = noiNhom(expandShots(SHOTS2, { places, crowd: crowdNames(EPISODE.actors), env: townEnv, light: EPISODE.light, fps: FPS }), { slots });
       const tl = buildTimeline(shots, FPS);
+      // thời lượng trang = tổng shot (tự tính): data-duration ghi sẵn trong HTML lệch tổng shot thì sửa tại chỗ + cảnh báo
+      for (const el of [document.getElementById('root'), document.getElementById('title'), document.getElementById('cap')]) {
+        if (el && Math.abs(+el.dataset.duration - tl.total) > 0.02) { if (el.id === 'root') console.warn(`[tập] data-duration ${el.dataset.duration} ≠ tổng shot ${tl.total.toFixed(3)} → dùng tổng shot`); el.dataset.duration = tl.total.toFixed(3); }
+      }
       // GHI CÔNG cuối phim (engine/credits.js): ảnh episodes/<ep>/ghi-cong.png (tools/ghi-cong.mjs) phủ lên 3 giây cuối, tắt được (?credits=0|1 hoặc setOptions({ credits })).
       // Mặc định TẮT (người dùng chốt 2026-11-13); bật bằng EPISODE.credits = true, ?credits=1 hoặc công tắc trình phát.
       const credits = await createCredits({ root: document.getElementById('root'), src: '/episodes/_template/ghi-cong.png', total: tl.total,
@@ -175,7 +180,19 @@
       function overlay(t, shot, local) {
         const L = OPTS.subs ? (CAPS[OPTS.lang] || CAPTIONS) : [];
         let i = -1; for (let j = 0; j < L.length; j++) { if (L[j][0] <= t + 1e-4 && t < L[j][1]) { i = j; break; } }
-        if (i !== lastCap) { cap.textContent = i >= 0 ? L[i][2] : ''; lastCap = i; }
+        // cụm có mốc từng chữ (L[i][3]): chữ dài thì thu nhỏ phông; ô FX 'chuTungChu' → chữ đang đọc sáng hơn (cap.dataset.wi cho bản xuất MP4). Như ep001.
+        const W = i >= 0 ? L[i][3] : null, kar = !!(W && globalThis.__autoFx?.chuTungChu);
+        let wi = -1; if (kar) for (let j = 0; j < W.length; j++) if (W[j][0] <= t + 1e-4) wi = j;
+        const key = i + ':' + wi + (kar ? 'k' : '');
+        if (key !== lastCap) {
+          const ct = i >= 0 ? L[i][2] : '';
+          if (kar) { cap.innerHTML = ''; ct.split(' ').forEach((w, j) => { const sp = document.createElement('span'); sp.className = j === wi ? 'w on' : 'w'; sp.textContent = (j ? ' ' : '') + w; cap.appendChild(sp); }); cap.dataset.wi = wi; }
+          else { cap.textContent = ct; delete cap.dataset.wi; }
+          cap.style.fontSize = W && ct.length > 22 ? Math.round(Math.max(52, 84 * Math.sqrt(22 / ct.length))) + 'px' : '';
+          lastCap = key;
+        }
+        const cy = shot.cap?.y, top = cy == null ? '' : cy + 'px';   // shots.js `cap: { y: 520 }` = top của phụ đề (px, khung 1080×1920)
+        if (cap.style.top !== top) cap.style.top = top;
         cap.style.transform = pop(i >= 0 ? (t - L[i][0]) / 0.12 : 1);
         const txt = shot.text || '';
         if (txt !== lastTitle) { title.textContent = txt; lastTitle = txt; }
