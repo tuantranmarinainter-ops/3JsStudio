@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 17:45",
+ "capNhat": "2026-11-13 18:00",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -99,7 +99,7 @@
     {
      "ten": "Dân làng tập 2 (ông Bách, thị trưởng, lính gác…) đổi từ R15 sang R6",
      "tt": "chua",
-     "ghiChu": "repo đã có engine/r6.js nhưng dàn diễn viên (cast.js) chưa dùng; cần ánh xạ animation R15 → R6 và kiểm mọi shot"
+     "ghiChu": "phải làm trước: nối R6 vào dàn diễn viên và thêm mặt sống cho R6 (hiện R6 gặp mặt sống sẽ lỗi)"
     },
     {
      "ten": "Thân hình R6 mới (thiết kế lại)",
@@ -113,7 +113,7 @@
     {
      "ten": "Áp toàn bộ biểu cảm của Gà cho nhân vật phụ và dân làng",
      "tt": "chua",
-     "ghiChu": "làm cùng đợt chuyển R6; đang rà cơ chế mặt của Gà / R15 / R6"
+     "ghiChu": "rà soát: Gà có 37 mặt (ảnh) nhưng không chớp mắt/nhìn theo/nhép; R15 có 16 mặt + chớp, nhìn, nhép; gấu gần như không có. Hướng: thư viện mặt chung từ bộ ảnh của Gà + giữ mặt sống. Công lớn"
     }
    ]
   },
@@ -121,15 +121,56 @@
    "ten": "Lõi chung áp cho mọi tập",
    "viec": [
     {
-     "ten": "Rà soát tập 2 thiếu gì so với tập 1 (hậu kỳ, trời/phông nền, vật liệu, hiệu ứng tự động, mặt nhân vật, âm thanh, dây chuyền)",
-     "tt": "dang",
-     "ghiChu": "1 agent Sonnet chỉ đọc; kết quả ở docs/handoff/ra-soat-loi-chung-ep002.md",
-     "pt": 30
+     "ten": "Rà soát tập 2 thiếu gì so với tập 1",
+     "tt": "xong",
+     "tok": 220,
+     "ghiChu": "10 thiếu sót, chi tiết ở docs/handoff/ra-soat-loi-chung-ep002.md. Đã đủ: hậu kỳ, đèn nhân vật, vật liệu, bụi cũ"
     },
     {
-     "ten": "Vá các thiếu sót vào tập 2 + tập mẫu + dây chuyền",
+     "ten": "Thị trấn: trời thật (mây, trăng, sao) theo giờ và thời tiết",
+     "tt": "dang",
+     "pt": 15,
+     "ghiChu": "17 shot đêm hiện chỉ có nền màu phẳng; 1 agent Sonnet đang làm"
+    },
+    {
+     "ten": "Thị trấn ban đêm: cửa sổ nhà sáng, đèn đường",
+     "tt": "dang",
+     "pt": 15,
+     "ghiChu": "cùng agent"
+    },
+    {
+     "ten": "Thị trấn: núi/rừng xa, bóng mây; xe và dân đi bộ nếu dùng lại được của tập 1",
+     "tt": "dang",
+     "pt": 10,
+     "ghiChu": "cùng agent; phần xe/dân đi bộ có thể để sau"
+    },
+    {
+     "ten": "Phụ đề từng chữ chưa chạy ở tập 2 (bật mà không có tác dụng)",
      "tt": "chua",
-     "ghiChu": "chờ kết quả rà soát"
+     "ghiChu": "tập mẫu thiếu mã, phụ đề tập 2 thiếu mốc từng chữ"
+    },
+    {
+     "ten": "Bụi chân / dấu chân khi nhân vật đi, chạy",
+     "tt": "chua",
+     "ghiChu": "hiện chỉ tính cho nhà có chân của tập 1"
+    },
+    {
+     "ten": "Mở trang chậm: tập 2 có 181 shader (tập 1: 104)",
+     "tt": "chua",
+     "ghiChu": "cần gom vật liệu + làm nóng trước"
+    },
+    {
+     "ten": "~100 đạo cụ/nội thất chưa khai chất liệu (thùng, bảng tin, nội thất, nhà máy)",
+     "tt": "chua"
+    },
+    {
+     "ten": "Tiếng động tập 2 mới 37 tiếng (~18/phút, chuẩn ≥ 20)",
+     "tt": "chua"
+    },
+    {
+     "ten": "Công cụ đồng bộ tập mẫu → tập đã sinh + bước kiểm \"chuẩn tập 1\" trong dây chuyền",
+     "tt": "chua",
+     "ghiChu": "hiện sửa tập mẫu không lan sang tập 2"
     }
    ]
   },
