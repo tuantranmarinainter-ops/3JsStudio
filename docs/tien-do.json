@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 21:00",
+ "capNhat": "2026-11-13 21:40",
  "nhom": [
   {
    "ten": "Tập 3",
@@ -47,8 +47,8 @@
     {
      "ten": "Bộ kit dựng phim tập 3 do Codex làm (nhân vật, mặt bằng bối cảnh, camera 104 shot, ánh sáng, tỉ lệ + vật liệu đồ vật)",
      "tt": "dang",
-     "pt": 10,
-     "ghiChu": "Codex đang chạy theo đề bài docs/handoff/ep003-de-bai-kit-cho-codex.md; kết quả ra kich-ban/ep003-kit/ (kit.json, KIT.html, bộ kiểm)"
+     "pt": 20,
+     "ghiChu": "lần 1 Codex chỉ ra khung dữ liệu (chưa đo: 357 lỗi thiếu số, cả 104 shot tin cậy thấp). Đang chạy lần 2 theo 3 đợt: phòng Gà (35 shot) → nhà máy (33) → phố và tiệm (36), mỗi đợt phải đo thật và tự chiếu ngược kiểm"
     }
    ],
    "tap": "Tập 3"
