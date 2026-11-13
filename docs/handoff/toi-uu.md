@@ -17,11 +17,21 @@ Làm repo nhẹ hơn, công cụ chạy nhanh hơn, ít token hơn — theo 8 đ
 7. Xoá `tools/peek.mjs`, `tools/snap.js` (đã hỏng); 3 skill chuyển sang `look.mjs`.
 8. Quy ước handoff → `docs/handoff/`, ảnh kiểm tra → `output/`; `git config core.safecrlf false` (cục bộ) để hết cảnh báo LF/CRLF.
 
+6a. **Nén model + ảnh vân (đợt 1)**: lệnh mới `node tools/nen-model.mjs <file> [--thu]` (glTF-Transform: dedup, prune, weld, lượng tử hoá
+   `KHR_mesh_quantization`, ảnh vân → WebP ≤ 1k; bản gốc lưu ở `.cache/nen-model/goc/`; đánh dấu `asset.extras.nen` để không nén chồng).
+   `nhap-model.mjs nhap` tự gọi sau bước Blender (tắt: `--khong-nen`); `kiem` đọc được cỡ ảnh WebP. Trang `tools/xem-model.html` để so
+   bản gốc ↔ bản nén từng model bằng `look.mjs --ref`. Đã nén 3 file: chậu cây 6177 → 4613 kB, mòng biển 3453 → 1226 kB, bộ sách
+   3187 → 2016 kB (tổng −5,0 MB). Bản gộp: ep001 90,8 → 84,1 MB; ep002 64,5 → 57,7 MB. Kiểm: 145 shot ep001 so ảnh chuẩn không lệch
+   quá mức nhiễu giữa hai lần chụp; so riêng từng model: cây + chim ≤ 0,004%, sách 0,06–0,07% (lấm tấm quanh dải vàng gáy sách do
+   JPEG → WebP, agent soi ảnh: chấp nhận). KHÔNG dùng meshopt: `vendor/three` chưa có `meshopt_decoder`, phải sửa `engine/assets.js`.
+
 ## Còn lại (theo thứ tự nên làm)
-1. **Mục 6a — nén model + ảnh vân** (tham khảo `donmccurdy/glTF-Transform`, `zeux/meshoptimizer`): thêm bước nén vào `tools/nhap-model.mjs`
-   (dedup, meshopt/quantize, ảnh vân WebP ≤ 1k). Bắt đầu với 3 file nặng nhất dùng ở cả hai tập: `assets/polyhaven/potted_plant_01` (5,1 MB),
-   `assets/polyfork/herring-gull-55c3da.glb` (3,4 MB), `assets/polyhaven/book_encyclopedia_set_01` (2,4 MB). Kiểm bằng `look.mjs --ref`.
-   Hiện model 22 MB + ảnh vân 16 MB = 60% bản gộp ep002 (63 MB). Lưu ý `tools/nhap-model.mjs` đang có thay đổi dở của phiên khác.
+1. **Mục 6a đợt 2 — nén các model còn lại**: chạy `node tools/nen-model.mjs <file> --thu` trên các file nặng kế tiếp (xem bảng trong bản đồ),
+   mỗi đợt vài file: chụp chuẩn trước (`look.mjs … --shots all --out output/nen-model/<đợt>-truoc`, chạy 2 lần để biết mức nhiễu — có shot tự
+   lệch tới 0,13%), nén, so `--ref`, rồi so riêng từng model bằng `tools/xem-model.html`. Chậu cây còn 4,0 MB lưới (114 nghìn đỉnh): muốn giảm
+   nữa phải dùng meshopt (đưa `meshopt_decoder.module.js` vào `vendor/three/addons/libs/` + `loader.setMeshoptDecoder` trong `engine/assets.js`,
+   `engine/r15.js`, `engine/ga-rig.js`) hoặc giảm lưới (đổi hình → cần người dùng duyệt).
+   CHƯA commit: phần móc nén trong `tools/nhap-model.mjs` (file đang có thay đổi dở của phiên khác) — phiên đó commit kèm.
 2. **Mục 6b — gộp không cần mở trang**: `tools/bundle.mjs` lưu danh sách file đã ghi (kèm mtime của shots.js/episode.js/manifest) để lần sau bỏ
    bước mở trình duyệt. Với `PROFILE=1` bước này đã ngắn hẳn — đo lại trước khi quyết có đáng làm không.
 3. **Mục 4b — giảm số shader ở gốc** (`docs/shaders.md`): ep002 có 105 program, 73 cái không có khoá dùng chung; 1 shader bóng mất 9 s;

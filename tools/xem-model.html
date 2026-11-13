@@ -1,0 +1,46 @@
+<!doctype html>
+<!-- Xem MỘT model glTF/GLB dưới đèn cố định, camera quay quanh theo t (hàm thuần của t) — để so bản gốc với bản đã nén:
+       node tools/look.mjs tools/xem-model.html --query "src=.cache/nen-model/goc/assets/x/x.gltf" --t 0,1,2,3 --out output/nen-model/x-goc
+       node tools/look.mjs tools/xem-model.html --query "src=assets/x/x.gltf" --t 0,1,2,3 --ref output/nen-model/x-goc --out output/nen-model/x-nen
+     t = 0,1,2,3 → 4 hướng nhìn cách nhau 90°; phần lẻ của t = cận dần (t=0.5: gần gấp đôi). -->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
+    <style>* { margin: 0 } html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000 } canvas { display: block }</style>
+  </head>
+  <body>
+    <canvas id="c" width="1080" height="1920"></canvas>
+    <script type="module">
+      import * as THREE from 'three';
+      import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+      window.THREE = THREE;
+      // src không có "/" đầu (tránh Git Bash tự đổi "/x" thành đường dẫn Windows) → tính từ gốc repo
+      const src = '/' + (new URLSearchParams(location.search).get('src') || '').replace(/^\/+/, '');
+      const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true, preserveDrawingBuffer: true });
+      renderer.setSize(1080, 1920, false);
+      const scene = new THREE.Scene(); scene.background = new THREE.Color('#8fa3b5');
+      scene.add(new THREE.HemisphereLight('#ffffff', '#55606b', 1.6));
+      const sun = new THREE.DirectionalLight('#ffffff', 2.4); sun.position.set(4, 9, 6); scene.add(sun);
+      const cam = new THREE.PerspectiveCamera(30, 1080 / 1920, 0.01, 1000);
+      const gltf = await new GLTFLoader().loadAsync(src);
+      const root = gltf.scene; root.name = 'model'; scene.add(root); root.updateMatrixWorld(true);
+      const box = new THREE.Box3().setFromObject(root), c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3());
+      const R = Math.max(s.x, s.y, s.z);
+      let tri = 0; root.traverse((o) => { if (o.isMesh) tri += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3; });
+      window.__info = { size: s.toArray().map((v) => +v.toFixed(4)), center: c.toArray().map((v) => +v.toFixed(4)), tri, clips: gltf.animations.map((a) => a.name) };
+      console.log('MODEL ' + JSON.stringify(window.__info));
+      const mixer = gltf.animations.length ? new THREE.AnimationMixer(root) : null;
+      if (mixer) mixer.clipAction(gltf.animations[0]).play();
+      window.__stage = { scene, camera: cam, renderer };
+      window.renderAt = (t) => {
+        const a = Math.floor(t) * Math.PI / 2 + 0.5, k = 1 - 0.5 * (t - Math.floor(t)), d = R * 3.4 * k;
+        cam.position.set(c.x + Math.sin(a) * d, c.y + R * 0.9 * k, c.z + Math.cos(a) * d); cam.lookAt(c);
+        if (mixer) mixer.setTime(t);
+        renderer.render(scene, cam);
+      };
+      window.renderAt(0);
+      window.__ready = true;
+    </script>
+  </body>
+</html>

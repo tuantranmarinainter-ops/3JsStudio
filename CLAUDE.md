@@ -40,6 +40,7 @@ Cảnh 3D dựng bằng three.js + engine tự viết (`engine/`). Sản phẩm 
 | `python tools/storyboard.py …` / `python tools/video2kb.py …` | kịch bản → tập mới / video → kịch bản (skill `nhap-kich-ban`, `video-sang-kich-ban`) |
 | `python tools/voices_build.py <ep> sample|vi|en|index` | giọng nhiều giọng, trang nghe thử |
 | `node tools/nhap-model.mjs tim|nhap|kiem` | nhập model qua Blender (`docs/nhap-model.md`) |
+| `node tools/nen-model.mjs <file.glb|.gltf> … [--thu]` | nén model tại chỗ (bỏ trùng, lượng tử hoá lưới, ảnh vân WebP ≤ 1k); so bản gốc/bản nén bằng `tools/xem-model.html` + `look.mjs --ref` |
 | `node tools/feedback.mjs --latest` | đọc góp ý từ trình phát (skill `gop-y`) |
 | `PROFILE=1 node tools/look.mjs …` (cũng cho `shaders.mjs`, `bundle.mjs`, test) | **mở trang nhanh gấp ~4 lần** (28 s → 6 s) nhờ giữ shader đã dịch ở `.cache/chrome-profile/`; ảnh giống hệt. Mặc định tắt; không dùng cùng `GL=swiftshader` |
 | `node tools/don.mjs [--xoa]` | liệt kê / dọn ảnh kiểm tra cũ hơn 24 giờ trong `output/` |
