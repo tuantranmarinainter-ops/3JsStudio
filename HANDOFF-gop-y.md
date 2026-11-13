@@ -22,6 +22,7 @@ Sửa hết góp ý ep001 từ trình phát (`feedback/`), giữ phim tất đ�
   - Film thêm 1 program (cây). Tất định OK ở 7 shot.
 
 ## Việc còn lại (theo thứ tự)
+0. (13/11) Đã sửa theo duyệt v10: cầu thang gấp bản lề `engine/stairs.js` (ô `stairsFold`, `4bddf10`) + chỗ yếu s013/s019/s038/s105/s124 (`7da2a80`) → bản xem thử `dist/ep1_v11.html`, chờ duyệt. Mục 1 dưới đây đã làm; mục 3 (tắt ô mới) đã kiểm OK.
 1. Hỏi người dùng đã duyệt `dist/ep1_v9.html` chưa; sửa theo ý họ. Chỗ yếu agent tự nhận (chỉ sửa khi người dùng muốn):
    - s013: lá hơi lime, gắt
    - s019: dân nhỏ trong khung
