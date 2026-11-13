@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 12:30",
+ "capNhat": "2026-11-13 12:50",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -68,8 +68,8 @@
     },
     {
      "ten": "Đưa khung studio vào trình phát thật (viền kéo, cột thẻ dọc, timeline, marker M, bánh răng, Gửi tới Claude)",
-     "tt": "dang",
-     "ghiChu": "1 agent Sonnet đang làm"
+     "tt": "do",
+     "ghiChu": "đã vào trình phát thật, agent thử tự động đạt, xuất MP4 thử đạt; chờ gộp bản xem thử cuối và người dùng dùng thử"
     },
     {
      "ten": "Tách khung studio khỏi nội dung tập (tập xuất ra nhẹ hơn)",
