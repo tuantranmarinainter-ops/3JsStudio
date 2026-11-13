@@ -97,7 +97,7 @@ refs/          ảnh chuẩn so khung               .cache/  giọng, tiếng đ
 ## Asset
 1. **Kenney** (CC0, scale 1.0) — bộ gốc. 2. **Polyfork / Poly Haven / Sketchfab / Poly Pizza** — khi Kenney thiếu, nhập bằng
    `tools/nhap-model.mjs` qua **Blender 5.1.2** (biến `BLENDER` trong `.env.local`). 3. **GLB riêng** (`assets/special/`) — chỉ cho twist.
-- Chỉ CC0 và CC BY; mỗi asset có dòng trong `assets/manifest.json` + ghi công. KHÔNG commit `.mjs`/bản HD của Polyfork.
+- Giấy phép: người dùng cho phép nhập model giấy phép BẤT KỲ (quyết 2026-11-13); mỗi asset vẫn có dòng trong `assets/manifest.json` ghi nguồn + giấy phép + ghi công. Mỗi món đề xuất NHIỀU ứng viên để người dùng chốt. KHÔNG commit `.mjs`/bản HD của Polyfork.
 - **Ưu tiên low poly** theo ngưỡng `docs/nhap-model.md`; không có low poly → hỏi người dùng trước.
 - Blender chỉ là trạm nhập model; KHÔNG dùng cho animation, bố trí cảnh, ánh sáng hay render.
 

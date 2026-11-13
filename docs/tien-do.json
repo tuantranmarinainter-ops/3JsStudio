@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 13:45",
+ "capNhat": "2026-11-13 14:05",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -31,7 +31,8 @@
     },
     {
      "ten": "Băng chuyền + kệ gấu trong nhà máy dùng model đã chọn",
-     "tt": "chua"
+     "tt": "chua",
+     "ghiChu": "chưa làm: bối cảnh nhà máy tự dựng nên model đã chọn chưa vào"
     },
     {
      "ten": "Sửa shot yếu: s037, s051, s032, s048, s044, s087, s114",
@@ -55,8 +56,28 @@
     },
     {
      "ten": "s061: nửa sau shot chỉ thấy sàn gỗ tối (lỗi bối cảnh nhà máy ở shot reveal)",
+     "tt": "dang",
+     "ghiChu": "1 agent Sonnet đang tìm nguyên nhân gốc (kèm s070 bị cắt người)"
+    },
+    {
+     "ten": "Lỗi đen màn hình sau khi phim kết thúc",
+     "tt": "xong",
+     "ghiChu": "nguyên nhân: trình phát còn để thời lượng cũ 175,9 giây nên sau 124,5 giây màn hình đen 51 giây; đã sửa về 124,49, vào bản xem thử kế tiếp"
+    },
+    {
+     "ten": "s006: hiệu ứng hộp có nhẫn → zoom → nhấp nháy → mất",
      "tt": "chua",
-     "ghiChu": "cần sửa engine/env factory"
+     "ghiChu": "làm sau khi agent đạo cụ xong (cùng file)"
+    },
+    {
+     "ten": "Tiệm gấu: gấu bông trên giá",
+     "tt": "chua",
+     "ghiChu": "làm sau khi agent đạo cụ xong (cùng file)"
+    },
+    {
+     "ten": "Thêm 6 bảng màu nhà (kẹo ngọt, Địa Trung Hải, rừng thu, sa mạc, đêm neon, Nhật Bản)",
+     "tt": "dang",
+     "ghiChu": "1 agent Sonnet; sẽ có ảnh lưới 11 bảng để duyệt"
     }
    ]
   },
@@ -144,10 +165,9 @@
   }
  ],
  "canBan": [
-  "Nghe thử tiếng động + nhạc mới trên bản xem thử (đặc biệt tiếng \"Boang\" cuối phim) rồi cho ý kiến",
-  "Dùng thử khung studio mới trên bản xem thử: kéo viền, rê timeline, phím M, nút ▶/✎ trên dòng shot",
-  "Hộp nhẫn ở tiệm may (shot s006): đang dùng hộp RỖNG vì kịch bản ghi \"hộp nhẫn mở trống\"; muốn hộp có nhẫn thì ghi vào ô",
-  "Chỗ đặt 3 đạo cụ chưa có vị trí: bàn tiệm may (đề xuất: trong tiệm may, đỡ hộp nhẫn), bảng hiệu treo (trước tiệm gấu), đèn cửa (trước các nhà)"
+  "Dùng thử khung studio mới khi có PC (kéo viền, rê timeline, phím M, nút ▶/✎)",
+  "Nghe thử tiếng động + nhạc khi có PC",
+  "Duyệt 6 bảng màu nhà mới khi có ảnh lưới (đang làm)"
  ],
  "daChot": [
   [
@@ -156,7 +176,7 @@
   ],
   [
    "Hướng đi",
-   "Studio phát triển thành công cụ chuyên nghiệp; thêm chế độ 3D"
+   "Studio phát triển thành công cụ chuyên nghiệp; chế độ 3D để XEM và KIỂM"
   ],
   [
    "Tập 2",
@@ -168,7 +188,7 @@
   ],
   [
    "Tập 2",
-   "Đạo cụ làm lại toàn bộ bằng model low poly, duyệt trước rồi mới nhập (đã duyệt Đợt 2, 3, 4)"
+   "Đạo cụ làm lại toàn bộ bằng model low poly, duyệt trước rồi mới nhập (đã duyệt Đợt 2, 3, 4); mỗi món đề xuất NHIỀU model để chốt"
   ],
   [
    "Tập 2",
@@ -176,7 +196,7 @@
   ],
   [
    "Tập 2",
-   "Bảng màu nhà thị trấn: pastel"
+   "Bảng màu nhà thị trấn ep002: pastel; thêm nhiều bảng có sẵn để chọn cho tập sau"
   ],
   [
    "Tập 2",
@@ -200,7 +220,7 @@
   ],
   [
    "Tài sản",
-   "Blender 5.1.2 là trạm nhập model; chỉ nhận CC0 và CC BY"
+   "Blender 5.1.2 là trạm nhập model; nhận model giấy phép BẤT KỲ (người dùng quyết 13/11), vẫn ghi nguồn + giấy phép vào manifest"
   ],
   [
    "Tài sản",
@@ -245,6 +265,14 @@
   [
    "Tài sản",
    "Khoá Roblox Open Cloud: để sau. Khoá Poly Pizza: người dùng đã điền trong Blender (chưa có trong .env.local)"
+  ],
+  [
+   "Tập 2",
+   "Hộp nhẫn s006: hộp CÓ nhẫn → zoom vào → nhẫn nhấp nháy rồi biến mất"
+  ],
+  [
+   "Tập 2",
+   "Tiệm gấu: thêm gấu bông đứng trên giá trong cửa hàng"
   ]
  ]
 }
