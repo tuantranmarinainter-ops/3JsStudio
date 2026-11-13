@@ -1,4 +1,9 @@
-# HANDOFF phiên điều phối (cập nhật 2026-11-13 ~14:40)
+# HANDOFF phiên điều phối (cập nhật 2026-11-13 19:40)
+
+**Tập 2 tạm gác** — trạng thái đầy đủ: `docs/handoff/ep002-tam-gac.md`. **Tập 3** làm ở phiên con riêng. Không còn agent nào chạy.
+Máy nhận (bật lại khi cần): `node tools/tien-do.mjs nhan --mot-lan` (8793), `node tools/gop-y-nhan.mjs --mot-lan` (8792), `node tools/duyet.mjs ep002 mo --mot-lan --khong-mo` (8791).
+Lưu ý git: phiên khác có file đã `git add` sẵn (vd `assets/faces/emote37/`) → khi commit luôn ghi rõ đường dẫn: `git commit <file…> -m …`.
+
 
 Nguồn sự thật về tiến độ: `docs/tien-do.json` (dựng: `node tools/tien-do.mjs` + `node tools/tien-do-artifact.mjs`, đăng lại artifact
 https://claude.ai/artifact/HZXy4g9aPUZYGUDdiYmRiW). Định hướng: `docs/dinh-huong-studio.md`. Mọi câu trả lời phải kèm link tiến độ.

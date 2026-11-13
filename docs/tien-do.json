@@ -1,8 +1,19 @@
 {
- "capNhat": "2026-11-13 19:10",
+ "capNhat": "2026-11-13 19:40",
  "nhom": [
   {
-   "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
+   "ten": "Tập 3",
+   "viec": [
+    {
+     "ten": "Mở phiên riêng cho tập 3, chờ người dùng cung cấp thông tin",
+     "tt": "dang",
+     "pt": 5,
+     "ghiChu": "phiên mới đã mở; đầu vào: kịch bản, nhân vật chính Gà, dân làng R6"
+    }
+   ]
+  },
+  {
+   "ten": "Tập 2 — TẠM GÁC từ 13/11 (xem docs/handoff/ep002-tam-gac.md)",
    "viec": [
     {
      "ten": "Kịch bản + shot theo giọng mới (104 shot, 124,5 giây)",
@@ -410,10 +421,9 @@
   }
  ],
  "canBan": [
-  "Xem lại 20 góp ý đã sửa trên bản xem thử (thẻ \"Làm dở\"); riêng s014b tôi chưa chắc hiểu đúng ý",
-  "R6: xác nhận ý — (1) Gà có thêm một thân hình R6 (đầu gà, thân khối R6), hay (2) Gà giữ nguyên, chỉ dân làng đổi sang R6?",
-  "Duyệt 11 bảng màu nhà ở Đợt 6 trang duyệt (http://127.0.0.1:8791/)",
-  "Nghe lại âm nền s001–s017 trên bản xem thử kế tiếp (đã đổi sang tiếng chim sáng nhẹ)",
+  "Cung cấp thông tin tập 3 trong phiên \"Tập 3\" (kịch bản / câu luật, giọng mẫu nếu có)",
+  "R6: Gà có thêm thân hình R6, hay chỉ dân làng đổi sang R6?",
+  "Khi rảnh: kiểm 20 góp ý tập 2 trên bản xem thử (thẻ Làm dở), duyệt 11 bảng màu nhà (Đợt 6), nghe lại âm nền",
   "Điền khoá vào S:\u0003JS Studio\\.env.local rồi chạy: node tools/kiem-khoa.mjs"
  ],
  "daChot": [
@@ -536,6 +546,10 @@
   [
    "Hướng đi",
    "Hiệu ứng, phông nền, code chung phải áp cho TẤT CẢ các tập; tập 2 đang thiếu → rà soát"
+  ],
+  [
+   "Hướng đi",
+   "13/11: tạm gác tập 2 tại bản xem thử hiện có; mở phiên riêng làm tập 3"
   ]
  ],
  "tokenGhiChu": "phần trăm của việc đang làm là ước lượng của Claude, không phải số đo trực tiếp"
