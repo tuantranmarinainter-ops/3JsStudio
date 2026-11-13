@@ -1,0 +1,11 @@
+// SINH TỰ ĐỘNG bởi tools/kb/kit2-sang-shot.mjs từ kich-ban/ep003-kit2/kit-phong.json — đừng sửa tay; sửa kit.json rồi chạy lại.
+export const KIT2 = {
+  s018: {"boi_canh":"bedroom","cam":{"p":[1,4.85,0.5],"l":[1.3,4.75,-5.5],"fov":30.96,"p2":[1.05,4.85,0.15]},"cast":{"hero":{"at":[1.3,0,-5.5],"ry":0.1745,"anim":"idle"}},"props":{}},
+  s020: {"boi_canh":"bedroom","cam":{"p":[-0.8,4.5,7.8],"l":[1,3,-5.8],"fov":73.74,"p2":[-0.7,4.5,7.2]},"cast":{"hero":{"at":[1,0,-5.2],"ry":3.1416,"anim":"walk"}},"props":{"dong_ho_bao_thuc":{"cam":"hero","tay":"tay_phai"}}},
+  s023: {"boi_canh":"bedroom","cam":{"p":[-4.8,3,-5.6],"l":[6,3.8,6.6],"fov":54.43,"p2":[-4.6,3,-5.35]},"cast":{"hero":{"at":[-4.8,1.75,-1.4],"lie":true,"ry":0,"rz":0,"anim":"lie"}},"props":{"sach_xanh_reu":{"at":[4.9,3.65,-8.1],"ry":0,"kich":[0.35,0.86,0.65]},"dong_ho_bao_thuc":{"at":[3.2,3.7,-8.1],"ry":0,"kich":[0.9,0.98,0.45]}}},
+  s026: {"boi_canh":"bedroom","cam":{"p":[-4.8,3,-5.6],"l":[6,3.8,6.6],"fov":36.24},"cast":{"bap":{"at":[-4.8,1.65,-0.6],"ry":1.5708,"anim":"sit"}},"props":{"sach_xanh_reu":{"at":[4.9,3.65,-8.1],"ry":0,"kich":[0.35,0.86,0.65]},"dong_ho_bao_thuc":{"at":[3.2,3.7,-8.1],"ry":0,"kich":[0.9,0.98,0.45]}}},
+  s033: {"boi_canh":"bedroom","cam":{"p":[-5.5,4.4,-0.9],"l":[3.3,3.4,-8.1],"fov":43.6},"cast":{"hero":{"at":[-4.8,1.65,-2.4],"ry":2.618,"anim":"sit"}},"props":{"sach_xanh_reu":{"at":[4.9,3.65,-8.1],"ry":0,"kich":[0.35,0.86,0.65]}}},
+  s095: {"boi_canh":"bedroom","cam":{"p":[0.2,5,0.6],"l":[0,3.1,-1.8],"fov":28.84},"cast":{"hero":{"at":[0,0,-2.2],"ry":0,"anim":"hold"}},"props":{"day_chuyen_bac_mat_giot_xanh":{"cam":"hero","tay":"tay_phai"}}},
+  s097: {"boi_canh":"bedroom","cam":{"p":[-4.6,1.6,4.6],"l":[-5.1,1.3,7.1],"fov":30.96,"p2":[-4.6,1.6,4.5]},"cast":{"hero":{"at":[-3.2,0,4.8],"ry":-0.6109,"anim":"hold"}},"props":{"day_chuyen_bac_mat_giot_xanh":{"cam":"hero","tay":"tay_phai"},"canh_ket_mo":{"at":[-7.4,1.42,6.2],"ry":0,"kich":[0.16,2.39,2.38]}}},
+  s099: {"boi_canh":"bedroom","cam":{"p":[-1,1.8,1],"l":[-4.7,2.1,6],"fov":43.6},"cast":{"bap":{"at":[-5,0,5.2],"ry":0,"anim":"hug"},"hero":{"at":[-1.2,0,7],"ry":-1.5708,"anim":"idle"}},"props":{"ket_teal_duoc_nang":{"cam":"bap","tay":"tay_phai"}}},
+};

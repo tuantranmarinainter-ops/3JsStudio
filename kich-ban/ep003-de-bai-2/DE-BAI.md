@@ -68,6 +68,8 @@ Mọi kích thước bối cảnh ghi bằng stud và phải hợp với thân n
 | Gấu bông | cao 2,2 | 0,40 G |
 | Lòng đường phố | rộng ≥ 16 | hai người đi ngược chiều + máy đứng giữa phố |
 
+**Bối cảnh đã dựng đúng tỉ lệ trong engine thì dùng nguyên hình học thật**, không bịa lại: phòng Gà (`bedroom`) lấy toàn bộ `khoi` từ `kich-ban/ep003-de-bai-2/khoi-e3-phong.json` (131 khối, xuất từ `engine/envs/e3-phong.js` bằng `node tools/kb/xuat-khoi-env.mjs ep003 e3-phong`; gốc = tâm sàn, phòng 14,56 × 9,36 × 17,68). Chỉ được thêm khối cho vật di động của shot (két mở, sách, đạo cụ). Phố, tiệm, nhà máy chưa dựng lại: Codex tự chốt khối theo bảng mốc trên, engine sẽ dựng theo.
+
 Đạo cụ then chốt phải có kích thước và vị trí bằng số: két Gà, két tiệm bánh, hộp nhẫn, bao tiền, bản đồ + ghim, đồng hồ quả quýt, thùng in đầu gấu, dây chuyền bạc, nhẫn bạc, sách xanh rêu, đồng hồ báo thức, gương.
 
 ## 4. Thứ tự làm cho MỖI shot
