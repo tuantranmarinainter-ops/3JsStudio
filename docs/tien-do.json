@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 11:50",
+ "capNhat": "2026-11-13 12:05",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -84,6 +84,16 @@
      "ten": "Trang tiến độ (trang này)",
      "tt": "xong",
      "ghiChu": "commit 5f567d6"
+    },
+    {
+     "ten": "Chế độ 3D (xem bố trí thành phố, nhân vật, camera từng shot)",
+     "tt": "cho",
+     "ghiChu": "đã ghi ý tưởng + đề xuất 3 giai đoạn ở docs/dinh-huong-studio.md; chờ người dùng duyệt"
+    },
+    {
+     "ten": "Dây chuyền kịch bản → video với Gà, ít phải sửa tay",
+     "tt": "chua",
+     "ghiChu": "ưu tiên số 1 sau khi xong ep002; rút bài học ep002 vào lam-phim + tập mẫu"
     }
    ]
   },
@@ -130,6 +140,8 @@
   "Tạo khoá Roblox Open Cloud rồi đặt vào .env.local dòng ROBLOX_API_KEY= (để tải mũ, đạo cụ Roblox đã chọn)",
   "Trả lời: có bật nhân vật Gà cho ep001 không",
   "Xác nhận chiều nơ gấu (đã xoay trước–sau) và màu nơ Bắp (xanh)",
-  "Tuỳ chọn: khoá API Poly Pizza (POLY_PIZZA_API_KEY) để tìm model nhanh hơn"
+  "Tuỳ chọn: khoá API Poly Pizza (POLY_PIZZA_API_KEY) để tìm model nhanh hơn",
+  "Duyệt đề xuất chế độ 3D và thứ tự ưu tiên (docs/dinh-huong-studio.md)",
+  "Phiên \"Quy trình câu luật → phim: phiên 3\" đã xong việc nhưng app không cho Claude lưu trữ (còn kết nối Remote Control): bạn tự lưu trữ từ thanh bên"
  ]
 }
