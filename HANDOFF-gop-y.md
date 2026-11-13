@@ -30,7 +30,7 @@ Sửa hết góp ý ep001 từ trình phát (`feedback/`), giữ phim tất đ�
    - s038: cảnh ngoài cửa sổ tối, bé che kính
    - s105: bè nhỏ ở góc
    - s124: gốc cột chưa dập nát, boong trống (s125 cùng env reef cũng thấy tàu đứt đôi)
-2. Lộ viền 3 cảnh bếp CHƯA sửa: #22 s061 (viền ảnh cảm xúc 2 nhân vật), #23 s064, #26 s074 (f2759 có viền, f2766 không).
+2. ĐÃ SỬA (13/11, `7b1e230`, ô `daTron`, bản `dist/ep1_v12.html`): viền do lớp grime kiểu nhà phủ nhầm lên da R15 (tối mép khối đầu), không phải decal mặt. Cũ: #22 s061 (viền ảnh cảm xúc 2 nhân vật), #23 s064, #26 s074 (f2759 có viền, f2766 không).
    Ảnh: `feedback/gop-y_ep001_2026-11-12_14-49/22_f2185.png`, `23_f2266.png`, `26_f2766.png`.
 3. Thử tắt từng ô mới → phải về như cũ (chưa kiểm).
 4. Kiểm cả phim 1 lần: `node tools/look.mjs episodes/ep001/index.html --shots all --det`.
