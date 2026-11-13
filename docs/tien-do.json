@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 18:00",
+ "capNhat": "2026-11-13 18:30",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -90,6 +90,11 @@
      "tt": "cho",
      "ghiChu": "đã mở Đợt 6 trang duyệt: 11 thẻ, mỗi bảng một ảnh",
      "tok": 63
+    },
+    {
+     "ten": "Nội thất mới hơi cháy sáng (s002 167, s004 162, s084 179) và s044 hơi tối (78); s047 Gà lệch chỗ so với s044",
+     "tt": "chua",
+     "ghiChu": "sửa sau khi agent thị trấn xong"
     }
    ]
   },
@@ -180,127 +185,142 @@
     {
      "ten": "s001: Nhiều nhà hơn cho ra thị trấn",
      "tt": "do",
-     "ghiChu": "đã sửa: thêm một vành nhà + đường quanh thị trấn, dãy phố dày hơn. Chờ gộp bản xem thử để bạn kiểm",
+     "ghiChu": "đã sửa: thêm một vành nhà + đường quanh thị trấn, dãy phố dày hơn. Đã vào bản xem thử, chờ bạn kiểm",
      "pt": 90,
      "tok": 51
     },
     {
      "ten": "s002: Đồ ở trong nhà",
      "tt": "do",
-     "ghiChu": "đã sửa: chuyển vào trong nhà Gà (nội thất mới): kệ trống, sàn, tường. Chờ gộp bản xem thử để bạn kiểm",
+     "ghiChu": "đã sửa: chuyển vào trong nhà Gà (nội thất mới): kệ trống, sàn, tường. Đã vào bản xem thử, chờ bạn kiểm",
      "pt": 90,
      "tok": 51
     },
     {
      "ten": "s004: Két tiền trong nhà, tiệm có biển bánh mì",
      "tt": "do",
-     "ghiChu": "đã sửa: chuyển vào trong tiệm bánh: quầy, bảng TIỆM BÁNH MÌ, két tiền cạnh quầy (s005 cũng vào tiệm). Chờ gộp bản xem thử để bạn kiểm",
+     "ghiChu": "đã sửa: chuyển vào trong tiệm bánh: quầy, bảng TIỆM BÁNH MÌ, két tiền cạnh quầy (s005 cũng vào tiệm). Đã vào bản xem thử, chờ bạn kiểm",
      "pt": 90,
      "tok": 51
     },
     {
      "ten": "s010: Nhiều hộp hơn",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: thêm 3 thùng in dấu gấu, lùi máy. Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     },
     {
      "ten": "s014b: Nhà ông Bách có biển hiệu bánh mì (sai biển)",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: CẦN BẠN XEM: không tìm thấy biển bánh mì đặt sai (thứ trong ảnh là hòm thư nhà Gà); đã đặt biển TIỆM GẤU trước nhà bên cạnh nhà Gà. Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     },
     {
      "ten": "s016: Ảnh chưa rõ",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: vẽ lại chân dung bà rõ nét, cận hơn. Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     },
     {
      "ten": "s018: Ảnh chưa rõ",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: vẽ lại chân dung bà rõ nét. Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     },
     {
      "ten": "s025: Ảnh hơi xấu",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: vẽ lại ảnh trong gương (đêm có sao, kệ, đồng hồ). Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     },
     {
      "ten": "s033: Đứng im, chưa kỹ hành động",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: gấu ôm đồng hồ và bước đi (animation mới). Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     },
     {
      "ten": "s034: Đứng im, chưa kỹ hành động",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: gấu kéo sách đi; sách còn lệch trái một chút. Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     },
     {
      "ten": "s037: Gấu nhảy ra cửa sổ",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: gấu chạy tới cửa sổ. Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     },
     {
      "ten": "s039: Gấu nhảy ra cửa sổ",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: gấu bật qua cửa sổ rồi biến mất, Gà chạy theo. Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     },
     {
      "ten": "s044: Nấp sai chỗ",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: Gà nấp trên mái hiên sát tường cạnh cửa sổ; thấy lưng, không thấy mặt. Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     },
     {
      "ten": "s048: Sai vị trí",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: gấu dời lên mái hiên nhà bên cạnh. Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     },
     {
      "ten": "s055: Sai hàng rào",
      "tt": "do",
-     "ghiChu": "đã sửa: thay bằng hàng rào sắt đã duyệt; shot dời ra sân, gấu chạy qua khe rào. Ban đêm chỉ thấy rõ khung rào. Chờ gộp bản xem thử để bạn kiểm",
+     "ghiChu": "đã sửa: thay bằng hàng rào sắt đã duyệt; shot dời ra sân, gấu chạy qua khe rào. Ban đêm chỉ thấy rõ khung rào. Đã vào bản xem thử, chờ bạn kiểm",
      "pt": 90,
      "tok": 51
     },
     {
      "ten": "s074: Rõ ràng hơn",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: dây chuyền làm lại dày hơn, mặt đá to; vòng dây còn hơi giống hai nhánh. Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     },
     {
      "ten": "s084: Cảnh này trong nhà thị trưởng",
      "tt": "do",
-     "ghiChu": "đã sửa: chuyển vào trong nhà thị trưởng: bàn giấy, đồng hồ, bảng THỊ TRƯỞNG, đèn bàn. Chờ gộp bản xem thử để bạn kiểm",
+     "ghiChu": "đã sửa: chuyển vào trong nhà thị trưởng: bàn giấy, đồng hồ, bảng THỊ TRƯỞNG, đèn bàn. Đã vào bản xem thử, chờ bạn kiểm",
      "pt": 90,
      "tok": 51
     },
     {
      "ten": "s087: Lỗi người đứng",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: xếp lại đội hình so le, thị trưởng ở giữa. Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     },
     {
      "ten": "s101: Quay thùng hàng",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: dời một cụm thùng HÀNG TIỆM BÁCH về tiệm gấu, máy quay vào đó. Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     },
     {
      "ten": "s107: Thêm dây chuyền",
-     "tt": "dang",
-     "ghiChu": "đã giao agent sửa",
-     "pt": 35
+     "tt": "do",
+     "ghiChu": "đã sửa: đặt dây chuyền vào trong két; chưa chắc đúng chỗ bạn khoanh. Đã vào bản xem thử, chờ bạn kiểm",
+     "pt": 90,
+     "tok": 19
     }
    ]
   },
@@ -389,6 +409,7 @@
   }
  ],
  "canBan": [
+  "Xem lại 20 góp ý đã sửa trên bản xem thử (thẻ \"Làm dở\"); riêng s014b tôi chưa chắc hiểu đúng ý",
   "R6: xác nhận ý — (1) Gà có thêm một thân hình R6 (đầu gà, thân khối R6), hay (2) Gà giữ nguyên, chỉ dân làng đổi sang R6?",
   "Duyệt 11 bảng màu nhà ở Đợt 6 trang duyệt (http://127.0.0.1:8791/)",
   "Nghe lại âm nền s001–s017 trên bản xem thử kế tiếp (đã đổi sang tiếng chim sáng nhẹ)",
