@@ -3,4 +3,8 @@
 import { SHOTS_PHONG } from './shots-phong.js';
 import { SHOTS_NHA_MAY } from './shots-nha-may.js';
 import { SHOTS_PHO } from './shots-pho.js';
-export const SHOTS = [...SHOTS_PHONG, ...SHOTS_NHA_MAY, ...SHOTS_PHO].sort((a, b) => (a.id < b.id ? -1 : 1));
+import { KHUNG } from './khung.js';
+// shot có đặc tả khung (khung.js) → cam.khung: máy tự đặt theo khung hình; cam ghi tay cũ giữ làm dự phòng. ?khung=0 trên URL → tắt, dùng cam ghi tay.
+const KHUNG_ON = !(typeof location !== 'undefined' && /[?&]khung=0/.test(location.search));
+export const SHOTS = [...SHOTS_PHONG, ...SHOTS_NHA_MAY, ...SHOTS_PHO].sort((a, b) => (a.id < b.id ? -1 : 1))
+  .map((s) => (KHUNG_ON && KHUNG[s.id] ? { ...s, cam: { ...(s.cam || {}), khung: KHUNG[s.id] } } : s));

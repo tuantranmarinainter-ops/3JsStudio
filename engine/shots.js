@@ -40,12 +40,14 @@ import { floatPose, floatTilt, wetline, worldGrad } from './floating.js';
 import { resolveSeaWeather, seaWeatherAmp } from './seaweather.js';
 import { gioThoiTiet } from './envs/gio-thoi-tiet.js';
 import { FACE_PRESETS } from './r15.js';
+import { createDatMay } from './dat-may.js';
 const lerp3 = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
 // tiến độ cục bộ trong một đoạn con của shot: win = [k0,k1]
 const sub = (k, win) => (win ? clamp01((k - win[0]) / (win[1] - win[0])) : k);
 
 export function createDirector({ THREE, stage, envs, K, actors, houses, props = {}, fx = {}, resolveType = null, episode = {} }) {   // episode = EPISODE: time/weather mặc định cho mọi shot không ghi riêng
   const { scene, camera } = stage;
+  const datMay = createDatMay(THREE);   // cam.khung → máy (đặt theo khung hình)
   const _v = new THREE.Vector3();
   const tmpObj = new THREE.Object3D();
   // --- hiệu ứng tự động (bụi/tuyết ở chân nhà, dấu chân, hơi thở, gió): tất định theo pha bước; bật/tắt qua globalThis.__autoFx ---
@@ -172,8 +174,11 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
 
   function placeCamera(c, k, t) {
     const ke = ease(c.ease || 'smooth', k);
-    let pos, look, fov;
-    if (c.p) {
+    let pos, look, fov, KH = null;
+    // cam.khung = đặc tả khung hình (engine/dat-may.js): nhắm ai/bộ phận nào, chiếm bao nhiêu % khung, ở đâu trên khung, góc ngang/cao, tiêu cự → máy tự tính.
+    //   Diễn viên + đạo cụ đã đặt xong trước khi gọi placeCamera nên máy bám đúng tư thế của khung này. Không tìm thấy chủ thể → rơi về cách ghi cũ.
+    if (c.khung && (KH = datMay.giai(c.khung, { actors, props, k: ke }))) { pos = KH.p; look = KH.l; fov = KH.fov; globalThis.__khung = { spec: c.khung, R: KH, kiem: () => datMay.kiem(KH, { scene, camera, cuaAi: actors[c.khung.nham]?.root || props[c.khung.nham] || null }) }; }
+    else if (c.p) {
       pos = c.p2 ? lerp3(c.p, c.p2, ke) : c.p; look = c.l2 ? lerp3(c.l, c.l2, ke) : c.l;
       fov = c.fov2 ? c.fov + (c.fov2 - c.fov) * ke : c.fov || 40;
     } else {
@@ -186,7 +191,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
       fov = c.fov2 ? c.fov + (c.fov2 - c.fov) * ke : c.fov || 40;
     }
     if (c.shake) { const s = c.shake; pos = [pos[0] + (Math.sin(t * 9.1) + 0.5 * Math.sin(t * 15.7 + 2)) * s * 0.22, pos[1] + (Math.sin(t * 11.3 + 1) + 0.5 * Math.sin(t * 17.9)) * s * 0.3, pos[2] + Math.cos(t * 8.3) * s * 0.22]; }   // rung tay máy chậm (~1.5–2.8 Hz), không giật
-    const roll = val(c.roll, ke, 0);
+    const roll = val(c.roll, ke, 0) + (KH ? KH.roll : 0);
     stage.setCamera(pos, look, { fov, roll, focusShadow: c.shadow !== false });
     if (c.shadowAt) stage.shadowFocus(anchorOf(c.shadowAt));
     else if (c.shadow === false) stage.shadowFocus(c.shadowFocus || [0, 0, 0]);   // vùng bóng cố định — không giữ chỗ của shot trước (tất định)

@@ -269,6 +269,9 @@ export function createR6Rig(THREE, opts = {}) {
   const char = {
     parts, root, options: o, materials: { skin: skinMat, shirt: torsoMats[4], pants: legMats[0], face: faceMat },
     faceCanvas, r6: true,
+    // số đo cho bộ đặt máy theo khung (engine/dat-may.js): tâm + chiều cao đoạn, toạ độ cục bộ của bộ phận
+    khung: { mat: { phan: 'head', tam: [0, FACE_C, 0], cao: HH }, dau: { phan: 'head', tam: [0, 0.02 + HH / 2, 0], cao: HH }, than: { phan: 'torso', tam: [0, 0.6, 0], cao: 2 },
+      tay_phai: { phan: 'rightHand', tam: [0, -0.5, 0], cao: 1 }, tay_trai: { phan: 'leftHand', tam: [0, -0.5, 0], cao: 1 } },
     headCenter: [0, 0.02 + HH / 2, 0], faceCenter: [0, FACE_C, HR], handGrip: [0, -0.75, 0.2],
     setFace(expr) { o.face = expr; faceAt(lastT, expr); },
     faceAt,
