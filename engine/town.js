@@ -12,7 +12,11 @@
 //   square: giữa quảng trường lát gạch.   crossroad: ngã tư giữa thị trấn.   park: bãi cỏ nhiều cây.
 // Đơn vị: 1 ô đường Kenney = `tile` stud (mặc định 16). Nhân vật R15 cao ~5.2 stud.
 import { rng } from './stage.js';
-import { ganMau } from './town-styles.js';
+import { ganMau, bam } from './town-styles.js';
+import { createWind } from './wind.js';
+import { createFarwoods } from './farwoods.js';
+import { createBackdrop } from './backdrop.js';
+import { createCloudShade } from './cloudshade.js';
 
 // ---- tô màu nhà Kenney theo bảng kiểu (engine/town-styles.js; docs/nha-thi-tran.md). Chỉ chạy khi khai kiểu: EPISODE.town.kieu hoặc ?nha=<kiểu> ----
 // GLB nhà: 1 mesh + 1 vật liệu 'colormap'; ảnh 512² chia ô 64×128 (nửa trái phẳng, nửa phải dốc sáng→tối). Ô (3,2)=tường, (0,1)=mái xanh, (1,2)=cửa,
@@ -117,9 +121,10 @@ export function buildTown(THREE, A, opts = {}) {
     roadTile(RD('road-straight'), X(i), Z(j), Math.PI / 2);            // phố theo trục Z
   }
   // đèn đường ở góc mỗi ngã tư
+  const lamps = [];
   for (let i = 0; i <= N; i += block) for (let j = 0; j <= N; j += block) {
     const o = tile * 0.42;
-    put(fit(RD('light-square'), 10, 'y', `lamp_${i}_${j}`), X(i) + o, Z(j) + o, Math.PI);
+    lamps.push(put(fit(RD('light-square'), 10, 'y', `lamp_${i}_${j}`), X(i) + o, Z(j) + o, Math.PI));
   }
 
   // khối nhà: ô trong mỗi khối = (block-1)², nhà xếp 2 dãy quay lưng vào nhau, mặt nhìn ra phố ngang
@@ -164,7 +169,7 @@ export function buildTown(THREE, A, opts = {}) {
       put(fit(SUB('planter'), 4.5, 'xz', 'planter_square'), cx + sx * r * 0.55, cz + sz * r * 1.05, 0);
       put(fit('furniture-kit/bench', 5.5, 'xz', 'bench_square'), cx + sx * r * 1.05, cz + sz * r * 0.5, sx > 0 ? -Math.PI / 2 : Math.PI / 2);
     }
-    put(fit(RD('light-square-double'), 11, 'y', 'lamp_square'), cx, cz - r * 0.2, 0);
+    lamps.push(put(fit(RD('light-square-double'), 11, 'y', 'lamp_square'), cx, cz - r * 0.2, 0));
     places.square = { pos: [cx, 0, cz + 6], ry: 0 };
   }
   function buildPark(cx, cz) {
@@ -219,6 +224,7 @@ export function buildTown(THREE, A, opts = {}) {
 
   // VÀNH NGOÀI (tuỳ chọn, mặc định TẮT: opts.vanh = số vành khối nhà bao quanh thị trấn; ep001 không khai → không đổi gì).
   // Dùng rng riêng (không đụng R) và KHÔNG thêm vào `houses`/`places` → vị trí, địa điểm, màu nhà cũ giữ nguyên.
+  const vanhHouses = [];
   if (opts.vanh > 0) {
     const nB = opts.vanh * block, R2 = rng(seed * 104729 + 77), pick2 = (arr) => arr[Math.floor(R2() * arr.length)];
     const ringRoad = (i, j) => { const crossH = (i % block === 0) && i >= -nB && i <= N + nB; return crossH; };
@@ -243,7 +249,7 @@ export function buildTown(THREE, A, opts = {}) {
         put(h, hx, hz, ry);
         put(fit(SUB('path-long'), Math.max(3, yard - 1), 'xz'), hx, fz + side * yard / 2, ry);
         if (R2() < 0.8) put(fit(pick2(TREES), 9 + R2() * 6, 'y', `tree_vanh${idx}`), hx + (R2() < 0.5 ? -1 : 1) * (houseSize * 0.38), fz + side * yard * 0.55, R2() * 6);
-        ring.push({ idx, house: h });
+        ring.push({ idx, house: h }); vanhHouses.push(h);
       }
     }
     if (kieu) {
@@ -253,12 +259,141 @@ export function buildTown(THREE, A, opts = {}) {
   }
 
   g.traverse((o) => { if (o.isMesh) { o.castShadow = o.castShadow !== false; o.receiveShadow = true; } });
-  return { group: g, places, houses, size: W, seed, nha: nhaInfo, setNight() {}, update: null };
+  const dem = taoDen(THREE, g, { houses: [...houses.map((h) => h.house), ...vanhHouses], lamps: lamps.filter(Boolean), seed });
+  return { group: g, places, houses, size: W, seed, vanh: opts.vanh || 0, nha: nhaInfo, setNight: dem.setNight, den: dem, update: null };
+}
+
+// ---- ĐÊM CÓ ĐÈN: cửa sổ nhà sáng ấm + đèn đường (quầng sáng). Chỉ THÊM vật; KHÔNG đụng vật liệu nhà (không đổi program nhà) và KHÔNG thêm PointLight
+//      (đổi số đèn thật buộc mọi env dịch lại shader). Kính nhà Kenney = ô (5,1) của colormap 8×4 (phanTichHinh: ô khác TƯỜNG/MÁI/VIỀN/CỬA).
+//      Cửa sổ nào sáng: bam(seed, nhà, cửa sổ) < LE_SANG → tất định theo seed. Ban ngày cả nhóm ẩn (visible=false).
+const LE_SANG = 0.6, KINH = [5, 1];
+const kinhCache = new WeakMap();
+export function cuaKinh(geo) {   // → [{ c:[x,y,z], n:[nx,0,nz], w, h }] trong toạ độ mesh; chỉ mặt kính hướng ra ngoài, mỗi cụm tam giác liền nhau = 1 cửa sổ
+  if (kinhCache.has(geo)) return kinhCache.get(geo);
+  const pos = geo.attributes.position, uv = geo.attributes.uv, idx = geo.index, out = [];
+  if (!pos || !uv || !idx) { kinhCache.set(geo, out); return out; }
+  geo.computeBoundingBox(); const bb = geo.boundingBox, cx0 = (bb.min.x + bb.max.x) / 2, cz0 = (bb.min.z + bb.max.z) / 2;
+  const P = (i) => [pos.getX(i), pos.getY(i), pos.getZ(i)], tris = [];
+  for (let t = 0; t < idx.count / 3; t++) {
+    const a = idx.getX(t * 3), b = idx.getX(t * 3 + 1), c = idx.getX(t * 3 + 2);
+    let u = 0, v = 0; for (const k of [a, b, c]) { u += uv.getX(k); v += uv.getY(k); }
+    if (Math.floor(u / 3 * 8) !== KINH[0] || Math.floor(v / 3 * 4) !== KINH[1]) continue;
+    const A = P(a), B = P(b), C = P(c), e1 = [B[0] - A[0], B[1] - A[1], B[2] - A[2]], e2 = [C[0] - A[0], C[1] - A[1], C[2] - A[2]];
+    const n = [e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]], L = Math.hypot(...n) || 1;
+    n[0] /= L; n[1] /= L; n[2] /= L;
+    if (Math.abs(n[1]) > 0.5) continue;                                                  // mặt nằm ngang
+    if (n[0] * ((A[0] + B[0] + C[0]) / 3 - cx0) + n[2] * ((A[2] + B[2] + C[2]) / 3 - cz0) <= 0) continue;   // mặt quay vào trong nhà
+    tris.push({ v: [a, b, c], n });
+  }
+  const key = (i) => `${Math.round(pos.getX(i) * 1000)},${Math.round(pos.getY(i) * 1000)},${Math.round(pos.getZ(i) * 1000)}`;
+  const cha = new Map(), goc = (x) => { while (cha.get(x) !== x) x = cha.get(x); return x; };
+  for (const t of tris) for (const i of t.v) { const k = key(i); if (!cha.has(k)) cha.set(k, k); }
+  for (const t of tris) for (let k = 1; k < 3; k++) cha.set(goc(key(t.v[k])), goc(key(t.v[0])));
+  const cum = new Map(); for (const t of tris) { const r = goc(key(t.v[0])); if (!cum.has(r)) cum.set(r, []); cum.get(r).push(t); }
+  for (const ts of cum.values()) {
+    let nx = 0, nz = 0; for (const t of ts) { nx += t.n[0]; nz += t.n[2]; } const nl = Math.hypot(nx, nz) || 1; nx /= nl; nz /= nl;
+    const tx = nz, tz = -nx; let s0 = 1e9, s1 = -1e9, y0 = 1e9, y1 = -1e9, px = 0, pz = 0, pc = 0;
+    for (const t of ts) for (const i of t.v) { const [x, y, z] = P(i), s = x * tx + z * tz; s0 = Math.min(s0, s); s1 = Math.max(s1, s); y0 = Math.min(y0, y); y1 = Math.max(y1, y); px += x; pz += z; pc++; }
+    if ((s1 - s0) * (y1 - y0) < 1e-5) continue;
+    out.push({ c: [px / pc, (y0 + y1) / 2, pz / pc], n: [nx, 0, nz], w: s1 - s0, h: y1 - y0 });
+  }
+  out.sort((p, q) => p.c[1] - q.c[1] || p.c[0] - q.c[0] || p.c[2] - q.c[2]);   // thứ tự cố định → chỉ số cửa sổ tất định
+  kinhCache.set(geo, out); return out;
+}
+function quangTex(THREE) {
+  if (typeof document === 'undefined') return null;
+  const cv = document.createElement('canvas'); cv.width = cv.height = 128; const x = cv.getContext('2d'), gr = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.25, 'rgba(255,255,255,0.55)'); gr.addColorStop(0.6, 'rgba(255,255,255,0.14)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  x.fillStyle = gr; x.fillRect(0, 0, 128, 128); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+const MAU_DEN = ['#ffd27a', '#ffe2a8', '#ffc060', '#fff0cc'];
+function taoDen(THREE, g, { houses, lamps, seed }) {
+  g.updateMatrixWorld(true);
+  const den = new THREE.Group(); den.name = 'town_night_lights'; den.visible = false; g.add(den);
+  // 1) cửa sổ sáng: 1 InstancedMesh + 1 vật liệu MeshBasic (không đèn)
+  const mats = [], M = new THREE.Matrix4(), q = new THREE.Quaternion(), V = new THREE.Vector3(), S = new THREE.Vector3(), Sc = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
+  houses.forEach((h, hi) => h.traverse((o) => {
+    if (!o.isMesh || !o.geometry?.index) return;
+    const ws = cuaKinh(o.geometry); if (!ws.length) return;
+    const mw = o.matrixWorld, s = Sc.setFromMatrixScale(mw).x;
+    ws.forEach((w, k) => {
+      if (bam(seed * 977 + hi, k) >= LE_SANG) return;
+      const nW = new THREE.Vector3(...w.n).transformDirection(mw), tW = new THREE.Vector3(nW.z, 0, -nW.x);
+      V.set(...w.c).applyMatrix4(mw).addScaledVector(nW, 0.18);
+      M.makeBasis(tW, UP, nW); q.setFromRotationMatrix(M); S.set(w.w * s * 0.86, w.h * s * 0.82, 1);
+      mats.push({ m: new THREE.Matrix4().compose(V, q, S), c: MAU_DEN[Math.floor(bam(seed * 31 + hi, k + 500) * MAU_DEN.length)] });
+    });
+  }));
+  let cs = null;
+  if (mats.length) {
+    cs = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ color: '#ffffff', toneMapped: false }), mats.length);
+    const cc = new THREE.Color();
+    mats.forEach((e, i) => { cs.setMatrixAt(i, e.m); cs.setColorAt(i, cc.set(e.c).multiplyScalar(1.5)); });
+    cs.name = 'town_windows_lit'; cs.frustumCulled = false; cs.castShadow = false; cs.receiveShadow = false; cs.userData.noAO = true; den.add(cs);
+  }
+  // 2) đèn đường: quầng sáng sprite ở đầu đèn + vệt sáng trên mặt đường (cộng sáng)
+  const tex = quangTex(THREE), heads = [];
+  for (const L of lamps) L.traverse((o) => {
+    if (!o.isMesh || !o.geometry?.attributes?.position) return;
+    const p = o.geometry.attributes.position; o.geometry.computeBoundingBox();
+    const y1 = o.geometry.boundingBox.max.y, y0 = o.geometry.boundingBox.min.y, H = y1 - y0, cl = [];
+    for (let i = 0; i < p.count; i++) {
+      if (p.getY(i) < y1 - 0.12 * H) continue;
+      const v = [p.getX(i), p.getY(i), p.getZ(i)], c = cl.find((c) => Math.hypot(c.x / c.n - v[0], c.z / c.n - v[2]) < 0.1 * H);   // đèn đôi có 2 đầu
+      if (c) { c.x += v[0]; c.y += v[1]; c.z += v[2]; c.n++; } else cl.push({ x: v[0], y: v[1], z: v[2], n: 1 });
+    }
+    const xa = cl.filter((c) => c.n >= 3).map((c) => ({ x: c.x / c.n, y: c.y / c.n, z: c.z / c.n })).map((c) => ({ ...c, d: Math.hypot(c.x, c.z) })).sort((a, b) => b.d - a.d);
+    const hs = xa.length && xa[0].d > 0.1 * H ? [xa[0]] : [];   // đầu đèn = mút cần xa trục cột nhất; đèn đôi: thêm mút ở phía đối diện
+    if (hs.length) { const o2 = xa.find((c) => c.d > 0.1 * H && (c.x * hs[0].x + c.z * hs[0].z) < -0.5 * c.d * hs[0].d); if (o2) hs.push(o2); }
+    for (const c of hs) heads.push(o.localToWorld(new THREE.Vector3(c.x, c.y, c.z)));
+  });
+  if (tex && heads.length) {
+    const sm = new THREE.SpriteMaterial({ map: tex, color: '#ffc870', blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, fog: false, toneMapped: false });
+    const pm = new THREE.MeshBasicMaterial({ map: tex, color: '#ffb450', blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, fog: false, toneMapped: false });
+    const pg = new THREE.PlaneGeometry(1, 1);
+    heads.forEach((h, i) => {
+      const sp = new THREE.Sprite(sm); sp.position.copy(h); sp.position.y -= 0.4; sp.scale.setScalar(15); sp.name = `lamp_glow_${i}`; den.add(sp);
+      const pool = new THREE.Mesh(pg, pm); pool.rotation.x = -Math.PI / 2; pool.position.set(h.x, 0.07, h.z); pool.scale.setScalar(40); pool.renderOrder = 3; pool.name = `lamp_pool_${i}`; pool.userData.noAO = true; den.add(pool);
+    });
+  }
+  return { group: den, windows: cs, nWindows: mats.length, heads, setNight(n) { den.visible = !!n && n > 0.5; } };
 }
 
 // Gắn thị trấn vào engine/envs.js như một env thường (envs.use(name) bật/tắt, preset ánh sáng LIGHTS[light]).
+// Đi qua envs.define → def() của lõi gán TRỜI THẬT (skybox ngày sky-7 / đêm sky-9: mây, mặt trời, trăng, sao) như env `town` của ep001; thêm núi xa (backdrop),
+// rừng xa (farwoods), bóng mây (cloudshade) theo đúng ô fx backdrop / farwoods / cloudShade. Đêm: town.setNight bật cửa sổ + đèn đường.
 export function registerTownEnv(envs, stage, town, { name = 'kenneyTown', light = 'day' } = {}) {
-  town.group.name = `env_${name}`; town.group.visible = false; stage.scene.add(town.group);
-  envs.envs[name] = { name, light, group: town.group, update: town.update, setNight: town.setNight, places: town.places };
-  return envs.envs[name];
+  town.group.name = `town_${name}`;
+  if (!envs.define) {   // lõi cũ không có define: giữ cách cũ (không trời thật)
+    town.group.visible = false; stage.scene.add(town.group);
+    envs.envs[name] = { name, light, group: town.group, update: town.update, setNight: town.setNight, places: town.places };
+    return envs.envs[name];
+  }
+  return envs.define(name, light, (g, e, H) => {
+    const { THREE, scene } = H;
+    town.group.visible = true; g.add(town.group);
+    const sun = () => scene.children.find((o) => o.isDirectionalLight && o.name === 'sun'), hemi = () => scene.children.find((o) => o.isHemisphereLight);
+    const ext = (town.size || 240) / 2 + 20 + (town.vanh || 0) * 80;   // nửa cạnh vùng có nhà; rừng xa nằm ngoài vùng này
+    const wind = createWind(THREE, { dir: [1, 0.2], speed: 3, gust: 0.6, seed: 8, gustSize: 40 });
+    const woods = createFarwoods(THREE, { wind, seed: 8, center: [0, 0], ring: [ext + 60, ext + 330], count: 1800, size: [10, 22], kinds: { leafy: 1, pine: 0.8 }, clumps: true,
+      avoid: (x, z) => Math.abs(x) < ext + 40 && Math.abs(z) < ext + 40 });
+    woods.mesh.onBeforeRender = () => { woods.lightFrom(sun(), hemi()); woods.fogFrom(scene.fog); };
+    const hills = createBackdrop(THREE, { seed: 8, radius: 900, base: -30, height: 340, snow: 0.6 });
+    hills.mesh.onBeforeRender = () => { hills.lightFrom(sun(), hemi()); hills.fogFrom(scene.fog); };
+    H.ganTang(woods.group, 'back'); H.ganTang(hills.group, 'back'); g.add(woods.group, hills.group);
+    const wind2 = createWind(THREE, { dir: [1, 0.2], speed: 3, gust: 0.6, seed: 8, gustSize: 40 }); wind2.set({ cloud: [0.5, 70, 2.4, 0.5] });
+    const cloud = createCloudShade(THREE, wind2, { far: 320 });
+    cloud.add(new THREE.PlaneGeometry(1400, 1400), { y: 0.012 }); cloud.group.name = 'town_cloudshade'; g.add(cloud.group);
+    cloud.onRender(() => cloud.lightFrom(sun()));
+    return {
+      places: town.places, setNight: town.setNight, woods, hills, cloud,
+      update(t, ctx) {
+        const AF = globalThis.__autoFx || {}, cam = stage.camera;
+        woods.group.visible = AF.farwoods !== false; if (woods.group.visible) woods.update(t, cam);
+        hills.group.visible = AF.backdrop !== false; if (hills.group.visible) hills.update(t, cam);
+        cloud.group.visible = AF.cloudShade !== false; if (cloud.group.visible) wind2.update(t);
+        town.update?.(t, ctx);
+      },
+    };
+  });
 }
