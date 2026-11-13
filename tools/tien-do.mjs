@@ -16,6 +16,7 @@ h1{font-size:20px;margin:0 0 4px}h2{font-size:13px;letter-spacing:.8px;text-tran
 <h1>Tiến độ 3JS Studio</h1><div class="mu">Cập nhật: ${e(d.capNhat)} · trang này chỉ mới khi Claude vừa xong một lượt làm việc (tải lại trang để xem bản mới)</div>
 <div class="sum">${Object.entries(TT).map(([k, [t, c]]) => `<span style="color:${c};border-color:${c}55">${t}: ${dem(k)}</span>`).join('')}</div>
 <div class="bar">${Object.entries(TT).map(([k, [, c]]) => `<i style="width:${dem(k) / all.length * 100}%;background:${c}"></i>`).join('')}</div>
+${(d.canBan || []).length ? `<h2 style="color:#f5b84a">Cần bạn làm / trả lời</h2>` + d.canBan.map((x) => `<div class="v" style="grid-template-columns:1fr;border-color:#f5b84a55">${e(x)}</div>`).join('') : ''}
 <h2>Mở nhanh</h2><div class="lk">${(d.link || []).map((l) => `<a href="${e(l.href)}">${e(l.ten)}</a>`).join('')}</div>
 ${d.nhom.map((n) => `<h2>${e(n.ten)}</h2>` + n.viec.map((v) => { const [t, c] = TT[v.tt] || TT.chua; return `<div class="v"><span class="tag" style="color:${c};border-color:${c}55;text-align:center">${t}</span><div>${e(v.ten)}${v.ghiChu ? `<small>${e(v.ghiChu)}</small>` : ''}</div></div>`; }).join('')).join('')}
 </main></body></html>`;
