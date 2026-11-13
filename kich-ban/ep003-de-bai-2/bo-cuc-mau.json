@@ -1,0 +1,137 @@
+{
+ "ghi_chu": "Bố cục MẪU để thử công cụ dựng khối (không phải số chuẩn của phim). Đơn vị stud. Chạy: node tools/kb/do-nhan-vat.mjs dung ep003 kich-ban/ep003-de-bai-2/bo-cuc-mau.json output/ep003/dung-khoi-mau",
+ "shots": [
+  {
+   "id": "M01_can_mat",
+   "cam": {
+    "p": [
+     3.2,
+     4.6,
+     8.5
+    ],
+    "l": [
+     0.4,
+     4.5,
+     0
+    ],
+    "fov": 31
+   },
+   "khoi": [
+    {
+     "ten": "tuong_bac",
+     "tam": [
+      0,
+      8,
+      -3
+     ],
+     "kich": [
+      30,
+      16,
+      0.4
+     ],
+     "mau": "#9fb0a8"
+    },
+    {
+     "ten": "ke_go",
+     "tam": [
+      2.6,
+      1.6,
+      -2.2
+     ],
+     "kich": [
+      4,
+      3.2,
+      1.2
+     ],
+     "mau": "#a9774a"
+    }
+   ],
+   "dien_vien": [
+    {
+     "ai": "hero",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "ry_do": 0
+    }
+   ]
+  },
+  {
+   "id": "M02_hai_nguoi_toan",
+   "cam": {
+    "p": [
+     0,
+     4.2,
+     26
+    ],
+    "l": [
+     0,
+     3.2,
+     0
+    ],
+    "fov": 28
+   },
+   "khoi": [
+    {
+     "ten": "tuong_bac",
+     "tam": [
+      0,
+      8,
+      -3
+     ],
+     "kich": [
+      30,
+      16,
+      0.4
+     ],
+     "mau": "#9fb0a8"
+    },
+    {
+     "ten": "giuong",
+     "tam": [
+      -3.2,
+      1.2,
+      -0.6
+     ],
+     "kich": [
+      4.1,
+      2.4,
+      4.4
+     ],
+     "mau": "#40507c"
+    }
+   ],
+   "dien_vien": [
+    {
+     "ai": "hero",
+     "pos": [
+      -1.4,
+      0,
+      3
+     ],
+     "ry_do": 20
+    },
+    {
+     "ai": "mayor",
+     "pos": [
+      1.7,
+      0,
+      2.5
+     ],
+     "ry_do": -30
+    },
+    {
+     "ai": "bap",
+     "pos": [
+      0.1,
+      0,
+      5
+     ],
+     "ry_do": 0
+    }
+   ]
+  }
+ ]
+}

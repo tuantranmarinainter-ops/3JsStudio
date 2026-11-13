@@ -1,0 +1,56 @@
+{
+ "M01_can_mat": {
+  "dien_vien": [
+   {
+    "ai": "hero",
+    "dau_cao_pct": 28.943,
+    "tam_dau_pct": [
+     36.577,
+     44.996
+    ],
+    "trong_khung": true,
+    "cach_may": 9.084,
+    "bi_che_boi": null
+   }
+  ],
+  "may_trong_khoi": []
+ },
+ "M02_hai_nguoi_toan": {
+  "dien_vien": [
+   {
+    "ai": "hero",
+    "dau_cao_pct": 12.737,
+    "tam_dau_pct": [
+     28.263,
+     37.476
+    ],
+    "trong_khung": true,
+    "cach_may": 23.049,
+    "bi_che_boi": null
+   },
+   {
+    "ai": "mayor",
+    "dau_cao_pct": 13.987,
+    "tam_dau_pct": [
+     75.857,
+     32.694
+    ],
+    "trong_khung": true,
+    "cach_may": 23.588,
+    "bi_che_boi": null
+   },
+   {
+    "ai": "bap",
+    "dau_cao_pct": 7.581,
+    "tam_dau_pct": [
+     51.691,
+     66.371
+    ],
+    "trong_khung": true,
+    "cach_may": 21.152,
+    "bi_che_boi": null
+   }
+  ],
+  "may_trong_khoi": []
+ }
+}

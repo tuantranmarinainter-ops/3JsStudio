@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Đo nhân vật + dựng khối</title>
+<!-- Trang phục vụ tools/kb/do-nhan-vat.mjs: đo hộp bao từng bộ phận của diễn viên một tập, chụp hình chiếu thẳng (trước / ngang / sau) cùng một tỉ lệ px/stud,
+     và DỰNG KHỐI một bố cục (hộp + diễn viên thật + máy quay) để kiểm số đo camera. Không dùng cho phim; mọi thứ tĩnh, không phụ thuộc giờ thực. -->
+<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/", "troika-three-text": "/vendor/troika/troika-three-text.esm.js", "troika-three-utils": "/vendor/troika/troika-three-utils.esm.js", "troika-worker-utils": "/vendor/troika/troika-worker-utils.esm.js", "webgl-sdf-generator": "/vendor/troika/webgl-sdf-generator.mjs", "bidi-js": "/vendor/troika/bidi.mjs" } }</script>
+<style>html, body { margin: 0; background: #fff; } canvas { display: block; }</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import * as THREE from 'three';
+import { buildCast } from '/engine/cast.js';
+window.THREE = THREE;
+const Q = new URLSearchParams(location.search), ep = Q.get('ep') || 'ep003';
+const { EPISODE } = await import(`/episodes/${ep}/episode.js`);
+if (EPISODE.bearGlb) globalThis.__bearGlb = true;
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#f4f3ee');
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 1.9));
+const sun = new THREE.DirectionalLight(0xffffff, 1.5); sun.position.set(4, 9, 7); scene.add(sun);
+const actors = await buildCast(THREE, EPISODE.actors, { seed: EPISODE.seed ?? 1 });
+for (const a of Object.values(actors)) { a.root.visible = false; scene.add(a.root); }
+const khoi = new THREE.Group(); khoi.name = 'khoi'; scene.add(khoi);
+
+const V = () => new THREE.Vector3(), r3 = (x) => Math.round(x * 1000) / 1000, arr = (v) => [r3(v.x), r3(v.y), r3(v.z)];
+const thay = (m) => { for (let n = m; n; n = n.parent) if (!n.visible) return false; return true; };
+// Hộp bao theo ĐỈNH lưới (đúng cả khi bộ phận bị xoay / có xương); `chan` = các nút con không tính (bộ phận khác).
+function hop(obj, chan = new Set()) {
+  const b = new THREE.Box3(), v = V(); obj.updateWorldMatrix(true, true);
+  const di = (n) => {
+    if (n !== obj && chan.has(n)) return;
+    if (n.isMesh && thay(n) && n.geometry?.attributes?.position) {
+      const p = n.geometry.attributes.position, skin = n.isSkinnedMesh && n.getVertexPosition;
+      if (skin) n.skeleton.update();
+      for (let i = 0; i < p.count; i++) { if (skin) n.getVertexPosition(i, v); else v.fromBufferAttribute(p, i); b.expandByPoint(v.applyMatrix4(n.matrixWorld)); }
+    }
+    n.children.forEach(di);
+  };
+  di(obj); return b;
+}
+const hopJ = (b) => (b.isEmpty() ? null : { min: arr(b.min), max: arr(b.max), kich: arr(b.getSize(V())) });
+function datTuThe(a, tuThe, t = 0) { if (!tuThe && a.apply) a.apply({}); else a.animate(tuThe || 'idle', t); }
+function chiHien(ten) { for (const [n, a] of Object.entries(actors)) a.root.visible = [].concat(ten).includes(n); }
+
+// ---------- 1. ĐO ----------
+function doNhanVat(ten, tuThe) {
+  const a = actors[ten]; chiHien(ten); khoi.visible = false;
+  a.root.position.set(0, 0, 0); a.root.rotation.set(0, 0, 0); datTuThe(a, tuThe); a.root.updateWorldMatrix(true, true);
+  const bo = new Set(Object.values(a.parts || {}));
+  const out = { loai: a.r6 ? 'r6' : EPISODE.actors[ten].bear ? 'gau' : 'khac', ngoai_hinh: EPISODE.actors[ten].look || null, ti_le: a.options?.scale ?? null, be_ngang: a.options?.wide ?? null,
+    toan_than: hopJ(hop(a.root)), bo_phan: {} };
+  for (const k of ['head', 'hat', 'torso', 'rightArm', 'leftArm', 'rightLeg', 'leftLeg']) if (a.parts?.[k]) { const j = hopJ(hop(a.parts[k], bo)); if (j) out.bo_phan[k] = j; }
+  const dau = a.khung?.dau, hp = dau && a.parts[dau.phan];
+  if (hp) {
+    const c = V().fromArray(dau.tam), top = hp.localToWorld(c.clone().add(V().set(0, dau.cao / 2, 0))), bot = hp.localToWorld(c.clone().add(V().set(0, -dau.cao / 2, 0)));
+    out.dau_khoi = { dinh_y: r3(top.y), cam_y: r3(bot.y), cao: r3(top.y - bot.y), tam: arr(hp.localToWorld(c.clone())) };
+    if (a.faceCenter) out.mat_tam = arr(hp.localToWorld(V().fromArray(a.faceCenter)));
+  } else if (a.headCenter && a.parts?.head) out.dau_tam = arr(a.parts.head.localToWorld(V().fromArray(a.headCenter)));
+  if (a.handGrip && a.parts?.rightHand) out.tay_phai_cam = arr(a.parts.rightHand.localToWorld(V().fromArray(a.handGrip)));
+  return out;
+}
+
+// ---------- 2. HÌNH CHIẾU THẲNG (cùng tỉ lệ cho mọi nhân vật) ----------
+const O = { x0: -3.5, x1: 3.5, y0: -0.5, y1: 7.5, px: 90 };   // vùng chụp theo stud + px / stud
+const ortho = new THREE.OrthographicCamera(O.x0, O.x1, O.y1, O.y0, 0.1, 200);
+const HUONG = { truoc: [0, 0, 60], sau: [0, 0, -60], ngang: [60, 0, 0] };   // ngang: máy ở +X = bên tay TRÁI nhân vật, mặt quay về TRÁI ảnh
+function chupThang(ten, huong, tuThe) {
+  const a = actors[ten]; chiHien(ten); khoi.visible = false;
+  a.root.position.set(0, 0, 0); a.root.rotation.set(0, 0, 0); datTuThe(a, tuThe);
+  renderer.setSize((O.x1 - O.x0) * O.px, (O.y1 - O.y0) * O.px, false);
+  const p = HUONG[huong]; ortho.position.set(p[0], 0, p[2]); ortho.up.set(0, 1, 0); ortho.lookAt(0, 0, 0); ortho.updateProjectionMatrix();
+  renderer.render(scene, ortho); return canvas.toDataURL('image/png');
+}
+
+// ---------- 3. DỰNG KHỐI một bố cục: { rong, cao, cam: { p, l, fov, nghieng }, khoi: [{ ten, tam, kich, ry_do, mau }], dien_vien: [{ ai, pos, ry_do, tu_the, t }] } ----------
+// Trả ảnh + số đo chiếu của từng diễn viên (cỡ đầu, tâm đầu theo % khung) để so với số ghi trong bộ dữ liệu.
+const persp = new THREE.PerspectiveCamera(30, 9 / 16, 0.1, 2000), ray = new THREE.Raycaster();
+function dungKhoi(bc) {
+  const W = bc.rong || 450, H = bc.cao || 800; renderer.setSize(W, H, false);
+  khoi.clear(); khoi.visible = true;
+  for (const k of bc.khoi || []) {
+    const g = new THREE.BoxGeometry(...k.kich), m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: k.mau || '#b9b4aa', roughness: 0.9 }));
+    m.name = k.ten || 'khoi'; m.position.fromArray(k.tam); m.rotation.y = ((k.ry_do || 0) * Math.PI) / 180;
+    m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color: '#5d5a54' }))); khoi.add(m);
+  }
+  if (bc.luoi !== false) { const gr = new THREE.GridHelper(200, 200, '#8f8b82', '#cfcbc2'); gr.position.y = (bc.san_y || 0) + 0.005; khoi.add(gr); }
+  const dv = bc.dien_vien || []; chiHien(dv.map((d) => d.ai));
+  for (const d of dv) { const a = actors[d.ai]; if (!a) throw new Error('không có diễn viên ' + d.ai); a.root.position.fromArray(d.pos); a.root.rotation.order = 'YXZ'; a.root.rotation.set(d.nam ? -Math.PI / 2 : 0, ((d.ry_do || 0) * Math.PI) / 180, 0); datTuThe(a, d.tu_the, d.t || 0); }   // nam: nằm ngửa, gốc = gót chân, đầu chỉ về −Z cục bộ
+  const c = bc.cam; persp.fov = c.fov; persp.aspect = W / H; persp.position.fromArray(c.p); persp.up.set(0, 1, 0); persp.lookAt(...c.l);
+  if (c.nghieng) persp.rotateZ((c.nghieng * Math.PI) / 180);
+  persp.updateProjectionMatrix(); persp.updateMatrixWorld(true);
+  renderer.render(scene, persp);
+  const pc = (v) => { const q = v.clone().project(persp); return [r3((q.x + 1) * 50), r3((1 - q.y) * 50), q.z < 1]; };
+  const do_ = dv.map((d) => {
+    const a = actors[d.ai], dau = a.khung?.dau, hp = dau ? a.parts[dau.phan] : a.parts?.head; if (!hp) return { ai: d.ai };
+    const c0 = V().fromArray(dau ? dau.tam : a.headCenter || [0, 0, 0]), cao = dau ? dau.cao : 0.8;   // gấu chưa khai số đo đầu: ước lượng 0,8 stud (thân 2,2)
+    const top = pc(hp.localToWorld(c0.clone().add(V().set(0, cao / 2, 0)))), bot = pc(hp.localToWorld(c0.clone().add(V().set(0, -cao / 2, 0)))), tam = pc(hp.localToWorld(c0.clone()));
+    // vật chắn: tia từ máy tới tâm đầu gặp khối nào trước khi tới đầu
+    const dich = hp.localToWorld(c0.clone()), cach = dich.distanceTo(persp.position); ray.set(persp.position, dich.clone().sub(persp.position).normalize()); ray.far = cach - 0.3;
+    const trung = ray.intersectObjects(khoi.children.filter((o) => o.isMesh), false)[0];
+    const trong = tam[2] && tam[0] >= 0 && tam[0] <= 100 && tam[1] >= 0 && tam[1] <= 100;
+    return { ai: d.ai, dau_cao_pct: r3(Math.hypot(top[0] - bot[0], (top[1] - bot[1]) * (H / W)) * (W / H)), tam_dau_pct: [tam[0], tam[1]], trong_khung: trong, cach_may: r3(cach), bi_che_boi: trung ? trung.object.name : null };
+  });
+  // máy nằm trong khối nào (máy chui vào tường / mái / cột)
+  const b3 = new THREE.Box3(), mayTrong = khoi.children.filter((o) => o.isMesh && b3.setFromObject(o).containsPoint(persp.position)).map((o) => o.name);
+  return { anh: canvas.toDataURL('image/png'), do: do_, may_trong_khoi: mayTrong };
+}
+window.__do = { ten: Object.keys(actors), doNhanVat, chupThang, dungKhoi, O };
+window.__ready = true;
+</script>
+</body>
+</html>
