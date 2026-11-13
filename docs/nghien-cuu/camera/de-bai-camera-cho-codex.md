@@ -16,6 +16,7 @@ Mục đích: bản dựng three.js cần đặt máy đúng như khung hình Co
   "goc_cao_do": 0,
   "nghieng_do": 0,
   "tieu_cu_mm": 65,
+  "goc_nhin_doc_do": 31,
   "chuyen_dong": { "kieu": "day", "muc": "nhe", "dau_cao_pct_cuoi": 37 },
   "tien_canh": [{ "la": "mép kệ gỗ", "o": "dưới-phải", "chiem_pct": 8 }],
   "hau_canh": [{ "la": "cửa sổ khung kem", "o": "trên-trái" }, { "la": "đầu giường", "o": "phải" }],
@@ -37,6 +38,7 @@ Mục đích: bản dựng three.js cần đặt máy đúng như khung hình Co
 - `goc_cao_do`: 0 = máy ngang tầm điểm nhắm; DƯƠNG = máy cao hơn, chúc xuống; ÂM = máy thấp, ngước lên.
 - `nghieng_do`: nghiêng đường chân trời (0 nếu thẳng).
 - `tieu_cu_mm`: tiêu cự quy đổi full-frame đã dùng khi tạo ảnh.
+- `goc_nhin_doc_do`: GÓC NHÌN DỌC của khung 9:16 tính bằng độ (từ mép trên tới mép dưới khung). BẮT BUỘC ghi, vì cùng một tiêu cự có hai cách quy đổi cho khung dọc (xoay máy dọc: 65 mm ≈ 31°; cắt dọc từ khung ngang: 65 mm ≈ 21°). Nếu chỉ biết mm thì ghi rõ đã dùng cách nào.
 - `chuyen_dong.kieu`: `tinh | day | keo | lia_trai | lia_phai | cau_len | ha_xuong | theo | rung`; `muc`: `nhe | vua | manh`; nếu có đẩy/kéo ghi `dau_cao_pct_cuoi`.
 - `tien_canh`: vật/người chắn phía trước (vai ai, mép gì), nằm góc nào, chiếm khoảng bao nhiêu % khung. Shot qua vai: ghi rõ vai của AI.
 - `hau_canh`: những thứ PHẢI nhìn thấy sau chủ thể và nằm phía nào khung.
