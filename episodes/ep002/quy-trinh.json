@@ -1,3 +1,9 @@
 {
-  "goi": { "vongMax": 0, "chapNhanNhap": true }
+ "goi": {
+  "vongMax": 0,
+  "chapNhanNhap": true
+ },
+ "ghiCong": {
+  "choPhepTroi": true
+ }
 }

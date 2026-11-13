@@ -15,8 +15,12 @@ Dây chuyền: câu luật → 5 kịch bản mẫu → kịch bản đầy đ�
   Mới: `engine/bear.js`, `engine/anim-them.js`, `engine/cast.js` (ga:1 / bear:1), `engine/envs/factory.js`, `engine/props-kb.js`, `tools/sfx/shot-list.mjs`.
   ep002 gộp TRỰC TIẾP: `node tools/bundle.mjs ep002 --out dist/ep002_xem-thu.html` (bước am-thanh/gop của lam-phim bị chặn vì giấy phép trời).
 
+- **Bản cuối ep002: `dist/ep002.html`** (2026-11-13 sáng). Người dùng tự bấm "Có, ra bản cuối" = nhận trách nhiệm giấy phép trời sky-7/sky-9
+  → `quy-trinh.json ghiCong.choPhepTroi: true`. `tiep --cho-phep-troi` chạy hết am-thanh + gop, NHƯNG ra-loi lại tự sửa đè 5 shot dù `vongMax 0`
+  → đã khôi phục `shots.js` từ HEAD rồi gộp lại bằng `node tools/bundle.mjs ep002`; vì vậy `trang-thai` báo bước tiếp là ra-loi — ĐỪNG chạy `tiep` nữa.
+
 ## Còn lại (theo thứ tự)
-1. Chờ người dùng xem bản nháp ep002 + trả lời mục "Chờ bạn quyết" trong `BAO-CAO-quy-trinh.md` (trời sky-7/sky-9, bảng mẫu, tiệm là mặt phố hay nội thất, CLAUDE.md, commit file Gà).
+1. Chờ người dùng xem bản cuối ep002 + trả lời các mục còn lại của "Chờ bạn quyết" trong `BAO-CAO-quy-trinh.md` (bảng mẫu, tiệm là mặt phố hay nội thất, CLAUDE.md, commit file Gà).
 2. Rà lại (scoped re-review, Sonnet) các gói sửa chưa rà: commit `eeec98c` `172e436` `cdfb6dd` (A: lam-phim/asset-plan/mau-duyet), `cbed4fa` (B: bear/cast/anim),
    `497e517` (C: storyboard/shot-gen/template/props-kb), `d0b5eda` (factory), `886f744` (engine ep002), `da0e233` (sfx shot-list).
 3. Sửa lỗi dây chuyền lộ ra khi chạy thật (mục cùng tên trong báo cáo): narration.txt bị ghi đè mất `@voice`; giọng `--dry` ghi đè giọng thật;
