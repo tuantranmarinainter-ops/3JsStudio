@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 13:20",
+ "capNhat": "2026-11-13 13:45",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -35,8 +35,8 @@
     },
     {
      "ten": "Sửa shot yếu: s037, s051, s032, s048, s044, s087, s114",
-     "tt": "dang",
-     "ghiChu": "1 agent Sonnet đang sửa (thêm s040, s055, s113 và rà cả phim)"
+     "tt": "do",
+     "ghiChu": "đã sửa 17 shot (10 shot đã biết + 6 shot rà thêm + s061 một phần); còn s061 nửa sau chỉ thấy sàn tối (nghi lỗi bối cảnh nhà máy); chưa gộp vào bản xem thử, chưa chụp lại cả phim"
     },
     {
      "ten": "Tiếng động + nhạc cho thời lượng mới (kể cả \"Boang\")",
@@ -52,6 +52,11 @@
      "ten": "Tài sản Roblox (mũ, đạo cụ đã chọn ở Đợt 3)",
      "tt": "cho",
      "ghiChu": "người dùng: để sau"
+    },
+    {
+     "ten": "s061: nửa sau shot chỉ thấy sàn gỗ tối (lỗi bối cảnh nhà máy ở shot reveal)",
+     "tt": "chua",
+     "ghiChu": "cần sửa engine/env factory"
     }
    ]
   },
