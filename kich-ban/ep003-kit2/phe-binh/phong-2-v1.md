@@ -1,0 +1,13 @@
+| shot | muc | engine dang thay gi | khac kich ban o dau | sua gi truoc |
+| --- | --- | --- | --- | --- |
+| S001 | dat | Ca ba khung can chot ngang tren cua; co them num cua ben duoi. | Chot va cua khac mau, num cua xuat hien them nhung chot van la trong tam. | Giu may; neu can, bo num cua khoi khung. |
+| S002 | lech | Ca ba khung nhin cheo xuong mat ke, thay vet vong va mep sach, phia sau la tuong. | Thieu cua so va vet nang canh vet vong; boi canh can cua so khong con doc duoc. | Doi may ve phia cua so, nang va xoay may de lay ca cua so, mat ke va vet vong; them vet nang tren ke. |
+| S016 | lech | Nhan vat hien toan than, di ve phia may; cua so va giuong o sau. | Ke sach va dong tac voi tay toi ke khong thay ro; nhan vat huong ve may thay vi huong sang ke. | Doi may sang phia doi dien ke, xoay nhan vat sang phai khung ve ke va dua ke cung canh tay vao khung. |
+| S017 | lech | Ca ba khung thay mat ke, vet vong, sach va tay ao lon tu goc trai duoi. | Tay vao tu phia doi dien so voi mau, che mot phan vet vong; cua so khong thay. | Doi may sang phia con lai cua ke de tay vao tu phai khung; luy may mot chut va xoay len de thay cua so, vet vong. |
+| S019 | lech | Mat va than tren nhan vat chiem gan het khung; dau buon, giua va cuoi cau may. | Khung chat hon ro, mat gan chinh dien; canh tay dua len truoc nguc va ke sach gan nhu mat khoi khung. | Lui may, doi sang ben trai khung va xoay ve nhan vat de thay tay dua truoc nguc cung ke sach phia sau. |
+| S021 | lech | Dong ho va sach tren ke hien ca ba khung, chi lo mot it tay ao o mep trai duoi. | Dong ho nho hon va nhin tu tren cheo xuong; thieu hai canh tay dang giu hai ben dong ho. | Tien may sat dong ho, ha may xuong gan ngang mat dong ho; dua hai canh tay vao hai ben dong ho. |
+| S022 | lech | Nhan vat nam tren giuong, gau o cuoi giuong, den va mot phan cua so phia sau. | May nhin tu tren xuong qua cao; nhan vat nam tren chan thay vi duoc chan phu, thieu ke va dong ho trong khung. | Ha may xuong gan mat giuong, lui ve phia chan giuong; dua chan len che nguoi nhan vat va lay ca ke dong ho vao khung. |
+| S024 | lech | Dong ho nho va sach tren mat tu, tuong chiem phan lon khung; mep tuong che ben trai. | May xa va nghieng, dong ho nho hon ro; sach o ben trai dong ho thay vi ben phai, thieu lop giuong tien canh. | Tien may lai gan ke, can may thang; doi sach sang ben phai dong ho va dua mep giuong vao tien canh. |
+| S025 | lech | Can mat nhan vat dang ngu tren goi, nhin tu tren xuong; ba khung gan nhu giong nhau. | Mat nghieng nguoc huong mau, nhan vat nam ngua thay vi nam nghieng; thieu chan xanh sat mat. | Doi may sang ben kia dau giuong va ha may gan ngang mat; xoay nhan vat nam nghieng ve phia may, dua chan sat mat. |
+
+CHUA_DAT: S002,S016,S017,S019,S021,S022,S024,S025

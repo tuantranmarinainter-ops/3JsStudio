@@ -1,0 +1,13 @@
+| shot | muc | engine dang thay gi | khac kich ban o dau | sua gi truoc |
+|---|---|---|---|---|
+| S057 | lech | Ca ba khung thay gau no xanh nhin nghien, mot gau no do va cot ke o giua. | Gau trong kich ban quay mat chech ve may, nhieu gau xep thanh hang; cot ke che va chia cat hang gau. | Doi may sang phai de tranh cot ke, xoay may doc theo hang gau va xoay gau no xanh huong mat chech ve may. |
+| S058 | dat | Ca ba khung thay nhan vat tu phia sau, gio tay truoc ban do co cac dau gau. | Bo cuc va huong nhin tuong ung; tay khoi khong giong ban ve khong tinh loi. | Giu vi tri may va ban do. |
+| S059 | lech | Ca ba khung can mot dau gau tren ban do; mot phan tay ao nam o goc duoi phai. | Can qua sat nen mat phan lon ban do va cac dau gau; tay khong cham vao dau gau nhu anh mau. | Lui may de thay nhieu nha va dau gau hon; doi tay khoi len sat dau gau o giua. |
+| S060 | lech | Ca ba khung thay nhan vat dung gio tay canh ban do, gau xanh rat nho o duoi phai. | Nhan vat va dac biet con gau nho hon ro so voi khung mau, du san trong. | Tien may lai gan va ha khung bot san; phong to hoac dua gau lai gan nhan vat de gau chiem ty le tuong tu anh mau. |
+| S061 | lech | Ca ba khung thay vai, sau dau nhan vat va tay khoi o truoc ban do co cac dau gau. | May nhin tu sau lung thay vi chech ben mat; phan nha tren ban do ma nhan vat chi toi khong ro. | Doi may sang ben mat nhan vat, lui nhe va xoay ve cum nha tren ban do; dua dau tay khoi toi cum nha do. |
+| S062 | lech | Ca ba khung thay bang chuyen, ke gau, ket sat nho o xa va rat nhieu san, tran. | Thieu ban do tren tuong; ket sat duoi bang chuyen nho va khong noi bat nhu anh mau. | Tien may ve phia ket sat, xoay khung de thay ban do tren tuong va ke gau phia sau; them ban do vao khung neu dang o ngoai tam nhin. |
+| S063 | lech | Ca ba khung can mat ket xanh va tay nam ba canh, mep ket bi cat. | May qua gan va gan nhu chinh dien; anh mau thay tron cua ket voi mat so va ban le, nhin hoi chech. | Lui may, dich sang ben de thay tron cua ket va ban le; them mat so tron neu ket chua co. |
+| S064 | lech | Ca ba khung thay mat truoc ket, tay nam bi cat va day chuyen voi mat xanh o sat mep tren. | May qua thap va nhin gan nhu ngang, khong thay ro day chuyen nam tren mat ket nhu anh mau. | Nang may len va chuc xuong mat tren ket; dat lai day chuyen va mat xanh nam tron ven tren mat ket. |
+| S065 | lech | Ca ba khung thay nhan vat sau cua so, tu dau den than tren, voi nhieu tran va tuong gach. | Nhan vat nho hon ro so voi canh can trong anh mau; phan tren va duoi khung cua so chiem nhieu dien tich. | Tien may ve cua so va can lai vao dau, than tren va tay nhan vat; bot phan tran va tuong duoi. |
+
+CHUA_DAT: S057,S059,S060,S061,S062,S063,S064,S065

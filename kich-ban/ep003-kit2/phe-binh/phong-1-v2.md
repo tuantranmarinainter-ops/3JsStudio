@@ -1,0 +1,12 @@
+| shot | muc | engine dang thay gi | khac kich ban o dau | sua gi truoc |
+|---|---|---|---|---|
+| S018 | lech | Ca ba khung can mat va nguc nhan vat; giua va cuoi co nuoc mat. | Khung engine sat mat hon, cat mat hai tay dang giu truoc nguc; cua so khong ro nhu anh mau. | Lui may va ha nhe de thay ca hai tay truoc nguc; dua cua so ve phia sau ben phai khung. |
+| S020 | lech | Ca ba khung thay nhan vat toan than cam vat mau do trong phong, quay sang phai. | Thieu giuong ben trai va guong dung ben phai; dong ho cam tren tay khong doc ro, phong sang hon nhieu. | Dua may lui ve phia cua phong; them giuong ben trai va guong dung ben phai, dat dong ho ro tren tay va giam sang. |
+| S023 | lech | Ca ba khung thay mat nhan vat rat lon o tien canh, giuong va guong phia sau. | Mat chiem gan het nua duoi; guong phan chieu tuong trong thay vi cua so, ke va dong ho. | Dua may ra sau vai nhan vat, nang va xoay may ve guong; dat ke va dong ho vao vung phan chieu, de cua so hien trong guong. |
+| S026 | lech | Ca ba khung thay guong va gau nho tren nen xanh trong guong. | Gau qua nho, guong chu yeu phan chieu tuong trong; thieu cua so, den, ke va dong ho trong guong. | Tien may gan guong, dieu chinh goc guong va may de gau lon hon; dua cua so, den, ke va dong ho vao vung phan chieu. |
+| S033 | lech | Ca ba khung thay lung nhan vat truoc cua so, giuong o tien canh. | Nhan vat qua xa va nho, thay than nhieu hon anh mau; canh khong con bo cuc qua vai gan cua so. | Tien may sat phia sau nhan vat va ha may de dau, vai chiem nua duoi khung; giu cua so va ke trong nen. |
+| S095 | hong | Ca ba khung thay than ao va chan; vong day chuyen treo roi truoc nguoi, mat day o gan dui. | Thieu canh hai tay nang day chuyen; day chuyen lo lung khong duoc giu. | Dua hai tay vao truoc nguc, dat day chuyen tiep xuc voi tay; tien may can sat hai tay va mat day. |
+| S097 | hong | Ca ba khung thay ket mo va day chuyen truoc nen toi; tay ao chi lo o mep trai. | Day chuyen lo lung, khong cham tay; canh tay khong vuon vao giu day nhu anh mau. | Dua tay vao mieng ket va dat dau day chuyen tiep xuc voi tay; giu mat day nam trong long ket. |
+| S099 | lech | Ca ba khung thay nhan vat lon bi cat ben trai, gau nho ben phai va ket sat sau gau. | Nhan vat va gau dao ben so voi mau; gau qua nho va khong om ket, ket dat sau lung gau. | Doi may sang phia doi dien de gau o trai va nhan vat o cua ben phai; tien gan gau, dat ket sat truoc nguoi gau va dua hai tay gau cham ket. |
+
+CHUA_DAT: S018,S020,S023,S026,S033,S095,S097,S099

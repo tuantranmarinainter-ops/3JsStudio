@@ -1,0 +1,12 @@
+| shot | mức | engine đang thấy gì | khác kịch bản ở đâu | sửa gì trước |
+|---|---|---|---|---|
+| S003 | lech | Cả ba thời điểm nhìn dọc phố, dãy cửa hàng ở bên trái; một cột đèn đen rất lớn ở tiền cảnh. | Cột che đáng kể mặt tiền và biển cửa hàng; cửa mở cùng tay nắm ở tiền cảnh như ảnh mẫu không thấy. | Dời máy sang phải để cột ra khỏi khung, rồi đặt mép cửa và tay nắm ở sát trái tiền cảnh. |
+| S008 | dat | Cả ba thời điểm thấy bà bán hàng, hai bạn nhỏ và gấu bông trước cửa hàng. | Cỡ cảnh rộng hơn đôi chút nhưng vẫn thấy đủ nhóm và gấu; cùng phía máy. | Giữ bố cục; có thể tiến máy nhẹ để nhóm và gấu lớn hơn. |
+| S009 | lech | Cả ba thời điểm thấy hai bạn và gấu phía sau quầy; một mảng thân áo sáng chiếm gần nửa dưới khung. | Bà ở tiền cảnh gần như không nhận ra; quầy và thân áo che nhiều, bạn ôm gấu nhỏ hơn ảnh mẫu. | Dời máy sang bên phải phần vai bà và tiến gần hai bạn; giữ đầu hoặc vai bà ở mép trái, hạ phần quầy khỏi giữa khung. |
+| S010 | lech | Cả ba thời điểm thấy bà, người áo xanh và tờ giấy; mặt quầy lớn chiếm tiền cảnh. | Cảnh rộng hơn rõ rệt, quầy ngăn hai người và chiếm nhiều khung; tờ giấy nhỏ hơn ảnh mẫu. | Tiến máy gần hai người và nâng góc nhìn qua mặt quầy; đưa tờ giấy lên giữa hai người, lớn và hướng mặt giấy về máy. |
+| S011 | lech | Cả ba thời điểm thấy bà sau quầy, một chồng giấy nhỏ và lưng áo xanh rất lớn ở tiền cảnh. | Không thấy đầu bạn đội mũ như ảnh mẫu; lưng áo che nhiều chồng giấy, làm vật chính khó đọc. | Lùi máy và dời sang phải để thấy đầu bạn ở mép trái; đưa chồng giấy ra trước bà và xoay mặt trên về phía máy. |
+| S012 | lech | Cả ba thời điểm nhìn dọc phố rộng, ba người đứng thành hàng sau các bàn màu hồng. | Người và giấy quá nhỏ; các bàn che phần thân dưới, khác bố cục ba người đứng sát cửa nhà cầm giấy. | Tiến máy tới gần dãy người, dời sang phía vỉa hè bên trái; bỏ các bàn chắn trước người và đưa giấy lên trước ngực. |
+| S013 | lech | Cả ba thời điểm nhìn từ trên xuống một nhóm người trên phố; biển hiệu và mái che chiếm mép trái. | Nhóm bị dồn và chồng lên nhau, không tách thành ba cụm như mẫu; các tờ giấy không thấy rõ, biển và mái che khuất cảnh. | Nâng và lùi máy, dời sang phải để tránh biển và mái che; tách người thành ba cụm và đặt giấy hướng lên máy ở từng cụm. |
+| S014 | dat | Cả ba thời điểm là cận nhân vật áo xanh sọc, băng đỏ, nhìn gần chính diện. | Cỡ cảnh và phía máy tương tự; tay thấp hơn mẫu nhưng nhân vật vẫn đọc rõ. | Giữ máy; nâng cánh tay hướng về ngực nếu cần sát ảnh mẫu hơn. |
+
+CHUA_DAT: S003,S009,S010,S011,S012,S013

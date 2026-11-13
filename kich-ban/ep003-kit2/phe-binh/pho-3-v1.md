@@ -1,0 +1,13 @@
+| shot | muc | engine dang thay gi | khac kich ban o dau | sua gi truoc |
+| --- | --- | --- | --- | --- |
+| S044 | lech | Nhan vat ao xanh chay tren pho, chan deu o tren mat duong trong ca ba khung. | Thieu bac cua ngay ben trai; nhan vat trong ca ba khung nhu dang lo lung thay vi dap chan xuong bac va duong. | Dua nhan vat sat mat duong, cho mot chan cham dat; dua bac va cua nha vao ben trai khung. |
+| S045 | lech | Ba gau va tui vang o giua pho; nhan vat ao xanh dung ngay sau gau giua. | Nhom gau qua nho va dung ngang hang; nhan vat ao xanh o qua gan thay vi rat xa phia sau; cuoi shot co vet trang chay sang o day. | Tien may gan nhom gau, dua gau giua len truoc va dua nhan vat ao xanh lui xa; giam sang mat duong. |
+| S046 | lech | May nhin cao xuong ba gau, tui vang va nhan vat ao xanh phia sau. | Mat duong va via he ben trai bi chay trang, kho doc bo cuc pho dem. | Giam sang mat duong va via he de thay ro be mat, giu goc nhin cao. |
+| S047 | lech | Gau xam no do chay truoc nha, khong thay vat nao trong tay. | Thieu cuon so mau nau ma gau om truoc nguc; gau nho hon ro so voi khung mau. | Them cuon so nau truoc nguc gau va tien may gan de gau chiem gan het chieu cao khung. |
+| S048 | lech | Gau nau o ben phai, tui vang lon o ben trai. | Gau quay ngang lung ve phia tui, khong quay mat nhin lai; tui tach khoi gau, khong thay day keo. | Xoay gau nhin lai ve phia may va tui; them day noi tui voi tay gau, dua tui sat gau. |
+| S067 | lech | Nhan vat ao xanh quay lung truoc cua, nguoi gia dung trong cua; cot xanh o tien canh. | May o sau lung nhan vat nen khong thay mat nhu khung mau; cot che mot phan loi vao. | Doi may sang ben trai nhan vat ao xanh de thay mat nghieng va nguoi gia trong cua; bo cot xanh khoi tien canh. |
+| S068 | lech | Mat va than nhan vat ao xanh nhin len, mot mang toi lon cua nguoi gia o mep phai. | May nhin tu tren xuong qua sat; khong thay ro dau va vai nguoi gia o tien canh nhu mau, phan chan nhan vat bi che. | Ha va lui may vao trong cua, dat sau vai nguoi gia de thay ro vai va dau o mep phai cung toan than nhan vat ao xanh. |
+| S069 | lech | Nguoi gia gan day khung, nen cua toi; khong thay nhan vat ao xanh. | Thieu dau va vai nhan vat ao xanh o tien canh trai; canh rong hon mau va khuon mat nguoi gia toi. | Dua dau va vai nhan vat ao xanh vao goc trai duoi, tien may gan mat nguoi gia va tang sang mat. |
+| S070 | lech | Nguoi gia dung truoc nen toi, chiem gan het khung. | Khong thay ro khung cua ben phai va boi canh ngoai nha ben trai nhu mau; mat nguoi gia toi. | Lui may va doi sang trai de lo khung cua ben phai va mot phan ngoai nha ben trai; tang sang mat nguoi gia. |
+
+CHUA_DAT: S044,S045,S046,S047,S048,S067,S068,S069,S070

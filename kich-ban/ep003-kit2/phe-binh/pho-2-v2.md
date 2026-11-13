@@ -1,0 +1,13 @@
+| shot | muc | engine dang thay gi | khac kich ban o dau | sua gi truoc |
+|---|---|---|---|---|
+| S004 | lech | Ca ba khung thay tho banh cui dau sau quay, bien banh va ke banh. | Nhan vat nho hon ro va bi quay che phan lon than; kich ban thay nhan vat gan hon, tu dau toi hong ben canh quay. | Dua may lai gan va dich sang phia trai quay, nang goc nhin de thay ro than va canh tay nhan vat. |
+| S005 | hong | Ca ba khung chu yeu thay san va mat duoi quay; chi lo mot phan nho nhan vat o mep tren. | Khong thay o tu rong nhu khung kich ban, san chiem gan het hinh va canh tay tren mat quay bi cat. | Dua may sat va chinh dien o tu, nang may va huong vao long tu; dua canh tay len mep tren khung. |
+| S006 | dat | Ca ba khung thay nguoi phu nu sau ban nhin xuong hop do dang mo. | Cu canh va vat chinh tuong tu; phia sau it do nghe may hon. | Giu goc may va vi tri hop. |
+| S007 | dat | Ca ba khung nhin tu tren xuong hop do mo rong tren mat ban. | Hop va goc nhin tuong tu; thieu cuon chi va tam vai o mep hinh. | Giu goc may; co the dat cuon chi va vai o mep tren neu can giong anh. |
+| S015 | lech | Ca ba khung thay sau lung nhan vat nhin day nha va bien cua hang. | May lech xien va gan day nha hon; cot den chiem tien canh, mat tien va cua hang khong ro nhu anh mau. | Lui may, dich sang phai de tranh cot den va xoay ve chinh dien day nha; giu sau lung nhan vat o tien canh. |
+| S036 | lech | Ca ba khung thay mat tien cua hang mai xanh va via he ban dem tu tren cao. | Canh bi ep sat vao toa nha, thieu khung cua so mo, mat trang va do sau cua con pho. | Lui may ve trong phong, dat sau cua so mo va xoay ra pho; mo rong khung de thay mat trang va den duong. |
+| S039 | lech | Ca ba khung thay nhan vat sau lan can, quay ngang truoc cua so sang. | Lan can che gan het than duoi; khong thay tu the ngoi thu minh va cua ra vao co den nhu anh mau. | Dua may sang phia ben trong lan can va ha may de thay tu dau den chan; dat nhan vat ngoi canh cua ra vao va them den. |
+| S042 | lech | Ca ba khung thay sau lung nhan vat va mot con gau rat nho tren mai doi dien. | May huong sat vao mat tien doi dien; gau qua nho, thieu chieu sau con pho va ong khoi trong anh mau. | Dich may sang trai va xoay doc theo con pho; dieu chinh khoang cach hoac vi tri gau de gau tren mai doc ro, dua ong khoi vao hau canh. |
+| S043 | lech | Ca ba khung thay gau ngoi tren mai, mot chiec nhan nam ben canh. | Gau nho hon va may nhin tu tren xuong; nhan khong o trong tay gau, hau canh pho dem gan nhu mat. | Dua may lai gan va ha xuong ngang tam gau, xoay de thay pho dem phia sau; dua nhan vao giua hai tay gau. |
+
+CHUA_DAT: S004,S005,S015,S036,S039,S042,S043
