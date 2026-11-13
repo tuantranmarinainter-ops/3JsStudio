@@ -234,18 +234,18 @@ export default function build(g, e, H) {
   // ---- KÉT TEAL (góc tây–nam, mặt số quay BẮC): thân rỗng + cửa bản lề phía TÂY + lòng két có đệm sẫm; nhấc/mở theo ctx ----
   const ket = new THREE.Group(); ket.name = 'phong_ket'; ket.position.set(KET.x, 0, KET.z); mid.add(ket);
   const ketDoor = new THREE.Group(); ketDoor.name = 'phong_ket_cua';
-  { const { w, d, h } = KET, tm = { metalness: 0.45, roughness: 0.5 }, TD = '#2f574e', y0 = 0.2, t = 0.16;
-    box(ket, 'ket_lung', w, h - y0, t, 0, y0, d / 2 - t / 2, TEAL, 'metalpaint', tm); box(ket, 'ket_noc', w, t, d, 0, h - t, 0, TEAL, 'metalpaint', tm); box(ket, 'ket_day', w, t, d, 0, y0, 0, TEAL, 'metalpaint', tm);
-    for (const sx of [-1, 1]) box(ket, 'ket_hong', t, h - y0, d, sx * (w / 2 - t / 2), y0, 0, TEAL, 'metalpaint', tm);
-    for (const [lx, lz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(ket, 'ket_chan', 0.34, y0, 0.34, lx * (w / 2 - 0.3), 0, lz * (d / 2 - 0.3), '#1b2e2a', 'metalpaint', tm);
+  { const { w, d, h } = KET, tm = { metalness: 0.2, roughness: 0.5 }, TD = '#2f574e', y0 = 0.2, t = 0.16;
+    box(ket, 'ket_lung', w, h - y0, t, 0, y0, d / 2 - t / 2, TEAL, 'enamel', tm); box(ket, 'ket_noc', w, t, d, 0, h - t, 0, TEAL, 'enamel', tm); box(ket, 'ket_day', w, t, d, 0, y0, 0, TEAL, 'enamel', tm);
+    for (const sx of [-1, 1]) box(ket, 'ket_hong', t, h - y0, d, sx * (w / 2 - t / 2), y0, 0, TEAL, 'enamel', tm);
+    for (const [lx, lz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(ket, 'ket_chan', 0.34, y0, 0.34, lx * (w / 2 - 0.3), 0, lz * (d / 2 - 0.3), '#1b2e2a', 'enamel', tm);
     box(ket, 'ket_long_dem', w - 0.4, 0.2, d - 0.4, 0, y0 + t, 0.02, '#2a1f2e', 'fabric').castShadow = false;
     const ins = none(new THREE.Mesh(new THREE.BoxGeometry(w - 0.34, h - y0 - 0.34, d - 0.34), new THREE.MeshBasicMaterial({ color: '#141a1c', side: THREE.BackSide }))); ins.position.set(0, (h + y0) / 2, 0); ins.name = 'ket_long_toi'; ket.add(ins);
     ketDoor.position.set(-w / 2 + 0.02, 0, -d / 2); ket.add(ketDoor);   // bản lề ở mép TÂY mặt trước (mặt trước = −z); cánh cục bộ x ∈ [0, w]
-    box(ketDoor, 'ket_cua', w - 0.06, h - y0 - 0.06, 0.16, w / 2, y0 + 0.03, -0.06, TD, 'metalpaint', tm);
-    const dial = cyl(ketDoor, 'ket_nup_xoay', 0.36, 0.36, 0.14, w * 0.6, 0, -0.2, '#c9a24a', 'chrome', { metalness: 0.75, roughness: 0.32 }, 20); dial.rotation.x = Math.PI / 2; dial.position.y = h * 0.6;
+    box(ketDoor, 'ket_cua', w - 0.06, h - y0 - 0.06, 0.16, w / 2, y0 + 0.03, -0.06, TD, 'enamel', tm);
+    const dial = cyl(ketDoor, 'ket_nup_xoay', 0.36, 0.36, 0.14, w * 0.6, 0, -0.2, '#c9a24a', 'enamel', { metalness: 0.3, roughness: 0.5 }, 20); dial.rotation.x = Math.PI / 2; dial.position.y = h * 0.6;
     box(ketDoor, 'ket_kim_chi', 0.07, 0.34, 0.05, w * 0.6, h * 0.6 - 0.05, -0.29, '#2a2014', 'chrome', { metalness: 0.6, roughness: 0.4 });
-    box(ketDoor, 'ket_tay_cam', 0.7, 0.16, 0.2, w * 0.28, h * 0.34, -0.24, '#c9a24a', 'chrome', { metalness: 0.75, roughness: 0.32 });
-    for (const y of [h * 0.3, h * 0.78]) box(ketDoor, 'ket_ban_le', 0.2, 0.36, 0.22, 0.05, y, -0.1, '#1b2e2a', 'metalpaint', tm);
+    box(ketDoor, 'ket_tay_cam', 0.7, 0.16, 0.2, w * 0.28, h * 0.34, -0.24, '#c9a24a', 'enamel', { metalness: 0.3, roughness: 0.5 });
+    for (const y of [h * 0.3, h * 0.78]) box(ketDoor, 'ket_ban_le', 0.2, 0.36, 0.22, 0.05, y, -0.1, '#1b2e2a', 'enamel', tm);
   }
   // ---- THẢM KEM giữa phòng ----
   { const rg = tag(new THREE.Mesh(new THREE.PlaneGeometry(6.0, 7.8), new THREE.MeshStandardMaterial({ map: rugTex, roughness: 1 })), 'knit', false); rg.rotation.x = -Math.PI / 2; rg.position.set(1.0, 0.04, 1.2); rg.name = 'phong_tham'; front.add(rg); }

@@ -1,6 +1,9 @@
 // ep003 — shot của cụm bối cảnh "pho" (31 shot). Mỗi shot 1 dòng; dòng chú thích phía trên ghi set, ngày/đêm, mốc giây và MẶT (emote) từng nhân vật theo kịch bản.
 // KHÔNG đổi id, dur. Đạo cụ thêm riêng của cụm: khai ở PROPS_PHO (episode.js gộp vào EPISODE.props).
-export const PROPS_PHO = {};
+export const PROPS_PHO = {   // tờ khai báo mất (s010–s013): chỉ hiện khi shot ghi cầm (hold) hoặc đặt (props)
+  to_khai: { kit: "to_khai", at: "e3-pho_in", hold: true }, to_khai_2: { kit: "to_khai", at: "e3-pho_in", hold: true }, to_khai_3: { kit: "to_khai", at: "e3-pho_in", hold: true },
+  xap_to_khai: { kit: "xap_to_khai", at: "e3-pho_in", hold: true },
+};
 const RAW_PHO = [
   // s003 · set:street · ngày · 2.85–4.22 s · mặt: —
   { id: "s003", dur: 1.37, env: "e3-pho", lightOverride: { exposure: 1.25 }, cam: { p: [-1, 3.4, 52], l: [-14, 6.5, 12], fov: 38, p2: [-2, 3.5, 46], l2: [-14, 6.5, 12], fov2: 38 }, cast: {}, line: 1 },

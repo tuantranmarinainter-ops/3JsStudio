@@ -28,7 +28,7 @@ node tools/kb/kit2-xem.mjs ep003 kich-ban/ep003-kit2/kit-<lớp>.json S018,S019,
 - `cam` = khung đầu, `cam2` = khung cuối. Máy gần như luôn chuyển động nhẹ: một người thì đẩy vào (hoặc thu `fov`), hai người trở lên hoặc vật lớn thì kéo ra. `cam2: null` chỉ cho shot tĩnh thật sự.
 - `dien_vien`: CHỈ những ai có trong kit mới hiện; ai không ghi thì bị ẩn. `pos` = giữa hai đế giày (ngồi: mặt ngồi; `nam: true`: gót chân, cộng 0,5 vào Y). `pos2` = đi tới đâu trong shot (dùng với `walk`/`run`). `thay_tu` = ghi khi cố ý chỉ thấy một phần ("hai tay", "sau đầu và vai", "trong gương").
 - `tu_the`: `idle walk run jump fall wave point sit scared cheer dance lookAround faint cower lie shiver hold panic hug sitHold write lookUp tumble`.
-- `giu` = tên đạo cụ engine cầm ở tay phải (hoặc `null` để bỏ cầm). `pose` = pose thô (rad), ví dụ `{ "head": { "x": 0.3 }, "rightArm": { "x": -1.25, "z": 0.3 }, "leftArm": { "x": -1.25, "z": -0.3 } }` (tay `x` âm = đưa ra trước).
+- `giu` = tên đạo cụ engine cầm ở tay phải (hoặc `null` để bỏ cầm). `giu_trai` = cầm ở tay trái. Muốn một nhân vật "cầm" gấu bông: gấu là diễn viên, đặt `pos` của gấu ngay trước ngực/tay người đó (y ≈ 2,2–2,6). `pose` = pose thô (rad), ví dụ `{ "head": { "x": 0.3 }, "rightArm": { "x": -1.25, "z": 0.3 }, "leftArm": { "x": -1.25, "z": -0.3 } }` (tay `x` âm = đưa ra trước).
 - Mặt, `giu`, `pose` của shot cũ được GIỮ nếu kit không ghi đè. Vị trí, hướng, tư thế của shot cũ thì bị thay bằng kit.
 - `them` = trường engine thô gộp vào shot: `envArg` (trạng thái bối cảnh), `props` (`"<tên đạo cụ>": { "at": [x,y,z], "ry": rad }` để đặt, `null` để ẩn), `lightOverride` (`{ "exposure": 1.4 }`).
 - `trang_thai`: `dat` (đạt) | `tam` (xem được nhưng còn lệch, ghi lệch gì) | `hong` (chưa dựng được, ghi vì sao).
@@ -41,7 +41,7 @@ node tools/kb/kit2-xem.mjs ep003 kich-ban/ep003-kit2/kit-<lớp>.json S018,S019,
 | Bản đồ nhanh từng bối cảnh (tên vật, tâm, kích thước) | `kich-ban/ep003-de-bai-2/khoi-e3-phong.json`, `khoi-e3-pho.json`, `khoi-e3-tiem.json`, `khoi-e3-nha-may.json` |
 | Hình học chính xác, điểm có tên, tham số `envArg` | `engine/envs/e3-phong.js` (đầu file: `PHONG_DIEM`, danh sách `envArg`), `e3-pho.js`, `e3-tiem.js`, `e3-nha-may.js` |
 | Điểm có tên của tập | `episodes/ep003/episode.js` → `places` |
-| Đạo cụ có sẵn (tên engine) | `thung_dau_gau day_chuyen day_chuyen_bac nhan_bac sach_reu dong_ho nhan_moi cuon_sach hop_nhan ket_ga_om dong_ho_quyt vi tui_tien` + vật cố định của bối cảnh (két, kệ, bản đồ, băng chuyền… xem file env) |
+| Đạo cụ có sẵn (tên engine) | `thung_dau_gau day_chuyen day_chuyen_bac nhan_bac sach_reu dong_ho nhan_moi cuon_sach hop_nhan ket_ga_om dong_ho_quyt vi tui_tien to_khai to_khai_2 to_khai_3 xap_to_khai` (tờ khai báo mất: cầm bằng `giu`, hoặc đặt bằng `them.props`; xấp tờ khai đặt trên bàn/quầy) + vật cố định của bối cảnh (két, kệ, bản đồ, băng chuyền… xem file env) |
 
 Phòng Gà có gương phản chiếu thật trên tường đông: muốn thấy vật qua gương thì máy phải nhìn vào ảnh đối xứng của vật qua mặt gương (hàm `phongPhanChieu`, `phongGuong` trong `engine/envs/e3-phong.js`; tính ra số rồi ghi vào kit; `envArg.guongRy` xoay gương riêng cho shot).
 
@@ -56,6 +56,7 @@ Phòng Gà có gương phản chiếu thật trên tường đông: muốn thấ
 Giới hạn đã biết của engine (đừng cố vượt, ghi vào ghi chú): thân R6 không có bàn tay/ngón tay, không gập khuỷu/gối; gấu là mô hình có sẵn; biểu cảm là mặt dán.
 
 ## Ràng buộc
+- **Chữ trong file bạn ghi:** `GHI-CHU-<lớp>.md`, `ghi_chu` trong kit và mọi file kết quả phải viết **tiếng Việt KHÔNG DẤU, chỉ ký tự ASCII** (lệnh ghi file qua PowerShell của bạn biến chữ có dấu thành dấu `?`). File phê bình hay ghi chú cũ nào đang đầy dấu `?` thì đoán nghĩa theo ngữ cảnh và ảnh; khi sửa GHI-CHU thì viết lại cả file không dấu.
 - Chỉ ghi file trong `kich-ban/ep003-kit2/`: `kit-<lớp>.json`, `GHI-CHU-<lớp>.md`. Lệnh xem thử tự ghi `episodes/ep003/kit2-<lớp>.js` và thư mục `xem/` (đó là việc của lệnh, không sửa tay).
 - KHÔNG sửa `engine/`, `episodes/`, `tools/`. KHÔNG chạy git. Cần engine/bối cảnh/đạo cụ đổi gì thì ghi một dòng `CẦN ENGINE: …` trong `GHI-CHU-<lớp>.md`.
 - `GHI-CHU-<lớp>.md`: bảng `| shot | trạng thái | khung engine đang thấy gì | còn lệch gì |`, cộng mục "Mốc đã chốt" (vị trí cố định của nhân vật/đồ dùng chung cho các shot sau). Lượt sau sẽ là một phiên mới đọc file này để làm tiếp, nên ghi đủ để người khác nối được.

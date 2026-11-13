@@ -509,6 +509,20 @@ export const PROPS_KB = {
     K.box(0.45, 0.02, 0.3, '#42a5f5', 0.1, 0.13, -0.08, 'the');
     return K.g;
   },
+  to_khai: (THREE) => {    // tờ khai báo mất (ep003): tờ giấy kem dựng đứng, có dòng kẻ + dấu đỏ; gốc ở mép dưới → cầm tay thì tờ giấy đứng trên bàn tay
+    const K = bo(THREE, 'to_khai');
+    K.box(0.9, 1.25, 0.03, '#f3ead2', 0, 0.63, 0, 'giay');
+    for (let i = 0; i < 5; i++) K.box(0.62, 0.035, 0.012, '#5d5a55', 0, 1.0 - i * 0.14, 0.021, 'dong' + i);
+    K.box(0.5, 0.08, 0.012, '#3b3a38', 0, 1.14, 0.021, 'tieu_de'); K.cyl(0.11, 0.11, 0.012, '#c0392b', 0.24, 0.2, 0.021, 'dau').rotation.x = PI / 2;
+    return K.g;
+  },
+  xap_to_khai: (THREE) => {   // xấp tờ khai dày nằm trên bàn (ep003): chồng giấy kem lệch mép, tờ trên cùng có dòng kẻ
+    const K = bo(THREE, 'xap_to_khai');
+    for (let i = 0; i < 9; i++) { const m = K.box(0.95, 0.07, 1.3, i % 2 ? '#efe4c8' : '#f6eeda', (i % 3 - 1) * 0.035, 0.035 + i * 0.07, ((i * 7) % 5 - 2) * 0.02, 'to' + i); m.rotation.y = ((i * 5) % 7 - 3) * 0.02; }
+    for (let i = 0; i < 5; i++) K.box(0.62, 0.012, 0.035, '#5d5a55', 0, 0.672, -0.35 + i * 0.16, 'dong' + i);
+    K.box(0.5, 0.012, 0.08, '#3b3a38', 0, 0.672, -0.52, 'tieu_de');
+    return K.g;
+  },
   tui_tien: (THREE) => {   // túi tiền buộc dây, đồng xu vàng
     const K = bo(THREE, 'tui_tien');
     const t = K.sph(0.6, '#d7b98e', 0, 0.51, 0, 'tui'); t.scale.y = 0.85;
@@ -660,6 +674,8 @@ export const PROP_INFO = {
   dong_ho_quyt_thi: { size: [1.5, 0.3, 1.5], base: 'surface' },
   vi: { size: [0.8, 0.15, 0.6], base: 'surface' },
   tui_tien: { size: [1.2, 1.4, 1.2], base: 'floor' },
+  to_khai: { size: [0.9, 1.25, 0.05], base: 'surface' },
+  xap_to_khai: { size: [1.0, 0.68, 1.35], base: 'surface' },
   doi_dep: { size: [1.4, 0.35, 1.2], base: 'floor' },
   bac_them_dep: { size: [7, 1, 3.5], base: 'floor', fixed: true },
   bac_them_trong: { size: [5, 1, 3.5], base: 'floor', fixed: true },

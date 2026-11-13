@@ -22,6 +22,7 @@ for (const s of kit.shots || []) {
     if (d.t) a.tOff = +d.t;
     if (d.pos2) a.to = r3(d.pos2);
     if (d.giu !== undefined) a.hold = d.giu;          // tên đạo cụ engine (hoặc { name, at, rot }) cầm ở tay phải; null = không cầm
+    if (d.giu_trai !== undefined) a.holdL = d.giu_trai;   // cầm ở tay trái
     if (d.pose !== undefined) a.pose = d.pose;        // pose thô của engine: { head: { x }, rightArm: { x, z }, … } (rad)
     if (d.mat_engine) a.face = d.mat_engine;
     cast[n] = a;

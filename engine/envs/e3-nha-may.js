@@ -207,12 +207,13 @@ export default function build(g, e, H) {
 
   // ============================== NGOÀI: sân, hàng rào, cổng, cột đèn, đèn tường (tầng trước) ==============================
   const yardF = grp('e3_yard', 'front');
-  const fenceItems = [], tipItems = [], FSTEEL = '#1A3C3C';
+  const fenceItems = [], tipItems = [], meshSegs = [], FSTEEL = '#1A3C3C';
   const run = (x0, z0, x1, z1, gap) => {
     const len = Math.hypot(x1 - x0, z1 - z0), n = Math.round(len / 1.3);
     for (let i = 0; i <= n; i++) { const k = i / n, x = x0 + (x1 - x0) * k, z = z0 + (z1 - z0) * k; if (gap && x > gap[0] && x < gap[1] && Math.abs(z - gap[2]) < 0.1) continue;
       fenceItems.push({ p: [x, 3.4, z], s: [0.32, 6.8, 0.32], c: FSTEEL }); tipItems.push({ p: [x, 7.25, z], s: [0.5, 0.9, 0.5] }); }
     const segs = gap ? [[x0, gap[0]], [gap[1], x1]] : [[x0, x1]];
+    if (gap) segs.forEach(([a, b]) => meshSegs.push([a, z0, b, z0])); else meshSegs.push([x0, z0, x1, z1]);   // đoạn rào để căng lưới mắt cáo (fence_mesh)
     if (gap) for (const [a, b] of segs) for (const y of [1.2, 5.6]) fenceItems.push({ p: [(a + b) / 2, y, z0], s: [b - a, 0.3, 0.3], c: FSTEEL });
     else for (const y of [1.2, 5.6]) fenceItems.push({ p: [(x0 + x1) / 2, y, (z0 + z1) / 2], s: [Math.abs(x1 - x0) || 0.3, 0.3, Math.abs(z1 - z0) || 0.3], c: FSTEEL });
   };
@@ -221,6 +222,12 @@ export default function build(g, e, H) {
     post.forEach(([x, z]) => { fenceItems.push({ p: [x, 4.2, z], s: [1.0, 8.4, 1.0], c: x === -20.5 || x === -7.5 ? '#4a4a54' : STEEL }); fenceItems.push({ p: [x, 8.55, z], s: [1.3, 0.3, 1.3], c: '#16302f' }); }); }
   inst(yardF, 'fence_picket', BOX, extS, fenceItems);
   inst(yardF, 'fence_spear', new THREE.ConeGeometry(0.5, 1, 4), std(FSTEEL, { roughness: 0.6, metalness: 0.3 }), tipItems);
+  // LƯỚI THÉP MẮT CÁO căng giữa các cọc (ảnh kịch bản S049/S050): mặt phẳng mỏng, vân kim cương trên nền trong suốt (alphaTest) — rào vẫn nhìn xuyên được
+  const meshTex = cvTex(32, 32, (c, w, h) => { c.clearRect(0, 0, w, h); c.strokeStyle = '#9fb4bc'; c.lineWidth = 2.6; c.beginPath(); c.moveTo(-2, -2); c.lineTo(w + 2, h + 2); c.moveTo(-2, h + 2); c.lineTo(w + 2, -2); c.stroke(); });
+  const meshMat = new THREE.MeshStandardMaterial({ map: meshTex, transparent: false, alphaTest: 0.35, side: THREE.DoubleSide, roughness: 0.55, metalness: 0.3, color: '#ffffff', emissive: new THREE.Color('#1b4a4a'), emissiveMap: meshTex, emissiveIntensity: 0.9 });
+  const meshPlane = (parent, len, hgt, x, y, z, ry, name) => { const mt = meshMat.clone(); mt.map = meshTex.clone(); mt.map.needsUpdate = true; mt.map.repeat.set(len / 1.1, hgt / 1.1); mt.emissiveMap = mt.map;
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(len, hgt), mt); m.position.set(x, y, z); m.rotation.y = ry; m.name = name; m.userData.matKind = 'none'; m.userData.grungeKind = 'none'; parent.add(m); return m; };
+  meshSegs.forEach(([xa, za, xb, zb]) => { const len = Math.hypot(xb - xa, zb - za); if (len < 0.5) return; meshPlane(yardF, len, 4.4, (xa + xb) / 2, 3.4, (za + zb) / 2, Math.abs(xb - xa) > 0.01 ? 0 : Math.PI / 2, 'fence_mesh'); });
   // cổng 2 cánh (khung + thanh đứng lưới #1A3C3C + giằng X), bản lề ở hai trụ, mở vào trong (−Z)
   const gateGroups = [-1, 1].map((s) => {
     const G = new THREE.Group(); G.name = 'gate_leaf'; G.position.set(s < 0 ? -19.9 : -8.1, 0, 32); yardF.add(G);
@@ -229,7 +236,7 @@ export default function build(g, e, H) {
     for (let i = 1; i < 8; i++) items.push({ p: [sg * (0.2 + i * 0.7), 3.6, 0], s: [0.22, 6.4, 0.22], c: FSTEEL });
     const ang = Math.atan2(5.1, 5.4), ln = Math.hypot(5.4, 5.1);
     items.push({ p: [sg * 3, 3.5, 0.05], s: [ln, 0.35, 0.3], r: [0, 0, sg * ang], c: STEEL2 }, { p: [sg * 3, 3.5, 0.05], s: [ln, 0.35, 0.3], r: [0, 0, -sg * ang], c: STEEL2 });
-    inst(G, 'gate_bars', BOX, extS, items); return G;
+    inst(G, 'gate_bars', BOX, extS, items); meshPlane(G, 5.6, 4.6, sg * 3, 3.5, -0.02, 0, 'fence_mesh_gate'); return G;
   });
   let doorK = -1, gateK = -1;
   const setGate = (k) => { k = Math.max(0, Math.min(1, k)); if (k === gateK) return; gateK = k; gateGroups[0].rotation.y = k * 1.5; gateGroups[1].rotation.y = -k * 1.5; };
@@ -283,7 +290,15 @@ export default function build(g, e, H) {
   // -- KÉT xám chì to dưới băng (GLB nhap/ket-sat-xam, mặt cửa quay +Z); thiếu model → hộp
   { const ket = fit('nhap/ket-sat-xam', 3.1);
     if (ket) { ket.position.set(-9, 0, -8); ket.name = 'ket_tiem_banh'; ket.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } }); front.add(ket); e.ket = ket; }
-    else K.box(4, 3.1, 3.2, '#7A7A82', -9, 1.55, -8, 'ket_tiem_banh', front); }
+    else K.box(4, 3.1, 3.2, '#7A7A82', -9, 1.55, -8, 'ket_tiem_banh', front);
+    // DẤU Ổ BÁNH nổi trên cánh két (cánh mở lệch, pháp tuyến ≈ (−0.77,0,0.63) đo bằng raycast) — nhận ra két của tiệm bánh (ảnh S062)
+    { const bread = cvTex(256, 112, (c, w, h) => { c.clearRect(0, 0, w, h);
+        const loaf = (dx, dy, col) => { c.fillStyle = col; c.beginPath(); c.moveTo(18 + dx, 84 + dy); c.bezierCurveTo(2 + dx, 80 + dy, 8 + dx, 30 + dy, 70 + dx, 26 + dy); c.lineTo(190 + dx, 26 + dy); c.bezierCurveTo(250 + dx, 30 + dy, 254 + dx, 80 + dy, 238 + dx, 84 + dy); c.closePath(); c.fill(); };
+        loaf(5, 6, 'rgba(0,0,0,0.65)'); loaf(0, 0, '#c98a45'); c.save(); c.clip(); c.fillStyle = '#e8c07a'; c.fillRect(0, 26, w, 30); c.restore();
+        c.strokeStyle = '#7a4a20'; c.lineWidth = 9; c.lineCap = 'round'; for (let k = 0; k < 4; k++) { c.beginPath(); c.moveTo(62 + k * 36, 66); c.lineTo(86 + k * 36, 38); c.stroke(); } });
+      bread.wrapS = bread.wrapT = THREE.ClampToEdgeWrapping;
+      const em = new THREE.Mesh(new THREE.PlaneGeometry(1.15, 0.5), new THREE.MeshStandardMaterial({ map: bread, transparent: true, alphaTest: 0.1, roughness: 0.6, emissive: new THREE.Color('#ffffff'), emissiveMap: bread, emissiveIntensity: 0.35, side: THREE.DoubleSide }));
+      em.name = 'ket_dau_o_banh'; em.position.set(-10.24, 2.0, -6.98); em.rotation.y = Math.atan2(-0.77, 0.63); em.userData.matKind = 'none'; em.userData.grungeKind = 'none'; front.add(em); } }
   // -- thùng đồ của dân cạnh băng (phía nam băng, không chắn đường nhìn qua kính tới đầu đông)
   { const items = [], TAN = ['#c89b5c', '#b98a4c', '#d2a76a', '#a97c44'];
     [[-5, -2.6, 0.2, 2.6], [-2.2, -2.2, -0.15, 2.4], [-7.6, -1.9, 0.5, 2.2], [-3.6, -2.4, 0.1, 2.0, 2.4]].forEach(([x, z, ry, s, y], i) => items.push({ p: [x, (y ? 2.6 + 1 : s / 2), z], s: [s, y ? 2 : s * 0.9, s], r: [0, ry, 0], c: TAN[i % 4] }));
@@ -333,14 +348,20 @@ export default function build(g, e, H) {
     const items = [];
     UX.forEach((cx, u) => SY.forEach((y, lv) => { for (let k = 0; k < 5; k++) { const i = u * 15 + lv * 5 + k; items.push({ p: [cx - 4.6 + k * 2.3 + (hash(i, 1) - 0.5) * 0.25, y, -17.6 + (hash(i, 2) - 0.5) * 0.3], s: [1, 1 + (hash(i, 3) - 0.5) * 0.08, 1], r: [0, (hash(i, 4) - 0.5) * 0.3, 0] }); } }));
     const bearMat = reg(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92, emissive: new THREE.Color('#6a3e18'), emissiveIntensity: 0.45 }), 'emissiveIntensity', 0.45, 0.2);
-    e.gauKe = inst(north, 'bear_plush', bg, bearMat, items, true); e.gauSoLuong = items.length; }
+    e.gauKe = inst(north, 'bear_plush', bg, bearMat, items, true); e.gauSoLuong = items.length;
+    // NƠ CỔ nhiều màu (xanh lam, cam, đỏ gạch, vàng, xanh lá) — mỗi con 3 khối (2 cánh + nút), màu theo chỉ số con; nằm đè lên nơ đỏ cũ ở cổ
+    const BOWC = ['#2f6fd0', '#ff5a10', '#a8452e', '#f2c230', '#4a9a4a', '#c0408a'], bows = [];
+    items.forEach((it, i) => { const yaw = it.r[1], cs = Math.cos(yaw), sn = Math.sin(yaw), col = BOWC[Math.floor(hash(i, 9) * BOWC.length)];
+      const at = (dx, dy, dz) => [it.p[0] + dx * cs + dz * sn, it.p[1] + dy, it.p[2] - dx * sn + dz * cs];
+      bows.push({ p: at(-0.27, 1.1, 0.74), s: [0.3, 0.17, 0.11], r: [0, yaw, 0.3], c: col }, { p: at(0.27, 1.1, 0.74), s: [0.3, 0.17, 0.11], r: [0, yaw, -0.3], c: col }, { p: at(0, 1.1, 0.78), s: [0.13, 0.13, 0.12], r: [0, yaw, 0], c: col }); });
+    inst(north, 'bear_bow', SPH, reg(new THREE.MeshStandardMaterial({ roughness: 0.8, emissive: new THREE.Color('#1c0c04'), emissiveIntensity: 0.4 }), 'emissiveIntensity', 0.4, 0.15), bows); }
   // bản đồ thị trấn (canvas): nhà (chấm đỏ = nhà có gấu), sông xanh, cây, nhà máy 3 ống khói; khung kim loại
   { const mapTex = cvTex(512, 330, (c, w, h) => {
       c.fillStyle = '#E3D0A8'; c.fillRect(0, 0, w, h); c.strokeStyle = '#8a7048'; c.lineWidth = 6; c.strokeRect(10, 10, w - 20, h - 20);
       c.strokeStyle = '#3f7fb0'; c.lineWidth = 22; c.lineCap = 'round'; c.beginPath(); c.moveTo(w * 0.62, 18); c.bezierCurveTo(w * 0.5, h * 0.3, w * 0.8, h * 0.55, w * 0.66, h - 18); c.stroke();
       c.strokeStyle = '#6aa8d0'; c.lineWidth = 8; c.stroke();
       const house = (x, y, s, red) => { c.fillStyle = '#c8a878'; c.fillRect(x - s, y - s * 0.6, s * 2, s * 1.3); c.fillStyle = '#9a4a3a'; c.beginPath(); c.moveTo(x - s * 1.2, y - s * 0.6); c.lineTo(x, y - s * 1.5); c.lineTo(x + s * 1.2, y - s * 0.6); c.fill(); c.strokeStyle = '#5a3a2a'; c.lineWidth = 2; c.strokeRect(x - s, y - s * 0.6, s * 2, s * 1.3); if (red) { c.fillStyle = '#d02020'; c.beginPath(); c.arc(x, y + s * 0.15, s * 0.32, 0, 7); c.fill(); } };
-      [[90, 100, 16, 1], [150, 150, 14, 0], [70, 200, 15, 1], [135, 235, 16, 1], [215, 95, 14, 0], [230, 170, 16, 1], [200, 250, 14, 1], [110, 285, 13, 0], [300, 120, 14, 1], [330, 260, 15, 0]].forEach(([x, y, s, r]) => house(x, y, s, r));
+      [[90, 100, 16, 1], [150, 150, 14, 0], [70, 200, 15, 1], [135, 235, 16, 0], [215, 95, 14, 0], [230, 170, 16, 1], [200, 250, 14, 1], [110, 285, 13, 0], [300, 120, 14, 1], [330, 260, 15, 0]].forEach(([x, y, s, r]) => house(x, y, s, r));
       c.fillStyle = '#c8a070'; c.fillRect(255, 188, 50, 36); c.fillStyle = '#7a4a3a'; c.fillRect(268, 150, 24, 40); c.fillStyle = '#9a4a3a'; c.beginPath(); c.moveTo(262, 152); c.lineTo(280, 124); c.lineTo(298, 152); c.fill();
       [[375, 70], [420, 120], [455, 200], [390, 285], [310, 40], [470, 60], [440, 270]].forEach(([x, y]) => { c.fillStyle = '#3f7a3a'; c.beginPath(); c.moveTo(x - 14, y + 16); c.lineTo(x, y - 20); c.lineTo(x + 14, y + 16); c.fill(); c.fillStyle = '#6a4a2a'; c.fillRect(x - 2, y + 16, 4, 7); });
       c.fillStyle = '#7a5a4a'; c.fillRect(395, 190, 70, 38); c.fillStyle = '#5a3a2e'; for (let i = 0; i < 3; i++) c.fillRect(402 + i * 22, 156, 12, 36);
@@ -348,6 +369,21 @@ export default function build(g, e, H) {
     mapTex.wrapS = mapTex.wrapT = THREE.ClampToEdgeWrapping;
     const mp = new THREE.Mesh(new THREE.PlaneGeometry(11.7, 7.5), reg(new THREE.MeshStandardMaterial({ map: mapTex, roughness: 0.8, emissive: new THREE.Color('#ffffff'), emissiveMap: mapTex, emissiveIntensity: 0.4 }), 'emissiveIntensity', 0.4, 0.15));
     mp.position.set(21, 9.2, -19.4); mp.name = 'map_town'; north.add(mp);
+    // GHIM ĐẦU GẤU cắm trên 5 nhà đã bị trộm (nhà chấm đỏ trên canvas); 5 nhà còn lại để trống (ảnh S060). Toạ độ canvas → bản đồ 11.7×7.5 tại (21, 9.2).
+    { const pinMat = (c, i = 0.5) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.7, metalness: 0.1, emissive: new THREE.Color(c), emissiveIntensity: i });
+      const mBase = pinMat('#6a4220', 0.35), mHead = pinMat('#C77A2F', 0.6), mCrm = pinMat('#F0D8A8', 0.6), mDk = pinMat('#2a1a12', 0.2), mRed = pinMat('#d03a2a', 0.5);
+      const part = (par, geo, mt, x, y, z, sx, sy, sz) => { const m = new THREE.Mesh(geo, mt); m.position.set(x, y, z); m.scale.set(sx, sy, sz); par.add(m); return m; };
+      [[90, 100], [70, 200], [230, 170], [200, 250], [300, 120]].forEach(([cx, cy], i) => {
+        const pin = new THREE.Group(); pin.name = 'map_pin_bear'; pin.position.set(21 + (cx / 512 - 0.5) * 11.7, 9.2 - (cy / 330 - 0.5) * 7.5 - 0.08, -19.2); north.add(pin);
+        part(pin, CYL, mBase, 0, 0, 0, 0.5, 0.2, 0.5).rotation.x = Math.PI / 2;                        // đế tròn (đinh ghim)
+        part(pin, CYL, mHead, 0, 0, 0.11, 0.36, 0.06, 0.36).rotation.x = Math.PI / 2;                    // mặt gấu
+        part(pin, SPH, mHead, -0.27, 0.27, 0.1, 0.14, 0.14, 0.07); part(pin, SPH, mHead, 0.27, 0.27, 0.1, 0.14, 0.14, 0.07);   // tai
+        part(pin, SPH, mCrm, 0, -0.1, 0.16, 0.17, 0.13, 0.06);                                             // mõm
+        part(pin, SPH, mDk, 0, -0.04, 0.2, 0.06, 0.045, 0.04);                                             // mũi
+        part(pin, SPH, mDk, -0.13, 0.1, 0.17, 0.04, 0.04, 0.03); part(pin, SPH, mDk, 0.13, 0.1, 0.17, 0.04, 0.04, 0.03);       // mắt
+        part(pin, SPH, mRed, 0, -0.33, 0.14, 0.09, 0.05, 0.04);                                            // nơ nhỏ dưới cằm
+        noPatch(pin); });
+    }
     inst(north, 'map_frame', BOX, intW, [{ p: [21, 13.05, -19.35], s: [12.3, 0.4, 0.3], c: '#4a4a52' }, { p: [21, 5.35, -19.35], s: [12.3, 0.4, 0.3], c: '#4a4a52' }, { p: [14.95, 9.2, -19.35], s: [0.4, 7.9, 0.3], c: '#4a4a52' }, { p: [27.05, 9.2, -19.35], s: [0.4, 7.9, 0.3], c: '#4a4a52' }]); }
 
   // ============================== KHO (tầng giữa/trước): cửa kho, chồng thùng carton in đầu gấu, chồng thùng gỗ ==============================
