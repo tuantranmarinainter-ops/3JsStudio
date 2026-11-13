@@ -3,219 +3,430 @@
   "label": "Tiếng nền (phố, phòng, xưởng…)",
   "gain": 1.0,
   "src": "sfx_nen.ogg",
-  "count": 18,
+  "count": 9,
   "missing": [],
   "items": [
    [
     0,
-    25.05,
+    21.57,
     "town ambience day birds"
    ],
    [
-    25.05,
-    60.35,
+    21.57,
+    24.65,
     "kitchen room tone quiet"
    ],
    [
-    60.35,
-    63.15,
+    24.65,
+    59.75,
     "night crickets ambience"
    ],
    [
-    63.15,
-    66.35,
-    "kitchen room tone quiet"
-   ],
-   [
-    66.35,
-    68.95,
-    "night crickets ambience"
-   ],
-   [
-    68.95,
-    71.35,
-    "kitchen room tone quiet"
-   ],
-   [
-    71.35,
-    83.75,
-    "night crickets ambience"
-   ],
-   [
-    83.75,
-    114.55,
+    59.75,
+    80.76,
     "conveyor hum"
    ],
    [
-    114.55,
-    129.65,
+    80.76,
+    87.65,
     "night crickets ambience"
    ],
    [
-    129.65,
-    140.85,
-    "conveyor hum"
-   ],
-   [
-    140.85,
-    142.45,
-    "night crickets ambience"
-   ],
-   [
-    142.45,
-    155.15,
-    "conveyor hum"
-   ],
-   [
-    155.15,
-    158.65,
+    87.65,
+    94.81,
     "town ambience day birds"
    ],
    [
-    158.65,
-    160.35,
+    94.81,
+    108.69,
     "conveyor hum"
    ],
    [
-    160.35,
-    162.95,
+    108.69,
+    116.69,
     "town ambience day birds"
    ],
    [
-    162.95,
-    164.45,
-    "conveyor hum"
-   ],
-   [
-    164.45,
-    165.95,
-    "town ambience day birds"
-   ],
-   [
-    165.95,
-    175.95,
+    116.69,
+    124.49,
     "kitchen room tone quiet"
    ]
   ]
  },
  "buoc-chan": {
-  "label": "Bước chân nhà (rầm) — ep002 không có nhà có chân: để trống",
+  "label": "Bước chân nhân vật (chạy/đi) — ep002 không có nhà có chân",
   "gain": 1.0,
   "src": "sfx_buoc-chan.ogg",
-  "count": 0,
+  "count": 36,
   "missing": [],
-  "items": []
+  "items": [
+   [
+    41.909,
+    "s039",
+    0.59
+   ],
+   [
+    42.179,
+    "s039",
+    0.59
+   ],
+   [
+    42.449,
+    "s039",
+    0.64
+   ],
+   [
+    42.719,
+    "s039",
+    0.64
+   ],
+   [
+    53.96,
+    "s049",
+    0.64
+   ],
+   [
+    54.23,
+    "s049",
+    0.69
+   ],
+   [
+    54.5,
+    "s049",
+    0.51
+   ],
+   [
+    54.77,
+    "s049",
+    0.51
+   ],
+   [
+    55.04,
+    "s049",
+    0.51
+   ],
+   [
+    55.362,
+    "s051",
+    0.38
+   ],
+   [
+    55.662,
+    "s051",
+    0.42
+   ],
+   [
+    55.962,
+    "s051",
+    0.37
+   ],
+   [
+    56.262,
+    "s051",
+    0.45
+   ],
+   [
+    59.869,
+    "s055",
+    0.42
+   ],
+   [
+    60.169,
+    "s055",
+    0.37
+   ],
+   [
+    60.469,
+    "s055",
+    0.45
+   ],
+   [
+    60.769,
+    "s055",
+    0.36
+   ],
+   [
+    61.069,
+    "s055",
+    0.44
+   ],
+   [
+    80.876,
+    "s076",
+    0.56
+   ],
+   [
+    81.136,
+    "s076",
+    0.58
+   ],
+   [
+    81.396,
+    "s076",
+    0.54
+   ],
+   [
+    81.656,
+    "s076",
+    0.69
+   ],
+   [
+    81.916,
+    "s076",
+    0.52
+   ],
+   [
+    82.176,
+    "s076",
+    0.67
+   ],
+   [
+    82.436,
+    "s076",
+    0.63
+   ],
+   [
+    88.972,
+    "s083",
+    0.58
+   ],
+   [
+    89.252,
+    "s083",
+    0.46
+   ],
+   [
+    89.532,
+    "s083",
+    0.49
+   ],
+   [
+    89.812,
+    "s083",
+    0.52
+   ],
+   [
+    93.76,
+    "s087",
+    0.58
+   ],
+   [
+    94.28,
+    "s087",
+    0.69
+   ],
+   [
+    110.113,
+    "s101",
+    0.47
+   ],
+   [
+    110.613,
+    "s101",
+    0.54
+   ],
+   [
+    111.113,
+    "s101",
+    0.47
+   ],
+   [
+    118.046,
+    "s108",
+    0.54
+   ],
+   [
+    118.546,
+    "s108",
+    0.62
+   ]
+  ]
  },
  "khoanh-khac": {
   "label": "Tiếng động theo cảnh",
   "gain": 1.0,
   "src": "sfx_khoanh-khac.ogg",
-  "count": 21,
+  "count": 36,
   "missing": [],
   "items": [
    [
-    0.0,
-    "town ambience day birds",
-    "s001"
-   ],
-   [
-    3.252,
+    2.713,
     "door lock click",
     "s003"
    ],
    [
-    52.75,
+    4.734,
+    "gasp short",
+    "s005"
+   ],
+   [
+    13.805,
+    "paper rustle",
+    "s013"
+   ],
+   [
+    19.216,
+    "soft magical chime",
+    "s016"
+   ],
+   [
+    25.051,
+    "glass clink table",
+    "s021"
+   ],
+   [
+    32.431,
+    "cloth rustle",
+    "s027"
+   ],
+   [
+    36.143,
+    "cloth rustle",
+    "s032"
+   ],
+   [
+    37.342,
+    "cloth rustle",
+    "s033"
+   ],
+   [
+    38.741,
     "book slide",
     "s034"
    ],
    [
-    56.75,
+    39.78,
+    "cloth rustle",
+    "s036"
+   ],
+   [
+    40.902,
     "magic poof",
     "s037"
    ],
    [
-    58.95,
+    42.389,
     "window open",
     "s039"
    ],
    [
-    70.449,
+    45.466,
+    "glass clink table",
+    "s042"
+   ],
+   [
+    49.615,
+    "cloth rustle",
+    "s045"
+   ],
+   [
+    50.489,
     "magic poof",
     "s046"
    ],
    [
-    75.849,
-    "footsteps run",
-    "s049"
+    55.342,
+    "cloth rustle",
+    "s051"
    ],
    [
-    90.749,
-    "conveyor hum",
-    "s060"
+    57.477,
+    "cloth rustle",
+    "s053"
    ],
    [
-    95.849,
+    58.478,
+    "cloth rustle",
+    "s054"
+   ],
+   [
+    59.949,
+    "cloth rustle",
+    "s055"
+   ],
+   [
+    62.877,
+    "wood squeak",
+    "s057"
+   ],
+   [
+    68.182,
     "dramatic sting",
     "s062"
    ],
    [
-    104.948,
+    74.358,
     "marker squeak",
     "s069"
    ],
    [
-    114.548,
-    "footsteps run",
-    "s076"
+    78.947,
+    "soft magical chime",
+    "s074"
    ],
    [
-    117.147,
+    82.495,
     "door knock",
-    "s078"
+    "s077"
    ],
    [
-    117.747,
+    83.095,
     "door creak",
-    "s078"
+    "s077"
    ],
    [
-    131.647,
-    "small bell ring",
-    "s086"
+    87.379,
+    "door slam",
+    "s081"
    ],
    [
-    133.248,
-    "magic poof",
-    "s087"
-   ],
-   [
-    134.448,
-    "magic poof",
-    "s088"
-   ],
-   [
-    144.248,
+    101.247,
     "metal door slide",
+    "s093"
+   ],
+   [
+    102.468,
+    "gasp short",
     "s094"
    ],
    [
-    152.649,
-    "cricket",
-    "s099"
+    103.127,
+    "heavy wood thud",
+    "s095"
    ],
    [
-    164.447,
-    "town ambience day birds",
+    106.951,
+    "cricket",
+    "s098"
+   ],
+   [
+    115.991,
+    "soft magical chime",
+    "s106"
+   ],
+   [
+    117.288,
+    "safe door close",
     "s107"
    ],
    [
-    168.049,
-    "safe door close",
+    119.027,
+    "cloth rustle",
     "s109"
    ],
    [
-    174.048,
+    120.978,
     "thud soft",
+    "s111"
+   ],
+   [
+    123.04,
+    "hollow pan bonk",
+    "s113"
+   ],
+   [
+    123.04,
+    "cartoon boing",
     "s113"
    ]
   ]

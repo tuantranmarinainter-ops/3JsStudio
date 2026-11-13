@@ -1,5 +1,5 @@
 {
- "_doc": "Cấu hình các LỚP tiếng động của ep002. Sửa rồi chạy: node tools/build.mjs ep002 <lớp> (nen | buoc-chan | khoanh-khac | nhac). Bối cảnh/giờ lấy từ shots.js qua tools/sfx/shot-list.mjs (env, hoặc <chỗ>_in; time:dem = đêm). gain = âm lượng mặc định trong trình phát; peak = mức đỉnh mục tiêu của track lớp.",
+ "_doc": "Cấu hình các LỚP tiếng động của ep002 (phim 124,49 s, 104 shot; cú cắt đen 123,29 s). Sửa rồi chạy: node tools/build.mjs ep002 <lớp> (nen | buoc-chan | khoanh-khac | nhac). Bối cảnh/giờ lấy từ shots.js qua tools/sfx/shot-list.mjs. Cue + bước chân sinh bằng: node episodes/ep002/sfx/gen-cues.mjs (mốc = thời gian shot thật). Đừng chạy build 'canh' cho ep002 (steps.mjs chỉ quét chân NHÀ, sẽ ghi đè steps.json = [] — vô hại vì bước chân nhân vật nằm ở steps_extra.json). cutAt/cutFade = im hẳn sau cắt đen.",
  "nen": {
   "label": "Tiếng nền (phố, phòng, xưởng…)",
   "gain": 1.0,
@@ -13,7 +13,8 @@
   },
   "night": {
    "kenneyTown": "night crickets ambience",
-   "town": "night crickets ambience"
+   "town": "night crickets ambience",
+   "bedroom": "night crickets ambience"
   },
   "boost": {
    "conveyor hum": 0.6,
@@ -21,23 +22,30 @@
    "night crickets ambience": 0.8,
    "town ambience day birds": 0.7
   },
-  "peak": 0.35
+  "peak": 0.35,
+  "minSeg": 3.0,
+  "cutAt": 123.29,
+  "cutFade": 0.15
  },
  "buoc-chan": {
-  "label": "Bước chân nhà (rầm) — ep002 không có nhà có chân: để trống",
+  "label": "Bước chân nhân vật (chạy/đi) — ep002 không có nhà có chân",
   "gain": 1.0,
-  "sound": "heavy footstep thud",
-  "near": 0.75,
-  "offscreen": 0.22,
-  "refDist": 70,
-  "maxDur": 1.6,
-  "shift": -0.017,
-  "peak": 0.6
+  "sound": "footsteps floor",
+  "near": 0.6,
+  "offscreen": 0.2,
+  "refDist": 55,
+  "maxDur": 0.22,
+  "shift": 0.0,
+  "peak": 0.35,
+  "cutAt": 123.29,
+  "cutFade": 0.05
  },
  "khoanh-khac": {
   "label": "Tiếng động theo cảnh",
   "gain": 1.0,
   "dedupe": 0.6,
-  "peak": 0.5
+  "peak": 0.5,
+  "cutAt": 123.29,
+  "cutFade": 0.25
  }
 }

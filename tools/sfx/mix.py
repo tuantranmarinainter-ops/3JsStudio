@@ -123,6 +123,18 @@ def layer_nen(buf, rep):
         name = c['night'].get(env) if light in ('night', 'bedNight') and env in c['night'] else c['map'].get(env)
         if segs and segs[-1][2] == name and abs(segs[-1][1] - a) < 1e-3: segs[-1][1] = b
         else: segs.append([a, b, name])
+    ms = float(c.get('minSeg', 0) or 0)      # đoạn nền ngắn hơn minSeg giây (cú cắt sang chỗ khác) → nhập vào đoạn kề, nền không chớp
+    while ms and len(segs) > 1:
+        i = next((k for k, g in enumerate(segs) if g[1] - g[0] < ms), None)
+        if i is None: break
+        j = i - 1 if i > 0 else i + 1
+        if j < i: segs[j][1] = segs[i][1]
+        else: segs[j][0] = segs[i][0]
+        del segs[i]
+        k = 1
+        while k < len(segs):
+            if segs[k][2] == segs[k - 1][2]: segs[k - 1][1] = segs[k][1]; del segs[k]
+            else: k += 1
     for a, b, name in segs:
         if not name: continue
         sig, used = sound(name)
@@ -135,12 +147,13 @@ def layer_nen(buf, rep):
         rep['items'].append([round(a, 2), round(b, 2), name if used == name else f'{name} → {used}'])
 
 def layer_buoc_chan(buf, rep):
-    c = CFG['buoc-chan']; p = EPD / 'sfx' / 'steps.json'
-    if not p.exists(): rep['missing'].append('sfx/steps.json'); return
+    c = CFG['buoc-chan']; p = EPD / 'sfx' / 'steps.json'; px = EPD / 'sfx' / 'steps_extra.json'
+    if not p.exists() and not px.exists(): rep['missing'].append('sfx/steps.json'); return
     thud, used = sound(c['sound'])
     if thud is None: rep['missing'].append(c['sound']); return
     last = -9
-    for e in sorted(json.loads(p.read_text(encoding='utf8')), key=lambda e: e['t']):
+    evs = [e for f in (p, px) if f.exists() for e in json.loads(f.read_text(encoding='utf8'))]
+    for e in sorted(evs, key=lambda e: e['t']):
         if e['t'] - last < 0.07: continue          # 2 chân chéo chạm cùng lúc → 1 tiếng
         last = e['t']; d = float(e.get('dist') or 80)
         vol = (c['near'] * min(1.0, c['refDist'] / max(d, 20.0))) if e.get('onScreen', True) else c['offscreen']
@@ -173,7 +186,13 @@ idx = json.loads(idx_path.read_text(encoding='utf8')) if idx_path.exists() else 
 for L in want:
     buf = np.zeros(N + SR, dtype=np.float32); rep = {'items': [], 'missing': []}
     FN[L](buf, rep)
-    buf = buf[:N]; peak = float(np.max(np.abs(buf))) or 1.0
+    buf = buf[:N]
+    ca = CFG[L].get('cutAt')                          # im hẳn sau cú cắt đen: bắt đầu tắt dần ở cutAt, dài cutFade giây, sau đó 0
+    if ca is not None:
+        i0 = int(float(ca) * SR); nf = int(float(CFG[L].get('cutFade', 0.2)) * SR)
+        if nf > 0 and i0 + nf <= len(buf): buf[i0:i0 + nf] *= np.linspace(1, 0, nf, dtype=np.float32)
+        buf[i0 + nf:] = 0
+    peak = float(np.max(np.abs(buf))) or 1.0
     buf *= CFG[L].get('peak', 0.5) / peak            # đưa đỉnh lớp về mức mục tiêu (layers.json: peak), nâng hoặc hạ
     out = EPD / f'sfx_{L}.ogg'
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'f32le', '-ar', str(SR), '-ac', '1', '-i', '-', '-c:a', 'libopus', '-b:a', '64k', str(out)],

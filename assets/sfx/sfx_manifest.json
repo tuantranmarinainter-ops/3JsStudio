@@ -1607,5 +1607,50 @@
     "source_url": "https://freesound.org/people/kvgarlic/sounds/149418",
     "duration": 3.42,
     "ambience": false
+  },
+  "cartoon boing": {
+    "file": "assets/sfx/cartoon_boing.mp3",
+    "title": "Cartoon Boing.wav",
+    "creator": "reelworldstudio",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/reelworldstudio/sounds/161122",
+    "duration": 2.14,
+    "ambience": false
+  },
+  "frying pan bonk": {
+    "missing": true
+  },
+  "door slam": {
+    "file": "assets/sfx/door_slam.mp3",
+    "title": "Door slam far.aiff",
+    "creator": "kd_jack",
+    "license": "cc0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_url": "https://freesound.org/people/kd_jack/sounds/217796",
+    "duration": 0.95,
+    "ambience": false
+  },
+  "bear sneak rustle": {
+    "missing": true
+  },
+  "hollow metal bonk": {
+    "missing": true
+  },
+  "cartoon bonk": {
+    "missing": true
+  },
+  "plush rustle": {
+    "missing": true
+  },
+  "hollow pan bonk": {
+    "file": "episodes/ep002/sfx/hollow_pan_bonk.wav",
+    "title": "hollow pan bonk (synthesized)",
+    "creator": "synth numpy (ep002)",
+    "license": "cc0",
+    "duration": 0.9,
+    "source_url": "synthesized in-repo, episodes/ep002/sfx/hollow_pan_bonk.wav",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "ambience": false
   }
 }

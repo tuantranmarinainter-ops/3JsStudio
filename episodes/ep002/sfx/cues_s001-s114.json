@@ -1,170 +1,303 @@
 [
  {
-  "t": 0.0,
-  "name": "town ambience day birds",
-  "vol": 0.3,
-  "dur": 1.5,
-  "shot": "s001",
-  "why": "storyboard"
- },
- {
-  "t": 2.7,
+  "t": 2.713,
   "name": "door lock click",
   "vol": 0.6,
-  "dur": 1.5,
+  "dur": 1.2,
+  "align": "peak",
   "shot": "s003",
-  "why": "storyboard"
+  "why": "ổ khoá cửa còn nguyên"
  },
  {
-  "t": 38.69,
+  "t": 4.734,
+  "name": "gasp short",
+  "vol": 0.3,
+  "dur": 0.8,
+  "shot": "s005",
+  "why": "chú bán bánh giật mình"
+ },
+ {
+  "t": 13.805,
+  "name": "paper rustle",
+  "vol": 0.3,
+  "dur": 0.9,
+  "shot": "s013",
+  "why": "bảng tin dán kín giấy báo mất"
+ },
+ {
+  "t": 19.216,
+  "name": "soft magical chime",
+  "vol": 0.3,
+  "dur": 1,
+  "shot": "s016",
+  "why": "dây chuyền của bà biến mất"
+ },
+ {
+  "t": 25.051,
+  "name": "glass clink table",
+  "vol": 0.25,
+  "dur": 0.8,
+  "align": "peak",
+  "shot": "s021",
+  "why": "Gà đặt đồng hồ lên kệ"
+ },
+ {
+  "t": 32.431,
+  "name": "cloth rustle",
+  "vol": 0.2,
+  "dur": 0.8,
+  "shot": "s027",
+  "why": "gấu lén ngồi dậy trong gương"
+ },
+ {
+  "t": 36.143,
+  "name": "cloth rustle",
+  "vol": 0.25,
+  "dur": 1,
+  "shot": "s032",
+  "why": "gấu lén trèo lên kệ"
+ },
+ {
+  "t": 37.342,
+  "name": "cloth rustle",
+  "vol": 0.25,
+  "dur": 0.9,
+  "shot": "s033",
+  "why": "gấu ôm đồng hồ"
+ },
+ {
+  "t": 38.741,
   "name": "book slide",
   "vol": 0.5,
-  "dur": 1.5,
+  "dur": 1,
   "shot": "s034",
-  "why": "storyboard"
+  "why": "kéo sách che chỗ vừa lấy đồ"
  },
  {
-  "t": 40.85,
+  "t": 39.78,
+  "name": "cloth rustle",
+  "vol": 0.3,
+  "dur": 0.6,
+  "shot": "s036",
+  "why": "Gà bật dậy"
+ },
+ {
+  "t": 40.902,
   "name": "magic poof",
   "vol": 0.6,
-  "dur": 1.5,
+  "dur": 1.3,
+  "align": "peak",
   "shot": "s037",
-  "why": "storyboard"
+  "why": "Bắp biến mất"
  },
  {
-  "t": 42.34,
+  "t": 42.389,
   "name": "window open",
   "vol": 0.5,
-  "dur": 1.5,
+  "dur": 1,
   "shot": "s039",
-  "why": "storyboard"
+  "why": "Gà mở cửa sổ"
  },
  {
-  "t": 50.44,
+  "t": 45.466,
+  "name": "glass clink table",
+  "vol": 0.25,
+  "dur": 0.8,
+  "align": "peak",
+  "shot": "s042",
+  "why": "đặt nhẫn lên kệ"
+ },
+ {
+  "t": 49.615,
+  "name": "cloth rustle",
+  "vol": 0.25,
+  "dur": 0.6,
+  "shot": "s045",
+  "why": "Bắp chộp nhẫn"
+ },
+ {
+  "t": 50.489,
   "name": "magic poof",
   "vol": 0.6,
-  "dur": 1.5,
+  "dur": 1.3,
+  "align": "peak",
   "shot": "s046",
-  "why": "storyboard"
+  "why": "nhẫn và Bắp biến mất"
  },
  {
-  "t": 53.79,
-  "name": "footsteps run",
-  "vol": 0.5,
-  "dur": 1.5,
-  "shot": "s049",
-  "why": "storyboard"
+  "t": 55.342,
+  "name": "cloth rustle",
+  "vol": 0.25,
+  "dur": 0.9,
+  "shot": "s051",
+  "why": "hai gấu nhập bọn ở ngã ba"
  },
  {
-  "t": 64.92,
-  "name": "conveyor hum",
-  "vol": 0.4,
-  "dur": 1.5,
-  "shot": "s060",
-  "why": "storyboard"
+  "t": 57.477,
+  "name": "cloth rustle",
+  "vol": 0.25,
+  "dur": 0.8,
+  "shot": "s053",
+  "why": "gấu nơ đỏ ôm ví"
  },
  {
-  "t": 68.13,
+  "t": 58.478,
+  "name": "cloth rustle",
+  "vol": 0.25,
+  "dur": 1,
+  "shot": "s054",
+  "why": "gấu nơ vàng kéo túi tiền"
+ },
+ {
+  "t": 59.949,
+  "name": "cloth rustle",
+  "vol": 0.2,
+  "dur": 1,
+  "shot": "s055",
+  "why": "ba gấu chui hàng rào"
+ },
+ {
+  "t": 62.877,
+  "name": "wood squeak",
+  "vol": 0.3,
+  "dur": 0.6,
+  "shot": "s057",
+  "why": "Gà trèo lên thùng gỗ"
+ },
+ {
+  "t": 68.182,
   "name": "dramatic sting",
   "vol": 0.7,
-  "dur": 1.5,
+  "dur": 1.4,
+  "align": "peak",
   "shot": "s062",
-  "why": "storyboard"
+  "why": "lộ mặt ông Bách (twist)"
  },
  {
-  "t": 74.31,
+  "t": 74.358,
   "name": "marker squeak",
   "vol": 0.5,
-  "dur": 1.5,
+  "dur": 0.8,
   "shot": "s069",
-  "why": "storyboard"
+  "why": "đánh dấu X đỏ lên bản đồ"
  },
  {
-  "t": 80.71,
-  "name": "footsteps run",
-  "vol": 0.5,
-  "dur": 1.5,
-  "shot": "s076",
-  "why": "storyboard"
+  "t": 78.947,
+  "name": "soft magical chime",
+  "vol": 0.3,
+  "dur": 1,
+  "shot": "s074",
+  "why": "thấy dây chuyền của bà"
  },
  {
-  "t": 82.45,
+  "t": 82.495,
   "name": "door knock",
   "vol": 0.6,
-  "dur": 1.5,
+  "dur": 0.9,
+  "align": "peak",
   "shot": "s077",
-  "why": "storyboard"
+  "why": "Gà gõ cửa thị trưởng"
  },
  {
-  "t": 83.05,
+  "t": 83.095,
   "name": "door creak",
   "vol": 0.5,
-  "dur": 1.5,
+  "dur": 0.6,
   "shot": "s077",
-  "why": "storyboard"
+  "why": "cửa hé mở"
  },
  {
-  "t": 87.33,
+  "t": 87.379,
   "name": "door slam",
   "vol": 0.6,
-  "dur": 1.5,
+  "dur": 0.95,
+  "align": "peak",
   "shot": "s081",
-  "why": "storyboard"
+  "why": "thị trưởng đóng cửa"
  },
  {
-  "t": 88.8,
-  "name": "footsteps run",
-  "vol": 0.5,
-  "dur": 1.5,
-  "shot": "s083",
-  "why": "storyboard"
- },
- {
-  "t": 101.2,
+  "t": 101.247,
   "name": "metal door slide",
   "vol": 0.7,
-  "dur": 1.5,
+  "dur": 1.2,
   "shot": "s093",
-  "why": "storyboard"
+  "why": "lính gác mở cửa kho"
  },
  {
-  "t": 106.9,
+  "t": 102.468,
+  "name": "gasp short",
+  "vol": 0.3,
+  "dur": 0.6,
+  "shot": "s094",
+  "why": "thị trưởng thấy thùng"
+ },
+ {
+  "t": 103.127,
+  "name": "heavy wood thud",
+  "vol": 0.3,
+  "dur": 0.7,
+  "align": "peak",
+  "shot": "s095",
+  "why": "chồng thùng in tên tiệm"
+ },
+ {
+  "t": 106.951,
   "name": "cricket",
   "vol": 0.4,
-  "dur": 1.5,
+  "dur": 0.99,
   "shot": "s098",
-  "why": "storyboard"
+  "why": "ông Bách im lặng gượng"
  },
  {
-  "t": 114.39,
-  "name": "town ambience day birds",
+  "t": 115.991,
+  "name": "soft magical chime",
   "vol": 0.3,
-  "dur": 1.5,
-  "shot": "s105",
-  "why": "storyboard"
+  "dur": 0.9,
+  "shot": "s106",
+  "why": "Gà cầm lại dây chuyền"
  },
  {
-  "t": 117.24,
+  "t": 117.288,
   "name": "safe door close",
   "vol": 0.6,
-  "dur": 1.5,
+  "dur": 0.64,
+  "align": "peak",
   "shot": "s107",
-  "why": "storyboard"
+  "why": "cất dây chuyền vào két"
  },
  {
-  "t": 120.93,
+  "t": 119.027,
+  "name": "cloth rustle",
+  "vol": 0.25,
+  "dur": 0.9,
+  "shot": "s109",
+  "why": "Bắp ôm nguyên cái két"
+ },
+ {
+  "t": 120.978,
   "name": "thud soft",
   "vol": 0.5,
-  "dur": 1.5,
+  "dur": 0.5,
+  "align": "peak",
   "shot": "s111",
-  "why": "storyboard"
+  "why": "Bắp đặt két xuống"
  },
  {
-  "t": 123.09,
-  "name": "cartoon boing",
+  "t": 123.04,
+  "name": "hollow pan bonk",
   "vol": 0.9,
-  "dur": 1.5,
+  "dur": 0.9,
+  "align": "peak",
   "shot": "s113",
-  "why": "storyboard"
+  "why": "Boang (nhip.json: boang)"
+ },
+ {
+  "t": 123.04,
+  "name": "cartoon boing",
+  "vol": 0.7,
+  "dur": 2.14,
+  "align": "peak",
+  "shot": "s113",
+  "why": "Boang — đuôi lò xo"
  }
 ]

@@ -1,12 +1,49 @@
 {
- "_doc": "Kế hoạch NHẠC NỀN ep002 (lớp nhac), cùng lược đồ ep001/music/plan.json: track = khoá trong assets/music/music_manifest.json (bài CC BY đã có sẵn trong repo, ghi công ở assets/music/CREDITS.md), offset = giây bắt đầu trong bài, vol tương đối giữa các đoạn, fadeIn/fadeOut giây, đoạn kề nhau chồng lên để hoà dần. targetLUFS = độ to cả track (giọng ≈ -18.5) nên nhạc luôn nằm dưới lời. Sửa rồi chạy: node tools/build.mjs ep002 nhac",
+ "_doc": "Kế hoạch NHẠC NỀN ep002 (lớp nhac), cùng lược đồ ep001/music/plan.json: track = khoá trong assets/music/music_manifest.json (bài CC BY đã có sẵn trong repo, ghi công ở assets/music/CREDITS.md), offset = giây bắt đầu trong bài, vol tương đối giữa các đoạn, fadeIn/fadeOut giây, đoạn kề nhau chồng lên để hoà dần. targetLUFS = độ to cả track (giọng ≈ -18.5) nên nhạc luôn nằm dưới lời. ep002: phim 124,49 s, 4 phần Hook 0–13,6 · Leo thang 13,6–62,6 · Twist 62,6–93,6 · Giải quyết 93,6–123,29 (cắt đen); duration kéo track đủ phim (đuôi im sau cắt đen). Sửa rồi chạy: node tools/build.mjs ep002 nhac",
  "label": "Nhạc nền",
  "targetLUFS": -26,
  "loopFade": 2.0,
  "segments": [
-  { "from": 0.0,   "to": 52.0,  "track": "bidous_transit",  "offset": 0,   "vol": 0.8, "fadeIn": 1.5, "fadeOut": 4.0, "why": "mở đầu bí ẩn, tinh nghịch: đồ đạc biến mất trong phòng khoá" },
-  { "from": 48.0,  "to": 112.0, "track": "wingspan",        "offset": 20,  "vol": 0.8, "fadeIn": 4.0, "fadeOut": 4.0, "why": "đêm theo dõi: Bắp biến mất, đuổi theo tới nhà máy" },
-  { "from": 108.0, "to": 150.0, "track": "storm_adventure", "offset": 30,  "vol": 0.9, "fadeIn": 3.0, "fadeOut": 4.0, "why": "căng lên: lộ ông Bách, dẫn thị trưởng tới" },
-  { "from": 146.0, "to": 175.95,"track": "bidous_transit",  "offset": 70,  "vol": 0.7, "fadeIn": 3.0, "fadeOut": 5.0, "why": "lắng xuống, kết nhẹ gợi cảnh đầu" }
- ]
+  {
+   "from": 0.0,
+   "to": 15.1,
+   "track": "bidous_transit",
+   "offset": 0,
+   "vol": 0.8,
+   "fadeIn": 1.5,
+   "fadeOut": 3.0,
+   "why": "HOOK: đồ đạc biến mất, bí ẩn tinh nghịch"
+  },
+  {
+   "from": 12.1,
+   "to": 64.1,
+   "track": "wingspan",
+   "offset": 20,
+   "vol": 0.8,
+   "fadeIn": 3.0,
+   "fadeOut": 3.0,
+   "why": "LEO THANG: Gà điều tra, hai đêm theo dõi Bắp tới nhà máy"
+  },
+  {
+   "from": 61.1,
+   "to": 95.1,
+   "track": "storm_adventure",
+   "offset": 30,
+   "vol": 0.9,
+   "fadeIn": 3.0,
+   "fadeOut": 3.0,
+   "why": "TWIST: lộ ông Bách gom đồ, thị trưởng không tin"
+  },
+  {
+   "from": 92.1,
+   "to": 123.29,
+   "track": "feeling_piano",
+   "offset": 40,
+   "vol": 0.9,
+   "fadeIn": 3.0,
+   "fadeOut": 0.6,
+   "why": "GIẢI QUYẾT: lộ kho, lấy lại dây chuyền; dứt đúng cú cắt đen sau Boang"
+  }
+ ],
+ "duration": 124.49
 }

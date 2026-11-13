@@ -45,7 +45,7 @@ def segment(sig, offset, n, loopfade):
         out[filled:filled + len(chunk)] = chunk; filled += len(chunk); pos = 0
     return out
 
-total = max(s['to'] for s in plan['segments']); N = int(total * SR) + SR
+total = max(s['to'] for s in plan['segments']); N = int(max(total, plan.get('duration', 0)) * SR) + SR   # duration: kéo track dài đủ phim (đuôi im)
 buf = np.zeros((N, 2), np.float32); cache = {}
 for s in plan['segments']:
     tr = cache[s['track']] if s['track'] in cache else cache.setdefault(s['track'], load(s['track']))
@@ -58,7 +58,7 @@ for s in plan['segments']:
     if fo: seg[-fo:] *= (np.cos(np.linspace(0, np.pi / 2, fo, dtype=np.float32)) ** 2)[:, None]
     a = int(round(s['from'] * SR)); buf[a:a + n] += seg * float(s.get('vol', 1.0))
     print(f"  {s['from']:6.1f}–{s['to']:6.1f}  {s['track']}  offset {s.get('offset', 0)}  vol {s.get('vol', 1.0)}")
-buf = buf[:int(total * SR)]
+total = max(total, plan.get('duration', 0)); buf = buf[:int(total * SR)]
 cur = lufs(buf)
 gain = 10 ** ((plan.get('targetLUFS', -28) - cur) / 20) if cur is not None else 0.1
 peak = float(np.max(np.abs(buf))) * gain

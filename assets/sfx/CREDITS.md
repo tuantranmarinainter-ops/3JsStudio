@@ -48,6 +48,7 @@ Sounds found via Openverse (Freesound). Paste the CC BY lines into the video des
 "Body Fall Over.wav" by raubana (https://freesound.org/people/raubana/sounds/82027), CC0
 "sliding book (1).mp3" by Heyy_Jayy_ (https://freesound.org/people/Heyy_Jayy_/sounds/515002), CC0
 "Matchbox fire lucifer - shaking riser build-up.wav" by Duisterwho (https://freesound.org/people/Duisterwho/sounds/644680), CC0
+"Cartoon Boing.wav" by reelworldstudio (https://freesound.org/people/reelworldstudio/sounds/161122), CC0
 "Creaking" by Lightnessko (https://freesound.org/people/Lightnessko/sounds/390323), CC0
 "Boy or Young Child Laughing" by OBXJohn (https://freesound.org/people/OBXJohn/sounds/365632), CC0
 "Jacket/Cloth Rustle 4" by brandondelehoy (https://freesound.org/people/brandondelehoy/sounds/494788), CC0
@@ -61,6 +62,7 @@ Sounds found via Openverse (Freesound). Paste the CC BY lines into the video des
 "Door - Creak 02.wav" by JarredGibb (https://freesound.org/people/JarredGibb/sounds/219492), CC0
 "Door knocking (Angry).wav" by Macif (https://freesound.org/people/Macif/sounds/194365), CC0
 "Door_Unlocking.wav" by IPaddeh (https://freesound.org/people/IPaddeh/sounds/422852), CC0
+"Door slam far.aiff" by kd_jack (https://freesound.org/people/kd_jack/sounds/217796), CC0
 "Piano Cord.wav" by ecfike (https://freesound.org/people/ecfike/sounds/183500), CC0
 "Silencyo_CC_Wind Mistral_Strong gusts_dry branches.aif" by silencyo (https://freesound.org/people/silencyo/sounds/81794), CC0
 "big log on dirt throwing.wav" by krypaw (https://freesound.org/people/krypaw/sounds/584891), CC0
@@ -78,6 +80,7 @@ Sounds found via Openverse (Freesound). Paste the CC BY lines into the video des
 "Heart trouble" by lisakale (https://freesound.org/people/lisakale/sounds/138388), CC0
 "FloorBang_03.wav" by Faulkin (https://freesound.org/people/Faulkin/sounds/336489), CC0
 "Door Open Close Heavy Wooden Hard Loud Creak Seal Theatre" by LampEight (https://freesound.org/people/LampEight/sounds/402465), CC0
+"hollow pan bonk (synthesized)" by synth numpy (ep002) (synthesized in-repo, episodes/ep002/sfx/hollow_pan_bonk.wav), CC0
 "Glassware rattle and shake movement.wav" by khenshom (https://freesound.org/people/khenshom/sounds/540904), CC0
 "Cruise Ship Horn, 3x" by Kinoton (https://freesound.org/people/Kinoton/sounds/352374), CC0
 "Ice Crack 5.wav" by ecfike (https://freesound.org/people/ecfike/sounds/177217), CC0
