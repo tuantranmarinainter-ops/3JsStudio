@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 13:10",
+ "capNhat": "2026-11-13 13:20",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -26,7 +26,8 @@
     },
     {
      "ten": "8 mục dựng riêng (bản đồ, 2 cụm thùng dấu gấu, 4 bảng hiệu, bảng bánh mì)",
-     "tt": "chua"
+     "tt": "dang",
+     "ghiChu": "1 agent Sonnet đang dựng + đặt bàn tiệm may, bảng hiệu treo, đèn cửa"
     },
     {
      "ten": "Băng chuyền + kệ gấu trong nhà máy dùng model đã chọn",
@@ -34,7 +35,8 @@
     },
     {
      "ten": "Sửa shot yếu: s037, s051, s032, s048, s044, s087, s114",
-     "tt": "chua"
+     "tt": "dang",
+     "ghiChu": "1 agent Sonnet đang sửa (thêm s040, s055, s113 và rà cả phim)"
     },
     {
      "ten": "Tiếng động + nhạc cho thời lượng mới (kể cả \"Boang\")",
