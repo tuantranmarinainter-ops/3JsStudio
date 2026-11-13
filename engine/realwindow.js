@@ -6,13 +6,13 @@ export function createWindowOutside(THREE, { hash, nbHouse, groundY = -3 }) {
   const group = new THREE.Group(); group.name = 'bed_outside';
   const tag = (o) => { o.traverse((m) => { if (m.isMesh) { m.castShadow = false; m.receiveShadow = false; m.userData.grungeKind = 'none'; m.userData.matKind = m.userData.matKind || 'matte'; } }); return o; };
   const mix = (c, to, k) => new THREE.Color(c).lerp(new THREE.Color(to), k);
-  const FOG = '#1b2350';                                                   // màu "sương đêm": vật càng xa càng ngả về màu này
+  const FOG = '#7f93c8';                                                   // màu "sương đêm": vật càng xa càng ngả về màu này
   const std = (c, extra = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.95, metalness: 0, ...extra });
   const add = (geo, mat, x, y, z, name, parent = group) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.name = name; parent.add(m); return m; };
 
   // --- trời đêm: gradient + sao + trăng, vẽ canvas (MeshBasic, không phụ thuộc đèn) ---
   const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const g = cv.getContext('2d');
-  const gr = g.createLinearGradient(0, 0, 0, 512); gr.addColorStop(0, '#070b26'); gr.addColorStop(0.55, '#1b2656'); gr.addColorStop(1, '#4a5a9a'); g.fillStyle = gr; g.fillRect(0, 0, 1024, 512);
+  const gr = g.createLinearGradient(0, 0, 0, 512); gr.addColorStop(0, '#3a58b0'); gr.addColorStop(0.55, '#7f9ee0'); gr.addColorStop(1, '#d8e4ff'); g.fillStyle = gr; g.fillRect(0, 0, 1024, 512);
   for (let i = 0; i < 160; i++) { const s = hash(i, 11); g.fillStyle = `rgba(255,255,240,${0.35 + 0.6 * hash(i, 12)})`; const r = 0.7 + 1.6 * s * s; g.beginPath(); g.arc(hash(i, 13) * 1024, hash(i, 14) * 340, r, 0, 7); g.fill(); }
   const mx = 700, my = 150; const mg = g.createRadialGradient(mx, my, 10, mx, my, 120); mg.addColorStop(0, 'rgba(255,248,215,0.55)'); mg.addColorStop(1, 'rgba(255,248,215,0)'); g.fillStyle = mg; g.fillRect(mx - 130, my - 130, 260, 260);
   g.fillStyle = '#fff6d8'; g.beginPath(); g.arc(mx, my, 34, 0, 7); g.fill(); g.fillStyle = 'rgba(190,180,150,0.45)'; for (const [dx, dy, r] of [[-10, -6, 8], [9, 10, 6], [4, -14, 5]]) { g.beginPath(); g.arc(mx + dx, my + dy, r, 0, 7); g.fill(); }
@@ -20,7 +20,7 @@ export function createWindowOutside(THREE, { hash, nbHouse, groundY = -3 }) {
   const sky = add(new THREE.PlaneGeometry(900, 450), new THREE.MeshBasicMaterial({ map: skyTex, fog: false }), 420, 140, 0, 'out_sky'); sky.rotation.y = -Math.PI / 2;
 
   // --- đồi xa (2 lớp bóng đổ) ---
-  for (const [x, c, hh, k] of [[330, '#222c5c', 55, 1], [250, '#1a2450', 36, 2]]) {
+  for (const [x, c, hh, k] of [[330, '#6f84c4', 55, 1], [250, '#5f78b8', 36, 2]]) {
     const sh = new THREE.Shape(); sh.moveTo(-420, 0);
     for (let i = 0; i <= 30; i++) { const z = -420 + i * 28; sh.lineTo(z, hh * (0.45 + 0.55 * Math.abs(Math.sin(i * 0.7 + k * 2) * 0.6 + Math.sin(i * 0.23 + k) * 0.4))); }
     sh.lineTo(420, 0); sh.closePath();
@@ -59,7 +59,7 @@ export function createWindowOutside(THREE, { hash, nbHouse, groundY = -3 }) {
     l.position.set(x, groundY, z); group.add(tag(l));
   });
   // ngoài trời đêm vẫn đọc được: vật liệu tự phát sáng nhẹ theo màu của nó (không phụ thuộc đèn phòng)
-  group.traverse((m) => { if (m.isMesh && m.material.isMeshStandardMaterial && m.material.emissive.getHex() === 0) { m.material.emissive.copy(m.material.color).multiplyScalar(0.5); m.material.emissiveIntensity = 1; } });
+  group.traverse((m) => { if (m.isMesh && m.material.isMeshStandardMaterial && m.material.emissive.getHex() === 0) { m.material.emissive.copy(m.material.color).multiplyScalar(0.95); m.material.emissiveIntensity = 1; } });
   tag(group); sky.userData.matKind = 'none';
   return { group };
 }

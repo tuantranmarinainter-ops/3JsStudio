@@ -83,10 +83,10 @@ export const SHOTS = [
     cam: orb('house', 0.4, 84, 8, { look: [0, -4, 0], yaw2: 0.8, dist2: 126, h2: 36, fov: 52 }) },
   { id: 's037', f: [1271, 1309], env: 'bedroom', line: 14, room: { roll: [0, 0.18], tilt: [0, 0.05] }, cast: { hero: R(-10, 3.6, -6.6, { lie: true, anim: 'lie', face: 'surprised', rz: 0 }) },
     props: {}, cam: { p: [4, 11, 0], l: [-10, 4, -10], p2: [0, 9.5, -3.5], fov: 46, roll: [0, -0.12], shake: 0.3 } },
-  { id: 's038', f: [1310, 1341], env: 'bedroom', line: 15, room: { roll: 0.12 }, cast: { hero: R(16.6, 4.6, -6, { anim: 'idle', ry: PI / 2, face: 'surprised', s: 0.92, pose: { rightArm: { x: -1.35 }, leftArm: { x: -1.35 } } }) },
+  { id: 's038', f: [1310, 1341], env: 'bedroom', line: 15, room: { roll: 0.12 }, cast: { hero: R(16.6, 4.6, -0.5, { anim: 'idle', ry: PI / 2 - 0.35, face: 'surprised', s: 0.92, pose: { rightArm: { x: -1.35 }, leftArm: { x: -1.35 } } }) },
     // bé đứng trên ghế đẩu (props.stool tạo 1 lần, đặt trong phòng) để đầu ngang cửa sổ
-    fn: ({ props, K, env }) => { const s = props.stool ||= Object.assign(K.stool({ h: 4.6 }), { name: 'stool' }); if (s.parent !== env.room) env.room.add(s); s.position.set(16.6, 0, -6); s.rotation.set(0, 0.2, 0); s.scale.setScalar(1); s.visible = true; },
-    props: {}, cam: { p: [6, 9, 7], l: [17.5, 8, -6.5], p2: [9.5, 8.8, 3], fov: 46 } },
+    fn: ({ props, K, env }) => { const s = props.stool ||= Object.assign(K.stool({ h: 4.6 }), { name: 'stool' }); if (s.parent !== env.room) env.room.add(s); s.position.set(16.6, 0, -0.5); s.rotation.set(0, 0.2, 0); s.scale.setScalar(1); s.visible = true; },
+    props: {}, cam: { p: [1, 10.5, 5], l: [17.5, 10, -3.2], p2: [4.5, 10.2, 2], fov: 50 } },
   { id: 's039', f: [1342, 1362], env: 'town', line: 15, house: FAM({ legsOut: 1, lift: 1 }), cam: { p: [-40, 27, 24], l: [-14, 24, 4], p2: [-76, 24, 52], l2: [-4, 14, 4], fov: 44 } },
   { id: 's040', f: [1363, 1436], env: 'town', line: 15, house: FAM({ at: [0, 30], to: [24, 36], ry: PI / 2 }), cam: orb([10, 18, 34], -0.9, 92, -2, { fov: 52, yaw2: -0.7, dist2: 112 }) },
   { id: 's041', f: [1437, 1480], env: 'town', line: 16, house: FAM(walkX(30, 50)), cam: { p: [70, 4, 80], l: [40, 17, 36], p2: [84, 6, 100], l2: [46, 15, 36], fov: 50, shake: 0.6 } },
@@ -169,7 +169,7 @@ export const SHOTS = [
   { id: 's102', skySun: 'frame', f: [3635, 3667], env: 'island', line: 52, cam: { p: [-39, 5.5, 58], l: [-39, 9, -20], p2: [-39, 5, 46], fov: 62 } },
   { id: 's103', f: [3668, 3683], env: 'island', line: 52, cam: { p: [0, 4.5, 108], l: [0, 0.4, 66], p2: [-1, 7, 128], fov: 50 } },
   { id: 's104', f: [3684, 3719], env: 'island', line: 52, cam: { p: [36, 22, -8], l: [60, 26, -50], p2: [34, 20, -10], fov: 40 } },
-  { id: 's105', f: [3720, 3768], env: 'island', line: 52, house: FAM({ ...ISL, lift: 0.85 }), cam: { p: [-130, 110, 150], l: [0, 0, -10], p2: [-142, 122, 162], fov: 40 } },
+  { id: 's105', f: [3720, 3768], env: 'island', line: 52, house: FAM({ ...ISL, lift: 0.85 }), cam: { p: [-130, 110, 150], l: [-6, 0, 8], p2: [-142, 122, 162], fov: 40 } },
 
   // ===== 11 · Người cha dưới hải đăng =====
   { id: 's106', f: [3769, 3806], cap: { y: 260 }, env: 'island', line: 53, props: { cardIsland: { at: [21.4, 15.3, -15], ry: -0.83 } }, cam: { p: [17, 14.5, -11], l: [60, 22, -50], fov: 44 } },

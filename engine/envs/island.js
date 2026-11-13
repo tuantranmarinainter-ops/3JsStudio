@@ -98,7 +98,7 @@ export default function build(g, e, H) {
     if (Math.hypot(x + 10, z) < 30 || Math.hypot(x - 42, z + 26) < 9) continue;
     const o = pf(['marram-grass-tuft-8c7a99', 'marram-grass-tuft-8c7a99', 'shell-scatter-6d36b7', 'tamarisk-bush-ba4337', 'driftwood-log-89a68f'][i % 5], 1 + hash(i, 23) * 0.5); if (o) place(g, o, x, 0, z, hash(i, 24) * 6); }
   const dinghy = pf('rowing-dinghy-022673', 1.1); if (dinghy) place(g, dinghy, -40, 0, 62, 0.8);
-  e.raft = createRaft(THREE, e.sea, { x: -37, z: 70, y: -0.6, yaw: 0.5, length: 13, beam: 7 }); g.add(e.raft.root); e.dinghy = dinghy;   // bè gỗ nổi thay thuyền chèo (khoá 'raft')
+  e.raft = createRaft(THREE, e.sea, { x: -34, z: 67, y: -0.6, yaw: 0.5, length: 22, beam: 12 }); g.add(e.raft.root); e.dinghy = dinghy;   // bè gỗ nổi thay thuyền chèo (khoá 'raft')
   // mòng biển ĐỨNG yên (model Polyfork dáng đứng, không có cánh vỗ) — đậu trên lan can / mái hải đăng, đá, cát; chỉ quay đầu + nhún nhẹ
   g.updateMatrixWorld(true);
   const lb = new THREE.Box3().setFromObject(e.lighthouse), lc = lb.getCenter(new THREE.Vector3()), lw = (lb.max.x - lb.min.x) / 2, lh = lb.max.y - lb.min.y;

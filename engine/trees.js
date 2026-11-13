@@ -49,9 +49,10 @@ void main() {
   float ndl = dot(n, uSunDir);
   float lit = clamp(ndl * 0.55 + 0.45, 0.0, 1.0);
   vec3 base = vCol;
-  vec3 cool = base * vec3(0.62, 0.80, 0.78);            // gốc/dưới tán: sẫm, hơi lạnh
-  vec3 warm = base * vec3(1.22, 1.16, 0.74);            // ngọn/trên tán: sáng, ngả vàng
+  vec3 cool = base * vec3(0.60, 0.78, 0.76);            // gốc/dưới tán: sẫm, hơi lạnh
+  vec3 warm = base * vec3(1.08, 1.08, 0.92);            // ngọn/trên tán: sáng, ngả vàng
   vec3 leaf = mix(cool, warm, smoothstep(0.05, 0.95, vG));
+  leaf = mix(leaf, vec3(dot(leaf, vec3(0.3, 0.59, 0.11))) * vec3(0.95, 1.0, 0.9), 0.3);   // bớt rực: giảm bão hoà ~30%
   vec3 bark = uBark * (0.6 + 0.5 * vG) * (0.9 + 0.2 * smoothstep(-0.2, 0.4, n.x));
   vec3 alb = mix(leaf, bark, step(vKind, 0.5));
   vec3 amb = uSkyColor * (0.5 + 0.5 * n.y);
@@ -79,8 +80,8 @@ function lumpyIco(THREE, detail = 1, jag = 0.16, seed = 5) {   // icosahedron l�
 
 export function createPvTrees(THREE = THREE_NS, opts = {}) {
   const { wind, list = [] } = opts, seed = opts.seed ?? 1;
-  const greens = opts.greens || ['#2f8f3a', '#3fa745', '#58b449', '#2a7d3c', '#6fb83f', '#35a050'];
-  const accents = opts.accents || ['#8cc640', '#a6c93c'];
+  const greens = opts.greens || ['#3d7a3f', '#468546', '#4f8b44', '#376e3e', '#5a8a42', '#3f7f4c', '#44784a'];
+  const accents = opts.accents || ['#7aa545', '#8aa94a'];
   const bark = opts.bark || '#6b4a2e';
   const cT = [], cC = [];   // thân / tán: mỗi cụm 4 mảng
   const push = (a, o) => { a.push(o); };
@@ -102,7 +103,7 @@ export function createPvTrees(THREE = THREE_NS, opts = {}) {
         const a = (k / cnt) * 6.28 + hash(ti, sd + 40 + n) * 1.2 + tier * 0.7, d = tier === tiers - 1 ? ring * 0.3 * hash(ti, sd + 60 + n) : ring * (0.7 + 0.5 * hash(ti, sd + 60 + n));
         const rr = r * (0.8 + 0.4 * hash(ti, sd + 80 + n));
         col.set(hash(ti, sd + 100 + n) < 0.12 ? accents[n % accents.length] : baseG);
-        col.offsetHSL((hash(ti, sd + 120 + n) - 0.5) * 0.04, (hash(ti, sd + 140 + n) - 0.5) * 0.1, (hash(ti, sd + 160 + n) - 0.5) * 0.08);
+        col.offsetHSL((hash(ti, sd + 5) - 0.5) * 0.05 + (hash(ti, sd + 120 + n) - 0.5) * 0.03, (hash(ti, sd + 140 + n) - 0.5) * 0.1, (hash(ti, sd + 160 + n) - 0.5) * 0.08);
         push(cC, { x: t.x + Math.cos(a) * d, y: cy0 + tier * R0 * 0.62 + (hash(ti, sd + 180 + n) - 0.5) * R0 * 0.3, z: t.z + Math.sin(a) * d, sx: rr, sy: rr * 0.82, sz: rr * (0.9 + 0.2 * hash(ti, sd + 200 + n)), yaw: hash(ti, sd + 220 + n) * 6.28, c: [col.r, col.g, col.b], H, rnd: hash(ti, sd + 3), kind: 1, bx: t.x, bz: t.z });
       }
     }

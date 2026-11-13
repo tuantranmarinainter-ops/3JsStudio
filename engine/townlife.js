@@ -95,7 +95,7 @@ export function townLife(THREE, K, { parked = [], lanes = [{ z: 31.5, dir: 1 }, 
   }
   // dân làng R15 (bản mới): dựng ngay khi thân R15 tải xong (trước mọi lần seek), đi 2 vỉa hè theo chiều xuôi/ngược; vài cặp đi chung, vài người đứng
   const crowd2 = new THREE.Group(); crowd2.name = 'town_villagers'; crowd2.userData.grungeKind = 'char'; crowd2.visible = false; group.add(crowd2);
-  const SPAN3 = 380, vil = [];
+  const SPAN3 = 380, vil = [], vilFg = [], FG_SPAN = 44, FG_CX = 26, FG_CZ = 50;
   const buildVillagers = (body) => {
     let n = 0, slot = 0;
     while (n < villagers) {
@@ -110,6 +110,13 @@ export function townLife(THREE, K, { parked = [], lanes = [{ z: 31.5, dir: 1 }, 
       }
       slot++;
     }
+    // dân làng GẦN CAMERA (góp ý đợt C, s019): vài người đi chậm / đứng ở vỉa hè gần, chỉ hiện khi camera ở gần (xem update)
+    const FG = [[0, 48.6, 1, 3.2, 0], [1, 50.4, -1, 3.6, 0], [2, 52.2, 1, 3.0, 0], [3, 49.4, 1, 0, 1], [4, 53.4, -1, 3.4, 0], [5, 51.2, -1, 0, 1]];
+    FG.forEach(([i, z, dir, v, idle], k) => {
+      const p = createR15(THREE, { ...villagerLook(100 + i, vSeed), body });
+      p.root.rotation.y = dir > 0 ? Math.PI / 2 : -Math.PI / 2; crowd2.add(p.root);
+      vilFg.push({ p, dir, z, off: hash(k, 71) * FG_SPAN, v, ph: hash(k, 72) * 3, idle: !!idle });
+    });
     applyGrunge(THREE, crowd2, 'char');
   };
   loadR15Body(THREE).then((b) => buildVillagers(b), () => buildVillagers(null)).catch((e) => console.warn('[townlife] dân làng R15 lỗi:', e && e.message));
@@ -117,7 +124,7 @@ export function townLife(THREE, K, { parked = [], lanes = [{ z: 31.5, dir: 1 }, 
   const AF = () => globalThis.__autoFx || {};
   return {
     group,
-    update(t, day) {
+    update(t, day, cam) {
       const trafficOn = AF().traffic !== false && traffic2.children.length > 0, vilOn = AF().villagers !== false && vil.length > 0;
       traffic.visible = !!day && !trafficOn; traffic2.visible = !!day && trafficOn;
       parkedOld.visible = !trafficOn; parkedNew.visible = trafficOn;
@@ -137,6 +144,13 @@ export function townLife(THREE, K, { parked = [], lanes = [{ z: 31.5, dir: 1 }, 
         if (w.idle) { w.p.root.position.set(wrap(w.off, SPAN3), 0, w.z); w.p.animate('idle', t + w.ph, { noFace: true }); continue; }
         w.p.root.position.set(wrap(w.off + w.dir * w.v * t, SPAN3), 0, w.z);
         if (w.run) w.p.animate('run', t + w.ph, { noFace: true, speed: 2.1 }); else w.p.animate('walk', t + w.ph, { noFace: true, speed: w.v / 3.8 });
+      }
+      // nhóm gần camera: chỉ khi camera nằm trong ~110 đơn vị quanh vỉa hè gần (thị trấn s019); tắt cờ villagers = không có
+      const fgOn = vilOn && !!cam && Math.hypot(cam.position.x - FG_CX, cam.position.z - FG_CZ) < 110 && cam.position.y > 40;
+      for (const w of vilFg) {
+        w.p.root.visible = fgOn; if (!fgOn) continue;
+        if (w.idle) { w.p.root.position.set(FG_CX + wrap(w.off, FG_SPAN), 0, w.z); w.p.animate('idle', t + w.ph, { noFace: true }); continue; }
+        w.p.root.position.set(FG_CX + wrap(w.off + w.dir * w.v * t, FG_SPAN), 0, w.z); w.p.animate('walk', t + w.ph, { noFace: true, speed: w.v / 3.8 });
       }
     },
   };

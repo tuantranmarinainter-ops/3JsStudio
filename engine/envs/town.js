@@ -179,5 +179,5 @@ export default function build(g, e, H) {
   // update() đọc cờ rồi xoá → mọi shot khác không thấy ghế (hàm thuần của shot, tua tới/lui như nhau)
   const seat = K.chair(); seat.name = 'porch_chair'; seat.scale.setScalar(1.8); seat.visible = false; g.add(seat);
   return { suSong: ['dan', 'xe', 'co-gio'], setNight(n) { nbWins.forEach((w) => { w.emissiveIntensity = n * 1.4; }); moon.visible = n > 0.5; }, dirt, hole, seat,
-    update(t, ctx) { woods.group.visible = globalThis.__autoFx?.farwoods !== false; if (woods.group.visible) woods.update(t, stage.camera); hills.group.visible = globalThis.__autoFx?.backdrop !== false; if (hills.group.visible) hills.update(t, stage.camera); const L = LIGHTS[ctx.light || 'night']; life.update(t, !L.night); seat.visible = !!seat.userData.want; seat.userData.want = false; } };
+    update(t, ctx) { woods.group.visible = globalThis.__autoFx?.farwoods !== false; if (woods.group.visible) woods.update(t, stage.camera); hills.group.visible = globalThis.__autoFx?.backdrop !== false; if (hills.group.visible) hills.update(t, stage.camera); const L = LIGHTS[ctx.light || 'night']; life.update(t, !L.night, stage.camera); seat.visible = !!seat.userData.want; seat.userData.want = false; } };
 }

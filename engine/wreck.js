@@ -62,6 +62,42 @@ export function createWreck(THREE, ship) {
   const mast = splint(0.2, 5.2, 8, true); mast.name = 'cleave_fallenMast'; mast.rotation.set(1.42, 0.0, -0.55); mast.position.set(0.9, 3.4, 2.4 - CUT); stern.add(mast);
   mast.position.set(1.2, 3.0, -2.0 - CUT);
   const plank = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.08, 2.4), pale); plank.name = 'cleave_plank'; plank.rotation.set(0.3, 0.9, 0.4); plank.position.set(-1.2, 2.2, CUT + 0.4); bow.add(plank);
+  // gốc cột nát + đồ đạc chìm trên boong: gộp lưới theo vật liệu (3 draw call), dùng lại vật liệu gỗ sẵn có (không thêm shader)
+  const rope = new THREE.MeshStandardMaterial({ color: '#8a7650', roughness: 1 }), moss = new THREE.MeshStandardMaterial({ color: '#2f4a22', roughness: 1 });
+  const bag = new Map([[dark, []], [pale, []], [rope, []], [moss, []]]);
+  const put = (mat, geo, x, y, z, rx, ry, rz) => {
+    const o = new THREE.Object3D(); o.position.set(x, y, z); o.rotation.set(rx || 0, ry || 0, rz || 0); o.updateMatrix();
+    const g = geo.index ? geo.toNonIndexed() : geo; g.applyMatrix4(o.matrix); bag.get(mat).push(g);
+  };
+  const MX = 0, MZ = 0.67 - CUT, MY = 3.0;                       // chân cột chính trong hệ nhóm mũi
+  for (let i = 0; i < 11; i++) {                                  // dăm gỗ nhọn quanh chỗ gãy
+    const a = i / 11 * Math.PI * 2 + h(i, 1) * 0.4, rr = 0.28 + h(i, 2) * 0.25, ln = 0.35 + h(i, 3) * 0.55;
+    const sp = new THREE.ConeGeometry(0.07 + h(i, 4) * 0.07, ln, 4);
+    put(i % 3 ? dark : pale, sp, MX + Math.cos(a) * rr, MY + 0.1 + ln * 0.5 + h(i, 5) * 0.15, MZ + Math.sin(a) * rr, Math.sin(a) * 0.35, 0, -Math.cos(a) * 0.35);
+  }
+  for (let i = 0; i < 5; i++) {                                   // ván vỡ quanh gốc cột
+    const a = i * 1.3 + 0.4, pl = new THREE.BoxGeometry(0.2, 0.06, 0.8 + h(i, 6) * 0.9);
+    put(i % 2 ? pale : dark, pl, MX + Math.cos(a) * 0.9, MY - 0.45 + h(i, 7) * 0.2, MZ + Math.sin(a) * 0.9, 0.3 * h(i, 8), a, 0.35 * (h(i, 9) - 0.5));
+  }
+  const DK = MY - 0.95;                                           // mặt boong ước lượng
+  const barrel = new THREE.CylinderGeometry(0.28, 0.28, 0.6, 8);
+  put(dark, barrel, 0.9, DK + 0.3, MZ + 0.2); put(dark, barrel, 0.7, DK + 0.25, MZ + 1.0, 0, 0, 1.2);
+  put(dark, barrel, -0.8, DK + 0.3, MZ - 0.6, 0.2, 0, 0.1);
+  put(moss, new THREE.CylinderGeometry(0.29, 0.29, 0.1, 8), 0.9, DK + 0.62, MZ + 0.2);  // rêu phủ nắp thùng
+  put(pale, new THREE.BoxGeometry(0.6, 0.45, 0.5), -0.7, DK + 0.22, MZ + 0.7, 0, 0.5, 0.08);   // thùng gỗ
+  put(moss, new THREE.BoxGeometry(0.62, 0.08, 0.52), -0.7, DK + 0.46, MZ + 0.7, 0, 0.5, 0.08);
+  put(rope, new THREE.TorusGeometry(0.32, 0.07, 5, 12), 0.2, DK + 0.1, MZ + 1.5, Math.PI / 2, 0, 0);       // cuộn dây
+  put(rope, new THREE.TorusGeometry(0.2, 0.06, 5, 10), 0.2, DK + 0.2, MZ + 1.5, Math.PI / 2, 0, 0);
+  put(dark, new THREE.CylinderGeometry(0.07, 0.09, 3.0, 5), -0.3, DK + 0.3, MZ - 1.6, 0.1, 1.0, Math.PI / 2 - 0.12);   // sào đổ
+  for (let i = 0; i < 7; i++)                                     // rong/hà bám
+    put(moss, new THREE.ConeGeometry(0.1, 0.5 + h(i, 11) * 0.5, 4), -1 + h(i, 12) * 2, DK + 0.25, MZ - 1.5 + h(i, 13) * 3, 0.2 * (h(i, 14) - 0.5), 0, 0.3 * (h(i, 15) - 0.5));
+  const merge = (list) => {
+    let n = 0; for (const g of list) n += g.attributes.position.count;
+    const P = new Float32Array(n * 3), N = new Float32Array(n * 3); let o = 0;
+    for (const g of list) { P.set(g.attributes.position.array, o * 3); N.set(g.attributes.normal.array, o * 3); o += g.attributes.position.count; }
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(P, 3)); geo.setAttribute('normal', new THREE.BufferAttribute(N, 3)); return geo;
+  };
+  for (const [mat, list] of bag) if (list.length) { const m = new THREE.Mesh(merge(list), mat); m.name = 'cleave_clutter'; m.castShadow = true; bow.add(m); }
   const setOn = (on) => {   // bật = 2 nửa; tắt = tàu nguyên bản (mọi lưới gốc hiện lại)
     halves.visible = on; orig.visible = !on; for (const x of extras) x.visible = !on;
   };
