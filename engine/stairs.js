@@ -2,12 +2,12 @@
 //   const st = createStairs(THREE, { shell, trim, porchMat, z0 }); st.update(bodyY);
 // bodyY = độ cao sàn hiên so với đất; hàm thuần của pose → tất định theo t.
 // - Nhà NGỒI (bodyY ≤ SIT_Y): cầu thang bung hết, dài vừa đúng tới đất (không thừa).
-// - Nhà nâng lên: đoạn dưới gập ngược lên đoạn trên (bản lề trên tay vịn), rồi cả khối xoay xuống áp vào hiên.
-// - Hạ xuống thì bung ra theo thứ tự ngược lại.
+// - Nhà nâng lên: đoạn trên nhấc lên NẰM NGANG song song sàn hiên (như cầu kéo), đoạn dưới gập ngược vào bên dưới,
+//   hướng về phía nhà (bản lề dưới dầm). Hạ xuống thì bung ra theo thứ tự ngược lại.
 // Tắt: __autoFx.houseStairs = false → cầu thang cũ 4 bậc; __autoFx.stairsFold = false → kiểu cũ (luôn dài tới đất, không gấp).
 export function createStairs(THREE, { shell, trim, porchMat, z0, width = 7 }) {
   const MAXN = 16, RISE = 0.78, RUN = 1.2;
-  const SIT_Y = 6.6, FOLD_H = 3.0, HOFF = 2.9;                // ngồi: sàn ≤ 6.6 (lift ≤ 0.3); gấp xong khi cao thêm 3; bản lề nằm trên tay vịn
+  const SIT_Y = 6.6, FOLD_H = 3.0, HOFF = -1.4;               // ngồi: sàn ≤ 6.6 (lift ≤ 0.3); gấp xong khi cao thêm 3; bản lề giữa nằm DƯỚI dầm
   const old = shell.children.filter((o) => /^(stair|stair_nose|stair_rail)$/.test(o.name));
   const grp = new THREE.Group(); grp.name = 'stairs_ground'; shell.add(grp);
   const hingeA = new THREE.Group(); hingeA.name = 'stairs_hingeA'; hingeA.position.set(0, 0, z0); grp.add(hingeA);
@@ -60,10 +60,10 @@ export function createStairs(THREE, { shell, trim, porchMat, z0, width = 7 }) {
       p.position.set(side(k) * (width / 2 + 0.2), ly, lz); p.rotation.x = -ang;
     });
     knuckles.forEach((m) => { m.visible = fold; });
-    // gấp: đoạn dưới gập lên trước (an toàn với đất), rồi cả khối xoay xuống áp vào hiên
-    const eB = sm(f / 0.6), eA = sm((f - 0.35) / 0.65);
-    hingeB.rotation.x = -(Math.PI - 0.05) * eB;
-    hingeA.rotation.x = ang + (Math.PI / 2 - ang) * eA;
+    // gấp: đoạn trên nhấc lên nằm ngang trước (nhấc cả thang khỏi đất), rồi đoạn dưới gập ngược vào dưới, hướng về nhà
+    const eA = sm(f / 0.55), eB = sm((f - 0.3) / 0.7);
+    hingeA.rotation.x = ang * (1 - eA);
+    hingeB.rotation.x = (Math.PI - 0.04) * eB;
   }
   return { update, group: grp };
 }
