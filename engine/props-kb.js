@@ -105,6 +105,152 @@ function dep(K, x, z) {
     K.sph(0.08, '#ffffff', x + dx, 0.3, z + 0.22, 'dep_bong' + i);
   }
 }
+// ---- vẽ canvas 2D cho bảng hiệu / bản đồ / dấu gấu (hàm thuần, không random) ----
+const tron2 = (g, x, y, r, c) => { g.fillStyle = c; g.beginPath(); g.arc(x, y, r, 0, 2 * PI); g.fill(); };
+const bau2 = (g, x, y, rx, ry, c, rot = 0) => { g.fillStyle = c; g.beginPath(); g.ellipse(x, y, rx, ry, rot, 0, 2 * PI); g.fill(); };
+function veGauPhang(g, x, y, r, mau = '#5d4037', mom = '#e3c9a6') {   // đầu gấu nhìn thẳng: 2 tai, mặt, mõm, mũi, 2 mắt
+  for (const s of [-1, 1]) { tron2(g, x + s * r * 0.78, y - r * 0.74, r * 0.4, mau); tron2(g, x + s * r * 0.78, y - r * 0.74, r * 0.2, mom); }
+  tron2(g, x, y, r, mau); bau2(g, x, y + r * 0.3, r * 0.52, r * 0.4, mom);
+  for (const s of [-1, 1]) { tron2(g, x + s * r * 0.36, y - r * 0.2, r * 0.13, '#fffaf0'); tron2(g, x + s * r * 0.36, y - r * 0.2, r * 0.07, '#2b1b14'); }
+  bau2(g, x, y + r * 0.14, r * 0.17, r * 0.11, '#2b1b14');
+  g.strokeStyle = '#2b1b14'; g.lineWidth = Math.max(1.5, r * 0.05); g.lineCap = 'round'; g.beginPath(); g.moveTo(x, y + r * 0.25); g.lineTo(x, y + r * 0.38); g.moveTo(x - r * 0.18, y + r * 0.46); g.quadraticCurveTo(x, y + r * 0.34, x + r * 0.18, y + r * 0.46); g.stroke();
+}
+function veBanhMi(g, x, y, r) {   // ổ bánh mì nằm chéo, 5 đường rạch sáng
+  g.save(); g.translate(x, y); g.rotate(-0.4);
+  bau2(g, 0, 0, r * 1.15, r * 0.55, '#e8a853'); g.strokeStyle = '#9a5a1c'; g.lineWidth = r * 0.08; g.beginPath(); g.ellipse(0, 0, r * 1.15, r * 0.55, 0, 0, 2 * PI); g.stroke();
+  g.strokeStyle = '#fbe0a4'; g.lineWidth = r * 0.11; g.lineCap = 'round';
+  for (let k = -2; k <= 2; k++) { g.beginPath(); g.moveTo(k * r * 0.42 - r * 0.13, -r * 0.24); g.lineTo(k * r * 0.42 + r * 0.13, r * 0.22); g.stroke(); }
+  g.restore();
+}
+function veKimChi(g, x, y, r) {   // cuộn chỉ đỏ + kim + sợi chỉ cuộn
+  g.fillStyle = '#d7ccc8'; g.fillRect(x - r * 0.55, y - r * 0.8, r * 1.1, r * 0.2); g.fillRect(x - r * 0.55, y + r * 0.6, r * 1.1, r * 0.2);
+  g.fillStyle = '#e53935'; g.fillRect(x - r * 0.42, y - r * 0.6, r * 0.84, r * 1.2);
+  g.strokeStyle = '#ff8a80'; g.lineWidth = r * 0.07; for (let k = 0; k < 5; k++) { g.beginPath(); g.moveTo(x - r * 0.42, y - r * 0.5 + k * r * 0.25); g.lineTo(x + r * 0.42, y - r * 0.4 + k * r * 0.25); g.stroke(); }
+  g.strokeStyle = '#90a4ae'; g.lineWidth = r * 0.09; g.lineCap = 'round'; g.beginPath(); g.moveTo(x + r * 0.2, y - r * 0.2); g.lineTo(x + r * 1.15, y - r * 1.0); g.stroke();
+  g.strokeStyle = '#5d4037'; g.lineWidth = r * 0.05; g.beginPath(); g.ellipse(x + r * 1.1, y - r * 0.93, r * 0.05, r * 0.1, 0.7, 0, 2 * PI); g.stroke();
+  g.strokeStyle = '#e53935'; g.lineWidth = r * 0.06; g.beginPath(); g.moveTo(x + r * 0.42, y + r * 0.3); g.bezierCurveTo(x + r * 1.0, y + r * 0.5, x + r * 0.7, y + r * 0.95, x + r * 1.15, y + r * 0.85); g.stroke();
+}
+function veSao(g, x, y, r) {   // ngôi sao 5 cánh vàng viền nâu
+  g.beginPath(); for (let k = 0; k < 10; k++) { const a = -PI / 2 + k * PI / 5, rr = k % 2 ? r * 0.45 : r; k ? g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr) : g.moveTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } g.closePath();
+  g.fillStyle = '#ffca28'; g.fill(); g.lineJoin = 'round'; g.strokeStyle = '#8d5a00'; g.lineWidth = r * 0.12; g.stroke();
+}
+const chuVien = (g, txt, x, y, size, font, fill, vien, maxW) => {   // chữ có viền tối quanh (đọc được trên mọi nền)
+  g.textAlign = 'center'; g.textBaseline = 'middle'; let s = size;
+  do { g.font = `900 ${s}px ${font}`; s -= 2; } while (maxW && g.measureText(txt).width > maxW && s > 8);
+  g.lineJoin = 'round'; g.lineWidth = Math.max(2, s * 0.2); g.strokeStyle = vien; g.strokeText(txt, x, y); g.fillStyle = fill; g.fillText(txt, x, y);
+};
+// vật liệu dán (decal) có nền trong suốt: alphaTest, không sắp xếp trong suốt → không nhấp nháy
+function matDecal(THREE, w, h, ve, px = 256) {
+  if (typeof document === 'undefined') return null;
+  const cv = document.createElement('canvas'); cv.width = px; cv.height = Math.max(16, Math.round((px * h) / w));
+  ve(cv.getContext('2d'), cv.width, cv.height);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+  return new THREE.MeshStandardMaterial({ map: t, roughness: 0.9, alphaTest: 0.35 });
+}
+const sangDem = (m) => { if (m?.map) { m.emissiveMap = m.map; m.emissive.set('#ffffff'); m.emissiveIntensity = 0.12; } return m; };   // chữ không tối thui ở cảnh đêm
+
+// ---- BẢNG HIỆU: 2 trụ gỗ có đế đá + xà ngang + bảng treo bằng 2 xích; mặt bảng vẽ canvas (huy hiệu + chữ có dấu). Mặt trước +Z, gốc = đáy giữa ----
+const GO_T = '#5a3a22', GO_V = '#8a5a33', GO_S = '#c9955c';
+const BANG = {   // màu nền theo màu nhấn của từng nhà trong bảng pastel thị trấn (EPISODE.town.vai)
+  tiem_gau: { nen: '#9984cf', nenToi: '#7a66b3', chu: 'TIỆM GẤU', phu: 'Ông Bách · gấu bông tặng cả phố', bieu: veGauPhang },
+  tiem_banh: { nen: '#8bbe6e', nenToi: '#6a9e50', chu: 'TIỆM BÁNH', phu: 'Bánh mì nóng giòn mỗi sáng', bieu: veBanhMi },
+  tiem_may: { nen: '#e77090', nenToi: '#c5547a', chu: 'TIỆM MAY', phu: 'Kim chỉ · sửa áo · may nhẫn', bieu: veKimChi },
+  thi_truong: { nen: '#e9806a', nenToi: '#c8604d', chu: 'NHÀ THỊ TRƯỞNG', phu: 'Thị trấn bình yên', bieu: veSao },
+};
+function veMatBang(g, w, h, o) {
+  const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, o.nen); gr.addColorStop(1, o.nenToi); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  g.strokeStyle = 'rgba(255,250,235,0.9)'; g.lineWidth = h * 0.035; g.strokeRect(h * 0.07, h * 0.07, w - h * 0.14, h * 0.86);
+  const bx = h * 0.56, r = h * 0.33; tron2(g, bx, h / 2, r + h * 0.03, '#3a2418'); tron2(g, bx, h / 2, r, '#fff4dc');
+  o.bieu(g, bx, h / 2, r * 0.68);
+  const x0 = bx + r + h * 0.1, tw = w - x0 - h * 0.14, cx = x0 + tw / 2;
+  chuVien(g, o.chu, cx, h * 0.4, h * 0.32, CHU, '#fffaf0', '#3a2418', tw);
+  chuVien(g, o.phu, cx, h * 0.75, h * 0.15, TAY, '#fff3d6', '#3a2418', tw);
+}
+function bangHieu(THREE, ten, loai, W = 6, H = 2.2, PH = 6.6) {
+  const K = bo(THREE, ten), D = K.sub('doc'), o = BANG[loai], t = 0.32;
+  const yT = PH - 0.9, cy = yT - t - H / 2;   // đỉnh khung / tâm mặt bảng
+  for (const [i, s] of [-1, 1].entries()) {
+    const x = s * (W / 2 + 0.55);
+    K.box(1.0, 0.3, 1.0, '#7d756b', x, 0.15, 0, 'de' + i); K.box(0.7, 0.16, 0.7, '#9a9187', x, 0.38, 0, 'de_vat' + i);
+    K.box(0.44, PH - 0.46, 0.44, GO_T, x, 0.46 + (PH - 0.46) / 2, 0, 'tru' + i);
+    K.box(0.62, 0.14, 0.62, GO_V, x, PH + 0.07, 0, 'mu' + i); K.box(0.46, 0.1, 0.46, GO_S, x, PH + 0.19, 0, 'mu_vat' + i);
+  }
+  K.box(W + 1.5, 0.42, 0.52, GO_V, 0, PH - 0.3, 0, 'xa'); K.box(W + 1.5, 0.08, 0.56, GO_S, 0, PH - 0.05, 0, 'xa_vat');
+  for (const [i, s] of [-1, 1].entries()) K.cyl(0.05, 0.05, 0.5, '#b0a89c', s * (W / 2 - 0.5), yT + 0.25 - 0.02, 0, 'xich' + i, null, { metalness: 0.6, roughness: 0.4 });
+  K.box(W + 0.2, H + 0.2, 0.3, GO_T, 0, cy, 0, 'long_bang');
+  const mat = matChu(THREE, W, H, (g, w, h) => veMatBang(g, w, h, o), 1024);
+  sangDem(mat);
+  K.pla(W, H, mat || o.nen, 0, cy, 0.152, 'mat_bang', D);
+  K.box(W + 2 * t, t, 0.46, GO_V, 0, cy + H / 2 + t / 2, 0.0, 'khung_tren'); K.box(W + 2 * t, t, 0.46, GO_V, 0, cy - H / 2 - t / 2, 0, 'khung_duoi');
+  for (const [i, s] of [-1, 1].entries()) K.box(t, H, 0.46, GO_V, s * (W / 2 + t / 2), cy, 0, 'khung_ben' + i);
+  K.box(W + 0.12, 0.1, 0.5, GO_S, 0, cy + H / 2 + 0.05, 0.0, 'lop_tren'); K.box(W + 0.12, 0.1, 0.5, GO_S, 0, cy - H / 2 - 0.05, 0, 'lop_duoi');
+  for (const [i, [sx, sy]] of [[-1, 1], [1, 1], [-1, -1], [1, -1]].entries()) K.sph(0.13, '#d4a017', sx * (W / 2 + t / 2), cy + sy * (H / 2 + t / 2), 0.26, 'dinh' + i, null, { metalness: 0.8, roughness: 0.3 });
+  lamDoc(D);
+  return K.g;
+}
+
+// ---- THÙNG GỖ CÓ VÁT MÉP (cụm thùng nhà máy): mỗi thùng = nhóm '<kit>_thung<i>' (userData.dims/ry) để props-glb thay bằng model; decal dán mặt trước ----
+//   spec: [w, h, d, x, yTâm, z, ry]
+function thungGo(K, i, [w, h, d, x, y, z, ry], mau) {
+  const G = K.sub('thung' + i, x, y, z); G.rotation.y = ry; G.userData.dims = [w, h, d]; G.userData.tam = [x, y, z];
+  K.box(w, h, d, mau, 0, 0, 0, 'than' + i, G);
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) K.box(0.14, h + 0.02, 0.14, '#7b5230', sx * (w / 2 - 0.02), 0, sz * (d / 2 - 0.02), 'cot' + i, G);
+  for (const dy of [-0.27, 0.27]) K.box(w + 0.02, 0.07, d + 0.02, '#8d6137', 0, dy * h, 0, 'dai' + i, G);
+  K.box(w + 0.1, 0.1, d + 0.1, '#e0b97d', 0, h / 2 - 0.05, 0, 'nap' + i, G);
+  return G;
+}
+// nhãn dán + dấu gấu lên mặt trước thùng (toạ độ kit; mặt trước hướng +Z xoay theo ry)
+function danThung(K, D, i, [w, h, d, x, y, z, ry], mat) {
+  const s = Math.min(w, h) * 0.78, q = d / 2 + 0.07;
+  const m = K.pla(s, s, mat || '#e0c3a0', x + Math.sin(ry) * q, y - h * 0.02, z + Math.cos(ry) * q, 'dan' + i, D); m.rotation.y = ry;
+  return m;
+}
+function veDanThung(g, w, h, o) {   // nhãn giấy ở trên (chữ) + dấu đầu gấu mực nâu ở dưới
+  g.fillStyle = o.giay; g.fillRect(w * 0.06, h * 0.04, w * 0.88, h * 0.26); g.strokeStyle = o.vien; g.lineWidth = h * 0.015; g.strokeRect(w * 0.06, h * 0.04, w * 0.88, h * 0.26);
+  chuVien(g, o.chu, w / 2, h * 0.14, h * 0.15, TAY, o.mau, 'rgba(255,255,255,0.0)', w * 0.8);
+  if (o.phu) { g.font = `${h * 0.075}px ${TAY}`; g.fillStyle = o.mau; g.textAlign = 'center'; g.fillText(o.phu, w / 2, h * 0.255); }
+  veGauPhang(g, w / 2, h * 0.65, h * 0.27, '#5d4037', '#d9bc98');
+}
+
+// bản đồ thị trấn (canvas w×h): đường lưới 3×3 khối, quảng trường giữa, nhà pastel; 5 nhà có tên + nhà máy; chấm đỏ = nhà báo mất đồ
+const PASTEL = ['#f4a6b8', '#a7d3f2', '#b9e0a5', '#f7d794', '#c9b6ec', '#f6b79e', '#9fd8cb'];
+function ve_ban_do(g, w, h) {
+  const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#f6e8c9'); gr.addColorStop(1, '#ead6ab'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  g.strokeStyle = '#a1887f'; g.lineWidth = h * 0.012; g.strokeRect(h * 0.02, h * 0.02, w - h * 0.04, h * 0.96);
+  chuGiua(g, 'BẢN ĐỒ THỊ TRẤN', w / 2, h * 0.085, h * 0.095, CHU, '#3e2723', w * 0.7);
+  const ax = w * 0.05, ay = h * 0.17, aw = w * 0.9, ah = h * 0.74;
+  g.fillStyle = '#c3dcaa'; g.fillRect(ax, ay, aw, ah); g.strokeStyle = '#8bab72'; g.lineWidth = 3; g.strokeRect(ax, ay, aw, ah);
+  const vx = [ax + aw * 0.34, ax + aw * 0.66], hy = [ay + ah * 0.36, ay + ah * 0.64], rd = h * 0.045;   // 2 đường dọc, 2 đường ngang
+  g.fillStyle = '#efe6d3'; for (const x of vx) g.fillRect(x - rd / 2, ay, rd, ah); for (const y of hy) g.fillRect(ax, y - rd / 2, aw, rd);
+  g.strokeStyle = '#d2c3a4'; g.lineWidth = 2; g.setLineDash([10, 9]);
+  for (const x of vx) { g.beginPath(); g.moveTo(x, ay); g.lineTo(x, ay + ah); g.stroke(); } for (const y of hy) { g.beginPath(); g.moveTo(ax, y); g.lineTo(ax + aw, y); g.stroke(); } g.setLineDash([]);
+  g.fillStyle = '#9ccc7e'; g.fillRect(vx[0] + rd / 2 + 4, hy[0] + rd / 2 + 4, vx[1] - vx[0] - rd - 8, hy[1] - hy[0] - rd - 8);   // quảng trường
+  for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) tron2(g, (vx[0] + vx[1]) / 2 + dx * aw * 0.07, (hy[0] + hy[1]) / 2 + dy * ah * 0.1, h * 0.03, '#4f9a5a');
+  tron2(g, (vx[0] + vx[1]) / 2, (hy[0] + hy[1]) / 2, h * 0.035, '#8ecae6');
+  const cols = [ax, vx[0], vx[1], ax + aw], rows = [ay, hy[0], hy[1], ay + ah];
+  const nha = [];   // [x, y, rộng, cao, màu]
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) {
+    if (r === 1 && c === 1) continue;
+    const x0 = cols[c] + (c === 0 ? 0 : rd / 2) + 6, x1 = cols[c + 1] - (c === 2 ? 0 : rd / 2) - 6, y0 = rows[r] + (r === 0 ? 0 : rd / 2) + 6, y1 = rows[r + 1] - (r === 2 ? 0 : rd / 2) - 6;
+    const n = 3, bw = (x1 - x0 - 10 * (n + 1)) / n, bh = (y1 - y0) * 0.36;
+    for (let k = 0; k < n; k++) for (const [j, yy] of [y0 + 8, y1 - bh - 8].entries()) nha.push([x0 + 10 + k * (bw + 10), yy, bw, bh, PASTEL[(r * 5 + c * 3 + k * 2 + j) % PASTEL.length]]);
+  }
+  for (const [x, y, bw, bh, c] of nha) { g.fillStyle = c; g.fillRect(x, y, bw, bh); g.fillStyle = 'rgba(0,0,0,0.18)'; g.fillRect(x, y, bw, bh * 0.28); g.strokeStyle = 'rgba(90,60,40,0.55)'; g.lineWidth = 2; g.strokeRect(x, y, bw, bh); }
+  // nhà có tên: [chỉ số nhà, nhãn]
+  const ten = [[0, 'Nhà Gà'], [4, 'Tiệm gấu'], [7, 'Tiệm bánh'], [12, 'Tiệm may'], [15, 'Thị trưởng'], [20, 'Nhà máy']];
+  const doM = new Set([1, 4, 7, 9, 12, 14, 17, 22, 24]);   // nhà báo mất đồ
+  g.font = `900 ${h * 0.04}px ${CHU}`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  for (const [i, nm] of ten) {
+    const [x, y, bw, bh] = nha[i];
+    const tw = g.measureText(nm).width + 12, ty = y < ay + ah / 2 ? y + bh + h * 0.03 : y - h * 0.03;
+    g.fillStyle = 'rgba(255,250,235,0.92)'; g.fillRect(x + bw / 2 - tw / 2, ty - h * 0.025, tw, h * 0.05); g.fillStyle = '#3e2723'; g.fillText(nm, x + bw / 2, ty + 1);
+  }
+  const [fx, fy, fw, fh] = nha[20]; g.fillStyle = '#90a4ae'; g.fillRect(fx + fw * 0.7, fy - h * 0.04, fw * 0.14, h * 0.045);
+  for (const i of doM) { const [x, y, bw, bh] = nha[i]; tron2(g, x + bw / 2, y + bh / 2, h * 0.034, '#ffffff'); tron2(g, x + bw / 2, y + bh / 2, h * 0.026, '#d32f2f'); }
+  for (const i of [1, 4, 7, 12, 15]) { const [x, y, bw, bh] = nha[i]; tron2(g, x + bw / 2, y + bh / 2, h * 0.034, '#ffffff'); tron2(g, x + bw / 2, y + bh / 2, h * 0.026, '#d32f2f'); }
+  tron2(g, w * 0.07, h * 0.945, h * 0.026, '#d32f2f'); g.fillStyle = '#3e2723'; g.textAlign = 'left'; g.font = `900 ${h * 0.04}px ${CHU}`; g.fillText('= nhà báo mất đồ', w * 0.1, h * 0.947);
+}
+
 export const PROPS_KB = {
   ke_trong: (THREE) => {   // kệ trống, vết bụi có chỗ sạch hình món đồ vừa mất
     const K = bo(THREE, 'ke_trong'); ke(K, 4, 5, 1.4, '#9c6b3e', '#7a5230', [0, 1.6, 3.25, 4.85]);
@@ -210,19 +356,14 @@ export const PROPS_KB = {
     [0.15, 2.1, 4.05].forEach((y, t) => [-2.7, -0.9, 0.9, 2.7].forEach((x, i) => gauNho(K, null, x, y, 0.05, NO[(i + t) % 3])));
     return K.g;
   },
-  ban_do: (THREE) => {     // bản đồ thị trấn treo tường, nhà có gấu đánh dấu đỏ (gốc = đáy sau, áp tường)
+  ban_do: (THREE) => {     // bản đồ thị trấn treo tường (khung gỗ vát 3 bậc, giấy da vẽ đường + nhà pastel + chấm đỏ nhà mất đồ) (gốc = đáy sau, áp tường)
     const K = bo(THREE, 'ban_do'); const D = K.sub('doc');
-    K.box(5, 3.5, 0.1, '#5d4037', 0, 1.75, 0.05, 'khung', D);
-    const giay = matChu(THREE, 4.7, 3.2, (g, w, h) => {
-      g.fillStyle = '#f5e6c8'; g.fillRect(0, 0, w, h); chuGiua(g, 'BẢN ĐỒ THỊ TRẤN', w / 2, h * 0.1, h * 0.13, CHU, '#3e2723', w * 0.94);
-      g.fillStyle = '#bcaaa4'; g.fillRect(0, h * 0.5, w, h * 0.05); g.fillRect(w * 0.45, h * 0.18, w * 0.05, h * 0.82);
-      for (let i = 0; i < 12; i++) { g.fillStyle = '#8d6e63'; g.fillRect(w * (0.06 + (i % 6) * 0.15), h * (i < 6 ? 0.28 : 0.66), w * 0.07, h * 0.1); }
-    });
-    K.pla(4.7, 3.2, giay || '#f5e6c8', 0, 1.75, 0.11, 'giay', D);
-    if (!giay) { K.box(4.6, 0.12, 0.01, '#bcaaa4', 0, 1.75, 0.115, 'duong', D); K.box(0.12, 3.0, 0.01, '#bcaaa4', 0.1, 1.75, 0.115, 'duong2', D); }
-    for (const [i, [x, y]] of [[-1.7, 2.4], [-0.6, 2.4], [1.2, 2.4], [-1.2, 1.0], [1.8, 1.0]].entries()) {
-      for (const r of [0.7, -0.7]) { const b = K.box(0.42, 0.08, 0.02, '#d32f2f', x, y, 0.13, 'dau_x' + i, D); b.rotation.z = r; }
-    }
+    K.box(5, 3.5, 0.08, GO_T, 0, 1.75, 0.04, 'khung'); K.box(4.8, 3.3, 0.1, GO_V, 0, 1.75, 0.05, 'khung_vat'); K.box(4.62, 3.12, 0.11, GO_S, 0, 1.75, 0.055, 'khung_lop');
+    const giay = matChu(THREE, 4.5, 3.0, ve_ban_do, 1024);
+    sangDem(giay);
+    K.pla(4.5, 3.0, giay || '#f3e3c3', 0, 1.75, 0.12, 'giay', D);
+    if (!giay) { K.box(4.4, 0.12, 0.01, '#bcaaa4', 0, 1.75, 0.125, 'duong', D); K.box(0.12, 2.9, 0.01, '#bcaaa4', 0.1, 1.75, 0.125, 'duong2', D); for (const [i, [x, y]] of [[-1.7, 2.4], [-0.6, 2.4], [1.2, 2.4], [-1.2, 1.0], [1.8, 1.0]].entries()) K.box(0.2, 0.2, 0.02, '#d32f2f', x, y, 0.13, 'cham_do' + i, D); }
+    for (const [i, [x, y]] of [[-2.3, 3.25], [2.3, 3.25], [-2.3, 0.25], [2.3, 0.25]].entries()) K.sph(0.08, '#d4a017', x, y, 0.13, 'dinh' + i, null, { metalness: 0.8, roughness: 0.3 });
     lamDoc(D);
     return K.g;
   },
@@ -365,6 +506,78 @@ export const PROPS_KB = {
     K.box(3, 0.6, 0.02, '#e57373', 0, 2.2, 1.01, 'khan');
     return K.g;
   },
+  thung_dan_mat: (THREE) => {   // cụm thùng gỗ chứa đồ dân bị mất: chất lộn xộn, lệch góc, có đồ thò ra; dán nhãn "ĐỒ DÂN MẤT" + dấu gấu
+    const K = bo(THREE, 'thung_dan_mat'), D = K.sub('doc');
+    const mat = matDecal(THREE, 1, 1, (g, w, h) => veDanThung(g, w, h, { giay: '#fff7e0', vien: '#8d6e63', chu: 'ĐỒ DÂN MẤT', mau: '#b71c1c', phu: null }), 256);
+    const SPEC = [[2.2, 1.8, 2.0, -2.2, 0.9, 0, 0.08], [2.0, 1.6, 1.9, 0.1, 0.8, 0.2, -0.12], [1.8, 1.8, 1.8, 2.3, 0.9, -0.1, 0.18],
+      [1.8, 1.4, 1.7, -1.9, 2.5, 0.1, -0.1], [1.7, 1.5, 1.7, 0.4, 2.35, 0.2, 0.15], [1.6, 1.3, 1.6, 2.2, 2.45, 0, -0.2]];
+    SPEC.forEach((s, i) => { thungGo(K, i, s, i % 2 ? '#c99a66' : '#d4a373'); danThung(K, D, i, s, mat); });
+    K.sph(0.4, '#e57373', -2.0, 3.45, 0.1, 'do_tui'); K.cyl(0.18, 0.18, 0.5, '#42a5f5', 0.6, 3.35, 0.2, 'do_coc'); K.tor(0.22, 0.05, '#ffca28', 2.3, 3.2, 0.1, 'do_vong').rotation.x = PI / 2;
+    K.box(0.9, 0.5, 0.6, '#7e57c2', -0.4, 0.25, 1.6, 'do_hop_nho'); K.sph(0.28, '#ffd54f', 1.4, 0.28, 1.5, 'do_cuc');
+    lamDoc(D);
+    return K.g;
+  },
+  thung_bach_giau: (THREE) => {   // cụm thùng hàng ông Bách tự giấu: xếp ngay ngắn 3 + 2, nhãn "HÀNG TIỆM BÁCH" + dấu gấu
+    const K = bo(THREE, 'thung_bach_giau'), D = K.sub('doc');
+    const mat = matDecal(THREE, 1, 1, (g, w, h) => veDanThung(g, w, h, { giay: '#fffaf0', vien: '#1565c0', chu: 'HÀNG TIỆM BÁCH', mau: '#1b3a6b', phu: 'Tiệm gấu Bách' }), 256);
+    const SPEC = [[1.7, 1.5, 1.7, -1.8, 0.75, 0, 0], [1.7, 1.5, 1.7, 0, 0.75, 0, 0], [1.7, 1.5, 1.7, 1.8, 0.75, 0, 0], [1.7, 1.5, 1.7, -0.9, 2.25, 0, 0], [1.7, 1.5, 1.7, 0.9, 2.25, 0, 0]];
+    SPEC.forEach((s, i) => { thungGo(K, i, s, '#d4a373'); danThung(K, D, i, s, mat); });
+    lamDoc(D);
+    return K.g;
+  },
+  bang_hieu_tiem_gau: (THREE) => bangHieu(THREE, 'bang_hieu_tiem_gau', 'tiem_gau'),
+  bang_hieu_tiem_banh: (THREE) => bangHieu(THREE, 'bang_hieu_tiem_banh', 'tiem_banh'),
+  bang_hieu_tiem_may: (THREE) => bangHieu(THREE, 'bang_hieu_tiem_may', 'tiem_may'),
+  bang_hieu_thi_truong: (THREE) => bangHieu(THREE, 'bang_hieu_thi_truong', 'thi_truong'),
+  bang_hieu_banh_mi: (THREE) => {   // bảng phấn chữ A đặt trước tiệm bánh: 2 tấm gỗ chụm đỉnh, mặt trước vẽ phấn "BÁNH MÌ" + ổ bánh
+    const K = bo(THREE, 'bang_hieu_banh_mi'), th = 0.17, cy = 1.577;
+    const mat = matChu(THREE, 2.1, 2.9, (g, w, h) => {
+      g.fillStyle = '#2f4a3a'; g.fillRect(0, 0, w, h); g.strokeStyle = 'rgba(255,255,255,0.12)'; g.lineWidth = 6; g.beginPath(); g.moveTo(w * 0.1, h * 0.93); g.lineTo(w * 0.5, h * 0.9); g.lineTo(w * 0.9, h * 0.94); g.stroke();
+      veBanhMi(g, w * 0.5, h * 0.26, w * 0.2);
+      chuVien(g, 'BÁNH MÌ', w / 2, h * 0.52, h * 0.15, CHU, '#fffaf0', '#1b2b22', w * 0.88);
+      g.fillStyle = '#ffe082'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = `${h * 0.075}px ${TAY}`; g.fillText('nóng giòn mỗi sáng', w / 2, h * 0.67);
+      g.fillStyle = '#fffaf0'; g.fillText('Ổ nhỏ  3 xu', w / 2, h * 0.79); g.fillText('Ổ lớn  5 xu', w / 2, h * 0.88);
+    }, 512);
+    sangDem(mat);
+    for (const [i, s] of [1, -1].entries()) {
+      const G = K.sub(i ? 'sau' : 'truoc', 0, cy, s * 0.28); G.rotation.x = -s * th;
+      K.box(2.4, 3.2, 0.12, GO_V, 0, 0, 0, 'tam', G); K.box(2.1, 0.14, 0.15, GO_S, 0, -1.43, 0.02, 'gio', G);
+      if (!i) { const Dm = K.sub('doc', 0, 0, 0, G); K.pla(2.1, 2.9, mat || '#2f4a3a', 0, 0, 0.065, 'mat', Dm); lamDoc(Dm); }
+      else K.box(2.1, 2.9, 0.02, '#2f4a3a', 0, 0, -0.07, 'mat_sau', G);
+    }
+    K.box(2.46, 0.14, 0.34, GO_T, 0, 3.17, 0, 'ban_le');
+    return K.g;
+  },
+  bang_hieu_treo: (THREE) => {   // bảng gỗ treo xà ngay trước tiệm gấu: "GẤU MIỄN PHÍ" + đầu gấu (dự phòng khi tắt GLB: 1 trụ + xà + bảng treo)
+    const K = bo(THREE, 'bang_hieu_treo'), D = K.sub('doc');
+    const mat = matChu(THREE, 1.64, 1.32, (g, w, h) => {
+      g.fillStyle = '#f3dcae'; g.fillRect(0, 0, w, h); g.strokeStyle = '#8a5a33'; g.lineWidth = h * 0.045; g.strokeRect(h * 0.05, h * 0.05, w - h * 0.1, h * 0.9);
+      veGauPhang(g, w * 0.5, h * 0.27, h * 0.18);
+      chuGiua(g, 'GẤU', w / 2, h * 0.58, h * 0.2, CHU, '#4a2c17', w * 0.8); chuGiua(g, 'MIỄN PHÍ', w / 2, h * 0.8, h * 0.17, CHU, '#c62828', w * 0.84);
+    }, 512);
+    sangDem(mat);
+    K.box(0.3, 4, 0.3, GO_T, -0.95, 2, 0, 'tru'); K.box(3, 0.3, 0.2, GO_T, 0, 3.7, -0.1, 'xa'); K.box(1.7, 1.4, 0.1, GO_S, 0.36, 2.58, -0.13, 'bang_go');
+    K.pla(1.64, 1.32, mat || '#f3dcae', 0.36, 2.58, -0.075, 'mat', D);
+    lamDoc(D);
+    return K.g;
+  },
+  ban_tiem_may: (THREE) => {   // bàn thợ tiệm may (dự phòng khi tắt GLB): mặt bàn dày vát (mặt trên y 2.3), 4 chân, thanh giằng + ngăn dưới
+    const K = bo(THREE, 'ban_tiem_may');
+    K.box(4.14, 0.3, 2.17, GO_V, 0, 2.15, 0, 'mat'); K.box(4.2, 0.1, 2.23, GO_S, 0, 2.25, 0, 'mat_vat');
+    for (const [i, [x, z]] of [[-1.85, -0.9], [1.85, -0.9], [-1.85, 0.9], [1.85, 0.9]].entries()) K.box(0.3, 2.0, 0.3, GO_T, x, 1.0, z, 'chan' + i);
+    K.box(3.6, 0.15, 1.8, GO_T, 0, 0.7, 0, 'ngan'); K.box(3.6, 0.2, 0.12, GO_T, 0, 1.8, -0.95, 'giang');
+    K.box(0.7, 0.3, 0.5, '#e77090', -1.6, 2.45, -0.4, 'vai_gap'); K.cyl(0.14, 0.14, 0.3, '#1e88e5', 1.5, 2.45, -0.5, 'cuon_chi');
+    return K.g;
+  },
+  den_cua: (THREE) => {   // cột đèn cạnh cửa: đế đá, cột sắt, tay đỡ cong, đèn lồng treo xích (ô sáng cam)
+    const K = bo(THREE, 'den_cua'), SAT = { metalness: 0.6, roughness: 0.45 };
+    K.box(0.7, 0.3, 0.7, '#7d756b', -0.45, 0.15, 0, 'chan_de'); K.box(0.46, 0.2, 0.46, '#9a9187', -0.45, 0.4, 0, 'chan_de_vat');
+    K.cyl(0.11, 0.14, 5.5, '#37363d', -0.45, 3.1, 0, 'cot', null, SAT); K.sph(0.17, '#d4a017', -0.45, 6.0, 0, 'dinh_cot', null, { metalness: 0.8, roughness: 0.3 });
+    K.box(1.15, 0.14, 0.14, '#37363d', 0.15, 5.78, 0, 'tay', null, SAT); const cheo = K.box(0.8, 0.1, 0.1, '#37363d', -0.1, 5.45, 0, 'tay_cheo', null, SAT); cheo.rotation.z = -0.75;
+    K.cyl(0.03, 0.03, 0.4, '#b0a89c', 0.55, 5.53, 0, 'xich', null, SAT);
+    K.box(0.4, 0.5, 0.4, '#ffb74d', 0.55, 5.0, 0, 'den', null, { emissive: '#ff9800', emissiveIntensity: 0.9, roughness: 0.4 }); K.box(0.5, 0.1, 0.5, '#37363d', 0.55, 5.3, 0, 'den_nap', null, SAT); K.box(0.5, 0.08, 0.5, '#37363d', 0.55, 4.72, 0, 'den_day', null, SAT);
+    return K.g;
+  },
 };
 
 // size [rộng, cao, sâu] (stud); base: floor (đặt sàn) | surface (đặt lên mặt kệ/bàn) | wall (treo tường, gốc = đáy sau);
@@ -401,6 +614,16 @@ export const PROP_INFO = {
   thung_go: { size: [2.4, 2, 2.4], base: 'floor', fixed: true, surfaces: [[0, 2, 0]] },
   hang_rao: { size: [8, 3.5, 0.3], base: 'floor', fixed: true },
   ban_bay: { size: [3, 2.6, 2], base: 'floor', fixed: true, surfaces: [[0, 2.6, 0]] },
+  thung_dan_mat: { size: [6.6, 3.9, 3.0], base: 'floor', fixed: true },
+  thung_bach_giau: { size: [5.6, 3.0, 1.9], base: 'floor', fixed: true },
+  bang_hieu_tiem_gau: { size: [8.1, 6.8, 1.0], base: 'floor', fixed: true },
+  bang_hieu_tiem_banh: { size: [8.1, 6.8, 1.0], base: 'floor', fixed: true },
+  bang_hieu_tiem_may: { size: [8.1, 6.8, 1.0], base: 'floor', fixed: true },
+  bang_hieu_thi_truong: { size: [8.1, 6.8, 1.0], base: 'floor', fixed: true },
+  bang_hieu_banh_mi: { size: [2.5, 3.3, 1.2], base: 'floor', fixed: true },
+  ban_tiem_may: { size: [4.2, 2.6, 2.2], base: 'floor', fixed: true, surfaces: [[-0.7, 2.3, 0.55]] },   // mặt bàn y 2.3; chỗ trống giữa hàng búa/cưa và ê-tô
+  den_cua: { size: [1.6, 6.2, 0.7], base: 'floor', fixed: true },
+  bang_hieu_treo: { size: [3.0, 5.6, 0.4], base: 'floor', fixed: true },   // (GLB: 4.18×5.6×0.94 — GLB_INFO)
 };
 const INFO_LA = { size: [1.2, 1.2, 1.2], base: 'floor' };   // kit lạ (propKit / chưa có): khung giả định
 export const infoOf = (kit) => (glbOn() && GLB_INFO[kit] ? { ...PROP_INFO[kit], ...GLB_INFO[kit] } : PROP_INFO[kit] || INFO_LA);
@@ -414,6 +637,7 @@ export const PROP_SLOTS = {
     byName: {
       bang_chuyen: [-5, 0, -6, 0], ke_gau: [-8.5, 0, -14.5, 0], ban_do: [14, 6.75, -15.95, 0], chuong: [10, 3.2, -9, 0],
       ket_tien: [-6, 0, -4.4, 0], thung_tiem_bach: [-17, 0, 0.5, PI / 2], thung_go: [0, 0, 16.6, PI], hang_rao: [-1.2, 0, 34, 0],
+      thung_dan_mat: [19, 0, 1.2, 0], thung_bach_giau: [-17, 0, 11.5, 0],   // đặt TRƯỚC hai cụm thùng các-tông env tự dựng (carton_pile ở thung_dan [19,0,-7]; carton_neat ở thung_bach [-17,0,6])
     },
     coSan: ['bang_chuyen', 'ke_gau', 'thung_go', 'hang_rao'],
     floor: [[-5, 0, 1, 0], [5, 0, 1, 0], [-7, 0, 6, PI / 2], [7, 0, 6, -PI / 2], [0, 0, 8, PI]],

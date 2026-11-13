@@ -49,6 +49,12 @@ export const GLB_KIT = {
   chan_tran: { id: 'nhap/ban-chan', keep: [], haiBan: 0.45, da: '#f0c89a' },
   bac_them_dep: { id: 'nhap/bac-them', dims: [5, 1, 3.5], at: [-1, 0.25], keep: ['dep_', 'tham_chui_chan'] },
   bac_them_trong: { id: 'nhap/bac-them', dims: [5, 1, 3.5], at: [-1, 0.25], keep: ['tham_chui_chan'] },
+  // ---- Đợt đạo cụ riêng (duyet/ep002/da-nhap-dot4.json) ----
+  ban_tiem_may: { id: 'nhap/ban-tiem-may', keep: [] },
+  den_cua: { id: 'nhap/den-cua', dims: [0.545, 1.2, 0.545], at: [0.55, 0], keep: ['chan_de', 'cot', 'dinh_cot', 'tay'], ext: 'denCua' },
+  bang_hieu_treo: { id: 'nhap/bang-hieu-treo', dims: [4.18, 5.6, 0.94], keep: [], ext: 'bangTreo' },
+  thung_dan_mat: { id: 'nhap/thung-go-dung', dims: [2.2, 2.2, 2.2], keep: ['doc', 'do_'], ext: 'cumThung' },
+  thung_bach_giau: { id: 'nhap/thung-go-dung', dims: [2.2, 2.2, 2.2], keep: ['doc'], ext: 'cumThung' },
 };
 // kích thước/mặt đỡ KHÁC của kit khi dùng GLB (datDaoCu/ganDaoCu dùng để đặt, lùi camera, đặt đồ lên mặt đỡ) — chỉ khi GLB đang bật
 export const GLB_INFO = {
@@ -60,6 +66,7 @@ export const GLB_INFO = {
   guong: { size: [4.35, 7, 0.48] },
   bang_tin: { size: [6.06, 6, 1.04] },
   thung_tiem_bach: { size: [5.1, 2.6, 6.4] },
+  bang_hieu_treo: { size: [4.18, 5.6, 0.94] },
 };
 
 const DUONG = '/assets/manifest.json';
@@ -184,6 +191,31 @@ const EXT = {
         if (c.name.endsWith('in_hong')) { c.position.x -= 0.18; c.scale.multiplyScalar(0.8); }
       }
     },
+  },
+  // bảng treo trước tiệm gấu: mặt bảng (Light Wood, x −0.48..1.2, y 1.9..3.26, mặt trước z −0.09 hướng +Z) nhận decal chữ của kit code (tuỳ model trước khi khớp → co theo model)
+  bangTreo: {
+    pre(THREE, model, code) {
+      const kit = 'bang_hieu_treo', src = code.getObjectByName(kit + '_doc')?.children[0]; if (!src) return;
+      const D = new THREE.Group(); D.name = kit + '_doc'; D.userData.vai = 'doc';
+      const pl = new THREE.Mesh(new THREE.PlaneGeometry(1.64, 1.32), src.material); pl.position.set(0.36, 2.58, -0.075); pl.name = kit + '_mat'; pl.castShadow = pl.receiveShadow = true;
+      pl.userData.matKind = 'none'; pl.userData.matNguon = 'khai-bao'; D.add(pl); model.add(D);
+    },
+  },
+  // cụm thùng: model là MỘT thùng 2.2³ → nhân bản đúng vị trí/cỡ/góc từng thùng của kit code (userData.dims/tam của nhóm '<kit>_thung<i>')
+  cumThung: {
+    post(THREE, g, code) {
+      const w = g.children[0], cr = code.children.filter((c) => /_thung\d+$/.test(c.name) && c.userData.dims);
+      if (!w || !cr.length) return;
+      const D0 = w.userData.dimsGoc || [2.2, 2.2, 2.2];
+      cr.forEach((c, i) => {
+        const [cw, ch, cd] = c.userData.dims, [x, y, z] = c.userData.tam, k = i ? w.clone(true) : w;
+        k.scale.set(cw / D0[0], ch / D0[1], cd / D0[2]); k.position.set(x, y - ch / 2, z); k.rotation.y = c.rotation.y; k.name = 'glb_thung' + i;
+        if (i) g.add(k);
+      });
+    },
+  },
+  denCua: {
+    post(THREE, g) { const w = g.children[0]; w.position.y += 4.51; },   // đèn lồng (cao 1.2, đỉnh xích = đỉnh model) treo dưới đầu tay đỡ (đáy tay y 5.71)
   },
   anhBa: {
     post(THREE, g) {   // chân dung bà phủ lên ô ảnh của khung (mặt trước nghiêng ngả ra sau ~20°; tâm mặt (0, 0.76, 0.115))
