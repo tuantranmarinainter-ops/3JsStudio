@@ -151,6 +151,29 @@ export const BEAR_ANIMATIONS = {
     return p;
   },
 
+  // ôm vật to trước ngực VÀ bước đi (lạch bạch): chân như walk, hai tay giữ nguyên dáng hug (ep002 s033: Bắp ôm đồng hồ đi khỏi kệ)
+  hugWalk: (t, o = {}) => {
+    const p = waddle(t, o.speed ?? 1.9, 0.9), h = BEAR_ANIMATIONS.hug(t);
+    p.torso = { ...h.torso, z: p.torso.z * 0.5 }; p.head = { ...h.head };
+    p.rightArm = h.rightArm; p.leftArm = h.leftArm; p.rightElbow = h.rightElbow; p.leftElbow = h.leftElbow; p.rightHand = h.rightHand; p.leftHand = h.leftHand;
+    return p;
+  },
+
+  // nhảy vọt LÊN rồi RA (cửa sổ cao): ngồi xổm nén lò xo → bật lên theo cung (body.y tăng tới o.h stud), tay giơ, chân co; cuối co về 0 (poof). t tính từ đầu shot, o.dur = tổng thời gian (mặc định 1 s)
+  //   Đi kèm cast.at→to nằm ngang (xuyên qua cửa sổ); không lặp. Hàm thuần của t.
+  jumpOut: (t, o = {}) => {
+    const dur = o.dur ?? 1, k = clamp01(t / dur), crouch = clamp01(k / 0.22), lau = ease((k - 0.2) / 0.5), up = 1 - Math.pow(1 - clamp01((k - 0.2) / 0.62), 2), H = o.h ?? 8.4;
+    const sh = ease((k - 0.84) / 0.16), c = S(PI * crouch) * (k < 0.22 ? 1 : 0), p = standBase(t);
+    p.body = { y: -0.28 * c + H * up, ds: 0.999 * sh, rz: 0.15 * S(PI * lau) };
+    p.torso = { x: 0.35 * c - 0.15 * lau }; p.head = { x: 0.1 - 0.35 * lau, z: 0.05 };
+    p.rightLeg = { x: -0.9 * c - 1.1 * lau, z: -0.15 }; p.leftLeg = { x: -0.9 * c - 1.1 * lau, z: 0.15 };
+    p.rightKnee = { x: 1.1 * c + 1.2 * lau }; p.leftKnee = { x: 1.1 * c + 1.2 * lau };
+    p.rightArm = { x: -0.3 * c - 2.7 * lau, z: -0.3 }; p.leftArm = { x: -0.3 * c - 2.7 * lau, z: 0.3 };
+    p.rightElbow = { x: -0.3 }; p.leftElbow = { x: -0.3 };
+    p.fx = { dust: sh, at: k };
+    return p;
+  },
+
   wave: (t) => {
     const p = sitBase(t, { look: 0.1 }), w = S(t * 9);
     p.rightArm = { x: -0.3, z: -2.35 }; p.rightElbow = { x: -0.3, z: -0.2 + 0.5 * w }; p.rightHand = { z: 0.25 * S(t * 9 - 0.7) };

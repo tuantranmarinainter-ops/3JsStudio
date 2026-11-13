@@ -35,7 +35,7 @@ export const GLB_KIT = {
   bang_chuyen: { id: 'nhap/bang-chuyen-xam', dims: [10, 3, 3.656], keep: [] },
   ket_tien: { id: 'nhap/ket-xanh-xam', keep: [], sang: 0.4 },
   ket_ga: { id: 'nhap/ket-sat-xam', keep: [] },
-  day_chuyen: { id: 'nhap/day-chuyen-vang', basis: [[1, 0, 0], [0, 0, -1], [0, 1, 0]], keep: [] },   // Rx(−90°): dây dựng đứng → nằm phẳng, mặt dây hướng +Z
+  // day_chuyen: dùng khối code (props-kb.js) — model GLB 'day-chuyen-vang' dây mảnh + mặt đá phình, không đọc được ở cận cảnh s074 (góp ý ep002 "rõ ràng hơn")
   chuong: { id: 'nhap/chuong-tay', keep: [] },
   doi_dep: { id: 'nhap/dep-xo-ngon', dims: [1.3, 0.3, 1.3], keep: [] },
   // ---- Đợt 4 (duyet/ep002/da-nhap-dot4.json) ----

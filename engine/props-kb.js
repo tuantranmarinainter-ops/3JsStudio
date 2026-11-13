@@ -76,21 +76,44 @@ const ke = (K, w, h, d, go, lung, tang) => {   // kệ: 2 vách + lưng + các t
 };
 
 // ảnh trong gương (canvas w×h ≈ 0.42): tường xanh nhạt, sàn gỗ, kệ trắng viền xanh 2 tầng có sách, đồng hồ đỏ 2 chuông trên tầng giữa, mép giường tím, vệt sáng chéo
-function ve_guong(g, w, h) {
-  const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#c9dcf3'); gr.addColorStop(1, '#e6eef8'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
-  g.fillStyle = '#a98a70'; g.fillRect(0, h * 0.86, w, h * 0.14); g.fillStyle = 'rgba(0,0,0,0.12)'; g.fillRect(0, h * 0.86, w, h * 0.012);
-  const kx = w * 0.12, kw = w * 0.76, kt = h * 0.2, kb = h * 0.86;
-  g.fillStyle = '#5c8ddb'; g.fillRect(kx - w * 0.03, kt, w * 0.03, kb - kt); g.fillRect(kx + kw, kt, w * 0.03, kb - kt);
-  g.fillStyle = '#eceff1'; g.fillRect(kx, kt, kw, kb - kt); g.fillStyle = '#cfd8dc'; g.fillRect(kx + w * 0.02, kt + h * 0.02, kw - w * 0.04, kb - kt - h * 0.02);
+function veBa(g, w, h) {   // chân dung bà: tóc bạc búi, mặt hồng hào, mắt + nụ cười, áo tím, dây chuyền vàng mặt đá đỏ
+  const bg = g.createRadialGradient(w * 0.5, h * 0.4, w * 0.1, w * 0.5, h * 0.45, w * 0.85); bg.addColorStop(0, '#fff2cf'); bg.addColorStop(1, '#e9c987'); g.fillStyle = bg; g.fillRect(0, 0, w, h);
+  const cx = w * 0.5, tone = '#f2c9a0';
+  g.fillStyle = '#6a3fb5'; g.beginPath(); g.moveTo(w * 0.04, h); g.quadraticCurveTo(w * 0.08, h * 0.72, cx - w * 0.16, h * 0.68); g.lineTo(cx + w * 0.16, h * 0.68); g.quadraticCurveTo(w * 0.92, h * 0.72, w * 0.96, h); g.closePath(); g.fill();   // vai áo
+  g.fillStyle = '#ffffff'; g.beginPath(); g.moveTo(cx - w * 0.16, h * 0.68); g.lineTo(cx, h * 0.8); g.lineTo(cx + w * 0.16, h * 0.68); g.lineTo(cx + w * 0.1, h * 0.66); g.lineTo(cx, h * 0.72); g.lineTo(cx - w * 0.1, h * 0.66); g.closePath(); g.fill();   // cổ áo
+  g.fillStyle = tone; g.fillRect(cx - w * 0.07, h * 0.58, w * 0.14, h * 0.12);   // cổ
+  g.fillStyle = '#d7d7de'; g.beginPath(); g.arc(cx, h * 0.17, w * 0.1, 0, 7); g.fill();   // búi tóc
+  g.fillStyle = '#c4c4cc'; g.beginPath(); g.ellipse(cx, h * 0.38, w * 0.27, h * 0.25, 0, 0, 7); g.fill();   // tóc sau
+  g.fillStyle = tone; g.beginPath(); g.ellipse(cx, h * 0.41, w * 0.22, h * 0.21, 0, 0, 7); g.fill();   // mặt
+  g.fillStyle = '#d9d9e0'; g.beginPath(); g.ellipse(cx, h * 0.27, w * 0.23, h * 0.1, 0, PI, 0); g.fill(); g.fillRect(cx - w * 0.23, h * 0.27, w * 0.05, h * 0.12); g.fillRect(cx + w * 0.18, h * 0.27, w * 0.05, h * 0.12);   // tóc mái + mai
+  g.fillStyle = 'rgba(235,120,120,0.45)'; for (const dx of [-0.13, 0.13]) { g.beginPath(); g.ellipse(cx + w * dx, h * 0.46, w * 0.05, h * 0.03, 0, 0, 7); g.fill(); }   // má hồng
+  g.strokeStyle = '#8c8c94'; g.lineWidth = w * 0.014; g.lineCap = 'round'; for (const dx of [-1, 1]) { g.beginPath(); g.moveTo(cx + dx * w * 0.04, h * 0.355); g.lineTo(cx + dx * w * 0.13, h * 0.345); g.stroke(); }   // lông mày
+  for (const dx of [-1, 1]) { g.fillStyle = '#ffffff'; g.beginPath(); g.ellipse(cx + dx * w * 0.085, h * 0.395, w * 0.04, h * 0.022, 0, 0, 7); g.fill(); g.fillStyle = '#2b1b12'; g.beginPath(); g.arc(cx + dx * w * 0.085, h * 0.395, w * 0.023, 0, 7); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(cx + dx * w * 0.078, h * 0.39, w * 0.008, 0, 7); g.fill(); }   // mắt
+  g.strokeStyle = '#c98a6a'; g.lineWidth = w * 0.012; g.beginPath(); g.moveTo(cx, h * 0.41); g.lineTo(cx - w * 0.012, h * 0.45); g.lineTo(cx + w * 0.015, h * 0.452); g.stroke();   // mũi
+  g.strokeStyle = '#b5483f'; g.lineWidth = w * 0.02; g.beginPath(); g.arc(cx, h * 0.468, w * 0.07, 0.25, PI - 0.25); g.stroke();   // nụ cười
+  g.strokeStyle = '#ffd54f'; g.lineWidth = w * 0.022; g.beginPath(); g.ellipse(cx, h * 0.6, w * 0.15, h * 0.1, 0, 0.15, PI - 0.15); g.stroke();   // dây chuyền vàng
+  g.strokeStyle = '#b8860b'; g.lineWidth = w * 0.006; g.beginPath(); g.ellipse(cx, h * 0.6, w * 0.15, h * 0.1, 0, 0.15, PI - 0.15); g.stroke();
+  g.fillStyle = '#ffd54f'; g.beginPath(); g.arc(cx, h * 0.7, w * 0.055, 0, 7); g.fill(); g.fillStyle = '#d32f2f'; g.beginPath(); g.arc(cx, h * 0.7, w * 0.032, 0, 7); g.fill(); g.fillStyle = '#ffcdd2'; g.beginPath(); g.arc(cx - w * 0.01, h * 0.69, w * 0.01, 0, 7); g.fill();   // mặt dây: đá đỏ
+}
+function ve_guong(g, w, h) {   // ảnh phản chiếu ĐÊM trong phòng Gà: tường xanh có sao, sàn gỗ, kệ trắng + sách, đồng hồ đỏ phát sáng (góp ý ep002 s025: "ảnh hơi xấu")
+  const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#3d4fb0'); gr.addColorStop(0.86, '#5a6cc8'); gr.addColorStop(1, '#5a6cc8'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  let sd = 7; const rnd = () => { sd = (sd * 16807) % 2147483647; return sd / 2147483647; };
+  g.fillStyle = '#fff6c8'; for (let i = 0; i < 14; i++) { const x = w * (0.05 + 0.9 * rnd()), y = h * (0.02 + 0.14 * rnd()), r = w * (0.012 + 0.012 * rnd()); g.beginPath(); for (let k = 0; k < 10; k++) { const a = (k * PI) / 5 - PI / 2, rr = k % 2 ? r * 0.45 : r; g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } g.closePath(); g.fill(); }
+  const fy = h * 0.86; g.fillStyle = '#8a6648'; g.fillRect(0, fy, w, h - fy); g.fillStyle = 'rgba(0,0,0,0.22)'; for (let i = 1; i < 5; i++) g.fillRect(0, fy + ((h - fy) * i) / 5, w, h * 0.004);
+  g.fillStyle = 'rgba(0,0,0,0.2)'; g.fillRect(0, fy - h * 0.006, w, h * 0.012);
+  const kx = w * 0.1, kw = w * 0.8, kt = h * 0.18, kb = fy;
+  g.fillStyle = '#2f64c8'; g.fillRect(kx - w * 0.035, kt, w * 0.035, kb - kt); g.fillRect(kx + kw, kt, w * 0.035, kb - kt);
+  g.fillStyle = '#f4f7fb'; g.fillRect(kx, kt, kw, kb - kt); g.fillStyle = '#c4cfdc'; g.fillRect(kx + w * 0.025, kt + h * 0.02, kw - w * 0.05, kb - kt - h * 0.02);
   const tang = [0.86, 0.69, 0.52, 0.35].map((f) => h * f);
-  g.fillStyle = '#eceff1'; for (const y of tang) g.fillRect(kx, y - h * 0.012, kw, h * 0.02);
-  const sach = ['#e57373', '#64b5f6', '#81c784', '#ffd54f']; for (let i = 0; i < 7; i++) { g.fillStyle = sach[i % 4]; g.fillRect(kx + w * (0.04 + i * 0.05), tang[0] - h * (0.08 + (i % 3) * 0.01), w * 0.04, h * (0.08 + (i % 3) * 0.01)); }
-  const cx = w * 0.5, cy = tang[1] - h * 0.07, r = w * 0.1;   // đồng hồ báo thức đỏ (tầng 2)
+  g.fillStyle = '#ffffff'; for (const y of tang) g.fillRect(kx, y - h * 0.012, kw, h * 0.022);
+  const sach = ['#e53935', '#1e88e5', '#43a047', '#fdd835']; for (let i = 0; i < 8; i++) { g.fillStyle = sach[i % 4]; const sh = h * (0.085 + (i % 3) * 0.012); g.fillRect(kx + w * (0.05 + i * 0.045), tang[0] - sh, w * 0.04, sh); }
+  const cx = w * 0.5, cy = tang[1] - h * 0.075, r = w * 0.13;   // đồng hồ báo thức đỏ (tầng 2) có quầng sáng
+  const gl = g.createRadialGradient(cx, cy, r * 0.6, cx, cy, r * 2.2); gl.addColorStop(0, 'rgba(255,240,170,0.55)'); gl.addColorStop(1, 'rgba(255,240,170,0)'); g.fillStyle = gl; g.beginPath(); g.arc(cx, cy, r * 2.2, 0, 7); g.fill();
   g.fillStyle = '#ffd54f'; for (const dx of [-0.7, 0.7]) { g.beginPath(); g.arc(cx + dx * r, cy - r * 1.05, r * 0.38, 0, 7); g.fill(); }
   g.fillStyle = '#e53935'; g.beginPath(); g.arc(cx, cy, r, 0, 7); g.fill(); g.fillStyle = '#fffde7'; g.beginPath(); g.arc(cx, cy, r * 0.78, 0, 7); g.fill();
   g.strokeStyle = '#212121'; g.lineWidth = r * 0.12; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx, cy - r * 0.55); g.moveTo(cx, cy); g.lineTo(cx + r * 0.38, cy + r * 0.12); g.stroke();
-  g.fillStyle = '#7e57c2'; g.fillRect(0, h * 0.74, w * 0.1, h * 0.12);   // mép giường lọt vào mép gương
-  g.fillStyle = 'rgba(255,255,255,0.14)'; g.beginPath(); g.moveTo(w * 0.55, 0); g.lineTo(w * 0.82, 0); g.lineTo(w * 0.2, h); g.lineTo(0, h); g.lineTo(0, h * 0.86); g.closePath(); g.fill();
+  g.fillStyle = '#7e57c2'; g.fillRect(0, h * 0.74, w * 0.09, h * 0.12);   // mép giường lọt vào mép gương
+  g.fillStyle = 'rgba(255,255,255,0.10)'; g.beginPath(); g.moveTo(w * 0.58, 0); g.lineTo(w * 0.8, 0); g.lineTo(w * 0.22, h); g.lineTo(w * 0.02, h); g.closePath(); g.fill();
 }
 // bậc thềm: bậc dưới thấp, bậc trên cao sát cửa (x −3.5..1.5), thảm chùi chân nâu
 function bacThem(K) {
@@ -296,13 +319,14 @@ export const PROPS_KB = {
     K.box(0.3, 1.1, 0.9, '#e57373', -1.6, 0.7, 0.05, 'sach_a'); K.box(0.3, 1.0, 0.9, '#64b5f6', -1.28, 0.65, 0.05, 'sach_b');
     return K.g;
   },
-  anh_ba: (THREE) => {     // ảnh bà đeo dây chuyền (khung đứng)
-    const K = bo(THREE, 'anh_ba');
+  anh_ba: (THREE) => {     // ảnh bà đeo dây chuyền (khung đứng): chân dung vẽ canvas — mặt to, mắt/miệng rõ, dây chuyền vàng + mặt đá đỏ nổi bật (góp ý ep002 s018: "ảnh chưa rõ")
+    const K = bo(THREE, 'anh_ba'), G = glbOn();
     const f = K.sub('khung', 0, 0.75, 0); f.rotation.x = -0.12;
-    K.box(1.2, 1.5, 0.1, '#b8860b', 0, 0, 0, 'vien', f); K.box(0.95, 1.2, 0.02, '#f3e5ab', 0, 0, 0.06, 'nen', f);
-    const tron = (r, c, x, y, z, nm) => { const m = K.cyl(r, r, 0.02, c, x, y, z, nm, f); m.rotation.x = PI / 2; };
-    tron(0.3, '#bdbdbd', 0, 0.2, 0.07, 'toc'); tron(0.22, '#f0c89a', 0, 0.12, 0.08, 'mat');
-    K.box(0.7, 0.36, 0.02, '#7e57c2', 0, -0.38, 0.075, 'ao', f); K.tor(0.13, 0.022, '#ffd54f', 0, -0.2, 0.09, 'day_chuyen', f, { metalness: 0.8, roughness: 0.3 });
+    K.box(1.2, 1.5, 0.1, '#b8860b', 0, 0, 0, 'vien', f);
+    const W = G ? 1.4 : 1.05, H = G ? 1.66 : 1.35;   // GLB: ô ảnh của khung model rộng hơn khung code → phủ kín
+    const mat = matChu(THREE, W, H, veBa, 640);
+    const nen = K.pla(W, H, mat ? new THREE.MeshBasicMaterial({ map: mat.map, color: '#dcdcdc', toneMapped: false }) : new THREE.MeshBasicMaterial({ color: '#f3e5ab' }), 0, 0, 0.065, 'nen', f);
+    nen.userData.matKind = 'none'; nen.userData.matNguon = 'khai-bao';
     const chan = K.box(0.08, 1.3, 0.08, '#8d6e63', 0, 0.64, -0.2, 'chan'); chan.rotation.x = 0.3;
     return K.g;
   },
@@ -325,7 +349,7 @@ export const PROPS_KB = {
     K.box(2.4, 5.6, 0.06, '#bcd6f2', 0, 3.9, 0.02, 'kinh', null, { metalness: 0.1, roughness: 0.3 });
     // ảnh phản chiếu GIẢ (tĩnh, tất định): kệ phòng Gà + đồng hồ báo thức đỏ + mép giường, vẽ canvas lật gương, sáng đều (MeshBasic) → mặt gương không đen
     const anh = matChu(THREE, 2.3, 5.5, ve_guong, 384);
-    const ph = K.pla(2.3, 5.5, anh ? new THREE.MeshBasicMaterial({ map: anh.map, color: '#8d98a8', toneMapped: false }) : new THREE.MeshBasicMaterial({ color: '#d4e4f6' }), 0, 3.9, 0.056, 'phan_chieu');
+    const ph = K.pla(2.3, 5.5, anh ? new THREE.MeshBasicMaterial({ map: anh.map, color: '#aab4c6', toneMapped: false }) : new THREE.MeshBasicMaterial({ color: '#d4e4f6' }), 0, 3.9, 0.056, 'phan_chieu');
     ph.userData.matKind = 'none'; ph.userData.matNguon = 'khai-bao';
     return K.g;
   },
@@ -377,12 +401,13 @@ export const PROPS_KB = {
     K.box(0.06, 0.4, 0.06, '#ffffff', 0.3, 1.5, 1.12, 'kim_chi');
     return K.g;
   },
-  day_chuyen: (THREE) => {  // sợi dây chuyền của bà (nằm phẳng): dây vàng + mặt dây tròn có đá đỏ + tia lấp lánh
-    const K = bo(THREE, 'day_chuyen'); const VANG = { metalness: 0.85, roughness: 0.2, emissive: '#b8860b', emissiveIntensity: 0.45 };
-    const d = K.tor(0.3, 0.032, '#ffd54f', 0, 0.032, 0, 'day', null, VANG); d.rotation.x = -PI / 2; d.scale.set(1.2, 0.8, 1);
-    K.cyl(0.055, 0.055, 0.035, '#ffd54f', 0, 0.035, 0.24, 'moc', null, VANG);
-    K.cyl(0.1, 0.1, 0.04, '#ffd54f', 0, 0.04, 0.3, 'mat_day', null, VANG); K.sph(0.06, '#e53935', 0, 0.075, 0.3, 'mat_da', null, { roughness: 0.1, emissive: '#b71c1c', emissiveIntensity: 0.5 });
-    for (const [i, r] of [0, PI / 4, PI / 2, -PI / 4].entries()) { const t = K.box(0.26, 0.005, 0.012, '#ffffff', 0, 0.11, 0.3, 'lap_lanh' + i, null, { emissive: '#ffffff', emissiveIntensity: 1 }); t.rotation.y = r; }
+  day_chuyen: (THREE) => {  // sợi dây chuyền của bà (nằm phẳng): dây vàng dày hai vòng + mặt dây tròn to có đá đỏ + tia lấp lánh (đọc được ở cận cảnh s074)
+    const K = bo(THREE, 'day_chuyen'); const VANG = { metalness: 0.85, roughness: 0.2, emissive: '#b8860b', emissiveIntensity: 0.6 };
+    const d = K.tor(0.3, 0.05, '#ffd54f', 0, 0.05, 0, 'day', null, VANG); d.rotation.x = -PI / 2; d.scale.set(1.2, 0.8, 1);
+    const d2 = K.tor(0.24, 0.03, '#ffe082', 0, 0.03, 0, 'day2', null, VANG); d2.rotation.x = -PI / 2; d2.scale.set(1.2, 0.8, 1);
+    K.cyl(0.07, 0.07, 0.05, '#ffd54f', 0, 0.05, 0.22, 'moc', null, VANG);
+    K.cyl(0.14, 0.14, 0.05, '#ffd54f', 0, 0.05, 0.32, 'mat_day', null, VANG); K.sph(0.085, '#e53935', 0, 0.085, 0.32, 'mat_da', null, { roughness: 0.1, emissive: '#b71c1c', emissiveIntensity: 0.6 });
+    for (const [i, r] of [0, PI / 4, PI / 2, -PI / 4].entries()) { const t = K.box(0.34, 0.006, 0.014, '#ffffff', 0, 0.16, 0.32, 'lap_lanh' + i, null, { emissive: '#ffffff', emissiveIntensity: 1 }); t.rotation.y = r; }
     return K.g;
   },
   chuong: (THREE) => {     // chuông tay
