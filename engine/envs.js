@@ -51,6 +51,7 @@ const hash = (i, s) => { let x = Math.imul(i ^ 0x9e3779b9, 0x85ebca6b) ^ Math.im
 
 // Asset Kenney dùng trong env (index.html gọi A.load(ENV_ASSETS) trước khi createEnvs).
 export const ENV_ASSETS = [
+  'nhap/hang-rao',   // hàng rào sắt nhà máy (engine/envs/factory.js; ep002) — env tĩnh nên ASSETS của file env không được nạp
   ...SCAN_IDS,   // mô hình quét Poly Haven (engine/scans.js) — bếp, phòng ngủ
   ...furnishIds(KITCHEN_FURNISH), ...furnishIds(BEDROOM_FURNISH),   // đồ bày bằng engine/furnish.js (KayKit/Kenney/quét)
   'nature-kit/plant_bushLargeTriangle', 'nature-kit/plant_bushTriangle', 'nature-kit/grass_leafsLarge', 'nature-kit/plant_flatTall', 'nature-kit/hanging_moss', 'nature-kit/mushroom_redGroup', 'nature-kit/rock_smallA', 'nature-kit/rock_smallFlatA', 'nature-kit/stone_tallA', 'nature-kit/stone_tallB',
@@ -138,7 +139,7 @@ export function createEnvs(THREE, stage, K0, A = null) {
   const place = (g, obj, x, y, z, ry = 0, s = 1) => { obj.position.set(x, y, z); obj.rotation.y = ry; obj.scale.setScalar(s); g.add(obj); return obj; };
   const skyboxes = {};
   const SKY_DAY = 'sky-7', SKY_NIGHT = 'sky-9';   // trời anime ban ngày (có mặt trời + trăng) / đêm xanh có sao (engine/skies.js)
-  const NO_SKY = new Set(['kitchen', 'bedroom', 'reef', 'storm', 'shipStorm']);   // nội thất, dưới nước, bão (trời bão riêng)
+  const NO_SKY = new Set(['kitchen', 'bedroom', 'shop-in', 'reef', 'storm', 'shipStorm']);   // nội thất, dưới nước, bão (trời bão riêng)
   const def = (name, light, build) => { const g = new THREE.Group(); g.name = `env_${name}`; g.visible = false; scene.add(g); const e = { name, light, group: g, update: null }; Object.assign(e, build(g, e) || {}); 
     // bầu trời 6 ảnh (engine/skybox.js): mọi env NGOÀI TRỜI mặc định trời ngày SKY_DAY + trời đêm SKY_NIGHT;
     //   env ghi đè: e.skybox = '<tên>' | null (tắt), e.skyboxNight = '<tên>' | null, e.skyFog / e.skyFogNight (màu sương chân trời).
@@ -332,7 +333,7 @@ export function createEnvs(THREE, stage, K0, A = null) {
       wl.amb.copy(stage.hemi.color).multiplyScalar(stage.hemi.intensity); wl.flash = ctx.flash || 0;
       for (const w of e.group.userData.waters) w.update(w.t || 0, stage.camera, wl, w.ampNow);
     }
-    const indoor = name === 'kitchen' || name === 'bedroom';
+    const indoor = name === 'kitchen' || name === 'bedroom' || name === 'shop-in';
     const AFX = globalThis.__autoFx || {};
     const lk = ctx.light || e.light, storm = lk === 'storm', night = !!L.night;   // trời 6 ảnh: ngày/đêm theo preset ánh sáng; bão → trời bão
     let box = null;

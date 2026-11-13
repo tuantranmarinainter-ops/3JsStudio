@@ -217,6 +217,41 @@ export function buildTown(THREE, A, opts = {}) {
     globalThis.__nhaInfo = nhaInfo;
   }
 
+  // VÀNH NGOÀI (tuỳ chọn, mặc định TẮT: opts.vanh = số vành khối nhà bao quanh thị trấn; ep001 không khai → không đổi gì).
+  // Dùng rng riêng (không đụng R) và KHÔNG thêm vào `houses`/`places` → vị trí, địa điểm, màu nhà cũ giữ nguyên.
+  if (opts.vanh > 0) {
+    const nB = opts.vanh * block, R2 = rng(seed * 104729 + 77), pick2 = (arr) => arr[Math.floor(R2() * arr.length)];
+    const ringRoad = (i, j) => { const crossH = (i % block === 0) && i >= -nB && i <= N + nB; return crossH; };
+    for (let j = -nB; j <= N + nB; j += block) for (let i = -nB - 2; i <= N + nB + 2; i++) {   // phố ngang mới + đoạn nối ra hai bên
+      if (j >= 0 && j <= N && i >= -2 && i <= N + 2) continue;
+      if (ringRoad(i, j)) roadTile(RD('road-crossroad'), X(i), Z(j)); else roadTile(RD('road-straight'), X(i), Z(j), 0);
+    }
+    for (let i = -nB; i <= N + nB; i += block) for (let j = -nB - 2; j <= N + nB + 2; j++) {   // phố dọc mới
+      if (i >= 0 && i <= N && j >= -2 && j <= N + 2) continue;
+      if (j % block === 0 && j >= -nB && j <= N + nB) continue;   // giao lộ đã có ở vòng ngang
+      roadTile(RD('road-straight'), X(i), Z(j), Math.PI / 2);
+    }
+    const ring = [];
+    for (let bx = -opts.vanh; bx < nb + opts.vanh; bx++) for (let bz = -opts.vanh; bz < nb + opts.vanh; bz++) {
+      if (bx >= 0 && bx < nb && bz >= 0 && bz < nb) continue;
+      const cx = X(bx * block) + (block * tile) / 2, cz = Z(bz * block) + (block * tile) / 2;
+      for (const side of [1, -1]) for (const k of [-1, 1]) {
+        const ry = side > 0 ? 0 : Math.PI, idx = 1000 + ring.length;
+        const h = fit(pick2(HOUSES), houseSize, 'xz', `house_vanh_${idx}`); if (!h) continue;
+        box.setFromObject(h); box.getSize(sz);
+        const hx = cx + k * inner / 4, hz = cz + side * (sz.z / 2 + 1.5), fz = hz + side * (sz.z / 2), yard = inner / 2 - (fz - cz) * side;
+        put(h, hx, hz, ry);
+        put(fit(SUB('path-long'), Math.max(3, yard - 1), 'xz'), hx, fz + side * yard / 2, ry);
+        if (R2() < 0.8) put(fit(pick2(TREES), 9 + R2() * 6, 'y', `tree_vanh${idx}`), hx + (R2() < 0.5 ? -1 : 1) * (houseSize * 0.38), fz + side * yard * 0.55, R2() * 6);
+        ring.push({ idx, house: h });
+      }
+    }
+    if (kieu) {
+      const mauV = ganMau(kieu, ring.map((r) => ({ idx: r.idx, x: r.house.position.x, z: r.house.position.z })), { seed: seed + 999, vai: [], nha: {} });
+      for (const r of ring) if (mauV[r.idx]) toMauNha(THREE, r.house, mauV[r.idx]);
+    }
+  }
+
   g.traverse((o) => { if (o.isMesh) { o.castShadow = o.castShadow !== false; o.receiveShadow = true; } });
   return { group: g, places, houses, size: W, seed, nha: nhaInfo, setNight() {}, update: null };
 }

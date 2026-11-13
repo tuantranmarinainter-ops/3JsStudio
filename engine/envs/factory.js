@@ -20,6 +20,7 @@
 //   cua_kho          [17,0,16.5]   cửa kho trượt bằng tôn x 12..22 ngoài tường +Z; e.cuaKho = Group cửa (đổi position.x để mở)
 //   san_ngoai        [0,0,24]      giữa sân (trống x −16..16, z 17..32)
 import { bearGlbOn, bearGlbBakedStatic } from '../bear-glb.js';   // gấu bông GLB nướng tĩnh cho kệ (tắt/thiếu model → gấu khối)
+export const ASSETS = ['nhap/hang-rao'];   // GLB hàng rào (index.html nạp trước khi dựng env)
 export const LIGHT = 'night';   // khoá ánh sáng mặc định (envs.define(tên, m.LIGHT, m.default))
 export const FACTORY_DIEM = {
   trong_giua: [0, 0, 3], bang_chuyen_dau: [-10, 3, -6], bang_chuyen_cuoi: [0, 3, -6], cho_gom: [1.8, 0, -6],
@@ -28,7 +29,7 @@ export const FACTORY_DIEM = {
 };
 
 export default function build(g, e, H) {
-  const { ganTang, THREE, K, mat, plane, hash } = H;
+  const { ganTang, THREE, K, A, mat, plane, hash } = H;
   const R = e.room = new THREE.Group(); R.name = 'factory_room'; g.add(R);
   e.diem = FACTORY_DIEM;
   const grp = (name, tang) => { const o = new THREE.Group(); o.name = name; R.add(tang ? ganTang(o, tang) : o); return o; };
@@ -104,13 +105,27 @@ export default function build(g, e, H) {
 
   // ======================= SÂN NGOÀI (tầng trước) =======================
   const yardF = grp('factory_yard', 'front');
-  { // hàng rào gỗ chữ U, có khe cho gấu chui ở x −2,2…−0,2
+  { // hàng rào chữ U, có khe cho gấu chui ở x −2,3…−0,1. Model người dùng đã duyệt: GLB nhap/hang-rao (hàng rào sắt nhà máy, cao 5, rộng 3,57) xếp lặp theo chiều dài.
+    // Tắt: ?propsGlb=0 / EPISODE.propsGlb=false, hoặc thiếu model → hàng rào gỗ cũ (cọc ván).
+    const glbOn = (() => { try { const v = new URLSearchParams(globalThis.location?.search || '').get('propsGlb'); return v === null ? globalThis.__propsGlb !== false : v !== '0'; } catch (e) { return globalThis.__propsGlb !== false; } })();
+    const src = glbOn && A && A.has && A.has('nhap/hang-rao') ? A.instance('nhap/hang-rao') : null;
+    let msh = null; if (src) { src.updateMatrixWorld(true); src.traverse((o) => { if (!msh && o.isMesh) msh = o; }); }
+    if (msh) {
+      const geo = msh.geometry.clone().applyMatrix4(msh.matrixWorld), mats = [].concat(msh.material).map((m) => { const c = m.clone(); c.side = THREE.DoubleSide; return c; });
+      const W0 = 3.567, items = [];
+      const run = (x0, z0, x1, z1, ry) => { const len = Math.hypot(x1 - x0, z1 - z0), n = Math.max(1, Math.round(len / W0)), sx = len / n / W0;   // n tấm khít đoạn [p0,p1]
+        for (let i = 0; i < n; i++) { const k = (i + 0.5) / n; items.push({ p: [x0 + (x1 - x0) * k, 0, z0 + (z1 - z0) * k], s: [sx, 1, 1.6], r: [0, ry, 0] }); } };
+      run(-30, 34, -3.2, 34, 0); run(0.8, 34, 30, 34, 0);        // mặt sau, chừa khe rộng 4 cho 3 gấu chạy qua (tâm −1,2)
+      run(-30, 15.6, -30, 34, Math.PI / 2); run(30, 15.6, 30, 34, Math.PI / 2);   // hai bên
+      const im = inst(yardF, 'fence_panel_glb', geo, mats.length > 1 ? mats : mats[0], items); im.frustumCulled = false;
+    } else {
     const items = [];
     for (let x = -30; x <= 30.01; x += 1.1) { if (x > -2.3 && x < -0.1) continue; const h = 5 + hash(Math.round(x * 3), 7) * 0.5; items.push({ p: [x, h / 2, 34], s: [0.8, h, 0.25], c: hash(Math.round(x * 3), 9) > 0.5 ? '#9b7d5a' : '#8a6c4b' }); }
     for (const sx of [-30, 30]) for (let z = 15.6; z <= 33.2; z += 1.1) { const h = 5 + hash(Math.round(z * 3), 11) * 0.5; items.push({ p: [sx, h / 2, z], s: [0.25, h, 0.8], c: '#8f7150' }); }
     for (const y of [1.4, 3.7]) { items.push({ p: [-31.2, y, 34], s: [0.3, 0.35, 0.4], c: '#7a5e3f' }); items.push({ p: [-15.15, y, 34.3], s: [29.7, 0.35, 0.25], c: '#6e5538' }); items.push({ p: [15.15, y, 34.3], s: [29.7, 0.35, 0.25], c: '#6e5538' });
       for (const sx of [-30.3, 30.3]) items.push({ p: [sx, y, 24.4], s: [0.25, 0.35, 18.4], c: '#6e5538' }); }
     inst(yardF, 'fence_picket', BOX, white, items);
+    }
   }
   { // thùng gỗ để đứng (+ 2 thùng phụ)
     const items = [];
