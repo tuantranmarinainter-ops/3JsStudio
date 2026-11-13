@@ -5,41 +5,40 @@
    "ten": "Tập 3",
    "viec": [
     {
-     "ten": "Nhận gói kịch bản 104 shot (2:20) + ảnh + giọng",
+     "ten": "Gói kịch bản 104 shot + giọng 2:20 + số đo camera của Codex",
      "tt": "xong"
     },
     {
      "ten": "13 nhân vật thân R6 + 37 mặt emote",
      "tt": "xong",
-     "ghiChu": "người dùng đã duyệt mẫu"
+     "ghiChu": "đã duyệt mẫu; còn lỗi da ngả xanh, không có bàn tay"
     },
     {
-     "ten": "4 bối cảnh mới: phòng Gà, tiệm bánh/may, nhà máy, phố",
+     "ten": "4 bối cảnh mới",
+     "tt": "do",
+     "ghiChu": "sai tỉ lệ so với kịch bản, thiếu nhiều vật chính → phải dựng lại theo Bo_canh_kich_thuoc.json"
+    },
+    {
+     "ten": "Bộ đặt máy theo khung hình (engine/dat-may.js) + kiểm bằng số",
      "tt": "xong",
-     "ghiChu": "còn vài chỗ lệch thiết kế, ghi ở docs/handoff/ep003.md"
+     "ghiChu": "77/104 shot dùng số của Codex"
     },
     {
-     "ten": "Nhập 104 shot + giọng 2:20 + phụ đề từng chữ; vá tập mẫu",
-     "tt": "xong"
+     "ten": "Bản xem thử dist/ep003_xem-thu.html",
+     "tt": "do",
+     "ghiChu": "soi độc lập 13/11: đạt 1, lệch 58, hỏng 45 / 104 shot (docs/handoff/ep003-loi-html-a.md, -b.md)"
     },
     {
-     "ten": "Dựng shot theo khung — vòng 1 (3 agent)",
-     "tt": "xong",
-     "ghiChu": "khoảng 75/103 shot đọc đúng ý khung gốc; 37 shot ngoài khoảng sáng"
-    },
-    {
-     "ten": "Bản xem thử đầu tiên dist/ep003_xem-thu.html",
-     "tt": "xong",
-     "ghiChu": "chưa có tiếng động/nhạc, chưa xuất thử MP4"
-    },
-    {
-     "ten": "Dựng shot vòng 2: ~28 shot chưa đạt + shot tối + sửa bối cảnh",
+     "ten": "Dựng lại set đúng tỉ lệ + đặt lại nhân vật theo bố trí của Codex",
      "tt": "chua"
     },
     {
-     "ten": "Gấu Bắp: model hiện tại lệch thiết kế, chưa có 37 mặt",
-     "tt": "cho",
-     "ghiChu": "cần người dùng chọn hướng"
+     "ten": "Đạo cụ đúng thiết kế (dây chuyền, nhẫn bạc, két, đồng hồ quả quýt, ghim đầu gấu…) + gấu Bắp",
+     "tt": "chua"
+    },
+    {
+     "ten": "Tay và tư thế cho thân R6, màu da",
+     "tt": "chua"
     },
     {
      "ten": "Tiếng động, nhạc, kiểm cả phim, xuất thử MP4",

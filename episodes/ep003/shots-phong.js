@@ -93,5 +93,5 @@ export const SHOTS_PHONG = [
   // s103 · set:bedroom · ngày · 138.22–138.93 s · mặt: hero=nhin_cuoi, bap=soc_ha_hoc
   { id: "s103", dur: 0.709, env: "e3-phong", at: "e3-phong_in", cam: C([-2.2, 2.4, 10.5], [-2.5, 2.2, 6.0], 30, [-2.3, 2.4, 10.0]), props: PR({ ket_ga_om: { at: [-4.8, 0, 7.0], ry: 0 } }), cast: { hero: { at: [-1.2, 0, 6.0], ry: -1.5708, anim: "idle", face: "nhin_cuoi", pose: { torso: { x: 0.2 }, rightArm: { x: -1.4 } } }, bap: { at: [-2.7, 0, 6.0], ry: 1.5708, anim: "idle", face: "soc_ha_hoc" } }, line: 61 },
   // s104 · set:black · ngày · 138.93–140.00 s · mặt: —
-  { id: "s104", dur: 1.075, env: "e3-phong", at: "phong_giua", black: true, cam: {"at":[0,6,0],"look":[0,6,-1],"dist":1,"fov":40}, time: "dem" },
+  { id: "s104", dur: 1.075, env: "e3-phong", time: "dem", lightOverride: { exposure: 0 }, cam: { p: [0, -400, 0], l: [0, -500, 0], fov: 20 } },   // CẮT ĐEN: máy chúc xuống dưới sàn rất xa + phơi sáng 0
 ];
