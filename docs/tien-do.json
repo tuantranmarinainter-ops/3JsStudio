@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 14:40",
+ "capNhat": "2026-11-13 15:00",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -56,8 +56,8 @@
     },
     {
      "ten": "s061: nửa sau shot chỉ thấy sàn gỗ tối (lỗi bối cảnh nhà máy ở shot reveal)",
-     "tt": "dang",
-     "ghiChu": "1 agent Sonnet đang tìm nguyên nhân gốc (kèm s070 bị cắt người)"
+     "tt": "xong",
+     "ghiChu": "nguyên nhân: camera của shot tự cẩu lên cao 24 và nhìn xuống sàn; đã giữ camera thấp, 3 khung đều thấy nhà máy + ông Bách; s070 đã đủ người. Chưa vào bản xem thử"
     },
     {
      "ten": "Lỗi đen màn hình sau khi phim kết thúc",
@@ -66,18 +66,18 @@
     },
     {
      "ten": "s006: hiệu ứng hộp có nhẫn → zoom → nhấp nháy → mất",
-     "tt": "chua",
-     "ghiChu": "làm sau khi agent đạo cụ xong (cùng file)"
+     "tt": "dang",
+     "ghiChu": "1 agent Sonnet đang làm (kèm rà độ sáng cả phim)"
     },
     {
      "ten": "Tiệm gấu: gấu bông trên giá",
-     "tt": "chua",
-     "ghiChu": "làm sau khi agent đạo cụ xong (cùng file)"
+     "tt": "dang",
+     "ghiChu": "1 agent Sonnet đang làm (kèm rà độ sáng cả phim)"
     },
     {
      "ten": "Thêm 6 bảng màu nhà (kẹo ngọt, Địa Trung Hải, rừng thu, sa mạc, đêm neon, Nhật Bản)",
-     "tt": "dang",
-     "ghiChu": "1 agent Sonnet; sẽ có ảnh lưới 11 bảng để duyệt"
+     "tt": "cho",
+     "ghiChu": "đã xong 6 bảng; ảnh lưới 11 bảng đã gửi, chờ người dùng xem (output/look/bang-nha/luoi.jpg)"
     }
    ]
   },
@@ -167,7 +167,7 @@
  "canBan": [
   "Dùng thử khung studio mới khi có PC (kéo viền, rê timeline, phím M, nút ▶/✎)",
   "Nghe thử tiếng động + nhạc khi có PC",
-  "Duyệt 6 bảng màu nhà mới khi có ảnh lưới (đang làm)"
+  "Xem ảnh lưới 11 bảng màu nhà (đã gửi trong chat): bảng nào giữ, bảng nào sửa"
  ],
  "daChot": [
   [
