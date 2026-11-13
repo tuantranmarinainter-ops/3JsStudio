@@ -16,125 +16,285 @@ async function init() {
   const FPS = +root.dataset.fps || 30, DUR = +root.dataset.duration;
   const title = document.title;
 
-  // ---- khung trình phát: thu #root vừa cửa sổ, thanh điều khiển bên phải/dưới ----
+  // ---- khung studio cho PC: thanh trên | cột shot | khung hình + điều khiển | cột thẻ | dải thời gian ----
+  // (bố cục đã duyệt ở dist/studio_ban-mau.html; mọi id điều khiển cũ giữ nguyên, chỉ chuyển vào đúng thẻ)
   const css = document.createElement('style');
   css.textContent = `
-    html, body { width: 100% !important; height: 100% !important; overflow: hidden; background: #0d0f14 !important; }
-    body { display: flex; align-items: center; justify-content: center; gap: 24px; font-family: system-ui, 'Segoe UI', sans-serif; color: #e8ecf3; }
-    #xwrap { position: relative; flex: none; box-shadow: 0 10px 40px rgba(0,0,0,.6); border-radius: 10px; overflow: hidden; }
+    html, body { width: 100% !important; height: 100% !important; overflow: hidden !important; background: #0e1116 !important; margin: 0; }
+    #xapp { --bg:#0e1116; --panel:#161b23; --panel2:#1d2430; --line:#2a3342; --text:#e8ecf2; --muted:#8b96a8; --acc:#4da3ff; --acc2:#1f6fd1; --ok:#3ecf8e; --warn:#f5b84a; --bad:#f2647a;
+      --wl:250px; --wr:360px; --ht:150px; --fs:13px;
+      position: fixed; inset: 0; z-index: 5; box-sizing: border-box; background: var(--bg); color: var(--text); font: var(--fs)/1.45 "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+      display: grid; grid-template-columns: var(--wl) 5px minmax(0, 1fr) 5px var(--wr); grid-template-rows: 44px minmax(0, 1fr) 5px var(--ht);
+      grid-template-areas: "hd hd hd hd hd" "lf g1 st g2 rt" "g3 g3 g3 g3 g3" "ft ft ft ft ft"; }
+    #xapp[data-theme="am"] { --bg:#14110f; --panel:#1d1916; --panel2:#27211c; --line:#3a312a; --text:#f1ebe4; --muted:#a39685; --acc:#f2a154; --acc2:#c9772a; }
+    #xapp[data-theme="sang"] { --bg:#eef1f5; --panel:#ffffff; --panel2:#f3f5f9; --line:#d7dde6; --text:#18202c; --muted:#657186; --acc:#1f6fd1; --acc2:#1557a8; }
+    #xapp *, #xapp *::before, #xapp *::after { box-sizing: border-box; }
+    #xapp.keo { user-select: none; }
+    #xapp button, #xapp select, #xapp input, #xapp textarea { font: inherit; color: inherit; margin: 0; }
+    #xapp button { background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; cursor: pointer; font-weight: 600; }
+    #xapp button:hover:not(:disabled) { border-color: var(--acc); }
+    #xapp button:disabled { opacity: .45; cursor: default; }
+    #xapp button.main { background: var(--acc2); border-color: var(--acc); color: #fff; font-weight: 700; }
+    #xapp button.act, #xapp button.on { border-color: var(--acc); color: var(--acc); }
+    #xapp button.main.act { color: #fff; }
+    #xapp select, #xapp input[type=number], #xapp input[type=text], #xapp textarea { background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; color: var(--text); }
+    #xapp input[type=range], #xapp input[type=checkbox], #xapp input[type=radio] { accent-color: var(--acc); }
+    #xapp .muted { color: var(--muted); font-size: .92em; } #xapp .num, #xapp .pill, #xapp .muted.num { font-variant-numeric: tabular-nums; }
+    #xapp kbd { background: var(--panel2); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; font: inherit; font-size: .85em; }
+    #xapp h4 { margin: 14px 0 8px; font-size: .85em; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); }
+    #xapp h4:first-child { margin-top: 0; }
+
+    #xhead { grid-area: hd; display: flex; align-items: center; gap: 12px; padding: 0 14px; background: var(--panel); border-bottom: 1px solid var(--line); position: relative; min-width: 0; }
+    #xhead .logo { font-weight: 800; letter-spacing: .3px; white-space: nowrap; } #xhead .logo span { color: var(--acc); }
+    #xhead .xtit { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+    #xhead .sp { flex: 1; }
+    #xapp .pill { padding: 2px 9px; border-radius: 99px; background: var(--panel2); border: 1px solid var(--line); font-size: .92em; white-space: nowrap; }
+    #xhead .gear { font-size: 17px; padding: 3px 9px; }
+    #xpop { position: absolute; right: 14px; top: 42px; width: 330px; max-width: calc(100vw - 28px); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; box-shadow: 0 14px 40px rgba(0,0,0,.45); z-index: 30; display: none; max-height: calc(100vh - 60px); overflow: auto; }
+    #xpop.on { display: block; }
+
+    #xapp .gut { background: var(--line); cursor: col-resize; position: relative; z-index: 5; } #xapp .gut.h { cursor: row-resize; }
+    #xapp .gut:hover, #xapp .gut.act { background: var(--acc); }
+    #xapp .gut[data-g=wl] { grid-area: g1; } #xapp .gut[data-g=wr] { grid-area: g2; } #xapp .gut[data-g=ht] { grid-area: g3; }
+    #xapp .col { background: var(--panel); display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+    #xleft { grid-area: lf; }
+    #xapp .hd { padding: 9px 12px; font-size: .85em; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 8px; }
+    #xapp .hd input[type=text] { flex: 1; min-width: 0; padding: 3px 7px; text-transform: none; letter-spacing: 0; font-weight: 400; }
+    #xapp .hd label { text-transform: none; letter-spacing: 0; white-space: nowrap; display: flex; gap: 4px; align-items: center; cursor: pointer; font-weight: 400; }
+    #xapp .scroll { overflow: auto; flex: 1; min-height: 0; }
+    #xapp .shot .sid { display: flex; align-items: center; gap: 4px; }
+    #xapp .shot .sb { display: none; gap: 3px; } #xapp .shot.on .sb { display: inline-flex; }
+    #xapp .shot .sb button { padding: 0 6px; font-size: .85em; line-height: 1.5; }
+    #xapp .shot { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; padding: 6px 12px; border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent); cursor: pointer; }
+    #xapp .shot:hover { background: var(--panel2); }
+    #xapp .shot.on { background: color-mix(in srgb, var(--acc) 16%, var(--panel)); box-shadow: inset 3px 0 0 var(--acc); }
+    #xapp .shot .tx { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); font-size: .92em; }
+    #xapp .cnt { display: inline-block; min-width: 17px; text-align: center; border-radius: 9px; background: var(--bad); color: #fff; font-size: .8em; font-weight: 700; padding: 0 4px; }
+    #xapp .sec { padding: 8px 12px; color: var(--muted); }
+
+    #xstage { grid-area: st; display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; min-width: 0; background: var(--bg); }
+    #xview { display: flex; align-items: center; justify-content: center; min-height: 0; min-width: 0; padding: 14px; position: relative; overflow: hidden; }
+    #xwrap { position: relative; flex: none; box-shadow: 0 10px 40px rgba(0,0,0,.5); border-radius: 8px; overflow: hidden; cursor: pointer; }
     #xwrap > #root { transform-origin: 0 0; position: absolute; left: 0; top: 0; }
-    #xui { width: 300px; flex: none; display: flex; flex-direction: column; gap: 12px; font-size: 14px; }
-    #xui h1 { font-size: 17px; margin: 0 0 4px; font-weight: 700; }
-    #xui .row { display: flex; gap: 8px; align-items: center; }
-    #xui button { font: inherit; font-weight: 600; border: 0; border-radius: 8px; padding: 10px 14px; cursor: pointer; background: #2a3040; color: #e8ecf3; }
-    #xui button:hover { background: #343c50; }
-    #xui button.main { background: #e5484d; color: #fff; padding: 13px 14px; font-size: 15px; }
-    #xui button.main:hover { background: #f05358; }
-    #xui button:disabled { opacity: .45; cursor: default; }
-    #xui select, #xui input[type=number] { font: inherit; background: #1b2030; color: #e8ecf3; border: 1px solid #343c50; border-radius: 6px; padding: 7px 8px; }
-    #xui select { flex: 1; }
-    #xui input[type=range] { flex: 1; }
-    #xui .muted { color: #8b93a7; font-size: 12.5px; line-height: 1.45; }
-    #xui .chk { display: flex; align-items: center; gap: 7px; cursor: pointer; flex: 1; background: #1b2030; border: 1px solid #343c50; border-radius: 6px; padding: 7px 9px; }
-    #xui .chk input { width: 16px; height: 16px; accent-color: #e5484d; margin: 0; }
-    #xui .lbl { width: 78px; color: #8b93a7; font-size: 12.5px; }
-    #xui .fxgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-    #xui .fxgrid .chk { font-size: 12.5px; padding: 6px 8px; }
-    #xui .sfxrow { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-    #xui .sfxrow .chk { flex: 1.4; font-size: 12.5px; padding: 6px 8px; }
-    #xui .sfxrow input[type=range] { flex: 1; min-width: 70px; }
-    #xui .sfxrow .pct { width: 38px; text-align: right; color: #8b93a7; font-size: 12px; font-variant-numeric: tabular-nums; }
-    #xbar { height: 8px; background: #1b2030; border-radius: 4px; overflow: hidden; }
-    #xbar > div { height: 100%; width: 0; background: #e5484d; transition: width .2s; }
-    #xstat { min-height: 38px; white-space: pre-line; }
-    #xtime { font-variant-numeric: tabular-nums; min-width: 92px; text-align: right; }
-    #xui .xfr { gap: 6px; } #xui .xstep { padding: 6px 0; flex: 1; font-variant-numeric: tabular-nums; }
-    #xframe { width: 78px; font: inherit; background: #1b2030; color: #e8ecf3; border: 1px solid #343c50; border-radius: 6px; padding: 4px 6px; }
-    #xftot, #xshot, #xshinfo { font-variant-numeric: tabular-nums; }
-    #xshsel { flex: 1; min-width: 0; padding: 5px 6px; border-radius: 6px; background: #1c2230; color: #fff; border: 1px solid #3a4358; font: inherit; font-weight: 700; }
-    .xsh { padding: 5px 9px; }
-    #xui { max-height: 100vh; overflow-y: auto; padding-right: 4px; box-sizing: border-box; }
-    #xwrap { cursor: pointer; }
+    #xbadge { position: absolute; top: 14px; left: 14px; display: flex; gap: 6px; flex-wrap: wrap; z-index: 4; pointer-events: none; }
+    #xbadge.off { display: none; }
     #xann { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 5; display: none; touch-action: none; cursor: crosshair; }
-    #xwrap.annot { cursor: crosshair; outline: 3px solid #e5484d; }
+    #xwrap.annot { cursor: crosshair; outline: 3px solid var(--bad); }
     #xwrap.annot #xann { display: block; }
-    #xannbox { display: flex; flex-direction: column; gap: 8px; }
-    #xanntools { display: none; flex-direction: column; gap: 8px; background: #151a27; border: 1px solid #343c50; border-radius: 8px; padding: 10px; }
-    #xanntools.on { display: flex; }
-    #xanntools .tl { padding: 7px 4px; flex: 1; font-size: 12.5px; }
-    #xanntools .tl.act { background: #e5484d; color: #fff; }
-    #xnote { font: inherit; width: 100%; box-sizing: border-box; min-height: 70px; resize: vertical; background: #1b2030; color: #e8ecf3; border: 1px solid #343c50; border-radius: 6px; padding: 7px 8px; }
-    #xmic.rec { background: #e5484d; color: #fff; }
+    #xapp .transport { display: flex; align-items: center; gap: 8px 6px; padding: 8px 14px; background: var(--panel); border-top: 1px solid var(--line); flex-wrap: wrap; }
+    #xapp .grp { display: flex; align-items: center; gap: 4px; padding-right: 10px; border-right: 1px solid var(--line); }
+    #xapp .grp:last-child { border-right: 0; padding-right: 0; } #xapp .grp.grow { flex: 1; min-width: 150px; }
+    #xapp .grp .lb { font-size: .85em; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; margin-right: 3px; }
+    #xapp #xplay { min-width: 84px; background: var(--acc2); border-color: var(--acc); color: #fff; }
+    #xapp #xseek { flex: 1; min-width: 80px; } #xtime { min-width: 54px; text-align: right; font-variant-numeric: tabular-nums; }
+    #xframe { width: 78px; } #xshsel { font-weight: 700; min-width: 70px; max-width: 110px; }
+    #xapp .xsh, #xapp .xstep { padding: 5px 9px; }
+    #xshinfo, #xftot, #xshot { font-variant-numeric: tabular-nums; }
+
+    #xannbox { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); width: min(460px, 92%); background: var(--panel); border: 1px solid var(--acc); border-radius: 10px; padding: 12px; box-shadow: 0 14px 40px rgba(0,0,0,.55); z-index: 20; display: none; flex-direction: column; gap: 8px; }
+    #xannbox.on { display: flex; }
+    #xannbox .tools { display: flex; gap: 5px; flex-wrap: wrap; }
+    #xannbox .tl { padding: 4px 8px; }
+    #xannbox .tl[data-tool].act { background: var(--bad); border-color: var(--bad); color: #fff; }
+    #xnote { width: 100%; min-height: 64px; resize: vertical; }
+    #xmic.rec { background: var(--bad); color: #fff; border-color: var(--bad); }
+
+    #xright { grid-area: rt; display: grid; grid-template-columns: 58px minmax(0, 1fr); min-height: 0; min-width: 0; background: var(--panel); }
+    #xapp .rail { border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px; padding: 6px 4px; background: var(--panel2); }
+    #xapp .tab { padding: 9px 2px; text-align: center; cursor: pointer; color: var(--muted); border-radius: 7px; font-size: .78em; font-weight: 600; position: relative; }
+    #xapp .tab i { display: block; font-style: normal; font-size: 18px; line-height: 1.2; }
+    #xapp .tab:hover { background: var(--panel); }
+    #xapp .tab.on { color: var(--text); background: var(--panel); box-shadow: inset 3px 0 0 var(--acc); }
+    #xapp .tab .cnt { position: absolute; top: 3px; right: 3px; }
+    #xright > .scroll { position: relative; }
+    #xapp .pane { display: none; padding: 12px; } #xapp .pane.on { display: block; }
+    #xapp .row { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+    #xapp .row > .l { width: 92px; color: var(--muted); flex: none; }
+    #xapp .row > :not(.l) { min-width: 0; } #xapp .row > select, #xapp .row > input[type=range] { flex: 1; }
+    #xapp .sw { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 6px; margin-bottom: 8px; }
+    #xapp .chk, #xapp .sw label { display: flex; align-items: center; gap: 7px; padding: 6px 8px; background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; cursor: pointer; }
+    #xapp .sfxrow { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    #xapp .sfxrow .chk { flex: 1.4; } #xapp .sfxrow input[type=range] { flex: 1; min-width: 70px; }
+    #xapp .sfxrow .pct { width: 38px; text-align: right; color: var(--muted); font-size: .9em; font-variant-numeric: tabular-nums; }
+    #xapp .fxgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 6px; }
+    #xbar { height: 8px; background: var(--panel2); border-radius: 4px; overflow: hidden; margin: 10px 0; }
+    #xbar > div { height: 100%; width: 0; background: var(--acc); transition: width .2s; }
+    #xstat { min-height: 38px; white-space: pre-line; }
     #xnotes { display: flex; flex-direction: column; gap: 6px; }
-    #xnotes .nt { display: flex; gap: 8px; align-items: center; background: #1b2030; border: 1px solid #343c50; border-radius: 6px; padding: 5px; cursor: pointer; }
-    #xnotes .nt:hover { background: #232a3d; }
+    #xnotes .nt { display: flex; gap: 8px; align-items: center; background: var(--panel2); border: 1px solid var(--line); border-left: 3px solid var(--warn); border-radius: 6px; padding: 5px; cursor: pointer; }
+    #xnotes .nt:hover { border-color: var(--acc); border-left-color: var(--warn); }
     #xnotes .nt img { width: 36px; height: 64px; object-fit: cover; border-radius: 3px; flex: none; background: #000; }
-    #xnotes .nt .tx { flex: 1; min-width: 0; font-size: 12.5px; line-height: 1.35; }
-    #xnotes .nt .tx b { color: #ffb4b6; font-variant-numeric: tabular-nums; }
-    #xnotes .nt .tx span { display: block; color: #8b93a7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    #xnotes .nt .del { padding: 4px 8px; background: #3a2226; }
-    @media (max-aspect-ratio: 1/1) { body { flex-direction: column; gap: 12px; } #xui { width: min(92vw, 420px); } }
+    #xnotes .nt .tx { flex: 1; min-width: 0; font-size: .95em; line-height: 1.35; }
+    #xnotes .nt .tx b { font-variant-numeric: tabular-nums; }
+    #xnotes .nt .tx span { display: block; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #xnotes .nt .del { padding: 2px 8px; }
+    #xclst.ok { color: var(--ok); } #xclst.no { color: var(--warn); }
+
+    #xfoot { grid-area: ft; background: var(--panel); display: flex; flex-direction: column; padding: 6px 14px 8px; gap: 3px; position: relative; min-height: 0; min-width: 0; }
+    #xapp .trk { display: grid; grid-template-columns: 74px minmax(0, 1fr); align-items: center; gap: 8px; min-height: 0; flex: 1; }
+    #xapp .trk.fix { flex: none; height: 18px; }
+    #xapp .trk .nm { font-size: .82em; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; white-space: nowrap; overflow: hidden; }
+    #xapp .ruler { display: flex; justify-content: space-between; font-size: .85em; color: var(--muted); font-variant-numeric: tabular-nums; }
+    #xapp .lane { height: 100%; min-height: 8px; display: flex; gap: 1px; border-radius: 4px; overflow: hidden; background: var(--panel2); position: relative; }
+    #xapp .blk { height: 100%; background: color-mix(in srgb, var(--acc) 30%, var(--panel2)); min-width: 1px; }
+    #xapp .blk:nth-child(even) { background: color-mix(in srgb, var(--acc) 20%, var(--panel2)); }
+    #xapp .blk.on { background: var(--acc); }
+    #xapp .lane canvas { width: 100%; height: 100%; display: block; }
+    #xlmk { overflow: visible; background: none; }
+    #xlmk b { position: absolute; top: 0; width: 14px; height: 16px; margin-left: -7px; background: var(--warn); color: #000; font-size: 10px; line-height: 14px; text-align: center; border-radius: 3px 3px 7px 7px; cursor: pointer; }
+    #xscrub { position: absolute; left: 96px; right: 14px; top: 6px; bottom: 6px; cursor: ew-resize; z-index: 3; }
+    #xhead2, #xghost { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; pointer-events: none; }
+    #xhead2 { background: #fff; box-shadow: 0 0 6px var(--acc); } #xhead2::before { content: ""; position: absolute; top: -3px; left: -5px; border: 6px solid transparent; border-top-color: var(--acc); }
+    #xghost { background: var(--muted); opacity: .6; display: none; }
+    #xtip { position: absolute; top: 0; transform: translateX(-50%); background: var(--panel2); border: 1px solid var(--line); border-radius: 5px; padding: 1px 7px; font-size: .85em; white-space: nowrap; display: none; pointer-events: none; z-index: 6; }
+
+    @media (max-width: 1099px), (max-aspect-ratio: 1/1) {
+      #xapp { grid-template-columns: minmax(0, 1fr); grid-template-rows: 44px minmax(0, 1fr) minmax(120px, 38vh) 5px min(var(--ht), 150px); grid-template-areas: "hd" "st" "rt" "g3" "ft"; }
+      #xapp #xleft, #xapp .gut[data-g=wl], #xapp .gut[data-g=wr], #xhead .pill, #xhead .xtit { display: none; }
+      #xright { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+      #xapp .rail { flex-direction: row; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+      #xapp .tab { flex: 1; padding: 4px 6px; white-space: nowrap; } #xapp .tab i { display: inline; font-size: 14px; margin-right: 3px; }
+      #xapp .pane { display: block; border-bottom: 1px solid var(--line); }
+      #xapp .transport { padding: 6px 10px; } #xapp .grp { border-right: 0; padding-right: 4px; }
+    }
   `;
   document.head.appendChild(css);
   const wrap = document.createElement('div'); wrap.id = 'xwrap';
   root.parentNode.insertBefore(wrap, root); wrap.appendChild(root);
   const annCv = document.createElement('canvas'); annCv.id = 'xann'; wrap.appendChild(annCv);   // lớp vẽ ghi chú — chỉ trên màn hình, không bao giờ vào video xuất
-  const ui = document.createElement('div'); ui.id = 'xui';
-  ui.innerHTML = `
-    <h1>${escapeHtml(title)}</h1>
-    <div class="muted">${W0}×${H0} · ${FPS} fps · ${fmt(DUR)}</div>
-    <div class="row"><span class="lbl">Ngôn ngữ</span><select id="xlang"><option value="vi">Tiếng Việt</option><option value="en">English</option></select></div>
-    <div class="row" id="xvidrow"><span class="lbl">Giọng</span><select id="xvid"></select></div>
-    <div class="row"><label class="chk"><input id="xsubs" type="checkbox" checked> Phụ đề</label><label class="chk"><input id="xvoice" type="checkbox" checked> Giọng đọc</label><label class="chk" id="xcredrow" style="display:none"><input id="xcred" type="checkbox"> Ghi công</label></div>
-    <div id="xsfxbox" style="display:none"><div class="lbl" style="width:auto;margin:2px 0 6px">Tiếng động</div><div id="xsfx"></div></div>
-    <div id="xaudopt" class="row" style="flex-direction:column;align-items:stretch;gap:6px">
-      <label class="chk" id="xduckrow" style="display:none"><input id="xduck" type="checkbox" checked> Giảm nhạc khi có lời</label>
-      <label class="chk"><input id="xloud" type="checkbox" checked> Chuẩn âm lượng YouTube (−14 LUFS)</label></div>
-    <div id="xfxbox" style="display:none"><div class="lbl" style="width:auto;margin:2px 0 6px">Hiệu ứng hình</div><div id="xfx" class="fxgrid"></div></div>
-    <div class="row"><button id="xplay">▶ Xem</button><input id="xseek" type="range" min="0" max="${DUR}" step="0.001" value="0"><span id="xtime">0:00.0</span></div>
-    <div class="row xfr" id="xshotrow" style="display:none"><span class="lbl" style="width:auto">Shot</span><button class="xsh" data-d="-1" title="Shot trước (phím [)">◀</button><select id="xshsel" title="Nhảy tới shot"></select><button class="xsh" data-d="1" title="Shot sau (phím ])">▶</button><button class="xsh" data-d="0" title="Về đầu shot này">↺</button><span id="xshinfo" class="muted"></span></div>
-    <div class="row xfr"><span class="lbl" style="width:auto">Frame</span><input id="xframe" type="number" min="0" step="1" value="0"><span id="xftot" class="muted"></span><span id="xshot" class="muted"></span></div>
-    <div class="row xfr">${[-10, -5, -1, 1, 5, 10].map((d) => `<button class="xstep" data-d="${d}" title="${d < 0 ? 'Lùi' : 'Tới'} ${Math.abs(d)} frame">${d < 0 ? '◀' : ''}${Math.abs(d)}${d > 0 ? '▶' : ''}</button>`).join('')}</div>
-    <div id="xannbox">
-      <button id="xannbtn">✎ Ghi chú lỗi</button>
-      <div id="xanntools">
-        <div class="muted">Vẽ lên khung hình để chỉ chỗ lỗi (video tạm dừng). Nét vẽ KHÔNG nằm trong file MP4 xuất ra.</div>
-        <div class="row xfr"><button class="tl act" data-tool="pen">✏ Bút</button><button class="tl" data-tool="ell">◯ Elip</button><button class="tl" data-tool="arrow">➚ Mũi tên</button></div>
-        <div class="row xfr"><button class="tl" id="xundo">↶ Hoàn tác</button><button class="tl" id="xclr">🗑 Xoá nét</button></div>
-        <textarea id="xnote" placeholder="Ghi chú cho khung này (gõ hoặc bấm micro để nói)…"></textarea>
-        <div class="row xfr"><label class="chk" style="flex-basis:100%"><input id="xscope" type="checkbox" checked> Lỗi của cả shot (bỏ tick = chỉ đúng khung này)</label><button id="xmic" style="flex:1">🎤 Nói</button><button id="xsave" class="main" style="flex:2;padding:10px 14px;font-size:14px">Lưu ghi chú</button></div>
-        <div id="xmicst" class="muted"></div>
+  const app = document.createElement('div'); app.id = 'xapp';
+  const stepBtn = (d) => `<button class="xstep" data-d="${d}" title="${d < 0 ? 'Lùi' : 'Tới'} ${Math.abs(d)} frame">${d < 0 ? '◀' : ''}${Math.abs(d)}${d > 0 ? '▶' : ''}</button>`;
+  app.innerHTML = `
+    <header id="xhead">
+      <div class="logo">3JS <span>Studio</span></div>
+      <b class="xtit">${escapeHtml(title)}</b>
+      <span class="pill num" id="xsumm">${W0}×${H0} · ${FPS} fps · ${fmt(DUR)}</span>
+      <div class="sp"></div>
+      <button class="main" id="xhgo">⬇ Xuất MP4</button>
+      <button class="gear" id="xgear" title="Cài đặt studio">⚙</button>
+      <div id="xpop">
+        <h4>Màu khung</h4>
+        <div class="row"><button data-th="">Xanh đêm</button><button data-th="am">Than ấm</button><button data-th="sang">Sáng</button></div>
+        <h4>Hiển thị</h4>
+        <div class="row"><span class="l">Cỡ chữ</span><input type="range" id="xfs" min="11" max="16" value="13"></div>
+        <div class="sw">
+          <label data-rowchk="xt-mk"><input type="checkbox" checked data-trk="xt-mk"> Hàng Marker</label>
+          <label data-rowchk="xt-shot"><input type="checkbox" checked data-trk="xt-shot"> Hàng Shot</label>
+          <label data-rowchk="xt-voice"><input type="checkbox" checked data-trk="xt-voice"> Hàng Giọng</label>
+          <label data-rowchk="xt-sfx"><input type="checkbox" checked data-trk="xt-sfx"> Hàng Tiếng động</label>
+          <label><input type="checkbox" checked id="xbadgechk"> Nhãn shot trên hình</label>
+        </div>
+        <h4>Bố cục</h4>
+        <div class="row"><button id="xreset">Đặt lại kích thước khung</button></div>
       </div>
-      <div id="xnotes"></div>
-      <div id="xsendrow" style="display:none;flex-direction:column;gap:6px">
-        <button id="xsend" class="main" style="font-size:14px">📨 Gửi góp ý (<span id="xncnt">0</span>)</button>
-        <div class="muted">Bấm Gửi góp ý → lưu file .json vào thư mục <b>S:\\3JS Studio\\feedback\\</b> để Claude đọc.</div>
-        <div id="xsendst" class="muted"></div>
-      </div>
-    </div>
-    <hr style="border:0;border-top:1px solid #262c3b;width:100%;margin:4px 0">
-    <div class="row"><select id="xres">${Object.entries(PRESETS).map(([k, p]) => `<option value="${k}"${k === '2k' ? ' selected' : ''}>${p.label}</option>`).join('')}</select></div>
-    <div class="row"><label class="muted" style="flex:1">Đoạn (giây)</label>
-      <input id="xs" type="number" min="0" max="${DUR}" step="0.1" value="0" style="width:72px"> –
-      <input id="xe" type="number" min="0" max="${DUR}" step="0.1" value="${DUR.toFixed(2)}" style="width:80px"></div>
-    <button id="xgo" class="main">⬇ Xuất MP4</button>
-    <button id="xstop" style="display:none">Dừng</button>
-    <div id="xbar"><div></div></div>
-    <div id="xstat" class="muted"></div>
-    <div class="muted">Render bằng card đồ hoạ của máy bạn, không cần mạng. Giữ tab này mở trong lúc xuất.
-      Chrome/Edge sẽ hỏi chỗ lưu file trước khi bắt đầu.</div>`;
-  document.body.appendChild(ui);
-  const $ = (id) => document.getElementById(id);
-  if (!('VideoEncoder' in window)) { $('xgo').disabled = true; $('xstat').textContent = 'Trình duyệt này không có WebCodecs → mở bằng Chrome hoặc Edge bản mới.'; }
+    </header>
 
+    <aside id="xleft" class="col">
+      <div class="hd">Shot <input type="text" id="xfind" placeholder="tìm mã / lời…"><label title="Chỉ hiện những shot đã có ghi chú"><input type="checkbox" id="xonlyerr"> có ghi chú</label></div>
+      <div class="scroll" id="xshots"></div>
+    </aside>
+    <div class="gut" data-g="wl"></div>
+
+    <section id="xstage">
+      <div id="xview">
+        <div id="xbadge"><span class="pill" id="xbshot"></span><span class="pill" id="xbfr"></span><span class="pill" id="xbtime"></span></div>
+        <div id="xannbox">
+          <div class="row" style="margin-bottom:0"><b id="xmtitle" style="flex:1"></b><button id="xmclose" title="Huỷ (Esc)">✕</button></div>
+          <div class="muted">Vẽ lên khung hình để chỉ chỗ lỗi (video tạm dừng). Nét vẽ KHÔNG nằm trong file MP4 xuất ra.</div>
+          <div class="tools" id="xanntools"><button class="tl act" data-tool="pen">✏ Bút</button><button class="tl" data-tool="ell">◯ Elip</button><button class="tl" data-tool="arrow">➚ Mũi tên</button><button class="tl" id="xundo">↶ Hoàn tác</button><button class="tl" id="xclr">🗑 Xoá nét</button></div>
+          <textarea id="xnote" placeholder="Lỗi là gì? (gõ hoặc bấm 🎤 để nói · Ctrl+Enter lưu · Esc huỷ)"></textarea>
+          <div class="row" style="margin:0"><label class="chk" style="flex:2"><input id="xscope" type="checkbox" checked> Lỗi của cả shot</label><button id="xmic">🎤 Nói</button><button id="xsave" class="main">Lưu marker</button></div>
+          <div id="xmicst" class="muted"></div>
+        </div>
+      </div>
+      <div class="transport">
+        <div class="grp"><button id="xplay">▶ Xem</button></div>
+        <div class="grp" id="xshotrow" style="display:none"><span class="lb">Shot</span><button class="xsh" data-d="-1" title="Shot trước (phím [)">◀</button><select id="xshsel" title="Nhảy tới shot"></select><button class="xsh" data-d="1" title="Shot sau (phím ])">▶</button><button class="xsh" data-d="0" title="Về đầu shot này">↺</button><span id="xshinfo" class="muted"></span></div>
+        <div class="grp"><span class="lb">Frame</span>${stepBtn(-10)}${stepBtn(-1)}<input id="xframe" type="number" min="0" step="1" value="0">${stepBtn(1)}${stepBtn(10)}<span id="xftot" class="muted"></span><span id="xshot" class="muted"></span></div>
+        <div class="grp"><button id="xannbtn" title="Đánh dấu lỗi tại đây (phím M)">⚑ Marker <kbd>M</kbd></button></div>
+        <div class="grp grow"><input id="xseek" type="range" min="0" max="${DUR}" step="0.001" value="0"><span id="xtime">0:00.0</span></div>
+      </div>
+    </section>
+
+    <div class="gut" data-g="wr"></div>
+    <aside id="xright">
+      <div class="rail">
+        <div class="tab on" data-p="xp1"><i>👁</i>Xem</div>
+        <div class="tab" data-p="xp2" id="xtab2"><i>🔊</i>Âm thanh</div>
+        <div class="tab" data-p="xp3" id="xtab3"><i>✨</i>Hiệu ứng</div>
+        <div class="tab" data-p="xp4"><i>⚑</i>Ghi chú<span class="cnt" id="xncnt0" style="display:none"></span></div>
+        <div class="tab" data-p="xp5"><i>⬇</i>Xuất</div>
+      </div>
+      <div class="scroll">
+        <div class="pane on" id="xp1">
+          <h4>Ngôn ngữ và giọng</h4>
+          <div class="row"><span class="l">Ngôn ngữ</span><select id="xlang"><option value="vi">Tiếng Việt</option><option value="en">English</option></select></div>
+          <div class="row" id="xvidrow"><span class="l">Giọng</span><select id="xvid"></select></div>
+          <div class="sw"><label class="chk"><input id="xsubs" type="checkbox" checked> Phụ đề</label><label class="chk"><input id="xvoice" type="checkbox" checked> Giọng đọc</label><label class="chk" id="xcredrow" style="display:none"><input id="xcred" type="checkbox"> Ghi công</label></div>
+          <h4>Shot đang xem</h4>
+          <div class="row"><span class="l">Loại</span><span id="xiloai">—</span></div>
+          <div class="row"><span class="l">Thời lượng</span><span class="num" id="xidur">—</span></div>
+          <div class="row"><span class="l">Lời</span><span id="xitx" class="muted">—</span></div>
+        </div>
+        <div class="pane" id="xp2">
+          <div id="xsfxbox" style="display:none"><h4>Âm lượng từng lớp</h4><div id="xsfx"></div></div>
+          <h4>Xử lý</h4>
+          <div id="xaudopt" class="sw">
+            <label class="chk" id="xduckrow" style="display:none"><input id="xduck" type="checkbox" checked> Giảm nhạc khi có lời</label>
+            <label class="chk"><input id="xloud" type="checkbox" checked> Chuẩn âm lượng YouTube (−14 LUFS)</label></div>
+        </div>
+        <div class="pane" id="xp3">
+          <div id="xfxbox" style="display:none"><h4>Hiệu ứng hình</h4><div id="xfx" class="fxgrid"></div></div>
+          <div id="xfxnone" class="muted">Tập này chưa có hiệu ứng hình tuỳ chọn.</div>
+        </div>
+        <div class="pane" id="xp4">
+          <div class="row"><button class="main" id="xsendc" style="flex:2">➤ Gửi tới Claude</button><button id="xsend" style="flex:1" title="Tải file góp ý .json về máy">⬇ Xuất file</button></div>
+          <div class="muted" id="xclst" style="margin:-3px 0 4px">Đang dò máy nhận…</div>
+          <div class="muted" id="xsendst" style="margin-bottom:10px;white-space:pre-line"></div>
+          <h4>Marker và ghi chú (<span id="xncnt">0</span>) — bấm <kbd>M</kbd> để thêm</h4>
+          <div id="xnotes"></div>
+        </div>
+        <div class="pane" id="xp5">
+          <h4>Xuất MP4 bằng GPU máy này</h4>
+          <div class="row"><span class="l">Độ phân giải</span><select id="xres">${Object.entries(PRESETS).map(([k, p]) => `<option value="${k}"${k === '2k' ? ' selected' : ''}>${p.label}</option>`).join('')}</select></div>
+          <div class="row"><span class="l">Đoạn (giây)</span>
+            <input id="xs" type="number" min="0" max="${DUR}" step="0.1" value="0" style="width:72px"> –
+            <input id="xe" type="number" min="0" max="${DUR}" step="0.1" value="${DUR.toFixed(2)}" style="width:80px"></div>
+          <button id="xgo" class="main" style="width:100%;padding:10px">⬇ Xuất MP4</button>
+          <button id="xstop" style="display:none;width:100%;margin-top:6px">Dừng</button>
+          <div id="xbar"><div></div></div>
+          <div id="xstat" class="muted"></div>
+          <div class="muted">Render bằng card đồ hoạ của máy bạn, không cần mạng. Giữ tab này mở trong lúc xuất.
+            Chrome/Edge sẽ hỏi chỗ lưu file trước khi bắt đầu.</div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="gut h" data-g="ht"></div>
+    <footer id="xfoot">
+      <div class="trk fix"><span class="nm"></span><div class="ruler" id="xruler"></div></div>
+      <div class="trk fix" id="xt-mk"><span class="nm">Marker</span><div class="lane" id="xlmk"></div></div>
+      <div class="trk" id="xt-shot" style="display:none"><span class="nm">Shot</span><div class="lane" id="xlshot"></div></div>
+      <div class="trk" id="xt-voice" style="display:none"><span class="nm">Giọng</span><div class="lane"><canvas id="xcvvoice" width="1600" height="40"></canvas></div></div>
+      <div class="trk" id="xt-sfx" style="display:none"><span class="nm">Tiếng động</span><div class="lane"><canvas id="xcvsfx" width="1600" height="40"></canvas></div></div>
+      <div id="xscrub"><div id="xghost"></div><div id="xhead2"></div><div id="xtip"></div></div>
+    </footer>`;
+  document.body.appendChild(app);
+  $('xview').appendChild(wrap);
+  function $(id) { return document.getElementById(id); }
+  if (!('VideoEncoder' in window)) { $('xgo').disabled = true; $('xhgo').disabled = true; $('xstat').textContent = 'Trình duyệt này không có WebCodecs → mở bằng Chrome hoặc Edge bản mới.'; }
+
+  // thu #root vừa chỗ trống của ô giữa (co theo kéo viền / đổi cỡ cửa sổ)
   function fit() {
-    const narrow = innerWidth / innerHeight < 1;
-    const availH = innerHeight - (narrow ? 330 : 40), availW = innerWidth - (narrow ? 32 : 380);
-    const k = Math.max(0.1, Math.min(availH / H0, availW / W0));
+    const v = $('xview'), availH = v.clientHeight - 28, availW = v.clientWidth - 28;
+    if (availH < 20 || availW < 20) return;
+    const k = Math.max(0.05, Math.min(availH / H0, availW / W0));
     root.style.transform = `scale(${k})`;
     wrap.style.width = `${W0 * k}px`; wrap.style.height = `${H0 * k}px`;
   }
   addEventListener('resize', fit); fit();
+  try { new ResizeObserver(fit).observe($('xview')); } catch {}
+  let syncUi = () => {}, syncNotesUi = () => {};   // gán lại ở khối STUDIO bên dưới (sau khi có ghi chú / danh sách shot)
   const xload = (m) => document.documentElement.setAttribute('data-xload', m);   // chữ trên lớp che của bản gộp (tools/bundle.mjs)
   xload('Đang tải cảnh…');
 
@@ -176,20 +336,21 @@ async function init() {
     if (ev && ev.target && ev.target.id === 'xlang') fillVoices();
     audioEl = voiceEl();
     show(+$('xseek').value);
+    if (ev && ev.target && ev.target.id === 'xlang') refreshVoiceRow();
     if (wasPlaying) play();
   };
   for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice', 'xcred']) $(id).onchange = applyOpts;
   // hiệu ứng hình: mỗi ô = 1 hiệu ứng của engine/post.js
   const fxOpts = hasOpts ? window.getOptions() : null;
   if (fxOpts && fxOpts.fx) {
-    $('xfxbox').style.display = '';
+    $('xfxbox').style.display = ''; $('xfxnone').style.display = 'none';
     $('xfx').innerHTML = Object.entries(fxOpts.fx).map(([k, on]) =>
       `<label class="chk"><input type="checkbox" data-fx="${k}"${on ? ' checked' : ''}> ${escapeHtml((fxOpts.fxLabels || {})[k] || k)}</label>`).join('');
     $('xfx').onchange = (e) => { const k = e.target.dataset.fx; if (!k) return; window.setOptions({ fx: { [k]: e.target.checked } }); show(+$('xseek').value); };
   }
 
   // ---- xem trước (thời gian thực theo giọng đọc; chỉ để xem, không dùng khi xuất) ----
-  let playing = false, raf = 0, t0 = 0, wall0 = 0, annotating = false;
+  let stopAt = null, stopFrame = 0, noteFromList = false, playing = false, raf = 0, t0 = 0, wall0 = 0, annotating = false;
   const NF = Math.round(DUR * FPS);   // tổng số frame; frame f hiển thị ở t = f / FPS
   const show = (t) => {
     window.renderAt(t); $('xseek').value = t; $('xtime').textContent = fmt(t, true);
@@ -199,6 +360,7 @@ async function init() {
       const si = shotInfo(t); $('xshot').textContent = si ? '· ' + si.id : '';
       if (si) { if ($('xshsel').value !== si.id) $('xshsel').value = si.id; $('xshinfo').textContent = `${si.index + 1}/${si.count} · khung ${si.fIn + 1}/${si.fCount}`; }
     } catch (e) {}
+    try { syncUi(t); } catch (e) { console.warn('studio ui', e); }
   };
   // ---- theo dõi theo SHOT: shot đang xem, khung thứ mấy trong shot; bắt lỗi theo shot là mặc định, theo frame khi cần chi tiết ----
   const fOf = (t) => Math.ceil(t * FPS - 1e-6);
@@ -220,7 +382,7 @@ async function init() {
       if (e.key === '[') goShot(si.fIn > 0 ? si.index : si.index - 1); else if (e.key === ']') goShot(si.index + 1); });
   };
   // đi từng frame: nút ◀10 ◀5 ◀1 1▶ 5▶ 10▶, ô số frame, phím ← → (giữ Shift = 10 frame)
-  const goFrame = (f) => { if (playing) pause(); f = Math.max(0, Math.min(NF - 1, Math.round(f))); show(f / FPS); };
+  const goFrame = (f) => { if (busy) return; if (playing) pause(); f = Math.max(0, Math.min(NF - 1, Math.round(f))); show(f / FPS); };
   const curFrame = () => Math.round(+$('xseek').value * FPS);
   // giảm nhạc khi có lời (xem trước): đường bao giọng đọc tính 1 lần từ chính file giọng đang chọn (xem duckEnvelope)
   const musicLayers = () => sfxLayers.filter((L) => L.id === 'nhac');
@@ -240,6 +402,7 @@ async function init() {
   }
   function loop() {
     const t = nowT();
+    if (stopAt !== null && t >= stopAt - 1e-4) { const lf = stopFrame; pause(); show(lf / FPS); return; }
     if (t >= DUR) { pause(); show(DUR - 1e-3); return; }
     applyMusicVolume(t);
     show(t); raf = requestAnimationFrame(loop);
@@ -271,12 +434,22 @@ async function init() {
     voiceEnvelope();   // bắt đầu tính đường bao giọng (nếu chưa có)
     raf = requestAnimationFrame(loop);
   }
-  function pause() { playing = false; $('xplay').textContent = '▶ Xem'; cancelAnimationFrame(raf); if (audioEl) audioEl.pause(); for (const L of sfxLayers) L.el.pause(); }
+  function pause() { stopAt = null; playing = false; $('xplay').textContent = '▶ Xem'; cancelAnimationFrame(raf); if (audioEl) audioEl.pause(); for (const L of sfxLayers) L.el.pause(); }
   $('xplay').onclick = () => (playing ? pause() : play());
   $('xduck').onchange = () => { if (playing) applyMusicVolume(nowT()); };
   $('xseek').oninput = () => { if (playing) pause(); show(+$('xseek').value); };
   try { initShots(); show(+$('xseek').value); } catch (e) { console.warn('shot ui', e); }
   addEventListener('keydown', (e) => { if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !annotating) { e.preventDefault(); playing ? pause() : play(); } });
+  // phím M = Marker (ghi chú nhanh tại frame đang xem); Esc = huỷ bảng ghi chú
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && annotating) { setAnnotate(false); return; }
+    if ((e.key === 'p' || e.key === 'P' || e.key === 'n' || e.key === 'N') && !e.ctrlKey && !e.metaKey && !e.altKey && !annotating && !/INPUT|TEXTAREA|SELECT/.test((e.target || {}).tagName || '')) {
+      const si = shotInfo(+$('xseek').value); if (!si) return; e.preventDefault();
+      if (e.key === 'p' || e.key === 'P') playShot(si.index); else noteShot(si.index);
+      return;
+    }
+    if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey && !/INPUT|TEXTAREA|SELECT/.test((e.target || {}).tagName || '')) { e.preventDefault(); if (!annotating) { noteFromList = false; setAnnotate(true); } else $('xnote').focus(); }
+  });
   for (const b of document.querySelectorAll('.xstep')) b.onclick = () => goFrame(curFrame() + +b.dataset.d);
   $('xframe').onchange = () => goFrame(+$('xframe').value);
   addEventListener('keydown', (e) => {
@@ -336,11 +509,14 @@ async function init() {
   function setAnnotate(on) {
     if (on && busy) return;
     annotating = on; if (on && playing) pause();
-    wrap.classList.toggle('annot', on); $('xanntools').classList.toggle('on', on);
-    $('xannbtn').textContent = on ? '✕ Thoát ghi chú' : '✎ Ghi chú lỗi';
-    if (!on) stopMic();
+    wrap.classList.toggle('annot', on); $('xannbox').classList.toggle('on', on);
+    $('xannbtn').classList.toggle('act', on);
+    if (!on) { stopMic(); strokes = []; cur = null; redrawAnn(); $('xnote').value = ''; $('xmicst').textContent = ''; }
+    else { try { syncUi(+$('xseek').value); } catch {} $('xnote').focus(); }
   }
-  $('xannbtn').onclick = () => setAnnotate(!annotating);
+  $('xannbtn').onclick = () => { noteFromList = false; setAnnotate(!annotating); };
+  $('xmclose').onclick = () => setAnnotate(false);
+  $('xnote').addEventListener('keydown', (e) => { if (e.key === 'Escape') setAnnotate(false); else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveNote(); } });
 
   // micro (Web Speech API)
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -381,14 +557,17 @@ async function init() {
     const ok = persist();
     strokes = []; cur = null; redrawAnn(); $('xnote').value = ''; stopMic();
     $('xmicst').textContent = ok ? 'Đã lưu ghi chú ' + (scope === 'shot' ? 'cho shot ' + shotId : 'ở frame ' + frame) + '.' : 'Đã lưu, nhưng bộ nhớ trình duyệt đầy: hãy bấm Gửi góp ý sớm (ảnh sẽ mất khi tải lại trang).';
-    renderNotes();
+    renderNotes(); setAnnotate(false);
+    if (noteFromList && si) { noteFromList = false; goShot(si.index + 1); }
   }
   $('xsave').onclick = saveNote;
   function renderNotes() {
     $('xnotes').innerHTML = notes.map((n, i) => `<div class="nt" data-i="${i}">${n.img ? `<img src="${n.img}" alt="">` : '<img alt="">'}` +
       `<div class="tx">${n.shotId ? `<b>${escapeHtml(n.shotId)}</b> · ${n.scope === 'shot' ? 'cả shot' : 'đúng khung'}${n.frameInShot ? ` ${n.frameInShot}/${n.shotFrames}` : ''} · f${n.frame}` : `<b>f${n.frame}</b>`} · ${n.t.toFixed(2)}s<span>${escapeHtml(n.text || '(chỉ có nét vẽ)')}</span></div>` +
-      `<button class="del" data-del="${i}" title="Xoá ghi chú">✕</button></div>`).join('');
-    $('xsendrow').style.display = notes.length ? 'flex' : 'none'; $('xncnt').textContent = notes.length;
+      `<button class="del" data-del="${i}" title="Xoá ghi chú">✕</button></div>`).join('') || '<div class="muted">Chưa có marker nào. Bấm <kbd>M</kbd> hoặc nút ⚑ Marker để thêm.</div>';
+    $('xncnt').textContent = notes.length; $('xsend').disabled = $('xsendc').disabled = !notes.length || busy;
+    const c0 = $('xncnt0'); c0.textContent = notes.length || ''; c0.style.display = notes.length ? '' : 'none';
+    try { syncNotesUi(); } catch (e) { console.warn('studio ui', e); }
   }
   $('xnotes').onclick = (e) => {
     const d = e.target.closest('[data-del]');
@@ -397,14 +576,16 @@ async function init() {
   };
   renderNotes();
 
-  // gửi góp ý: 1 file json (ảnh dạng data URL)
+  // dữ liệu góp ý: 1 file json (ảnh dạng data URL) — dùng chung cho "Xuất file" và "Gửi tới Claude"
+  const feedbackData = () => ({ app: 'gop-y', version: 1, episode: epId, title, fps: FPS, duration: DUR, created: new Date().toISOString(), notes });
+  const stFile = (s) => { $('xsendst').textContent = s; };
+  // Xuất file: lưu .json (hộp lưu của Chrome/Edge, hoặc tải xuống) để bỏ vào feedback\ cho tools/feedback.mjs
   $('xsend').onclick = async () => {
     if (!notes.length) return;
     const d = new Date(), z = (n) => String(n).padStart(2, '0');
     const name = `gop-y_${epId}_${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}_${z(d.getHours())}-${z(d.getMinutes())}.json`;
-    const data = { app: 'gop-y', version: 1, episode: epId, title, fps: FPS, duration: DUR, created: d.toISOString(), notes };
-    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-    const st = (s) => { $('xsendst').textContent = s; };
+    const blob = new Blob([JSON.stringify(feedbackData())], { type: 'application/json' });
+    const st = stFile;
     try {
       if (window.showSaveFilePicker) {
         const fh = await showSaveFilePicker({ suggestedName: name, types: [{ description: 'Góp ý (JSON)', accept: { 'application/json': ['.json'] } }] });
@@ -416,6 +597,201 @@ async function init() {
       download(blob, name); st('Không mở được hộp lưu → đã tải: ' + name + '\nChuyển vào S:\\3JS Studio\\feedback\\.');
     }
   };
+  // Gửi tới Claude: POST đúng JSON đó tới máy nhận cục bộ (node tools/gop-y-nhan.mjs, cổng 8792); dò /ping để biết có đang chờ không
+  const CLAUDE = 'http://127.0.0.1:8792';
+  async function pingClaude() {
+    const el = $('xclst'); let ok = false;
+    try {
+      const ac = new AbortController(), to = setTimeout(() => ac.abort(), 1500);
+      const r = await fetch(CLAUDE + '/ping', { signal: ac.signal, cache: 'no-store' }); clearTimeout(to);
+      const j = await r.json(); ok = !!(j && j.ung === 'gop-y');
+    } catch {}
+    el.className = 'muted ' + (ok ? 'ok' : 'no');
+    el.textContent = ok ? '● Claude đang chờ nhận · không cần xuất file' : '○ Chưa bật máy nhận → dùng "Xuất file" (hoặc chạy: node tools/gop-y-nhan.mjs)';
+    return ok;
+  }
+  window.__pingClaude = pingClaude;
+  $('xsendc').onclick = async () => {
+    if (!notes.length || busy) return;
+    stFile('Đang gửi…');
+    try {
+      const r = await fetch(CLAUDE + '/gop-y', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(feedbackData()) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok) throw new Error(j.loi || ('máy nhận trả mã ' + r.status));
+      stFile(`Đã gửi ${notes.length} ghi chú tới Claude lúc ${new Date().toLocaleTimeString('vi')}.\n${j.file || ''}`);
+    } catch (e) {
+      stFile('Không gửi được (' + (e && e.message || e) + ') → bấm "Xuất file" rồi nhắn Claude "đọc góp ý".');
+    }
+    pingClaude();
+  };
+
+  // ================= STUDIO: danh sách shot, dải thời gian, viền kéo, cài đặt (bố cục ở khối đầu init) =================
+  const UIKEY = 'studio-ui'; let U = {};
+  try { U = JSON.parse(localStorage.getItem(UIKEY) || '{}') || {}; } catch { U = {}; }
+  const uiSave = () => { try { localStorage.setItem(UIKEY, JSON.stringify(U)); } catch {} };
+  const tlAll = window.__shots && window.__shots.list && window.__shots.list.length ? window.__shots : null, list = tlAll ? tlAll.list : [];
+  const mqNarrow = matchMedia('(max-width: 1099px), (max-aspect-ratio: 1/1)');
+  const GH = { wl: [160, 520], wr: [260, 640], ht: [90, 420] };
+  for (const k of ['wl', 'wr', 'ht']) if (U[k]) app.style.setProperty('--' + k, U[k] + 'px');
+  if (U.fs) { app.style.setProperty('--fs', U.fs + 'px'); $('xfs').value = U.fs; }
+  if (U.th) app.dataset.theme = U.th;
+  if (U.badge === false) { $('xbadgechk').checked = false; $('xbadge').classList.add('off'); }
+  const hasRow = { 'xt-mk': true, 'xt-shot': !!tlAll, 'xt-voice': false, 'xt-sfx': false };
+  function applyRows() {
+    for (const id of Object.keys(hasRow)) {
+      const on = hasRow[id] && !(U.rows && U.rows[id] === false);
+      $(id).style.display = on ? '' : 'none';
+      const lb = app.querySelector(`[data-rowchk="${id}"]`); if (lb) { lb.style.display = hasRow[id] ? '' : 'none'; lb.querySelector('input').checked = on; }
+    }
+  }
+  const themeBtns = () => app.querySelectorAll('[data-th]').forEach((b) => b.classList.toggle('act', b.dataset.th === (app.dataset.theme || '')));
+
+  // -- cột trái: danh sách shot (mã, lời nếu trang có phụ đề, số ghi chú); lời lấy từ window.__captions ([t0,t1,chữ]) nếu có, không thì chữ nổi của shot, không có thì để trống
+  const capsFor = (s) => { const c = window.__captions; if (Array.isArray(c)) { const t = c.filter((x) => x[1] > s.t0 && x[0] < s.t1).map((x) => x[2]).join(' '); if (t) return t; } return s.text || ''; };
+  let lastSi = -1;
+  const markCur = () => { app.querySelectorAll('#xshots .shot').forEach((r) => { const on = +r.dataset.i === lastSi; r.classList.toggle('on', on); if (on) r.scrollIntoView({ block: 'nearest' }); }); };
+  function dungDS() {
+    const q = $('xfind').value.trim().toLowerCase(), only = $('xonlyerr').checked, cnt = new Map();
+    for (const n of notes) if (n.shotId) cnt.set(n.shotId, (cnt.get(n.shotId) || 0) + 1);
+    let h = '';
+    list.forEach((s, i) => {
+      const c = cnt.get(s.id) || 0, tx = capsFor(s);
+      if ((only && !c) || (q && !(s.id + ' ' + tx).toLowerCase().includes(q))) return;
+      h += `<div class="shot" data-i="${i}"><span class="sid"><span class="sb"><button data-act="play" title="Phát riêng shot này (P)">▶</button><button data-act="note" title="Ghi chú cả shot (N)">✎</button></span><b class="num">${escapeHtml(s.id)}</b></span><span class="tx">${escapeHtml(tx)}</span><span class="muted num">${s.dur.toFixed(1)}s ${c ? `<span class="cnt">${c}</span>` : ''}</span></div>`;
+    });
+    $('xshots').innerHTML = h || `<div class="sec">${list.length ? 'Không có shot nào khớp.' : 'Trang này chưa khai báo danh sách shot.'}</div>`;
+    markCur();
+  }
+  $('xshots').onclick = (e) => {
+    const r = e.target.closest('.shot'); if (!r) return; const i = +r.dataset.i, a = e.target.closest('[data-act]');
+    if (a && a.dataset.act === 'play') playShot(i); else if (a && a.dataset.act === 'note') noteShot(i); else goShot(i);
+  };
+  // ▶ phát RIÊNG một shot (khung đầu → khung cuối rồi tự dừng; bấm lần nữa khi đang phát = dừng); ✎ ghi chú cả shot rồi chuyển sang shot kế
+  function playShot(i) {
+    if (busy || !tlAll) return;
+    if (playing && stopAt !== null) { pause(); return; }
+    const s = list[Math.max(0, Math.min(list.length - 1, i))]; if (!s) return;
+    const f0 = Math.ceil(s.t0 * FPS - 1e-6), f1 = Math.max(f0, Math.ceil(s.t1 * FPS - 1e-6) - 1);
+    goFrame(f0); stopFrame = Math.min(NF - 1, f1); play(); stopAt = (stopFrame + 1) / FPS;
+  }
+  function noteShot(i) {
+    if (busy || !tlAll) return;
+    const si = shotInfo(+$('xseek').value); if (!si || si.index !== i) goShot(i);
+    $('xscope').checked = true; noteFromList = true; setAnnotate(true);
+  }
+  $('xfind').oninput = dungDS; $('xonlyerr').onchange = dungDS;
+
+  // -- dải thời gian: thước, hàng Marker / Shot / Giọng / Tiếng động (hàng nào không có dữ liệu thì ẩn)
+  $('xruler').innerHTML = [0, 1, 2, 3, 4, 5, 6].map((k) => `<span>${fmt(k / 6 * DUR)}</span>`).join('');
+  $('xlshot').innerHTML = list.map((s) => `<div class="blk" style="flex:${s.dur}"></div>`).join('');
+  const sc = $('xscrub'); let drag = false, pend = null, pendRaf = 0;
+  const frAt = (e) => { const r = sc.getBoundingClientRect(); return Math.max(0, Math.min(NF - 1, Math.floor((e.clientX - r.left) / r.width * NF))); };
+  const flushPend = () => { pendRaf = 0; if (pend !== null) { const f = pend; pend = null; goFrame(f); } };
+  const tipText = (f) => { const si = tlAll ? shotInfo(f / FPS + 1e-4) : null; return (si ? `${si.id} · khung ${si.fIn + 1}/${si.fCount} · ` : '') + `f${f} · ${fmt(f / FPS, true)}`; };
+  sc.addEventListener('pointerdown', (e) => {
+    const mk = document.elementsFromPoint(e.clientX, e.clientY).find((x) => x.dataset && x.dataset.m !== undefined && x.parentElement && x.parentElement.id === 'xlmk');
+    if (mk) { goFrame(notes[+mk.dataset.m].frame); return; }
+    drag = true; sc.setPointerCapture(e.pointerId); goFrame(frAt(e));
+  });
+  sc.addEventListener('pointermove', (e) => {
+    const f = frAt(e), r = sc.getBoundingClientRect(), x = e.clientX - r.left;
+    $('xtip').style.display = 'block'; $('xtip').style.left = Math.max(60, Math.min(r.width - 60, x)) + 'px'; $('xtip').textContent = tipText(f);
+    $('xghost').style.display = drag ? 'none' : 'block'; $('xghost').style.left = x + 'px';
+    if (drag) { pend = f; if (!pendRaf) pendRaf = requestAnimationFrame(flushPend); }
+  });
+  const endDrag = () => { if (!drag) return; drag = false; if (pendRaf) cancelAnimationFrame(pendRaf); flushPend(); };
+  sc.addEventListener('pointerup', endDrag); sc.addEventListener('pointercancel', endDrag);
+  sc.addEventListener('pointerleave', () => { if (!drag) { $('xtip').style.display = 'none'; $('xghost').style.display = 'none'; } });
+  sc.addEventListener('wheel', (e) => { e.preventDefault(); goFrame(curFrame() + (e.deltaY > 0 ? 1 : -1) * (e.shiftKey ? 10 : 1)); }, { passive: false });
+
+  // đồng bộ giao diện theo frame đang xem / theo danh sách ghi chú
+  syncUi = (t) => {
+    const f = Math.min(NF - 1, Math.max(0, Math.round(t * FPS))), si = tlAll ? shotInfo(t) : null;
+    $('xhead2').style.left = (f + 0.5) / NF * 100 + '%';
+    $('xbtime').textContent = fmt(t, true);
+    $('xbshot').style.display = si ? '' : 'none'; if (si) $('xbshot').textContent = `${si.id} · ${si.index + 1}/${si.count}`;
+    $('xbfr').textContent = si ? `khung ${si.fIn + 1}/${si.fCount} · f${f}` : `f${f}`;
+    if (si && si.index !== lastSi) {
+      const blks = $('xlshot').children; if (blks[lastSi]) blks[lastSi].classList.remove('on'); if (blks[si.index]) blks[si.index].classList.add('on');
+      lastSi = si.index; markCur();
+      const s = list[si.index];
+      $('xiloai').textContent = (s.type || '—') + (s.at ? ' · ' + s.at : ''); $('xidur').textContent = `${s.dur.toFixed(2)} s · ${si.fCount} khung (f${si.f0}–${si.f1})`; $('xitx').textContent = capsFor(s) || '—';
+    }
+    if (annotating) $('xmtitle').textContent = si ? `⚑ Marker tại ${si.id} · khung ${si.fIn + 1}/${si.fCount} · f${f}` : `⚑ Marker tại f${f}`;
+  };
+  syncNotesUi = () => {
+    $('xlmk').innerHTML = notes.map((n, i) => `<b style="left:${(n.frame + 0.5) / NF * 100}%" data-m="${i}" title="${escapeHtml((n.shotId || 'f' + n.frame) + ': ' + (n.text || '(nét vẽ)'))}">⚑</b>`).join('');
+    dungDS();
+  };
+
+  // hàng Giọng / Tiếng động: dạng sóng THẬT của các file âm thanh trong trang (giải mã nền sau khi cảnh sẵn sàng); không có file → hàng ẩn
+  let wv = { voice: null, sfx: null };
+  async function wavePeaks(srcs, cols = 1600) {
+    const out = new Float32Array(cols);
+    for (const src of srcs) {
+      const b = await loadAudio(src); if (!b) continue;
+      const sr = b.sampleRate, step = DUR * sr / cols;
+      for (let c = 0; c < cols; c++) {
+        const a = Math.floor(c * step), z = Math.min(b.length, Math.floor((c + 1) * step)); if (a >= z) break;
+        const inc = Math.max(1, Math.floor((z - a) / 160)); let m = 0;
+        for (let k = 0; k < b.numberOfChannels; k++) { const d = b.getChannelData(k); for (let i = a; i < z; i += inc) { const v = Math.abs(d[i]); if (v > m) m = v; } }
+        if (m > out[c]) out[c] = m;
+      }
+    }
+    return out;
+  }
+  function drawWave(cvId, peaks, col) {
+    const cv = $(cvId), g = cv.getContext('2d'), W = cv.width, H = cv.height; g.clearRect(0, 0, W, H); if (!peaks) return;
+    let mx = 0; for (const v of peaks) if (v > mx) mx = v; if (!(mx > 0.005)) return;
+    g.fillStyle = col;
+    for (let c = 0; c < peaks.length; c++) { const h = Math.max(1, Math.sqrt(peaks[c] / mx) * H); g.fillRect(c * W / peaks.length, (H - h) / 2, Math.max(1, W / peaks.length), h); }
+  }
+  const drawWaves = () => { const cs = getComputedStyle(app); drawWave('xcvvoice', wv.voice, cs.getPropertyValue('--ok').trim() || '#3ecf8e'); drawWave('xcvsfx', wv.sfx, cs.getPropertyValue('--warn').trim() || '#f5b84a'); };
+  async function refreshVoiceRow() {
+    try {
+      const o = opts(), a = document.querySelector(`audio[data-lang="${o.lang}"]`) || document.querySelector('audio[data-lang]');
+      if (!a) return; const p = await wavePeaks([a.currentSrc || a.src]); wv.voice = p;
+      hasRow['xt-voice'] = p.some((v) => v > 0.005); applyRows(); drawWaves();
+    } catch (e) { console.warn('sóng giọng', e); }
+  }
+  async function refreshSfxRow() {
+    try {
+      const srcs = sfxLayers.filter((L) => L.id !== 'nhac').map((L) => L.el.currentSrc || L.el.src); if (!srcs.length) return;
+      const p = await wavePeaks(srcs); wv.sfx = p; hasRow['xt-sfx'] = p.some((v) => v > 0.005); applyRows(); drawWaves();
+    } catch (e) { console.warn('sóng tiếng động', e); }
+  }
+
+  // -- viền kéo co giãn (trái / phải / timeline): nhớ kích thước, bấm đúp = về mặc định
+  app.querySelectorAll('.gut').forEach((g) => {
+    g.addEventListener('pointerdown', (e) => {
+      const k = g.dataset.g; g.setPointerCapture(e.pointerId); g.classList.add('act'); app.classList.add('keo');
+      const mv = (ev) => { const r = app.getBoundingClientRect(); let v = k === 'wl' ? ev.clientX - r.left : k === 'wr' ? r.right - ev.clientX : r.bottom - ev.clientY; v = Math.round(Math.max(GH[k][0], Math.min(GH[k][1], v))); app.style.setProperty('--' + k, v + 'px'); U[k] = v; };
+      const up = () => { for (const [n, f] of [['pointermove', mv], ['pointerup', up], ['pointercancel', up]]) g.removeEventListener(n, f); g.classList.remove('act'); app.classList.remove('keo'); uiSave(); fit(); };
+      g.addEventListener('pointermove', mv); g.addEventListener('pointerup', up); g.addEventListener('pointercancel', up);
+    });
+    g.addEventListener('dblclick', () => { app.style.removeProperty('--' + g.dataset.g); delete U[g.dataset.g]; uiSave(); fit(); });
+  });
+
+  // -- cột thẻ: 5 thẻ (màn hẹp: các thẻ xếp dọc, bấm thẻ = cuộn tới mục đó)
+  app.querySelectorAll('.tab').forEach((tb) => { tb.onclick = () => {
+    app.querySelectorAll('.tab, .pane').forEach((x) => x.classList.remove('on')); tb.classList.add('on');
+    const p = $(tb.dataset.p); p.classList.add('on'); if (mqNarrow.matches) p.parentElement.scrollTop = p.offsetTop;
+    if (tb.dataset.p === 'xp4') pingClaude();
+  }; });
+  $('xhgo').onclick = () => { app.querySelector('.tab[data-p="xp5"]').click(); $('xgo').click(); };
+
+  // -- bánh răng: màu khung, cỡ chữ, hàng timeline, nhãn shot, đặt lại kích thước
+  $('xgear').onclick = (e) => { e.stopPropagation(); $('xpop').classList.toggle('on'); };
+  document.addEventListener('click', (e) => { if (!e.target.closest('#xpop') && !e.target.closest('#xgear')) $('xpop').classList.remove('on'); });
+  app.querySelectorAll('[data-th]').forEach((b) => { b.onclick = () => { if (b.dataset.th) app.dataset.theme = b.dataset.th; else delete app.dataset.theme; U.th = b.dataset.th; uiSave(); themeBtns(); drawWaves(); }; });
+  $('xfs').oninput = (e) => { app.style.setProperty('--fs', e.target.value + 'px'); U.fs = +e.target.value; uiSave(); };
+  app.querySelectorAll('[data-trk]').forEach((c) => { c.onchange = () => { U.rows = U.rows || {}; U.rows[c.dataset.trk] = c.checked; uiSave(); applyRows(); }; });
+  $('xbadgechk').onchange = (e) => { U.badge = e.target.checked; $('xbadge').classList.toggle('off', !e.target.checked); uiSave(); };
+  $('xreset').onclick = () => { for (const k of ['wl', 'wr', 'ht']) { app.style.removeProperty('--' + k); delete U[k]; } uiSave(); fit(); };
+
+  applyRows(); themeBtns(); syncNotesUi(); syncUi(+$('xseek').value); fit();
+  pingClaude();
+  setTimeout(() => { refreshVoiceRow(); refreshSfxRow(); }, 400);
 
   // ---- XUẤT MP4 ----
   let cancel = false;
@@ -427,13 +803,13 @@ async function init() {
     const ts = Math.max(0, +$('xs').value || 0), te = Math.min(DUR, +$('xe').value || DUR);
     const f0 = Math.round(ts * FPS), f1 = Math.round(te * FPS), N = f1 - f0;
     if (N <= 0) { $('xstat').textContent = 'Đoạn rỗng.'; return; }
-    const O = opts(), tag = `${O.lang === 'en' ? '_EN' : '_VI'}${O.voice && O.vid ? '_' + O.vid[O.lang] : ''}${O.subs ? '' : '_nosub'}${O.voice ? '' : '_novoice'}${!sfxLayers.length || sfxLayers.every((L) => L.on) ? '' : sfxLayers.some((L) => L.on) ? '_tat-' + sfxLayers.filter((L) => !L.on).map((L) => L.id).join('-') : '_nosfx'}`;
+    const O = opts(), tag = `${O.lang === 'en' ? '_EN' : '_VI'}${O.voice && O.vid && O.vid[O.lang] ? '_' + O.vid[O.lang] : ''}${O.subs ? '' : '_nosub'}${O.voice ? '' : '_novoice'}${!sfxLayers.length || sfxLayers.every((L) => L.on) ? '' : sfxLayers.some((L) => L.on) ? '_tat-' + sfxLayers.filter((L) => !L.on).map((L) => L.id).join('-') : '_nosfx'}`;
     const name = `${title}${tag}_${P.w}x${P.h}${ts > 0 || te < DUR ? `_${ts}-${te}s` : ''}.mp4`.replace(/[\\/:*?"<>|]/g, '_');
     busy = true; cancel = false;
     $('xgo').disabled = true; $('xplay').disabled = true; $('xstop').style.display = '';
     for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice', 'xcred', 'xres', 'xduck', 'xloud']) $(id).disabled = true;
     for (const el of document.querySelectorAll('#xsfx input')) el.disabled = true;
-    for (const el of document.querySelectorAll('#xfx input, .xstep, #xframe, #xannbox button, #xannbox textarea')) el.disabled = true;
+    for (const el of document.querySelectorAll('#xfx input, .xstep, .xsh, #xframe, #xseek, #xhgo, #xsendc, #xannbtn, #xannbox button, #xannbox textarea')) el.disabled = true;
     const setStat = (s) => { $('xstat').textContent = s; };
     const bar = $('xbar').firstElementChild;
     let fileHandle = null, stream = null;
@@ -544,9 +920,9 @@ async function init() {
       busy = false; $('xgo').disabled = false; $('xplay').disabled = false; $('xstop').style.display = 'none';
       for (const id of ['xlang', 'xvid', 'xsubs', 'xvoice', 'xcred', 'xres', 'xduck', 'xloud']) $(id).disabled = false;
       for (const el of document.querySelectorAll('#xsfx input')) el.disabled = false;
-      for (const el of document.querySelectorAll('#xfx input, .xstep, #xframe, #xannbox button, #xannbox textarea')) el.disabled = false;
+      for (const el of document.querySelectorAll('#xfx input, .xstep, .xsh, #xframe, #xseek, #xhgo, #xsendc, #xannbtn, #xannbox button, #xannbox textarea')) el.disabled = false;
       if (!SR) $('xmic').disabled = true;
-      show(+$('xseek').value);
+      renderNotes(); show(+$('xseek').value);
     }
   };
 }
