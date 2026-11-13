@@ -17,7 +17,7 @@ Số cũ của mọi shot lưu ở `output/_tmp/` (kit-nm-v1.json, kit-nm-v2.jso
 | S064 | lệch | lệch | mặt dây xanh ngọc trên mép két, băng phía trên | két tối, dây treo lộ một phần |
 | S065 | lệch | lệch | mặt Gà nhìn vào qua kính, hàng rào phía sau | không có khung cửa sổ ấm; đặt máy sát kính thì mặt tràn khung nên giữ bản xa |
 | S066 | lệch | đạt | Gà chạy về nam nhìn từ sau lưng, tường nhà máy + cửa sổ + đèn bên trái, thùng tiền cảnh | hàng rào ngoài khung |
-| S078 | lệch | đạt | thị trưởng áp sát kính, Gà chỉ, hai lính phía sau, thùng góc dưới | thị trưởng quay lưng nhiều |
+| S078 | lệch | lệch (sửa lại theo người dùng) | máy chếch từ ngoài tường dọc kính, khung cửa sổ lớn phía trên-phải, thị trưởng sát kính, Gà chỉ, hai lính gần phía sau-trái, thùng gỗ tiền cảnh | kính ban ngày nên không sáng hổ phách; thị trưởng hơi quay lưng |
 | S079 | lệch | lệch | giữ số cũ: Bách cầm đồng hồ trước ngực, băng chuyền, kệ gấu | thiếu dây xích, tay nâng cao (thử nâng tay thì khối tay che hết) |
 | S080 | lệch | đạt | cận đôi: mặt nghiêng thị trưởng lớn, Gà sau vai bên trái, tường gạch | tạm ổn |
 | S082 | hỏng | lệch | lính A cận cảnh, thị trưởng và cửa thép phía sau | chốt cửa không lọt khung (tay R6 không với tới chốt) |

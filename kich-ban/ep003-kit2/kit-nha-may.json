@@ -900,29 +900,29 @@
    "id": "S078",
    "cam": {
     "p": [
-     -36.6,
-     4.6,
-     4.2
+     -37.8,
+     4.2,
+     6.5
     ],
     "l": [
-     -32.8,
-     4.8,
-     -5.5
+     -32.5,
+     5.8,
+     -4
     ],
-    "fov": 56
+    "fov": 54
    },
    "cam2": {
     "p": [
-     -37,
-     4.6,
-     5.2
+     -38.2,
+     4.2,
+     7.5
     ],
     "l": [
-     -32.8,
-     4.8,
-     -5.5
+     -32.5,
+     5.8,
+     -4
     ],
-    "fov": 58
+    "fov": 56
    },
    "dien_vien": [
     {
@@ -930,17 +930,17 @@
      "pos": [
       -31.8,
       0,
-      -3.2
+      -2
      ],
-     "ry_do": 80,
+     "ry_do": 85,
      "tu_the": "idle"
     },
     {
      "ai": "GA",
      "pos": [
-      -34.4,
+      -34.2,
       0,
-      -4.6
+      -3
      ],
      "ry_do": 75,
      "tu_the": "point"
@@ -948,26 +948,26 @@
     {
      "ai": "GUARD_A",
      "pos": [
-      -35,
+      -35.6,
       0,
-      -9.4
+      -5
      ],
-     "ry_do": 70,
+     "ry_do": 60,
      "tu_the": "idle"
     },
     {
      "ai": "GUARD_B",
      "pos": [
-      -32.2,
+      -33,
       0,
-      -10.6
+      -5.6
      ],
-     "ry_do": 80,
+     "ry_do": 70,
      "tu_the": "idle"
     }
    ],
-   "trang_thai": "dat",
-   "ghi_chu": "Thi truong ap sat kinh, Ga chi, hai linh o phia sau, thung go goc duoi, khung cua so nha may o tren."
+   "trang_thai": "tam",
+   "ghi_chu": "Vong 2: may chech tu ngoai tuong, khung cua so lon phia tren-phai, thi truong sat kinh, Ga chi, hai linh gan phia sau-trai, thung go tien canh duoi; kinh ban ngay nen khong sang ho phach, thi truong van hoi quay lung."
   },
   {
    "id": "S079",
