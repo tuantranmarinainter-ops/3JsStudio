@@ -1,5 +1,5 @@
 {
- "capNhat": "2026-11-13 15:40",
+ "capNhat": "2026-11-13 16:00",
  "nhom": [
   {
    "ten": "Tập 2 — Món đồ biến mất trong phòng khóa kín",
@@ -30,9 +30,9 @@
      "ghiChu": "đã vào bản xem thử; bảng hiệu là bảng đứng trên trụ sau mỗi địa điểm; 2 cụm thùng chưa có shot nào quay tới"
     },
     {
-     "ten": "Băng chuyền + kệ gấu trong nhà máy dùng model đã chọn",
+     "ten": "Băng chuyền nhà máy dùng model đã chọn",
      "tt": "chua",
-     "ghiChu": "chưa làm: bối cảnh nhà máy tự dựng nên model đã chọn chưa vào"
+     "ghiChu": "chưa làm (kệ gấu đã xong)"
     },
     {
      "ten": "Sửa shot yếu: s037, s051, s032, s048, s044, s087, s114",
@@ -71,8 +71,8 @@
     },
     {
      "ten": "Kệ nhà máy: thay 30 gấu khối bằng gấu bông mới (3 màu)",
-     "tt": "dang",
-     "ghiChu": "người dùng chọn kệ nhà máy; 1 agent Sonnet đang làm"
+     "tt": "xong",
+     "ghiChu": "30 gấu bông 3 màu trên kệ, đã vào bản xem thử; tất định OK trên 6 shot"
     },
     {
      "ten": "Thêm 6 bảng màu nhà (kẹo ngọt, Địa Trung Hải, rừng thu, sa mạc, đêm neon, Nhật Bản)",
