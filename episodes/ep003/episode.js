@@ -1,6 +1,9 @@
 // ep003 — Ở thị trấn này: Món đồ biến mất trong phòng khóa kín. Dựng từ gói kịch bản của người dùng (kich-ban/ep003-goi, tools/kb/goi-sang-storyboard.mjs).
 // Mọi nhân vật người thân R6 (engine/r6-rig.js, ngoại hình engine/r6-looks.js); gấu = gấu bông. Bối cảnh riêng: e3-phong, e3-tiem, e3-nha-may, e3-pho (engine/envs/).
 // places: điểm có tên của các env (toạ độ env, ry = hướng mặt). props: đạo cụ theo kịch bản (engine/props-kb.js); shot tự ghi props: { <tên>: { at, ry } } để đặt/ẩn theo cảnh.
+import { PROPS_PHONG } from './shots-phong.js';
+import { PROPS_NHA_MAY } from './shots-nha-may.js';
+import { PROPS_PHO } from './shots-pho.js';
 export const EPISODE = {
   id: "ep003",
   title: "Ở thị trấn này — Món đồ biến mất trong phòng khóa kín",
@@ -81,6 +84,7 @@ export const EPISODE = {
     "bac_thi_truong": {"pos":[-9.8,0.4,-68],"ry":-1.5708},
   },
   props: {
+    ...PROPS_PHONG, ...PROPS_NHA_MAY, ...PROPS_PHO,
     day_chuyen: {"kit":"day_chuyen","at":"e3-phong_in","pos":[5.5,3.6,-13.9]},
     dong_ho: {"kit":"dong_ho","at":"e3-phong_in","pos":[5.5,3.6,-13.9]},
     nhan_moi: {"kit":"nhan_moi","at":"e3-phong_in","pos":[5.5,3.6,-13.9]},
