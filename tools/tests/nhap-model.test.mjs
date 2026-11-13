@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { chuanGiayPhep, giayPhepHopLe, ghiManifest, ghiCredits, kiem, docEnv, che } from '../nhap-model.mjs';
+import { chuanGiayPhep, giayPhepHopLe, ghiManifest, ghiCredits, kiem, docEnv, che, ppTuHtml } from '../nhap-model.mjs';
 
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'nhap-'));
 
@@ -123,4 +123,14 @@ test('tim: không có low poly → mã thoát 3 + dòng cảnh báo (dữ liệu
     const xep = sapXepUngVien([{ id: 'a', tamGiac: 9000, gp: {} }], 'phu-kien');
     if (xep.filter((m) => m.hang !== 'vuot').length === 0) { console.log('KHÔNG CÓ LOW POLY'); process.exit(3); }`], { encoding: 'utf8' });
   assert.equal(r.status, 3); assert.match(r.stdout, /KHÔNG CÓ LOW POLY/);
+});
+
+test('Poly Pizza không khoá: đọc model + URL GLB từ trang công khai', () => {
+  const rid = '8d8927eb-1a6c-4692-884f-d0e976b71a69';
+  const html = `<script>window.__SERVER_APP_STATE__ =  {"initialData":{"model":{"Title":"Mirror \\"x\\" {","ResourceID":"${rid}","PublicID":"cjvm-bUFBAW","Tris":52,"Creator":{"Username":"Poly by Google"},"Category":"Furniture","Licence":"CC-BY 3.0"}}};</script><div>}</div>`;
+  const i = ppTuHtml(html, 'cjvm-bUFBAW');
+  assert.equal(i.glb, `https://static.poly.pizza/${rid}.glb`);
+  assert.equal(i.tamGiac, 52); assert.equal(i.tacGia, 'Poly by Google'); assert.equal(i.gp.ma, 'CC BY 3.0');
+  assert.throws(() => ppTuHtml('<html></html>', 'x'), /không có dữ liệu/);
+  assert.throws(() => ppTuHtml(html.replace(rid, '../etc'), 'x'), /ResourceID/);
 });

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Trạm nhập model: tìm model miễn phí (CC0 / CC BY) → tải → Blender chuẩn hoá → assets/nhap/<ten>.glb + manifest + ghi công.
 //   node tools/nhap-model.mjs tim <từ khoá> [--loai nho|phu-kien|vua|lon|chu-dao] [--ca-nang] [--nguon …] [--toi-da N]   (mã thoát 3 = không có low poly)
-//   node tools/nhap-model.mjs nhap <nguon>:<id> --ten <ten> [--loai …] [--cho-phep-nang "<lý do>"] [--cao <stud>] [--tam-giac-toi-da N] [--ao] [--mau-dinh] [--xoay độ] [--tex px]
+//   node tools/nhap-model.mjs nhap <nguon>:<id> --ten <ten> [--loai …] [--cho-phep-nang "<lý do>"] [--cao <stud>] [--tam-giac-toi-da N] [--ao] [--mau-dinh] [--sang 0..1] [--xam 0..1] [--xoay độ] [--tex px]
 //   node tools/nhap-model.mjs kiem
 // Khoá API đọc từ .env.local (SKETCHFAB_API_TOKEN, POLY_PIZZA_API_KEY, BLENDER); KHÔNG bao giờ in ra / ghi lại.
 import fs from 'node:fs';
@@ -161,6 +161,25 @@ async function timPolypizza(q) {
   const j = await http(`${PP}/search/${encodeURIComponent(q)}`, { headers: ppHead() });
   return (j.results || []).map(ppThongTin);
 }
+// Không cần khoá: trang công khai poly.pizza/m/<id> nhúng JSON model + ResourceID; GLB ở static.poly.pizza/<ResourceID>.glb
+export async function ppTuTrang(id) {
+  const r = await fetch(`https://poly.pizza/m/${encodeURIComponent(id)}`, { headers: { 'User-Agent': UA }, redirect: 'follow', signal: AbortSignal.timeout(60000) });
+  if (!r.ok) throw new Error(`HTTP ${r.status} poly.pizza/m/${id}`);
+  return ppTuHtml(await r.text(), id);
+}
+export function ppTuHtml(html, id) {
+  const i = html.indexOf('__SERVER_APP_STATE__'); if (i < 0) throw new Error('trang Poly Pizza không có dữ liệu model');
+  const b = html.indexOf('{', i);
+  let sau = 0, j = b, tr = false, esc = false;
+  for (; j < html.length; j++) {   // cắt đúng đối tượng JSON đầu tiên
+    const c = html[j];
+    if (tr) { if (esc) esc = false; else if (c === '\\') esc = true; else if (c === '"') tr = false; continue; }
+    if (c === '"') tr = true; else if (c === '{') sau++; else if (c === '}' && --sau === 0) break;
+  }
+  const m = JSON.parse(html.slice(b, j + 1))?.initialData?.model;
+  if (!m?.ResourceID || !/^[0-9a-f-]{36}$/.test(m.ResourceID)) throw new Error('không thấy ResourceID');
+  return ppThongTin({ ID: m.PublicID || id, Title: m.Title, Creator: m.Creator, Licence: m.Licence, 'Tri Count': m.Tris, Category: m.Category, Download: `https://static.poly.pizza/${m.ResourceID}.glb` });
+}
 async function taiPolypizza(id, dir, info) {
   const m = info.glb ? info : ppThongTin(await http(`${PP}/model/${encodeURIComponent(id)}`, { headers: ppHead() }));
   const buf = await http(m.glb, { bytes: true, max: TOI_DA_TAI });
@@ -274,6 +293,8 @@ function chayBlender(vao, ra, a, ten) {
   if (a.tex) ps.push('--tex', String(a.tex));
   if (a.xoay) ps.push('--xoay', String(a.xoay));
   if (a.ao) ps.push('--ao');
+  if (a.sang) ps.push('--sang', String(a.sang));
+  if (a.xam) ps.push('--xam', String(a.xam));
   if (a['mau-dinh']) ps.push('--mau-dinh');
   const r = spawnSync(exe, ps, { encoding: 'utf8', maxBuffer: 1 << 26, timeout: 300000 });
   const out = (r.stdout || '') + (r.stderr || '');
@@ -296,7 +317,7 @@ async function cmdNhap(a) {
   let info;
   if (nguon === 'sketchfab') info = await layDuLieuSketchfab(id);
   else if (nguon === 'polyhaven') info = phThongTin(id, await http(`${PH}/info/${encodeURIComponent(id)}`));
-  else { if (!ENV.POLY_PIZZA_API_KEY) loi('POLY_PIZZA_API_KEY rỗng'); info = ppThongTin(await http(`${PP}/model/${encodeURIComponent(id)}`, { headers: ppHead() })); }
+  else info = ENV.POLY_PIZZA_API_KEY ? ppThongTin(await http(`${PP}/model/${encodeURIComponent(id)}`, { headers: ppHead() })) : await ppTuTrang(id);
   if (!info.gp) loi(`giấy phép "${info.gpRaw}" không phải CC0/CC BY — từ chối`);
   if (info.ai) loi('model gắn nhãn AI-generated — từ chối');
   const ng = NGUONG.loai[loai];
@@ -390,6 +411,6 @@ if (import.meta.url === pathToFileURL(process.argv[1] || '').href) {
     if (cmd === 'tim') await cmdTim(a);
     else if (cmd === 'nhap') await cmdNhap(a);
     else if (cmd === 'kiem') cmdKiem();
-    else console.log('Dùng: tim <từ khoá> [--loai L] [--ca-nang] [--nguon …] [--toi-da N] | nhap <nguon>:<id> --ten <ten> [--loai L] [--cho-phep-nang "lý do"] [--cao stud] [--tam-giac-toi-da N] [--ao] [--mau-dinh] [--xoay độ] | kiem');
+    else console.log('Dùng: tim <từ khoá> [--loai L] [--ca-nang] [--nguon …] [--toi-da N] | nhap <nguon>:<id> --ten <ten> [--loai L] [--cho-phep-nang "lý do"] [--cao stud] [--tam-giac-toi-da N] [--ao] [--mau-dinh] [--sang 0..1] [--xam 0..1] [--xoay độ] | kiem');
   } catch (e) { loi(e.message); }
 }

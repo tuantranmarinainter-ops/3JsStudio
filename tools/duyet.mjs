@@ -5,6 +5,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import crypto from 'node:crypto';
+import http from 'node:http';
+import { spawn } from 'node:child_process';
 
 const GOC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const MIME = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif' };
@@ -41,12 +43,75 @@ export function congToken(ep, so, viec, token, model = 'sonnet', goc = GOC) {
   ghiJson(f, d); return d.token.tong;
 }
 
-export function nhan(ep, file, goc = GOC) {
-  const kq = docJson(file);
+export function nhan(ep, file, goc = GOC) { return luuKetQua(ep, docJson(file), goc); }
+
+export function luuKetQua(ep, kq, goc = GOC) {
   if (!kq.dot) throw new Error('file kết quả không có trường "dot"');
   const f = path.join(goc, 'duyet', ep, `dot-${NN(kq.dot)}.ketqua.json`);
   if (!fs.existsSync(path.join(goc, 'duyet', ep, `dot-${NN(kq.dot)}.json`))) throw new Error(`không có dot-${NN(kq.dot)}.json`);
   ghiJson(f, kq); return f;
+}
+
+// ---- máy chủ cục bộ: mo [--cong N] [--khong-mo] [--mot-lan] [--het-gio phút] [--thu-muc dir] ----
+const DUOI_OK = { html: 'text/html; charset=utf-8', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif' };
+
+export function moMayChu(ep, { cong = 8791, khongMo = false, motLan = false, hetGio = 240, goc = GOC, log = console.log } = {}) {
+  dung(ep, { goc, log: console.warn });
+  const trang = path.join(goc, 'dist', `${ep}_duyet.html`);
+  let congThat = cong;
+  const hostOk = h => !!h && new RegExp(`^(127\\.0\\.0\\.1|localhost):${congThat}$`).test(h);
+  const originOk = o => o === undefined || new RegExp(`^http://(127\\.0\\.0\\.1|localhost):${congThat}$`).test(o);
+  const tra = (res, ma, noiDung, kieu = 'text/plain; charset=utf-8') => { res.writeHead(ma, { 'Content-Type': kieu, 'Cache-Control': 'no-store' }); res.end(noiDung); };
+  let xong = false;
+  const sv = http.createServer((req, res) => {
+    if (!hostOk(req.headers.host)) return tra(res, 403, 'host không hợp lệ');
+    let u; try { u = new URL(req.url, 'http://x'); } catch { return tra(res, 400, 'url sai'); }
+    if (req.method === 'POST' && u.pathname === '/gui') {
+      if (!originOk(req.headers.origin)) return tra(res, 403, 'origin không hợp lệ');
+      const bufs = []; let n = 0, qua = false;
+      req.on('data', c => { n += c.length; if (n > 2 * 2 ** 20) { if (!qua) { qua = true; tra(res, 413, 'quá 2 MB'); } } else bufs.push(c); });
+      req.on('end', () => {
+        if (qua) return;
+        let kq; try { kq = JSON.parse(Buffer.concat(bufs).toString('utf8')); } catch { return tra(res, 400, 'JSON sai'); }
+        if (!kq || kq.tap !== ep) return tra(res, 422, `tap phải là "${ep}"`);
+        if (!Number.isInteger(kq.dot) || !danhSachDot(ep, goc).some(d => d.so === kq.dot)) return tra(res, 422, 'dot không có trong các đợt hiện tại');
+        let f; try { f = luuKetQua(ep, kq, goc); } catch (e) { return tra(res, 500, e.message); }
+        const dong = { luc: new Date().toISOString(), dot: kq.dot, soChon: Object.keys(kq.chon || {}).length + (kq.gau ? 1 : 0), soDuyet: (kq.duyet || []).length, soSua: (kq.sua || []).length, file: path.relative(goc, f).replaceAll('\\', '/') };
+        fs.appendFileSync(path.join(goc, 'duyet', ep, 'hop-thu.jsonl'), JSON.stringify(dong) + '\n');
+        log(`DA-NHAN dot=${kq.dot} file=${f}`);
+        tra(res, 200, JSON.stringify({ ok: true, dot: kq.dot, luc: dong.luc }), 'application/json');
+        if (motLan && !xong) { xong = true; res.on('finish', () => setTimeout(() => process.exit(0), 50)); }
+      });
+      return;
+    }
+    if (req.method !== 'GET' && req.method !== 'HEAD') return tra(res, 405, 'chỉ GET và POST /gui');
+    let rel; try { rel = decodeURIComponent(u.pathname); } catch { return tra(res, 400, 'url sai'); }
+    if (rel === '/') rel = `/dist/${ep}_duyet.html`;
+    if (rel.includes('\0') || rel.split(/[\\/]/).includes('..')) return tra(res, 403, 'không được');
+    const f = path.resolve(goc, '.' + rel), duoi = path.extname(f).slice(1).toLowerCase();
+    if (!f.startsWith(path.resolve(goc) + path.sep)) return tra(res, 403, 'ngoài gốc repo');
+    if (!DUOI_OK[duoi]) return tra(res, 403, 'đuôi file không cho phép');
+    if (!fs.existsSync(f) || !fs.statSync(f).isFile()) return tra(res, 404, 'không có');
+    tra(res, 200, fs.readFileSync(f), DUOI_OK[duoi]);
+  });
+  return new Promise((ok, loi) => {
+    const thu = c => {
+      congThat = c;
+      const onLoi = e => { if (e.code === 'EADDRINUSE' && c < cong + 10) thu(c + 1); else loi(e); };
+      sv.once('error', onLoi);
+      sv.listen(c, '127.0.0.1', () => {
+        sv.off('error', onLoi);
+        const url = `http://127.0.0.1:${c}/`;
+        log(`MO ${url}  (trang: ${trang})`);
+        if (!khongMo) {
+          try { (process.platform === 'win32' ? spawn('cmd', ['/c', 'start', '""', url], { stdio: 'ignore', detached: true }) : spawn(process.platform === 'darwin' ? 'open' : 'xdg-open', [url], { stdio: 'ignore', detached: true })).on('error', () => {}).unref(); } catch {}
+        }
+        if (hetGio > 0) setTimeout(() => { log('HET-GIO: không ai gửi'); process.exit(3); }, hetGio * 60000);
+        ok({ server: sv, cong: c, url });
+      });
+    };
+    thu(cong);
+  });
 }
 
 // ---- chuẩn hoá lược đồ ----
@@ -252,8 +317,11 @@ const TRANG = String.raw`<!doctype html>
   <div id="dem"></div>
   <button id="tatca">Duyệt hết mục chưa chọn</button>
   <button id="chep">Sao chép kết quả</button>
-  <button id="luu" class="chinh">Lưu kết quả</button>
+  <button id="luu">Lưu kết quả</button>
+  <button id="gui" class="chinh">Gửi tới Claude</button>
+  <span id="ghi-gui" class="mota" style="margin:0"></span>
 </header>
+<div id="tb" style="display:none;position:sticky;top:64px;z-index:6;margin:10px 16px 0;padding:8px 12px;border-radius:8px;color:#fff;max-width:1248px"></div>
 <div id="dots"></div>
 <div id="loc"><span>Hiện:</span><button data-l="">Tất cả</button><button data-l="chua">Chưa chọn</button><button data-l="sua">Cần sửa</button></div>
 <nav id="muc-luc"></nav>
@@ -388,7 +456,7 @@ function veDot(d) {
   main.textContent = ''; nav.textContent = ''; main.dataset.loc = LOC;
   const ti = el('h2', { text: 'Đợt ' + d.so + ': ' + d.tieuDe }); if (dongKhoa(d)) ti.append(el('span', { class: 'nhan', text: 'đã chốt' }));
   main.append(ti, el('p', { class: 'mota', text: d.ngay + (d.tomTat ? ' · ' + d.tomTat : '') }));
-  const p = el('p', { class: 'mota' }); p.append(document.createTextNode('Bấm vào hình để phóng to; bấm link ↗ để xem nguồn ở tab mới. Mỗi thẻ chọn Duyệt (xanh) hoặc Cần sửa (đỏ), ghi chú nếu muốn; lựa chọn tự nhớ trên máy này. Xong bấm Lưu kết quả hoặc Sao chép kết quả. '));
+  const p = el('p', { class: 'mota' }); p.append(document.createTextNode('Bấm vào hình để phóng to; bấm link ↗ để xem nguồn ở tab mới. Mỗi thẻ chọn Duyệt (xanh) hoặc Cần sửa (đỏ), ghi chú nếu muốn; lựa chọn tự nhớ trên máy này. Xong bấm Gửi tới Claude (hoặc Lưu / Sao chép kết quả).'));
   (d.lienKet || []).forEach(l => { p.append(el('a', { class: 'phim', href: l.href, text: l.ten }), document.createTextNode(' ')); });
   main.append(p, veToken(d));
   for (const n of d.nhom || []) {
@@ -451,6 +519,23 @@ document.getElementById('chep').onclick = async () => {
 };
 const phong = document.getElementById('phong');
 document.addEventListener('click', e => { if (e.target.classList.contains('anh') || e.target.closest('details.tong img')) { phong.firstElementChild.src = e.target.src; phong.style.display = 'block'; phong.scrollTo(0, 0); } else if (phong.contains(e.target)) phong.style.display = 'none'; });
+const CO_MAY_CHU = location.protocol === 'http:' && ['127.0.0.1', 'localhost'].includes(location.hostname);
+const bGui = document.getElementById('gui'), tb = document.getElementById('tb');
+const thongBao = (loai, chu) => { tb.style.display = 'block'; tb.style.background = loai === 'ok' ? '#1e8e4e' : '#c0392b'; tb.textContent = chu; };
+if (!CO_MAY_CHU) { bGui.disabled = true; document.getElementById('ghi-gui').textContent = 'Mở bằng tools/duyet-mo.bat để gửi thẳng'; }
+bGui.onclick = async () => {
+  const d = hien; if (dongKhoa(d)) return thongBao('loi', 'Đợt này đã chốt, không gửi lại được.');
+  const k = JSON.parse(ketQua()).chuaChon.length;
+  if (k > 0 && !confirm('Còn ' + k + ' mục chưa chọn, vẫn gửi?')) return;
+  bGui.disabled = true;
+  try {
+    const r = await fetch('/gui', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: ketQua() });
+    if (!r.ok) throw new Error('máy chủ trả ' + r.status + ': ' + (await r.text()));
+    const h = new Date(), p = x => String(x).padStart(2, '0');
+    thongBao('ok', 'Đã gửi Đợt ' + d.so + ' lúc ' + p(h.getHours()) + ':' + p(h.getMinutes()) + ' — Claude sẽ nhận trong phiên điều phối');
+  } catch (e) { thongBao('loi', 'Gửi lỗi: ' + e.message + '. Dùng "Lưu kết quả" rồi đưa file cho Claude.'); }
+  bGui.disabled = false;
+};
 window.__duyet = { ketQua, chonDot: so => chonDot(DOTS.find(d => d.so === so)), dots: DOTS };
 chonDot(hien);
 </script>
@@ -460,12 +545,16 @@ chonDot(hien);
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const [ep, lenh, ...r] = process.argv.slice(2);
+  const co = t => r.includes(t), giaTri = (t, mac) => { const i = r.indexOf(t); return i >= 0 && r[i + 1] ? r[i + 1] : mac; };
   try {
-    if (lenh === 'dung') { const o = dung(ep); console.log(`${o.out}: ${(o.bytes / 2 ** 20).toFixed(2)} MB, ${o.dots} đợt, ${o.anhNhung} ảnh nhúng, ${o.thieu.length} thiếu`); }
+    if (lenh === 'mo') {
+      moMayChu(ep, { cong: +giaTri('--cong', 8791), khongMo: co('--khong-mo'), motLan: co('--mot-lan'), hetGio: +giaTri('--het-gio', 240), goc: path.resolve(giaTri('--thu-muc', GOC)) })
+        .catch(e => { console.error('Lỗi: ' + e.message); process.exit(1); });
+    } else if (lenh === 'dung') { const o = dung(ep); console.log(`${o.out}: ${(o.bytes / 2 ** 20).toFixed(2)} MB, ${o.dots} đợt, ${o.anhNhung} ảnh nhúng, ${o.thieu.length} thiếu`); }
     else if (lenh === 'moi') console.log('tạo ' + moi(ep, r[0]));
     else if (lenh === 'token' && r.length >= 3) console.log('tổng token đợt ' + r[0] + ': ' + congToken(ep, +r[0], r[1], r[2], r[3]));
     else if (lenh === 'them-ung-vien' && r.length >= 2) console.log('nạp ứng viên vào ' + themUngVien(ep, +r[0], r[1]));
     else if (lenh === 'nhan' && r[0]) console.log('lưu ' + nhan(ep, r[0]));
-    else { console.error('Dùng: node tools/duyet.mjs <ep> dung | moi "<tiêu đề>" | token <số> "<việc>" <token> [model] | nhan <file.json> | them-ung-vien <số> <file.json>'); process.exit(2); }
+    else { console.error('Dùng: node tools/duyet.mjs <ep> dung | moi "<tiêu đề>" | token <số> "<việc>" <token> [model] | nhan <file.json> | them-ung-vien <số> <file.json> | mo [--cong N] [--khong-mo] [--mot-lan] [--het-gio phút] [--thu-muc dir]'); process.exit(2); }
   } catch (e) { console.error('Lỗi: ' + e.message); process.exit(1); }
 }

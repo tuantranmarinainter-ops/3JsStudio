@@ -1,0 +1,962 @@
+{
+ "nhomId": "roblox",
+ "ten": "Roblox — mũ và đạo cụ miễn phí (chỉ để duyệt)",
+ "mota": "Tài sản Roblox chỉ cấp phép dùng trong Roblox. Chưa tải gì; chọn ở đây là chọn MẪU để tải/tham chiếu sau.",
+ "khe": [
+  {
+   "id": "rb-mu-linh",
+   "ten": "Mũ lính gác",
+   "phu": "vai guard1, guard2",
+   "ungVien": [
+    {
+     "id": "rb-mu-linh__1",
+     "ten": "Night Guard/Police Hat",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-linh__1.png",
+     "link": "https://create.roblox.com/store/asset/12473889309",
+     "nguon": "Roblox Creator Store",
+     "assetId": 12473889309,
+     "tacGia": "BBNewCom",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · mũ cảnh sát xanh khối giản dị, 426 tam giác, hợp phong cách khối"
+    },
+    {
+     "id": "rb-mu-linh__2",
+     "ten": "Police Hat",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-linh__2.png",
+     "link": "https://create.roblox.com/store/asset/15196727221",
+     "nguon": "Roblox Creator Store",
+     "assetId": 15196727221,
+     "tacGia": "Test_Accaunt008",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · cùng kiểu, có huy hiệu bạc"
+    },
+    {
+     "id": "rb-mu-linh__3",
+     "ten": "Guards Hat",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-linh__3.png",
+     "link": "https://www.roblox.com/catalog/75593919604782",
+     "nguon": "Roblox Marketplace",
+     "assetId": 75593919604782,
+     "tacGia": "ShadedSmiles Co",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Hat · mũ lưỡi trai đen kiểu chỉ huy, dạng phụ kiện UGC"
+    }
+   ]
+  },
+  {
+   "id": "rb-mu-dau-bep",
+   "ten": "Mũ đầu bếp",
+   "phu": "vai baker",
+   "ungVien": [
+    {
+     "id": "rb-mu-dau-bep__1",
+     "ten": "Chef Hat",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-dau-bep__1.png",
+     "link": "https://create.roblox.com/store/asset/7184746056",
+     "nguon": "Roblox Creator Store",
+     "assetId": 7184746056,
+     "tacGia": "andreminecraft768",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · mũ đầu bếp trắng nấm, đúng nghĩa nhất"
+    },
+    {
+     "id": "rb-mu-dau-bep__2",
+     "ten": "Chef Hat",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-dau-bep__2.png",
+     "link": "https://create.roblox.com/store/asset/15344415888",
+     "nguon": "Roblox Creator Store",
+     "assetId": 15344415888,
+     "tacGia": "mcove2010",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · mũ khối cao, gần với hình khối vuông"
+    },
+    {
+     "id": "rb-mu-dau-bep__3",
+     "ten": "Chef Hat",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-dau-bep__3.png",
+     "link": "https://create.roblox.com/store/asset/58384842",
+     "nguon": "Roblox Creator Store",
+     "assetId": 58384842,
+     "tacGia": "WaldoWallace",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · mũ đầu bếp nhăn nhẹ, 524 tam giác"
+    }
+   ]
+  },
+  {
+   "id": "rb-mu-top-hat",
+   "ten": "Mũ chóp cao (thị trưởng)",
+   "phu": "vai mayor",
+   "ungVien": [
+    {
+     "id": "rb-mu-top-hat__1",
+     "ten": "Top Hat",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-top-hat__1.png",
+     "link": "https://www.roblox.com/catalog/125262071241947",
+     "nguon": "Roblox Marketplace",
+     "assetId": 125262071241947,
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Accessory undefined · mũ chóp đen giản dị"
+    },
+    {
+     "id": "rb-mu-top-hat__2",
+     "ten": "Top Hat",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-top-hat__2.png",
+     "link": "https://create.roblox.com/store/asset/11870310728",
+     "nguon": "Roblox Creator Store",
+     "assetId": 11870310728,
+     "tacGia": "Ahmed42500",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · chóp cao đen trơn, 670 tam giác"
+    },
+    {
+     "id": "rb-mu-top-hat__3",
+     "ten": "Purple Banded Top Hat",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-top-hat__3.png",
+     "link": "https://create.roblox.com/store/asset/2719193629",
+     "nguon": "Roblox Creator Store",
+     "assetId": 2719193629,
+     "tacGia": "blackcat1407",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · chóp cao dải tím, 438 tam giác"
+    }
+   ]
+  },
+  {
+   "id": "rb-mu-phot",
+   "ten": "Mũ phớt / nồi / lưỡi vịt (ông Bách)",
+   "phu": "vai bach",
+   "ungVien": [
+    {
+     "id": "rb-mu-phot__1",
+     "ten": "Business Fedora",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-phot__1.png",
+     "link": "https://www.roblox.com/catalog/101172089370590",
+     "nguon": "Roblox Marketplace",
+     "assetId": 101172089370590,
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Accessory undefined · mũ phớt nâu dải đen"
+    },
+    {
+     "id": "rb-mu-phot__2",
+     "ten": "Bowler Hat",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-phot__2.png",
+     "link": "https://create.roblox.com/store/asset/3677470752",
+     "nguon": "Roblox Creator Store",
+     "assetId": 3677470752,
+     "tacGia": "s1oan_e",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · mũ nồi tròn đen dải trắng"
+    },
+    {
+     "id": "rb-mu-phot__3",
+     "ten": "Boina",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-phot__3.png",
+     "link": "https://create.roblox.com/store/asset/17760923328",
+     "nguon": "Roblox Creator Store",
+     "assetId": 17760923328,
+     "tacGia": "murillo_zico",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · mũ nồi dẹt kẻ caro (kiểu thợ)"
+    }
+   ]
+  },
+  {
+   "id": "rb-kinh",
+   "ten": "Kính tròn (ông Bách)",
+   "phu": "vai bach",
+   "ungVien": [
+    {
+     "id": "rb-kinh__1",
+     "ten": "Grandpa Glasses",
+     "anh": "output/ep002/ung-vien-roblox/rb-kinh__1.png",
+     "link": "https://www.roblox.com/catalog/12663134136",
+     "nguon": "Roblox Marketplace",
+     "assetId": 12663134136,
+     "tacGia": "Scorched UGC",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Face accessory · kính ông già gọng nâu nửa vành"
+    },
+    {
+     "id": "rb-kinh__2",
+     "ten": "Round Glasses Black",
+     "anh": "output/ep002/ung-vien-roblox/rb-kinh__2.png",
+     "link": "https://create.roblox.com/store/asset/15328226717",
+     "nguon": "Roblox Creator Store",
+     "assetId": 15328226717,
+     "tacGia": "may9819h",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · kính tròn mảnh đen"
+    },
+    {
+     "id": "rb-kinh__3",
+     "ten": "Round Glasses",
+     "anh": "output/ep002/ung-vien-roblox/rb-kinh__3.png",
+     "link": "https://create.roblox.com/store/asset/5516736016",
+     "nguon": "Roblox Creator Store",
+     "assetId": 5516736016,
+     "tacGia": "twentikaa",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · kính tròn đen kính xanh nhạt"
+    }
+   ]
+  },
+  {
+   "id": "rb-no-toc",
+   "ten": "Nơ / kẹp tóc",
+   "phu": "vai tailor",
+   "ungVien": [
+    {
+     "id": "rb-no-toc__1",
+     "ten": "Aesthetic White Hair Bow",
+     "anh": "output/ep002/ung-vien-roblox/rb-no-toc__1.png",
+     "link": "https://create.roblox.com/store/asset/4911699391",
+     "nguon": "Roblox Creator Store",
+     "assetId": 4911699391,
+     "tacGia": "ayatvdu",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · nơ trắng nhỏ, 496 tam giác"
+    },
+    {
+     "id": "rb-no-toc__2",
+     "ten": "White Hair Ribbon Bow",
+     "anh": "output/ep002/ung-vien-roblox/rb-no-toc__2.png",
+     "link": "https://www.roblox.com/catalog/102302611373134",
+     "nguon": "Roblox Marketplace",
+     "assetId": 102302611373134,
+     "tacGia": "Avatar Maker Club",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Hat · nơ ruy băng trắng lớn"
+    },
+    {
+     "id": "rb-no-toc__3",
+     "ten": "Lovely White Bow",
+     "anh": "output/ep002/ung-vien-roblox/rb-no-toc__3.png",
+     "link": "https://create.roblox.com/store/asset/3930502447",
+     "nguon": "Roblox Creator Store",
+     "assetId": 3930502447,
+     "tacGia": "Petorikoru",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · nơ trắng đơn giản"
+    }
+   ]
+  },
+  {
+   "id": "rb-thuoc-keo",
+   "ten": "Thước dây / kéo thợ may",
+   "phu": "vai tailor",
+   "ungVien": [
+    {
+     "id": "rb-thuoc-keo__1",
+     "ten": "Measure tape mesh HD",
+     "anh": "output/ep002/ung-vien-roblox/rb-thuoc-keo__1.png",
+     "link": "https://create.roblox.com/store/asset/711109842",
+     "nguon": "Roblox Creator Store",
+     "assetId": 711109842,
+     "tacGia": "Ghaucho",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · thước dây vàng, 464 tam giác (có chữ nhỏ trên vỏ)"
+    },
+    {
+     "id": "rb-thuoc-keo__2",
+     "ten": "Scissors",
+     "anh": "output/ep002/ung-vien-roblox/rb-thuoc-keo__2.png",
+     "link": "https://create.roblox.com/store/asset/522596912",
+     "nguon": "Roblox Creator Store",
+     "assetId": 522596912,
+     "tacGia": "diviznn",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · kéo may kim loại, 760 tam giác"
+    },
+    {
+     "id": "rb-thuoc-keo__3",
+     "ten": "Scissors Model for barber shops",
+     "anh": "output/ep002/ung-vien-roblox/rb-thuoc-keo__3.png",
+     "link": "https://create.roblox.com/store/asset/104982307",
+     "nguon": "Roblox Creator Store",
+     "assetId": 104982307,
+     "tacGia": "AndrewJMiller",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · kéo cổ cán gỗ, 760 tam giác"
+    }
+   ]
+  },
+  {
+   "id": "rb-mu-luoi-trai",
+   "ten": "Mũ lưỡi trai (đứa bé)",
+   "phu": "vai kid1",
+   "ungVien": [
+    {
+     "id": "rb-mu-luoi-trai__1",
+     "ten": "Red Cap",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-luoi-trai__1.png",
+     "link": "https://www.roblox.com/catalog/122981571862386",
+     "nguon": "Roblox Marketplace",
+     "assetId": 122981571862386,
+     "tacGia": "THINK DIFFERENT.",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Hat · mũ lưỡi trai đỏ kiểu quân đội, không logo"
+    },
+    {
+     "id": "rb-mu-luoi-trai__2",
+     "ten": "Green Baseball Cap",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-luoi-trai__2.png",
+     "link": "https://create.roblox.com/store/asset/95141507721558",
+     "nguon": "Roblox Creator Store",
+     "assetId": 95141507721558,
+     "tacGia": "BlazeKickStew",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · mũ xanh lá có dấu $ (kiểm lại tên, có thể hơi lòe loẹt)"
+    },
+    {
+     "id": "rb-mu-luoi-trai__3",
+     "ten": "Roblox Baseball Cap",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-luoi-trai__3.png",
+     "link": "https://www.roblox.com/catalog/607702162",
+     "nguon": "Roblox Marketplace",
+     "assetId": 607702162,
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Accessory undefined · mũ đen có chữ Roblox, chỉ dùng tham khảo hình khối; không dùng logo trong phim"
+    }
+   ]
+  },
+  {
+   "id": "rb-mu-len",
+   "ten": "Mũ len (nhân vật chính)",
+   "phu": "vai hero",
+   "ungVien": [
+    {
+     "id": "rb-mu-len__1",
+     "ten": "Green Knit Beanie",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-len__1.png",
+     "link": "https://www.roblox.com/catalog/101336609030401",
+     "nguon": "Roblox Marketplace",
+     "assetId": 101336609030401,
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Accessory undefined · mũ len xanh có tai gấu"
+    },
+    {
+     "id": "rb-mu-len__2",
+     "ten": "Blissful Brown Beanie",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-len__2.png",
+     "link": "https://www.roblox.com/catalog/107585753784277",
+     "nguon": "Roblox Marketplace",
+     "assetId": 107585753784277,
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Accessory undefined · mũ len nâu tai gấu có nhãn HAPPY"
+    },
+    {
+     "id": "rb-mu-len__3",
+     "ten": "orange beanie hat",
+     "anh": "output/ep002/ung-vien-roblox/rb-mu-len__3.png",
+     "link": "https://create.roblox.com/store/asset/15603182762",
+     "nguon": "Roblox Creator Store",
+     "assetId": 15603182762,
+     "tacGia": "JJaymc_14",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · mũ len trơn 248 tam giác"
+    }
+   ]
+  },
+  {
+   "id": "rb-gau-bong",
+   "ten": "Gấu bông (teddy)",
+   "phu": "vai bap, bear2, bear3 và kệ gấu",
+   "ungVien": [
+    {
+     "id": "rb-gau-bong__1",
+     "ten": "Giant Teddy Bear",
+     "anh": "output/ep002/ung-vien-roblox/rb-gau-bong__1.png",
+     "link": "https://create.roblox.com/store/asset/12549476788",
+     "nguon": "Roblox Creator Store",
+     "assetId": 12549476788,
+     "tacGia": "Astrra",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · gấu bông nâu cổ điển, dáng ngồi, 2344 tam giác"
+    },
+    {
+     "id": "rb-gau-bong__2",
+     "ten": "Teddy Bear",
+     "anh": "output/ep002/ung-vien-roblox/rb-gau-bong__2.png",
+     "link": "https://create.roblox.com/store/asset/31412121",
+     "nguon": "Roblox Creator Store",
+     "assetId": 31412121,
+     "tacGia": "iKarlee",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · gấu bông nâu bụng sáng, 866 tam giác, nhẹ nhất (có script đi kèm) · có script đi kèm (chỉ cần mesh)"
+    },
+    {
+     "id": "rb-gau-bong__3",
+     "ten": "Teddy Bear",
+     "anh": "output/ep002/ung-vien-roblox/rb-gau-bong__3.png",
+     "link": "https://create.roblox.com/store/asset/4919878545",
+     "nguon": "Roblox Creator Store",
+     "assetId": 4919878545,
+     "tacGia": "The_Deceiver",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · gấu nâu sẫm mềm, 7016 tam giác"
+    },
+    {
+     "id": "rb-gau-bong__4",
+     "ten": "Stuffed Bear",
+     "anh": "output/ep002/ung-vien-roblox/rb-gau-bong__4.png",
+     "link": "https://create.roblox.com/store/asset/396561679",
+     "nguon": "Roblox Creator Store",
+     "assetId": 396561679,
+     "tacGia": "nightowII",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · gấu kem tay chân dài, hợp làm biến thể màu"
+    }
+   ]
+  },
+  {
+   "id": "rb-ket-sat",
+   "ten": "Két sắt",
+   "phu": "prop ket_tien",
+   "ungVien": [
+    {
+     "id": "rb-ket-sat__1",
+     "ten": "Working Safe Box Made By Electric_Bloxx",
+     "anh": "output/ep002/ung-vien-roblox/rb-ket-sat__1.png",
+     "link": "https://create.roblox.com/store/asset/12803756515",
+     "nguon": "Roblox Creator Store",
+     "assetId": 12803756515,
+     "tacGia": "Jakesoccer19",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · két xanh đen có tay nắm, 240 tam giác (có script đi kèm) · có script đi kèm (chỉ cần mesh)"
+    },
+    {
+     "id": "rb-ket-sat__2",
+     "ten": "Vault",
+     "anh": "output/ep002/ung-vien-roblox/rb-ket-sat__2.png",
+     "link": "https://create.roblox.com/store/asset/9453652260",
+     "nguon": "Roblox Creator Store",
+     "assetId": 9453652260,
+     "tacGia": "Theoficialroblix",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · két vuông có vô lăng, 744 tam giác"
+    },
+    {
+     "id": "rb-ket-sat__3",
+     "ten": "Money Safe Treasure Chest Bag Vault Bank Tresure",
+     "anh": "output/ep002/ung-vien-roblox/rb-ket-sat__3.png",
+     "link": "https://create.roblox.com/store/asset/81941281971221",
+     "nguon": "Roblox Creator Store",
+     "assetId": 81941281971221,
+     "tacGia": "Starby4110",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · tủ két đen, 898 tam giác (có script) · có script đi kèm (chỉ cần mesh)"
+    }
+   ]
+  },
+  {
+   "id": "rb-bang-chuyen",
+   "ten": "Băng chuyền",
+   "phu": "prop bang_chuyen",
+   "ungVien": [
+    {
+     "id": "rb-bang-chuyen__1",
+     "ten": "conveyor belt",
+     "anh": "output/ep002/ung-vien-roblox/rb-bang-chuyen__1.png",
+     "link": "https://create.roblox.com/store/asset/18405270867",
+     "nguon": "Roblox Creator Store",
+     "assetId": 18405270867,
+     "tacGia": "Ex1so100",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · băng chuyền con lăn trông thật, 2148 tam giác"
+    },
+    {
+     "id": "rb-bang-chuyen__2",
+     "ten": "Conveyor Belt",
+     "anh": "output/ep002/ung-vien-roblox/rb-bang-chuyen__2.png",
+     "link": "https://create.roblox.com/store/asset/7063606146",
+     "nguon": "Roblox Creator Store",
+     "assetId": 7063606146,
+     "tacGia": "TheAzureNeko",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · băng chuyền cực gọn, 36 tam giác (có script) · có script đi kèm (chỉ cần mesh)"
+    },
+    {
+     "id": "rb-bang-chuyen__3",
+     "ten": "conveyor belt",
+     "anh": "output/ep002/ung-vien-roblox/rb-bang-chuyen__3.png",
+     "link": "https://create.roblox.com/store/asset/11244626725",
+     "nguon": "Roblox Creator Store",
+     "assetId": 11244626725,
+     "tacGia": "ZEBO20003O000",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · băng chuyền đen xám, 260 tam giác (có script) · có script đi kèm (chỉ cần mesh)"
+    }
+   ]
+  },
+  {
+   "id": "rb-may-khau",
+   "ten": "Máy khâu",
+   "phu": "prop của cô thợ may",
+   "ungVien": [
+    {
+     "id": "rb-may-khau__1",
+     "ten": "Sewing Machine",
+     "anh": "output/ep002/ung-vien-roblox/rb-may-khau__1.png",
+     "link": "https://create.roblox.com/store/asset/14047703302",
+     "nguon": "Roblox Creator Store",
+     "assetId": 14047703302,
+     "tacGia": "lowqualityqwerty",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · máy khâu trắng chi tiết, 4118 tam giác"
+    },
+    {
+     "id": "rb-may-khau__2",
+     "ten": "Light-Pastel Pink Sewing Machine",
+     "anh": "output/ep002/ung-vien-roblox/rb-may-khau__2.png",
+     "link": "https://create.roblox.com/store/asset/879207507",
+     "nguon": "Roblox Creator Store",
+     "assetId": 879207507,
+     "tacGia": "AirplaneTaxes",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · máy khâu hồng nhạt gọn, 1058 tam giác"
+    },
+    {
+     "id": "rb-may-khau__3",
+     "ten": "Sewing Machine",
+     "anh": "output/ep002/ung-vien-roblox/rb-may-khau__3.png",
+     "link": "https://create.roblox.com/store/asset/3272646970",
+     "nguon": "Roblox Creator Store",
+     "assetId": 3272646970,
+     "tacGia": "SirCannons",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · máy khâu trên bàn gỗ, 960 tam giác"
+    }
+   ]
+  },
+  {
+   "id": "rb-chuong",
+   "ten": "Chuông",
+   "phu": "prop chuong",
+   "ungVien": [
+    {
+     "id": "rb-chuong__1",
+     "ten": "epic bell",
+     "anh": "output/ep002/ung-vien-roblox/rb-chuong__1.png",
+     "link": "https://create.roblox.com/store/asset/2959717401",
+     "nguon": "Roblox Creator Store",
+     "assetId": 2959717401,
+     "tacGia": "marcie_wav",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · chuông tay vàng cán nâu"
+    },
+    {
+     "id": "rb-chuong__2",
+     "ten": "bell",
+     "anh": "output/ep002/ung-vien-roblox/rb-chuong__2.png",
+     "link": "https://create.roblox.com/store/asset/9476645221",
+     "nguon": "Roblox Creator Store",
+     "assetId": 9476645221,
+     "tacGia": "ely_thm",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · chuông vàng đơn giản, 2340 tam giác"
+    },
+    {
+     "id": "rb-chuong__3",
+     "ten": "Working Dinner Bell",
+     "anh": "output/ep002/ung-vien-roblox/rb-chuong__3.png",
+     "link": "https://create.roblox.com/store/asset/14277456742",
+     "nguon": "Roblox Creator Store",
+     "assetId": 14277456742,
+     "tacGia": "Chuba7",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · chuông bàn xám, có script đi kèm · có script đi kèm (chỉ cần mesh)"
+    }
+   ]
+  },
+  {
+   "id": "rb-o-khoa",
+   "ten": "Ổ khoá",
+   "phu": "prop o_khoa",
+   "ungVien": [
+    {
+     "id": "rb-o-khoa__1",
+     "ten": "Lock",
+     "anh": "output/ep002/ung-vien-roblox/rb-o-khoa__1.png",
+     "link": "https://create.roblox.com/store/asset/13031065663",
+     "nguon": "Roblox Creator Store",
+     "assetId": 13031065663,
+     "tacGia": "vxdimm",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · ổ khoá đen lỗ khoá, 428 tam giác"
+    },
+    {
+     "id": "rb-o-khoa__2",
+     "ten": "Padlock Full",
+     "anh": "output/ep002/ung-vien-roblox/rb-o-khoa__2.png",
+     "link": "https://create.roblox.com/store/asset/8800862286",
+     "nguon": "Roblox Creator Store",
+     "assetId": 8800862286,
+     "tacGia": "daon2000",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · ổ khoá kim loại, 536 tam giác"
+    },
+    {
+     "id": "rb-o-khoa__3",
+     "ten": "rusted padlock",
+     "anh": "output/ep002/ung-vien-roblox/rb-o-khoa__3.png",
+     "link": "https://create.roblox.com/store/asset/28465187",
+     "nguon": "Roblox Creator Store",
+     "assetId": 28465187,
+     "tacGia": "Eman1234567",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · ổ khoá gỉ lỗ khoá, 334 tam giác"
+    }
+   ]
+  },
+  {
+   "id": "rb-ke-go",
+   "ten": "Kệ gỗ",
+   "phu": "prop ke_trong, ke_gau",
+   "ungVien": [
+    {
+     "id": "rb-ke-go__1",
+     "ten": "Wooden Shelf",
+     "anh": "output/ep002/ung-vien-roblox/rb-ke-go__1.png",
+     "link": "https://create.roblox.com/store/asset/6875305771",
+     "nguon": "Roblox Creator Store",
+     "assetId": 6875305771,
+     "tacGia": "NASTSAN",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · kệ gỗ mở, 132 tam giác"
+    },
+    {
+     "id": "rb-ke-go__2",
+     "ten": "Wooden Shelf",
+     "anh": "output/ep002/ung-vien-roblox/rb-ke-go__2.png",
+     "link": "https://create.roblox.com/store/asset/3662691950",
+     "nguon": "Roblox Creator Store",
+     "assetId": 3662691950,
+     "tacGia": "NameIsNormal",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · kệ thấp 2 tầng, 348 tam giác"
+    },
+    {
+     "id": "rb-ke-go__3",
+     "ten": "Bookshelf (With Books)",
+     "anh": "output/ep002/ung-vien-roblox/rb-ke-go__3.png",
+     "link": "https://create.roblox.com/store/asset/9914694425",
+     "nguon": "Roblox Creator Store",
+     "assetId": 9914694425,
+     "tacGia": "bradyocon",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · tủ sách có sách, 1668 tam giác"
+    }
+   ]
+  },
+  {
+   "id": "rb-bang-tin",
+   "ten": "Bảng tin",
+   "phu": "prop bang_tin",
+   "ungVien": [
+    {
+     "id": "rb-bang-tin__1",
+     "ten": "Notice Board",
+     "anh": "output/ep002/ung-vien-roblox/rb-bang-tin__1.png",
+     "link": "https://create.roblox.com/store/asset/8547476448",
+     "nguon": "Roblox Creator Store",
+     "assetId": 8547476448,
+     "tacGia": "Just_George01",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · bảng ghim giấy, 112 tam giác"
+    },
+    {
+     "id": "rb-bang-tin__2",
+     "ten": "Notice Board",
+     "anh": "output/ep002/ung-vien-roblox/rb-bang-tin__2.png",
+     "link": "https://create.roblox.com/store/asset/58101028",
+     "nguon": "Roblox Creator Store",
+     "assetId": 58101028,
+     "tacGia": "3rdkingben",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · bảng ghim nghiêng có giấy, 384 tam giác"
+    },
+    {
+     "id": "rb-bang-tin__3",
+     "ten": "Notice Board",
+     "anh": "output/ep002/ung-vien-roblox/rb-bang-tin__3.png",
+     "link": "https://create.roblox.com/store/asset/112292866786657",
+     "nguon": "Roblox Creator Store",
+     "assetId": 112292866786657,
+     "tacGia": "Zraft_Thecreator",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · bảng tin ngoài trời chân gỗ, 924 tam giác"
+    }
+   ]
+  },
+  {
+   "id": "rb-dong-ho",
+   "ten": "Đồng hồ báo thức",
+   "phu": "prop dong_ho",
+   "ungVien": [
+    {
+     "id": "rb-dong-ho__1",
+     "ten": "Alarm Clock",
+     "anh": "output/ep002/ung-vien-roblox/rb-dong-ho__1.png",
+     "link": "https://create.roblox.com/store/asset/73347805",
+     "nguon": "Roblox Creator Store",
+     "assetId": 73347805,
+     "tacGia": "xabi",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · đồng hồ số đỏ 7:00, 122 tam giác (kiểu số, không phải kim)"
+    },
+    {
+     "id": "rb-dong-ho__2",
+     "ten": "Alarm Clock",
+     "anh": "output/ep002/ung-vien-roblox/rb-dong-ho__2.png",
+     "link": "https://create.roblox.com/store/asset/5307268641",
+     "nguon": "Roblox Creator Store",
+     "assetId": 5307268641,
+     "tacGia": "Sage_TheCoffeeAddict",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · đồng hồ số trắng 7:00, 38 tam giác"
+    },
+    {
+     "id": "rb-dong-ho__3",
+     "ten": "Alarm Clock",
+     "anh": "output/ep002/ung-vien-roblox/rb-dong-ho__3.png",
+     "link": "https://create.roblox.com/store/asset/1565504113",
+     "nguon": "Roblox Creator Store",
+     "assetId": 1565504113,
+     "tacGia": "Borderline_User",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · đồng hồ số xanh, 86 tam giác"
+    }
+   ]
+  },
+  {
+   "id": "rb-guong",
+   "ten": "Gương",
+   "phu": "prop guong",
+   "ungVien": [
+    {
+     "id": "rb-guong__1",
+     "ten": "Standing Mirror",
+     "anh": "output/ep002/ung-vien-roblox/rb-guong__1.png",
+     "link": "https://create.roblox.com/store/asset/18477997629",
+     "nguon": "Roblox Creator Store",
+     "assetId": 18477997629,
+     "tacGia": "cookie_unicorn1315",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · gương đứng chân kim loại, 90 tam giác"
+    },
+    {
+     "id": "rb-guong__2",
+     "ten": "Mirror",
+     "anh": "output/ep002/ung-vien-roblox/rb-guong__2.png",
+     "link": "https://create.roblox.com/store/asset/3342737538",
+     "nguon": "Roblox Creator Store",
+     "assetId": 3342737538,
+     "tacGia": "Bean1957",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · gương oval, 864 tam giác"
+    },
+    {
+     "id": "rb-guong__3",
+     "ten": "Ground Mirror",
+     "anh": "output/ep002/ung-vien-roblox/rb-guong__3.png",
+     "link": "https://create.roblox.com/store/asset/2835369952",
+     "nguon": "Roblox Creator Store",
+     "assetId": 2835369952,
+     "tacGia": "Furniture_build",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · gương sàn viền đen, 236 tam giác"
+    }
+   ]
+  },
+  {
+   "id": "rb-vi",
+   "ten": "Ví tiền",
+   "phu": "prop vi",
+   "ungVien": [
+    {
+     "id": "rb-vi__1",
+     "ten": "Wallet",
+     "anh": "output/ep002/ung-vien-roblox/rb-vi__1.png",
+     "link": "https://create.roblox.com/store/asset/16995071812",
+     "nguon": "Roblox Creator Store",
+     "assetId": 16995071812,
+     "tacGia": "bertPlanet",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · ví nâu có tiền, 104 tam giác"
+    },
+    {
+     "id": "rb-vi__2",
+     "ten": "wallet",
+     "anh": "output/ep002/ung-vien-roblox/rb-vi__2.png",
+     "link": "https://create.roblox.com/store/asset/8605159359",
+     "nguon": "Roblox Creator Store",
+     "assetId": 8605159359,
+     "tacGia": "DanteDMCryAlt",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · ví nâu khoá bấm, 1110 tam giác"
+    }
+   ]
+  },
+  {
+   "id": "rb-tui-tien",
+   "ten": "Túi tiền",
+   "phu": "prop tui_tien",
+   "ungVien": [
+    {
+     "id": "rb-tui-tien__1",
+     "ten": "Money Bag Mesh",
+     "anh": "output/ep002/ung-vien-roblox/rb-tui-tien__1.png",
+     "link": "https://create.roblox.com/store/asset/5024158116",
+     "nguon": "Roblox Creator Store",
+     "assetId": 5024158116,
+     "tacGia": "reallyfunny3",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · bao tiền nâu buộc miệng, 2166 tam giác"
+    },
+    {
+     "id": "rb-tui-tien__2",
+     "ten": "money bag",
+     "anh": "output/ep002/ung-vien-roblox/rb-tui-tien__2.png",
+     "link": "https://create.roblox.com/store/asset/2899597159",
+     "nguon": "Roblox Creator Store",
+     "assetId": 2899597159,
+     "tacGia": "hakobmher",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · túi tiền kèm đồng xu, 620 tam giác"
+    },
+    {
+     "id": "rb-tui-tien__3",
+     "ten": "Money Bag",
+     "anh": "output/ep002/ung-vien-roblox/rb-tui-tien__3.png",
+     "link": "https://create.roblox.com/store/asset/161263832",
+     "nguon": "Roblox Creator Store",
+     "assetId": 161263832,
+     "tacGia": "LennoxNova",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · túi tiền đan, 128 tam giác"
+    }
+   ]
+  },
+  {
+   "id": "rb-day-chuyen",
+   "ten": "Dây chuyền",
+   "phu": "prop day_chuyen",
+   "ungVien": [
+    {
+     "id": "rb-day-chuyen__1",
+     "ten": "Jade Necklace with Shell Pendant",
+     "anh": "output/ep002/ung-vien-roblox/rb-day-chuyen__1.png",
+     "link": "https://www.roblox.com/catalog/376527115",
+     "nguon": "Roblox Marketplace",
+     "assetId": 376527115,
+     "tacGia": "Roblox",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Neck accessory · dây chuyền ngọc bích do Roblox làm"
+    },
+    {
+     "id": "rb-day-chuyen__2",
+     "ten": "Golden Dragon Pendant Chain",
+     "anh": "output/ep002/ung-vien-roblox/rb-day-chuyen__2.png",
+     "link": "https://create.roblox.com/store/asset/15039130522",
+     "nguon": "Roblox Creator Store",
+     "assetId": 15039130522,
+     "tacGia": "buto23212",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · dây vàng mặt rồng, 884 tam giác"
+    },
+    {
+     "id": "rb-day-chuyen__3",
+     "ten": "Gold Star Necklace",
+     "anh": "output/ep002/ung-vien-roblox/rb-day-chuyen__3.png",
+     "link": "https://create.roblox.com/store/asset/16097441981",
+     "nguon": "Roblox Creator Store",
+     "assetId": 16097441981,
+     "tacGia": "1ntrstellar",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · dây chuyền sao mảnh"
+    }
+   ]
+  },
+  {
+   "id": "rb-dep",
+   "ten": "Dép",
+   "phu": "prop doi_dep",
+   "ungVien": [
+    {
+     "id": "rb-dep__1",
+     "ten": "Slippers",
+     "anh": "output/ep002/ung-vien-roblox/rb-dep__1.png",
+     "link": "https://create.roblox.com/store/asset/376038391",
+     "nguon": "Roblox Creator Store",
+     "assetId": 376038391,
+     "tacGia": "Cuddlysweet",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · dép trắng tai mèo, 1696 tam giác"
+    },
+    {
+     "id": "rb-dep__2",
+     "ten": "Cat paw slippers",
+     "anh": "output/ep002/ung-vien-roblox/rb-dep__2.png",
+     "link": "https://create.roblox.com/store/asset/12208787080",
+     "nguon": "Roblox Creator Store",
+     "assetId": 12208787080,
+     "tacGia": "toberkus",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · dép be dáng bàn chân, 2688 tam giác"
+    },
+    {
+     "id": "rb-dep__3",
+     "ten": "Slippers",
+     "anh": "output/ep002/ung-vien-roblox/rb-dep__3.png",
+     "link": "https://create.roblox.com/store/asset/5541362545",
+     "nguon": "Roblox Creator Store",
+     "assetId": 5541362545,
+     "tacGia": "PhalseProphet",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · đôi dép đỏ đan, 888 tam giác"
+    }
+   ]
+  },
+  {
+   "id": "rb-quay-banh",
+   "ten": "Quầy bánh",
+   "phu": "prop hoc_quay",
+   "ungVien": [
+    {
+     "id": "rb-quay-banh__1",
+     "ten": "Bakery counter",
+     "anh": "output/ep002/ung-vien-roblox/rb-quay-banh__1.png",
+     "link": "https://create.roblox.com/store/asset/14152550822",
+     "nguon": "Roblox Creator Store",
+     "assetId": 14152550822,
+     "tacGia": "hgrgtipro",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · quầy kính gỗ, 120 tam giác"
+    },
+    {
+     "id": "rb-quay-banh__2",
+     "ten": "Bakery Display Counter",
+     "anh": "output/ep002/ung-vien-roblox/rb-quay-banh__2.png",
+     "link": "https://create.roblox.com/store/asset/10228630371",
+     "nguon": "Roblox Creator Store",
+     "assetId": 10228630371,
+     "tacGia": "roxifoxy1000",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · quầy trưng bày, 144 tam giác"
+    },
+    {
+     "id": "rb-quay-banh__3",
+     "ten": "Bakery Counter - 8 Low Poly Props",
+     "anh": "output/ep002/ung-vien-roblox/rb-quay-banh__3.png",
+     "link": "https://create.roblox.com/store/asset/118293801653600",
+     "nguon": "Roblox Creator Store",
+     "assetId": 118293801653600,
+     "tacGia": "dgd419",
+     "giayPhep": "Roblox — chỉ cấp phép trong Roblox, người dùng chịu trách nhiệm",
+     "phu": "miễn phí · Model · bộ 8 đạo cụ bánh mì nhẹ (cần kiểm tra thủ công)"
+    }
+   ]
+  }
+ ]
+}

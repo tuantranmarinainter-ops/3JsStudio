@@ -12616,5 +12616,488 @@
   "loai": "phu-kien",
   "tris": 581,
   "tris_goc": 581
+ },
+ {
+  "id": "nhap/ke-trong",
+  "src": "assets/nhap/ke-trong.glb",
+  "source": "poly.pizza/m/TDgvIuorcX",
+  "license": "CC0",
+  "credit": "“Shelf Tall” by Quaternius (https://poly.pizza/m/TDgvIuorcX), CC0",
+  "title": "Shelf Tall",
+  "author": "Quaternius",
+  "scale": 1,
+  "bbox": [
+   3.31,
+   5,
+   1.305
+  ],
+  "nodes": [
+   "ke-trong"
+  ],
+  "loai": "vua",
+  "tris": 536,
+  "tris_goc": 536
+ },
+ {
+  "id": "nhap/ke-sach-xam",
+  "src": "assets/nhap/ke-sach-xam.glb",
+  "source": "sketchfab.com/3d-models/low-poly-book-shelf-9f9e0e532a5846c1acc252fcf664813b",
+  "license": "CC BY 4.0",
+  "credit": "“Low Poly Book Shelf” by Nat (https://sketchfab.com/3d-models/low-poly-book-shelf-9f9e0e532a5846c1acc252fcf664813b), CC BY 4.0",
+  "title": "Low Poly Book Shelf",
+  "author": "Nat",
+  "scale": 1,
+  "bbox": [
+   3.702,
+   6,
+   1.129
+  ],
+  "nodes": [
+   "ke-sach-xam"
+  ],
+  "loai": "vua",
+  "tris": 154,
+  "tris_goc": 154
+ },
+ {
+  "id": "nhap/ke-kho",
+  "src": "assets/nhap/ke-kho.glb",
+  "source": "poly.pizza/m/6gKdASmfB9U",
+  "license": "CC BY 3.0",
+  "credit": "“Storage Shelf” by Jarlan Perez (https://poly.pizza/m/6gKdASmfB9U), CC BY 3.0",
+  "title": "Storage Shelf",
+  "author": "Jarlan Perez",
+  "scale": 1,
+  "bbox": [
+   4.393,
+   6,
+   1.714
+  ],
+  "nodes": [
+   "ke-kho"
+  ],
+  "loai": "vua",
+  "tris": 96,
+  "tris_goc": 96
+ },
+ {
+  "id": "nhap/cua-go",
+  "src": "assets/nhap/cua-go.glb",
+  "source": "poly.pizza/m/a948jjnuaL",
+  "license": "CC0",
+  "credit": "“Door” by Quaternius (https://poly.pizza/m/a948jjnuaL), CC0",
+  "title": "Door",
+  "author": "Quaternius",
+  "scale": 1,
+  "bbox": [
+   3.787,
+   6.8,
+   0.709
+  ],
+  "nodes": [
+   "cua-go"
+  ],
+  "loai": "vua",
+  "tris": 848,
+  "tris_goc": 848
+ },
+ {
+  "id": "nhap/sap-cho",
+  "src": "assets/nhap/sap-cho.glb",
+  "source": "poly.pizza/m/DGIM5HGISb",
+  "license": "CC0",
+  "credit": "“Market Stand” by Quaternius (https://poly.pizza/m/DGIM5HGISb), CC0",
+  "title": "Market Stand",
+  "author": "Quaternius",
+  "scale": 1,
+  "bbox": [
+   3.172,
+   3.5,
+   3.969
+  ],
+  "nodes": [
+   "sap-cho"
+  ],
+  "loai": "lon",
+  "tris": 1548,
+  "tris_goc": 1548
+ },
+ {
+  "id": "nhap/thung-carton",
+  "src": "assets/nhap/thung-carton.glb",
+  "source": "poly.pizza/m/HvjissDrdr",
+  "license": "CC0",
+  "credit": "“Box” by Kenney (https://poly.pizza/m/HvjissDrdr), CC0",
+  "title": "Box",
+  "author": "Kenney",
+  "scale": 1,
+  "bbox": [
+   2,
+   2,
+   2
+  ],
+  "nodes": [
+   "thung-carton"
+  ],
+  "loai": "nho",
+  "tris": 124,
+  "tris_goc": 124
+ },
+ {
+  "id": "nhap/dong-thung",
+  "src": "assets/nhap/dong-thung.glb",
+  "source": "poly.pizza/m/e6ltACZnFSS",
+  "license": "CC BY 3.0",
+  "credit": "“Pile of boxes” by David Jeffries (https://poly.pizza/m/e6ltACZnFSS), CC BY 3.0",
+  "title": "Pile of boxes",
+  "author": "David Jeffries",
+  "scale": 1,
+  "bbox": [
+   5.09,
+   2.6,
+   6.407
+  ],
+  "nodes": [
+   "dong-thung"
+  ],
+  "loai": "vua",
+  "tris": 644,
+  "tris_goc": 644
+ },
+ {
+  "id": "nhap/bang-tin-go",
+  "src": "assets/nhap/bang-tin-go.glb",
+  "source": "sketchfab.com/3d-models/notice-board-low-poly-c7253f06bb8c49b0afcd60a509a8240c",
+  "license": "CC BY 4.0",
+  "credit": "“Notice board low-poly” by Viktor_ (https://sketchfab.com/3d-models/notice-board-low-poly-c7253f06bb8c49b0afcd60a509a8240c), CC BY 4.0",
+  "title": "Notice board low-poly",
+  "author": "Viktor_",
+  "scale": 1,
+  "bbox": [
+   6.06,
+   6,
+   1.04
+  ],
+  "nodes": [
+   "bang-tin-go"
+  ],
+  "loai": "vua",
+  "tris": 924,
+  "tris_goc": 924
+ },
+ {
+  "id": "nhap/khung-anh",
+  "src": "assets/nhap/khung-anh.glb",
+  "source": "sketchfab.com/3d-models/photo-frame-low-poly-speed-model-3e6dc5d42e1a4e78a7bad4dac7754cb9",
+  "license": "CC BY 4.0",
+  "credit": "“Photo Frame (Low Poly Speed Model)” by TheoClarke (https://sketchfab.com/3d-models/photo-frame-low-poly-speed-model-3e6dc5d42e1a4e78a7bad4dac7754cb9), CC BY 4.0",
+  "title": "Photo Frame (Low Poly Speed Model)",
+  "author": "TheoClarke",
+  "scale": 1,
+  "bbox": [
+   1.176,
+   1.5,
+   0.768
+  ],
+  "nodes": [
+   "khung-anh"
+  ],
+  "loai": "nho",
+  "tris": 100,
+  "tris_goc": 100
+ },
+ {
+  "id": "nhap/dong-ho-bao-thuc",
+  "src": "assets/nhap/dong-ho-bao-thuc.glb",
+  "source": "sketchfab.com/3d-models/alarm-clock-household-props-10-b7832cf1396e4dcc9513e5e1acef182b",
+  "license": "CC BY 4.0",
+  "credit": "“Alarm Clock: Household Props 10” by Daniel O'Neil (https://sketchfab.com/3d-models/alarm-clock-household-props-10-b7832cf1396e4dcc9513e5e1acef182b), CC BY 4.0",
+  "title": "Alarm Clock: Household Props 10",
+  "author": "Daniel O'Neil",
+  "scale": 1,
+  "bbox": [
+   0.74,
+   1,
+   0.432
+  ],
+  "nodes": [
+   "dong-ho-bao-thuc"
+  ],
+  "loai": "nho",
+  "tris": 300,
+  "tris_goc": 300
+ },
+ {
+  "id": "nhap/guong-khung",
+  "src": "assets/nhap/guong-khung.glb",
+  "source": "poly.pizza/m/cjvm-bUFBAW",
+  "license": "CC BY 3.0",
+  "credit": "“Mirror” by Poly by Google (https://poly.pizza/m/cjvm-bUFBAW), CC BY 3.0",
+  "title": "Mirror",
+  "author": "Poly by Google",
+  "scale": 1,
+  "bbox": [
+   4.349,
+   7,
+   0.477
+  ],
+  "nodes": [
+   "guong-khung"
+  ],
+  "loai": "vua",
+  "tris": 52,
+  "tris_goc": 52
+ },
+ {
+  "id": "nhap/cuon-sach",
+  "src": "assets/nhap/cuon-sach.glb",
+  "source": "sketchfab.com/3d-models/book-low-poly-d6465435cb3241f9a550067e34c28918",
+  "license": "CC BY 4.0",
+  "credit": "“Book Low Poly” by DiegoVega (https://sketchfab.com/3d-models/book-low-poly-d6465435cb3241f9a550067e34c28918), CC BY 4.0",
+  "title": "Book Low Poly",
+  "author": "DiegoVega",
+  "scale": 1,
+  "bbox": [
+   1.149,
+   0.4,
+   1.219
+  ],
+  "nodes": [
+   "cuon-sach"
+  ],
+  "loai": "nho",
+  "tris": 164,
+  "tris_goc": 164
+ },
+ {
+  "id": "nhap/nhan-kim-cuong",
+  "src": "assets/nhap/nhan-kim-cuong.glb",
+  "source": "poly.pizza/m/klY4A6FGjz",
+  "license": "CC BY 3.0",
+  "credit": "“Diamond Ring” by mehreen1919 (https://poly.pizza/m/klY4A6FGjz), CC BY 3.0",
+  "title": "Diamond Ring",
+  "author": "mehreen1919",
+  "scale": 1,
+  "bbox": [
+   0.453,
+   0.55,
+   0.3
+  ],
+  "nodes": [
+   "nhan-kim-cuong"
+  ],
+  "loai": "nho",
+  "tris": 448,
+  "tris_goc": 448
+ },
+ {
+  "id": "nhap/vi-da",
+  "src": "assets/nhap/vi-da.glb",
+  "source": "sketchfab.com/3d-models/wallet-ccfcc4ae6efa44a2ba34c4c479be7daf",
+  "license": "CC BY 4.0",
+  "credit": "“Wallet” by apleesee (https://sketchfab.com/3d-models/wallet-ccfcc4ae6efa44a2ba34c4c479be7daf), CC BY 4.0",
+  "title": "Wallet",
+  "author": "apleesee",
+  "scale": 1,
+  "bbox": [
+   0.801,
+   0.12,
+   1.108
+  ],
+  "nodes": [
+   "vi-da"
+  ],
+  "loai": "nho",
+  "tris": 928,
+  "tris_goc": 928
+ },
+ {
+  "id": "nhap/tui-tien",
+  "src": "assets/nhap/tui-tien.glb",
+  "source": "sketchfab.com/3d-models/toon-money-bag-0d9ddfea069d4c47a07043642c3fbc07",
+  "license": "CC BY 4.0",
+  "credit": "“Toon Money Bag” by Dary Muhammad (https://sketchfab.com/3d-models/toon-money-bag-0d9ddfea069d4c47a07043642c3fbc07), CC BY 4.0",
+  "title": "Toon Money Bag",
+  "author": "Dary Muhammad",
+  "scale": 1,
+  "bbox": [
+   1.066,
+   1.4,
+   1.066
+  ],
+  "nodes": [
+   "tui-tien"
+  ],
+  "loai": "nho",
+  "tris": 576,
+  "tris_goc": 576
+ },
+ {
+  "id": "nhap/bang-chuyen-xam",
+  "src": "assets/nhap/bang-chuyen-xam.glb",
+  "source": "poly.pizza/m/5f4he3uHyov",
+  "license": "CC BY 3.0",
+  "credit": "“Conveyor” by Josh (https://poly.pizza/m/5f4he3uHyov), CC BY 3.0",
+  "title": "Conveyor",
+  "author": "Josh",
+  "scale": 1,
+  "bbox": [
+   9.164,
+   3,
+   3.656
+  ],
+  "nodes": [
+   "bang-chuyen-xam"
+  ],
+  "loai": "lon",
+  "tris": 1068,
+  "tris_goc": 1068
+ },
+ {
+  "id": "nhap/ket-xanh-xam",
+  "src": "assets/nhap/ket-xanh-xam.glb",
+  "source": "sketchfab.com/3d-models/stylized-safe-low-poly-4817cd0ee84d4f35814471e91f2267b3",
+  "license": "CC BY 4.0",
+  "credit": "“Stylized safe (low poly)” by Polly Green (https://sketchfab.com/3d-models/stylized-safe-low-poly-4817cd0ee84d4f35814471e91f2267b3), CC BY 4.0",
+  "title": "Stylized safe (low poly)",
+  "author": "Polly Green",
+  "scale": 1,
+  "bbox": [
+   3.028,
+   2.2,
+   2.196
+  ],
+  "nodes": [
+   "ket-xanh-xam"
+  ],
+  "loai": "vua",
+  "tris": 951,
+  "tris_goc": 951
+ },
+ {
+  "id": "nhap/day-chuyen-vang",
+  "src": "assets/nhap/day-chuyen-vang.glb",
+  "source": "poly.pizza/m/D0nIOgnzrK",
+  "license": "CC BY 3.0",
+  "credit": "“Necklace” by Zsky (https://poly.pizza/m/D0nIOgnzrK), CC BY 3.0",
+  "title": "Necklace",
+  "author": "Zsky",
+  "scale": 1,
+  "bbox": [
+   0.562,
+   0.8,
+   0.676
+  ],
+  "nodes": [
+   "day-chuyen-vang"
+  ],
+  "loai": "nho",
+  "tris": 816,
+  "tris_goc": 816
+ },
+ {
+  "id": "nhap/chuong-tay",
+  "src": "assets/nhap/chuong-tay.glb",
+  "source": "poly.pizza/m/dYZz5rDiF7U",
+  "license": "CC BY 3.0",
+  "credit": "“Bell” by Poly by Google (https://poly.pizza/m/dYZz5rDiF7U), CC BY 3.0",
+  "title": "Bell",
+  "author": "Poly by Google",
+  "scale": 1,
+  "bbox": [
+   0.444,
+   0.93,
+   0.444
+  ],
+  "nodes": [
+   "chuong-tay"
+  ],
+  "loai": "nho",
+  "tris": 784,
+  "tris_goc": 784
+ },
+ {
+  "id": "nhap/dep-xo-ngon",
+  "src": "assets/nhap/dep-xo-ngon.glb",
+  "source": "poly.pizza/m/aVbWCpQLno8",
+  "license": "CC BY 3.0",
+  "credit": "“flip flops” by Tiff Eidmann (https://poly.pizza/m/aVbWCpQLno8), CC BY 3.0",
+  "title": "flip flops",
+  "author": "Tiff Eidmann",
+  "scale": 1,
+  "bbox": [
+   1.555,
+   0.35,
+   1.568
+  ],
+  "nodes": [
+   "dep-xo-ngon"
+  ],
+  "loai": "nho",
+  "tris": 252,
+  "tris_goc": 252
+ },
+ {
+  "id": "nhap/ban-chan",
+  "src": "assets/nhap/ban-chan.glb",
+  "source": "sketchfab.com/3d-models/foot-low-poly-0a2829421709406b84d72647b2f0e0e9",
+  "license": "CC BY 4.0",
+  "credit": "“Foot Low Poly” by gaelinix (https://sketchfab.com/3d-models/foot-low-poly-0a2829421709406b84d72647b2f0e0e9), CC BY 4.0",
+  "title": "Foot Low Poly",
+  "author": "gaelinix",
+  "scale": 1,
+  "bbox": [
+   0.686,
+   0.7,
+   1.842
+  ],
+  "nodes": [
+   "ban-chan"
+  ],
+  "loai": "nho",
+  "tris": 724,
+  "tris_goc": 724
+ },
+ {
+  "id": "nhap/bac-them",
+  "src": "assets/nhap/bac-them.glb",
+  "source": "poly.pizza/m/2cghwnOqEX",
+  "license": "CC0",
+  "credit": "“Steps” by Kenney (https://poly.pizza/m/2cghwnOqEX), CC0",
+  "title": "Steps",
+  "author": "Kenney",
+  "scale": 1,
+  "bbox": [
+   2.5,
+   1,
+   2.5
+  ],
+  "nodes": [
+   "bac-them"
+  ],
+  "loai": "nho",
+  "tris": 84,
+  "tris_goc": 84
+ },
+ {
+  "id": "nhap/ket-sat-xam",
+  "src": "assets/nhap/ket-sat-xam.glb",
+  "source": "sketchfab.com/3d-models/cartoon-safe-e6cb405ef7e942459eec7307416dc528",
+  "license": "CC BY 4.0",
+  "credit": "“Cartoon Safe” by Adrian21 (https://sketchfab.com/3d-models/cartoon-safe-e6cb405ef7e942459eec7307416dc528), CC BY 4.0",
+  "title": "Cartoon Safe",
+  "author": "Adrian21",
+  "scale": 1,
+  "bbox": [
+   2.439,
+   2,
+   3.54
+  ],
+  "nodes": [
+   "ket-sat-xam"
+  ],
+  "loai": "vua",
+  "tris": 2240,
+  "tris_goc": 2240
  }
 ]

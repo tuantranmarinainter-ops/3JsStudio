@@ -25,10 +25,19 @@ chi phí token từng đợt và bảng "Lịch sử các đợt" (ngày, số m
 | `node tools/duyet.mjs ep002 dung` | dựng `dist/ep002_duyet.html` (báo ảnh thiếu; cảnh báo nếu ảnh > 25 MB) |
 | `node tools/duyet.mjs ep002 them-ung-vien <số> <file.json>` | nạp nhóm `ung-vien` (file `{ nhomId, ten, mota, khe:[…] }`) vào đợt `<số>`, tạo đợt nếu chưa có, thay nhóm cùng `nhomId` |
 | `node tools/duyet.mjs ep002 nhan <file.json>` | nhập file "Lưu kết quả" của người dùng → `dot-NN.ketqua.json` |
+| `node tools/duyet.mjs ep002 mo [--cong 8791] [--khong-mo] [--mot-lan] [--het-gio 240] [--thu-muc dir]` | dựng lại trang + máy chủ `127.0.0.1` (tự đổi cổng nếu bận, mở trình duyệt); nút "Gửi tới Claude" POST `/gui` → `dot-NN.ketqua.json` + dòng trong `hop-thu.jsonl`, in `DA-NHAN dot=<N> file=<đường dẫn>` |
 
 ## Quy trình
 1. `moi` → điền `nhom`/`anh` → `token` mỗi khi có việc tốn token → `dung` → đưa link HTML.
 2. Người dùng duyệt, bấm "Lưu kết quả" (file `ep002_duyet_dotNN.json`, có trường `dot`) → `nhan` → `dung` lại.
 3. localStorage tách theo đợt: `<ep>_duyet_dotNN`. Nút Lưu/Sao chép chỉ xuất đợt đang mở.
+
+## Gửi thẳng tới Claude
+- Người dùng bấm đúp `tools/duyet-mo.bat [ep]` (mặc định ep002) → trang mở ở `http://127.0.0.1:<cổng>/` → duyệt xong bấm **Gửi tới Claude**
+  (hỏi xác nhận nếu còn mục chưa chọn). Mở trang bằng `file://` thì nút mờ; vẫn có Lưu / Sao chép kết quả.
+- Máy chủ chỉ nghe `127.0.0.1`, kiểm Host/Origin, giới hạn 2 MB, `tap` phải đúng `<ep>`, `dot` phải là đợt đang có; chỉ phục vụ ảnh/HTML trong gốc repo.
+- **Cho Claude:** chạy `node tools/duyet.mjs <ep> mo --mot-lan` ở chế độ nền (có thể thêm `--khong-mo` nếu trình duyệt đã mở sẵn).
+  Khi tiến trình thoát mã 0, đọc dòng `DA-NHAN dot=<N> file=…` rồi xử lý `duyet/<ep>/dot-NN.ketqua.json`, sau đó `dung` lại.
+  Mã thoát 3 = hết giờ (`--het-gio`, mặc định 240 phút) không ai gửi.
 
 Test: `node --test tools/tests/duyet.test.mjs`

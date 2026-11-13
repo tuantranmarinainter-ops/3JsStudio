@@ -18,6 +18,8 @@ ap.add_argument('--tex', type=int, default=512)
 ap.add_argument('--ao', action='store_true')
 ap.add_argument('--mau-dinh', action='store_true', help='thay ảnh màu bằng màu trung bình (phong cách khối)')
 ap.add_argument('--xoay', type=float, default=0, help='xoay quanh trục đứng (độ) để mặt trước nhìn +Z')
+ap.add_argument('--sang', type=float, default=0, help='làm sáng màu: trộn k (0..1) về trắng (ảnh màu, màu nền, màu đỉnh)')
+ap.add_argument('--xam', type=float, default=0, help='khử bão hoà k (0..1, 1 = xám giữ độ sáng); chạy trước --sang')
 ap.add_argument('--ten', default='model')
 A = ap.parse_args(argv)
 
@@ -109,7 +111,25 @@ def mean_color(img):
     if w * h == 0: return None
     a = np.empty(w * h * 4, dtype=np.float32); img.pixels.foreach_get(a)
     a = a.reshape(-1, 4); return tuple(float(x) for x in a.mean(axis=0))
-n_mat = 0; img_dung = set(); tex_info = []
+def doi_mau(r, g, b):
+    if A.xam > 0:
+        y = 0.2126 * r + 0.7152 * g + 0.0722 * b
+        r, g, b = r + (y - r) * A.xam, g + (y - g) * A.xam, b + (y - b) * A.xam
+    if A.sang > 0:
+        r, g, b = r + (1 - r) * A.sang, g + (1 - g) * A.sang, b + (1 - b) * A.sang
+    return r, g, b
+def doi_anh(img):
+    import numpy as np
+    w, h = img.size
+    a = np.empty(w * h * 4, dtype=np.float32); img.pixels.foreach_get(a); a = a.reshape(-1, 4)
+    if A.xam > 0:
+        y = a[:, 0] * 0.2126 + a[:, 1] * 0.7152 + a[:, 2] * 0.0722
+        for i in range(3): a[:, i] = a[:, i] + (y - a[:, i]) * A.xam
+    if A.sang > 0:
+        for i in range(3): a[:, i] = a[:, i] + (1 - a[:, i]) * A.sang
+    img.pixels.foreach_set(a.reshape(-1)); img.update()
+DOI = A.xam > 0 or A.sang > 0
+n_mat = 0; img_dung = set(); tex_info = []; anh_doi = set()
 for mat in me.materials:
     if not mat: continue
     n_mat += 1
@@ -132,7 +152,7 @@ for mat in me.materials:
             c = mean_color(img)
             if c:
                 for l in list(bc.links): nt.links.remove(l)
-                bc.default_value = (c[0], c[1], c[2], 1.0)
+                bc.default_value = (*doi_mau(c[0], c[1], c[2]), 1.0)
                 al = bsdf.inputs['Alpha']
                 for l in list(al.links): nt.links.remove(l)
                 al.default_value = 1.0
@@ -142,9 +162,19 @@ for mat in me.materials:
         if m > TEX:
             f = TEX / m; img.scale(max(1, int(w * f)), max(1, int(h * f)))
         al_linked = bsdf.inputs['Alpha'].is_linked
+        if DOI and img.name not in anh_doi: doi_anh(img); anh_doi.add(img.name)
         img.file_format = 'PNG' if al_linked else 'JPEG'
+        try: img.pack()   # đóng gói lại bộ đệm đã thu nhỏ để bộ xuất không dùng lại tệp gốc 1024 px
+        except Exception as e: say('pack lỗi', e)
         img_dung.add(img.name); tex_info.append((img.name, img.size[0], img.size[1]))
+    if DOI and not bc.is_linked:
+        v = bc.default_value; bc.default_value = (*doi_mau(v[0], v[1], v[2]), v[3])
     for l in list(bsdf.inputs['Normal'].links): nt.links.remove(l)
+    # Bỏ ảnh/nhóm nút không nuôi màu nền hoặc alpha (vd. nhóm "glTF Settings" nối ảnh ORM 1024 px → bộ xuất vẫn xuất occlusion)
+    giu = {getattr(x, 'name', None) for x in (upstream_image(bc), upstream_image(bsdf.inputs['Alpha']))}
+    for nd in list(nt.nodes):
+        if nd.type == 'GROUP' and nd.node_tree and 'glTF' in nd.node_tree.name: nt.nodes.remove(nd)
+        elif nd.type == 'TEX_IMAGE' and nd.name not in giu: nt.nodes.remove(nd)
     # Emission map -> bỏ (phong cách khối)
     for l in list(bsdf.inputs['Emission Color'].links): nt.links.remove(l)
 
@@ -170,7 +200,17 @@ if A.ao:
         g = 1.0 - 0.75 * ao[lp.vertex_index]; ca.data[li].color = (g, g, g, 1.0)
     me.color_attributes.active_color = ca
 elif len(me.color_attributes):
-    pass   # giữ màu đỉnh gốc (nhiều model low-poly tô màu bằng đỉnh)
+    if DOI:   # màu đỉnh gốc: đổi cùng cách
+        import numpy as np
+        for ca in me.color_attributes:
+            if ca.domain not in ('POINT', 'CORNER'): continue
+            n = len(ca.data); a = np.empty(n * 4, dtype=np.float32); ca.data.foreach_get('color', a); a = a.reshape(-1, 4)
+            if A.xam > 0:
+                y = a[:, 0] * 0.2126 + a[:, 1] * 0.7152 + a[:, 2] * 0.0722
+                for i in range(3): a[:, i] = a[:, i] + (y - a[:, i]) * A.xam
+            if A.sang > 0:
+                for i in range(3): a[:, i] = a[:, i] + (1 - a[:, i]) * A.sang
+            ca.data.foreach_set('color', a.reshape(-1))
 
 # ---------- xuất ----------
 os.makedirs(os.path.dirname(os.path.abspath(A.ra)), exist_ok=True)

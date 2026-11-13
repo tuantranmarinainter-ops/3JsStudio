@@ -1,0 +1,290 @@
+{
+ "ke_trong": {
+  "glb": "assets/nhap/ke-trong.glb",
+  "manifestId": "nhap/ke-trong",
+  "cao": 5,
+  "xoay": 0,
+  "bbox": [
+   3.31,
+   5,
+   1.305
+  ],
+  "ghiChu": "rộng 3.3 (kit 4): cần co dãn ngang ×1.2"
+ },
+ "ke_phong_ga": {
+  "glb": "assets/nhap/ke-sach-xam.glb",
+  "manifestId": "nhap/ke-sach-xam",
+  "cao": 6,
+  "xoay": 0,
+  "bbox": [
+   3.702,
+   6,
+   1.129
+  ],
+  "ghiChu": "tủ sách gỗ nâu sẫm (kit trắng); rộng 3.7 (kit 4)"
+ },
+ "ke_gau": {
+  "glb": "assets/nhap/ke-kho.glb",
+  "manifestId": "nhap/ke-kho",
+  "cao": 6,
+  "xoay": 0,
+  "bbox": [
+   4.393,
+   6,
+   1.714
+  ],
+  "ghiChu": "rộng 4.4 (kit 8): cần co dãn ngang ×1.8 hoặc đặt 2 cái"
+ },
+ "o_khoa": {
+  "glb": "assets/nhap/cua-go.glb",
+  "manifestId": "nhap/cua-go",
+  "cao": 6.8,
+  "xoay": 0,
+  "bbox": [
+   3.787,
+   6.8,
+   0.709
+  ],
+  "ghiChu": ""
+ },
+ "hoc_quay": {
+  "glb": "assets/nhap/sap-cho.glb",
+  "manifestId": "nhap/sap-cho",
+  "cao": 3.5,
+  "xoay": 0,
+  "bbox": [
+   3.172,
+   3.5,
+   3.969
+  ],
+  "ghiChu": "sạp chợ 3.2×3.5×4.0 (kit 5×3.5×2: sâu hơn rộng, có thể xoay 90°)"
+ },
+ "thung_dau_gau": {
+  "glb": "assets/nhap/thung-carton.glb",
+  "manifestId": "nhap/thung-carton",
+  "cao": 2,
+  "xoay": 0,
+  "bbox": [
+   2,
+   2,
+   2
+  ],
+  "ghiChu": ""
+ },
+ "thung_tiem_bach": {
+  "glb": "assets/nhap/dong-thung.glb",
+  "manifestId": "nhap/dong-thung",
+  "cao": 2.6,
+  "xoay": 0,
+  "bbox": [
+   5.09,
+   2.6,
+   6.407
+  ],
+  "ghiChu": "cỡ theo bề rộng (cao 2.6 → rộng 5.1 sâu 6.4); chồng thùng bừa, kit gốc 5×4.5×2.2 nên thấp hơn kit"
+ },
+ "bang_tin": {
+  "glb": "assets/nhap/bang-tin-go.glb",
+  "manifestId": "nhap/bang-tin-go",
+  "cao": 6,
+  "xoay": -90,
+  "bbox": [
+   6.06,
+   6,
+   1.04
+  ],
+  "ghiChu": "đã xoay -90° (mặt giấy nhìn +Z); làm sáng màu --sang 0.4; ảnh trước/sau ở output/ep002/da-nhap/so/bang-tin-truoc-sau.jpg"
+ },
+ "anh_ba": {
+  "glb": "assets/nhap/khung-anh.glb",
+  "manifestId": "nhap/khung-anh",
+  "cao": 1.5,
+  "xoay": 0,
+  "bbox": [
+   1.176,
+   1.5,
+   0.768
+  ],
+  "ghiChu": ""
+ },
+ "dong_ho": {
+  "glb": "assets/nhap/dong-ho-bao-thuc.glb",
+  "manifestId": "nhap/dong-ho-bao-thuc",
+  "cao": 1,
+  "xoay": 0,
+  "bbox": [
+   0.74,
+   1,
+   0.432
+  ],
+  "ghiChu": ""
+ },
+ "guong": {
+  "glb": "assets/nhap/guong-khung.glb",
+  "manifestId": "nhap/guong-khung",
+  "cao": 7,
+  "xoay": 0,
+  "bbox": [
+   4.349,
+   7,
+   0.477
+  ],
+  "ghiChu": "khung gương, mặt gương xám trơn (kit có ảnh phản chiếu → dán texture)"
+ },
+ "cuon_sach": {
+  "glb": "assets/nhap/cuon-sach.glb",
+  "manifestId": "nhap/cuon-sach",
+  "cao": 0.4,
+  "xoay": 0,
+  "bbox": [
+   1.149,
+   0.4,
+   1.219
+  ],
+  "ghiChu": "sách NẰM phẳng (kit đứng 0.35×1.3×1.0); cỡ chỉnh theo bề mặt 1.1×1.2"
+ },
+ "nhan_moi": {
+  "glb": "assets/nhap/nhan-kim-cuong.glb",
+  "manifestId": "nhap/nhan-kim-cuong",
+  "cao": 0.55,
+  "xoay": 0,
+  "bbox": [
+   0.453,
+   0.55,
+   0.3
+  ],
+  "ghiChu": "nhẫn đứng, đá xanh nhạt"
+ },
+ "vi": {
+  "glb": "assets/nhap/vi-da.glb",
+  "manifestId": "nhap/vi-da",
+  "cao": 0.12,
+  "xoay": 0,
+  "bbox": [
+   0.801,
+   0.12,
+   1.108
+  ],
+  "ghiChu": "ví phẳng 0.8×1.1 (kit 0.8×0.6); thu ảnh 256"
+ },
+ "tui_tien": {
+  "glb": "assets/nhap/tui-tien.glb",
+  "manifestId": "nhap/tui-tien",
+  "cao": 1.4,
+  "xoay": 0,
+  "bbox": [
+   1.066,
+   1.4,
+   1.066
+  ],
+  "ghiChu": ""
+ },
+ "bang_chuyen": {
+  "glb": "assets/nhap/bang-chuyen-xam.glb",
+  "manifestId": "nhap/bang-chuyen-xam",
+  "cao": 3,
+  "xoay": 0,
+  "bbox": [
+   9.164,
+   3,
+   3.656
+  ],
+  "ghiChu": "rộng 9.2 (kit 10)"
+ },
+ "ket_tien": {
+  "glb": "assets/nhap/ket-xanh-xam.glb",
+  "manifestId": "nhap/ket-xanh-xam",
+  "cao": 2.2,
+  "xoay": 0,
+  "bbox": [
+   3.028,
+   2.2,
+   2.196
+  ],
+  "ghiChu": "cửa két mở, bản gốc màu xanh xám đậm; rộng 3.0 (kit 2.2)"
+ },
+ "ket_ga": {
+  "glb": "assets/nhap/ket-sat-xam.glb",
+  "manifestId": "nhap/ket-sat-xam",
+  "cao": 2,
+  "xoay": 0,
+  "bbox": [
+   2.439,
+   2,
+   3.54
+  ],
+  "ghiChu": "bản xám thép (--xam 1 --sang 0.1) của ket-sat; bản gốc xanh dương giữ nguyên; két mở cửa nên sâu 3.5 (kit 1.8)"
+ },
+ "day_chuyen": {
+  "glb": "assets/nhap/day-chuyen-vang.glb",
+  "manifestId": "nhap/day-chuyen-vang",
+  "cao": 0.8,
+  "xoay": 0,
+  "bbox": [
+   0.562,
+   0.8,
+   0.676
+  ],
+  "ghiChu": "dây chuyền DỰNG ĐỨNG (mặt dây thả xuống); kit nằm phẳng → xoay 90° quanh X khi gắn"
+ },
+ "chuong": {
+  "glb": "assets/nhap/chuong-tay.glb",
+  "manifestId": "nhap/chuong-tay",
+  "cao": 0.93,
+  "xoay": 0,
+  "bbox": [
+   0.444,
+   0.93,
+   0.444
+  ],
+  "ghiChu": ""
+ },
+ "doi_dep": {
+  "glb": "assets/nhap/dep-xo-ngon.glb",
+  "manifestId": "nhap/dep-xo-ngon",
+  "cao": 0.35,
+  "xoay": 0,
+  "bbox": [
+   1.555,
+   0.35,
+   1.568
+  ],
+  "ghiChu": ""
+ },
+ "chan_tran": {
+  "glb": "assets/nhap/ban-chan.glb",
+  "manifestId": "nhap/ban-chan",
+  "cao": 0.7,
+  "xoay": 0,
+  "bbox": [
+   0.686,
+   0.7,
+   1.842
+  ],
+  "ghiChu": "MỘT bàn chân trắng có băng cổ chân (cần 2 bản, màu trắng, kit là da); mũi chân nhìn +Z"
+ },
+ "bac_them_dep": {
+  "glb": "assets/nhap/bac-them.glb",
+  "manifestId": "nhap/bac-them",
+  "cao": 1,
+  "xoay": 0,
+  "bbox": [
+   2.5,
+   1,
+   2.5
+  ],
+  "ghiChu": "dùng chung bac-them với bac_them_trong; 2.5×1×2.5, cần co dãn ngang ×2.8 (kit rộng 7); thấp ở +Z"
+ },
+ "bac_them_trong": {
+  "glb": "assets/nhap/bac-them.glb",
+  "manifestId": "nhap/bac-them",
+  "cao": 1,
+  "xoay": 0,
+  "bbox": [
+   2.5,
+   1,
+   2.5
+  ],
+  "ghiChu": "dùng chung bac-them với bac_them_dep; cần co dãn ngang ×2 (kit rộng 5)"
+ }
+}

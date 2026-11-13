@@ -1,0 +1,43 @@
+{
+ "tap": "ep002",
+ "dot": 2,
+ "luc": "2026-11-13T02:18:12.858Z",
+ "gau": null,
+ "duyet": [],
+ "sua": [],
+ "chuaChon": [
+  "hop_nhan",
+  "ban_do"
+ ],
+ "chon": {
+  "ke_trong": "ke_trong__2",
+  "ke_phong_ga": "ke_phong_ga__3",
+  "ke_gau": "ke_gau__3",
+  "o_khoa": "o_khoa__2",
+  "hoc_quay": "hoc_quay__1",
+  "thung_dau_gau": "thung_dau_gau__2",
+  "thung_tiem_bach": "thung_tiem_bach__2",
+  "bang_tin": "bang_tin__1",
+  "anh_ba": "anh_ba__3",
+  "dong_ho": "dong_ho__2",
+  "guong": "guong__3",
+  "cuon_sach": "cuon_sach__3",
+  "nhan_moi": "nhan_moi__3",
+  "vi": "vi__3",
+  "tui_tien": "tui_tien__2",
+  "bang_chuyen": "bang_chuyen__3",
+  "ket_tien": "ket_tien__3",
+  "ket_ga": "ket_ga__1",
+  "day_chuyen": "day_chuyen__2",
+  "chuong": "chuong__2",
+  "doi_dep": "doi_dep__3",
+  "chan_tran": "chan_tran__2",
+  "bac_them_dep": "bac_them_dep__2",
+  "bac_them_trong": "bac_them_trong__2"
+ },
+ "ghiChu": {
+  "hop_nhan": "tìm hộp riêng, nhẫn riêng để duyệt",
+  "bang_tin": "đổi vật liệu để sáng sủa phù hợp hơn",
+  "ban_do": "ĐỀ XUẤT DỰNG LẠI TRONG BLENDER (tấm phẳng + texture thị trấn có chấm đỏ); ứng viên chỉ là giấy bản đồ/cuộn"
+ }
+}

@@ -1,0 +1,271 @@
+{
+ "id": "da-nhap",
+ "ten": "Model đã nhập cho đạo cụ (xem cỡ và màu)",
+ "mota": "24 kit đạo cụ tập 2 đã có model thật (23 file GLB, ảnh cạnh nhân vật cam cao 5.2 stud để so cỡ). hop_nhan và ban_do chưa chọn nên chưa nhập. Model CC BY: ghi công trong assets/nhap/CREDITS.md.",
+ "muc": [
+  {
+   "id": "dn-ke_trong",
+   "ten": "Kệ trống có vết bụi (ke_trong)",
+   "phu": "536 tam giác · cao 5 stud, hộp 3.31×5×1.305 · 26 KB · rộng 3.3 (kit 4): cần co dãn ngang ×1.2",
+   "anh": "output/ep002/da-nhap/ke-trong.jpg",
+   "link": "https://poly.pizza/m/TDgvIuorcX",
+   "nguon": "polypizza",
+   "tacGia": "Quaternius",
+   "giayPhep": "CC0",
+   "tamGiac": 536
+  },
+  {
+   "id": "dn-ke_phong_ga",
+   "ten": "Kệ phòng Gà cạnh cửa sổ (ke_phong_ga)",
+   "phu": "154 tam giác · cao 6 stud, hộp 3.702×6×1.129 · 12 KB · tủ sách gỗ nâu sẫm (kit trắng); rộng 3.7 (kit 4)",
+   "anh": "output/ep002/da-nhap/ke-sach-xam.jpg",
+   "link": "https://sketchfab.com/3d-models/none-9f9e0e532a5846c1acc252fcf664813b",
+   "nguon": "sketchfab",
+   "tacGia": "Nat",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 154
+  },
+  {
+   "id": "dn-ke_gau",
+   "ten": "Kệ gấu mới may (nhà máy) (ke_gau)",
+   "phu": "96 tam giác · cao 6 stud, hộp 4.393×6×1.714 · 7 KB · rộng 4.4 (kit 8): cần co dãn ngang ×1.8 hoặc đặt 2 cái",
+   "anh": "output/ep002/da-nhap/ke-kho.jpg",
+   "link": "https://poly.pizza/m/6gKdASmfB9U",
+   "nguon": "polypizza",
+   "tacGia": "Jarlan Perez",
+   "giayPhep": "CC-BY 3.0",
+   "tamGiac": 96
+  },
+  {
+   "id": "dn-o_khoa",
+   "ten": "Ổ khoá / cửa gỗ khoá kín (o_khoa)",
+   "phu": "848 tam giác · cao 6.8 stud, hộp 3.787×6.8×0.709 · 37 KB",
+   "anh": "output/ep002/da-nhap/cua-go.jpg",
+   "link": "https://poly.pizza/m/a948jjnuaL",
+   "nguon": "polypizza",
+   "tacGia": "Quaternius",
+   "giayPhep": "CC0",
+   "tamGiac": 848
+  },
+  {
+   "id": "dn-hoc_quay",
+   "ten": "Quầy tiệm bánh (hoc_quay)",
+   "phu": "1548 tam giác · cao 3.5 stud, hộp 3.172×3.5×3.969 · 70 KB · sạp chợ 3.2×3.5×4.0 (kit 5×3.5×2: sâu hơn rộng, có thể xoay 90°)",
+   "anh": "output/ep002/da-nhap/sap-cho.jpg",
+   "link": "https://poly.pizza/m/DGIM5HGISb",
+   "nguon": "polypizza",
+   "tacGia": "Quaternius",
+   "giayPhep": "CC0",
+   "tamGiac": 1548
+  },
+  {
+   "id": "dn-thung_dau_gau",
+   "ten": "Thùng in dấu đầu gấu (thung_dau_gau)",
+   "phu": "124 tam giác · cao 2 stud, hộp 2×2×2 · 11 KB",
+   "anh": "output/ep002/da-nhap/thung-carton.jpg",
+   "link": "https://poly.pizza/m/HvjissDrdr",
+   "nguon": "polypizza",
+   "tacGia": "Kenney",
+   "giayPhep": "CC0",
+   "tamGiac": 124
+  },
+  {
+   "id": "dn-thung_tiem_bach",
+   "ten": "Chồng thùng Tiệm gấu Bách (thung_tiem_bach)",
+   "phu": "644 tam giác · cao 2.6 stud, hộp 5.09×2.6×6.407 · 47 KB · cỡ theo bề rộng (cao 2.6 → rộng 5.1 sâu 6.4); chồng thùng bừa, kit gốc 5×4.5×2.2 nên thấp hơn kit",
+   "anh": "output/ep002/da-nhap/dong-thung.jpg",
+   "link": "https://poly.pizza/m/e6ltACZnFSS",
+   "nguon": "polypizza",
+   "tacGia": "David Jeffries",
+   "giayPhep": "CC-BY 3.0",
+   "tamGiac": 644
+  },
+  {
+   "id": "dn-bang_tin",
+   "ten": "Bảng tin thị trấn (bang_tin)",
+   "phu": "924 tam giác · cao 6 stud, hộp 6.06×6×1.04 · 199 KB · đã xoay -90° (mặt giấy nhìn +Z); làm sáng màu --sang 0.4; ảnh trước/sau ở output/ep002/da-nhap/so/bang-tin-truoc-sau.jpg",
+   "anh": "output/ep002/da-nhap/bang-tin-go.jpg",
+   "link": "https://sketchfab.com/3d-models/none-c7253f06bb8c49b0afcd60a509a8240c",
+   "nguon": "sketchfab",
+   "tacGia": "Viktor_",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 924
+  },
+  {
+   "id": "dn-anh_ba",
+   "ten": "Ảnh bà đeo dây chuyền (khung đứng) (anh_ba)",
+   "phu": "100 tam giác · cao 1.5 stud, hộp 1.176×1.5×0.768 · 116 KB",
+   "anh": "output/ep002/da-nhap/khung-anh.jpg",
+   "link": "https://sketchfab.com/3d-models/none-3e6dc5d42e1a4e78a7bad4dac7754cb9",
+   "nguon": "sketchfab",
+   "tacGia": "TheoClarke",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 100
+  },
+  {
+   "id": "dn-dong_ho",
+   "ten": "Đồng hồ báo thức đỏ 2 chuông (dong_ho)",
+   "phu": "300 tam giác · cao 1 stud, hộp 0.74×1×0.432 · 77 KB",
+   "anh": "output/ep002/da-nhap/dong-ho-bao-thuc.jpg",
+   "link": "https://sketchfab.com/3d-models/none-b7832cf1396e4dcc9513e5e1acef182b",
+   "nguon": "sketchfab",
+   "tacGia": "Daniel O'Neil",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 300
+  },
+  {
+   "id": "dn-guong",
+   "ten": "Gương đứng đối diện giường (guong)",
+   "phu": "52 tam giác · cao 7 stud, hộp 4.349×7×0.477 · 5 KB · khung gương, mặt gương xám trơn (kit có ảnh phản chiếu → dán texture)",
+   "anh": "output/ep002/da-nhap/guong-khung.jpg",
+   "link": "https://poly.pizza/m/cjvm-bUFBAW",
+   "nguon": "polypizza",
+   "tacGia": "Poly by Google",
+   "giayPhep": "CC-BY 3.0",
+   "tamGiac": 52
+  },
+  {
+   "id": "dn-cuon_sach",
+   "ten": "Cuốn sách dựng đứng (cuon_sach)",
+   "phu": "164 tam giác · cao 0.4 stud, hộp 1.149×0.4×1.219 · 69 KB · sách NẰM phẳng (kit đứng 0.35×1.3×1.0); cỡ chỉnh theo bề mặt 1.1×1.2",
+   "anh": "output/ep002/da-nhap/cuon-sach.jpg",
+   "link": "https://sketchfab.com/3d-models/none-d6465435cb3241f9a550067e34c28918",
+   "nguon": "sketchfab",
+   "tacGia": "DiegoVega",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 164
+  },
+  {
+   "id": "dn-nhan_moi",
+   "ten": "Chiếc nhẫn (trên gối nhung) (nhan_moi)",
+   "phu": "448 tam giác · cao 0.55 stud, hộp 0.453×0.55×0.3 · 25 KB · nhẫn đứng, đá xanh nhạt",
+   "anh": "output/ep002/da-nhap/nhan-kim-cuong.jpg",
+   "link": "https://poly.pizza/m/klY4A6FGjz",
+   "nguon": "polypizza",
+   "tacGia": "mehreen1919",
+   "giayPhep": "CC-BY 3.0",
+   "tamGiac": 448
+  },
+  {
+   "id": "dn-vi",
+   "ten": "Cái ví (vi)",
+   "phu": "928 tam giác · cao 0.12 stud, hộp 0.801×0.12×1.108 · 84 KB · ví phẳng 0.8×1.1 (kit 0.8×0.6); thu ảnh 256",
+   "anh": "output/ep002/da-nhap/vi-da.jpg",
+   "link": "https://sketchfab.com/3d-models/none-ccfcc4ae6efa44a2ba34c4c479be7daf",
+   "nguon": "sketchfab",
+   "tacGia": "apleesee",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 928
+  },
+  {
+   "id": "dn-tui_tien",
+   "ten": "Túi tiền buộc dây (tui_tien)",
+   "phu": "576 tam giác · cao 1.4 stud, hộp 1.066×1.4×1.066 · 45 KB",
+   "anh": "output/ep002/da-nhap/tui-tien.jpg",
+   "link": "https://sketchfab.com/3d-models/none-0d9ddfea069d4c47a07043642c3fbc07",
+   "nguon": "sketchfab",
+   "tacGia": "Dary Muhammad",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 576
+  },
+  {
+   "id": "dn-bang_chuyen",
+   "ten": "Băng chuyền nhà máy (bang_chuyen)",
+   "phu": "1068 tam giác · cao 3 stud, hộp 9.164×3×3.656 · 69 KB · rộng 9.2 (kit 10)",
+   "anh": "output/ep002/da-nhap/bang-chuyen-xam.jpg",
+   "link": "https://poly.pizza/m/5f4he3uHyov",
+   "nguon": "polypizza",
+   "tacGia": "Josh",
+   "giayPhep": "CC-BY 3.0",
+   "tamGiac": 1068
+  },
+  {
+   "id": "dn-ket_tien",
+   "ten": "Két tiền của chú bán bánh (ket_tien)",
+   "phu": "951 tam giác · cao 2.2 stud, hộp 3.028×2.2×2.196 · 94 KB · cửa két mở, bản gốc màu xanh xám đậm; rộng 3.0 (kit 2.2)",
+   "anh": "output/ep002/da-nhap/ket-xanh-xam.jpg",
+   "link": "https://sketchfab.com/3d-models/none-4817cd0ee84d4f35814471e91f2267b3",
+   "nguon": "sketchfab",
+   "tacGia": "Polly Green",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 951
+  },
+  {
+   "id": "dn-ket_ga",
+   "ten": "Két góc phòng Gà (ket_ga)",
+   "phu": "2240 tam giác · cao 2 stud, hộp 2.439×2×3.54 · 156 KB · bản xám thép (--xam 1 --sang 0.1) của ket-sat; bản gốc xanh dương giữ nguyên; két mở cửa nên sâu 3.5 (kit 1.8)",
+   "anh": "output/ep002/da-nhap/ket-sat-xam.jpg",
+   "link": "https://sketchfab.com/3d-models/cartoon-safe-e6cb405ef7e942459eec7307416dc528",
+   "nguon": "sketchfab",
+   "tacGia": "Adrian21",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 2240
+  },
+  {
+   "id": "dn-day_chuyen",
+   "ten": "Dây chuyền của bà (day_chuyen)",
+   "phu": "816 tam giác · cao 0.8 stud, hộp 0.562×0.8×0.676 · 70 KB · dây chuyền DỰNG ĐỨNG (mặt dây thả xuống); kit nằm phẳng → xoay 90° quanh X khi gắn",
+   "anh": "output/ep002/da-nhap/day-chuyen-vang.jpg",
+   "link": "https://poly.pizza/m/D0nIOgnzrK",
+   "nguon": "polypizza",
+   "tacGia": "Zsky",
+   "giayPhep": "CC-BY 3.0",
+   "tamGiac": 816
+  },
+  {
+   "id": "dn-chuong",
+   "ten": "Chuông tay (chuong)",
+   "phu": "784 tam giác · cao 0.93 stud, hộp 0.444×0.93×0.444 · 59 KB",
+   "anh": "output/ep002/da-nhap/chuong-tay.jpg",
+   "link": "https://poly.pizza/m/dYZz5rDiF7U",
+   "nguon": "polypizza",
+   "tacGia": "Poly by Google",
+   "giayPhep": "CC-BY 3.0",
+   "tamGiac": 784
+  },
+  {
+   "id": "dn-doi_dep",
+   "ten": "Đôi dép của thị trưởng (doi_dep)",
+   "phu": "252 tam giác · cao 0.35 stud, hộp 1.555×0.35×1.568 · 19 KB",
+   "anh": "output/ep002/da-nhap/dep-xo-ngon.jpg",
+   "link": "https://poly.pizza/m/aVbWCpQLno8",
+   "nguon": "polypizza",
+   "tacGia": "Tiff Eidmann",
+   "giayPhep": "CC-BY 3.0",
+   "tamGiac": 252
+  },
+  {
+   "id": "dn-chan_tran",
+   "ten": "Hai bàn chân trần dưới gấu quần ngủ (chan_tran)",
+   "phu": "724 tam giác · cao 0.7 stud, hộp 0.686×0.7×1.842 · 21 KB · MỘT bàn chân trắng có băng cổ chân (cần 2 bản, màu trắng, kit là da); mũi chân nhìn +Z",
+   "anh": "output/ep002/da-nhap/ban-chan.jpg",
+   "link": "https://sketchfab.com/3d-models/none-0a2829421709406b84d72647b2f0e0e9",
+   "nguon": "sketchfab",
+   "tacGia": "gaelinix",
+   "giayPhep": "CC BY 4.0",
+   "tamGiac": 724
+  },
+  {
+   "id": "dn-bac_them_dep",
+   "ten": "Bậc thềm 2 bậc + đôi dép (bac_them_dep)",
+   "phu": "84 tam giác · cao 1 stud, hộp 2.5×1×2.5 · 13 KB · dùng chung với bac_them_trong · dùng chung bac-them với bac_them_trong; 2.5×1×2.5, cần co dãn ngang ×2.8 (kit rộng 7); thấp ở +Z",
+   "anh": "output/ep002/da-nhap/bac-them.jpg",
+   "link": "https://poly.pizza/m/2cghwnOqEX",
+   "nguon": "polypizza",
+   "tacGia": "Kenney",
+   "giayPhep": "CC0",
+   "tamGiac": 84
+  },
+  {
+   "id": "dn-bac_them_trong",
+   "ten": "Bậc thềm 2 bậc không dép (bac_them_trong)",
+   "phu": "84 tam giác · cao 1 stud, hộp 2.5×1×2.5 · 13 KB · dùng chung với bac_them_dep · dùng chung bac-them với bac_them_dep; cần co dãn ngang ×2 (kit rộng 5)",
+   "anh": "output/ep002/da-nhap/bac-them.jpg",
+   "link": "https://poly.pizza/m/2cghwnOqEX",
+   "nguon": "polypizza",
+   "tacGia": "Kenney",
+   "giayPhep": "CC0",
+   "tamGiac": 84
+  }
+ ]
+}

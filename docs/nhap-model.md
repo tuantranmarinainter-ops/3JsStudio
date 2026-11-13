@@ -6,7 +6,7 @@ Khoá đọc từ `.env.local` (đã gitignore): `SKETCHFAB_API_TOKEN`, `POLY_PI
 ## Lệnh
 ```
 node tools/nhap-model.mjs tim "sewing machine" --loai vua [--ca-nang] [--nguon sketchfab|polyhaven|polypizza] [--toi-da 10]
-node tools/nhap-model.mjs nhap sketchfab:<uid> --ten may-khau --loai vua --cao 1.6 [--cho-phep-nang "<lý do>"] [--tam-giac-toi-da N] [--ao] [--mau-dinh] [--xoay 90] [--tex 512]
+node tools/nhap-model.mjs nhap sketchfab:<uid> --ten may-khau --loai vua --cao 1.6 [--cho-phep-nang "<lý do>"] [--tam-giac-toi-da N] [--ao] [--mau-dinh] [--sang 0.4] [--xam 1] [--xoay 90] [--tex 512]
 node tools/nhap-model.mjs kiem          # thiếu manifest/ghi công/giấy phép/loai, vượt ngưỡng không duyệt → mã thoát 1; phong cách vượt → chỉ cảnh báo
 node output/nhap-model/chup.mjs [ten1,ten2…] [ra.png]   # lưới ảnh kiểm chiều/cỡ/màu (nhân vật cam cao 5.2 stud để so)
 ```
@@ -39,6 +39,12 @@ Phong cách sau chuẩn hoá (chỉ cảnh báo trong `kiem`): ≤ 6 vật liệ
    `--ao` nướng AO vào màu đỉnh. Không dùng Draco (engine chưa nạp Draco).
 3. Xuất `assets/nhap/<ten>.glb`, thêm dòng `nhap/<ten>` vào `assets/manifest.json` (chỉ thêm; chạy lại cùng tên thì thay đúng dòng đó),
    ghi `assets/nhap/CREDITS.md` (tên, tác giả, URL, giấy phép). Nhớ dán CREDITS vào mô tả video khi dùng model CC BY.
+
+## Poly Pizza không cần khoá
+`POLY_PIZZA_API_KEY` rỗng → `nhap polypizza:<id>` đọc trang công khai `poly.pizza/m/<id>` (JSON `__SERVER_APP_STATE__`: tên, tác giả, giấy phép, tam giác, `ResourceID`) và tải `static.poly.pizza/<ResourceID>.glb`. Vẫn lọc CC0/CC BY. `tim polypizza` vẫn cần khoá.
+
+## Đổi màu
+`--sang k` (0..1) trộn màu về trắng; `--xam k` (0..1) khử bão hoà giữ độ sáng (chạy trước `--sang`). Áp cho ảnh màu, màu nền, màu đỉnh. Vd két xám thép: `--xam 1 --sang 0.1`. Chuẩn hoá cũng bỏ ảnh/nhóm nút `glTF Settings` không nuôi màu nền (trước đây ảnh ORM 1024 px bị xuất theo).
 
 ## Dùng trong engine
 `createAssetLib(...).load(['nhap/den-duong'])` rồi `instance('nhap/den-duong')` — đơn vị đã là stud, `scale: 1`; `bbox` = [x, cao, sâu].

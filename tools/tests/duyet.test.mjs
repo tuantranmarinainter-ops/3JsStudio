@@ -52,3 +52,67 @@ test('them-ung-vien: tạo đợt, thay nhóm cùng id, dựng trang', () => {
   assert.throws(() => themUngVien('t', 2, (fs.writeFileSync(f, '{"nhomId":"a","khe":[]}'), f), goc));
   fs.rmSync(goc, { recursive: true, force: true });
 });
+
+// ---- máy chủ cục bộ (mo --mot-lan) ----
+import { spawn } from 'node:child_process';
+import http from 'node:http';
+import { fileURLToPath } from 'node:url';
+const DUYET = fileURLToPath(new URL('../duyet.mjs', import.meta.url));
+
+function taoGoc() {
+  const goc = fs.mkdtempSync(path.join(os.tmpdir(), 'duyet-'));
+  fs.mkdirSync(path.join(goc, 'x'), { recursive: true }); fs.writeFileSync(path.join(goc, 'x', 'a.png'), PNG);
+  fs.writeFileSync(path.join(goc, 'bi-mat.txt'), 'x');
+  const d = moi('t', 'Đầu', goc); const j = JSON.parse(fs.readFileSync(d, 'utf8'));
+  j.nhom = [{ id: 'g', ten: 'G', mota: '', anh: [], muc: [{ id: 'm1', ten: 'Một', anh: 'x/a.png' }, { id: 'm2', ten: 'Hai' }] }];
+  fs.writeFileSync(d, JSON.stringify(j));
+  return goc;
+}
+
+function khoiDong(goc, extra = []) {
+  const cong = 20000 + Math.floor(Math.random() * 20000);
+  const p = spawn(process.execPath, [DUYET, 't', 'mo', '--khong-mo', '--cong', String(cong), '--thu-muc', goc, ...extra], { stdio: ['ignore', 'pipe', 'pipe'] });
+  let out = ''; p.stdout.on('data', c => out += c);
+  const thoat = new Promise(r => p.on('exit', code => r(code)));
+  const san = new Promise((ok, loi) => { const t = setInterval(() => { const m = out.match(/MO http:\/\/127\.0\.0\.1:(\d+)\//); if (m) { clearInterval(t); ok(+m[1]); } }, 50); setTimeout(() => { clearInterval(t); loi(new Error('máy chủ không lên: ' + out)); }, 15000); });
+  return { p, san, thoat, out: () => out };
+}
+
+test('mo --mot-lan: GET /, POST hợp lệ ghi file và thoát 0; sai tap / quá cỡ / thoát thư mục bị chặn', async () => {
+  const goc = taoGoc(), s = khoiDong(goc, ['--mot-lan']);
+  try {
+    const cong = await s.san, base = `http://127.0.0.1:${cong}`;
+    const g = await fetch(base + '/'); assert.equal(g.status, 200);
+    assert.match(await g.text(), /Gửi tới Claude/);
+    assert.equal((await fetch(base + '/x/a.png')).status, 200);
+    assert.equal((await fetch(base + '/bi-mat.txt')).status, 403);
+    const raw = (p) => new Promise(ok => { const h = http.get({ host: '127.0.0.1', port: cong, path: p }, r => { r.resume(); ok(r.statusCode); }); });
+    assert.ok([400, 403, 404].includes(await raw('/../../x.png')));
+    assert.ok([400, 403, 404].includes(await raw('/%2e%2e/%2e%2e/x.png')));
+    const kqDir = path.join(goc, 'duyet', 't', 'dot-01.ketqua.json');
+    const post = (body, hdr = {}) => fetch(base + '/gui', { method: 'POST', headers: { 'Content-Type': 'application/json', ...hdr }, body });
+    assert.equal((await post(JSON.stringify({ tap: 'khac', dot: 1 }))).status, 422);
+    assert.equal((await post(JSON.stringify({ tap: 't', dot: 9 }))).status, 422);
+    assert.equal((await post('{sai')).status, 400);
+    assert.equal((await post(JSON.stringify({ tap: 't', dot: 1 }), { Origin: 'http://evil.example' })).status, 403);
+    const to = await post(JSON.stringify({ tap: 't', dot: 1, ghiChu: { m1: 'x'.repeat(2.5 * 2 ** 20) } })).then(r => r.status, () => 413);
+    assert.equal(to, 413);
+    assert.ok(!fs.existsSync(kqDir), 'chưa được ghi');
+    const ok = await post(JSON.stringify({ tap: 't', dot: 1, duyet: ['m1'], sua: ['m2'], chon: {} }));
+    assert.equal(ok.status, 200);
+    assert.equal(await s.thoat, 0);
+    assert.ok(fs.existsSync(kqDir)); assert.equal(JSON.parse(fs.readFileSync(kqDir, 'utf8')).duyet[0], 'm1');
+    assert.match(s.out(), /DA-NHAN dot=1 file=/);
+    const hop = JSON.parse(fs.readFileSync(path.join(goc, 'duyet', 't', 'hop-thu.jsonl'), 'utf8').trim());
+    assert.deepEqual([hop.dot, hop.soDuyet, hop.soSua], [1, 1, 1]);
+  } finally { s.p.kill(); fs.rmSync(goc, { recursive: true, force: true }); }
+});
+
+test('mo: Host lạ bị từ chối', async () => {
+  const goc = taoGoc(), s = khoiDong(goc);
+  try {
+    const cong = await s.san;
+    const st = await new Promise(ok => { http.get({ host: '127.0.0.1', port: cong, path: '/', headers: { Host: 'evil.example' } }, r => { r.resume(); ok(r.statusCode); }); });
+    assert.equal(st, 403);
+  } finally { s.p.kill(); fs.rmSync(goc, { recursive: true, force: true }); }
+});
