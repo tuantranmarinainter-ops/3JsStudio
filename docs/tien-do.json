@@ -145,8 +145,8 @@
     {
      "ten": "NPC Roblox cho Tập 4 (thay nhân vật, trừ Gà)",
      "tt": "dang",
-     "pt": 35,
-     "ghiChu": "14/11: lập bảng 15 vai; phiên Roblox bổ sung đọc diện mạo NPC (áo, quần, màu thân, phụ kiện); tìm ~1200 mẫu, lọc + xem ảnh còn 85 ứng viên cho 9 vai. CHỜ NGƯỜI DÙNG DUYỆT: dist/ep003-npc_duyet.html. Khuyến nghị cách A (giữ xương R6 của engine, lấy áo quần + tóc mũ từ Roblox), giữ gấu GLB hiện tại. Chưa sửa engine."
+     "pt": 65,
+     "ghiChu": "14/11: người dùng chốt đợt 1 (ông Bách, thị trưởng, đồ ngủ, lính, thợ bánh, 2 bé, dân làng). Đã làm cách A: tools/npc-roblox.mjs + engine/r6-roblox.js dán áo quần Roblox lên thân R6, gắn tóc/mũ thật; 24 nhân vật dựng xong, trang thử engine/r6-roblox-lab.html, test 5 qua. Soi ảnh: 6/8 vai đạt; ông Bách lỗi (Roblox khoá ảnh) → chọn lại. CHỜ DUYỆT ĐỢT 2: dist/ep003-npc_duyet.html (xác nhận bản dựng, chọn lại ông Bách, thợ may, gấu). Còn: nối cast.js, manifest, handoff cho phiên dựng tập — docs/handoff/npc-roblox.md."
     }
    ],
    "tap": "Tập 3"

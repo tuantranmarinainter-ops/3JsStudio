@@ -1,0 +1,25 @@
+{
+ "ten": "dan_14",
+ "robloxId": "8598090797",
+ "nhanVat": "Villager [?]",
+ "mau": {
+  "head": "#ffcc99",
+  "torso": "#ffcc99",
+  "leftArm": "#ffcc99",
+  "rightArm": "#ffcc99",
+  "leftLeg": "#ffcc99",
+  "rightLeg": "#ffcc99"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": null,
+ "phuKien": [
+  "Hair"
+ ],
+ "shirtId": "347417107",
+ "pantsId": "347420160",
+ "tieuDe": "NPC Villager (Moves and has DNA)",
+ "tacGia": "ILANoob30",
+ "moTa": "dân làng áo nâu"
+}

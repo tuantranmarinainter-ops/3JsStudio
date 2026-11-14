@@ -1,0 +1,34 @@
+{
+ "ten": "be_ngoc",
+ "robloxId": "119429811638939",
+ "nhanVat": " ",
+ "mau": {
+  "head": "#eab892",
+  "torso": "#eab892",
+  "leftArm": "#eab892",
+  "rightArm": "#eab892",
+  "leftLeg": "#eab892",
+  "rightLeg": "#eab892"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": true,
+ "acc": {
+  "soNode": 1,
+  "tamGiac": 520,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [
+  "Bloxxercap"
+ ],
+ "shirtId": "2064941941",
+ "pantsId": "3473515082",
+ "tshirtId": "1028594",
+ "tieuDe": "Bloxxer Boy Character Model Humanoid R6 Rig Roblox",
+ "tacGia": "Content Deleted - 158552482",
+ "them": {
+  "scale": 0.84
+ },
+ "moTa": "bé Ngọc"
+}

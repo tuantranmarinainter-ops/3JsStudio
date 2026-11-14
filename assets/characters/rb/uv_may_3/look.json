@@ -1,0 +1,33 @@
+{
+ "ten": "uv_may_3",
+ "robloxId": "112507919413426",
+ "nhanVat": "",
+ "mau": {
+  "head": "#cc8e69",
+  "torso": "#cc8e69",
+  "leftArm": "#cc8e69",
+  "rightArm": "#cc8e69",
+  "leftLeg": "#cc8e69",
+  "rightLeg": "#cc8e69"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 1,
+  "tamGiac": 3973,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [
+  "Accessory (CuteLongPigtailsHair)"
+ ],
+ "shirtId": "14684239754",
+ "pantsId": "7947213501",
+ "tieuDe": "Shy Girl Character Model Avatar NPC Rig Girls R6",
+ "tacGia": "Content Deleted - 158552482",
+ "moTa": "ứng viên thợ may",
+ "canhBao": [
+  "có CharacterMesh (thân lưới riêng) — bỏ, dùng khối R6"
+ ]
+}

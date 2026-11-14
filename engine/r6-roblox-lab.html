@@ -1,0 +1,42 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>R6 Roblox lab</title>
+<style>html,body{margin:0;background:#cfd6dc}canvas{display:block}</style>
+<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
+</head><body><canvas id="c"></canvas>
+<script type="module">
+// Trang thử NPC Roblox trên thân R6: lưới nhân vật, mỗi ô 1 người.
+//   ?ten=bach,mayor,…  (mặc định: mọi tên trong assets/characters/rb/nguon.json, bỏ tên bắt đầu bằng _)
+//   &anim=idle|walk|run|talk|wave|point|hug|sit…  &yaw=0.5 (rad; yaw=quay → xoay theo t)  &cols=6 &cell=260 &pack=altiwyre|emote37  &face=<biểu cảm>
+//   &rb=0 → TẮT diện mạo Roblox: hiện look cũ cùng tên trong engine/r6-looks.js (so trước/sau)
+//   window.renderAt(t) — hàm thuần của t (tools/look.mjs --t …); window.__cells = [{ten,x,y,w,h}]; window.__ready khi tải xong mọi ảnh + GLB.
+import * as THREE from 'three';
+import { createR6Rig } from './r6-rig.js';
+import { R6_LOOKS } from './r6-looks.js';
+import { loadFacePacks } from './face-pack.js';
+import { loadRbLooks, rbRigOptions, applyRbLook } from './r6-roblox.js';
+const q = new URLSearchParams(location.search);
+const nguon = await fetch(new URL('../assets/characters/rb/nguon.json', import.meta.url)).then((r) => r.json()).catch(() => ({}));
+const names = (q.get('ten') ? q.get('ten').split(',') : Object.keys(nguon).filter((k) => !k.startsWith('_')));
+const anim = q.get('anim') || 'idle', yawQ = q.get('yaw') ?? '0.45', cols = Math.min(names.length, +(q.get('cols') || 6)), CELL = +(q.get('cell') || 260), RB = q.get('rb') !== '0';
+const rows = Math.ceil(names.length / cols), UW = 5.2, UH = 7.2, CH = Math.round(CELL * UH / UW);
+const cv = document.getElementById('c'); const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(cols * CELL, rows * CH); renderer.setPixelRatio(1); renderer.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#cfd6dc');
+scene.add(new THREE.HemisphereLight('#ffffff', '#8a8f98', 1.5)); const d = new THREE.DirectionalLight('#fff4e0', 1.9); d.position.set(4, 9, 8); scene.add(d);
+const cam = new THREE.OrthographicCamera(-cols * UW / 2, cols * UW / 2, rows * UH / 2, -rows * UH / 2, 0.1, 200); cam.position.set(0, 0, 60);
+await loadFacePacks(THREE, q.get('pack') || 'altiwyre');
+const res = RB ? await loadRbLooks(THREE, names) : {};
+window.__cells = []; const chars = [];
+names.forEach((ten, i) => {
+  const c = i % cols, r = Math.floor(i / cols), rs = res[ten];
+  const a = createR6Rig(THREE, { name: ten, ...(rs ? rbRigOptions(rs) : (R6_LOOKS[ten] || R6_LOOKS[ten.replace(/_\d+$/, '_a')] || {})), facePack: true });
+  if (rs) applyRbLook(THREE, a, rs);
+  const g = new THREE.Group(); g.name = 'o_' + ten; g.add(a.root); g.position.set((c - (cols - 1) / 2) * UW, ((rows - 1) / 2 - r) * UH - UH / 2 + 0.5, 0); scene.add(g);
+  chars.push({ a, g, ten }); window.__cells.push({ ten, x: c * CELL, y: r * CH, w: CELL, h: CH });
+});
+window.renderAt = (t) => {
+  for (const { a, g } of chars) { a.animate(anim, t, {}); if (q.get('face')) a.setFace(q.get('face')); g.rotation.y = yawQ === 'quay' ? t * 1.2 : +yawQ; }
+  renderer.render(scene, cam);
+};
+window.THREE = THREE; window.__scene = scene; window.__stage = { renderer, scene, camera: cam }; window.__chars = chars;
+window.renderAt(0); window.__ready = true;
+</script></body></html>

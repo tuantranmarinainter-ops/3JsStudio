@@ -1,0 +1,28 @@
+{
+ "ten": "uv_may_7",
+ "robloxId": "99243652986564",
+ "nhanVat": "R6 [Dummy]",
+ "mau": {
+  "head": "#ffcc99",
+  "torso": "#ffcc99",
+  "leftArm": "#ffcc99",
+  "rightArm": "#ffcc99",
+  "leftLeg": "#ffcc99",
+  "rightLeg": "#ffcc99"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 3,
+  "tamGiac": 3913,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [],
+ "shirtId": "6591269518",
+ "pantsId": "6591263265",
+ "tieuDe": "R6 Dummy Rig Woman Training Pose Animation R6dummy",
+ "tacGia": "Gearco9722",
+ "moTa": "ứng viên thợ may"
+}

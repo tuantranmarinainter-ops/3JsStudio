@@ -1,0 +1,34 @@
+{
+ "ten": "uv_may_2",
+ "robloxId": "16198634320",
+ "nhanVat": "velinha",
+ "mau": {
+  "head": "#744b18",
+  "torso": "#0d69ac",
+  "leftArm": "#b68642",
+  "rightArm": "#b68642",
+  "leftLeg": "#a4bd47",
+  "rightLeg": "#a4bd47"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 2,
+  "tamGiac": 1552,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [
+  "Missy Glasses",
+  "Peruca Velha Empoada"
+ ],
+ "shirtId": "582998365",
+ "pantsId": "11243993687",
+ "tieuDe": "Velinha",
+ "tacGia": "Drawer's Dev",
+ "moTa": "ứng viên thợ may",
+ "canhBao": [
+  "pants 11243993687: cỡ 256×256 (khuôn chuẩn 585×559) — sẽ co giãn"
+ ]
+}

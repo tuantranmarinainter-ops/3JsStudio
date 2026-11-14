@@ -1,0 +1,31 @@
+{
+ "ten": "dan_15",
+ "robloxId": "604065110",
+ "nhanVat": "Farmer Mike",
+ "mau": {
+  "head": "#ffcc99",
+  "torso": "#ffcc99",
+  "leftArm": "#ffcc99",
+  "rightArm": "#ffcc99",
+  "leftLeg": "#ffcc99",
+  "rightLeg": "#ffcc99"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 2,
+  "tamGiac": 732,
+  "dauCao": 1.25,
+  "dauRong": 1.245
+ },
+ "phuKien": [
+  "Tilted Hat",
+  "Beard"
+ ],
+ "shirtId": "186045242",
+ "pantsId": "200796058",
+ "tieuDe": "Farmer Mike",
+ "tacGia": "HokPen",
+ "moTa": "nông dân râu"
+}

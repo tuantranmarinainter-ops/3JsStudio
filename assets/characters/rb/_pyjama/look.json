@@ -1,0 +1,23 @@
+{
+ "ten": "_pyjama",
+ "robloxId": "123126413388497",
+ "nhanVat": "StarterCharacter",
+ "mau": {
+  "head": "#f5cd30",
+  "torso": "#0d69ac",
+  "leftArm": "#f5cd30",
+  "rightArm": "#f5cd30",
+  "leftLeg": "#a4bd47",
+  "rightLeg": "#a4bd47"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": null,
+ "phuKien": [],
+ "shirtId": "1321121082",
+ "pantsId": "1321132026",
+ "tieuDe": "Sleeping boy morph",
+ "tacGia": "Oshibkaa167",
+ "moTa": "chỉ lấy bộ pyjama"
+}

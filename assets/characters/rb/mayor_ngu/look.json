@@ -1,0 +1,35 @@
+{
+ "ten": "mayor_ngu",
+ "robloxId": "83527751194934",
+ "nhanVat": "neonbluenigh",
+ "mau": {
+  "head": "#ffcc99",
+  "torso": "#0d69ac",
+  "leftArm": "#ffcc99",
+  "rightArm": "#ffcc99",
+  "leftLeg": "#a4bd47",
+  "rightLeg": "#a4bd47"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 5,
+  "tamGiac": 1856,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [
+  "WalrusAccessory",
+  "Cavanhaque em torno",
+  "WrinklesAccessory",
+  "Meshes/Grandpa HairAccessory",
+  "Malaysia Flag Pinned 1.0"
+ ],
+ "aoTu": "123126413388497",
+ "shirtId": "1321121082",
+ "pantsId": "1321132026",
+ "tieuDe": "Frail Old Man Rig Elderly Grandpa Character Roblox",
+ "tacGia": "Content Deleted - 158552482",
+ "moTa": "thị trưởng mặc đồ ngủ"
+}

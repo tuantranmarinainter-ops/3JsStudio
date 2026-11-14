@@ -1,0 +1,28 @@
+{
+ "ten": "uv_may_8",
+ "robloxId": "135331401553316",
+ "nhanVat": "JakeMom",
+ "mau": {
+  "head": "#ffcc99",
+  "torso": "#ffcc99",
+  "leftArm": "#ffcc99",
+  "rightArm": "#ffcc99",
+  "leftLeg": "#ffcc99",
+  "rightLeg": "#ffcc99"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 1,
+  "tamGiac": 760,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [],
+ "shirtId": "175994788",
+ "pantsId": "212771871",
+ "tieuDe": "Mom Jake Character Model R6 Family Roblox Humanoid",
+ "tacGia": "Content Deleted - 158552482",
+ "moTa": "ứng viên thợ may"
+}

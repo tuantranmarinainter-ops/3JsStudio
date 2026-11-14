@@ -1,0 +1,28 @@
+{
+ "ten": "uv_bach_4",
+ "robloxId": "16037100653",
+ "nhanVat": "Hershel",
+ "mau": {
+  "head": "#ffc9c9",
+  "torso": "#ffcc99",
+  "leftArm": "#ffc9c9",
+  "rightArm": "#ffc9c9",
+  "leftLeg": "#8f4c2a",
+  "rightLeg": "#8f4c2a"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 5,
+  "tamGiac": 696,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [],
+ "shirtId": "5657301201",
+ "pantsId": "5657306192",
+ "tieuDe": "Hershel twd",
+ "tacGia": "elgatitotower",
+ "moTa": "ứng viên ông Bách"
+}

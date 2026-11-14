@@ -1,0 +1,34 @@
+{
+ "ten": "mayor",
+ "robloxId": "83527751194934",
+ "nhanVat": "neonbluenigh",
+ "mau": {
+  "head": "#ffcc99",
+  "torso": "#ffcc99",
+  "leftArm": "#ffcc99",
+  "rightArm": "#ffcc99",
+  "leftLeg": "#ffcc99",
+  "rightLeg": "#ffcc99"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 5,
+  "tamGiac": 1856,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [
+  "WalrusAccessory",
+  "Cavanhaque em torno",
+  "WrinklesAccessory",
+  "Meshes/Grandpa HairAccessory",
+  "Malaysia Flag Pinned 1.0"
+ ],
+ "shirtId": "8881990075",
+ "pantsId": "8881989959",
+ "tieuDe": "Frail Old Man Rig Elderly Grandpa Character Roblox",
+ "tacGia": "Content Deleted - 158552482",
+ "moTa": "thị trưởng"
+}

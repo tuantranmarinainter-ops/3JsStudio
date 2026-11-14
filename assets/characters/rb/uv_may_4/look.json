@@ -1,0 +1,35 @@
+{
+ "ten": "uv_may_4",
+ "robloxId": "118400431811478",
+ "nhanVat": "Mom",
+ "mau": {
+  "head": "#eab892",
+  "torso": "#eab892",
+  "leftArm": "#eab892",
+  "rightArm": "#eab892",
+  "leftLeg": "#eab892",
+  "rightLeg": "#eab892"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 2,
+  "tamGiac": 4563,
+  "dauCao": 1.342,
+  "dauRong": 1.33
+ },
+ "phuKien": [
+  "FashionableWhiteShoulderPurse",
+  "HighPigtails",
+  "Bucket hatAccessory"
+ ],
+ "shirtId": "4644327745",
+ "pantsId": "5230807754",
+ "tieuDe": "Mom's NPC Mom's Character Model R6 Roleplay Roblox",
+ "tacGia": "Content Deleted - 158552482",
+ "moTa": "ứng viên thợ may",
+ "canhBao": [
+  "có CharacterMesh (thân lưới riêng) — bỏ, dùng khối R6"
+ ]
+}

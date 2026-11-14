@@ -1,0 +1,32 @@
+{
+ "ten": "dan_05",
+ "robloxId": "84294762238979",
+ "nhanVat": "Civilian",
+ "mau": {
+  "head": "#eab892",
+  "torso": "#eab892",
+  "leftArm": "#eab892",
+  "rightArm": "#eab892",
+  "leftLeg": "#eab892",
+  "rightLeg": "#eab892"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 3,
+  "tamGiac": 2002,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [
+  "ClockworksShades",
+  "SparkleTimeFedora",
+  "NerdHair"
+ ],
+ "shirtId": "1449982587",
+ "pantsId": "1449984961",
+ "tieuDe": "AI Civilian NPC Citizen People Humanoid Town R6",
+ "tacGia": "Content Deleted - 158552482",
+ "moTa": "dân làng (pack Civilians #5)"
+}

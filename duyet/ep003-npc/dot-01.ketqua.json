@@ -1,0 +1,38 @@
+{
+ "tap": "ep003-npc",
+ "dot": 1,
+ "luc": "2026-11-14T04:07:00.955Z",
+ "gau": null,
+ "duyet": [],
+ "sua": [],
+ "chuaChon": [
+  "npc_may",
+  "npc_gau"
+ ],
+ "chon": {
+  "npc_bach": "bach__1",
+  "npc_mayor": "mayor__1",
+  "npc_mayor_ngu": "mayor_ngu__3",
+  "npc_linh": [
+   "linh__2"
+  ],
+  "npc_banh": "banh__1",
+  "npc_be": [
+   "be__7",
+   "be__6"
+  ],
+  "npc_dan": [
+   "dan__1",
+   "dan__4",
+   "dan__7",
+   "dan__3",
+   "dan__9"
+  ]
+ },
+ "ghiChu": {
+  "npc_may": "tìm thêm model người lớn R6 khối vuông",
+  "npc_gau": "duyệt lại tìm từ khóa teddy bear"
+ },
+ "doiTuDot": {},
+ "giuTuDot": {}
+}

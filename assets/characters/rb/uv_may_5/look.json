@@ -1,0 +1,34 @@
+{
+ "ten": "uv_may_5",
+ "robloxId": "72858972549384",
+ "nhanVat": "Бабушка 1",
+ "mau": {
+  "head": "#ffcc99",
+  "torso": "#ffcc99",
+  "leftArm": "#ffcc99",
+  "rightArm": "#ffcc99",
+  "leftLeg": "#ffcc99",
+  "rightLeg": "#ffcc99"
+ },
+ "shirt": false,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 3,
+  "tamGiac": 3324,
+  "dauCao": 1.146,
+  "dauRong": 1.164
+ },
+ "phuKien": [
+  "Accessory (MeshPartAccessory)"
+ ],
+ "pantsId": "6349178328",
+ "tieuDe": "Бабушка с подъезда 1",
+ "tacGia": "Litvin_LitenergyReal",
+ "moTa": "ứng viên thợ may",
+ "canhBao": [
+  "có CharacterMesh (thân lưới riêng) — bỏ, dùng khối R6",
+  "mesh 898301267: asset 898301267: Roblox từ chối (403: Requested asset is archived) — asset riêng tư hoặc chưa được duyệt, Open Cloud không tải được: cảnh báo tả",
+  "mesh 898301165: asset 898301165: Roblox từ chối (403: Requested asset is archived) — asset riêng tư hoặc chưa được duyệt, Open Cloud không tải được: cảnh báo tả"
+ ]
+}

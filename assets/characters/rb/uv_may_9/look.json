@@ -1,0 +1,28 @@
+{
+ "ten": "uv_may_9",
+ "robloxId": "97588997527305",
+ "nhanVat": "Mom",
+ "mau": {
+  "head": "#ffcc99",
+  "torso": "#ffcc99",
+  "leftArm": "#ffcc99",
+  "rightArm": "#ffcc99",
+  "leftLeg": "#eab892",
+  "rightLeg": "#eab892"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 2,
+  "tamGiac": 2402,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [],
+ "shirtId": "95532465",
+ "pantsId": "151769183",
+ "tieuDe": "Mom Character Model R6 Humanoid Family Roleplay RP",
+ "tacGia": "Content Deleted - 158552482",
+ "moTa": "ứng viên thợ may"
+}

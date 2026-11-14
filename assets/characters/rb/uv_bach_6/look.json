@@ -1,0 +1,30 @@
+{
+ "ten": "uv_bach_6",
+ "robloxId": "131405452688512",
+ "nhanVat": "Buckley",
+ "mau": {
+  "head": "#d7c59a",
+  "torso": "#d7c59a",
+  "leftArm": "#d7c59a",
+  "rightArm": "#d7c59a",
+  "leftLeg": "#d7c59a",
+  "rightLeg": "#d7c59a"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 1,
+  "tamGiac": 800,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [
+  "Haiti Gold"
+ ],
+ "shirtId": "4012546661",
+ "pantsId": "2549585444",
+ "tieuDe": "Shop Owner Shopkeeper NPC Merchant Store Clerk Man",
+ "tacGia": "Echostr7830",
+ "moTa": "ứng viên ông Bách"
+}

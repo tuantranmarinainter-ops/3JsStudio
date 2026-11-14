@@ -1,0 +1,36 @@
+{
+ "ten": "uv_may_6",
+ "robloxId": "11262472256",
+ "nhanVat": "Nadiia",
+ "mau": {
+  "head": "#eab892",
+  "torso": "#eab892",
+  "leftArm": "#eab892",
+  "rightArm": "#eab892",
+  "leftLeg": "#eab892",
+  "rightLeg": "#eab892"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 4,
+  "tamGiac": 5605,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [
+  "MeshPartAccessory",
+  "Medical Eyepatch",
+  "Meshes/PatCapAccessory",
+  "Messy Summer Hair in White"
+ ],
+ "shirtId": "10881570495",
+ "pantsId": "10881555965",
+ "tieuDe": "Nadiia",
+ "tacGia": "MiusHair",
+ "moTa": "ứng viên thợ may",
+ "canhBao": [
+  "có CharacterMesh (thân lưới riêng) — bỏ, dùng khối R6"
+ ]
+}

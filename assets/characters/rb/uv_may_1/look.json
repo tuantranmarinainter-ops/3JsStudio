@@ -1,0 +1,29 @@
+{
+ "ten": "uv_may_1",
+ "robloxId": "12109583351",
+ "nhanVat": "grandma",
+ "mau": {
+  "head": "#ffc78e",
+  "torso": "#ffc78e",
+  "leftArm": "#ffc78e",
+  "rightArm": "#ffc78e",
+  "leftLeg": "#ffc78e",
+  "rightLeg": "#ffc78e"
+ },
+ "shirt": true,
+ "pants": false,
+ "tshirt": false,
+ "acc": {
+  "soNode": 2,
+  "tamGiac": 824,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [
+  "JE Hair Gray"
+ ],
+ "shirtId": "1975225812",
+ "tieuDe": "grandma",
+ "tacGia": "pablozj6",
+ "moTa": "ứng viên thợ may"
+}

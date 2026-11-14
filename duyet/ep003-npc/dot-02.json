@@ -1,0 +1,679 @@
+{
+ "so": 2,
+ "ngay": "2026-11-14",
+ "tieuDe": "NPC Roblox đợt 2 — bản dựng thật + chọn lại ông Bách, thợ may, gấu",
+ "tomTat": "Bản dựng thật của các vai đã chốt (thân R6 của engine + áo quần, tóc mũ Roblox). Chọn lại ông Bách (mẫu cũ bị Roblox khoá tay áo), thợ may, gấu.",
+ "token": {
+  "tong": 0,
+  "chiTiet": [],
+  "ghiChu": ""
+ },
+ "nhom": [
+  {
+   "id": "npc-roblox-2",
+   "ten": "NPC Roblox đợt 2",
+   "kieu": "ung-vien",
+   "anh": [],
+   "mota": "Đã làm theo CÁCH A: giữ xương + động tác + bộ mặt biểu cảm của engine, dán áo quần Roblox và gắn tóc/mũ/kính thật. Mặt khác ảnh gốc là đúng ý (mặt engine đổi được biểu cảm). Chưa đưa vào phim — bạn xác nhận xong mới chuyển cho phiên dựng Tập 4.",
+   "muc": [
+    {
+     "id": "npc_xacnhan",
+     "ten": "Xác nhận 6 vai đã chốt: thị trưởng, thị trưởng đồ ngủ, lính gác, người làm bánh, bé Vàng, bé Ngọc",
+     "phu": "Ảnh: hàng trên = ông Bách (LỖI, chọn lại bên dưới), thị trưởng, thị trưởng đồ ngủ, lính gác; hàng dưới = người làm bánh, bé Vàng, bé Ngọc, nữ nông dân. Còn lệch nhẹ: râu người làm bánh thưa hơn gốc; mũ bé Ngọc hơi nhỏ. Chọn \"Đạt\" hoặc \"Không cái nào\" + ghi chú chỗ cần sửa.",
+     "ungVien": [
+      {
+       "id": "npc_xacnhan__1",
+       "ten": "Đạt — dùng như ảnh",
+       "anh": [
+        "duyet/ep003-npc/anh/da-chot.png"
+       ],
+       "phu": "bản dựng thật trong engine"
+      }
+     ]
+    },
+    {
+     "id": "npc_dan2",
+     "ten": "Dân làng nền — 16 người đã dựng (chọn NHIỀU người muốn dùng)",
+     "phu": "Thứ tự trong ảnh lớn: trái → phải, trên → dưới = dan_01 … dan_16. Ô 7 (tóc che mặt) và ô 11 (mũ vắt ngang mặt) trông chưa ổn — không chọn thì bỏ. Chỉ có 1 nữ (ô 13).",
+     "chonNhieu": true,
+     "ungVien": [
+      {
+       "id": "npc_dan2__1",
+       "ten": "dan_01",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_01.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/84294762238979",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "84294762238979",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 32975,
+       "phu": "dân làng (pack Civilians #1) · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__2",
+       "ten": "dan_02",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_02.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/84294762238979",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "84294762238979",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 32975,
+       "phu": "dân làng (pack Civilians #2) · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__3",
+       "ten": "dan_03",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_03.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/84294762238979",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "84294762238979",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 32975,
+       "phu": "dân làng (pack Civilians #3) · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__4",
+       "ten": "dan_04",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_04.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/84294762238979",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "84294762238979",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 32975,
+       "phu": "dân làng (pack Civilians #4) · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__5",
+       "ten": "dan_05",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_05.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/84294762238979",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "84294762238979",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 32975,
+       "phu": "dân làng (pack Civilians #5) · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__6",
+       "ten": "dan_06",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_06.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/84294762238979",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "84294762238979",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 32975,
+       "phu": "dân làng (pack Civilians #6) · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__7",
+       "ten": "dan_07",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_07.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/84294762238979",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "84294762238979",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 32975,
+       "phu": "dân làng (pack Civilians #7) · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__8",
+       "ten": "dan_08",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_08.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/84294762238979",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "84294762238979",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 32975,
+       "phu": "dân làng (pack Civilians #8) · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__9",
+       "ten": "dan_09",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_09.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/84294762238979",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "84294762238979",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 32975,
+       "phu": "dân làng (pack Civilians #9) · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__10",
+       "ten": "dan_10",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_10.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/84294762238979",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "84294762238979",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 32975,
+       "phu": "dân làng (pack Civilians #10) · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__11",
+       "ten": "dan_11",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_11.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/84294762238979",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "84294762238979",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 32975,
+       "phu": "dân làng (pack Civilians #11) · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__12",
+       "ten": "dan_12",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_12.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/84294762238979",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "84294762238979",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 32975,
+       "phu": "dân làng (pack Civilians #12) · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__13",
+       "ten": "dan_13",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_13.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/3706386033",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "3706386033",
+       "tacGia": "s_uddenDev",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2718,
+       "phu": "nữ nông dân · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__14",
+       "ten": "dan_14",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_14.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/8598090797",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "8598090797",
+       "tacGia": "ILANoob30",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1066,
+       "phu": "dân làng áo nâu · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__15",
+       "ten": "dan_15",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_15.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/604065110",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "604065110",
+       "tacGia": "HokPen",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1798,
+       "phu": "nông dân râu · bản dựng thật"
+      },
+      {
+       "id": "npc_dan2__16",
+       "ten": "dan_16",
+       "anh": [
+        "duyet/ep003-npc/anh/dan_16.jpg"
+       ],
+       "link": "https://create.roblox.com/store/asset/12170843804",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "12170843804",
+       "tacGia": "DUNKELLGRAU",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1666,
+       "phu": "nam tóc nâu áo đen · bản dựng thật"
+      }
+     ]
+    },
+    {
+     "id": "npc_bach2",
+     "ten": "Ông Bách — CHỌN LẠI (mẫu đã chọn bị Roblox khoá ảnh tay áo + quần)",
+     "phu": "Mẫu \"李爺\" bạn chọn vẽ áo quần bằng nhiều ảnh dán rời, 2 ảnh đã bị Roblox lưu trữ (lỗi 403) và tóc bạc là hình vẽ trên đầu → dựng ra hói, chân trần (ứng viên cuối). Các mẫu dưới đã dựng thật.",
+     "ungVien": [
+      {
+       "id": "npc_bach2__1",
+       "ten": "Old Man Startercharacter R6 Mannequin Avatar Rig",
+       "anh": [
+        "duyet/ep003-npc/anh/uv_bach_1.jpg",
+        ".cache/roblox/70644652180683/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/70644652180683",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "70644652180683",
+       "tacGia": "Lunaw8509",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3243,
+       "phu": "ông già tóc trắng hai bên, râu xám, áo caro xám đen — KHUYÊN DÙNG, giống gốc nhất · ảnh 1 = bản dựng thật trong engine, ảnh 2 = ảnh gốc Roblox"
+      },
+      {
+       "id": "npc_bach2__2",
+       "ten": "Hershel twd",
+       "anh": [
+        "duyet/ep003-npc/anh/uv_bach_4.jpg",
+        ".cache/roblox/16037100653/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/16037100653",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "16037100653",
+       "tacGia": "elgatitotower",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2386,
+       "phu": "ông hói tóc trắng hai bên, áo be, dây đeo quần — hiền · ảnh 1 = bản dựng thật trong engine, ảnh 2 = ảnh gốc Roblox"
+      },
+      {
+       "id": "npc_bach2__3",
+       "ten": "Old Steampunk Man",
+       "anh": [
+        "duyet/ep003-npc/anh/uv_bach_2.jpg",
+        ".cache/roblox/126608988/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/126608988",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "126608988",
+       "tacGia": "AmericanSkeleton",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 4914,
+       "phu": "tóc bạc, vest nâu, sơ mi trắng — da hồng hơi lạ · ảnh 1 = bản dựng thật trong engine, ảnh 2 = ảnh gốc Roblox"
+      },
+      {
+       "id": "npc_bach2__4",
+       "ten": "shopkeeper [M:RP]",
+       "anh": [
+        "duyet/ep003-npc/anh/uv_bach_3.jpg",
+        ".cache/roblox/15816956489/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/15816956489",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "15816956489",
+       "tacGia": "Jordan115413",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1066,
+       "phu": "hói, vest đen sơ mi xám — mặt trơ · ảnh 1 = bản dựng thật trong engine, ảnh 2 = ảnh gốc Roblox"
+      },
+      {
+       "id": "npc_bach2__5",
+       "ten": "Shop Owner Shopkeeper NPC Merchant Store Clerk Man",
+       "anh": [
+        "duyet/ep003-npc/anh/uv_bach_6.jpg",
+        ".cache/roblox/131405452688512/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/131405452688512",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "131405452688512",
+       "tacGia": "Echostr7830",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1866,
+       "phu": "mũ cao bồi, vest nâu · ảnh 1 = bản dựng thật trong engine, ảnh 2 = ảnh gốc Roblox"
+      },
+      {
+       "id": "npc_bach2__6",
+       "ten": "李爺",
+       "anh": [
+        "duyet/ep003-npc/anh/bach.jpg",
+        ".cache/roblox/18541446276/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/18541446276",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "18541446276",
+       "tacGia": "tigerNOOB001",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 6030,
+       "phu": "mẫu đã chọn ở đợt 1 — dựng thiếu tóc + quần vì Roblox khoá ảnh"
+      }
+     ]
+    },
+    {
+     "id": "npc_may2",
+     "ten": "Cô thợ may — người lớn R6 khối vuông (đã dựng thật)",
+     "phu": "Kho Roblox rất ít mẫu NỮ R6 khối vuông miễn phí: tìm 18 từ khoá, 531 mẫu, chỉ 6 mẫu là nữ + dựng được. Không ưng thì ghi chú kiểu bạn muốn (tuổi, tóc, màu áo) — có thể ghép tóc nữ của mẫu này với áo của mẫu khác.",
+     "ungVien": [
+      {
+       "id": "npc_may2__1",
+       "ten": "Velinha",
+       "anh": [
+        "duyet/ep003-npc/anh/uv_may_2.jpg",
+        ".cache/roblox/16198634320/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/16198634320",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "16198634320",
+       "tacGia": "Drawer's Dev",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2618,
+       "phu": "bà da nâu, tóc xám xoăn, kính, áo xanh nhạt cổ trắng, váy tím — KHUYÊN DÙNG · ảnh 1 = bản dựng thật trong engine, ảnh 2 = ảnh gốc Roblox"
+      },
+      {
+       "id": "npc_may2__2",
+       "ten": "Бабушка с подъезда 1",
+       "anh": [
+        "duyet/ep003-npc/anh/uv_may_5.jpg",
+        ".cache/roblox/72858972549384/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/72858972549384",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "72858972549384",
+       "tacGia": "Litvin_LitenergyReal",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 6340,
+       "phu": "bà tóc bạc, áo + váy hoa — đúng hình ảnh bà thợ may · ảnh 1 = bản dựng thật trong engine, ảnh 2 = ảnh gốc Roblox"
+      },
+      {
+       "id": "npc_may2__3",
+       "ten": "Mom Jake Character Model R6 Family Roblox Humanoid",
+       "anh": [
+        "duyet/ep003-npc/anh/uv_may_8.jpg",
+        ".cache/roblox/135331401553316/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/135331401553316",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "135331401553316",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1826,
+       "phu": "cô tóc nâu tết, băng đô, áo len sọc · ảnh 1 = bản dựng thật trong engine, ảnh 2 = ảnh gốc Roblox"
+      },
+      {
+       "id": "npc_may2__4",
+       "ten": "Shy Girl Character Model Avatar NPC Rig Girls R6",
+       "anh": [
+        "duyet/ep003-npc/anh/uv_may_3.jpg",
+        ".cache/roblox/112507919413426/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/112507919413426",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "112507919413426",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 6273,
+       "phu": "cô trẻ tóc nâu dài, áo xanh rêu, quần jean · ảnh 1 = bản dựng thật trong engine, ảnh 2 = ảnh gốc Roblox"
+      },
+      {
+       "id": "npc_may2__5",
+       "ten": "Mom's NPC Mom's Character Model R6 Roleplay Roblox",
+       "anh": [
+        "duyet/ep003-npc/anh/uv_may_4.jpg",
+        ".cache/roblox/118400431811478/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/118400431811478",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "118400431811478",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 8825,
+       "phu": "cô trẻ mũ bucket trắng, tóc đuôi ngựa · ảnh 1 = bản dựng thật trong engine, ảnh 2 = ảnh gốc Roblox"
+      },
+      {
+       "id": "npc_may2__6",
+       "ten": "grandma",
+       "anh": [
+        "duyet/ep003-npc/anh/uv_may_1.jpg",
+        ".cache/roblox/12109583351/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/12109583351",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "12109583351",
+       "tacGia": "pablozj6",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2196,
+       "phu": "bà tóc búi xám, áo xanh lá (mẫu không có ảnh quần → chân trần) · ảnh 1 = bản dựng thật trong engine, ảnh 2 = ảnh gốc Roblox"
+      }
+     ]
+    },
+    {
+     "id": "npc_gau2",
+     "ten": "Gấu bông — tìm lại theo từ khoá \"teddy bear\" (14 từ khoá, 261 mẫu)",
+     "phu": "Ảnh = ảnh gốc Roblox (chưa dựng). Hầu hết gấu bông Roblox là KHỐI LIỀN đang ngồi, không có xương: dùng làm gấu trên kệ thì được ngay; làm Bắp biết đi/ôm/leo thì phải dựng xương + làm lại động tác. \"Không cái nào\" = giữ gấu GLB hiện tại cho Bắp. Có thể chọn một mẫu ngồi làm gấu trưng bày và vẫn giữ Bắp hiện tại — ghi chú giúp.",
+     "ungVien": [
+      {
+       "id": "npc_gau2__1",
+       "ten": "Adopt me Beta Brown Bear",
+       "anh": [
+        ".cache/roblox/16170737783/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/16170737783",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "16170737783",
+       "tacGia": "Abe1103755",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3512,
+       "phu": "gấu nâu hoạt hình, ĐỨNG, có rig R6 (kiểu thú cưng \"Adopt Me\") · dùng được ngay các động tác R6; cần kiểm lại thương hiệu"
+      },
+      {
+       "id": "npc_gau2__2",
+       "ten": "Big 'Ol Teddy Bear",
+       "anh": [
+        ".cache/roblox/615379895/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/615379895",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "615379895",
+       "tacGia": "Klyborg",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 6024,
+       "phu": "gấu nâu bụng kem, tròn, đứng dang tay · khối liền, không rig → phải dựng xương"
+      },
+      {
+       "id": "npc_gau2__3",
+       "ten": "Teddy Bear",
+       "anh": [
+        ".cache/roblox/4919878545/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/4919878545",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "4919878545",
+       "tacGia": "The_Deceiver",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7016,
+       "phu": "gấu nâu sẫm, NGỒI kiểu gấu bông · khối liền, không rig"
+      },
+      {
+       "id": "npc_gau2__4",
+       "ten": "Stuffed Toy Teddy Bear",
+       "anh": [
+        ".cache/roblox/8820218869/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/8820218869",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "8820218869",
+       "tacGia": "A_RandomPuppy",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 13374,
+       "phu": "gấu nâu váy hồng, ngồi · nặng 13 nghìn tam giác"
+      },
+      {
+       "id": "npc_gau2__5",
+       "ten": "Teddy Bear ",
+       "anh": [
+        ".cache/roblox/8648724784/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/8648724784",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "8648724784",
+       "tacGia": "The World OF OOF",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 20650,
+       "phu": "gấu nâu nhạt nơ vàng, ngồi · nặng 20 nghìn tam giác"
+      },
+      {
+       "id": "npc_gau2__6",
+       "ten": "Yellow Cute Teddy Bear",
+       "anh": [
+        ".cache/roblox/5640074127/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/5640074127",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "5640074127",
+       "tacGia": "Fizzyliar",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7016,
+       "phu": "gấu màu kem, ngồi · cùng mô hình mẫu 3"
+      },
+      {
+       "id": "npc_gau2__7",
+       "ten": "Teddy Bear Model Design",
+       "anh": [
+        ".cache/roblox/4919874115/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/4919874115",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "4919874115",
+       "tacGia": "The_Deceiver",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7016,
+       "phu": "gấu nâu đậm, ngồi · cùng mô hình mẫu 3"
+      },
+      {
+       "id": "npc_gau2__8",
+       "ten": "Cute Pink Teddy Bear",
+       "anh": [
+        ".cache/roblox/12513036641/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/12513036641",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "12513036641",
+       "tacGia": "Th3Server",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7016,
+       "phu": "gấu hồng, ngồi · cùng mô hình mẫu 3"
+      },
+      {
+       "id": "npc_gau2__9",
+       "ten": "pastel green teddy bear",
+       "anh": [
+        ".cache/roblox/5687109344/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/5687109344",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "5687109344",
+       "tacGia": "eienorid",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7016,
+       "phu": "gấu xanh lá pastel, ngồi · cùng mô hình mẫu 3"
+      },
+      {
+       "id": "npc_gau2__10",
+       "ten": "Teddy Bear for bayleebutera",
+       "anh": [
+        ".cache/roblox/912590778/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/912590778",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "912590778",
+       "tacGia": "babyklebold",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2150,
+       "phu": "gấu xanh ngọc lông thô, ngồi nghiêng · nhẹ; kém khối vuông"
+      },
+      {
+       "id": "npc_gau2__11",
+       "ten": "Bear Market",
+       "anh": [
+        ".cache/roblox/105679799210802/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/105679799210802",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "105679799210802",
+       "tacGia": "JoyILL2011",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 6320,
+       "phu": "gấu nâu nhỏ, đứng chữ T, rig R15 · có rig R15"
+      },
+      {
+       "id": "npc_gau2__12",
+       "ten": "Teddy <3",
+       "anh": [
+        ".cache/roblox/9935984148/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/9935984148",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "9935984148",
+       "tacGia": "H4ppiGames",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7016,
+       "phu": "gấu kem trắng, ngồi · cùng mô hình mẫu 3"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "lienKet": []
+}

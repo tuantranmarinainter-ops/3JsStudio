@@ -1,0 +1,28 @@
+{
+ "ten": "linh",
+ "robloxId": "107895271287060",
+ "nhanVat": "Police Man",
+ "mau": {
+  "head": "#ffcc99",
+  "torso": "#ffcc99",
+  "leftArm": "#ffcc99",
+  "rightArm": "#ffcc99",
+  "leftLeg": "#ffcc99",
+  "rightLeg": "#ffcc99"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 1,
+  "tamGiac": 426,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [],
+ "shirtId": "1972067",
+ "pantsId": "1960214",
+ "tieuDe": "Police Man Officer NPC Model Cop Uniform Policeman",
+ "tacGia": "Sparkx0570",
+ "moTa": "lính gác (dùng cho cả linh_a, linh_b)"
+}

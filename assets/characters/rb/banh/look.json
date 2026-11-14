@@ -1,0 +1,30 @@
+{
+ "ten": "banh",
+ "robloxId": "6270043601",
+ "nhanVat": "ChefNPCByJack",
+ "mau": {
+  "head": "#eab892",
+  "torso": "#eab892",
+  "leftArm": "#eab892",
+  "rightArm": "#eab892",
+  "leftLeg": "#eab892",
+  "rightLeg": "#eab892"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 2,
+  "tamGiac": 982,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [
+  "Beard"
+ ],
+ "shirtId": "760772312",
+ "pantsId": "760772312",
+ "tieuDe": "Chef NPC",
+ "tacGia": "Eupherium",
+ "moTa": "người làm bánh"
+}

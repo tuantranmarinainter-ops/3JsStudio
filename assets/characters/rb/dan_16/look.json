@@ -1,0 +1,30 @@
+{
+ "ten": "dan_16",
+ "robloxId": "12170843804",
+ "nhanVat": "Dummy",
+ "mau": {
+  "head": "#fdea8d",
+  "torso": "#fdea8d",
+  "leftArm": "#fdea8d",
+  "rightArm": "#fdea8d",
+  "leftLeg": "#fdea8d",
+  "rightLeg": "#fdea8d"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 1,
+  "tamGiac": 600,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [
+  "JE Hair"
+ ],
+ "shirtId": "7212955380",
+ "pantsId": "6477037543",
+ "tieuDe": "Civilian NPC",
+ "tacGia": "DUNKELLGRAU",
+ "moTa": "nam tóc nâu áo đen"
+}

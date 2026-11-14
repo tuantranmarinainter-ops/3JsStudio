@@ -1,0 +1,33 @@
+{
+ "ten": "be_vang",
+ "robloxId": "135634323232287",
+ "nhanVat": "R6",
+ "mau": {
+  "head": "#ffcc99",
+  "torso": "#ffcc99",
+  "leftArm": "#ffcc99",
+  "rightArm": "#ffcc99",
+  "leftLeg": "#ffcc99",
+  "rightLeg": "#ffcc99"
+ },
+ "shirt": true,
+ "pants": true,
+ "tshirt": false,
+ "acc": {
+  "soNode": 1,
+  "tamGiac": 2340,
+  "dauCao": 1.25,
+  "dauRong": 1.25
+ },
+ "phuKien": [
+  "Hair"
+ ],
+ "shirtId": "1434248692",
+ "pantsId": "9622237089",
+ "tieuDe": "Boy R6 Character Rig Model Dummy NPC Boys",
+ "tacGia": "Content Deleted - 158552482",
+ "them": {
+  "scale": 0.84
+ },
+ "moTa": "bé Vàng"
+}
