@@ -43,7 +43,8 @@ function chepTrang(tu, den, ten) {
 }
 
 // ---------- gom ----------
-fs.rmSync(RA, { recursive: true, force: true });
+// xoá bản cũ nhưng giữ thư mục gốc (có thể đang mở) và thư mục ket-qua (file người duyệt gửi về)
+for (const e of fs.existsSync(RA) ? fs.readdirSync(RA) : []) if (e !== 'ket-qua') fs.rmSync(path.join(RA, e), { recursive: true, force: true });
 fs.mkdirSync(path.join(RA, 'ket-qua'), { recursive: true });
 fs.writeFileSync(path.join(RA, 'ket-qua', 'DOC-TOI.txt'), 'Bỏ các file ket-qua_….json (tải về sau khi bấm Gửi trên trang duyệt) vào thư mục này.\r\n', 'utf8');
 
