@@ -142,3 +142,22 @@ test('dongGhiCong: model ghép (--ghep-nguon) được ghi công chung và vẫn
   assert.match(d, /Ring box.*by A, licensed under/); assert.match(d, /Ghép thêm: "Ring" \(https:\/\/x\/b\) by B, licensed under/);
   assert.equal(dongGhiCong(a, 'hop').includes('Ghép thêm'), false);
 });
+
+test('ghiManifest giữ kiểu xuống dòng CRLF: thêm, thay, và nhánh định dạng lạ đều không lẫn LF', () => {
+  const d = fs.mkdtempSync(path.join(os.tmpdir(), 'nhap-crlf-')), f = path.join(d, 'manifest.json');
+  const leLF = (t) => (t.match(/(?<!\r)\n/g) || []).length;
+  const dau = [{ id: 'a/b', license: 'CC0' }];
+  fs.writeFileSync(f, JSON.stringify(dau, null, 1).replace(/\n/g, '\r\n'));              // CRLF, không xuống dòng cuối
+  ghiManifest({ id: 'nhap/t', src: 'x.glb', license: 'CC0', credit: 'c', source: 's', bbox: [1, 2, 3] }, f);
+  ghiManifest({ id: 'nhap/t', src: 'x.glb', license: 'CC0', credit: 'c2', source: 's', bbox: [1, 2, 3] }, f);   // thay được → đã nhận là định dạng chuẩn
+  let t = fs.readFileSync(f, 'utf8');
+  assert.equal(leLF(t), 0); assert.ok(t.includes('\r\n')); assert.ok(!t.endsWith('\n'));
+  assert.deepEqual(JSON.parse(t).map((e) => e.credit), [undefined, 'c2']);
+  fs.writeFileSync(f, '[\r\n  {"id": "a/b"}\r\n]\r\n');                                    // định dạng lạ + CRLF
+  ghiManifest({ id: 'nhap/u', src: 'u.glb', license: 'CC0', credit: 'c', source: 's' }, f);
+  t = fs.readFileSync(f, 'utf8');
+  assert.equal(leLF(t), 0); assert.ok(t.endsWith(']\r\n')); assert.deepEqual(JSON.parse(t).map((e) => e.id), ['a/b', 'nhap/u']);
+  fs.writeFileSync(f, JSON.stringify(dau, null, 1) + '\n');                                // LF vẫn là LF
+  ghiManifest({ id: 'nhap/t', src: 'x.glb', license: 'CC0', credit: 'c', source: 's' }, f);
+  assert.ok(!fs.readFileSync(f, 'utf8').includes('\r'));
+});

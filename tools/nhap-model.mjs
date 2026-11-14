@@ -222,19 +222,22 @@ async function taiRoblox(id, dir, a) {   // → GLB thô (toạ độ stud, chư
 
 // ---------- manifest + ghi công ----------
 export function ghiManifest(entry, file = MANIFEST) {
-  let txt = fs.readFileSync(file, 'utf8');
+  const goc = fs.readFileSync(file, 'utf8');
+  const eol = goc.includes('\r\n') ? '\r\n' : '\n';        // giữ kiểu xuống dòng của file (Windows checkout = CRLF)
+  const txt = goc.replace(/\r\n/g, '\n');
+  const ghi = (t) => fs.writeFileSync(file, eol === '\n' ? t : t.replace(/\n/g, eol));
   const arr = JSON.parse(txt);
   const kieu = JSON.stringify(arr, null, 1) === txt.trimEnd();
   const i = arr.findIndex((e) => e.id === entry.id);
   if (i >= 0 && !entry.id.startsWith('nhap/')) throw new Error('không ghi đè dòng manifest cũ ' + entry.id);
   if (kieu) {
     if (i >= 0) arr[i] = entry; else arr.push(entry);
-    fs.writeFileSync(file, JSON.stringify(arr, null, 1) + (txt.endsWith('\n') ? '\n' : ''));
+    ghi(JSON.stringify(arr, null, 1) + (txt.endsWith('\n') ? '\n' : ''));
   } else {   // định dạng lạ: chỉ chèn chữ trước dấu ] cuối
     if (i >= 0) throw new Error('manifest không đúng định dạng chuẩn; không thể thay dòng cũ');
     const k = txt.lastIndexOf(']');
     const khoi = JSON.stringify(entry, null, 1).split('\n').map((l) => ' ' + l).join('\n');
-    fs.writeFileSync(file, txt.slice(0, k).replace(/\s*$/, '') + ',\n' + khoi + '\n' + txt.slice(k));
+    ghi(txt.slice(0, k).replace(/\s*$/, '') + ',\n' + khoi + '\n' + txt.slice(k));
   }
 }
 export function dongGhiCong(info, ten) {
