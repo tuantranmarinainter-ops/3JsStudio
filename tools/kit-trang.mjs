@@ -55,7 +55,7 @@ const bcBang = (kit.boiCanh || []).map((c) => `<tr><th>${esc(c.id)}</th><td>${es
 const nvBang = (kit.nhanVat || []).map((n) => `<tr><th><i style="background:${mauNv[n.id]}"></i>${esc(tenNv[n.id] || n.id)}</th><td>${esc(n.cao)} stud</td><td>${(n.mau || []).map((m) => `<i style="background:${esc(m)}" title="${esc(m)}"></i>`).join('')}</td></tr>`).join('');
 
 const html = `<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bộ kit ${esc(kit.ep)}</title>
-<style>:root{--bg:#f3f5f8;--p:#fff;--l:#d5dbe5;--f:#17202c;--m:#5d6a7e;--a:#1f6fd1}@media(prefers-color-scheme:dark){:root{--bg:#0e1116;--p:#161b23;--l:#2a3342;--f:#e8ecf2;--m:#8b96a8;--a:#4da3ff}}
+<style>:root{--bg:#f3f5f8;--p:#fff;--l:#d5dbe5;--f:#17202c;--m:#5d6a7e;--a:#1f6fd1}@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1116;--p:#161b23;--l:#2a3342;--f:#e8ecf2;--m:#8b96a8;--a:#4da3ff}}:root[data-theme="dark"]{--bg:#0e1116;--p:#161b23;--l:#2a3342;--f:#e8ecf2;--m:#8b96a8;--a:#4da3ff}
 body{margin:0;background:var(--bg);color:var(--f);font:14px/1.5 system-ui,"Segoe UI",sans-serif;padding:16px 16px 90px}main{max-width:1000px;margin:0 auto}h1{font-size:22px;margin:0}h2{font-size:17px;margin:0 0 4px}.mu{color:var(--m);font-size:13px;margin:2px 0}
 .shot,.khoi{background:var(--p);border:1px solid var(--l);border-radius:10px;padding:12px;margin-top:12px}.luoi{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:14px;margin-top:8px}@media(max-width:760px){.luoi{grid-template-columns:1fr}}
 .anh{display:flex;gap:8px}.anh figure{margin:0;flex:1;min-width:0}.anh img{width:100%;border-radius:6px;display:block}figcaption{font-size:12px;color:var(--m);text-align:center}
