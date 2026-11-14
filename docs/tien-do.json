@@ -151,7 +151,7 @@
     {
      "ten": "Bộ mặt AltiWyre cho nhân vật R6",
      "tt": "xong",
-     "ghiChu": "14/11: bật facePack altiwyre (ô FX matAlti tắt = 37 emote cũ); soi 6 shot cận: mặt rõ, không bị tóc/mũ che; tất định OK; s014 đổi sang mặt cười tươi. Đã gộp bản xem thử cùng nhà phố + đồ tiệm + 12 NPC Roblox.",
+     "ghiChu": "14/11: bật facePack altiwyre (ô FX matAlti tắt = 37 emote cũ); soi 6 shot cận: mặt rõ, không bị tóc/mũ che; tất định OK; s014 đổi sang mặt cười tươi. Đã gộp bản xem thử cùng nhà phố + đồ tiệm + 12 NPC Roblox. Tối 14/11: chuyển sang 37 MẶT NGUYÊN (ô matNguyen); hạ + thu mặt Gà (faceY 0.52, faceSize 0.92) cho khỏi bị băng đô che (s014, s100 đạt); tất định OK; gộp lại bản xem thử 68 MB.",
      "pt": 92
     }
    ],

@@ -36,6 +36,7 @@ export const R6_LOOKS = {
   // Anh Gà — đầu vàng, chỏm 3 múi, băng đỏ, hoodie ô-liu sọc vàng, quần lửng nâu, giày đen đế kem
   ga: {
     skin: '#ffe000', shirt: '#7da33c', pants: '#6b2e1e', hero: true, chat: { ao: 'knit' },   // hoodie LEN sọc (khung kịch bản)
+    faceY: 0.52, faceSize: 0.92,   // 14/11: bộ 37 mặt nguyên (altiwyre-nguyen) to hơn → hạ + thu nhỏ cho mắt/mày không lọt dưới băng đô đỏ (s014, s100)
     torso: { bands: [[0, 0.92, '#7da33c'], [0.92, 1, '#6b8f32']], wrap: [{ op: 'stripes', color: '#c9d95a', n: 7, h: 0.035, y0: 0.02, y1: 0.9 }],
       front: [P([[0.24, 0.6], [0.76, 0.6], [0.86, 0.88], [0.14, 0.88]], '#77993a'), P([[0.24, 0.6], [0.76, 0.6], [0.86, 0.88], [0.14, 0.88]], '#5f7f2c', { stroke: true, w: 0.014 })] },
     arm: { bands: [[0, 0.74, '#7da33c'], [0.74, 0.8, '#6b8f32'], [0.8, 1, '#ffe000']], wrap: [{ op: 'stripes', color: '#c9d95a', n: 6, h: 0.035, y0: 0.02, y1: 0.74 }] },
