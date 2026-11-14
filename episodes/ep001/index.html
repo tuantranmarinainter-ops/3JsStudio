@@ -40,56 +40,20 @@
     </script>
 
     <script type="module">
-      import * as THREE from 'three';
-      import { createStage } from '/engine/stage.js';
-      import { propKit } from '/engine/props.js';
-      import { createEnvs, ENV_ASSETS } from '/engine/envs.js';
-      import { createAssetLib } from '/engine/assets.js';
-      import { buildTimeline } from '/engine/timeline.js';
-      import { createDirector } from '/engine/shots.js';
-      import { snapPostcards } from '/engine/snap.js';
-      import { buildCast, buildHouses, buildProps, buildFx } from '/episodes/ep001/episode.js';
-      import { SHOTS } from '/episodes/ep001/shots.js';
-      import { CAPTIONS } from '/episodes/ep001/captions.js';
-
+      import { createScene, captionAt } from '/episodes/ep001/scene.js';
       const q = new URLSearchParams(location.search);
       if (q.get('peek')) document.body.classList.add('peek');
-      const stage = createStage(THREE, { canvas: document.getElementById('stage'), ground: null, fov: 40 });
-      const K = propKit(THREE);
-      const A = createAssetLib(THREE);
-      await A.load(ENV_ASSETS);
-      const envs = createEnvs(THREE, stage, K, A);
-      const actors = await buildCast(THREE), houses = buildHouses(THREE), props = buildProps(THREE, K), fx = buildFx(THREE);
-      for (const a of Object.values(actors)) stage.scene.add(a.root);
-      for (const h of Object.values(houses)) stage.scene.add(h.root);
-      for (const p of Object.values(props)) stage.scene.add(p);
-      for (const f of Object.values(fx)) stage.scene.add(f.obj);
-      const tl = buildTimeline(SHOTS, 30);
-      const director = createDirector({ THREE, stage, envs, K, actors, houses, props, fx });
-
+      const S = await createScene(document.getElementById('stage'));
+      const { stage, tl } = S;
       // phụ đề cụm chữ: bật nảy 0.12 s khi đổi cụm
       const cap = document.getElementById('cap');
       let lastCap = -1;
       function caption(t) {
-        let i = -1; for (let j = 0; j < CAPTIONS.length; j++) { if (CAPTIONS[j][0] <= t + 1e-4 && t < CAPTIONS[j][1]) { i = j; break; } }
-        if (i !== lastCap) { cap.textContent = i >= 0 ? CAPTIONS[i][2] : ''; lastCap = i; }
-        const k = i >= 0 ? Math.min(1, (t - CAPTIONS[i][0]) / 0.12) : 1;
-        cap.style.transform = (document.body.classList.contains('peek') ? 'scale(0.5) ' : '') + `scale(${0.82 + 0.18 * (1 - Math.pow(1 - k, 3))})`;
+        const c = captionAt(t);
+        if (c.i !== lastCap) { cap.textContent = c.text; lastCap = c.i; }
+        cap.style.transform = (document.body.classList.contains('peek') ? 'scale(0.5) ' : '') + `scale(${0.82 + 0.18 * (1 - Math.pow(1 - c.k, 3))})`;
       }
-
-      stage.onFrame((t) => {
-        const T = Math.min(t, tl.total - 1e-4);
-        const { shot, local, k } = tl.at(T);
-        director.render(shot, local, k, T);
-        caption(T);
-      });
-      // biên dịch shader của mọi env trước khi seek
-      for (const e of Object.values(envs.envs)) e.group.visible = true;
-      for (const h of Object.values(houses)) h.root.visible = true;
-      stage.renderer.compile(stage.scene, stage.camera);
-      for (const e of Object.values(envs.envs)) e.group.visible = false;
-      // tranh bưu thiếp = ảnh chụp từ chính các cảnh 3D (Nam Cực, đại dương, đỉnh núi, đảo)
-      snapPostcards(THREE, stage, envs, { hide: [...Object.values(actors).map((a) => a.root), ...Object.values(houses).map((h) => h.root)], props });
+      stage.onFrame((t) => { const T = S.update(t); caption(T); });
       stage.start();
       window.renderAt = (t) => stage.renderAt(t);
       window.__shots = tl;
