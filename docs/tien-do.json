@@ -65,8 +65,15 @@
     },
     {
      "ten": "11. Engine: điểm giữa cho camera + loại shot đổi hướng",
-     "tt": "cho",
-     "ghiChu": "Cần bạn quyết. Engine chỉ nội suy camera đầu→cuối, nên shot 3 hình (nhảy, ngã, quay người) chưa tự động được. Thêm điểm giữa là sửa engine dùng chung cho mọi tập. Trả lời 'làm' hoặc 'để sau'."
+     "tt": "xong",
+     "pt": 100,
+     "ghiChu": "14/11: engine có ĐIỂM GIỮA tuỳ chọn (engine/diem-giua.js): camera cam.pm / lm / fovm (quỹ đạo: yawm, hm, distm, lookm), nhân vật cast.<tên>.atm (kể cả độ cao → cú nhảy) và rym, đạo cụ props.<tên>.atm, tm = lúc tới điểm giữa (mặc định giữa shot). Đường cong mượt qua 3 điểm, không ghi thì hình y hệt cũ. Không thêm loại shot đổi hướng: điểm giữa đã đủ. kit-shots tự ghi điểm giữa cho shot 3 hình (hết 'CẦN SỬA TAY: có khung giữa'), kiem-chuyen-dong so thêm khung giữa với kit. CHƯA xem cú nhảy bằng mắt; chưa có động tác (anim) nhảy riêng, Gà chỉ được nhấc lên theo quỹ đạo ném."
+    },
+    {
+     "ten": "Bộ mặt AltiWyre (thay bộ 37 emote)",
+     "tt": "do",
+     "ghiChu": "Đã duyệt 14/11. Engine chọn bộ mặt bằng EPISODE.facePack, có ô bật/tắt matAlti trong trình phát, tập mới mặc định AltiWyre; so A/B + tất định đạt. CÒN LẠI: phiên Tập 4 thêm 2 dòng theo docs/handoff/face-pack-altiwyre.md rồi gộp lại; 6 biểu cảm còn khớp tạm.",
+     "pt": 90
     }
    ]
   },
@@ -131,9 +138,9 @@
     },
     {
      "ten": "Duyệt lại asset theo Roblox (chỉ Creator Store)",
-     "tt": "cho",
-     "pt": 20,
-     "ghiChu": "14/11: kiểm kê 71 món (phố 21 · tiệm 14 · nhà máy 15 · phòng 11 · đạo cụ khác 10). ĐỢT 1 = tiệm bánh + tiệm may (14 món, 70 ứng viên Roblox, đã tải GLB + chụp so với ảnh gốc: khớp 50 · mất màu 11 · lỗi hình 8 · không tải 1) → CHỜ người dùng duyệt ở dist/ep003_duyet.html. Chưa thay gì trong bối cảnh. Còn 4 đợt: phòng, nhà máy, phố, đạo cụ khác (57 món)."
+     "tt": "dang",
+     "pt": 25,
+     "ghiChu": "14/11: kiểm kê 71 món. ĐỢT 1 tiệm bánh + tiệm may: người dùng chốt 13/14 món → đã nhập (nhap-model roblox:) và thay vào e3-tiem.js (?rb=0 = bản khối cũ); soi s004 đạt, s006/s007 lỗi nhẹ, s005 lỗi máy quay có từ trước. ĐỢT 2 biển tiệm bánh (10 mẫu mới) chờ duyệt. Trang duyệt có nút chọn nhiều + 10 ứng viên/món từ nay. Còn: sky, nhà ngoại thất, phố, nhà máy, phòng Gà, đạo cụ nhỏ — kế hoạch docs/handoff/ep003-roblox.md."
     }
    ],
    "tap": "Tập 3"

@@ -1,0 +1,134 @@
+{
+ "nhomId": "roblox-bien",
+ "ten": "Roblox — biển tiệm bánh (tìm lại)",
+ "mota": "Người dùng loại 5 mẫu cũ ở Đợt 1 (\"tìm hình khác đi\"). 10 mẫu mới; chọn MỘT hoặc \"Không cái nào\". Ảnh: trái = ảnh gốc Roblox, phải = bản GLB đã tải.",
+ "khe": [
+  {
+   "id": "tiem_banh_bien",
+   "ten": "Biển ổ bánh trên tường",
+   "phu": "cần ~6.4×3.6×0.2 stud · x1 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_banh_bien__1",
+     "ten": "Poster",
+     "anh": "output/ep003/roblox/duyet/14852064156.jpg",
+     "link": "https://create.roblox.com/store/asset/14852064156",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "14852064156",
+     "tacGia": "rash_dark59",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 74,
+     "phu": "Tranh Patisserie bánh ngọt khung gỗ, 74 tg · GLB 7×3.5×0.4 stud"
+    },
+    {
+     "id": "tiem_banh_bien__2",
+     "ten": "Large Normal Bread",
+     "anh": "output/ep003/roblox/duyet/9682253749.jpg",
+     "link": "https://create.roblox.com/store/asset/9682253749",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "9682253749",
+     "tacGia": "marques2306",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 284,
+     "phu": "Lát bánh mì lớn khối đơn giản, 284 tg · GLB 16.98×17.52×2.1 stud"
+    },
+    {
+     "id": "tiem_banh_bien__3",
+     "ten": "Bread",
+     "anh": "output/ep003/roblox/duyet/11972345616.jpg",
+     "link": "https://create.roblox.com/store/asset/11972345616",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "11972345616",
+     "tacGia": "ArgonameStuff",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 336,
+     "phu": "Ổ bánh mì cắt dạng biển, 336 tg · GLB 0.24×1.3×1.2 stud"
+    },
+    {
+     "id": "tiem_banh_bien__4",
+     "ten": "Cupcake Neon Sign",
+     "anh": "output/ep003/roblox/duyet/487969135.jpg",
+     "link": "https://create.roblox.com/store/asset/487969135",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "487969135",
+     "tacGia": "KALEID0SC0PIK",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 1980,
+     "phu": "Biển cupcake neon, hình bánh rõ, 1980 tg · GLB 4.79×4.7×0.13 stud"
+    },
+    {
+     "id": "tiem_banh_bien__5",
+     "ten": "I heart Cake Tool",
+     "anh": "output/ep003/roblox/duyet/7431949.jpg",
+     "link": "https://create.roblox.com/store/asset/7431949",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "7431949",
+     "tacGia": "Christina8787",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 24,
+     "phu": "Biển I heart Cake trên cột, 24 tg · GLB 0.17×1.67×1.81 stud"
+    },
+    {
+     "id": "tiem_banh_bien__6",
+     "ten": "RPG Signs",
+     "anh": "output/ep003/roblox/duyet/71658408.jpg",
+     "link": "https://create.roblox.com/store/asset/71658408",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "71658408",
+     "tacGia": "0_1195",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 1720,
+     "phu": "Biển gỗ treo tay sắt, 1720 tg · GLB 6.4×9.2×3.41 stud"
+    },
+    {
+     "id": "tiem_banh_bien__7",
+     "ten": "Image",
+     "anh": "output/ep003/roblox/duyet/621193144.jpg",
+     "link": "https://create.roblox.com/store/asset/621193144",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "621193144",
+     "tacGia": "wael0s",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 182,
+     "phu": "Biển gỗ vàng treo móc tròn, 182 tg · GLB 4.4×4.9×0.4 stud"
+    },
+    {
+     "id": "tiem_banh_bien__8",
+     "ten": "city prob #",
+     "anh": "output/ep003/roblox/duyet/6701079110.jpg",
+     "link": "https://create.roblox.com/store/asset/6701079110",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "6701079110",
+     "tacGia": "AlexBoiPie",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 684,
+     "phu": "Biển Sweet Treats trên cột, 684 tg · GLB 32.61×48×24.96 stud"
+    },
+    {
+     "id": "tiem_banh_bien__9",
+     "ten": "Pasqually backdrop",
+     "anh": "output/ep003/roblox/duyet/80916758884932.jpg",
+     "link": "https://create.roblox.com/store/asset/80916758884932",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "80916758884932",
+     "tacGia": "Bethatguy58",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 28,
+     "phu": "Biển Pasqually hình bánh, rất nhẹ 28 tg · GLB 11.07×9.84×11.23 stud"
+    },
+    {
+     "id": "tiem_banh_bien__10",
+     "ten": "'Tis a sign",
+     "anh": "output/ep003/roblox/duyet/30209431.jpg",
+     "link": "https://create.roblox.com/store/asset/30209431",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "30209431",
+     "tacGia": "rotxdxdxdxd",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 26,
+     "phu": "Biển gỗ chữ nghiêng trên cọc, 26 tg · GLB 1.01×8.21×7.46 stud"
+    }
+   ]
+  }
+ ]
+}

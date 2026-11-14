@@ -93,7 +93,10 @@ function quyetDinhDot(d, dn) {
     if (n.kieu === 'ung-vien') {
       if (k.chon && Object.hasOwn(k.chon, m.id)) {
         const c = k.chon[m.id];
-        if (c) { const u = (m.ungVien || []).find(x => x.id === c); e = { trangThai: 'chon', ten: u?.ten ?? c, anh: u?.anh?.[0] || null, nguon: u?.nguon || null, link: linkChinh(u) }; }
+        if (Array.isArray(c) && c.length) {   // khe chonNhieu: chọn nhiều ứng viên
+          const us = c.map(id => (m.ungVien || []).find(x => x.id === id)).filter(Boolean);
+          e = { trangThai: 'chon', ten: us.map(u => u.ten).join(' + ') || c.join(' + '), anh: us[0]?.anh?.[0] || null, nguon: us[0]?.nguon || null, link: linkChinh(us[0]), cacId: c };
+        } else if (c && !Array.isArray(c)) { const u = (m.ungVien || []).find(x => x.id === c); e = { trangThai: 'chon', ten: u?.ten ?? c, anh: u?.anh?.[0] || null, nguon: u?.nguon || null, link: linkChinh(u) }; }
         else e = { trangThai: 'sua', ten: null, anh: null, nguon: null, link: null };
       }
     } else if (n.kieu === 'chon') { if (k.gau?.id === m.id) e = tuMuc('duyet'); }
@@ -552,21 +555,30 @@ function veKhe(d, nhom, khe) {
   const luoi = el('div', { class: 'luoi' });
   luoi.append(el('div', { class: 'the tc' }, khungNhan(khe, 'Hiện tại')));
   const bKhong = el('button', { class: 'b-khong' });
-  const cac = [];
+  const cac = [], nhieu = !!khe.chonNhieu;   // khe.chonNhieu: chọn NHIỀU ứng viên (cây, đá…) → chon = mảng id
+  const dangChon = (c, uid) => (Array.isArray(c) ? c.includes(uid) : c === uid);
+  const bHet = nhieu ? el('button', { class: 'b-duyet', text: 'Chọn hết' }) : null;
   const hien2 = () => {
-    const c = TT[id]?.chon || '';
-    w.dataset.tt = c === 'khong' ? 'sua' : c ? 'duyet' : ''; w.classList.toggle('co', !!c && c !== 'khong');
+    const c = TT[id]?.chon || '', co = Array.isArray(c) ? c.length > 0 : (!!c && c !== 'khong');
+    w.dataset.tt = c === 'khong' ? 'sua' : co ? 'duyet' : ''; w.classList.toggle('co', co);
     bKhong.textContent = c === 'khong' ? '✕ Không cái nào' : 'Không cái nào';
-    cac.forEach(([u, card, b]) => { const on = c === u.id; card.dataset.tt = on ? 'duyet' : ''; b.textContent = on ? '✓ Đã chọn' : 'Chọn'; });
+    if (bHet) bHet.textContent = Array.isArray(c) && c.length === khe.ungVien.length ? '✓ Đã chọn hết' : 'Chọn hết' + (Array.isArray(c) && c.length ? ' (đang chọn ' + c.length + ')' : '');
+    cac.forEach(([u, card, b]) => { const on = dangChon(c, u.id); card.dataset.tt = on ? 'duyet' : ''; b.textContent = on ? '✓ Đã chọn' : 'Chọn'; });
   };
-  const dat = c => { if (khoaDong) return; TT[id] = { ...(TT[id] || {}), chon: TT[id]?.chon === c ? '' : c, tt: TT[id]?.chon === c ? '' : (c === 'khong' ? 'sua' : 'duyet') }; hien2(); nho(); };
+  const ghi = c => { const rong = !c || (Array.isArray(c) && !c.length); TT[id] = { ...(TT[id] || {}), chon: rong ? '' : c, tt: rong ? '' : (c === 'khong' ? 'sua' : 'duyet') }; hien2(); nho(); };
+  const dat = c => {
+    if (khoaDong) return; const cu = TT[id]?.chon || '';
+    if (!nhieu || c === 'khong') return ghi(cu === c ? '' : c);
+    const a = Array.isArray(cu) ? [...cu] : []; const i = a.indexOf(c); if (i >= 0) a.splice(i, 1); else a.push(c); ghi(a);
+  };
+  if (bHet) { bHet.onclick = () => { if (khoaDong) return; const c = TT[id]?.chon; ghi(Array.isArray(c) && c.length === khe.ungVien.length ? '' : khe.ungVien.map(u => u.id)); }; if (khoaDong) bHet.disabled = true; }
   khe.ungVien.forEach(u => {
     const b = el('button', { class: 'b-duyet', text: 'Chọn' }); b.onclick = () => dat(u.id); if (khoaDong) b.disabled = true;
     const card = el('div', { class: 'the uv', 'data-id': id + '/' + u.id }, el('div', { class: 'dau', text: '✓' }), veKhung(u.anh, u.ten), ...veChu(u), el('div', { class: 'nut' }, b));
     cac.push([u, card, b]); luoi.append(card);
   });
   bKhong.onclick = () => dat('khong'); if (khoaDong) bKhong.disabled = true;
-  w.append(el('h3', { text: khe.ten }), veTrung(khe) || el('span'), khe.phu ? el('div', { class: 'phu mota', text: khe.phu }) : el('div'), luoi, el('div', { class: 'cuoi' }, bKhong, ghiChu(d, id)));
+  w.append(el('h3', { text: khe.ten + (nhieu ? ' — chọn được NHIỀU mẫu' : '') }), veTrung(khe) || el('span'), khe.phu ? el('div', { class: 'phu mota', text: khe.phu }) : el('div'), luoi, el('div', { class: 'cuoi' }, ...(bHet ? [bHet] : []), bKhong, ghiChu(d, id)));
   hien2(); return w;
 }
 function veToken(d) {

@@ -1,0 +1,31 @@
+{
+ "tap": "ep003",
+ "dot": 1,
+ "luc": "2026-11-14T03:30:55.647Z",
+ "gau": null,
+ "duyet": [],
+ "sua": [],
+ "chuaChon": [
+  "tiem_banh_bien"
+ ],
+ "chon": {
+  "tiem_banh_quay": "tiem_banh_quay__5",
+  "tiem_banh_ke": "tiem_banh_ke__4",
+  "tiem_banh_ban_bay": "tiem_banh_ban_bay__5",
+  "tiem_gio_banh": "tiem_gio_banh__5",
+  "tiem_banh_dai": "tiem_banh_dai__4",
+  "tiem_banh_cua": "tiem_banh_cua__5",
+  "tiem_may_ban": "tiem_may_ban__2",
+  "tiem_may_ke": "tiem_may_ke__5",
+  "tiem_may_ke_vai": "tiem_may_ke_vai__1",
+  "tiem_ma_no_canh": "tiem_ma_no_canh__1",
+  "tiem_cuon_chi": "tiem_cuon_chi__1",
+  "tiem_den_treo": "tiem_den_treo__1",
+  "tiem_cua_may": "tiem_cua_may__1"
+ },
+ "ghiChu": {
+  "tiem_banh_bien": "tìm hình khác đi"
+ },
+ "doiTuDot": {},
+ "giuTuDot": {}
+}
