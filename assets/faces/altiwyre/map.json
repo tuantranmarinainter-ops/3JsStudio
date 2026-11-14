@@ -1,0 +1,197 @@
+{
+ "nguon": {
+  "ten": "AltiWyre's Face Pack",
+  "tacGia": "AltiWyre",
+  "robloxAssetId": 6557969904,
+  "link": "https://create.roblox.com/store/asset/6557969904",
+  "giayPhep": "Roblox Creator Store"
+ },
+ "cachDoc": "map[<tên biểu cảm cũ>].lop = mã bộ phận vẽ chồng từ dưới lên (parts/<mã>.png, khung 1000² canh sẵn). e = mắt (cột lẻ = bên trái người xem, chẵn = bên phải; hậu tố -right/-left theo góc nhìn NHÂN VẬT), b = mày, m = miệng, s = miệng khi nói, a = phụ thêm, o = phụ thêm bản cũ, p = con ngươi rời (không canh sẵn). Sửa xong chạy: node tools/face-pack.mjs ghep --chi-mat",
+ "map": {
+  "00_binh_thuong": {
+   "lop": ["e07-fwd", "e08-fwd", "m28"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "01_o_tho": {
+   "lop": ["b11", "b12", "e11-left", "e12-left", "m35"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "02_cuoi_rang_tho": {
+   "lop": ["b03", "b04", "e19-blank", "e20-blank", "m34"],
+   "khop": "tot",
+   "ghiChu": "không có răng thỏ"
+  },
+  "03_cuoi_ra_nuoc_mat": {
+   "lop": ["b03", "b04", "e19-blank", "e20-blank", "m34", "o05"],
+   "khop": "tot",
+   "ghiChu": "o05 là nước mắt cả hai mắt (gốc chỉ một bên)"
+  },
+  "04_phan_khich": {
+   "lop": ["b07", "b08", "e09-up", "e10-up", "m34"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "05_nan_ni_moi_vien_den": {
+   "lop": ["b01", "b02", "e09-fwd", "e10-fwd", "m03"],
+   "khop": "tam",
+   "ghiChu": "thiếu mắt lấp lánh; p11 chỉ là vòng sáng không canh sẵn"
+  },
+  "06_buon_rung_rung": {
+   "lop": ["b01", "b02", "e07-down", "e08-down", "m19", "o05"],
+   "khop": "tot",
+   "ghiChu": "nước mắt o05"
+  },
+  "07_khoc_oa": {
+   "lop": ["b01", "b02", "e19-blank", "e20-blank", "m44", "o05"],
+   "khop": "tot",
+   "ghiChu": "nước mắt o05; miệng mếu nhỏ m44"
+  },
+  "08_que_do_mat": {
+   "lop": ["b01", "b02", "e07-down", "e08-down", "m28", "o08"],
+   "khop": "tot",
+   "ghiChu": "má hồng nhạt o08 (đậm hơn thì o15)"
+  },
+  "09_ren_do_mo_hoi": {
+   "lop": ["b11", "b12", "e11-left", "e12-left", "m19"],
+   "khop": "tam",
+   "ghiChu": "thiếu giọt mồ hôi"
+  },
+  "10_hoang_so": {
+   "lop": ["b07", "b08", "e09-up", "e10-up", "m19"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "11_soc_ha_hoc": {
+   "lop": ["b07", "b08", "e09-fwd", "e10-fwd", "m03"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "12_la_het": {
+   "lop": ["b05", "b06", "e05-blank", "e06-blank", "s4-3"],
+   "khop": "tam",
+   "ghiChu": "không có mắt >< ; nheo bằng mắt khe"
+  },
+  "13_met_moi": {
+   "lop": ["b11", "b12", "e11-down", "e12-down", "m27"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "14_nghien_rang_tuc_gian": {
+   "lop": ["b05", "b06", "e17-fwd", "e18-fwd", "m42"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "15_quat": {
+   "lop": ["b05", "b06", "e17-left", "e18-left", "m30"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "16_nghi_ngo": {
+   "lop": ["b09", "b10", "e01-left", "e02-left", "m25"],
+   "khop": "tam",
+   "ghiChu": "bản gốc hai mày bất đối xứng, bộ mới đối xứng"
+  },
+  "17_boi_roi": {
+   "lop": ["b07", "b08", "e09-left", "e10-left", "m03"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "18_cuoi_dac_y": {
+   "lop": ["b09", "b10", "e01-left", "e02-left", "m40"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "19_ghe_tom": {
+   "lop": ["b03", "b04", "e07-left", "e08-left", "m09"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "20_cuoi_guong": {
+   "lop": ["b01", "b02", "e07-fwd", "e08-fwd", "m36"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "21_kiet_suc": {
+   "lop": ["b11", "b12", "e15-fwd", "e16-fwd", "m44", "o13"],
+   "khop": "tam",
+   "ghiChu": "o13 là vệt tím ngang, chưa rõ có đúng vị trí dưới mắt; cần xem khi ghép"
+  },
+  "22_ngo_ngac": {
+   "lop": ["b07", "b08", "e09-up", "e10-up", "m03"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "23_buon_ngu": {
+   "lop": ["b03", "b04", "e19-down", "e20-down", "m03"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "24_quyet_tam": {
+   "lop": ["b05", "b06", "e17-left", "e18-left", "m35"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "25_thac_mac": {
+   "lop": ["b03", "b04", "e09-up", "e10-up", "m03"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "26_ngam_nghi": {
+   "lop": ["b03", "b04", "e07-up", "e08-up", "m16"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "27_thiet_ha": {
+   "lop": ["b09", "b10", "e01-left", "e02-left", "m03"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "28_a_ra_roi": {
+   "lop": ["b07", "b08", "e09-fwd", "e10-fwd", "m34"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "29_hoi_loi": {
+   "lop": ["b01", "b02", "e07-down", "e08-down", "m19"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "30_dao_mat": {
+   "lop": ["b03", "b04", "e09-up", "e10-up", "m26"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "31_ban_tin_ban_nghi": {
+   "lop": ["b11", "b12", "e01-left", "e02-left", "m28"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "32_nhin_cuoi": {
+   "lop": ["b03", "b04", "e07-left", "e08-left", "m28", "o08"],
+   "khop": "tot",
+   "ghiChu": "má hồng nhạt o08"
+  },
+  "33_im_lang_kho_xu": {
+   "lop": ["b03", "b04", "e09-fwd", "e10-fwd", "m18"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "34_thi_tham": {
+   "lop": ["b03", "b04", "e07-left", "e08-left", "m12"],
+   "khop": "tot",
+   "ghiChu": "m12 là chữ 3 đúng như bản gốc"
+  },
+  "35_tho_phao": {
+   "lop": ["e19-down", "e20-down", "m28"],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "36_nhay_mat": {
+   "lop": ["b03", "b04", "e07-left", "e20-blank", "m28"],
+   "khop": "tam",
+   "ghiChu": "nháy mắt: mắt phải ghép lẻ e20-blank"
+  }
+ }
+}

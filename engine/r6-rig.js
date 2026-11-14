@@ -8,6 +8,7 @@
 // Mọi thứ là hàm thuần của t; không trạng thái theo thời gian thực.
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { applyPose, mixPose, samplePose, soleHeight, GA_FACE_MAP, GA_FACES } from './r15.js';
+import { activeFaceSet } from './face-pack.js';
 
 const PI = Math.PI, S = Math.sin, C = Math.cos;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v)), clamp01 = (v) => clamp(v, 0, 1);
@@ -138,11 +139,14 @@ export function createR6Rig(THREE, opts = {}) {
     const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
     addMesh(head, g, faceMat, 'face', { cast: false }).renderOrder = 2;
   }
-  const set = o.faceSet || globalThis.__emoteFaces || {};
+  // bộ mặt: o.faceSet cố định, hoặc o.facePack = true → bộ đang hiệu lực của tập (engine/face-pack.js; ô FX 'matAlti' đổi lúc chạy)
+  const setOf = () => (o.facePack ? activeFaceSet(o.faceSet) : o.faceSet || globalThis.__emoteFaces || {});
+  let set = setOf();
   const NUM = Object.fromEntries(GA_FACES.map(([n, k]) => [String(n).padStart(2, '0'), k]));
   const fKey = (n) => { n = String(n ?? ''); const k = NUM[n.padStart(2, '0')] || GA_FACE_MAP[n] || n; return set[k] ? k : 'binh_thuong'; };
   const bbCache = {};
-  const faceBB = (k, img) => {
+  const faceBB = (k0, img) => {
+    const k = (set.__name || '') + '/' + k0;
     if (bbCache[k]) return bbCache[k];
     const w = img.width || img.naturalWidth, h = img.height || img.naturalHeight, cv = document.createElement('canvas'); cv.width = w; cv.height = h;
     const c2 = cv.getContext('2d', { willReadFrequently: true }); c2.drawImage(img, 0, 0); const d = c2.getImageData(0, 0, w, h).data;
@@ -153,14 +157,16 @@ export function createR6Rig(THREE, opts = {}) {
   const FB = o.faceBox || { x0: 0.08, x1: 0.92, y0: 0.1, y1: 0.9 }, GROW = o.faceGrow ?? 1.2;
   const draw = (k) => {
     const img = set[k]?.image; if (!img) return;
+    if (set.__fit === 'full') { const B = set.__box || { x0: 0, y0: 0, x1: 1, y1: 1 }; fg.drawImage(img, B.x0 * FACE_PX, B.y0 * FACE_PX, (B.x1 - B.x0) * FACE_PX, (B.y1 - B.y0) * FACE_PX); return; }   // ảnh nguyên khung: không cắt theo chữ
     const b = faceBB(k, img), bw = b.x1 - b.x0, bh = b.y1 - b.y0, tw = (FB.x1 - FB.x0) * FACE_PX, th = (FB.y1 - FB.y0) * FACE_PX;
     const sc = Math.min(tw / bw, th / bh, GROW * FACE_PX / b.w), cx = (FB.x0 + FB.x1) / 2 * FACE_PX, cy = (FB.y0 + FB.y1) / 2 * FACE_PX;
     fg.drawImage(img, b.x0, b.y0, bw, bh, cx - bw * sc / 2, cy - bh * sc / 2, bw * sc, bh * sc);
   };
   let faceKey = '', lastT = 0, lastPoseFace;
   function faceAt(t, name = o.face, { from, mix = 1 } = {}) {
+    set = setOf();
     const key = fKey(name), fk = from && mix < 1 ? fKey(from) : null, wq = fk && fk !== key ? Math.round(clamp01(mix) * 8) / 8 : 1;
-    const id = `${key}|${wq < 1 ? fk : ''}|${wq}`;
+    const id = `${set.__name || ''}|${key}|${wq < 1 ? fk : ''}|${wq}`;
     if (id !== faceKey) {
       faceKey = id; fg.setTransform(1, 0, 0, 1, 0, 0); fg.clearRect(0, 0, FACE_PX, FACE_PX);
       if (wq < 1) { fg.globalAlpha = 1 - wq; draw(fk); fg.globalAlpha = wq; draw(key); fg.globalAlpha = 1; } else draw(key);

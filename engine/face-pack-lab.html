@@ -1,0 +1,38 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>Face pack lab</title>
+<style>html,body{margin:0;background:#cfd6dc}canvas{display:block}</style>
+<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
+</head><body><canvas id="c"></canvas>
+<script type="module">
+// Trang thử bộ mặt: lưới đầu R6, mỗi ô 1 biểu cảm.  ?pack=altiwyre|emote37&look=tron (đầu trơn) | dan_a…&cols=8&cell=220&fx=0|1&yaw=0
+//   window.__cells = [{ten, x, y, w, h}] (px) để công cụ cắt từng ô; window.__ready = true khi vẽ xong.
+import * as THREE from 'three';
+import { GA_FACES } from './r15.js';
+import { createR6Rig } from './r6-rig.js';
+import { R6_LOOKS } from './r6-looks.js';
+import { loadFacePacks } from './face-pack.js';
+const q = new URLSearchParams(location.search);
+const pack = q.get('pack') || 'altiwyre', look = q.get('look') || 'tron', cols = +(q.get('cols') || 8), CELL = +(q.get('cell') || 220), yaw = +(q.get('yaw') || 0);
+if (q.get('fx') === '0') (globalThis.__autoFx ||= {}).matAlti = false;
+const names = GA_FACES.map(([n, k]) => String(n).padStart(2, '0') + '_' + k), rows = Math.ceil(names.length / cols);
+const U = 2.3;                                           // cạnh ô tính bằng stud (đầu R6 ~1.4)
+const cv = document.getElementById('c'); const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(cols * CELL, rows * CELL); renderer.setPixelRatio(1); renderer.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#cfd6dc');
+scene.add(new THREE.HemisphereLight('#ffffff', '#8a8f98', 1.5)); const d = new THREE.DirectionalLight('#fff4e0', 1.9); d.position.set(4, 9, 8); scene.add(d);
+const cam = new THREE.OrthographicCamera(-cols * U / 2, cols * U / 2, rows * U / 2, -rows * U / 2, 0.1, 100); cam.position.set(0, 0, 40);
+await loadFacePacks(THREE, pack);
+window.__cells = [];
+names.forEach((ten, i) => {
+  const c = i % cols, r = Math.floor(i / cols);
+  const a = createR6Rig(THREE, { name: 'f' + i, ...R6_LOOKS[look], facePack: true });
+  a.animate('idle', 0, { noFace: true }); a.setFace(ten.slice(3));
+  a.root.updateMatrixWorld(true);
+  const hp = new THREE.Vector3(); a.parts.head.getWorldPosition(hp);      // đưa đầu vào giữa ô
+  const g = new THREE.Group(); g.name = 'dau_' + ten; scene.add(g); g.attach(a.parts.head);   // chỉ giữ ĐẦU (thân hàng trên không đè ô dưới)
+  a.parts.head.position.sub(hp).y -= 0.62; a.parts.head.rotation.set(0, 0, 0);
+  g.position.set((c - (cols - 1) / 2) * U, ((rows - 1) / 2 - r) * U, 0); g.rotation.y = yaw;
+  window.__cells.push({ ten, x: c * CELL, y: r * CELL, w: CELL, h: CELL });
+});
+window.THREE = THREE; window.__scene = scene;
+renderer.render(scene, cam); window.__ready = true;
+</script></body></html>
