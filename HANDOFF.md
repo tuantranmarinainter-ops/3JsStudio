@@ -3,7 +3,7 @@
 <!-- ĐIỂM DỪNG: tối đa 25 dòng, GHI ĐÈ cả khối mỗi lần cập nhật (mẫu: docs/handoff/_mau.md). Phần dưới khối là ghi chép, chỉ đọc khi cần. -->
 ## ĐIỂM DỪNG
 - **Cập nhật:** 2026-11-14 (phiên điều phối đã xác nhận)
-- **Nhánh:** `ep1-v2`, không push
+- **Nhánh:** `ep1-v2`; người dùng cho push 1 lần ngày 14/11 (tới `dc161c0`, lên `origin/claude/ep1-v2`). Các lần sau vẫn KHÔNG push khi chưa được bảo; `main` chưa đụng
 - **Đang làm:** điều phối, KHÔNG code tại đây (việc code/dựng mở phiên con). Tập 2 (ep002) tạm gác: `docs/handoff/ep002-tam-gac.md`
 - **Phiên con đang mở:** ep003 (Tập 4, duyệt lại asset theo Roblox + gắn NPC) · ep003-roblox đợt 4 (nhà) · npc-roblox · face-pack-altiwyre ·
   roblox (công cụ tải) · engine-diem-giua (xong) · nghien-cuu-game-studios (cải tiến 1–3 xong)
