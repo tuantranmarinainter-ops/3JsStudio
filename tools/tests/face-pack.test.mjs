@@ -38,9 +38,12 @@ test('loadFacePacks: tải bộ của tập + bộ cũ, gắn __fit/__name, có 
   assert.equal(set.__name, 'altiwyre'); assert.equal(set.__fit, 'full'); assert.equal(globalThis.__facePack, 'altiwyre');
   assert.equal(Object.keys(set).length, 37, '__name/__fit không lọt vào danh sách khoá');
   assert.equal(globalThis.__facePacks.emote37.__fit, 'bbox');
-  assert.equal(goi.length, 74); assert.ok(goi.includes('/assets/faces/altiwyre/24_quyet_tam.png')); assert.ok(goi.includes('/assets/faces/emote37/00_binh_thuong.png'));
-  assert.equal(await FP.loadFacePack(THREE, 'altiwyre'), set); assert.equal(goi.length, 74, 'lần hai không tải lại');
-  assert.equal(FP.activeFaceSet(), set);
+  assert.equal(goi.length, 111, 'bộ mới + mặt nguyên + bộ cũ'); assert.ok(goi.includes('/assets/faces/altiwyre-nguyen/24_quyet_tam.png')); assert.ok(goi.includes('/assets/faces/altiwyre/24_quyet_tam.png')); assert.ok(goi.includes('/assets/faces/emote37/00_binh_thuong.png'));
+  assert.equal(await FP.loadFacePack(THREE, 'altiwyre'), set); assert.equal(goi.length, 111, 'lần hai không tải lại');
+  assert.equal(FP.activeFaceSet().__name, 'altiwyre-nguyen', 'mặc định: mặt nguyên');
+  globalThis.__autoFx = { matNguyen: false }; assert.equal(FP.activeFaceSet(), set, 'tắt ô matNguyen → mặt ghép bộ phận');
+  globalThis.__autoFx = { matNguyen: true, matAlti: false }; assert.equal(FP.activeFaceSet().__name, 'emote37', 'tắt matAlti → bộ cũ dù matNguyen bật');
+  assert.equal(FP.facePackName('altiwyre-nguyen'), 'emote37', 'biến thể không khai trực tiếp trong tập');
   don(); goi.length = 0;
   const cu = await FP.loadFacePacks(THREE, undefined);
   assert.equal(cu.__name, 'emote37'); assert.equal(goi.length, 37, 'tập cũ chỉ tải bộ cũ');
@@ -55,6 +58,8 @@ test('assets/faces/altiwyre: map.json đủ 37 biểu cảm, mọi mã có ảnh
   for (const t of ten) {
     const m = map.map[t];
     assert.ok(Array.isArray(m.lop) && m.lop.length >= 2, t + ': cần ít nhất mắt + miệng');
+    const n = JSON.parse(fs.readFileSync(path.join(D, '..', 'altiwyre-nguyen', 'map.json'), 'utf8')).map[t];
+    assert.ok(n && n.lop.length >= 1 && n.lop.every((x) => co.has(x)), t + ': mặt nguyên phải có mã hợp lệ'); assert.ok(fs.existsSync(path.join(D, '..', 'altiwyre-nguyen', t + '.png')), t + ': thiếu ảnh mặt nguyên');
     for (const ma of m.lop) { assert.ok(co.has(ma), `${t}: mã ${ma} không có trong parts.json`); assert.ok(fs.existsSync(path.join(D, 'parts', ma + '.png')), `thiếu parts/${ma}.png`); }
     assert.ok(['tot', 'tam', 'khong'].includes(m.khop), t);
     const b = fs.readFileSync(path.join(D, t + '.png')), i = thongTinPng(b);

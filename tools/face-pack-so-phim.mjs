@@ -24,7 +24,7 @@ await page.goto(`http://localhost:${srv.address().port}/episodes/${ep}/index.htm
 await page.waitForFunction('window.__ready === true', { timeout: 240000 });
 
 // tên ảnh NN_tên của từng biểu cảm (GA_FACES) + bí danh phim
-const R15 = await page.evaluate(async () => { const m = await import('/engine/r15.js'); const fp = await import('/engine/face-pack.js'); return { F: m.GA_FACES, M: m.GA_FACE_MAP, P: fp.FACE_PACKS, pack: globalThis.__facePack || null, fx: globalThis.__autoFx?.matAlti }; });
+const R15 = await page.evaluate(async () => { const m = await import('/engine/r15.js'); const fp = await import('/engine/face-pack.js'); return { F: m.GA_FACES, M: m.GA_FACE_MAP, P: fp.FACE_PACKS, pack: fp.activeFaceSet().__name || globalThis.__facePack || null, fx: globalThis.__autoFx?.matAlti }; });
 const fileOf = (k) => { k = R15.M[k] || k; const f = R15.F.find(([, n]) => n === k); return f ? String(f[0]).padStart(2, '0') + '_' + f[1] : null; };
 const list = await page.evaluate(() => window.__shots.list.map((s) => ({ id: s.id, t0: s.t0, t1: s.t1, cast: Object.fromEntries(Object.entries(s.cast || {}).map(([n, c]) => [n, c.face || null])) })));
 const dung = {};                                         // biểu cảm → [{id, t, vai}]
@@ -86,7 +86,7 @@ for (const [bc, ds] of Object.entries(dung).sort((a, b) => b[1].length - a[1].le
 await br.close(); srv.close();
 
 // ảnh mẫu: ô của trang duyệt (face-pack-mau.mjs → r6-<bộ>.png, lưới 8 cột ô 220)
-const mauF = path.join(out, `r6-${pack}.png`), coMau = fs.existsSync(mauF);
+const mauF = path.join(out, `r6-${pack.startsWith('altiwyre') ? 'altiwyre' : pack}.png`), coMau = fs.existsSync(mauF);
 const H = 300, W = 1200, lop = [], chu = [];
 for (const [i, k] of kq.entries()) {
   const y = i * (H + 8);

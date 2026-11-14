@@ -6,7 +6,7 @@
   "link": "https://create.roblox.com/store/asset/6557969904",
   "giayPhep": "Roblox Creator Store"
  },
- "cachDoc": "BẢN ĐỀ XUẤT dùng MẶT NGUYÊN (nhóm f = bảng \"MISC FACES\" của gói, đúng bảng trong ảnh người dùng gửi 14/11). map[<biểu cảm>].lop = [mã]. Ghép thử: node tools/face-pack.mjs ghep --chi-mat --map assets/faces/altiwyre/map-mat-nguyen.json --ra output/face-pack/mat-nguyen",
+ "cachDoc": "ĐANG DÙNG (duyệt 14/11): MẶT NGUYÊN, nhóm f = bảng \"MISC FACES\" của gói. map[<biểu cảm>].lop = mã vẽ chồng từ dưới lên (parts/<mã>.png); có thể thêm bộ phận rời e/b/m/s/a/o. Bản ghép bộ phận cũ: map-bo-phan.json. Sửa xong chạy: node tools/face-pack.mjs ghep --chi-mat",
  "khung": {
   "phong": 1.2,
   "tam": 0.52

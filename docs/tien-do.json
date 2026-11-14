@@ -72,8 +72,8 @@
     {
      "ten": "Bộ mặt AltiWyre (thay bộ 37 emote)",
      "tt": "do",
-     "ghiChu": "Đã duyệt 14/11. Engine chọn bộ mặt bằng EPISODE.facePack, có ô bật/tắt matAlti trong trình phát, tập mới mặc định AltiWyre; so A/B + tất định đạt. CÒN LẠI: phiên Tập 4 thêm 2 dòng theo docs/handoff/face-pack-altiwyre.md rồi gộp lại; 6 biểu cảm còn khớp tạm.",
-     "pt": 90
+     "ghiChu": "Đã nối engine (EPISODE.facePack). 14/11 tối: thêm 37 MẶT NGUYÊN lấy từ bảng 140 mặt của gói — mặc định hiện trong phim; ô hiệu ứng \"Mặt nguyên AltiWyre\" tắt = mặt ghép mắt + mày + miệng, ô \"Bộ mặt AltiWyre\" tắt = 37 emote cũ. CÒN LẠI: phiên Tập 4 gộp lại bản xem thử; 2 mặt chưa có tương đương tốt (cười ra nước mắt, nháy mắt).",
+     "pt": 92
     }
    ]
   },
@@ -151,7 +151,8 @@
     {
      "ten": "Bộ mặt AltiWyre cho nhân vật R6",
      "tt": "xong",
-     "ghiChu": "14/11: bật facePack altiwyre (ô FX matAlti tắt = 37 emote cũ); soi 6 shot cận: mặt rõ, không bị tóc/mũ che; tất định OK; s014 đổi sang mặt cười tươi. Đã gộp bản xem thử cùng nhà phố + đồ tiệm + 12 NPC Roblox."
+     "ghiChu": "14/11: bật facePack altiwyre (ô FX matAlti tắt = 37 emote cũ); soi 6 shot cận: mặt rõ, không bị tóc/mũ che; tất định OK; s014 đổi sang mặt cười tươi. Đã gộp bản xem thử cùng nhà phố + đồ tiệm + 12 NPC Roblox.",
+     "pt": 92
     }
    ],
    "tap": "Tập 3"

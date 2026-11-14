@@ -13,6 +13,7 @@ import { loadFacePacks, FACE_PACKS } from './face-pack.js';
 const q = new URLSearchParams(location.search);
 const pack = q.get('pack') || 'altiwyre', look = q.get('look') || 'tron', cols = +(q.get('cols') || 8), CELL = +(q.get('cell') || 220), yaw = +(q.get('yaw') || 0);
 if (q.get('fx') === '0') (globalThis.__autoFx ||= {}).matAlti = false;
+if (q.get('nguyen') === '0') (globalThis.__autoFx ||= {}).matNguyen = false;   // &nguyen=0 → mặt ghép bộ phận
 const names = GA_FACES.map(([n, k]) => String(n).padStart(2, '0') + '_' + k), rows = Math.ceil(names.length / cols);
 const U = 2.3;                                           // cạnh ô tính bằng stud (đầu R6 ~1.4)
 const cv = document.getElementById('c'); const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, preserveDrawingBuffer: true });

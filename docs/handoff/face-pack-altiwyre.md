@@ -35,3 +35,13 @@ Không khai báo thì tập vẫn dùng bộ cũ `emote37` (đã chạy thử `l
 `engine/post.js` (ô FX `matAlti`) · `assets/faces/altiwyre/` (37 mặt + `parts/` 279 bộ phận + `map.json`, `parts.json`) · `tools/face-pack.mjs`, `tools/face-pack-mau.mjs` ·
 `engine/face-pack-lab.html` (trang thử: `?pack=altiwyre|emote37&look=tron|dan_a&fx=0`) · test `tools/tests/face-pack.test.mjs`.
 Tập mới: `tools/storyboard.py` ghi sẵn `facePack: 'altiwyre'`; `episodes/_template` và `_mau-kit` đã có trường + truyền cho `buildCast`.
+
+## Cập nhật 14/11 (tối): thêm biến thể MẶT NGUYÊN — ô FX `matNguyen`
+Người dùng thấy mặt trong phim khác bảng họ xem (bảng "MISC FACES" 140 mặt vẽ nguyên khuôn của cùng gói); đã duyệt đổi, với yêu cầu giữ bộ ghép bộ phận làm lựa chọn tắt/bật.
+- Tập khai `facePack: 'altiwyre'` giờ tải 3 bộ: `altiwyre-nguyen` (37 mặt nguyên, **mặc định hiện**), `altiwyre` (mặt ghép mắt + mày + miệng), `emote37`.
+- Ô FX trong trình phát: `matNguyen` bật = mặt nguyên, tắt = mặt ghép bộ phận; `matAlti` tắt = 37 emote cũ (bất kể `matNguyen`).
+- **Phiên ep003 không phải sửa dòng nào** — chỉ cần gộp lại `dist/ep003_xem-thu.html` (thêm 37 PNG ~0,4 MB). Tên biểu cảm trong shot giữ nguyên.
+- Dữ liệu: `assets/faces/altiwyre-nguyen/` (37 ảnh + `map.json`, mỗi biểu cảm `lop: ["fNN"]`); ảnh gốc 140 mặt ở `assets/faces/altiwyre/parts/f*.png`.
+  Đổi một mặt: sửa `assets/faces/altiwyre-nguyen/map.json` → `node tools/face-pack.mjs ghep --chi-mat --map assets/faces/altiwyre-nguyen/map.json --ra assets/faces/altiwyre-nguyen`.
+- Trang duyệt: `node tools/face-pack-mau.mjs` (mặt nguyên) hoặc `--bo altiwyre` (mặt ghép). Đối chiếu mẫu với phim: `node tools/face-pack-so-phim.mjs ep003` (đo 14/11: 24/24 biểu cảm lệch 0–0,01%).
+- Hai mặt chưa có tương đương tốt: `03_cuoi_ra_nuoc_mat` (không có nước mắt), `36_nhay_mat` (không có mặt nháy mắt rõ). 37 lựa chọn do Claude chọn theo ảnh thu nhỏ; người dùng mới xem trang mẫu, chưa chỉnh từng ô.

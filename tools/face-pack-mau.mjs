@@ -13,8 +13,8 @@ import { launchBrowser } from './browser.mjs';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const arg = (k, d) => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : d; };
 const look = arg('look', 'tron'), CELL = 220, COLS = 8;   // 'tron' = đầu trơn không tóc (không che mặt)
-const D = path.join(ROOT, 'assets', 'faces', 'altiwyre');
-const map = JSON.parse(fs.readFileSync(arg('map') ? path.resolve(ROOT, arg('map')) : path.join(D, 'map.json'), 'utf8'));
+const D = path.join(ROOT, 'assets', 'faces', 'altiwyre'), BO = arg('bo', 'altiwyre-nguyen');   // --bo altiwyre → trang duyệt cho mặt ghép bộ phận
+const map = JSON.parse(fs.readFileSync(arg('map') ? path.resolve(ROOT, arg('map')) : path.join(ROOT, 'assets', 'faces', BO, 'map.json'), 'utf8'));
 const them = (arg('base') ? `&base=${encodeURIComponent('/' + arg('base').replace(/^[\/]+/, ''))}` : '') + (arg('phong') ? `&phong=${arg('phong')}&tam=${arg('tam', '0.53')}` : '');   // bản đề xuất ghép ở thư mục khác
 const parts = JSON.parse(fs.readFileSync(path.join(D, 'parts.json'), 'utf8'));
 
@@ -30,7 +30,7 @@ async function chup(pack) {
   const page = await browser.newPage({ viewport: { width: COLS * CELL, height: 5 * CELL } }); const errs = [];
   page.on("response", (r) => { if (r.status() >= 400 && /faces|face-pack/.test(r.url())) errs.push(r.status() + " " + r.url()); });
   page.on('pageerror', (e) => errs.push(String(e.message)));
-  await page.goto(`http://localhost:${srv.address().port}/engine/face-pack-lab.html?pack=${pack}&look=${look}&cols=${COLS}&cell=${CELL}${pack === 'altiwyre' ? them : ''}`);
+  await page.goto(`http://localhost:${srv.address().port}/engine/face-pack-lab.html?pack=${pack}&look=${look}&cols=${COLS}&cell=${CELL}${pack === 'altiwyre' ? them + (BO === 'altiwyre' ? '&nguyen=0' : '') : ''}`);
   await page.waitForFunction('window.__ready === true', { timeout: 90000 });
   if (errs.length) throw new Error(pack + ': ' + errs.join(' | '));
   const cells = await page.evaluate('window.__cells');
