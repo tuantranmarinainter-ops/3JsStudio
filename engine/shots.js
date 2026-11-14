@@ -44,6 +44,7 @@ import { resolveSeaWeather, seaWeatherAmp } from './seaweather.js';
 import { gioThoiTiet } from './envs/gio-thoi-tiet.js';
 import { FACE_PRESETS } from './r15.js';
 import { createDatMay } from './dat-may.js';
+import { chongLop } from './blocky/chong.js';   // động tác chồng lớp `do:` (ô FX chongLop)
 import { themSong } from './blocky/song.js';   // idle sống (ô FX idleSong), mã chép từ blocky-shorts
 import { moc, qua1, qua3, mayTuyetDoi, viTri, huongThan } from './diem-giua.js';
 const lerp3 = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
@@ -245,7 +246,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
   // NHÉP MIỆNG (ô FX 'nhep'): shot ghi `talk: 'hero'` (hoặc ['hero','mom']) → miệng đổi theo đường bao âm lượng giọng đang chọn (globalThis.__nhep.level(t) = 0..9, tools/levels.py).
   //   0 = giữ mặt của shot, 1–4 = miệng 'o', ≥5 = miệng 'open'. Dựng bằng biểu cảm phụ `<mặt>~o|open` (copy preset gốc, chỉ đổi miệng) → không sửa r15.js. Hàm thuần của t.
   const talkFace = (base, t) => { const L = globalThis.__nhep?.level?.(t) ?? 0; if (!L || !FACE_PRESETS[base]) return base; const m = L >= 5 ? 'open' : 'o', nm = base + '~' + m; return (FACE_PRESETS[nm] ||= { ...FACE_PRESETS[base], mouth: m }), nm; };
-  function placeCast(cast = {}, k, t, talk) {
+  function placeCast(cast = {}, k, t, talk, local = 0, dur = Infinity) {
     for (const [name, a] of Object.entries(actors)) {
       const s = cast[name];
       a.root.visible = !!s;
@@ -272,6 +273,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
       if (talk && AUTO.nhep !== false && [].concat(talk).includes(name) && want) want = talkFace(want.split('~')[0], t);
       if (want && a.options.face !== want) { a.setFace(want); a.animate(anim, at, opt); }   // đổi mặt xong dựng lại pose → hướng mắt không phụ thuộc shot trước (tất định)
       if (AUTO.idleSong) themSong(a, name, anim, at);   // idle sống (engine/blocky/song.js): thở + lắc đầu lệch pha theo tên; tắt = không đụng gì
+      if (s.do && AUTO.chongLop) chongLop(a, s.do, local, dur);   // động tác chồng lớp (engine/blocky/chong.js); tắt = không đụng gì
       if (s.pose) applyExtra(a, s.pose, ke);
       // vật cầm tay
       for (const side of ['holdR', 'holdL', 'hold']) if (s[side]) holdProp(a, s[side], side);
@@ -379,7 +381,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     }
     envObj.setNight?.(night);
     if (envObj.dirt) { envObj.dirt.visible = !!shot.dirt; envObj.hole.visible = shot.dirt === 'hole'; }
-    placeCast(shot.cast, k, t, shot.talk);
+    placeCast(shot.cast, k, t, shot.talk, local, shot.dur);
     // sea2: env có vật nổi chở người (tàu trong bão) → diễn viên đứng trong toạ độ thế giới đi theo biến đổi của tàu
     //   (đặt trước camera để camera bám đúng chỗ). Shot tạo cho tàu đứng yên ở gốc → ma trận nghỉ = đơn vị.
     { const M = envObj.carry?.(t);

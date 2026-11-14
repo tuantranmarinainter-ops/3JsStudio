@@ -2,20 +2,20 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-14 21:20
-- **Nhánh:** `ep1-v2` (đã push lên `origin/claude/ep1-v2`, tới commit dc161c0)
-- **Đang làm:** không. Bước 1–3 đã xong và commit; dừng chờ người dùng chọn việc tiếp
-- **Bước kế tiếp:** người dùng chọn một trong hai việc: (a) nới cỡ "can" (`engine/blocky/co-canh.js`, bảng `CO_VN`, `can: { S: 2.8 }` → khoảng 3.4), hoặc (b) bước 4: động tác chồng lớp
-- **Đang chờ:** người dùng chọn (a) hoặc (b)
-- **File đang dở (chưa commit):** `episodes/ep004/index.html` (2 dòng: bật `idleSong` + tham số `?idleSong=0`; tệp chưa vào git, thuộc phiên ep004), `docs/tien-do.json` (thêm 2 việc ở nhóm "Lõi chung"; tệp có cả thay đổi chưa commit của phiên khác)
-- **Đang chạy nền:** không
-- **Đạt khi:** (a) shot-lab `?type=closeup` cỡ can thấy đầu + vai, đầu không cắt; (b) shot khai được nhiều động tác có mốc giờ, mờ vào/ra 0,12 s, tắt = hình y hệt cũ (`look.mjs --pose-ref`), `npm test` không thêm lỗi
-- **Câu hỏi còn mở:** có bật idle sống cho tập mới mặc định không (hiện mặc định tắt, chỉ ep004 bật)
+- **Cập nhật:** 2026-11-14 22:00
+- **Nhánh:** `ep1-v2` (chưa push phần mới; push cũ tới dc161c0)
+- **Đang làm:** không. Việc (a) và (b) đã xong, đã commit; dừng chờ người dùng
+- **Đã xong:** (a) cỡ `can` nới `S` 2.8 → 3.8, `y` 4.3 (`engine/blocky/co-canh.js`); Haiku xem ảnh `output/blocky-can/`: đầu không cắt ở đầu/giữa/cuối shot, vai thấy rõ lúc đầu, cuối shot thân đỏ chạm hai mép khung. (b) động tác chồng lớp: `engine/blocky/chong.js` + hook `placeCast` trong `engine/shots.js` + ô FX `chongLop` (mặc định tắt) trong `engine/post.js`
+- **Cách dùng (b):** diễn viên ghi `cast: { hero: { do: [{ a: 'wave', arm: 'R', t: [0.3, 1.5] }, { a: 'nod', t: [1.8, 2.6] }] } }`; `t` = giây từ đầu shot, thiếu = cả shot; mờ vào/ra 0,12 s; `a` = tên trong `ACTIONS` (`engine/blocky/poses.js`). Ví dụ: `engine/shot-lab.html?type=chong` (`&chong=0` tắt)
+- **Kiểm:** bật/tắt: khung trước mốc giờ giống hệt, khung trong mốc khác; `look.mjs --det` OK; test mới `tools/tests/chong-lop.test.mjs`, `co-canh.test.mjs`; `npm test` chỉ hỏng các test có sẵn (shot ep002, HOUSE bbox) + `ghi-cong` flaky (chạy lại pass)
+- **Chưa làm:** `--pose-ref` không dùng được trên shot-lab (trang không có xương); chưa bật `do` ở tập thật; chưa thêm mục "động tác một phần" vào skill `r6-anim`
+- **File đang dở (chưa commit):** `episodes/ep004/index.html` (của phiên Tập 5), `docs/tien-do.json` (có thay đổi của phiên khác)
+- **Câu hỏi còn mở:** có bật idle sống mặc định cho tập mới không (hiện chỉ ep004 bật)
 <!-- /ĐIỂM DỪNG -->
 
 ## Việc còn lại (theo thứ tự)
-1. Nới cỡ "can", rồi chụp lại bằng `PROFILE=1 node tools/look.mjs "engine/shot-lab.html?type=closeup" --shots all --out output/blocky-co`, giao agent Haiku xem ảnh.
-2. Bước 4, động tác chồng lớp: dáng nền + động tác "một phần cơ thể" trộn theo trọng số, mờ 0,12 s. Lấy từ `engine/blocky/poses.js` (`blend`, `ACTIONS`). Nối vào `engine/r6-rig.js` + `engine/shots.js` (trường `do: [...]` trên diễn viên), có công tắc FX.
+1. (xong) cỡ `can`.
+2. (xong) động tác chồng lớp — còn: mục `do` trong skill `r6-anim`, thử trên một shot tập thật.
 3. Các đề xuất khác trong `docs/nghien-cuu-skill-in-this-town.md` (bảng mục 3: tỉ lệ kiểu máy, khối xám trước, bảng góp ý → lớp…).
 
 ## Ghi chép (kể dài, chỉ đọc khi cần)

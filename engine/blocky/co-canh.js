@@ -6,7 +6,7 @@
 const SHOTSIZE = { extreme: { S: 2.6, k: 'head', o: -.1 }, close: { S: 4.0, k: 'head', o: -.55 }, medium: { S: 6.8, k: 'head', o: -1.5 }, cowboy: { S: 8.6, k: 'head', o: -2.4 }, full: { S: 10.5, k: 'feet', o: 3.3 }, wide: { S: 16, k: 'feet', o: 4.8 }, establishing: { S: 28, k: 'feet', o: 7 } };
 // Tên TIẾNG VIỆT = bảng HIỆU CHỈNH cho R6 của mình (chân 0–2, thân 2–4, đầu 4–5.2): S = chiều cao khung thấy được, y = độ cao tâm nhìn (tuyệt đối).
 //   Bảng gốc blocky (tên tiếng Anh) lỏng hơn với R6: 'medium' 6.8 thấy gần trọn người (shot-lab 2026-11-14) → giữ nguyên để so, nhưng tập mới dùng tên Việt.
-const CO_VN = { cucCan: { S: 1.8, y: 4.6 }, can: { S: 2.8, y: 4.4 }, trung: { S: 4.4, y: 3.9 }, ngangDui: { S: 5.8, y: 3.4 }, toanThan: { S: 8, y: 2.9 }, rong: { S: 14, y: 4.5 }, toanCanh: { S: 28, y: 7 } };
+const CO_VN = { cucCan: { S: 1.8, y: 4.6 }, can: { S: 3.8, y: 4.3 }, trung: { S: 4.4, y: 3.9 }, ngangDui: { S: 5.8, y: 3.4 }, toanThan: { S: 8, y: 2.9 }, rong: { S: 14, y: 4.5 }, toanCanh: { S: 28, y: 7 } };
 export const CO_TEN = { cucCan: 'extreme', can: 'close', trung: 'medium', ngangDui: 'cowboy', toanThan: 'full', rong: 'wide', toanCanh: 'establishing' };
 export const CO_NAMES = [...Object.keys(CO_VN), ...Object.keys(SHOTSIZE)];
 const ASPECT = 9 / 16;

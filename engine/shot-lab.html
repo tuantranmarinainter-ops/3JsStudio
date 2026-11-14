@@ -35,7 +35,7 @@ import { buildCast } from './cast.js';
 window.THREE = THREE;
 const q = new URLSearchParams(location.search);
 const TYPE = q.get('type') || 'houseFull';
-if (!SHOT_TYPE_NAMES.includes(TYPE)) throw new Error(`type="${TYPE}" không có. Có: ${SHOT_TYPE_NAMES.join(', ')}`);
+if (!SHOT_TYPE_NAMES.includes(TYPE) && TYPE !== 'chong') throw new Error(`type="${TYPE}" không có. Có: ${SHOT_TYPE_NAMES.join(', ')}`);
 const FPS = 30;
 
 // shot mẫu theo loại (đủ để thử biến thể: hướng nhà, fov, tham số)
@@ -64,6 +64,11 @@ const LAB_SHOTS = {
     { id: 'c3', dur: 1.2, type: 'closeup', at: 'lab', who: 'hero', co: 'toanThan' },
     { id: 'c4', dur: 1.2, type: 'closeup', at: 'lab', who: 'hero' },
   ],
+  // động tác chồng lớp `do:` (engine/blocky/chong.js, ô FX chongLop; thêm ?chong=0 để tắt): vẫy tay phải 0,3–1,5 s rồi gật 1,8–2,6 s trên dáng đứng
+  chong: [
+    { id: 'd1', dur: 3, type: 'closeup', at: 'lab', who: 'hero', co: 'trung',
+      cast: { hero: { do: [{ a: 'wave', arm: 'R', t: [0.3, 1.5] }, { a: 'nod', t: [1.8, 2.6] }] } } },
+  ],
   fall: [
     { id: 'f1', dur: 1.2, type: 'fall', at: 'lab', who: 'hero' },
     { id: 'f2', dur: 1.2, type: 'fall', who: 'hero', anim: 'fall', turn: 0.6 },
@@ -88,14 +93,15 @@ const houses = { family: createHouse(THREE, { style: 'family', name: 'house_fami
 houses.illustration = houses.illus;
 for (const h of Object.values(houses)) stage.scene.add(h.root);
 const props = { card: makePostcard(THREE, 'island', { w: 2.6 }) };
-const actors = (TYPE === 'hug' || TYPE === 'fall' || TYPE === 'closeup') ? await buildCast(THREE, { hero: { shirt: '#e74c3c', face: 'smile' }, mom: { shirt: '#8e44ad', skirt: '#5d4037', hair: 'braids' } }) : {};
+const actors = (TYPE === 'hug' || TYPE === 'fall' || TYPE === 'closeup' || TYPE === 'chong') ? await buildCast(THREE, { hero: { shirt: '#e74c3c', face: 'smile' }, mom: { shirt: '#8e44ad', skirt: '#5d4037', hair: 'braids' } }) : {};
 for (const a of Object.values(actors)) stage.scene.add(a.root);
 
 const places = resolvePlaces({ lab: { pos: [0, 0, 0], ry: 0 } }, {});
 const shots = expandShots(LAB_SHOTS[TYPE], { places, crowd: [], env: 'lab', light: 'day', fps: FPS });
 const tl = buildTimeline(shots, FPS);
 
-(globalThis.__autoFx ||= {}).faceLive = false;   // trang thử loại shot: giữ hình cũ (mặt sống chỉ ở face-lab / tập mẫu)
+(globalThis.__autoFx ||= {}).faceLive = false;
+globalThis.__autoFx.chongLop = new URLSearchParams(location.search).get('chong') !== '0';   // trang thử: bật động tác chồng lớp (?chong=0 tắt)   // trang thử loại shot: giữ hình cũ (mặt sống chỉ ở face-lab / tập mẫu)
 const director = createDirector({ THREE, stage, envs, K: {}, actors, houses, props, fx: {} });
 stage.onFrame((t) => {
   const T = Math.min(t, tl.total - 1e-4);

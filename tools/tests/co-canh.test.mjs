@@ -11,10 +11,10 @@ test('co: cỡ càng rộng thì máy càng xa; cận nhìn ngang đầu, toàn 
   const d = ['cucCan', 'can', 'trung', 'ngangDui', 'toanThan', 'rong', 'toanCanh'].map((c) => apCoCanh(cam, c).dist);
   for (let i = 1; i < d.length; i++) assert.ok(d[i] > d[i - 1], `dist tăng dần: ${d}`);
   assert.ok(apCoCanh(cam, 'can').look[1] > apCoCanh(cam, 'toanThan').look[1]);
-  // chiều cao khung nhìn thấy = 2·khoảng xiên·tan(fov/2) = S của bảng (gốc blocky 'close' = 4.0; Việt 'can' = 2.8)
+  // chiều cao khung nhìn thấy = 2·khoảng xiên·tan(fov/2) = S của bảng (gốc blocky 'close' = 4.0; Việt 'can' = 3.8)
   const S = (c) => 2 * Math.hypot(c.dist, c.h) * Math.tan((40 / 2) * Math.PI / 180);
   assert.ok(Math.abs(S(apCoCanh(cam, 'close')) - 4.0) < 0.01);
-  assert.ok(Math.abs(S(apCoCanh(cam, 'can')) - 2.8) < 0.01);
+  assert.ok(Math.abs(S(apCoCanh(cam, 'can')) - 3.8) < 0.01);
   assert.throws(() => apCoCanh(cam, 'khongCo'), /không có/);
   assert.ok(CO_NAMES.includes('close') && CO_NAMES.includes('toanThan'));
 });
