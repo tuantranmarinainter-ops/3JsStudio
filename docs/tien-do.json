@@ -6,27 +6,27 @@
    "viec": [
     {
      "ten": "1. Mẫu kit + bộ kiểm kit dùng chung",
-     "tt": "dang",
-     "ghiChu": "Đợt 1, agent Sonnet đang code + viết test. Nhỏ. Kiểm số hình mỗi shot, trường chuyển động, ngưỡng số đo; còn lỗi thì chặn không cho sang bước dựng.",
-     "pt": 20
+     "tt": "xong",
+     "ghiChu": "Xong code + 20+20 test qua: tools/kiem-bang-shot.mjs, tools/kiem-kit.mjs, docs/kit.mau.json. Còn lỗi thì thoát mã 1 (chặn bước dựng).",
+     "pt": 100
     },
     {
      "ten": "2. Chia shot từ kịch bản chữ",
-     "tt": "dang",
-     "ghiChu": "Đợt 1. Đã có đặc tả định dạng bảng shot (docs/quy-trinh-dau-vao.md) + bộ mẫu 6 shot; agent đang viết bộ kiểm. Phần chia shot do Claude làm khi có kịch bản.",
-     "pt": 20
+     "tt": "do",
+     "ghiChu": "Xong phần công cụ: định dạng bảng shot + bộ kiểm. Phần chia shot do Claude làm khi bạn đưa kịch bản chữ — chưa thử trên kịch bản thật.",
+     "pt": 70
     },
     {
      "ten": "3. Chạy Codex vẽ hình song song",
-     "tt": "dang",
-     "ghiChu": "Đợt 1, agent Sonnet đang code + viết test. Vừa. Một lệnh: chia theo cụm bối cảnh, gpt-6-luna low, trần 6 tiến trình, tự chạy lại shot thiếu, báo số hình và lỗi.",
-     "pt": 20
+     "tt": "do",
+     "ghiChu": "Code xong, 10 test qua với Codex giả: tools/codex-ve.mjs. CHƯA chạy Codex thật: chưa biết gpt-6-luna có vẽ được hình và lệnh có chạy đúng trên Windows không. Cần bạn cho phép chạy thử 1 lần (tốn hạn mức Codex).",
+     "pt": 80
     },
     {
      "ten": "4. Trang duyệt bảng shot + ảnh tham chiếu",
-     "tt": "dang",
-     "ghiChu": "Đợt 1, agent Sonnet đang code + viết test. Nhỏ. Dùng lại trang duyệt đợt đang có; bạn chốt từng nhân vật, bối cảnh, shot.",
-     "pt": 20
+     "tt": "do",
+     "ghiChu": "Code xong, 7 test qua: tools/duyet-bang-shot.mjs (có nút Chép cho điện thoại). Chưa xem trang bằng mắt.",
+     "pt": 85
     },
     {
      "ten": "5. Kit → shots.js tự động",

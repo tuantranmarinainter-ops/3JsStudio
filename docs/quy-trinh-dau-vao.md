@@ -60,6 +60,8 @@ Quy tắc (bộ kiểm phải bắt):
 }
 ```
 
+Gốc toạ độ ở **tâm sàn bối cảnh** (|x| ≤ `rong`/2, |z| ≤ `sau`/2, y = 0 là sàn). Shot `hinh: 1` chỉ có file `_dau`.
+
 Quy tắc: mọi shot của bảng shot phải có trong kit; `may.dau` bắt buộc, `may.cuoi` bắt buộc khi `hinh` ≥ 2 (và `may.giua` khi `hinh: 3`);
 mỗi nhân vật của shot có toạ độ `dau` (và `cuoi` khi `hinh` ≥ 2); `cao` nhân vật trong 1–8 stud; `fov` 15–90; `p[1]` (độ cao máy) > 0 và < `cao` bối cảnh;
 toạ độ nhân vật nằm trong `rong`×`sau` của bối cảnh; `luma` 85–150; `tinCay` ∈ `cao | vua | thap` (`thap` là cảnh báo; quá 20% shot `thap` là lỗi);
@@ -75,4 +77,6 @@ chuỗi có ký tự `�` hoặc `?` nằm giữa chữ cái tiếng Việt →
 | `node tools/codex-ve.mjs <tham-chieu\|shot> kich-ban/<ep> [--thu] [--tran 6]` | soạn đề bài theo cụm, chạy Codex song song | 0 đủ hình · 1 còn thiếu |
 | `node tools/duyet-bang-shot.mjs kich-ban/<ep> [mo]` | trang duyệt cổng 1 → `duyet-1.json` | — |
 
-Bộ mẫu để test: `tools/tests/fixtures/dau-vao-mau/` (bang-shot.json 6 shot, kit.json đạt).
+Bộ mẫu để test: `tools/tests/fixtures/dau-vao-mau/` (bang-shot.json 6 shot = 12 hình, kit.json đạt). Test: `node --test tools/tests/kiem-bang-shot.test.mjs tools/tests/kiem-kit.test.mjs tools/tests/codex-ve.test.mjs tools/tests/duyet-bang-shot.test.mjs` (57 test, dùng Codex giả `tools/tests/fixtures/codex-gia.mjs`).
+
+**Chưa kiểm thật:** gọi `codex` thật trên Windows (trích dẫn lệnh, `gpt-6-luna` có vẽ được hình không); trang duyệt chưa được xem bằng mắt.

@@ -1,0 +1,23 @@
+{
+  "ep": "mau", "donVi": "stud",
+  "nhanVat": [
+    { "id": "ga", "cao": 2.6, "mau": ["#f5c542", "#d93a2b"] },
+    { "id": "ba-ban-banh", "cao": 2.8, "mau": ["#e8e8e8", "#ffffff"] }
+  ],
+  "boiCanh": [
+    { "id": "pho", "rong": 40, "sau": 60, "cao": 14, "anhSang": { "kieu": "ngay", "luma": 125 }, "diemDung": { "giua": [0, 0, 0], "cuoi": [15, 0, 0] } },
+    { "id": "tiem-banh", "rong": 24, "sau": 18, "cao": 10, "anhSang": { "kieu": "ngay", "luma": 120 }, "diemDung": { "cua": [0, 0, 8], "quay": [0, 0, -3] } }
+  ],
+  "shots": [
+    { "id": "s001", "may": { "dau": { "p": [0, 8, 10], "nhin": [0, 7, 0], "fov": 40 }, "cuoi": { "p": [0, 12, 28], "nhin": [0, 3, 0], "fov": 50 } }, "nhanVat": [], "tinCay": "cao" },
+    { "id": "s002", "may": { "dau": { "p": [0, 2.5, 8], "nhin": [0, 2.4, 0], "fov": 40 }, "cuoi": { "p": [0, 2.8, 3], "nhin": [0, 3, 0], "fov": 30 } },
+      "nhanVat": [{ "id": "ga", "dau": [0, 0, 0], "cuoi": [0, 0, 0], "huong": 0 }], "tinCay": "cao" },
+    { "id": "s003", "may": { "dau": { "p": [-1, 3.5, 7], "nhin": [0, 2.8, -3], "fov": 35 }, "cuoi": { "p": [-3, 4, 9], "nhin": [0, 2.5, -2], "fov": 45 } },
+      "nhanVat": [{ "id": "ga", "dau": [0, 0, 5], "cuoi": [0, 0, 3], "huong": 180 }, { "id": "ba-ban-banh", "dau": [0, 0, -3], "cuoi": [0, 0, -3], "huong": 0 }], "tinCay": "vua" },
+    { "id": "s004", "may": { "dau": { "p": [0, 3, -2], "nhin": [0, 1.2, -3], "fov": 25 } }, "nhanVat": [], "tinCay": "cao" },
+    { "id": "s005", "may": { "dau": { "p": [3, 2.5, 6], "nhin": [0, 2, 3], "fov": 38 }, "giua": { "p": [4, 3, 6], "nhin": [0, 3.5, 3], "fov": 38 }, "cuoi": { "p": [5, 2.5, 5], "nhin": [0, 2, 3], "fov": 40 } },
+      "nhanVat": [{ "id": "ga", "dau": [0, 0, 3], "cuoi": [0, 0, 3], "huong": 90 }], "tinCay": "cao" },
+    { "id": "s006", "may": { "dau": { "p": [-12, 2.8, 8], "nhin": [-14, 2.2, 0], "fov": 42 }, "cuoi": { "p": [12, 2.8, 8], "nhin": [14, 2.2, 0], "fov": 42 } },
+      "nhanVat": [{ "id": "ga", "dau": [-14, 0, 0], "cuoi": [14, 0, 0], "huong": 90 }], "tinCay": "cao" }
+  ]
+}

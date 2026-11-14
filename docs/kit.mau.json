@@ -1,0 +1,31 @@
+{
+  "_ghiChu": "Mẫu kit rỗng. Codex điền theo bang-shot.json; xoá mọi khoá _ghiChu khi nộp. Toạ độ tính bằng stud, gốc (0,0,0) ở TÂM sàn bối cảnh: x trong ±rong/2, z trong ±sau/2, y là độ cao. Mọi shot trong bảng shot phải có đủ một dòng ở đây.",
+  "ep": "epXXX",
+  "donVi": "stud",
+  "nhanVat": [
+    { "id": "id-nhan-vat", "cao": 2.6, "mau": ["#f5c542"], "_ghiChu": "cao 1–8 stud; mau = bảng màu chính (hex)" }
+  ],
+  "boiCanh": [
+    {
+      "id": "id-boi-canh", "rong": 24, "sau": 18, "cao": 10,
+      "anhSang": { "kieu": "ngay", "luma": 125, "_ghiChu": "luma 85–150" },
+      "diemDung": { "cua": [0, 0, 8], "quay": [0, 0, -3], "_ghiChu": "tên điểm đứng tự đặt, nằm trong rong×sau" },
+      "_ghiChu": "rong, sau, cao > 0"
+    }
+  ],
+  "shots": [
+    {
+      "id": "s001",
+      "may": {
+        "dau": { "p": [0, 3, 12], "nhin": [0, 2.2, 0], "fov": 40, "_ghiChu": "p[1] > 0 và < cao bối cảnh; fov 15–90" },
+        "giua": { "p": [0, 3, 8], "nhin": [0, 2.2, 0], "fov": 40, "_ghiChu": "chỉ khi hinh = 3" },
+        "cuoi": { "p": [0, 2.6, 5], "nhin": [0, 2.4, -2], "fov": 40, "_ghiChu": "bắt buộc khi hinh >= 2; không được giống hệt dau nếu nhân vật đứng yên" }
+      },
+      "nhanVat": [
+        { "id": "id-nhan-vat", "dau": [0, 0, 8], "cuoi": [0, 0, -2], "huong": 180, "_ghiChu": "cuoi bắt buộc khi hinh >= 2" }
+      ],
+      "tinCay": "cao",
+      "_ghiChu": "tinCay: cao | vua | thap (thap = cảnh báo; quá 20% shot thap là lỗi)"
+    }
+  ]
+}

@@ -26,7 +26,7 @@ Người dùng **chỉ đưa kịch bản chữ**: mô tả bối cảnh, mô t�
 
 | Mức | Số hình | Dùng khi | Ví dụ |
 |---|---|---|---|
-| `1` | 1 (giữa shot) | Camera và nhân vật gần như đứng yên; chèn cận đồ vật, chữ | bưu thiếp, cận hộp nhẫn |
+| `1` | 1 (file `_dau`) | Camera và nhân vật gần như đứng yên; chèn cận đồ vật, chữ | bưu thiếp, cận hộp nhẫn |
 | `2` | 2 (đầu, cuối) | Chuyển động đi thẳng một hướng: zoom vào, lùi ra, lia, đi từ A sang B, thoại | mặc định cho shot thường |
 | `3` | 3 (đầu, giữa, cuối) | Chuyển động đổi hướng hoặc có sự kiện giữa shot: nhảy, ngã, quay người, vật xuất hiện, cửa mở, biểu cảm đổi, camera đổi hướng | Gà nhảy lên bắt gấu |
 
