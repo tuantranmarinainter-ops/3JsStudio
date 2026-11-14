@@ -9,8 +9,8 @@ e = lambda s: html.escape(str(s if s is not None else ''))
 NH = SU['nhom']
 PP = [
  dict(k='rb', ten='Tập 1', phim='Nhà có chân — bản Roblox Studio', pp='Dựng thẳng trong Roblox Studio', vao='Ý tưởng + video tham chiếu', shot=141,
-      kq='Đã dừng, chuyển sang three.js',
-      uu=['Hình ảnh đúng chất Roblox thật: ánh sáng, vật liệu, thân R6 và kho tài sản có sẵn', 'Tốn ít token nhất trong bốn lần (18 triệu token mới)', 'Không phải tự viết engine'],
+      kq='Đã dừng, chuyển sang three.js', thieu='Số token, giờ máy và việc sửa của Tập 1 KHÔNG đầy đủ: phần lớn công việc làm bằng một tài khoản Claude khác, nhật ký không nằm trên máy này. Các số ở đây chỉ là phần thấy được, không dùng để so với ba tập còn lại.',
+      uu=['Hình ảnh đúng chất Roblox thật: ánh sáng, vật liệu, thân R6 và kho tài sản có sẵn', 'Không phải tự viết engine'],
       nhuoc=['Claude không tự chạy, tự chụp, tự xuất video trong Studio được: mỗi vòng thử cần người thao tác', 'Không tua tới lui cho ra cùng một hình, nên khó kiểm bằng số', 'Không có lịch sử từng lần sửa (không git), khó quay lại', 'Dừng giữa chừng: 6 việc còn tồn, không ra video']),
  dict(k='ep1', ten='Tập 2', phim='Ngôi nhà biết đi', pp='three.js, dựng theo video tham chiếu cắt thành 145 shot', vao='Video mẫu → 5.132 khung hình + danh sách cắt + lời kể', shot=145,
       kq='Hoàn chỉnh nhất: có bản xuất MP4, còn 3 việc tồn',
@@ -35,20 +35,20 @@ def gio(v): return ('%.1f' % v).replace('.', ',') + ' giờ'
 def chart(tieu_de, chu, key, fmt):
     mx = max(p[key] for p in PP) or 1
     return (f'<figure class="ch"><figcaption><b>{e(tieu_de)}</b><span class="mu">{e(chu)}</span></figcaption><div class="bars">' + ''.join(
-        f'<div class="row" tabindex="0" data-tip="{e(p["ten"])}: {e(fmt(p[key]))}"><span class="lb">{e(p["ten"])}</span><span class="tr"><i style="width:{p[key] / mx * 100:.1f}%"></i></span><span class="vl num">{e(fmt(p[key]))}</span></div>' for p in PP) + '</div></figure>')
+        f'<div class="row{" thieu" if p.get("thieu") else ""}" tabindex="0" data-tip="{e(p["ten"])}: {"ít nhất " if p.get("thieu") else ""}{e(fmt(p[key]))}{" (thiếu dữ liệu)" if p.get("thieu") else ""}"><span class="lb">{e(p["ten"])}</span><span class="tr"><i style="width:{p[key] / mx * 100:.1f}%"></i></span><span class="vl num">{"≥ " if p.get("thieu") else ""}{e(fmt(p[key]))}</span></div>' for p in PP) + '</div><p class="mu">Tập 1: thiếu dữ liệu (làm phần lớn bằng tài khoản khác), số thật lớn hơn; thanh vẽ nhạt.</p></figure>')
 dem = lambda p, n: sum(1 for m in p['muc'] if m.get('nhom') == n)
 mxn = max([dem(p, n) for p in PP for n in NH] + [1])
 
 tong_quan = ('<section data-p="tq"><div class="eps">' + ''.join(
     f'<article class="ep"><div class="hd"><span class="so">{e(p["ten"])}</span><b>{e(p["phim"])}</b></div><p class="mu">{e(p["pp"])}</p><p><span class="k">Đầu vào</span> {e(p["vao"])}</p><p><span class="k">Kết quả</span> {e(p["kq"])}</p>'
-    f'<p class="num mu">{tr(p["moi"])} token mới · {gio(p["gio"])} máy · {p["sua"]} việc sửa, {p["ton"]} tồn</p></article>' for p in PP) + '</div>'
+    + (f'<p class=\"thieu-note\">{e(p["thieu"])}</p>' if p.get("thieu") else '') + f'<p class="num mu">{"ít nhất " if p.get("thieu") else ""}{tr(p["moi"])} token mới · {gio(p["gio"])} máy · {p["sua"]} việc sửa, {p["ton"]} tồn</p></article>' for p in PP) + '</div>'
     + chart('Token mới', 'Token chưa có trong bộ nhớ đệm + token viết ra: sát với chi phí thật. Tập 2 gồm cả công dựng engine và studio.', 'moi', tr)
     + chart('Giờ máy làm việc', 'Cộng dồn phiên chính và mọi agent phụ, nên lớn hơn giờ đồng hồ', 'gio', gio)
     + chart('Số việc phải sửa riêng cho tập', 'Không tính viết chức năng, công cụ, lõi dùng chung', 'sua', lambda v: str(v))
     + chart('Việc còn tồn', 'Chưa sửa xong tính đến lúc lập trang', 'ton', lambda v: str(v))
     + '<div class="tw"><table><thead><tr><th>Tập</th><th>Số shot</th><th>Tổng token</th><th>Token mới</th><th>Giờ máy</th><th>Lượt gọi mô hình</th><th>Việc sửa</th><th>Còn tồn</th><th>Vòng góp ý</th><th>Thời gian</th></tr></thead><tbody>'
-    + ''.join(f'<tr><th scope="row">{e(p["ten"])}</th><td class="num">{p["shot"]}</td><td class="num">{tr(p["tong"])}</td><td class="num">{tr(p["moi"])}</td><td class="num">{gio(p["gio"])}</td><td class="num">' + f'{p["luot"]:,}'.replace(',', '.') + f'</td><td class="num">{p["sua"]}</td><td class="num">{p["ton"]}</td><td class="num">{e(p["vong"] if p["vong"] is not None else "—")}</td><td class="num">{e(p["tu"][5:])} → {e(p["den"][5:])}</td></tr>' for p in PP)
-    + '</tbody></table></div></section>')
+    + ''.join(f'<tr><th scope="row">{e(p["ten"])}{" *" if p.get("thieu") else ""}</th><td class="num">{p["shot"]}</td><td class="num">{tr(p["tong"])}</td><td class="num">{tr(p["moi"])}</td><td class="num">{gio(p["gio"])}</td><td class="num">' + f'{p["luot"]:,}'.replace(',', '.') + f'</td><td class="num">{p["sua"]}</td><td class="num">{p["ton"]}</td><td class="num">{e(p["vong"] if p["vong"] is not None else "—")}</td><td class="num">{e(p["tu"][5:])} → {e(p["den"][5:])}</td></tr>' for p in PP)
+    + '</tbody></table></div><p class="mu">* Tập 1 thiếu dữ liệu: chỉ là phần nhật ký có trên máy này.</p></section>')
 
 def tap_sec(i, p):
     bars = ''.join(f'<div class="row r2" tabindex="0" data-tip="{e(n)}: {dem(p, n)} việc"><span class="lb">{e(n)}</span><span class="tr"><i style="width:{dem(p, n) / mxn * 100:.1f}%"></i></span><span class="vl num">{dem(p, n)}</span></div>' for n in NH)
@@ -56,14 +56,14 @@ def tap_sec(i, p):
     for n in NH:
         ms = [m for m in p['muc'] if m.get('nhom') == n]
         if ms: ds += f'<h3>{e(n)} <span class="num mu">{len(ms)}</span></h3><ul class="ds">' + ''.join(f'<li class="{"ton" if m.get("con_ton") else ""}" data-ton="{1 if m.get("con_ton") else 0}"><span>{e(m.get("mo_ta"))}</span><span class="mt num">' + (f'{e(m["so_shot"])} shot · ' if m.get('so_shot') else '') + e(m.get('dot') or '') + (' · <b>còn tồn</b>' if m.get('con_ton') else '') + '</span></li>' for m in ms) + '</ul>'
-    return (f'<section data-p="t{i}" hidden><div class="ep"><div class="hd"><span class="so">{e(p["ten"])}</span><b>{e(p["phim"])}</b></div><p class="mu">{e(p["pp"])}</p><p><span class="k">Đầu vào</span> {e(p["vao"])}</p><p><span class="k">Kết quả</span> {e(p["kq"])}</p></div>'
+    return (f'<section data-p="t{i}" hidden><div class="ep"><div class="hd"><span class="so">{e(p["ten"])}</span><b>{e(p["phim"])}</b></div><p class="mu">{e(p["pp"])}</p><p><span class="k">Đầu vào</span> {e(p["vao"])}</p><p><span class="k">Kết quả</span> {e(p["kq"])}</p>' + (f'<p class="thieu-note">{e(p["thieu"])}</p>' if p.get("thieu") else '') + '</div>'
             f'<div class="hero"><div><b class="num">{tr(p["moi"])}</b><span class="mu">token mới</span></div><div><b class="num">{gio(p["gio"])}</b><span class="mu">giờ máy</span></div><div><b class="num">{p["sua"]}</b><span class="mu">việc sửa</span></div><div><b class="num">{p["ton"]}</b><span class="mu">còn tồn</span></div></div>'
             f'<div class="uc"><div class="box uu"><h3>Ưu điểm của cách làm</h3><ul>{"".join(f"<li>{e(x)}</li>" for x in p["uu"])}</ul></div><div class="box nh"><h3>Nhược điểm</h3><ul>{"".join(f"<li>{e(x)}</li>" for x in p["nhuoc"])}</ul></div></div>'
             f'<figure class="ch"><figcaption><b>Việc sửa theo loại</b><span class="mu">Cùng một thang đo cho cả bốn tập</span></figcaption><div class="bars">{bars}</div></figure>'
             + (f'<label class="chk"><input type="checkbox" class="lt" id="lt{i}"> Chỉ hiện việc còn tồn</label>' if p['ton'] else '') + (ds or '<p class="mu">Không có lịch sử sửa được ghi lại.</p>') + '</section>')
 
 DANH_GIA = [
- ('Chất lượng đi theo chuẩn hình, không đi theo số token', 'Tập 2 có khung hình chuẩn cho từng shot nên ra kết quả tốt nhất. Tập 3 chỉ có chữ nên bản đầu lệch xa mong đợi. Thiếu chuẩn hình thì mọi vòng sửa đều là đoán ý.'),
+ ('Chất lượng đi theo chuẩn hình, không đi theo số token', 'Nhận định dựa trên Tập 2, 3, 4 (Tập 1 thiếu dữ liệu nên không dùng để so). Tập 2 có khung hình chuẩn cho từng shot nên ra kết quả tốt nhất. Tập 3 chỉ có chữ nên bản đầu lệch xa mong đợi. Thiếu chuẩn hình thì mọi vòng sửa đều là đoán ý.'),
  ('Có ảnh chuẩn vẫn chưa đủ nếu thiếu bố trí 3D', 'Tập 4 có đủ 104 ảnh nhưng lần soi đầu chỉ 1 shot đạt. Ảnh cho biết khung hình trông ra sao, không cho biết nhân vật đứng đâu trong phòng và máy đặt ở đâu. Giao việc "đo 3D từ ảnh" cho Codex đã không thành: 4 lượt chạy giải được 2/104 máy.'),
  ('Lỗi được phát hiện quá muộn và bằng mắt người', 'Màn hình đen 51 giây, âm nền là tiếng ù thành phố, bảng hiệu sai nhà, shot trống: đều do bạn xem mới thấy. Các phép kiểm tự động hiện có (độ sáng, tất định, mốc giọng) không bắt được lỗi nội dung.'),
  ('Sửa theo từng shot thay vì theo nguyên nhân gốc', 'Bối cảnh và đạo cụ chiếm 29/52 việc sửa ở Tập 2 và 23/52 ở Tập 3. Phần lớn là hệ quả của việc dàn shot trước khi bối cảnh được duyệt, nên sửa xong shot này lại lộ shot khác.'),
@@ -108,7 +108,7 @@ button:focus-visible,input:focus-visible{{outline:2px solid var(--acc);outline-o
 .hd{{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}}.so{{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);border:1px solid var(--line);border-radius:99px;padding:1px 9px}}
 .hero{{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}}.hero div{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}}.hero b{{display:block;font-size:22px;font-weight:800}}
 .ch{{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}}.ch figcaption{{display:flex;flex-direction:column;margin-bottom:8px}}
-.bars{{display:flex;flex-direction:column;gap:8px}}.row{{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;border-radius:6px}}.row.r2{{grid-template-columns:minmax(120px,190px) 1fr 32px}}.row:focus-visible{{outline:2px solid var(--data);outline-offset:2px}}
+.bars{{display:flex;flex-direction:column;gap:8px}}.row{{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;border-radius:6px}}.row.thieu .tr i{{opacity:.35}}.row.thieu .lb,.row.thieu .vl{{color:var(--mu)}}.row.r2{{grid-template-columns:minmax(120px,190px) 1fr 32px}}.row:focus-visible{{outline:2px solid var(--data);outline-offset:2px}}
 .lb{{font-weight:600;font-size:14px}}.tr{{display:block;height:14px;background:var(--track);border-radius:0 4px 4px 0;overflow:hidden}}.tr i{{display:block;height:100%;background:var(--data);border-radius:0 4px 4px 0}}.vl{{min-width:32px;text-align:right}}
 #tip{{position:fixed;pointer-events:none;background:var(--fg);color:var(--bg);padding:4px 8px;border-radius:6px;font-size:13px;z-index:5;transform:translate(-50%,-140%);white-space:nowrap}}
 .uc{{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:10px}}.uc ul,.box ul{{margin:0;padding-left:18px}}.uc li{{margin:3px 0}}
@@ -119,7 +119,7 @@ button:focus-visible,input:focus-visible{{outline:2px solid var(--acc);outline-o
 .tw{{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px}}table{{border-collapse:collapse;width:100%;font-size:14px;min-width:720px}}
 th,td{{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}}thead th{{font-size:12px;color:var(--mu);font-weight:600}}tbody th,th:first-child{{text-align:left;font-weight:600}}tbody tr:last-child th,tbody tr:last-child td{{border-bottom:0}}
 table.pp td{{text-align:left}}table.pp th small{{display:block;font-weight:400;color:var(--mu);font-size:12px}}
-.warn{{background:var(--warnbg);border:1px solid var(--warn);border-radius:8px;padding:10px 12px;font-size:14px}}
+.warn,.thieu-note{{background:var(--warnbg);border:1px solid var(--warn);border-radius:8px;padding:10px 12px;font-size:14px}}.thieu-note{{padding:6px 10px;font-size:13px}}
 </style>
 <main>
 <header><h1>Tổng kết bốn tập</h1><p class="mu">3JS Studio · lập lúc {e(SU.get("lap_luc"))} · token, thời gian và việc sửa của từng tập; ưu nhược từng cách làm; đánh giá và khuyến nghị</p></header>
@@ -128,7 +128,7 @@ table.pp td{{text-align:left}}table.pp th small{{display:block;font-weight:400;c
 {"".join(tap_sec(i, p) for i, p in enumerate(PP))}
 {dg}
 {kn}
-<div class="warn">Số token và giờ lấy từ nhật ký Claude Code (không gồm Codex); việc gán cho từng tập là ước lượng. Tập 2 gồm cả công dựng engine và studio. Danh sách việc sửa do agent lập từ lịch sử commit và file bàn giao, chưa đối chiếu từng dòng. Tập 3 và Tập 4 chưa xong.</div>
+<div class="warn"><b>Tập 1 không so sánh được một cách khách quan</b>: phần lớn công việc của nó làm bằng một tài khoản Claude khác nên thiếu nhật ký. Ba tập còn lại: số token và giờ lấy từ nhật ký Claude Code trên máy này (không gồm Codex); việc gán cho từng tập là ước lượng. Tập 2 gồm cả công dựng engine và studio. Danh sách việc sửa do agent lập từ lịch sử commit và file bàn giao, chưa đối chiếu từng dòng. Tập 3 và Tập 4 chưa xong.</div>
 </main>
 <div id="tip" hidden></div>
 <script>
