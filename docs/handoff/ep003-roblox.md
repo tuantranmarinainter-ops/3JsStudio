@@ -15,7 +15,7 @@ Chốt đợt nào → nhập + thay vào bối cảnh đó → `look.mjs` + `sh
 | 6 | nhà máy nội thất (15 món) | chưa |
 | 7 | phòng Gà (11 món) | chưa |
 | 8 | đạo cụ nhỏ (10 món) | chưa |
-| ? | "các mô hình nghề" — đang hỏi người dùng ý là gì | chờ trả lời |
+(Người dùng nói "các mô hình nghề" = **mô hình nhà** → chính là đợt 4; ưu tiên làm sớm.)
 NPC (gấu, dân làng, thị trưởng) do phiên `npc-roblox` lo.
 
 Kiểm kê đủ 71 món (file, shot, cỡ stud): `output/ep003/roblox/kiem-ke.json` (không vào git; dựng lại bằng agent nếu mất).
