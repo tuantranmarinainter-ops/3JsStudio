@@ -162,7 +162,7 @@ export function createR6Rig(THREE, opts = {}) {
     const sc = Math.min(tw / bw, th / bh, GROW * FACE_PX / b.w), cx = (FB.x0 + FB.x1) / 2 * FACE_PX, cy = (FB.y0 + FB.y1) / 2 * FACE_PX;
     fg.drawImage(img, b.x0, b.y0, bw, bh, cx - bw * sc / 2, cy - bh * sc / 2, bw * sc, bh * sc);
   };
-  let faceKey = '', lastT = 0, lastPoseFace;
+  let faceKey = '', lastT = 0;
   function faceAt(t, name = o.face, { from, mix = 1 } = {}) {
     set = setOf();
     const key = fKey(name), fk = from && mix < 1 ? fKey(from) : null, wq = fk && fk !== key ? Math.round(clamp01(mix) * 8) / 8 : 1;
@@ -305,10 +305,9 @@ export function createR6Rig(THREE, opts = {}) {
       lastT = t;
       const pose = fullPose(name, t, opt);
       applyPose(parts, pose); update(pose, fullPose(name, t - 0.07, opt), name);
-      if (pose.face !== lastPoseFace) { lastPoseFace = pose.face; if (pose.face) o.face = pose.face; }
       if (opt.faceFrom !== undefined) { pose.faceFrom = opt.faceFrom; pose.faceMix = opt.faceMix; }
       char.lastPose = pose;
-      if (!opt.noFace) faceAt(t, o.face, { from: opt.faceFrom, mix: opt.faceMix });
+      if (!opt.noFace) faceAt(t, pose.face || o.face, { from: opt.faceFrom, mix: opt.faceMix });
       return pose;
     },
   };
