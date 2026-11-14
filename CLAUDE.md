@@ -30,6 +30,7 @@ Cảnh 3D dựng bằng three.js + engine tự viết (`engine/`). Sản phẩm 
   Claude không đề nghị "chuyển sang phiên mới" cho phiên này; nhắc `/compact` và đẩy việc nặng sang phiên con / agent phụ.
   Trước khi compact, ghi quyết định chưa có trong file vào `HANDOFF.md`/docs. **Phiên con thì clear thoải mái.**
 - Tài sản Roblox (Creator Store, Marketplace) **được dùng để dựng phim**; tải bằng `tools/sky-extract/`, vẫn ghi nguồn vào manifest.
+- **Việc Roblox: đọc `docs/roblox.md` trước** (khoá, lệnh, quy trình, lỗi đã gặp, quyết định đã chốt) thay vì dò lại code. Phiên con Roblox chạy Sonnet; mỗi lần duyệt **một nhóm** (vd NHÀ 9 món), không giao "tất cả". Đề bài: "Đọc docs/roblox.md rồi làm X. Đạt khi … Dừng khi …".
 - Đã chốt: hải đăng màu xanh; bỏ Three.js Water Pro; phông Be Vietnam Pro (phụ đề) + Patrick Hand (bưu thiếp).
 
 ## Công cụ (dùng thay vì viết script tạm)
@@ -48,6 +49,7 @@ Cảnh 3D dựng bằng three.js + engine tự viết (`engine/`). Sản phẩm 
 | `node tools/nen-model.mjs <file.glb|.gltf> … [--thu]` | nén model tại chỗ (bỏ trùng, lượng tử hoá lưới, ảnh vân WebP ≤ 1k); so bản gốc/bản nén bằng `tools/xem-model.html` + `look.mjs --ref` |
 | `node tools/feedback.mjs --latest` | đọc góp ý từ trình phát (skill `gop-y`) |
 | `PROFILE=1 node tools/look.mjs …` (cũng cho `shaders.mjs`, `bundle.mjs`, test) | **mở trang nhanh gấp ~4 lần** (28 s → 6 s) nhờ giữ shader đã dịch ở `.cache/chrome-profile/`; ảnh giống hệt. Mặc định tắt; không dùng cùng `GL=swiftshader` |
+| `node tools/xuat.mjs <ep> [--range a:b] [--res 1080p]` / `--chi-nen f.mp4` | **xuất video để xem bằng 1 lệnh**: bấm Xuất MP4 + nén bản nhẹ 720×1280, in đường dẫn và link `file:///` (`output/xuat/`). Dùng thay vì tự render/nén/gửi link |
 | `node tools/don.mjs [--xoa]` | liệt kê / dọn ảnh kiểm tra cũ hơn 24 giờ trong `output/` |
 
 ## Làm việc theo LỚP
