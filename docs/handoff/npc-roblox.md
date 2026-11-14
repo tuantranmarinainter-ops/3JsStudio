@@ -48,7 +48,10 @@ Thay mọi nhân vật ep003 (trừ Gà) bằng NPC Roblox Creator Store, có c�
    be_vang: {"r6":1,"look":"be_vang","rb":"be_vang"}, be_ngoc: {"r6":1,"look":"be_ngoc","rb":"be_ngoc"},
    dan_a: {"r6":1,"look":"dan_a","rb":"dan_04"},      dan_b: {"r6":1,"look":"dan_b","rb":"dan_09"},      dan_c: {"r6":1,"look":"dan_c","rb":"dan_15"},
    ```
-2. Gấu: hỏi người dùng mẫu 8648724784 dùng cho vai nào; nếu cho Bắp → việc riêng (dựng xương trong Blender bằng `tools/blender/nhap_rig.py` hoặc tách khối).
+2. Gấu — NGƯỜI DÙNG QUYẾT 14/11: "Thay cả Bắp" bằng mẫu Roblox 8648724784 (gấu nâu nhạt nơ vàng, NGỒI, khối liền ~20 nghìn tam giác, KHÔNG xương). Việc riêng, chưa bắt đầu:
+   - `node tools/roblox.mjs xem 8648724784` / `tai` → xem mẫu là mấy mảnh (đầu/thân/tay/chân tách hay một lưới), có vượt ngưỡng low poly `chu-dao` 12 000 không (vượt → hỏi người dùng hoặc giảm lưới).
+   - Bắp hiện tại: GLB có xương `assets/characters/bap/*.glb`, lái bởi `engine/bear-glb.js` (bật bằng `EPISODE.bearGlb`), 3 con đổi màu lông/nơ (bap, gau_vi, gau_tui). Động tác đang dùng trong ep003: sit 7, idle 6, walk 7, hug 4, hugWalk 1, hold 2, climb 1, drag 1, stand 2.
+   - Hướng làm đề xuất: tách khối theo mảnh (nếu mẫu nhiều mảnh) thành rig khối kiểu R6 lái bằng pose có sẵn, HOẶC dựng xương trong Blender (`tools/blender/nhap_rig.py`, xem `assets/characters/bap/README.md`). Mẫu đang NGỒI → phải có tư thế đứng. Duyệt mẫu (ảnh đứng/đi/ngồi/ôm) trước khi thay; phải bật/tắt được về gấu cũ.
 3. Nén `assets/characters/rb` (8,6 MB, PNG 585×559 ~330 KB/ảnh) trước khi gộp `dist/`; công cụ gộp phải nhúng được `look.json`/PNG/`acc.glb` (chưa kiểm `tools/bundle`).
 4. Commit `assets/manifest.json` khi file hết thay đổi của phiên khác.
 
