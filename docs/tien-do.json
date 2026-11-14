@@ -153,6 +153,11 @@
      "tt": "xong",
      "ghiChu": "14/11: bật facePack altiwyre (ô FX matAlti tắt = 37 emote cũ); soi 6 shot cận: mặt rõ, không bị tóc/mũ che; tất định OK; s014 đổi sang mặt cười tươi. Đã gộp bản xem thử cùng nhà phố + đồ tiệm + 12 NPC Roblox. Tối 14/11: chuyển sang 37 MẶT NGUYÊN (ô matNguyen); hạ + thu mặt Gà (faceY 0.52, faceSize 0.92) cho khỏi bị băng đô che (s014, s100 đạt); tất định OK; gộp lại bản xem thử 68 MB.",
      "pt": 92
+    },
+    {
+     "ten": "Gấu kệ nhà máy = mẫu Roblox có nơ",
+     "tt": "xong",
+     "ghiChu": "14/11 tối: bật gauKe (episode.js, ?gauKe=0 tắt). Thấy rõ ở s055 (nền), s056, s057 (cận). Soi: ngồi đúng ván, có nơ, không che mặt; s056 có vài mảnh nâu nhỏ cần xem kỹ. Tất định OK; mở trang 6,5 s, shader 139 (như trước), bản gộp 68,6 MB."
     }
    ],
    "tap": "Tập 3"

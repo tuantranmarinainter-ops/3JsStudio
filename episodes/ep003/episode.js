@@ -25,6 +25,7 @@ export const EPISODE = {
     grass: false, flowers: false, sway: false, cloudShade: false, farwoods: false, backdrop: false, traffic: false, villagers: false, pvTrees: false,
     familyPhoto: false, houseStairs: false, stairsFold: false, foot: false, prints: false, wind: false, breath: false, paint: false, outline: false },
   bearGlb: true,
+  gauKe: true,   // gấu TRÊN KỆ = mẫu Roblox 104566604295071 có nơ (engine/gau-ke.js); ?gauKe=0 tắt
   propsGlb: true,
   actors: {
     hero: {"r6":1,"look":"ga"},
@@ -107,4 +108,5 @@ export const EPISODE = {
   },
 };
 globalThis.__bearGlb = EPISODE.bearGlb !== false;   // cầu nối tới engine/bear-glb.js
+globalThis.__gauKe = EPISODE.gauKe !== false;     // cầu nối tới engine/gau-ke.js (gấu kệ nhà máy)
 globalThis.__propsGlb = EPISODE.propsGlb !== false;   // cầu nối tới engine/props-glb.js (module nạp trước episode.js)
