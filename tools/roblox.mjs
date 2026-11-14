@@ -123,7 +123,7 @@ export async function taiAsset(id) {
   if (!r.ok) throw new Error(`asset ${id}: HTTP ${r.status}`);
   const j = await r.json();
   const loc = j.location || j.locations?.[0]?.location;
-  if (!loc) throw new Error(`asset ${id}: không có location`);
+  if (!loc) throw new Error(`asset ${id}: ` + (j.errors?.[0] ? `Roblox từ chối (${j.errors[0].code}: ${j.errors[0].message}) — asset riêng tư của tác giả, Open Cloud không tải được` : 'không có location'));
   const c = await fetch(loc);                          // CDN: không gửi khoá
   if (!c.ok) throw new Error(`asset ${id}: CDN HTTP ${c.status}`);
   return Buffer.from(await c.arrayBuffer());
@@ -251,6 +251,7 @@ async function taiTiep(a, id, ra, dir, dM, dA, parts, meshIds, imgIds, canhBao) 
   const r = chay(exe, ['-b', '--factory-startup', '-P', path.join(ROOT, 'tools', 'blender', 'roblox_ghep.py'), '--', manifest]);
   const out = (r.stdout || '') + (r.stderr || '');
   const m = out.match(/^GHEP_JSON (.*)$/m);
+  if (/GHEP_LOI không có mảnh/.test(out) && canhBao.length) loi(`không ghép được mảnh nào — ${canhBao.length} mesh/ảnh không tải được:\n  ` + canhBao.slice(0, 6).join('\n  '));
   if (r.status !== 0 || !m) loi('Blender lỗi:\n' + out.split('\n').filter((l) => /Error|Traceback|GHEP_LOI|File "/.test(l)).slice(-12).join('\n') + (m ? '' : '\n' + out.slice(-500)));
   const kq = JSON.parse(m[1]);
   // 5. nguồn
