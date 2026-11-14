@@ -3,7 +3,8 @@
 //
 //   node tools/kiem-chuyen-dong.mjs <trang index.html> [--kit kich-ban/<ep>] [--goc goc.json] [--shots s001,s002|all] [--json out.json]
 //
-//   --kit   thư mục có kit.json (và bang-shot.json nếu có): so camera/nhân vật đầu-cuối với kit, loại camera với bảng shot.
+//   --kit   thư mục có kit.json (và bang-shot.json nếu có): so camera/nhân vật đầu-giữa-cuối với kit (giữa: may.giua, nhanVat[].giua → "LỆCH KIT (giữa)"), loại camera với bảng shot.
+//           Mẫu giữa lấy ở tiến độ cam.tm của shot (mặc định 0,5 = giữa shot).
 //   --goc   {"<boiCanh>": {"goc":[x,y,z],"xoay":độ}} đổi toạ độ kit (gốc tâm sàn bối cảnh) sang toạ độ thế giới của tập. Mặc định 0.
 //   Mã thoát: 0 không lỗi · 1 có lỗi.
 //
@@ -141,7 +142,7 @@ export function chamShot(mau, { bangShot, kit, goc } = {}) {
 
   if (kit && kit.may) {
     const g = chonGoc(goc, bangShot && bangShot.boiCanh);
-    for (const moc of ['dau', 'cuoi']) {
+    for (const moc of ['dau', 'giua', 'cuoi']) {
       const k = kit.may[moc], m = mau[moc] && mau[moc].cam;
       if (!k || !m) continue;
       const p = doiToaDo(k.p, g), d = norm(sub(doiToaDo(k.nhin, g), p));
@@ -150,15 +151,15 @@ export function chamShot(mau, { bangShot, kit, goc } = {}) {
       if (dv > NGUONG.kitViTriStud) sai.push(`vị trí lệch ${f2(dv)} stud`);
       if (dh > NGUONG.kitHuongDo) sai.push(`hướng lệch ${f1(dh)}°`);
       if (df > NGUONG.kitFovDo) sai.push(`fov lệch ${f1(df)}°`);
-      if (sai.length) loi.push(`LỆCH KIT: camera ${moc}: ${sai.join(', ')}`);
+      if (sai.length) loi.push(moc === 'giua' ? `LỆCH KIT (giữa): camera: ${sai.join(', ')}` : `LỆCH KIT: camera ${moc}: ${sai.join(', ')}`);
     }
     for (const nv of kit.nhanVat || []) {
-      for (const moc of ['dau', 'cuoi']) {
+      for (const moc of ['dau', 'giua', 'cuoi']) {
         if (!nv[moc]) continue;
         const m = mau[moc] && mau[moc].nv && mau[moc].nv[nv.id];
         if (!m) { if (mau.nvLayDuoc) canhBao.push(`không thấy nhân vật "${nv.id}" ở mốc ${moc} để so với kit`); continue; }
         const dv = len(sub(m.p, doiToaDo(nv[moc], chonGoc(goc, bangShot && bangShot.boiCanh))));
-        if (dv > NGUONG.kitNvStud) loi.push(`NHÂN VẬT LỆCH: ${nv.id} ${moc} lệch ${f2(dv)} stud so với kit`);
+        if (dv > NGUONG.kitNvStud) loi.push(moc === 'giua' ? `LỆCH KIT (giữa): nhân vật ${nv.id} lệch ${f2(dv)} stud so với kit` : `NHÂN VẬT LỆCH: ${nv.id} ${moc} lệch ${f2(dv)} stud so với kit`);
       }
     }
   }
@@ -208,7 +209,7 @@ async function main() {
   page.on('pageerror', (e) => console.log('  pageerror:', e.message));
   await page.goto(url);
   await page.waitForFunction(() => window.__ready === true, null, { timeout: 300000 });
-  const info = await page.evaluate(() => ({ fps: window.__shots.fps, list: window.__shots.list.map((s) => ({ id: s.id, t0: s.t0, t1: s.t1, cast: Object.keys(s.cast || {}).filter((k) => s.cast[k]) })) }));
+  const info = await page.evaluate(() => ({ fps: window.__shots.fps, list: window.__shots.list.map((s) => ({ id: s.id, t0: s.t0, t1: s.t1, tm: s.cam && typeof s.cam.tm === 'number' ? s.cam.tm : 0.5, cast: Object.keys(s.cast || {}).filter((k) => s.cast[k]) })) }));
   const FPS = info.fps || 30;
   const want = !opt.shots || opt.shots === 'all' ? null : new Set(opt.shots.split(','));
   const shots = info.list.filter((s) => !want || want.has(s.id));
@@ -238,7 +239,7 @@ async function main() {
   let nLoi = 0, nBao = 0, nCamIm = 0, nImHet = 0, coNv = 0;
   for (let i = 0; i < shots.length; i++) {
     const s = shots[i], e = 1 / FPS;
-    const ts = { dau: s.t0 + e, giua: (s.t0 + s.t1) / 2, cuoi: s.t1 - e };
+    const ts = { dau: s.t0 + e, giua: s.t0 + (s.t1 - s.t0) * (s.tm ?? 0.5), cuoi: s.t1 - e };
     const mau = { id: s.id };
     for (const k of ['dau', 'giua', 'cuoi']) mau[k] = await lay({ t: ts[k], names: s.cast });
     mau.nvLayDuoc = s.cast.length > 0 && Object.keys(mau.dau.nv).length > 0;

@@ -16,7 +16,7 @@
       "nhanVat": [{ "id": "ga", "dau": [0, 0, 5], "cuoi": [0, 0, 3], "huong": 180 }, { "id": "ba-ban-banh", "dau": [0, 0, -3], "cuoi": [0, 0, -3], "huong": 0 }], "tinCay": "vua" },
     { "id": "s004", "may": { "dau": { "p": [0, 3, -2], "nhin": [0, 1.2, -3], "fov": 25 } }, "nhanVat": [], "tinCay": "cao" },
     { "id": "s005", "may": { "dau": { "p": [3, 2.5, 6], "nhin": [0, 2, 3], "fov": 38 }, "giua": { "p": [4, 3, 6], "nhin": [0, 3.5, 3], "fov": 38 }, "cuoi": { "p": [5, 2.5, 5], "nhin": [0, 2, 3], "fov": 40 } },
-      "nhanVat": [{ "id": "ga", "dau": [0, 0, 3], "cuoi": [0, 0, 3], "huong": 90 }], "tinCay": "cao" },
+      "nhanVat": [{ "id": "ga", "dau": [0, 0, 3], "giua": [0, 1.6, 3], "cuoi": [0, 0, 3], "huong": 90 }], "tinCay": "cao" },
     { "id": "s006", "may": { "dau": { "p": [-12, 2.8, 8], "nhin": [-14, 2.2, 0], "fov": 42 }, "cuoi": { "p": [12, 2.8, 8], "nhin": [14, 2.2, 0], "fov": 42 } },
       "nhanVat": [{ "id": "ga", "dau": [-14, 0, 0], "cuoi": [14, 0, 0], "huong": 90 }], "tinCay": "cao" }
   ]

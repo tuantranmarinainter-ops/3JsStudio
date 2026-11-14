@@ -112,3 +112,18 @@ test('bảng ghi dung hinh 1, đứng im hoàn toàn: chỉ cảnh báo; hinh 2 
   assert.ok(chamShot(mau(c, c), { bangShot: bang('dung', 2) }).loi.length >= 1);
   assert.ok(chamShot(mau(c, c)).loi.some((x) => x.startsWith('ĐỨNG IM HOÀN TOÀN')));
 });
+
+test('kit có khung giữa: so mẫu giữa với may.giua và nhân vật giua → LỆCH KIT (giữa)', () => {
+  const huong = (p, n) => { const d = [n[0] - p[0], n[1] - p[1], n[2] - p[2]], l = Math.hypot(...d); return d.map((x) => x / l); };
+  const K = { may: { dau: { p: [3, 2.5, 6], nhin: [0, 2, 3], fov: 38 }, giua: { p: [4, 3, 6], nhin: [0, 3.5, 3], fov: 38 }, cuoi: { p: [5, 2.5, 5], nhin: [0, 2, 3], fov: 40 } },
+    nhanVat: [{ id: 'ga', dau: [0, 0, 3], giua: [0, 1.6, 3], cuoi: [0, 0, 3] }] };
+  const c = (m) => cam(m.p, huong(m.p, m.nhin), m.fov);
+  const nv = (y) => ({ ga: { p: [0, y, 3], yaw: 90 } });
+  const dung = chamShot(mau(c(K.may.dau), c(K.may.cuoi), c(K.may.giua), { dau: nv(0), giua: nv(1.6), cuoi: nv(0) }), { kit: K });
+  assert.ok(!dung.loi.some((x) => /LỆCH/.test(x)), dung.loi.join(' | '));
+  // engine đi thẳng đầu→cuối (bỏ khung giữa), nhân vật không nhảy → lệch ở giữa
+  const thang = { p: [4, 2.5, 5.5], nhin: [0, 2, 3], fov: 39 };
+  const sai = chamShot(mau(c(K.may.dau), c(K.may.cuoi), c(thang), { dau: nv(0), giua: nv(0), cuoi: nv(0) }), { kit: K });
+  assert.ok(co(sai, 'LỆCH KIT (giữa): camera'), sai.loi.join(' | '));
+  assert.ok(co(sai, 'LỆCH KIT (giữa): nhân vật ga'), sai.loi.join(' | '));
+});

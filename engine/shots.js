@@ -5,6 +5,9 @@
 //     cam:   { at:'hero'|'house'|'obj:<tên>'|[x,y,z], look:[dx,dy,dz], yaw, h, dist, fov, roll, rel,
 //              yaw2, h2, dist2, fov2, look2, ease, shake }            // quỹ đạo quanh chủ thể
 //         |  { p:[x,y,z], l:[x,y,z], fov, p2, l2, fov2, ease, shake }  // tuyệt đối
+//         ĐIỂM GIỮA (tuỳ chọn, engine/diem-giua.js): pm, lm, fovm (tuyệt đối) | yawm, hm, distm, lookm, fovm (quỹ đạo) + tm = tiến độ thời gian của điểm giữa (mặc định 0.5)
+//           → đường cong mượt đầu → giữa → cuối (parabol qua 3 điểm, không gãy ở giữa). Không ghi trường nào ⇒ y hệt cũ. Thiếu p2/l2… ⇒ cuối = đầu (đi rồi về).
+//         cast/props cũng vậy: atm:[x,y,z] (kể cả độ cao y → cú nhảy), cast.rym (hướng thân giữa), tm. timeline nối shot vẫn lấy vị trí CUỐI (to || at, ry2 ?? ry).
 //     house: { style, at:[x,z], to:[x,z], ry, legsOut, lift, kneel, shake, door, walk0, pitch, roll, night, boat (0..1: nổi như thuyền) }
 //     cast:  { hero: { at:[x,y,z], to, ry, ry2, anim, from, face, speed, tOff, lie, parent:'house', hold } , … }
 //     props: { <tên>: { at, to, ry, rx, rz, s, parent } },  fx: { cards:{at,t0}, dust:[{at,t0}] },
@@ -41,9 +44,12 @@ import { resolveSeaWeather, seaWeatherAmp } from './seaweather.js';
 import { gioThoiTiet } from './envs/gio-thoi-tiet.js';
 import { FACE_PRESETS } from './r15.js';
 import { createDatMay } from './dat-may.js';
+import { moc, qua1, qua3, mayTuyetDoi, viTri, huongThan } from './diem-giua.js';
 const lerp3 = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
 // tiến độ cục bộ trong một đoạn con của shot: win = [k0,k1]
 const sub = (k, win) => (win ? clamp01((k - win[0]) / (win[1] - win[0])) : k);
+// easing của shot/diễn viên dạng hàm — để đặt mốc điểm giữa (tm = tiến độ THỜI GIAN, mặc định 0.5) lên trục tiến độ đã ease
+const easeFnOf = (name) => (x) => ease(name || 'smooth', x);
 
 export function createDirector({ THREE, stage, envs, K, actors, houses, props = {}, fx = {}, resolveType = null, episode = {} }) {   // episode = EPISODE: time/weather mặc định cho mọi shot không ghi riêng
   const { scene, camera } = stage;
@@ -179,16 +185,17 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     //   Diễn viên + đạo cụ đã đặt xong trước khi gọi placeCamera nên máy bám đúng tư thế của khung này. Không tìm thấy chủ thể → rơi về cách ghi cũ.
     if (c.khung && (KH = datMay.giai(c.khung, { actors, props, k: ke }))) { pos = KH.p; look = KH.l; fov = KH.fov; globalThis.__khung = { spec: c.khung, R: KH, kiem: () => datMay.kiem(KH, { scene, camera, cuaAi: actors[c.khung.nham]?.root || props[c.khung.nham] || null }) }; }
     else if (c.p) {
-      pos = c.p2 ? lerp3(c.p, c.p2, ke) : c.p; look = c.l2 ? lerp3(c.l, c.l2, ke) : c.l;
-      fov = c.fov2 ? c.fov + (c.fov2 - c.fov) * ke : c.fov || 40;
+      ({ pos, look, fov } = mayTuyetDoi(c, ke, easeFnOf(c.ease)));   // p→p2, l→l2, fov→fov2 (+ điểm giữa pm / lm / fovm nếu có)
     } else {
-      const lk = c.look2 ? lerp3(c.look || [0, 0, 0], c.look2, ke) : c.look || [0, 0, 0];
+      const coGiua = c.yawm !== undefined || c.hm !== undefined || c.distm !== undefined || c.lookm || c.fovm !== undefined;
+      const um = coGiua ? moc(c.tm ?? 0.5, easeFnOf(c.ease)) : 0.5;
+      const lk = c.lookm ? qua3(c.look || [0, 0, 0], c.lookm, c.look2 || c.look || [0, 0, 0], ke, um) : c.look2 ? lerp3(c.look || [0, 0, 0], c.look2, ke) : c.look || [0, 0, 0];
       const tgt = anchorOf(c.at || 'house', lk);
-      const yaw = (c.yaw2 !== undefined ? c.yaw + (c.yaw2 - c.yaw) * ke : c.yaw || 0) + (c.rel ? headingOf(c.at) : 0);
-      const dist = c.dist2 !== undefined ? c.dist + (c.dist2 - c.dist) * ke : c.dist ?? 12;
-      const h = c.h2 !== undefined ? c.h + (c.h2 - c.h) * ke : c.h ?? 0;
+      const yaw = (c.yawm !== undefined ? qua1(c.yaw || 0, c.yawm, c.yaw2 ?? (c.yaw || 0), ke, um) : c.yaw2 !== undefined ? c.yaw + (c.yaw2 - c.yaw) * ke : c.yaw || 0) + (c.rel ? headingOf(c.at) : 0);
+      const dist = c.distm !== undefined ? qua1(c.dist ?? 12, c.distm, c.dist2 ?? c.dist ?? 12, ke, um) : c.dist2 !== undefined ? c.dist + (c.dist2 - c.dist) * ke : c.dist ?? 12;
+      const h = c.hm !== undefined ? qua1(c.h ?? 0, c.hm, c.h2 ?? c.h ?? 0, ke, um) : c.h2 !== undefined ? c.h + (c.h2 - c.h) * ke : c.h ?? 0;
       pos = [tgt[0] + Math.sin(yaw) * dist, tgt[1] + h, tgt[2] + Math.cos(yaw) * dist]; look = tgt;
-      fov = c.fov2 ? c.fov + (c.fov2 - c.fov) * ke : c.fov || 40;
+      fov = c.fovm !== undefined ? qua1(c.fov || 40, c.fovm, c.fov2 || c.fov || 40, ke, um) : c.fov2 ? c.fov + (c.fov2 - c.fov) * ke : c.fov || 40;
     }
     if (c.shake) { const s = c.shake; pos = [pos[0] + (Math.sin(t * 9.1) + 0.5 * Math.sin(t * 15.7 + 2)) * s * 0.22, pos[1] + (Math.sin(t * 11.3 + 1) + 0.5 * Math.sin(t * 17.9)) * s * 0.3, pos[2] + Math.cos(t * 8.3) * s * 0.22]; }   // rung tay máy chậm (~1.5–2.8 Hz), không giật
     const roll = val(c.roll, ke, 0) + (KH ? KH.roll : 0);
@@ -248,9 +255,10 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
       const moving = !!s.to && (anim === 'walk' || anim === 'run');
       const kw = sub(k, s.win);
       const ke = moving ? kw : ease(s.ease || 'smooth', kw);
-      const p = s.to ? lerp3(s.at, s.to, ke) : s.at || [0, 0, 0];
+      const eF = moving ? null : easeFnOf(s.ease);   // đi/chạy: tiến độ tuyến tính
+      const p = viTri(s, ke, eF);                     // at→to (+ điểm giữa atm nếu có)
       a.root.position.set(p[0], p[1], p[2]);
-      let ry = s.ry2 !== undefined ? (s.ry ?? 0) + (s.ry2 - (s.ry ?? 0)) * ke : s.ry;
+      let ry = huongThan(s, ke, eF);                  // ry→ry2 (+ rym)
       if (ry === undefined && s.to) ry = Math.atan2(s.to[0] - s.at[0], s.to[2] - s.at[2]);
       a.root.rotation.set(s.lie ? -Math.PI / 2 : s.rx || 0, ry || 0, s.rz || 0);
       a.root.scale.setScalar(s.s || 1);
@@ -330,7 +338,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
       const parent = s.parent === 'house' && activeHouse ? activeHouse.body : s.parent === 'room' ? envs.current?.room || scene : scene;
       if (obj.parent !== parent) parent.add(obj);
       const ke = ease(s.ease || 'smooth', sub(k, s.win));
-      const p = s.to ? lerp3(s.at, s.to, ke) : s.at || [0, 0, 0];
+      const p = viTri(s, ke, easeFnOf(s.ease));
       obj.position.set(p[0], p[1], p[2]);
       obj.rotation.set(val(s.rx, ke, 0), val(s.ry, ke, 0), val(s.rz, ke, 0));
       obj.scale.setScalar(val(s.s, ke, 1));

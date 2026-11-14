@@ -3,6 +3,7 @@
 //   --goc: { "<boiCanh>": { "goc": [x,y,z], "xoay": độ, "env": "<tên env engine>"? } } (quy ước: tools/kit-toa-do.mjs) — đổi toạ độ kit (gốc = tâm sàn bối cảnh) → toạ độ thế giới.
 // Thoát: 0 xong · 1 sai cách dùng/đọc file · 2 kit còn lỗi (kiemKit --khong-hinh).
 // Đặc tả: docs/quy-trinh-dau-vao.md. Loại shot: engine/shottypes.js. Camera p/l/p2/l2/fov/fov2: engine/shots.js (placeCamera).
+// Shot hinh:3 → ĐIỂM GIỮA của engine (engine/diem-giua.js): cam.pm / lm / fovm từ may.giua, cast.<tên>.atm từ nhanVat[].giua (đường cong mượt đầu → giữa → cuối).
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -11,7 +12,7 @@ import { doiDiem, doiHuongRad, chonGoc } from './kit-toa-do.mjs';
 import { SHOT_TYPES } from '../engine/shottypes.js';
 
 // ---- BẢNG ÁNH XẠ (dễ sửa): số nhân vật (0,1,2,3=3 trở lên) × camera.loai → type của engine/shottypes.js ----
-// Camera thật luôn lấy từ kit (cam.p→p2, l→l2) nên `type` chỉ quyết định diễn viên mặc định + nhãn; chọn type có sẵn đúng luật camera.
+// Camera thật luôn lấy từ kit (cam.p→[pm]→p2, l→[lm]→l2) nên `type` chỉ quyết định diễn viên mặc định + nhãn; chọn type có sẵn đúng luật camera.
 export const ANH_XA = {
   0: { zoomIn: 'insert', zoomOut: 'establish', lia: 'establish', theo: 'establish', dung: 'insert', doiHuong: 'establish' },
   1: { zoomIn: 'closeup', zoomOut: 'reveal', lia: 'walkBy', theo: 'follow', dung: 'reaction', doiHuong: 'reaction' },
@@ -60,7 +61,7 @@ export function kitSangShots(bangShot, kit, goc = {}) {
     const n = ids.length;
     const loai = bs.camera.loai;
     const type = chonLoai(bs, n);
-    const may = k.may, dau = may.dau, cuoi = bs.hinh >= 2 ? may.cuoi : null;
+    const may = k.may, dau = may.dau, cuoi = bs.hinh >= 2 ? may.cuoi : null, giua = bs.hinh === 3 && cuoi ? may.giua : null;
 
     // người chính / người phụ
     const kn = (id) => (k.nhanVat || []).find((x) => x.id === id);
@@ -75,6 +76,10 @@ export function kitSangShots(bangShot, kit, goc = {}) {
     if (cuoi) {
       cam.p2 = T.diem(cuoi.p); cam.l2 = T.diem(cuoi.nhin);
       if (cuoi.fov !== dau.fov) cam.fov2 = cuoi.fov;
+    }
+    if (giua) {   // điểm giữa: máy đi đầu → giữa → cuối (đổi hướng, vòng cung)
+      cam.pm = T.diem(giua.p); cam.lm = T.diem(giua.nhin);
+      if (giua.fov !== (dau.fov + cuoi.fov) / 2) cam.fovm = giua.fov;
     }
 
     // diễn viên (toạ độ thế giới; kit đã chuẩn hoá hướng 0 = mặt +Z, độ → rad)
@@ -94,6 +99,11 @@ export function kitSangShots(bangShot, kit, goc = {}) {
         c.anim = 'idle';
         if (['walkBy', 'follow', 'chase'].includes(type)) c.to = null;   // loại này tự thêm `to`: ép đứng yên
       }
+      if (bs.hinh === 3 && e.giua && (dist3(e.giua, a) > NGUONG_DICH / 5 || dist3(e.giua, b) > NGUONG_DICH / 5)) {
+        c.atm = T.diem(e.giua);
+        if (!dich) c.ease = 'linear';   // đứng tại chỗ mà có điểm giữa (nhảy lên rồi rơi): parabol theo thời gian đều = quỹ đạo ném
+        chuyenDong.push(`${id} qua giữa [${c.atm}]`);
+      }
       cast[id] = c;
     }
 
@@ -107,10 +117,8 @@ export function kitSangShots(bangShot, kit, goc = {}) {
     // ---- chú thích ----
     note(bs.id, 'info', `${loai}/${bs.camera.gocMay}/${(bs.camera.coKhung || []).join('>')} → ${type}`
       + (chuyenDong.length ? `; ${chuyenDong.join(', ')}` : '') + (bs.hanhDong ? `; ${bs.hanhDong}` : ''));
-    if (bs.hinh === 3) {
-      note(bs.id, 'sua-tay', 'có khung giữa (engine chỉ nội suy p→p2, không có điểm giữa: shots.js thiếu cam.p3; đã dùng đầu→cuối)');
-    }
-    if (loai === 'doiHuong') note(bs.id, 'sua-tay', 'doiHuong không có loại shot riêng (đổi hướng giữa shot): dựng tay/tách thành 2 shot');
+    if (bs.hinh === 3 && !giua) note(bs.id, 'sua-tay', 'hinh 3 nhưng kit thiếu may.giua: đã dùng đầu→cuối');
+    if (loai === 'doiHuong' && !giua) note(bs.id, 'sua-tay', 'doiHuong cần may.giua (điểm giữa) để đổi hướng giữa shot');
     if (type === 'crowd') note(bs.id, 'sua-tay', '≥3 nhân vật dùng type crowd nhưng diễn viên lấy từ cast kit (crowd cần ctx.crowd để bày thêm người)');
     if (k.tinCay === 'thap') note(bs.id, 'sua-tay', 'tinCay thấp: số đo kit không chắc, xem lại khung');
 
@@ -138,8 +146,8 @@ export function dungModule(res, ep) {
       ...nhan(s.id, 'sua-tay').map((m) => `CẦN SỬA TAY: ${m}`)].map(dong).join(' · ');
     return `  { ${body} },  // ${cm}`;
   });
-  return `// ${ep} — ${res.shots.length} shot, sinh bởi tools/kit-shots.mjs từ kit.json (camera đầu→cuối, nhân vật đầu→cuối).\n`
-    + '// Mỗi dòng 1 shot theo LOẠI (engine/shottypes.js); cam.p→p2 / l→l2 / fov→fov2 là camera thật. Chỗ "CẦN SỬA TAY" Claude sửa tiếp.\n'
+  return `// ${ep} — ${res.shots.length} shot, sinh bởi tools/kit-shots.mjs từ kit.json (camera đầu→[giữa]→cuối, nhân vật đầu→[giữa]→cuối).\n`
+    + '// Mỗi dòng 1 shot theo LOẠI (engine/shottypes.js); cam.p→p2 / l→l2 / fov→fov2 là camera thật; pm / lm / fovm / cast.atm = điểm giữa của shot 3 hình. Chỗ "CẦN SỬA TAY" Claude sửa tiếp.\n'
     + `export const SHOTS = [\n${lines.join('\n')}\n];\n`;
 }
 

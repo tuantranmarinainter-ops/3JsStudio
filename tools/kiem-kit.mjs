@@ -64,7 +64,8 @@ export function kiemKit(bangShot, kit, { files = null } = {}) {
       if (!e) { L(id, `thiếu toạ độ nhân vật "${n}"`); continue; }
       if (!vec3(e.dau)) L(id, `nhân vật "${n}" thiếu toạ độ dau`);
       if (s.hinh >= 2 && !vec3(e.cuoi)) L(id, `nhân vật "${n}" thiếu toạ độ cuoi`);
-      for (const m of ['dau', 'cuoi']) {
+      if (e.giua !== undefined && !vec3(e.giua)) L(id, `nhân vật "${n}" có giua nhưng không phải [x,y,z]`);
+      for (const m of ['dau', 'giua', 'cuoi']) {   // giua tuỳ chọn (shot hinh:3: vị trí ở khung giữa, y > 0 = đang nhảy)
         const p = e[m];
         if (vec3(p) && bc && bc.rong > 0 && bc.sau > 0 && (Math.abs(p[0]) > bc.rong / 2 || Math.abs(p[2]) > bc.sau / 2))
           L(id, `nhân vật "${n}" ngoài bối cảnh ở ${m}: [${p}] vượt ${bc.rong}×${bc.sau}`);

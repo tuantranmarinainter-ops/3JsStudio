@@ -63,7 +63,7 @@ Quy tắc (bộ kiểm phải bắt):
 Gốc toạ độ ở **tâm sàn bối cảnh** (|x| ≤ `rong`/2, |z| ≤ `sau`/2, y = 0 là sàn). Shot `hinh: 1` chỉ có file `_dau`.
 
 Quy tắc: mọi shot của bảng shot phải có trong kit; `may.dau` bắt buộc, `may.cuoi` bắt buộc khi `hinh` ≥ 2 (và `may.giua` khi `hinh: 3`);
-mỗi nhân vật của shot có toạ độ `dau` (và `cuoi` khi `hinh` ≥ 2); `cao` nhân vật trong 1–8 stud; `fov` 15–90; `p[1]` (độ cao máy) > 0 và < `cao` bối cảnh;
+mỗi nhân vật của shot có toạ độ `dau` (và `cuoi` khi `hinh` ≥ 2; `giua` tuỳ chọn khi `hinh: 3` — vị trí ở khung giữa, y > 0 = đang ở trên không); `cao` nhân vật trong 1–8 stud; `fov` 15–90; `p[1]` (độ cao máy) > 0 và < `cao` bối cảnh;
 toạ độ nhân vật nằm trong `rong`×`sau` của bối cảnh; `luma` 85–150; `tinCay` ∈ `cao | vua | thap` (`thap` là cảnh báo; quá 20% shot `thap` là lỗi);
 shot `hinh` ≥ 2 mà `may.dau` giống hệt `may.cuoi` và nhân vật không đổi chỗ → lỗi "không có chuyển động"; đủ file hình trong `hinh/` theo `hinh`;
 chuỗi có ký tự `�` hoặc `?` nằm giữa chữ cái tiếng Việt → lỗi hỏng dấu.
@@ -80,6 +80,14 @@ chuỗi có ký tự `�` hoặc `?` nằm giữa chữ cái tiếng Việt →
 Bộ mẫu để test: `tools/tests/fixtures/dau-vao-mau/` (bang-shot.json 6 shot = 12 hình, kit.json đạt). Test: `node --test tools/tests/kiem-bang-shot.test.mjs tools/tests/kiem-kit.test.mjs tools/tests/codex-ve.test.mjs tools/tests/duyet-bang-shot.test.mjs` (57 test, dùng Codex giả `tools/tests/fixtures/codex-gia.mjs`).
 
 **Chưa kiểm thật:** gọi `codex` thật trên Windows (trích dẫn lệnh, `gpt-6-luna` có vẽ được hình không); trang duyệt chưa được xem bằng mắt.
+
+## Shot 3 hình → điểm giữa của engine
+`tools/kit-shots.mjs` đổi shot `hinh: 3` thành shot có ĐIỂM GIỮA (`docs/core.md` mục "Điểm giữa của shot"): `may.giua` → `cam.pm` / `cam.lm` / `cam.fovm`;
+`nhanVat[].giua` → `cast.<tên>.atm` (nhân vật đứng tại chỗ mà có `giua`, vd. nhảy lên rồi rơi, được thêm `ease: 'linear'` để ra quỹ đạo ném).
+Máy và nhân vật đi theo đường cong mượt đầu → giữa → cuối; `camera.loai: "doiHuong"` dùng chính điểm giữa này, không có loại shot riêng.
+Không còn ghi chú `CẦN SỬA TAY: có khung giữa`; chỉ còn khi `hinh: 3` mà kit thiếu `may.giua`.
+`tools/kiem-chuyen-dong.mjs --kit …` so thêm mẫu GIỮA shot với `may.giua` và `nhanVat[].giua` (ngưỡng như đầu/cuối) → lỗi `LỆCH KIT (giữa): …`.
+Chưa có: hướng thân ở khung giữa trong kit (engine có `cast.<tên>.rym`, ghi tay), `tm` khác 0,5 trong kit, động tác (anim) riêng cho cú nhảy.
 
 ## Đổi toạ độ
 

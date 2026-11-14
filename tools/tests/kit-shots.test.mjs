@@ -54,11 +54,20 @@ test('camera đầu/cuối và nhân vật khớp kit', () => {
   assert.equal(s006.cast.ga.anim, 'run');   // 28 stud / 1,1 s > ngưỡng chạy
 });
 
-test('hinh:3 ghi chú CẦN SỬA TAY khung giữa; vi phạm luật được đếm', () => {
+test('hinh:3 dùng điểm giữa của engine (cam.pm/lm/fovm, cast.atm), không còn CẦN SỬA TAY; vi phạm luật được đếm', () => {
   const r = kitSangShots(bs(), kit());
-  assert.ok(r.ghiChu.some((g) => g.id === 's005' && g.loai === 'sua-tay' && /khung giữa/.test(g.msg)));
+  const s005 = r.shots.find((s) => s.id === 's005'), k5 = kit().shots.find((s) => s.id === 's005');
+  assert.deepEqual(s005.cam.pm, k5.may.giua.p); assert.deepEqual(s005.cam.lm, k5.may.giua.nhin);
+  assert.equal(s005.cam.fovm, 38);                       // 38 ≠ trung bình (38+40)/2 → ghi fovm
+  assert.deepEqual(s005.cast.ga.atm, [0, 1.6, 3]);       // Gà nhảy lên ở khung giữa
+  assert.equal(s005.cast.ga.to, undefined); assert.equal(s005.cast.ga.ease, 'linear');
+  assert.ok(!r.ghiChu.some((g) => g.id === 's005' && g.loai === 'sua-tay'));
+  for (const s of r.shots) if (s.id !== 's005') { assert.equal(s.cam.pm, undefined); for (const c of Object.values(s.cast || {})) assert.equal(c.atm, undefined); }
   const mod = dungModule(r, 'mau');
-  assert.match(mod.split('\n').find((l) => l.includes('"s005"')), /CẦN SỬA TAY: có khung giữa/);
+  assert.doesNotMatch(mod.split('\n').find((l) => l.includes('"s005"')), /CẦN SỬA TAY/);
+  // hinh:3 mà kit thiếu may.giua → vẫn báo sửa tay
+  const kThieu = kit(); delete kThieu.shots.find((s) => s.id === 's005').may.giua;
+  assert.ok(kitSangShots(bs(), kThieu).ghiChu.some((g) => g.id === 's005' && g.loai === 'sua-tay' && /may\.giua/.test(g.msg)));
   // s005: 1 nhân vật mà máy lùi ra (doiHuong) → vi phạm luật
   assert.ok(r.ghiChu.some((g) => g.id === 's005' && g.loai === 'luat' && /zoom out/.test(g.msg)));
 });

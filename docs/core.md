@@ -178,6 +178,17 @@ Mỗi lần chụp ≤ 12 khung, mỗi agent dùng `--out` riêng.
 3. Cần biển có đảo/bờ riêng: tạo `engine/envs/<tên>.js` gọi `makeSea(g, {…, rate})` + `update(t) { e.sea(t) }`. Phần nổi, sự kiện và thời tiết tự có.
 4. Kiểm bằng `look.mjs --shots … --det` và `engine/sea-lab.html`.
 
+## Điểm giữa của shot — `engine/diem-giua.js` (đầu → giữa → cuối)
+Tuỳ chọn, cho shot 3 hình (nhảy, ngã, quay người, camera đổi hướng). Không ghi trường nào ⇒ kết quả y hệt trước (p→p2 thẳng).
+- **Camera tuyệt đối:** `cam.pm` (vị trí), `cam.lm` (điểm nhìn), `cam.fovm`. **Camera quỹ đạo:** `yawm`, `hm`, `distm`, `lookm`, `fovm`.
+- **Diễn viên:** `cast.<tên>.atm: [x,y,z]` (kể cả độ cao y → cú nhảy), `cast.<tên>.rym` (hướng thân ở giữa). **Đạo cụ:** `props.<tên>.atm`.
+- `tm` (trong `cam` / `cast.<tên>` / `props.<tên>`) = tiến độ THỜI GIAN của điểm giữa trong shot, 0..1, mặc định 0.5 (kẹp 0.05–0.95 sau easing).
+- Đường đi là MỘT parabol qua đúng 3 điểm (= Bézier bậc hai) → không gãy, không giật ở giữa; easing của shot (`ease`) vẫn áp như cũ, điểm giữa rơi đúng lúc k = `tm`.
+- Thiếu điểm cuối (`p2`, `to`, `ry2`…) mà có điểm giữa ⇒ cuối = đầu: `{ at:[0,0,3], atm:[0,1.6,3], ease:'linear' }` = nhảy tại chỗ theo quỹ đạo ném.
+- Nối shot (`shottypes.js` remember) vẫn lấy vị trí/hướng CUỐI (`to || at`, `ry2 ?? ry`), không lấy điểm giữa.
+- `camera.loai: "doiHuong"` của bảng shot KHÔNG có loại shot riêng: điểm giữa đã đủ (máy đi p → pm → p2, nhìn l → lm → l2); `tools/kit-shots.mjs` tự ghi từ `may.giua`.
+- Ví dụ: `cam: { p:[3,2.5,6], l:[0,2,3], fov:38, pm:[4,3,6], lm:[0,3.5,3], fovm:38, p2:[5,2.5,5], l2:[0,2,3], fov2:40 }`. Test: `tools/tests/diem-giua.test.mjs`.
+
 ## furnish — `engine/furnish.js` (bày đồ đạc bằng dữ liệu)
 Mỗi phòng khai MỘT mảng layout (1 món = 1 dòng); không viết tay vị trí/kích thước. Nguồn nội thất CC0: KayKit Furniture Bits (`kaykit:`, 53 món, `assets/kaykit/furniture/`), Kenney Furniture Kit (`kenney:`, 140 món, `assets/kenney/furniture-kit/`), đồ quét Poly Haven (`scan:`). Đơn vị chuẩn hoá về stud: KayKit ×2.4, Kenney ×6.5, scan ×2.9 (`KITS` trong file). Danh sách tên món: `assets/manifest.json` (`kaykit/…`, `furniture-kit/…`, `polyhaven/…`).
 ```js
