@@ -10,8 +10,8 @@ Chốt đợt nào → nhập + thay vào bối cảnh đó → `look.mjs` + `sh
 | 1 | tiệm bánh + tiệm may, 14 món × 5 ứng viên | ĐÃ CHỐT 13 món, đã thay vào `engine/envs/e3-tiem.js` (biển bị loại) |
 | 2 | biển tiệm bánh, 10 ứng viên mới | CHỜ DUYỆT |
 | 3 | SKY 6 mặt cho từng thời điểm (ngày, hoàng hôn, đêm) — `tools/sky-extract/`, `tools/sky-import.mjs`, `engine/sky-lab.html?sky=` | chưa |
-| 4 | NHÀ ngoại thất: nhà Gà, tiệm gấu, tiệm bánh, tiệm may, nhà thị trưởng, nhà ngã ba, nhà máy, nhà nền (chọn nhiều) | chưa |
-| 5 | PHỐ: đèn đường, trụ chặn, cây (chọn nhiều), ghế, hộp hoa, chậu cây (chọn nhiều), biển treo, bàn trưng, cổng rào, tháp chuông, đường/vỉa hè/biển báo | chưa |
+| 4 | NHÀ ngoại thất: nhà Gà, tiệm gấu, tiệm bánh, tiệm may, nhà thị trưởng, nhà ngã ba, nhà máy xa, tháp chuông, nhà nền (chọn nhiều) — 9 món × 10 mẫu | CHỜ DUYỆT (`duyet/ep003/dot-03.json`, nhóm `roblox-nha`) — chưa thay gì trong `e3-pho.js` |
+| 5 | PHỐ: đèn đường, trụ chặn, cây (chọn nhiều), ghế, hộp hoa, chậu cây (chọn nhiều), biển treo, bàn trưng, cổng rào, mái hiên xanh lam, đường/vỉa hè/biển báo | chưa |
 | 6 | nhà máy nội thất (15 món) | chưa |
 | 7 | phòng Gà (11 món) | chưa |
 | 8 | đạo cụ nhỏ (10 món) | chưa |
@@ -38,4 +38,21 @@ Kiểm kê đủ 71 món (file, shot, cỡ stud): `output/ep003/roblox/kiem-ke.j
 - s005 (nhìn vào hốc dưới quầy) khó đọc từ TRƯỚC khi thay đồ (bản `?rb=0` giống hệt) — lỗi máy quay, chưa sửa.
 - s004: kệ bánh không vào khung (máy nhìn thợ bánh). s006: tay chưa chạm hộp, nhẫn nằm ngoài hộp (đạo cụ cũ).
 - Shader ep003 ~139 program, mở 16 s — vượt ngưỡng từ trước (bản cũ 137); đồ Roblox chỉ thêm 2.
+- `roblox.mjs xem/tai` hỏng với vài mẫu cũ: sky-extract dump báo `Unexpected XML event StartElement(binary…)` hoặc `Invalid character U+0000`
+  (3459094, 23692279, 89288354, 98709097) → bỏ, chọn mẫu khác. Mẫu cần > 40 request (410340121, 6296379649) cũng bỏ.
+- Tìm "toy store" ra toàn Toys R Us / hộp trống; "tailor shop" gần như không có → tiệm gấu và tiệm may lấy tiệm nhỏ có hiên, thêm biển riêng sau.
 - `assets/manifest.json` có dòng `faces/emote37` do phiên khác `git add` sẵn → commit manifest theo đường dẫn sẽ kéo theo dòng đó; báo phiên điều phối.
+
+## Đợt 4 — nhà (14/11)
+- File làm việc (không vào git): `output/ep003/roblox/` — `tim/nha_<khoá>_<n>.json` (63 từ khoá), `tim/nhagop_<mon>.json` (gộp, số `#n` của lưới),
+  `chon-nha.json` (10 chọn + dự phòng theo id), `xem-nha.json` (part/mesh/số request từng mẫu), `loai-nha.json` (mẫu bị loại + lý do),
+  `soi-nha.json` (kết quả soi GLB), `glb/<id>.glb`, `duyet/<id>.jpg` (ảnh [Roblox | GLB] nhúng vào trang).
+- Script thêm ở `output/_tmp/`: `rb-gop-nha.mjs` (gộp kết quả tìm), `rb-luoi2.py` (lưới 5×4 có phân trang), `rb-chon-nha.mjs` (số #n → id, bỏ trùng),
+  `rb-xem-nha.mjs` (ước lượng request bằng `roblox.mjs xem`), `rb-chot-nha.mjs [--sau-tai]` (loại mẫu lỗi, đôn dự phòng),
+  `rb-ghep2.py` (tấm soi 5 hàng/ảnh), `rb-ungvien-nha.mjs` (file ứng viên; khe `pho_nha_nen_dong` gộp dãy đông + hàng xa, `chonNhieu`).
+- Số liệu: 90 mẫu cần ~460 request tải + 131 request `xem`; 3 luồng tải song song, hết ~3 phút, không gặp 429.
+- Sau khi người dùng chốt: `duyet.mjs ep003 nhan <kết quả>` → `nhap-model.mjs nhap roblox:<id> --ten … --loai nha` → chép helper `rb()` sang `e3-pho.js`.
+  Kích cỡ GLB rất khác nhau (có mẫu 1×1×1, có mẫu 260 stud) → luôn đặt bằng `kich`/`cao`, không dùng scale gốc. Nhiều mẫu có nội thất / nền đất kèm theo:
+  cân nhắc `nen-model.mjs` hoặc cắt bớt trước khi nhân bản nhà nền (~32 căn).
+- Chưa có trong đợt này: `pho_hien_xanh_lam` (mái hiên Bắp ngồi, s042–s043) — phụ thuộc mẫu nhà nền được chọn, để sang đợt 5.
+
