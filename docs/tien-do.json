@@ -128,7 +128,7 @@
      "ten": "Bộ kit dựng phim tập 3 do Codex làm (nhân vật, mặt bằng bối cảnh, camera 104 shot, ánh sáng, tỉ lệ + vật liệu đồ vật)",
      "tt": "do",
      "pt": 45,
-     "ghiChu": "Codex chạy 4 lượt, kit bản 0.4 vẫn DỞ: có 14 bối cảnh với mặt bằng + điểm đứng, 21 đồ vật kèm vật liệu, 6 bộ đèn, 14 màu, 16 nhân vật, và mô tả bố trí từng nhân vật trong 104 ảnh; CHƯA giải được vị trí máy 3D (2/104), cả 104 shot tin cậy thấp. Đã giao phiên tập 3 dùng phần có sẵn + bộ giải đặt máy của engine"
+     "ghiChu": "14/11 chiều: người dùng chê tiếng nền ồ ồ → lọc ù dưới 180 Hz (layers.json nen.hp), hạ đỉnh lớp nền 0,35 → 0,12, giảm băng chuyền + tiếng phòng; nền giờ nhỏ hơn nhạc. Chờ người dùng nghe lại. Codex chạy 4 lượt, kit bản 0.4 vẫn DỞ: có 14 bối cảnh với mặt bằng + điểm đứng, 21 đồ vật kèm vật liệu, 6 bộ đèn, 14 màu, 16 nhân vật, và mô tả bố trí từng nhân vật trong 104 ảnh; CHƯA giải được vị trí máy 3D (2/104), cả 104 shot tin cậy thấp. Đã giao phiên tập 3 dùng phần có sẵn + bộ giải đặt máy của engine"
     },
     {
      "ten": "Vật liệu theo chất liệu (gỗ ra gỗ, vải ra vải…)",
