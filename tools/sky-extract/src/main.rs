@@ -59,8 +59,25 @@ fn main() -> ExitCode {
             }
         };
     }
+    if args.first().map(String::as_str) == Some("dump") {
+        let Some(f) = args.get(1) else {
+            eprintln!("Cách dùng: sky-extract dump <file.rbxm|.rbxmx>");
+            return ExitCode::from(2);
+        };
+        return match sky_extract::dump::dump_parts(Path::new(f)) {
+            Ok(v) => {
+                println!("{v}");
+                ExitCode::SUCCESS
+            }
+            Err(e) => {
+                eprintln!("Lỗi: {e}");
+                ExitCode::FAILURE
+            }
+        };
+    }
     let Some(arg) = args.first().cloned() else {
         eprintln!("Cách dùng: sky-extract <file.rbxm|.rbxl|.rbxmx|.rbxlx>");
+        eprintln!("           sky-extract dump <file.rbxm|.rbxmx>   (in JSON mọi BasePart)");
         eprintln!("           sky-extract mesh <input.mesh|file cache> <output.obj|output.glb>");
         eprintln!("Muốn dùng giao diện, mở sky-studio.exe");
         return ExitCode::from(2);

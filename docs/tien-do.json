@@ -30,13 +30,15 @@
     },
     {
      "ten": "5. Kit → shots.js tự động",
-     "tt": "chua",
-     "ghiChu": "Đợt 2. Vừa. Chọn loại shot theo trường chuyển động, điền camera từ kit; Claude chỉ sửa shot lệch."
+     "tt": "dang",
+     "ghiChu": "Đợt 2. Vừa. Chọn loại shot theo trường chuyển động, điền camera từ kit; Claude chỉ sửa shot lệch.",
+     "pt": 20
     },
     {
      "ten": "6. Kiểm chuyển động",
-     "tt": "chua",
-     "ghiChu": "Đợt 2. Vừa. Chụp khung đầu và cuối mỗi shot, so với hình đầu/cuối của storyboard; báo shot đứng im hoặc đi sai hướng."
+     "tt": "dang",
+     "ghiChu": "Đợt 2. Vừa. Chụp khung đầu và cuối mỗi shot, so với hình đầu/cuối của storyboard; báo shot đứng im hoặc đi sai hướng.",
+     "pt": 20
     },
     {
      "ten": "7. Điểm khớp storyboard từng shot",
@@ -52,6 +54,12 @@
      "ten": "9. Nối R6 + 37 biểu cảm cho nhân vật phụ",
      "tt": "chua",
      "ghiChu": "Làm riêng. Lớn. Việc nền đã có từ trước, không phụ thuộc quy trình mới."
+    },
+    {
+     "ten": "10. Tìm và tải mẫu Roblox Creator Store (không cần Studio)",
+     "tt": "do",
+     "pt": 75,
+     "ghiChu": "Chạy được với khoá của bạn: node tools/roblox.mjs tim \"từ khoá\" / tai <id> → một GLB trong assets/nhap/. Thử thật 4 mẫu, số tam giác khớp Creator Store (gấu bông 7016/7016). CHƯA: chưa ai nhìn GLB bằng mắt; mẫu thật chưa cái nào ra ảnh vân; Union và decal chưa hỗ trợ; chưa nối vào trang duyệt nhiều ứng viên."
     }
    ]
   },

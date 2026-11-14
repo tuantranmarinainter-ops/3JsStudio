@@ -1,5 +1,6 @@
 //! Đọc file Roblox (.rbxm, .rbxl, .rbxmx, .rbxlx) và lấy ID ảnh của các đối tượng `Sky`.
 
+pub mod dump;
 pub mod mesh;
 
 use std::{fs::File, io::BufReader, path::Path};
