@@ -141,6 +141,12 @@
      "tt": "dang",
      "pt": 25,
      "ghiChu": "14/11: kiểm kê 71 món. ĐỢT 1 tiệm bánh + tiệm may: người dùng chốt 13/14 món → đã nhập (nhap-model roblox:) và thay vào e3-tiem.js (?rb=0 = bản khối cũ); soi s004 đạt, s006/s007 lỗi nhẹ, s005 lỗi máy quay có từ trước. ĐỢT 2 biển tiệm bánh (10 mẫu mới) chờ duyệt. Trang duyệt có nút chọn nhiều + 10 ứng viên/món từ nay. Còn: sky, nhà ngoại thất, phố, nhà máy, phòng Gà, đạo cụ nhỏ — kế hoạch docs/handoff/ep003-roblox.md."
+    },
+    {
+     "ten": "NPC Roblox cho Tập 4 (thay nhân vật, trừ Gà)",
+     "tt": "dang",
+     "pt": 35,
+     "ghiChu": "14/11: lập bảng 15 vai; phiên Roblox bổ sung đọc diện mạo NPC (áo, quần, màu thân, phụ kiện); tìm ~1200 mẫu, lọc + xem ảnh còn 85 ứng viên cho 9 vai. CHỜ NGƯỜI DÙNG DUYỆT: dist/ep003-npc_duyet.html. Khuyến nghị cách A (giữ xương R6 của engine, lấy áo quần + tóc mũ từ Roblox), giữ gấu GLB hiện tại. Chưa sửa engine."
     }
    ],
    "tap": "Tập 3"

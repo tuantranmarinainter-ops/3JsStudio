@@ -244,7 +244,7 @@ export function chuanHoa(dot) {
   d.nhom = (d.nhom || []).map(n => {
     n.anh = mang(n.anh);
     if (n.kieu === 'ung-vien') {
-      n.muc = (n.khe || n.muc || []).map(k => ({ id: k.id, chuDe: k.chuDe, ten: k.ten, phu: k.phu || '', anh: mang(k.anhHienTai ?? k.anh), ungVien: (k.ungVien || []).map(u => chuanMuc(u)) }));
+      n.muc = (n.khe || n.muc || []).map(k => ({ id: k.id, chuDe: k.chuDe, chonNhieu: k.chonNhieu || undefined, ten: k.ten, phu: k.phu || '', anh: mang(k.anhHienTai ?? k.anh), ungVien: (k.ungVien || []).map(u => chuanMuc(u)) }));
       delete n.khe;
     } else {
       n.muc = (n.muc || []).map(m => chuanMuc(m, n.kieu));

@@ -1,0 +1,1364 @@
+{
+ "so": 1,
+ "ngay": "2026-11-14",
+ "tieuDe": "NPC Roblox cho Tập 4 (Gà và Bắp) — chọn nhân vật",
+ "tomTat": "Chọn nhân vật Roblox thay cho các vai của Tập 4 (trừ Gà). Chưa đổi gì trong phim — chốt xong mới làm.",
+ "token": {
+  "tong": 0,
+  "chiTiet": [],
+  "ghiChu": ""
+ },
+ "nhom": [
+  {
+   "id": "npc-roblox",
+   "ten": "Nhân vật Roblox cho Tập 4 — mỗi vai chọn mẫu",
+   "kieu": "ung-vien",
+   "anh": [],
+   "mota": "Ảnh = ảnh gốc trên Creator Store (bấm \"Creator Store\" để xem trang mẫu). Ứng viên đầu mỗi vai là khuyên dùng. KHUYẾN NGHỊ cách đưa vào phim — CÁCH A: giữ bộ xương R6 của engine (mọi động tác đi/chạy/ôm/cầm đồ + bộ mặt biểu cảm đang có dùng được ngay), chỉ lấy DIỆN MẠO của mẫu Roblox: màu da, ảnh áo + quần dán theo khuôn R6 chuẩn, tóc/mũ/kính gắn lên đầu. Mặt vẫn dùng bộ mặt của engine (để đổi biểu cảm được) nên mặt trong phim sẽ KHÁC mặt trong ảnh. Cách B (nhập nguyên mô hình thành GLB) cho ra tượng đứng yên, phải dựng xương + làm lại toàn bộ động tác → không khuyên. Chưa có ảnh \"bản đã tải\" ở vòng này vì bản GLB tĩnh không có áo quần (nhìn sẽ sai); sau khi bạn chốt, mỗi mẫu được chọn sẽ dựng thật trong engine rồi gửi ảnh so với ảnh gốc để duyệt lần 2. Mẫu nào Roblox không cho tải áo/tóc (riêng tư) sẽ báo và lấy mẫu kế tiếp.",
+   "muc": [
+    {
+     "id": "npc_bach",
+     "ten": "Ông Bách — chủ tiệm gấu bông (20 shot, 8 shot cận mặt)",
+     "phu": "hiện: thân R6 tự vẽ (tóc muối tiêu, kính tròn, áo len kem, tạp dề cam). Động tác: đứng, cầm đồ, chỉ tay, vẫy. Chọn MỘT.",
+     "ungVien": [
+      {
+       "id": "bach__1",
+       "ten": "李爺",
+       "anh": [
+        ".cache/roblox/18541446276/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/18541446276",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "18541446276",
+       "tacGia": "tigerNOOB001",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 6030,
+       "phu": "ông già tóc xám, kính, sơ mi caro xám, quần đen · hợp nhất: hiền, có kính + tóc bạc; chưa có tạp dề · R6 · áo ✅ quần ✅ · phụ kiện 1: HipsterGlasses"
+      },
+      {
+       "id": "bach__2",
+       "ten": "Old Man Startercharacter R6 Mannequin Avatar Rig",
+       "anh": [
+        ".cache/roblox/70644652180683/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/70644652180683",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "70644652180683",
+       "tacGia": "Lunaw8509",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3243,
+       "phu": "ông già tóc + râu bạc, cười hiền, áo khoác caro tối, quần đen · rất hợp; không kính, không tạp dề (gắn thêm được) · R6 · áo ✅ quần ✅ · phụ kiện 2: Accessory (White Gentleman's Beard), Accessory (defaultAccessory)"
+      },
+      {
+       "id": "bach__3",
+       "ten": "Old Steampunk Man",
+       "anh": [
+        ".cache/roblox/126608988/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/126608988",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "126608988",
+       "tacGia": "AmericanSkeleton",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 4914,
+       "phu": "ông già tóc trắng, kính, gile nâu, áo trắng · tóc bạc + kính; hơi steampunk · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 1: WhiteCharmerHair"
+      },
+      {
+       "id": "bach__4",
+       "ten": "shopkeeper [M:RP]",
+       "anh": [
+        ".cache/roblox/15816956489/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/15816956489",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "15816956489",
+       "tacGia": "Jordan115413",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1066,
+       "phu": "ông hói, gile đen, sơ mi xám · ra dáng chủ tiệm; mặt ít nét · R6 · áo ✅ quần ✅ · phụ kiện 0"
+      },
+      {
+       "id": "bach__5",
+       "ten": "Hershel twd",
+       "anh": [
+        ".cache/roblox/16037100653/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/16037100653",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "16037100653",
+       "tacGia": "elgatitotower",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2386,
+       "phu": "ông hói, áo hồng nhạt có dây đeo quần, quần nâu · hiền, khối vuông; gợi nhân vật Hershel (TWD) — cân nhắc · R6 · áo ✅ quần ✅ · phụ kiện 0"
+      },
+      {
+       "id": "bach__6",
+       "ten": "Shop Owner Shopkeeper NPC Merchant Store Clerk Man",
+       "anh": [
+        ".cache/roblox/131405452688512/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/131405452688512",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "131405452688512",
+       "tacGia": "Echostr7830",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1866,
+       "phu": "nam mũ cao bồi trắng, gile nâu · cười thân thiện; mũ cao bồi lệch vai · R6 · áo ✅ quần ✅ · phụ kiện 1: Haiti Gold"
+      },
+      {
+       "id": "bach__7",
+       "ten": "Shop Keeper 2 Shopkeeper NPC Merchant Vendor Shops",
+       "anh": [
+        ".cache/roblox/79287746635594/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/79287746635594",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "79287746635594",
+       "tacGia": "Zephwhis6105",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1466,
+       "phu": "nam mũ cao bồi vàng, áo nâu · áo tối, kém thân thiện · R6 · áo ✅ quần ✅ · phụ kiện 1: Tilted Hat"
+      },
+      {
+       "id": "bach__8",
+       "ten": "Shop Guy with Animation Shopkeeper Dummy R6 NPC",
+       "anh": [
+        ".cache/roblox/123152051193151/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/123152051193151",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "123152051193151",
+       "tacGia": "Frosw5825",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1622,
+       "phu": "nam mũ xô đen, áo sọc xanh ngọc · dễ thương nhưng không giống ông già · R6 · áo ✅ quần ✅ · phụ kiện 0"
+      },
+      {
+       "id": "bach__9",
+       "ten": "Frail Old Man Rig Elderly Grandpa Character Roblox",
+       "anh": [
+        ".cache/roblox/83527751194934/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/83527751194934",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "83527751194934",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2922,
+       "phu": "ông gần hói, ria xám, vest đen cà vạt · đúng tuổi; hơi trang trọng (cũng hợp thị trưởng) · R6 · áo ✅ quần ✅ · phụ kiện 5: WalrusAccessory, Cavanhaque em torno, WrinklesAccessory, Meshes/Grandpa HairAccessory, Malaysia Flag Pinned 1.0"
+      },
+      {
+       "id": "bach__10",
+       "ten": "Grandpa NPC!",
+       "anh": [
+        ".cache/roblox/4003555933/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/4003555933",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "4003555933",
+       "tacGia": "springthyef",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3544,
+       "phu": "ông cụ chống gậy, gile len · thân xám, mặt nhỏ · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 0"
+      }
+     ]
+    },
+    {
+     "id": "npc_mayor",
+     "ten": "Thị trưởng (16 shot, 4 cận mặt)",
+     "phu": "hiện: vest navy, cà vạt vàng, tóc bạc, ria trắng. Động tác: đứng, chỉ tay, đi, chạy. Chọn MỘT. Kho Roblox ít mẫu thị trưởng — chỉ tìm được 8.",
+     "ungVien": [
+      {
+       "id": "mayor__1",
+       "ten": "Frail Old Man Rig Elderly Grandpa Character Roblox",
+       "anh": [
+        ".cache/roblox/83527751194934/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/83527751194934",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "83527751194934",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2922,
+       "phu": "ông gần hói, ria xám, vest đen cà vạt · lớn tuổi + có ria + vest: rất hợp thị trưởng · R6 · áo ✅ quần ✅ · phụ kiện 5: WalrusAccessory, Cavanhaque em torno, WrinklesAccessory, Meshes/Grandpa HairAccessory, Malaysia Flag Pinned 1.0"
+      },
+      {
+       "id": "mayor__2",
+       "ten": "Walking Man NPC City Town Citizen Roleplay RP R6",
+       "anh": [
+        ".cache/roblox/87395712026439/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/87395712026439",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "87395712026439",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3374,
+       "phu": "nam mũ chóp đen, vest đen, sơ mi trắng, cười · tốt nhất, trang trọng; chưa có ria · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 1: WhiteBandTopHat"
+      },
+      {
+       "id": "mayor__3",
+       "ten": "Boss",
+       "anh": [
+        ".cache/roblox/84082880124207/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/84082880124207",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "84082880124207",
+       "tacGia": "GOOD_BROTHER2003",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2804,
+       "phu": "nam tóc đen, vest xanh navy, cà vạt, sơ mi trắng · hợp thị trưởng; trẻ hơn mong đợi · R6 · áo ✅ quần ✅ · phụ kiện 1: BrownNeatBoyHair"
+      },
+      {
+       "id": "mayor__4",
+       "ten": "Top Hat Kid (Old Model)",
+       "anh": [
+        ".cache/roblox/2595092661/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/2595092661",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "2595092661",
+       "tacGia": "funeer",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1510,
+       "phu": "nam mũ chóp xanh đen, áo đen · mũ chóp khối rõ; mặt ít biểu cảm · R6 · áo — quần — · phụ kiện 0"
+      },
+      {
+       "id": "mayor__5",
+       "ten": "Percy (R6)",
+       "anh": [
+        ".cache/roblox/136183056854717/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/136183056854717",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "136183056854717",
+       "tacGia": "LouBrawlerStars",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1066,
+       "phu": "nam hói, vest đen, sơ mi đỏ sẫm · trang trọng; không mũ · R6 · áo ✅ quần ✅ · phụ kiện 0"
+      },
+      {
+       "id": "mayor__6",
+       "ten": "[Best!] Mr. Retro Rich! Pack Vibe Roleplay Hangout",
+       "anh": [
+        ".cache/roblox/125723047266230/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/125723047266230",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "125723047266230",
+       "tacGia": "IvyArcade9",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 10501,
+       "phu": "nam mũ chóp hồng, vest hồng, gậy · kiểu thị trưởng hài; hồng chói · R6 · áo — quần — · thân lưới riêng (CharacterMesh) · phụ kiện 1: TopHatOfBlingBling"
+      },
+      {
+       "id": "mayor__7",
+       "ten": "Butler Psi",
+       "anh": [
+        ".cache/roblox/93687087768420/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/93687087768420",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "93687087768420",
+       "tacGia": "minecrath_e",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7154,
+       "phu": "nam kính râm, gile đen · giống quản gia; kính râm mất nét hiền · R6 · 9 mảnh"
+      },
+      {
+       "id": "mayor__8",
+       "ten": "office worker Mycha",
+       "anh": [
+        ".cache/roblox/16227191212/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/16227191212",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "16227191212",
+       "tacGia": "mychawertoletikklol",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3210,
+       "phu": "nam da xanh, cà vạt đỏ, sơ mi trắng · da xanh dương, không giống người · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 0"
+      },
+      {
+       "id": "mayor__9",
+       "ten": "Rainbow Tuxedo NPC",
+       "anh": [
+        ".cache/roblox/2188835885/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/2188835885",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "2188835885",
+       "tacGia": "Craz_ey",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 6238,
+       "phu": "vest + mũ cầu vồng, kính, gậy · loè loẹt, dự phòng · R6 · áo ✅ quần ✅ · phụ kiện 0"
+      }
+     ]
+    },
+    {
+     "id": "npc_mayor_ngu",
+     "ten": "Thị trưởng mặc đồ ngủ (5 shot, 2 cận mặt)",
+     "phu": "cùng người với thị trưởng: nếu theo cách A sẽ chỉ lấy BỘ PYJAMA của mẫu chọn ở đây, giữ đầu/tóc/ria của mẫu thị trưởng. Chọn MỘT. Kho ít mẫu — chỉ 6.",
+     "ungVien": [
+      {
+       "id": "mayor_ngu__1",
+       "ten": "Mike Pyjama Outfit",
+       "anh": [
+        ".cache/roblox/133054714076727/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/133054714076727",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "133054714076727",
+       "tacGia": "prettypartykid111",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 6666,
+       "phu": "người lớn, mũ len xanh lá, pyjama hoạ tiết xanh đậm · đúng đồ ngủ, ra dáng người lớn · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 3: Black Sided Hair, Black Sideburns, Pine Green Basic Beanie"
+      },
+      {
+       "id": "mayor_ngu__2",
+       "ten": "Micky Pyjama Outfit",
+       "anh": [
+        ".cache/roblox/77636066001909/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/77636066001909",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "77636066001909",
+       "tacGia": "prettypartykid111",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 5905,
+       "phu": "tóc xoăn nâu, pyjama sọc xanh đen · giống nam trưởng thành · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 1: Handle"
+      },
+      {
+       "id": "mayor_ngu__3",
+       "ten": "Sleeping boy morph",
+       "anh": [
+        ".cache/roblox/123126413388497/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/123126413388497",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "123126413388497",
+       "tacGia": "Oshibkaa167",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1066,
+       "phu": "đầu vàng kiểu noob, pyjama sọc xám xanh · khối cổ điển nhất · R6 · áo ✅ quần ✅ · phụ kiện 0"
+      },
+      {
+       "id": "mayor_ngu__4",
+       "ten": "Davy Pyjama Outfit",
+       "anh": [
+        ".cache/roblox/128936675496858/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/128936675496858",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "128936675496858",
+       "tacGia": "prettypartykid111",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 6017,
+       "phu": "tóc nâu thẳng, pyjama đen chấm màu · giống nữ, dự phòng · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 1: Handle"
+      },
+      {
+       "id": "mayor_ngu__5",
+       "ten": "Pajama Party Help  Bot",
+       "anh": [
+        ".cache/roblox/69033077/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/69033077",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "69033077",
+       "tacGia": "Planetaries",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3554,
+       "phu": "tóc vàng, pyjama hồng, dép thỏ · giống nữ, màu chói · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 1: LongHairHeadBand"
+      },
+      {
+       "id": "mayor_ngu__6",
+       "ten": "MidKnightStorm",
+       "anh": [
+        ".cache/roblox/340458677/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/340458677",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "340458677",
+       "tacGia": "MidKnightStorm",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2414,
+       "phu": "tóc đen, kính, pyjama sao vàng nền navy · dễ thương; trông trẻ · R6 · áo ✅ quần ✅ · phụ kiện 3: Nerd Glasses, SleepingHat, Ultra-Fabulous Hair"
+      }
+     ]
+    },
+    {
+     "id": "npc_linh",
+     "ten": "Hai lính gác (6 shot, không cận)",
+     "phu": "chọn HAI mẫu (hoặc một mẫu dùng cho cả hai, đổi màu cầu vai). Đã loại mọi mẫu có súng/dùi cui.",
+     "chonNhieu": true,
+     "ungVien": [
+      {
+       "id": "linh__1",
+       "ten": "Policeman Officer Uniform NPC Cop Roleplay Cops R6",
+       "anh": [
+        ".cache/roblox/103995304624696/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/103995304624696",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "103995304624696",
+       "tacGia": "Storflin6564",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1492,
+       "phu": "mũ cảnh sát xanh, áo xanh, cà vạt, quần đen · tốt nhất: không vũ khí, đồng phục rõ · R6 · áo ✅ quần ✅ · phụ kiện 1: Cap"
+      },
+      {
+       "id": "linh__2",
+       "ten": "Police Man Officer NPC Model Cop Uniform Policeman",
+       "anh": [
+        ".cache/roblox/107895271287060/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/107895271287060",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "107895271287060",
+       "tacGia": "Sparkx0570",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 4990,
+       "phu": "mũ cảnh sát xanh, áo xanh, cà vạt · cùng kiểu, làm cặp với mẫu 1 · R6 · áo ✅ quần ✅ · phụ kiện 0"
+      },
+      {
+       "id": "linh__3",
+       "ten": "Police Epic Face Pet *Testing Only*",
+       "anh": [
+        ".cache/roblox/121204619/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/121204619",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "121204619",
+       "tacGia": "dreamscape_90",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1066,
+       "phu": "không mũ, áo xanh, mặt cười · cùng bộ đồng phục · R6 · áo ✅ quần ✅ · phụ kiện 0"
+      },
+      {
+       "id": "linh__4",
+       "ten": "Police NPC Officer Model Rig NPCs Man Character R6",
+       "anh": [
+        ".cache/roblox/133178236320262/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/133178236320262",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "133178236320262",
+       "tacGia": "Frosw5825",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3784,
+       "phu": "mũ xanh, áo xanh, tai nghe · không súng · R6 · áo ✅ quần ✅ · phụ kiện 0"
+      },
+      {
+       "id": "linh__5",
+       "ten": "Security Guard",
+       "anh": [
+        ".cache/roblox/8830313989/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/8830313989",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "8830313989",
+       "tacGia": "operativeIy",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 5860,
+       "phu": "tóc đen, áo trắng, quần đen, huy hiệu · gọn, hiền; kém \"lính\" · R6 · áo ✅ quần ✅ · phụ kiện 2: Johnny Hair, Security Cap"
+      },
+      {
+       "id": "linh__6",
+       "ten": "officer jaden",
+       "anh": [
+        ".cache/roblox/1825110003/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/1825110003",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "1825110003",
+       "tacGia": "EndAllFilms",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 5112,
+       "phu": "mũ cảnh sát bang, sơ mi be, quần nâu · dây lưng có thể có bao súng (sẽ bỏ) · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 1: Canadian"
+      },
+      {
+       "id": "linh__7",
+       "ten": "BrokeSecurity",
+       "anh": [
+        ".cache/roblox/8998067473/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/8998067473",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "8998067473",
+       "tacGia": "BrokeSecurity",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2854,
+       "phu": "mũ lưỡi trai xanh, áo xám xanh · mặt xanh dương · R6 · áo ✅ quần ✅ · phụ kiện 2: Black Square Glasses, Security Cap"
+      },
+      {
+       "id": "linh__8",
+       "ten": "Bouncer",
+       "anh": [
+        ".cache/roblox/366774931/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/366774931",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "366774931",
+       "tacGia": "SvintBaby",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2000,
+       "phu": "mũ đen kính đỏ, áo đen SECURITY · hơi hầm hố · R6 · áo ✅ quần ✅ · phụ kiện 2: BH6Glasses, PercyJacksonHalfBloodCap"
+      },
+      {
+       "id": "linh__9",
+       "ten": "R.S.P (Roblox Speacial or super police)",
+       "anh": [
+        ".cache/roblox/13189886/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/13189886",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "13189886",
+       "tacGia": "SigismundI",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2634,
+       "phu": "mũ rằn ri, áo xanh dương, thắt lưng vàng · hơi quân sự · R6 · 7 mảnh"
+      }
+     ]
+    },
+    {
+     "id": "npc_banh",
+     "ten": "Người làm bánh (3 shot, 1 cận)",
+     "phu": "hiện: mũ đầu bếp kem, áo đỏ nâu, tạp dề kem. Chọn MỘT.",
+     "ungVien": [
+      {
+       "id": "banh__1",
+       "ten": "Chef NPC",
+       "anh": [
+        ".cache/roblox/6270043601/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/6270043601",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "6270043601",
+       "tacGia": "Eupherium",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2048,
+       "phu": "nam râu nâu, mũ đầu bếp cao, áo đầu bếp · tốt nhất: đủ mũ + áo, hiền · R6 · áo ✅ quần ✅ · phụ kiện 1: Beard"
+      },
+      {
+       "id": "banh__2",
+       "ten": "chef Helpbot. ",
+       "anh": [
+        ".cache/roblox/78435647/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/78435647",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "78435647",
+       "tacGia": "Disasterman1111",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2684,
+       "phu": "da nâu, mũ cao, áo trắng \"Head Chef\" · đủ đồ nghề, cười · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 0"
+      },
+      {
+       "id": "banh__3",
+       "ten": "Chef Rig",
+       "anh": [
+        ".cache/roblox/5464949801/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/5464949801",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "5464949801",
+       "tacGia": "silly_temmie",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 9070,
+       "phu": "mũ cao, áo trắng cài cúc, cầm đĩa · rõ vai đầu bếp · R6 · áo ✅ quần ✅ · phụ kiện 0"
+      },
+      {
+       "id": "banh__4",
+       "ten": "Chef Character",
+       "anh": [
+        ".cache/roblox/6951097043/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/6951097043",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "6951097043",
+       "tacGia": "NoTimeForAdventure",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3402,
+       "phu": "kiểu noob đầu vàng, mũ đầu bếp · khối cổ điển nhất · R6 · áo — quần — · phụ kiện 1: ChefSupreme"
+      },
+      {
+       "id": "banh__5",
+       "ten": "Chef Kris",
+       "anh": [
+        ".cache/roblox/14733954698/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/14733954698",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "14733954698",
+       "tacGia": "DEVEIQPER",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 4846,
+       "phu": "đầu vàng, mũ đầu bếp, áo trắng, cầm xẻng · vui; có chữ R trên áo · R6 · áo ✅ quần ✅ · phụ kiện 1: Chef Hat"
+      },
+      {
+       "id": "banh__6",
+       "ten": "Chef",
+       "anh": [
+        ".cache/roblox/620377119/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/620377119",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "620377119",
+       "tacGia": "julius321julius",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 4846,
+       "phu": "mũ cao, áo xanh xám, kèm tấm bột · có đạo cụ bột · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 1: Top Hat"
+      },
+      {
+       "id": "banh__7",
+       "ten": "BAKERY OBBY mpc",
+       "anh": [
+        ".cache/roblox/613843724/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/613843724",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "613843724",
+       "tacGia": "Albyistthebest1234",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1514,
+       "phu": "mũ cao, áo xám · ít chi tiết đầu bếp · R6 · áo ✅ quần ✅ · phụ kiện 0"
+      },
+      {
+       "id": "banh__8",
+       "ten": "Chef narwhal",
+       "anh": [
+        ".cache/roblox/15267691702/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/15267691702",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "15267691702",
+       "tacGia": "Santosarrs",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 6990,
+       "phu": "da xanh xám, mũ cao, áo trắng · da lạ · R6 · áo ✅ quần ✅ · phụ kiện 4: NarwalHead, MeshPartAccessory, 1.0 knifeAccessory, Machete"
+      },
+      {
+       "id": "banh__9",
+       "ten": "Noob chef devil",
+       "anh": [
+        ".cache/roblox/9904087869/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/9904087869",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "9904087869",
+       "tacGia": "LucasHchr",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 5798,
+       "phu": "noob đỏ, mũ cao · lạ · R6 · áo — quần — · phụ kiện 2: Hat, Chef Hat"
+      },
+      {
+       "id": "banh__10",
+       "ten": "CHEF RAGE",
+       "anh": [
+        ".cache/roblox/4913887751/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/4913887751",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "4913887751",
+       "tacGia": "01Polecat",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 4032,
+       "phu": "mũ cao, áo trắng, mặt giận · mặt giận · R6 · 2 người · áo ✅ quần ✅ · phụ kiện 1: Master Chef"
+      }
+     ]
+    },
+    {
+     "id": "npc_may",
+     "ten": "Cô thợ may (2 shot)",
+     "phu": "hiện: tóc đen búi thấp, áo tím nhạt, tạp dề lanh. Chọn MỘT. Kho ít mẫu — chỉ 7.",
+     "ungVien": [
+      {
+       "id": "may__1",
+       "ten": "grandma",
+       "anh": [
+        ".cache/roblox/12109583351/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/12109583351",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "12109583351",
+       "tacGia": "pablozj6",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2196,
+       "phu": "bà tóc xám búi, cardigan xanh lá, váy xanh, gậy · hiền nhất, khối vuông · R6 · áo ✅ quần — · phụ kiện 1: JE Hair Gray"
+      },
+      {
+       "id": "may__2",
+       "ten": "Velinha",
+       "anh": [
+        ".cache/roblox/16198634320/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/16198634320",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "16198634320",
+       "tacGia": "Drawer's Dev",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2618,
+       "phu": "bà da nâu, kính, tóc xám, áo xanh nhạt, váy hồng · hiền, rõ là bà · R6 · áo ✅ quần ✅ · phụ kiện 2: Missy Glasses, Peruca Velha Empoada"
+      },
+      {
+       "id": "may__3",
+       "ten": "Бабушка с подъезда 1",
+       "anh": [
+        ".cache/roblox/72858972549384/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/72858972549384",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "72858972549384",
+       "tacGia": "Litvin_LitenergyReal",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 6340,
+       "phu": "bà tóc xám, váy hoa tím (đang ngồi) · hiền; mẫu ở tư thế ngồi · R6 · áo — quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 1: Accessory (MeshPartAccessory)"
+      },
+      {
+       "id": "may__4",
+       "ten": "Grandma Whit Cat Siting Sitting NPC Cats Noob",
+       "anh": [
+        ".cache/roblox/105394416276304/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/105394416276304",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "105394416276304",
+       "tacGia": "Crazyf2272",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 5254,
+       "phu": "bà tóc cuốn hồng, váy hoa, ngồi ghế · kèm ghế + túi · R6 · áo ✅ quần ✅ · phụ kiện 2: Curlers, Round Glasses"
+      },
+      {
+       "id": "may__5",
+       "ten": "Nadiia",
+       "anh": [
+        ".cache/roblox/11262472256/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/11262472256",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "11262472256",
+       "tacGia": "MiusHair",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 8545,
+       "phu": "bà tóc bạc dài, áo xanh rêu, quần rằn ri · hơi quân sự · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 4: MeshPartAccessory, Medical Eyepatch, Meshes/PatCapAccessory, Messy Summer Hair in White"
+      },
+      {
+       "id": "may__6",
+       "ten": "Shy Girl Character Model Avatar NPC Rig Girls R6",
+       "anh": [
+        ".cache/roblox/112507919413426/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/112507919413426",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "112507919413426",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 6273,
+       "phu": "cô trẻ tóc nâu dài, áo xanh rêu, jeans · dễ thương, không phải bà · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 1: Accessory (CuteLongPigtailsHair)"
+      },
+      {
+       "id": "may__7",
+       "ten": "Mom's NPC Mom's Character Model R6 Roleplay Roblox",
+       "anh": [
+        ".cache/roblox/118400431811478/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/118400431811478",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "118400431811478",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 8825,
+       "phu": "cô trẻ tóc đuôi ngựa, mũ bucket, yếm xanh · trẻ và hiện đại · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 3: FashionableWhiteShoulderPurse, HighPigtails, Bucket hatAccessory"
+      }
+     ]
+    },
+    {
+     "id": "npc_be",
+     "ten": "Hai đứa trẻ: bé Vàng + bé Ngọc (2 shot)",
+     "phu": "chọn HAI mẫu. Sẽ thu nhỏ 0,84 như hiện nay.",
+     "chonNhieu": true,
+     "ungVien": [
+      {
+       "id": "be__1",
+       "ten": "Kid Girl NPC Character R6 Rig Kids Girls Roleplay",
+       "anh": [
+        ".cache/roblox/108279174241621/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/108279174241621",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "108279174241621",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1826,
+       "phu": "bé gái tóc nâu, băng đô, áo xám in hình · tốt nhất, rất dễ thương · R6 · áo ✅ quần ✅ · phụ kiện 1: LongHairHeadBand"
+      },
+      {
+       "id": "be__2",
+       "ten": "Kid Girl Child Hair NPC Girls Model Little Young",
+       "anh": [
+        ".cache/roblox/92230729750140/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/92230729750140",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "92230729750140",
+       "tacGia": "Dekkco5495",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1826,
+       "phu": "bé gái giống mẫu 1, tóc khác · dự phòng · R6 · áo ✅ quần ✅ · phụ kiện 1: LongHairHeadBand"
+      },
+      {
+       "id": "be__3",
+       "ten": "Funny Kid NPC Camper Character R6 Model Roblox Rig",
+       "anh": [
+        ".cache/roblox/112785255738352/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/112785255738352",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "112785255738352",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1478,
+       "phu": "bé trai mũ lưỡi trai xanh, áo vàng · vui, kiểu noob cổ điển · R6 · áo — quần — · phụ kiện 1: Ihasabucket"
+      },
+      {
+       "id": "be__4",
+       "ten": "Kid NPC Walking Lilly Character Roblox R6 Humanoid",
+       "anh": [
+        ".cache/roblox/89413701183122/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/89413701183122",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "89413701183122",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3606,
+       "phu": "bé gái tóc nâu, váy cam trắng · hợp bé gái thứ hai · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 1: Hair"
+      },
+      {
+       "id": "be__5",
+       "ten": "girl",
+       "anh": [
+        ".cache/roblox/1110774819/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/1110774819",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "1110774819",
+       "tacGia": "ElijahWinsto",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 4040,
+       "phu": "bé gái tóc nâu đỏ, pyjama hồng · đồ ngủ · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 1: IceCreamHairNoCone"
+      },
+      {
+       "id": "be__6",
+       "ten": "Bloxxer Boy Character Model Humanoid R6 Rig Roblox",
+       "anh": [
+        ".cache/roblox/119429811638939/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/119429811638939",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "119429811638939",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1586,
+       "phu": "bé trai mũ trắng đỏ, áo trắng in hình · sáng, vui · R6 · áo ✅ quần ✅ · phụ kiện 1: Bloxxercap"
+      },
+      {
+       "id": "be__7",
+       "ten": "Boy R6 Character Rig Model Dummy NPC Boys",
+       "anh": [
+        ".cache/roblox/135634323232287/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/135634323232287",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "135634323232287",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3406,
+       "phu": "bé trai tóc đen, áo caro xanh đen · mặt hơi buồn · R6 · áo ✅ quần ✅ · phụ kiện 1: Hair"
+      },
+      {
+       "id": "be__8",
+       "ten": "Bacon Hair Girl R6 NPC Rig Boy Man Kid Plush",
+       "anh": [
+        ".cache/roblox/118537732189575/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/118537732189575",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "118537732189575",
+       "tacGia": "Buludedu18",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3868,
+       "phu": "bé trai tóc bacon, áo đen · da xám kém ấm · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 1: Pal Hair"
+      },
+      {
+       "id": "be__9",
+       "ten": "Sleeping boy morph",
+       "anh": [
+        ".cache/roblox/123126413388497/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/123126413388497",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "123126413388497",
+       "tacGia": "Oshibkaa167",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1066,
+       "phu": "bé trai đầu vàng, pyjama sọc · khối cổ điển · R6 · áo ✅ quần ✅ · phụ kiện 0"
+      },
+      {
+       "id": "be__10",
+       "ten": "Bacon Morph Boy Man Hair Character Morphs Sad R6",
+       "anh": [
+        ".cache/roblox/106988038935717/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/106988038935717",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "106988038935717",
+       "tacGia": "Dekkfro0322",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3976,
+       "phu": "bé trai tóc bacon, áo đen · kèm bục · R6 · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 1: Pal Hair"
+      }
+     ]
+    },
+    {
+     "id": "npc_dan",
+     "ten": "Dân làng nền (hiện 3 người, 4 shot) — cần 8–12 kiểu",
+     "phu": "chọn NHIỀU. Pack 12 người đã đủ số; các mẫu lẻ để thêm kiểu (nông dân, bà…). Người trong pack không lấy làm vai chính.",
+     "chonNhieu": true,
+     "ungVien": [
+      {
+       "id": "dan__1",
+       "ten": "AI Civilian NPC Citizen People Humanoid Town R6",
+       "anh": [
+        ".cache/roblox/84294762238979/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/84294762238979",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "84294762238979",
+       "tacGia": "Content Deleted - 158552482",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 32975,
+       "phu": "PACK 12 người dân (nam, nữ, đủ kiểu áo) · ưu tiên — lấy được nhiều kiểu một lần · R6 · 12 người · áo ✅ quần ✅ · phụ kiện 18: GlassesBlackFrame, Ultra-Fabulous Hair, HipsterGlasses, Beard, Fauxhawk…"
+      },
+      {
+       "id": "dan__2",
+       "ten": "NPC Civilians",
+       "anh": [
+        ".cache/roblox/95136736/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/95136736",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "95136736",
+       "tacGia": "Astralinklang",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 4872,
+       "phu": "PACK người dân · ưu tiên pack · R6 · 12 người · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 0"
+      },
+      {
+       "id": "dan__3",
+       "ten": "Farmer Mike",
+       "anh": [
+        ".cache/roblox/604065110/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/604065110",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "604065110",
+       "tacGia": "HokPen",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1798,
+       "phu": "nam râu, mũ rộng vành, sơ mi caro xanh, jeans · nông dân hiền · R6 · áo ✅ quần ✅ · phụ kiện 2: Tilted Hat, Beard"
+      },
+      {
+       "id": "dan__4",
+       "ten": "Farmer Katie",
+       "anh": [
+        ".cache/roblox/3706386033/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/3706386033",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "3706386033",
+       "tacGia": "s_uddenDev",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2718,
+       "phu": "nữ mũ rơm, kính, yếm jeans · nữ nông dân · R6 · áo ✅ quần ✅ · phụ kiện 2: HipsterGlasses, LongHairHeadBandBrown"
+      },
+      {
+       "id": "dan__5",
+       "ten": "🎮 Farmer! Gear NPC Furniture",
+       "anh": [
+        ".cache/roblox/94395909110051/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/94395909110051",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "94395909110051",
+       "tacGia": "cepit393C0",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 5026,
+       "phu": "nam mũ cao bồi nâu, áo xanh lá, dây đeo quần · nông dân khối vuông · R6 · áo — quần ✅ · phụ kiện 3: Mellow Cowboy, Swashbucklin Beard, Wheat"
+      },
+      {
+       "id": "dan__6",
+       "ten": "[🏆⭐] Villager Town City Life Roleplay NPC Hal",
+       "anh": [
+        ".cache/roblox/75783505612438/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/75783505612438",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "75783505612438",
+       "tacGia": "3mve6",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2574,
+       "phu": "nam mũ nâu, áo đỏ sẫm, thắt lưng da · dân làng kiểu cổ · R6 · áo ✅ quần ✅ · phụ kiện 1: TheScoundral"
+      },
+      {
+       "id": "dan__7",
+       "ten": "NPC Villager (Moves and has DNA)",
+       "anh": [
+        ".cache/roblox/8598090797/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/8598090797",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "8598090797",
+       "tacGia": "ILANoob30",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1066,
+       "phu": "nam áo nâu da, quần nâu · đơn giản · R6 · áo ✅ quần ✅ · phụ kiện 1: Hair"
+      },
+      {
+       "id": "dan__8",
+       "ten": "AI walking Civilian NPC",
+       "anh": [
+        ".cache/roblox/104275286/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/104275286",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "104275286",
+       "tacGia": "buildbanner",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1066,
+       "phu": "đầu vàng, áo đỏ, quần be · dân thường khối vuông · R6 · áo — quần — · phụ kiện 0"
+      },
+      {
+       "id": "dan__9",
+       "ten": "Civilian NPC",
+       "anh": [
+        ".cache/roblox/12170843804/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/12170843804",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "12170843804",
+       "tacGia": "DUNKELLGRAU",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1666,
+       "phu": "nam tóc nâu, áo đen, jeans · hiện đại · R6 · áo ✅ quần ✅ · phụ kiện 1: JE Hair"
+      },
+      {
+       "id": "dan__10",
+       "ten": "Civilian NPC",
+       "anh": [
+        ".cache/roblox/91907865/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/91907865",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "91907865",
+       "tacGia": "DaftCreator",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1490,
+       "phu": "nam tóc nâu xù, áo xanh, jeans · dân thường · R6 · áo ✅ quần ✅ · phụ kiện 1: Ultra-Fabulous Hair"
+      },
+      {
+       "id": "dan__11",
+       "ten": "Civilian NPC",
+       "anh": [
+        ".cache/roblox/4985471886/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/4985471886",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "4985471886",
+       "tacGia": "Venvalve",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1066,
+       "phu": "đầu vàng, áo xanh lá, quần xanh · noob dân thường · R6 · áo — quần — · phụ kiện 0"
+      },
+      {
+       "id": "dan__12",
+       "ten": "Civilian NPCs",
+       "anh": [
+        ".cache/roblox/12177151550/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/12177151550",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "12177151550",
+       "tacGia": "DUNKELLGRAU",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3332,
+       "phu": "pack 2: nam mặc đen, jeans · thêm kiểu nam · R6 · 2 người · áo ✅ quần ✅ · phụ kiện 1: JE Hair"
+      },
+      {
+       "id": "dan__13",
+       "ten": "Blue Civilian (ALPHA)",
+       "anh": [
+        ".cache/roblox/106495956783857/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/106495956783857",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "106495956783857",
+       "tacGia": "AsketHeiloy",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2132,
+       "phu": "pack 2: đầu xám áo đen + đầu vàng áo xanh · đơn giản · R6 · 2 người · áo — quần — · phụ kiện 0"
+      },
+      {
+       "id": "dan__14",
+       "ten": "NPC Spawn Point Location NPCs Pack Spawnlocation",
+       "anh": [
+        ".cache/roblox/124954213236980/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/124954213236980",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "124954213236980",
+       "tacGia": "Zuperite165",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 48494,
+       "phu": "pack 6: áo xanh lá in số, kính râm · giống một đội, ít đa dạng · R6 · 6 người · áo ✅ quần ✅ · thân lưới riêng (CharacterMesh) · phụ kiện 2: BrownCharmerHair, VarietyShades02"
+      }
+     ]
+    },
+    {
+     "id": "npc_gau",
+     "ten": "Gấu bông: Bắp + gấu ví + gấu túi (Bắp 24 shot)",
+     "phu": "hiện: GLB gấu bông có xương riêng (assets/characters/bap). KHUYÊN: bấm \"Không cái nào\" = GIỮ gấu hiện tại. Kho Roblox không có gấu bông R6 khối dễ thương; mẫu đẹp nhất là R15 hoặc đang ngồi → phải dựng lại xương + làm lại 7 động tác (ngồi, ôm, leo, kéo…). Vẫn muốn đổi thì chọn MỘT kiểu (3 con đổi màu lông/nơ).",
+     "ungVien": [
+      {
+       "id": "gau__1",
+       "ten": "bear",
+       "anh": [
+        ".cache/roblox/10865473020/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/10865473020",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "10865473020",
+       "tacGia": "Lolo19793",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 4092,
+       "phu": "teddy nâu bụng kem, ĐỨNG 2 chân, có mặt (R15) · dễ thương nhất; tay chân rời nhiều đoạn · R15 · áo ✅ quần ✅ · phụ kiện 2: Bear Suit, TeddyBearHead"
+      },
+      {
+       "id": "gau__2",
+       "ten": "Sba bear rig starter character baaren",
+       "anh": [
+        ".cache/roblox/137230637577389/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/137230637577389",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "137230637577389",
+       "tacGia": "Anthoxha",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1670,
+       "phu": "gấu nâu khối vuông, tay chân rời, yếm xanh (R15) · gần yêu cầu nhất; là R15 · R6 · áo — quần — · phụ kiện 0"
+      },
+      {
+       "id": "gau__3",
+       "ten": "bear",
+       "anh": [
+        ".cache/roblox/15475995932/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/15475995932",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "15475995932",
+       "tacGia": "Candycat20223",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7060,
+       "phu": "teddy đứng 2 chân, gần giống mẫu trên (R15) · có thể thiếu mặt · R15 · áo ✅ quần ✅ · phụ kiện 2: TeddyBearHead, Bear Suit"
+      },
+      {
+       "id": "gau__4",
+       "ten": "Teddy Bear Teddybear Plush Stuffed Toy Tan Classic",
+       "anh": [
+        ".cache/roblox/73632323121226/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/73632323121226",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "73632323121226",
+       "tacGia": "Remetedu976",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 9504,
+       "phu": "gấu bông vàng be, mắt to, đang ngồi, 22 mảnh · rất dễ thương; phải dựng xương lại · không phải rig người · 22 mảnh"
+      },
+      {
+       "id": "gau__5",
+       "ten": "Brianna Bear",
+       "anh": [
+        ".cache/roblox/9830735126/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/9830735126",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "9830735126",
+       "tacGia": "LinaGamesStuff",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 9142,
+       "phu": "gấu đen đứng 2 chân, váy xanh (R6) · R6 thật; hơi tối · R6 · áo — quần — · thân lưới riêng (CharacterMesh) · phụ kiện 0"
+      },
+      {
+       "id": "gau__6",
+       "ten": "alien bear",
+       "anh": [
+        ".cache/roblox/5421169/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/5421169",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "5421169",
+       "tacGia": "megaturkeyman",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2228,
+       "phu": "gấu nâu bụng kem, R6 · R6 thật; hình thô · R6 · áo — quần — · phụ kiện 0"
+      },
+      {
+       "id": "gau__7",
+       "ten": "teddy bear morph",
+       "anh": [
+        ".cache/roblox/35790766/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/35790766",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "35790766",
+       "tacGia": "ramo1997",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1378,
+       "phu": "đầu gấu nâu trên thân khối nâu, R6 · tay chân khối R6 · R6 · 7 mảnh"
+      },
+      {
+       "id": "gau__8",
+       "ten": "teddy bear",
+       "anh": [
+        ".cache/roblox/3666334143/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/3666334143",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "3666334143",
+       "tacGia": "calixte_333",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 8640,
+       "phu": "gấu nâu sẫm, ngồi, 20 mảnh · tư thế ngồi · không phải rig người · 20 mảnh"
+      },
+      {
+       "id": "gau__9",
+       "ten": "bear",
+       "anh": [
+        ".cache/roblox/10867000694/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/10867000694",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "10867000694",
+       "tacGia": "xiaokeming",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7272,
+       "phu": "gấu vải sờn, R6, 13 mảnh · hơi u ám · R6 · 19 mảnh"
+      },
+      {
+       "id": "gau__10",
+       "ten": "Teddybear",
+       "anh": [
+        ".cache/roblox/8822547131/thumb.png"
+       ],
+       "link": "https://create.roblox.com/store/asset/8822547131",
+       "linkTen": "Creator Store",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "8822547131",
+       "tacGia": "Kiwi_Birb",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 8160,
+       "phu": "gấu nâu sẫm, ngồi, 22 mảnh · hơi cũ · không phải rig người · 22 mảnh"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "lienKet": []
+}
