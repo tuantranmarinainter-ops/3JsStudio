@@ -69,16 +69,23 @@ code{font:12px ui-monospace,Consolas,monospace;background:var(--bg);border:1px s
 </div>
 <div class="ar"></div>
 
+<div class="st cl">
+  <div class="hd"><span class="n">1</span><span class="t">Soạn đề bài và mẫu kit</span><span class="who cl"><i></i>Claude</span><span class="tag">chưa thử</span></div>
+  <p>Claude đọc gói kịch bản và biết engine cần gì, nên Claude viết đề bài cho Codex: mẫu kit cố định với đúng các trường engine dùng (đơn vị stud, loại shot có sẵn, cỡ khung, điểm đứng, chuyển động camera, khung đầu và khung cuối, hành động nhân vật).</p>
+  <p>Đề bài ghi rõ số nào phải đo từ ảnh, không chép từ engine.</p>
+  <div class="out"><b>Ra:</b> đề bài + <code>kit.mau.json</code> + bộ kiểm <code>kiem-kit.mjs</code></div>
+</div>
+<div class="ar"></div>
+
 <div class="st cx">
-  <div class="hd"><span class="n">1</span><span class="t">Tạo bộ kit</span><span class="who cx"><i></i>Codex</span><span class="tag">phần chuyển động: chưa thử</span></div>
-  <p>Đo từ ảnh theo một mẫu cố định: nhân vật, tỉ lệ, bối cảnh và kích thước, vật liệu, ánh sáng, góc máy và cỡ khung của từng shot.</p>
-  <p>Mỗi shot ghi thêm chuyển động: loại chuyển động camera, khung đầu và khung cuối, hành động của từng nhân vật.</p>
+  <div class="hd"><span class="n">2</span><span class="t">Điền bộ kit theo mẫu</span><span class="who cx"><i></i>Codex</span></div>
+  <p>Codex xem ảnh và đo: nhân vật, tỉ lệ, bối cảnh và kích thước, vật liệu, ánh sáng, góc máy và chuyển động của từng shot. Chỉ điền vào mẫu, không tự đặt trường mới.</p>
   <div class="out"><b>Ra:</b> <code>kit.json</code> + <code>KIT.html</code></div>
 </div>
 <div class="ar"></div>
 
 <div class="st may">
-  <div class="hd"><span class="n">2</span><span class="t">Kiểm kit bằng máy</span><span class="who may"><i></i>Máy</span></div>
+  <div class="hd"><span class="n">2b</span><span class="t">Kiểm kit bằng máy</span><span class="who may"><i></i>Máy</span></div>
   <p>Đủ trường cho mọi shot, số đo nằm trong ngưỡng, chữ tiếng Việt không hỏng dấu, shot nào cũng có chuyển động.</p>
   <div class="out"><b>Công cụ:</b> <code>kiem-kit.mjs</code></div>
   <div class="back">↺ Thiếu hoặc sai → trả Codex sửa. Chỉ đi một vòng.</div>
@@ -175,6 +182,6 @@ code{font:12px ui-monospace,Consolas,monospace;background:var(--bg);border:1px s
 <div class="end">Video hoàn chỉnh 1080×1920</div>
 
 <div class="note">
-  <b>Phần đã chạy thật và phần chưa.</b> Các bước 3 đến 11 đã dùng ở Tập 3 và Tập 4. Bước 1 với phần chuyển động trong kit và bước 2 kiểm kit trước khi nhận là khuyến nghị rút ra từ Tập 4, chưa được thử trên tập nào.
+  <b>Phần đã chạy thật và phần chưa.</b> Các bước 3 đến 11 đã dùng ở Tập 3 và Tập 4. Bước 1 (Claude soạn đề bài và mẫu kit có cả chuyển động) và bước 2b (kiểm kit trước khi nhận) là khuyến nghị rút ra từ Tập 4, chưa được thử trên tập nào. Giai đoạn hai của Tập 4 đã đi theo hướng Claude giao việc cho Codex, nhưng đề bài khi đó chưa có phần chuyển động.
 </div>
 </main>
