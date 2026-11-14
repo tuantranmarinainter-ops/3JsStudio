@@ -20,6 +20,7 @@
 //   cua_kho          [17,0,16.5]   cửa kho trượt bằng tôn x 12..22 ngoài tường +Z; e.cuaKho = Group cửa (đổi position.x để mở)
 //   san_ngoai        [0,0,24]      giữa sân (trống x −16..16, z 17..32)
 import { bearGlbOn, bearGlbBakedStatic } from '../bear-glb.js';   // gấu bông GLB nướng tĩnh cho kệ (tắt/thiếu model → gấu khối)
+import { gauKeOn, gauKeStatic } from '../gau-ke.js';   // gấu kệ mẫu Roblox có nơ (bật: EPISODE.gauKe / ?gauKe=1; tắt → gấu GLB cũ / gấu khối)
 export const ASSETS = ['nhap/hang-rao'];   // GLB hàng rào (index.html nạp trước khi dựng env)
 export const LIGHT = 'night';   // khoá ánh sáng mặc định (envs.define(tên, m.LIGHT, m.default))
 export const FACTORY_DIEM = {
@@ -180,7 +181,7 @@ export default function build(g, e, H) {
   let glbDone = false;
   const doiGauGlb = () => {
     glbDone = true;
-    const baked = [0, 1, 2].map((v) => bearGlbBakedStatic(THREE, v));
+    const rb = gauKeOn(), baked = [0, 1, 2].map((v) => (rb ? gauKeStatic(THREE, v) : bearGlbBakedStatic(THREE, v)));
     if (!baked.every((b) => b && b.materials[0])) return;
     const H0 = 3.0, per = [[], [], []];   // cao ngồi ~3 stud (gấu khối cũ 3,3; hạ để tay không chạm cột kệ), ngồi đúng mặt ván
     SY.forEach((y, lv) => BX.forEach((x, k) => {
@@ -188,7 +189,7 @@ export default function build(g, e, H) {
       per[v].push({ p: [x + (hash(lv * 20 + k, 6) - 0.5) * 0.2, y - b.box.min.y * sc, -14.45], s: [sc, sc, sc], r: [0, jy, 0] });
     }));
     per.forEach((items, v) => { const b = baked[v]; const im = inst(shelf, 'bear_plush_' + v, b.geometry, b.materials, items); im.frustumCulled = false; });
-    blockBears.forEach((m) => { m.visible = false; shelf.remove(m); }); e.bearShelfGlb = true;
+    blockBears.forEach((m) => { m.visible = false; shelf.remove(m); }); e.bearShelfGlb = rb ? 'rb' : true;
   };
 
 
@@ -221,7 +222,7 @@ export default function build(g, e, H) {
   return {
     suSong: [],
     update(t) {
-      if (!glbDone && bearGlbOn() && globalThis.__keGauGlb !== false) doiGauGlb();
+      if (!glbDone && (gauKeOn() || bearGlbOn()) && globalThis.__keGauGlb !== false) doiGauGlb();
       beltTex.offset.x = -((t * 1.2) % 1);   // mặt băng trôi theo +X, hàm thuần của t
       mist.forEach((m, i) => { m.position.x = (i ? 16 : -14) + Math.sin(t * 0.15 + i * 2) * 3; });
     },

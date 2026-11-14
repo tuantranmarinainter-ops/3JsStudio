@@ -145,8 +145,8 @@
     {
      "ten": "NPC Roblox cho Tập 4 (thay nhân vật, trừ Gà)",
      "tt": "dang",
-     "pt": 85,
-     "ghiChu": "14/11: người dùng chốt đủ 3 đợt duyệt (ông Bách, thị trưởng + đồ ngủ, lính, thợ bánh, thợ may, 2 bé, 9 dân làng). Cách A chạy thật: áo quần + tóc mũ Roblox trên thân R6 của engine, đã nối engine/cast.js (actor thêm rb:, tắt bằng ?rb=0), kiểm tất định + đi/đứng trên trang thử, 5 test qua. Đã sửa ảnh duyệt đen/lẫn người và lỗi râu tóc lệch. Còn: phiên dựng Tập 4 đổi episode.js theo docs/handoff/npc-roblox.md; gấu (người dùng chọn mẫu gấu ngồi không xương — cần hỏi dùng cho vai nào); nén ảnh; commit manifest."
+     "pt": 90,
+     "ghiChu": "14/11 chiều: người dùng chốt GIỮ Bắp cũ; gấu trên kệ nhà máy = mẫu Roblox 104566604295071 có nơ (bật ?gauKe=1 / EPISODE.gauKe, mặc định tắt, chờ phiên ep003 bật). Sửa lỗi áo quần NPC mất trong bản gộp HTML (ảnh không đọc từ file nhúng). 14/11: người dùng chốt đủ 3 đợt duyệt (ông Bách, thị trưởng + đồ ngủ, lính, thợ bánh, thợ may, 2 bé, 9 dân làng). Cách A chạy thật: áo quần + tóc mũ Roblox trên thân R6 của engine, đã nối engine/cast.js (actor thêm rb:, tắt bằng ?rb=0), kiểm tất định + đi/đứng trên trang thử, 5 test qua. Đã sửa ảnh duyệt đen/lẫn người và lỗi râu tóc lệch. Còn: phiên dựng Tập 4 đổi episode.js theo docs/handoff/npc-roblox.md; gấu (người dùng chọn mẫu gấu ngồi không xương — cần hỏi dùng cho vai nào); nén ảnh; commit manifest."
     }
    ],
    "tap": "Tập 3"

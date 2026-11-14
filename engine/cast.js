@@ -67,6 +67,7 @@ export async function buildCast(THREE, actors = {}, { seed = 1, facePack } = {})
   let createGa = null;
   if (plan.some((p) => p.kind === 'ga')) { const G = await import('./ga-rig.js'); createGa = G.createGa; const { loadGaAtlas, loadGaHood } = G; gaRes = { faceSet: await loadGaFaces(THREE), atlas: await loadGaAtlas(THREE), hood: await loadGaHood(THREE) }; }
   if (plan.some((p) => p.kind === 'bear') && bearGlbWanted()) await bearGlbPreload();
+  { const GK = await import('./gau-ke.js'); if (GK.gauKeWanted()) await GK.gauKePreload(THREE); }   // gấu kệ mẫu Roblox (engine/envs/factory.js); mặc định tắt
   // Thân R6 (r6:1): nạp ĐỘNG rig + thư viện ngoại hình + bộ mặt của tập (engine/face-pack.js; một lần cho cả tập)
   let r6Res = null;
   if (plan.some((p) => p.kind === 'r6')) { const [RG, LK] = await Promise.all([import('./r6-rig.js'), import('./r6-looks.js')]); const FP = await import('./face-pack.js'); r6Res = { create: RG.createR6Rig, looks: LK.R6_LOOKS, faceSet: await FP.loadFacePacks(THREE, facePack) }; }   // facePack = EPISODE.facePack ('altiwyre' | 'emote37'; thiếu → bộ cũ)

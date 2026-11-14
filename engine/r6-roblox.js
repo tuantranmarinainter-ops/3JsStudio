@@ -19,7 +19,8 @@ export const RB_MAT_ORDER = ['L', 'R', 'U', 'D', 'F', 'B'];
 const HEAD_R_ENGINE = 0.68;   // = HR trong engine/r6-rig.js
 const HEAD_RB = 1.25;   // đường kính + chiều cao đầu R6 Roblox (stud)
 
-const taiAnh = (url) => new Promise((ok) => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => ok(null); im.src = url; });
+// Tải ảnh QUA fetch (không dùng new Image().src): bản gộp dist/<ep>.html chỉ chặn fetch() + loader của three → Image.src trỏ ra file không có → áo quần mất, thân trơn màu (lỗi 14/11).
+const taiAnh = async (url) => { try { const r = await fetch(url); if (!r.ok) return null; return await createImageBitmap(await r.blob()); } catch { return null; } };
 
 /** Tải look.json + ảnh + acc.glb của các nhân vật. Trả { <tên>: { look, shirt, pants, tshirt (Image|null), acc (Object3D|null) } }. Thiếu file → null, không ném lỗi. */
 export async function loadRbLooks(THREE, names, { base = GOC } = {}) {

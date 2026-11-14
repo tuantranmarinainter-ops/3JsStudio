@@ -1,3 +1,4 @@
+import { gauKeOn, gauKeTach } from '../gau-ke.js';   // gấu kệ mẫu Roblox có nơ (mặc định tắt)
 // Bối cảnh 'e3-nha-may' — NHÀ MÁY GẤU BÔNG của tập 3 (3 khu liền một khối: factory-exterior / factory-interior / factory-storage).
 // Sửa bối cảnh này CHỈ trong file này. Được episodes/<ep>/index.html nạp động khi shot ghi `env: "e3-nha-may"` → build(g, e, H).
 // ĐÊM (mặc định, LIGHT = 'night'): ngoài xanh lam, trong hổ phách. NGÀY: shot ghi `light: 'day'` — cùng bố trí, nắng qua kính.
@@ -354,7 +355,16 @@ export default function build(g, e, H) {
     items.forEach((it, i) => { const yaw = it.r[1], cs = Math.cos(yaw), sn = Math.sin(yaw), col = BOWC[Math.floor(hash(i, 9) * BOWC.length)];
       const at = (dx, dy, dz) => [it.p[0] + dx * cs + dz * sn, it.p[1] + dy, it.p[2] - dx * sn + dz * cs];
       bows.push({ p: at(-0.27, 1.1, 0.74), s: [0.3, 0.17, 0.11], r: [0, yaw, 0.3], c: col }, { p: at(0.27, 1.1, 0.74), s: [0.3, 0.17, 0.11], r: [0, yaw, -0.3], c: col }, { p: at(0, 1.1, 0.78), s: [0.13, 0.13, 0.12], r: [0, yaw, 0], c: col }); });
-    inst(north, 'bear_bow', SPH, reg(new THREE.MeshStandardMaterial({ roughness: 0.8, emissive: new THREE.Color('#1c0c04'), emissiveIntensity: 0.4 }), 'emissiveIntensity', 0.4, 0.15), bows); }
+    e.gauNo = inst(north, 'bear_bow', SPH, reg(new THREE.MeshStandardMaterial({ roughness: 0.8, emissive: new THREE.Color('#1c0c04'), emissiveIntensity: 0.4 }), 'emissiveIntensity', 0.4, 0.15), bows);
+    // GẤU KỆ MẪU ROBLOX có nơ (engine/gau-ke.js; bật: EPISODE.gauKe / ?gauKe=1, mặc định tắt → giữ gấu khối ở trên). Env dựng TRƯỚC khi nạp model (buildCast)
+    // → thay ở lần update đầu khi model sẵn sàng; làm 1 lần, không phụ thuộc t. Cùng vị trí, cùng vật liệu (đổi theo đêm/ngày), nơ giữ màu theo chỉ số con.
+    e.doiGauKe = () => {
+      const gk = gauKeTach(THREE, { long: CAR, mat: DK }); if (!gk) return false;
+      const sc = 2.35 / gk.size[1], it2 = items.map((it) => ({ p: [it.p[0], it.p[1] - gk.box.min.y * sc, it.p[2]], s: [sc, sc * it.s[1], sc], r: it.r }));
+      const cu = [e.gauKe, e.gauNo]; e.gauKe = inst(north, 'bear_plush', gk.than, e.gauKe.material, it2, true); e.gauKe.name = 'bear_plush_rb';
+      if (gk.no) e.gauNo = inst(north, 'bear_bow', gk.no, cu[1].material, it2.map((it, i) => ({ ...it, c: BOWC[Math.floor(hash(i, 9) * BOWC.length)] })));
+      cu.forEach((m) => { m.visible = false; north.remove(m); }); noPatch(e.gauKe); if (gk.no) noPatch(e.gauNo); e.gauKeRb = true; return true;
+    }; }
   // bản đồ thị trấn (canvas): nhà (chấm đỏ = nhà có gấu), sông xanh, cây, nhà máy 3 ống khói; khung kim loại
   { const mapTex = cvTex(512, 330, (c, w, h) => {
       c.fillStyle = '#E3D0A8'; c.fillRect(0, 0, w, h); c.strokeStyle = '#8a7048'; c.lineWidth = 6; c.strokeRect(10, 10, w - 20, h - 20);
@@ -433,6 +443,7 @@ export default function build(g, e, H) {
   return {
     suSong: [],
     update(t, ctx = {}) {
+      if (!e.gauKeRb && gauKeOn()) e.doiGauKe();
       const lk = ctx.light || e.light, nt = (LIGHTS[lk] || LIGHTS.night).night ? 1 : 0;
       for (const [m, p, n, d] of dn) m[p] = nt ? n : d;
       skyGlass.color.set(nt ? '#ffb55a' : '#cfe6ff'); skyGlass.opacity = nt ? 0.5 : 0.22;

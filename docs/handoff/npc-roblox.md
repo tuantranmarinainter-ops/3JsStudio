@@ -64,3 +64,12 @@ Thay mọi nhân vật ep003 (trừ Gà) bằng NPC Roblox Creator Store, có c�
 - `assets/characters/rb` ~11 MB cho 24 người (PNG gốc ~330 KB/ảnh) — chưa nén; cân nhắc WebP trước khi gộp `dist/`.
 - Mẫu 851937200 làm `sky-extract dump` lỗi (Color3uint8). Kho Roblox rất ít nữ R6 khối vuông miễn phí.
 - Đã dùng ~560 request Open Cloud (tìm 122, xem ~300, tải ~140).
+
+## CHỐT GẤU (14/11 chiều) — thay cho mọi phương án gấu ở trên
+- Người dùng: **"dùng Bắp cũ, gấu trên kệ là 104566604295071 (lưu ý có nơ)"** → KHÔNG thay Bắp / gau_vi / gau_tui (giữ `engine/bear-glb.js`). Phương án 8541228386, 8648724784, 8820218869 huỷ.
+- Gấu kệ: `tools/gau-ke.mjs dung` → `assets/characters/rb/gau_ke/gau.glb` (thân 104566604295071, nơ mượn của 8820218869 vì mẫu thân không có nơ — tôi hiểu "có nơ" là gấu kệ phải đeo nơ; 8 212 tam giác/con, không ảnh vân).
+- `engine/gau-ke.js`: `gauKeWanted/On`, `gauKePreload` (gọi trong `cast.js buildCast`), `gauKeStatic` (cho `envs/factory.js`), `gauKeTach` (cho `envs/e3-nha-may.js`: thân màu đỉnh + nơ tô màu theo instance, vẫn 2 InstancedMesh, dùng lại vật liệu cũ nên đổi đêm/ngày như trước).
+- **Mặc định TẮT.** Bật: `?gauKe=1` hoặc trong `episodes/ep003/episode.js` thêm `globalThis.__gauKe = EPISODE.gauKe !== false;` (cạnh dòng `__bearGlb`) — VIỆC CỦA PHIÊN ep003. Tắt → gấu khối cũ.
+- Đã kiểm: 33 shot nhà máy ep003, chỉ 5 shot có kệ đổi (s052, s055, s056, s057, s079), 28 shot còn lại giống hệt từng điểm ảnh; `tools/tests/gau-ke.test.mjs` 5 qua. Chưa đo `do-nang.mjs` (30 con × 8,2 nghìn tam giác ≈ 246 nghìn; nặng thì giảm lưới).
+- Lỗi "nhân vật Roblox lỗi texture" (người dùng báo trên bản gộp): `engine/r6-roblox.js` tải áo quần bằng `new Image().src` → bản gộp `dist/*.html` chỉ chặn `fetch` nên ảnh không có, thân trơn màu. Đã đổi sang `fetch` + `createImageBitmap`; kiểm trên `file://`: 11 nhân vật có hoạ tiết áo.
+- `assets/manifest.json`: thêm `characters/rb/gau_ke` trong CÂY LÀM VIỆC, chưa commit (file đang có thay đổi của phiên khác), cùng 17 dòng `characters/rb/*` trước đó.
