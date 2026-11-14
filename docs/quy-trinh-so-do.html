@@ -63,40 +63,54 @@ code{font:12px ui-monospace,Consolas,monospace;background:var(--bg);border:1px s
 </div>
 
 <div class="st nd">
-  <div class="hd"><span class="n">0</span><span class="t">Đầu vào: gói kịch bản</span><span class="who nd"><i></i>Bạn</span></div>
-  <p>Khung ảnh storyboard, mô tả từng shot, ảnh nhân vật và bối cảnh, lời kể.</p>
-  <div class="out"><b>Ra:</b> <code>kich-ban/&lt;ep&gt;-goi/</code></div>
+  <div class="hd"><span class="n">0</span><span class="t">Đầu vào: kịch bản chữ</span><span class="who nd"><i></i>Bạn</span></div>
+  <p>Chỉ có chữ: mô tả bối cảnh, mô tả nhân vật, lời thoại. Không có hình, không có bảng shot.</p>
 </div>
 <div class="ar"></div>
 
-<div class="st cl">
-  <div class="hd"><span class="n">1</span><span class="t">Soạn đề bài và mẫu kit</span><span class="who cl"><i></i>Claude</span><span class="tag">chưa thử</span></div>
-  <p>Claude đọc gói kịch bản và biết engine cần gì, nên Claude viết đề bài cho Codex: mẫu kit cố định với đúng các trường engine dùng (đơn vị stud, loại shot có sẵn, cỡ khung, điểm đứng, chuyển động camera, khung đầu và khung cuối, hành động nhân vật).</p>
-  <p>Claude quyết số hình cho từng shot: 1 hình cho shot tĩnh, 2 hình (đầu, cuối) cho shot thường, 3 hình (đầu, giữa, cuối) cho shot có hành động đổi hướng hoặc sự kiện giữa chừng. Mỗi shot kèm một dòng mô tả hành động.</p>
-  <p>Đề bài ghi rõ số nào phải đo từ ảnh, không chép từ engine.</p>
-  <div class="out"><b>Ra:</b> đề bài (mẫu: <code>docs/de-bai-codex-mau.md</code>) + <code>kit.mau.json</code> + bộ kiểm <code>kiem-kit.mjs</code></div>
+<div class="wrapPar">
+  <div class="parL">Chạy song song</div>
+  <div class="par">
+    <div class="st cl">
+      <div class="hd"><span class="n">1a</span><span class="t">Chia shot và viết mô tả</span><span class="who cl"><i></i>Claude</span><span class="tag">chưa thử</span></div>
+      <p>Cắt kịch bản thành bảng shot theo luật camera dồn dập. Mỗi shot một dòng: thoại, bối cảnh, camera, mô tả khung đầu và khung cuối, hành động.</p>
+      <p>Claude quyết số hình cho từng shot: 1 hình cho shot tĩnh, 2 hình (đầu, cuối) cho shot thường, 3 hình (đầu, giữa, cuối) cho shot có hành động đổi hướng hoặc sự kiện giữa chừng.</p>
+      <div class="out"><b>Ra:</b> bảng shot (mẫu: <code>docs/de-bai-codex-mau.md</code>)</div>
+    </div>
+    <div class="st cx">
+      <div class="hd"><span class="n">1b</span><span class="t">Vẽ ảnh tham chiếu</span><span class="who cx"><i></i>Codex</span><span class="tag">chưa thử</span></div>
+      <p>Từ mô tả trong kịch bản: mỗi nhân vật một tờ mẫu (trước, nghiêng, sau, vài biểu cảm), mỗi bối cảnh một ảnh toàn cảnh. Claude viết đề bài.</p>
+      <div class="out"><b>Ra:</b> <code>tham-chieu/</code></div>
+    </div>
+  </div>
+</div>
+<div class="ar"></div>
+
+<div class="gate">
+  <div class="hd"><span class="t">Cổng duyệt 1: bảng shot và ảnh tham chiếu</span><span class="who nd"><i></i>Bạn</span></div>
+  <div class="out">Chốt nhân vật, bối cảnh và cách chia shot trước khi tốn công vẽ hàng trăm hình.</div>
 </div>
 <div class="ar"></div>
 
 <div class="st cx">
-  <div class="hd"><span class="n">2</span><span class="t">Điền bộ kit theo mẫu</span><span class="who cx"><i></i>Codex</span></div>
-  <p>Codex xem ảnh và đo: nhân vật, tỉ lệ, bối cảnh và kích thước, vật liệu, ánh sáng, góc máy và chuyển động của từng shot. Chỉ điền vào mẫu, không tự đặt trường mới.</p>
+  <div class="hd"><span class="n">2</span><span class="t">Vẽ hình từng shot và điền bộ kit</span><span class="who cx"><i></i>Codex</span><span class="tag">chưa thử</span></div>
+  <p>Vẽ đúng số hình Claude đã ghi cho mỗi shot, luôn đính kèm ảnh tham chiếu đã duyệt để nhân vật và bối cảnh nhất quán. Sau đó điền số đo vào mẫu kit: tỉ lệ, kích thước bối cảnh, ánh sáng, góc máy, chuyển động.</p>
   <p>Chạy bằng <code>gpt-6-luna</code> mức <code>low</code>, mỗi cụm bối cảnh một tiến trình, tất cả cùng lúc (trần 6).</p>
-  <div class="out"><b>Ra:</b> <code>kit.json</code> + <code>KIT.html</code></div>
+  <div class="out"><b>Ra:</b> hình storyboard + <code>kit.json</code> + <code>KIT.html</code></div>
 </div>
 <div class="ar"></div>
 
 <div class="st may">
-  <div class="hd"><span class="n">2b</span><span class="t">Kiểm kit bằng máy</span><span class="who may"><i></i>Máy</span></div>
-  <p>Đủ trường cho mọi shot, số đo nằm trong ngưỡng, chữ tiếng Việt không hỏng dấu, shot nào cũng có chuyển động.</p>
+  <div class="hd"><span class="n">2b</span><span class="t">Kiểm hình và kit bằng máy</span><span class="who may"><i></i>Máy</span></div>
+  <p>Đủ hình theo số đã ghi, đúng khổ 9:16, kit đủ trường cho mọi shot, số đo trong ngưỡng, chữ tiếng Việt không hỏng dấu. Agent phụ soi độ nhất quán giữa các hình của cùng một shot.</p>
   <div class="out"><b>Công cụ:</b> <code>kiem-kit.mjs</code></div>
   <div class="back">↺ Thiếu hoặc sai → trả Codex sửa. Chỉ đi một vòng.</div>
 </div>
 <div class="ar"></div>
 
 <div class="gate">
-  <div class="hd"><span class="t">Cổng duyệt 1: bộ kit</span><span class="who nd"><i></i>Bạn</span></div>
-  <div class="out">Xem trang kit, chốt nhân vật, bảng màu, tỉ lệ. Chưa dựng gì trước khi qua cổng này.</div>
+  <div class="hd"><span class="t">Cổng duyệt 2: storyboard và bộ kit</span><span class="who nd"><i></i>Bạn</span></div>
+  <div class="out">Xem trang kit với hình từng shot. Chưa dựng 3D trước khi qua cổng này.</div>
 </div>
 <div class="ar"></div>
 
@@ -111,7 +125,7 @@ code{font:12px ui-monospace,Consolas,monospace;background:var(--bg);border:1px s
         <div class="out"><b>Ra:</b> trang duyệt đợt → <code>assets/</code> + manifest</div>
       </div>
       <div class="gate">
-        <div class="hd"><span class="t">Cổng duyệt 2: model</span><span class="who nd"><i></i>Bạn</span></div>
+        <div class="hd"><span class="t">Cổng duyệt 3: model</span><span class="who nd"><i></i>Bạn</span></div>
         <div class="out">Chốt từng món trên trang duyệt.</div>
       </div>
       <div class="st cl">
@@ -133,7 +147,7 @@ code{font:12px ui-monospace,Consolas,monospace;background:var(--bg);border:1px s
         <div class="out"><b>Ra:</b> trang nghe thử</div>
       </div>
       <div class="gate">
-        <div class="hd"><span class="t">Cổng duyệt 3: giọng</span><span class="who nd"><i></i>Bạn</span></div>
+        <div class="hd"><span class="t">Cổng duyệt 4: giọng</span><span class="who nd"><i></i>Bạn</span></div>
         <div class="out">Nghe thử, chốt giọng.</div>
       </div>
       <div class="st cl">
@@ -162,7 +176,7 @@ code{font:12px ui-monospace,Consolas,monospace;background:var(--bg);border:1px s
 <div class="ar"></div>
 
 <div class="gate">
-  <div class="hd"><span class="t">Cổng duyệt 4: bắt lỗi theo shot</span><span class="who nd"><i></i>Bạn</span></div>
+  <div class="hd"><span class="t">Cổng duyệt 5: bắt lỗi theo shot</span><span class="who nd"><i></i>Bạn</span></div>
   <div class="out">Xem trong khung studio, bấm M ghi chú từng shot, bấm Gửi tới Claude.</div>
   <div class="back">↺ Có góp ý → Claude sửa đúng shot đó → kiểm lại bước 8 → bản xem thử mới.</div>
 </div>
@@ -184,6 +198,6 @@ code{font:12px ui-monospace,Consolas,monospace;background:var(--bg);border:1px s
 <div class="end">Video hoàn chỉnh 1080×1920</div>
 
 <div class="note">
-  <b>Phần đã chạy thật và phần chưa.</b> Các bước 3 đến 11 đã dùng ở Tập 3 và Tập 4. Bước 1 (Claude soạn đề bài và mẫu kit có cả chuyển động) và bước 2b (kiểm kit trước khi nhận) là khuyến nghị rút ra từ Tập 4, chưa được thử trên tập nào. Giai đoạn hai của Tập 4 đã đi theo hướng Claude giao việc cho Codex, nhưng đề bài khi đó chưa có phần chuyển động.
+  <b>Phần đã chạy thật và phần chưa.</b> Các bước 3 đến 11 đã dùng ở Tập 3 và Tập 4. Các bước 1a, 1b, 2 và 2b (Claude chia shot từ kịch bản chữ, Codex vẽ ảnh tham chiếu rồi vẽ hình từng shot, kiểm trước khi nhận) là đề xuất, chưa được thử trên tập nào. Các tập trước bạn đưa sẵn gói có hình.
 </div>
 </main>

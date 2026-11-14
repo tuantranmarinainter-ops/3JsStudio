@@ -2,6 +2,15 @@
 
 Trạng thái: **mẫu đề xuất, chưa thử trên tập nào.**
 
+## Đầu vào (người dùng nhắc 2026-11-14)
+
+Người dùng **chỉ đưa kịch bản chữ**: mô tả bối cảnh, mô tả nhân vật, lời thoại. Không có hình, không có bảng shot. Vì vậy:
+
+1. Claude tự chia shot và viết dòng dữ liệu cho từng shot (mục 1, 2).
+2. Song song, Codex vẽ **ảnh tham chiếu** từ mô tả: mỗi nhân vật một tờ mẫu (trước, nghiêng, sau, vài biểu cảm), mỗi bối cảnh một ảnh toàn cảnh → `tham-chieu/`.
+3. Người dùng duyệt bảng shot + ảnh tham chiếu. **Chưa duyệt thì chưa vẽ hình shot.**
+4. Mọi lần vẽ hình shot đều đính kèm (`-i`) ảnh tham chiếu đã duyệt của nhân vật và bối cảnh trong cụm đó.
+
 ## 0. Quy định chạy (người dùng chốt 2026-11-14)
 
 - **Model: `gpt-6-luna`, mức suy luận `low`.** Claude đã viết sẵn mô tả từng hình nên Codex chỉ cần gọi công cụ tạo hình.
