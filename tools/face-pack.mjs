@@ -103,7 +103,7 @@ function cmdKe(id) {
 const NHOM = [                                          // [đuôi path, tiền tố mã]
   ['-EYES-.Decals', 'e'], ['-EYES-.-EYEBROWS-.Decals', 'b'], ['-EYES-.-PUPILS-.Decals', 'p'],
   ['-MOUTHS-.-STILLS-.Decals', 'm'], ['-MOUTHS-.-SPEECH-.Decals', 's'], ['-ADDITIONAL-', 'a'],
-  ['[OLD].ADDITIONS [OLD].Decals', 'o'],   // phụ thêm của bản cũ (nước mắt, mồ hôi, má hồng… nếu có)
+  ['[OLD].ADDITIONS [OLD].Decals', 'o'], ['MISC FACES.Decals', 'f'],   // f = MẶT NGUYÊN (140 mặt vẽ sẵn cả mắt + miệng)   // phụ thêm của bản cũ (nước mắt, mồ hôi, má hồng… nếu có)
 ];
 const HUONG = ['blank', 'up', 'down', 'right', 'left', 'fwd'];   // hàng mắt từ trên xuống (theo nhãn Blank/Up/Down/Right/Left/Forward)
 /** dump → [{ma, nhom, hang, cot, id}] ; mã ổn định: e07-up, ex03 (hàng mắt phụ), m12, s2-4, b05, p11, a09. */
@@ -152,7 +152,7 @@ async function cmdBang(id) {
 
 /** Ghép từng biểu cảm theo assets/faces/altiwyre/map.json (mảng `lop` = mã bộ phận, vẽ từ dưới lên) → NN_tên.png 512²;
  *  kèm chép mọi bộ phận (500², PNG bảng màu) vào assets/faces/altiwyre/parts/ để chọn lại sau. */
-async function cmdGhep(id, { chiMat = false } = {}) {
+async function cmdGhep(id, { chiMat = false, mapFile = null, ra = null } = {}) {
   const sharp = (await import('sharp')).default;
   const dir = path.join(ROOT, '.cache', 'roblox', id), dich = path.join(ROOT, 'assets', 'faces', 'altiwyre'), dP = path.join(dich, 'parts');
   fs.mkdirSync(dP, { recursive: true });
@@ -165,22 +165,23 @@ async function cmdGhep(id, { chiMat = false } = {}) {
     fs.writeFileSync(path.join(dich, 'parts.json'), JSON.stringify(ds.map(({ ma, nhom, hang, cot, id: anh }) => ({ ma, nhom, hang, cot, robloxId: anh }))) + '\n');
     console.log(`parts/: ${n} bộ phận`);
   }
-  const map = JSON.parse(fs.readFileSync(path.join(dich, 'map.json'), 'utf8'));
+  const map = JSON.parse(fs.readFileSync(mapFile ? path.resolve(ROOT, mapFile) : path.join(dich, 'map.json'), 'utf8'));
+  const dRa = ra ? path.resolve(ROOT, ra) : dich; fs.mkdirSync(dRa, { recursive: true });   // --map <file> --ra <thư mục>: ghép bản đề xuất ra chỗ khác, không đụng bộ đang dùng
   let k = 0;
   for (const [ten, m] of Object.entries(map.map)) {
     const lop = [];
     for (const ma of m.lop) lop.push({ input: await sharp(goc(ma)).resize(1000, 1000).png().toBuffer() });
     const b = await sharp({ create: { width: 1000, height: 1000, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).composite(lop).png().toBuffer();
-    await sharp(b).resize(512, 512).png({ palette: true, quality: 95, effort: 10 }).toFile(path.join(dich, ten + '.png')); k++;
+    await sharp(b).resize(512, 512).png({ palette: true, quality: 95, effort: 10 }).toFile(path.join(dRa, ten + '.png')); k++;
   }
-  console.log(`ghép ${k} biểu cảm → assets/faces/altiwyre/`);
+  console.log(`ghép ${k} biểu cảm → ${path.relative(ROOT, dRa)}`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const [cmd, id = MAC_DINH] = process.argv.slice(2).filter((x) => !x.startsWith('--'));
+  const [cmd, id = MAC_DINH] = process.argv.slice(2).filter((x, i, A) => !x.startsWith('--') && !['--map', '--ra', '--song-song'].includes(A[i - 1]));
   if (cmd === 'tai') await cmdTai(id);
   else if (cmd === 'ke') cmdKe(id);
   else if (cmd === 'bang') await cmdBang(id);
-  else if (cmd === 'ghep') await cmdGhep(id, { chiMat: process.argv.includes('--chi-mat') });
+  else if (cmd === 'ghep') { const g = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : null; }; await cmdGhep(id, { chiMat: process.argv.includes('--chi-mat'), mapFile: g('--map'), ra: g('--ra') }); }
   else { console.log('cách dùng: node tools/face-pack.mjs tai|ke [id]'); process.exit(cmd ? 1 : 0); }
 }

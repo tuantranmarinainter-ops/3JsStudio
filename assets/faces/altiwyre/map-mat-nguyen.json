@@ -1,0 +1,275 @@
+{
+ "nguon": {
+  "ten": "AltiWyre's Face Pack",
+  "tacGia": "AltiWyre",
+  "robloxAssetId": 6557969904,
+  "link": "https://create.roblox.com/store/asset/6557969904",
+  "giayPhep": "Roblox Creator Store"
+ },
+ "cachDoc": "BẢN ĐỀ XUẤT dùng MẶT NGUYÊN (nhóm f = bảng \"MISC FACES\" của gói, đúng bảng trong ảnh người dùng gửi 14/11). map[<biểu cảm>].lop = [mã]. Ghép thử: node tools/face-pack.mjs ghep --chi-mat --map assets/faces/altiwyre/map-mat-nguyen.json --ra output/face-pack/mat-nguyen",
+ "khung": {
+  "phong": 1.2,
+  "tam": 0.52
+ },
+ "map": {
+  "00_binh_thuong": {
+   "lop": [
+    "f47"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "01_o_tho": {
+   "lop": [
+    "f09"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "02_cuoi_rang_tho": {
+   "lop": [
+    "f59"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "03_cuoi_ra_nuoc_mat": {
+   "lop": [
+    "f104"
+   ],
+   "khop": "tam",
+   "ghiChu": "không có nước mắt"
+  },
+  "04_phan_khich": {
+   "lop": [
+    "f02"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "05_nan_ni_moi_vien_den": {
+   "lop": [
+    "f71"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "06_buon_rung_rung": {
+   "lop": [
+    "f77"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "07_khoc_oa": {
+   "lop": [
+    "f28"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "08_que_do_mat": {
+   "lop": [
+    "f126"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "09_ren_do_mo_hoi": {
+   "lop": [
+    "f39"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "10_hoang_so": {
+   "lop": [
+    "f20"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "11_soc_ha_hoc": {
+   "lop": [
+    "f29"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "12_la_het": {
+   "lop": [
+    "f27"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "13_met_moi": {
+   "lop": [
+    "f66"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "14_nghien_rang_tuc_gian": {
+   "lop": [
+    "f134"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "15_quat": {
+   "lop": [
+    "f63"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "16_nghi_ngo": {
+   "lop": [
+    "f13"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "17_boi_roi": {
+   "lop": [
+    "f25"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "18_cuoi_dac_y": {
+   "lop": [
+    "f95"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "19_ghe_tom": {
+   "lop": [
+    "f07"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "20_cuoi_guong": {
+   "lop": [
+    "f10"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "21_kiet_suc": {
+   "lop": [
+    "f31"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "22_ngo_ngac": {
+   "lop": [
+    "f23"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "23_buon_ngu": {
+   "lop": [
+    "f75"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "24_quyet_tam": {
+   "lop": [
+    "f70"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "25_thac_mac": {
+   "lop": [
+    "f37"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "26_ngam_nghi": {
+   "lop": [
+    "f24"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "27_thiet_ha": {
+   "lop": [
+    "f17"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "28_a_ra_roi": {
+   "lop": [
+    "f86"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "29_hoi_loi": {
+   "lop": [
+    "f135"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "30_dao_mat": {
+   "lop": [
+    "f52"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "31_ban_tin_ban_nghi": {
+   "lop": [
+    "f16"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "32_nhin_cuoi": {
+   "lop": [
+    "f129"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "33_im_lang_kho_xu": {
+   "lop": [
+    "f38"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "34_thi_tham": {
+   "lop": [
+    "f103"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "35_tho_phao": {
+   "lop": [
+    "f106"
+   ],
+   "khop": "tot",
+   "ghiChu": ""
+  },
+  "36_nhay_mat": {
+   "lop": [
+    "f30"
+   ],
+   "khop": "tam",
+   "ghiChu": "không có mặt nháy mắt rõ"
+  }
+ }
+}

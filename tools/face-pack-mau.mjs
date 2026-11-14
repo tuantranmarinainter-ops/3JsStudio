@@ -14,7 +14,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const arg = (k, d) => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : d; };
 const look = arg('look', 'tron'), CELL = 220, COLS = 8;   // 'tron' = đầu trơn không tóc (không che mặt)
 const D = path.join(ROOT, 'assets', 'faces', 'altiwyre');
-const map = JSON.parse(fs.readFileSync(path.join(D, 'map.json'), 'utf8'));
+const map = JSON.parse(fs.readFileSync(arg('map') ? path.resolve(ROOT, arg('map')) : path.join(D, 'map.json'), 'utf8'));
+const them = (arg('base') ? `&base=${encodeURIComponent('/' + arg('base').replace(/^[\/]+/, ''))}` : '') + (arg('phong') ? `&phong=${arg('phong')}&tam=${arg('tam', '0.53')}` : '');   // bản đề xuất ghép ở thư mục khác
 const parts = JSON.parse(fs.readFileSync(path.join(D, 'parts.json'), 'utf8'));
 
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.webp': 'image/webp' };
@@ -27,8 +28,9 @@ const browser = await launchBrowser();
 const out = path.join(ROOT, 'output', 'face-pack'); fs.mkdirSync(out, { recursive: true });
 async function chup(pack) {
   const page = await browser.newPage({ viewport: { width: COLS * CELL, height: 5 * CELL } }); const errs = [];
+  page.on("response", (r) => { if (r.status() >= 400 && /faces|face-pack/.test(r.url())) errs.push(r.status() + " " + r.url()); });
   page.on('pageerror', (e) => errs.push(String(e.message)));
-  await page.goto(`http://localhost:${srv.address().port}/engine/face-pack-lab.html?pack=${pack}&look=${look}&cols=${COLS}&cell=${CELL}`);
+  await page.goto(`http://localhost:${srv.address().port}/engine/face-pack-lab.html?pack=${pack}&look=${look}&cols=${COLS}&cell=${CELL}${pack === 'altiwyre' ? them : ''}`);
   await page.waitForFunction('window.__ready === true', { timeout: 90000 });
   if (errs.length) throw new Error(pack + ': ' + errs.join(' | '));
   const cells = await page.evaluate('window.__cells');
@@ -76,11 +78,12 @@ textarea{width:100%;height:110px;font:12px ui-monospace,Consolas,monospace;margi
 <button id="xoa">Gỡ hết phụ thêm</button><button id="lai">Trả về đề xuất</button><button id="chep" class="on">Chép JSON</button></header><div id="parts"></div></div>
 <script>
 const D=${JSON.stringify(DATA)};
-const NH={e:'Mắt',b:'Lông mày',m:'Miệng',s:'Miệng khi nói',a:'Phụ thêm',p:'Con ngươi rời'};
+const NH={f:'Mặt nguyên (140)',e:'Mắt',b:'Lông mày',m:'Miệng',s:'Miệng khi nói',a:'Phụ thêm',p:'Con ngươi rời'};
 const P=Object.fromEntries(D.parts.map(p=>[p.ma,p])),IM={};
-const goc=JSON.parse(JSON.stringify(D.map));let chon=null,nhom='e';
+const goc=JSON.parse(JSON.stringify(D.map));let chon=null,nhom='f';
 const img=ma=>IM[ma]||(IM[ma]=Object.assign(new Image(),{src:D.thumbs[ma]}));
 const khe=ma=>{const p=P[ma];if(!p)return ma;if(p.nhom==='e'||p.nhom==='b')return p.nhom+(p.cot%2?'R':'L');if(p.nhom==='m'||p.nhom==='s')return 'mouth';return ma};
+const laF=ma=>P[ma]&&P[ma].nhom==='f';
 const capDoi=ma=>{const p=P[ma];const q=D.parts.find(x=>x.nhom===p.nhom&&x.hang===p.hang&&x.cot===(p.cot^1));return q&&q.ma};
 function ve(ten){const c=document.querySelector('[data-c="'+ten+'"]');if(!c)return;const g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);
   Promise.all(D.map[ten].lop.map(ma=>{const i=img(ma);return i.complete?i:new Promise(r=>{i.onload=()=>r(i)})})).then(is=>{g.clearRect(0,0,c.width,c.height);is.forEach(i=>g.drawImage(i,0,0,c.width,c.height))});
@@ -93,7 +96,7 @@ const nb=document.getElementById('nhom');Object.keys(NH).forEach(k=>{if(!D.parts
 function veParts(){nb.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===nhom));const box=document.getElementById('parts');box.innerHTML='';const cur=chon?D.map[chon].lop:[];
   D.parts.filter(p=>p.nhom===nhom).forEach(p=>{const d=document.createElement('div');d.className='pt'+(cur.includes(p.ma)?' on':'');d.innerHTML='<img loading="lazy" src="'+D.thumbs[p.ma]+'">'+p.ma;d.onclick=()=>dat(p.ma);box.appendChild(d)})}
 function dat1(lop,ma){const k=khe(ma),i=lop.findIndex(x=>khe(x)===k);if(P[ma].nhom==='a'||P[ma].nhom==='p'){if(i>=0)lop.splice(i,1);else lop.push(ma)}else if(i>=0)lop[i]=ma;else lop.push(ma)}
-function dat(ma){if(!chon){alert('Bấm chọn một ô biểu cảm trước.');return}const lop=D.map[chon].lop;dat1(lop,ma);
+function dat(ma){if(!chon){alert('Bấm chọn một ô biểu cảm trước.');return}if(laF(ma)){D.map[chon].lop=[ma];ve(chon);veParts();return}if(D.map[chon].lop.some(laF)&&'ebms'.includes(P[ma].nhom))D.map[chon].lop=[];const lop=D.map[chon].lop;dat1(lop,ma);
   if(document.getElementById('doi').checked&&(P[ma].nhom==='e'||P[ma].nhom==='b')){const d=capDoi(ma);if(d)dat1(lop,d)}ve(chon);veParts()}
 document.getElementById('xoa').onclick=()=>{if(!chon)return;D.map[chon].lop=D.map[chon].lop.filter(x=>P[x]&&P[x].nhom!=='a'&&P[x].nhom!=='p');ve(chon);veParts()};
 document.getElementById('lai').onclick=()=>{if(!chon)return;D.map[chon].lop=goc[chon].lop.slice();ve(chon);veParts()};
