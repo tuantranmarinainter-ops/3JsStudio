@@ -66,10 +66,6 @@ if (co_(`${kb}/KIT.html`)) {
   chepThuMuc(path.join(GOC, kb, 'hinh'), path.join(RA, 'cong-2', 'hinh'));
   them('Trang duyệt', 'Cổng duyệt 2 — storyboard và bộ kit', 'cong-2/KIT.html', 'Số đo bối cảnh, camera, chuyển động từng shot.', `${kb}/KIT.html`);
 }
-if (co_(`dist/${ep}_duyet-nv.html`)) {
-  chepTrang(path.join(GOC, 'dist', `${ep}_duyet-nv.html`), path.join(RA, 'cong-3', 'duyet-nhan-vat.html'), `${ep}_cong-3-nv`);
-  them('Trang duyệt', 'Cổng duyệt 3 (đợt 2) — chọn nhân vật', 'cong-3/duyet-nhan-vat.html', 'Mỗi nhân vật nhiều ứng viên, chọn rồi gửi.', `dist/${ep}_duyet-nv.html`);
-}
 if (co_(`dist/${ep}_duyet.html`)) {
   chepTrang(path.join(GOC, 'dist', `${ep}_duyet.html`), path.join(RA, 'cong-3', 'duyet-model.html'), `${ep}_cong-3`);
   them('Trang duyệt', 'Cổng duyệt 3 — chọn model, đạo cụ', 'cong-3/duyet-model.html', 'Mỗi món nhiều ứng viên, chọn rồi gửi.', `dist/${ep}_duyet.html`);
