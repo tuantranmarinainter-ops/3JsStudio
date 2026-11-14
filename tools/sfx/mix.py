@@ -192,6 +192,10 @@ for L in want:
         i0 = int(float(ca) * SR); nf = int(float(CFG[L].get('cutFade', 0.2)) * SR)
         if nf > 0 and i0 + nf <= len(buf): buf[i0:i0 + nf] *= np.linspace(1, 0, nf, dtype=np.float32)
         buf[i0 + nf:] = 0
+    hp = float(CFG[L].get('hp', 0) or 0)             # layers.json: hp = lọc bỏ tiếng ù dưới hp Hz (0 ở hp/2 → nguyên ở hp); mặc định tắt
+    if hp > 0:
+        F = np.fft.rfft(buf); fr = np.fft.rfftfreq(len(buf), 1 / SR)
+        F *= np.clip(np.log2(np.maximum(fr, 1e-6) / (hp / 2)), 0, 1); buf[:] = np.fft.irfft(F, len(buf)).astype(buf.dtype)
     peak = float(np.max(np.abs(buf))) or 1.0
     buf *= CFG[L].get('peak', 0.5) / peak            # đưa đỉnh lớp về mức mục tiêu (layers.json: peak), nâng hoặc hạ
     out = EPD / f'sfx_{L}.ogg'

@@ -18,12 +18,13 @@
    "e3-nha-may": "conveyor hum"
   },
   "boost": {
-   "conveyor hum": 0.6,
-   "kitchen room tone quiet": 0.6,
+   "conveyor hum": 0.3,
+   "kitchen room tone quiet": 0.4,
    "night crickets ambience": 0.8,
    "town ambience day birds": 0.7
   },
-  "peak": 0.35,
+  "peak": 0.12,
+  "hp": 180,
   "minSeg": 3.0,
   "cutAt": 138.92,
   "cutFade": 0.15
