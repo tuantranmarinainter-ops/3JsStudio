@@ -2,52 +2,56 @@
  "capNhat": "2026-11-14",
  "nhom": [
   {
-   "ten": "Đề xuất code cho quy trình mới (chờ bạn chọn)",
+   "ten": "Công cụ cho quy trình mới (kịch bản chữ → video)",
    "viec": [
     {
      "ten": "1. Mẫu kit + bộ kiểm kit dùng chung",
-     "tt": "cho",
-     "ghiChu": "Nhỏ. Kiểm số hình mỗi shot, trường chuyển động, ngưỡng số đo; còn lỗi thì chặn không cho sang bước dựng."
+     "tt": "dang",
+     "ghiChu": "Đợt 1, agent Sonnet đang code + viết test. Nhỏ. Kiểm số hình mỗi shot, trường chuyển động, ngưỡng số đo; còn lỗi thì chặn không cho sang bước dựng.",
+     "pt": 20
     },
     {
      "ten": "2. Chia shot từ kịch bản chữ",
-     "tt": "cho",
-     "ghiChu": "Vừa. Kịch bản chữ → bảng shot theo mẫu (thoại, bối cảnh, camera, khung đầu/cuối, hành động, 1/2/3 hình) + kiểm định dạng."
+     "tt": "dang",
+     "ghiChu": "Đợt 1. Đã có đặc tả định dạng bảng shot (docs/quy-trinh-dau-vao.md) + bộ mẫu 6 shot; agent đang viết bộ kiểm. Phần chia shot do Claude làm khi có kịch bản.",
+     "pt": 20
     },
     {
      "ten": "3. Chạy Codex vẽ hình song song",
-     "tt": "cho",
-     "ghiChu": "Vừa. Một lệnh: chia theo cụm bối cảnh, gpt-6-luna low, trần 6 tiến trình, tự chạy lại shot thiếu, báo số hình và lỗi."
+     "tt": "dang",
+     "ghiChu": "Đợt 1, agent Sonnet đang code + viết test. Vừa. Một lệnh: chia theo cụm bối cảnh, gpt-6-luna low, trần 6 tiến trình, tự chạy lại shot thiếu, báo số hình và lỗi.",
+     "pt": 20
     },
     {
      "ten": "4. Trang duyệt bảng shot + ảnh tham chiếu",
-     "tt": "cho",
-     "ghiChu": "Nhỏ. Dùng lại trang duyệt đợt đang có; bạn chốt từng nhân vật, bối cảnh, shot."
+     "tt": "dang",
+     "ghiChu": "Đợt 1, agent Sonnet đang code + viết test. Nhỏ. Dùng lại trang duyệt đợt đang có; bạn chốt từng nhân vật, bối cảnh, shot.",
+     "pt": 20
     },
     {
      "ten": "5. Kit → shots.js tự động",
-     "tt": "cho",
-     "ghiChu": "Vừa. Chọn loại shot theo trường chuyển động, điền camera từ kit; Claude chỉ sửa shot lệch."
+     "tt": "chua",
+     "ghiChu": "Đợt 2. Vừa. Chọn loại shot theo trường chuyển động, điền camera từ kit; Claude chỉ sửa shot lệch."
     },
     {
      "ten": "6. Kiểm chuyển động",
-     "tt": "cho",
-     "ghiChu": "Vừa. Chụp khung đầu và cuối mỗi shot, so với hình đầu/cuối của storyboard; báo shot đứng im hoặc đi sai hướng."
+     "tt": "chua",
+     "ghiChu": "Đợt 2. Vừa. Chụp khung đầu và cuối mỗi shot, so với hình đầu/cuối của storyboard; báo shot đứng im hoặc đi sai hướng."
     },
     {
      "ten": "7. Điểm khớp storyboard từng shot",
-     "tt": "cho",
-     "ghiChu": "Vừa. Chấm đạt/lệch/hỏng theo ngưỡng, đưa bảng trạng thái từng shot vào trang tiến độ."
+     "tt": "chua",
+     "ghiChu": "Đợt 3. Vừa. Chấm đạt/lệch/hỏng theo ngưỡng, đưa bảng trạng thái từng shot vào trang tiến độ."
     },
     {
      "ten": "8. Ngưỡng độ nặng kiểm sớm",
-     "tt": "cho",
-     "ghiChu": "Nhỏ. Dung lượng, thời gian mở, số shader kiểm ngay sau bước dựng bối cảnh."
+     "tt": "chua",
+     "ghiChu": "Đợt 3. Nhỏ. Dung lượng, thời gian mở, số shader kiểm ngay sau bước dựng bối cảnh."
     },
     {
      "ten": "9. Nối R6 + 37 biểu cảm cho nhân vật phụ",
-     "tt": "cho",
-     "ghiChu": "Lớn. Việc nền đã có từ trước, không phụ thuộc quy trình mới."
+     "tt": "chua",
+     "ghiChu": "Làm riêng. Lớn. Việc nền đã có từ trước, không phụ thuộc quy trình mới."
     }
    ]
   },

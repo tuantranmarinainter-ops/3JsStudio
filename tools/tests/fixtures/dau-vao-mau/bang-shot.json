@@ -1,0 +1,32 @@
+{
+  "ep": "mau",
+  "nhanVat": [
+    { "id": "ga", "ten": "Gà", "moTa": "gà con vàng, khối vuông, mắt to, khăn đỏ" },
+    { "id": "ba-ban-banh", "ten": "Bà bán bánh", "moTa": "bà cụ tóc bạc búi, tạp dề trắng, khối vuông" }
+  ],
+  "boiCanh": [
+    { "id": "tiem-banh", "ten": "Tiệm bánh", "moTa": "quầy gỗ, tủ kính bánh, nắng sáng qua cửa sổ" },
+    { "id": "pho", "ten": "Phố thị trấn", "moTa": "dãy nhà pastel, đường lát đá, buổi sáng" }
+  ],
+  "shots": [
+    { "id": "s001", "boiCanh": "pho", "nhanVat": [], "dur": 1.4, "thoai": "Ở thị trấn này, ai cũng có một con số trên đầu.",
+      "camera": { "loai": "zoomOut", "gocMay": "tren-xuong", "coKhung": ["trung", "toan"] }, "hinh": 2,
+      "dau": "Mái nhà pastel sát khung", "cuoi": "Trọn dãy phố, người đi lại nhỏ xíu", "hanhDong": "Camera lùi ra và nâng lên" },
+    { "id": "s002", "boiCanh": "pho", "nhanVat": ["ga"], "dur": 1.0, "thoai": "Trừ tôi.",
+      "camera": { "loai": "zoomIn", "gocMay": "ngang-mat", "coKhung": ["trung", "can"] }, "hinh": 2,
+      "dau": "Gà đứng giữa phố, nhìn lên", "cuoi": "Cận mặt Gà, trên đầu trống không", "hanhDong": "Gà ngước nhìn lên đầu mình" },
+    { "id": "s003", "boiCanh": "tiem-banh", "nhanVat": ["ga", "ba-ban-banh"], "dur": 1.2, "thoai": "",
+      "camera": { "loai": "zoomOut", "gocMay": "qua-vai", "coKhung": ["can", "trung"] }, "hinh": 2,
+      "dau": "Qua vai Gà thấy bà sau quầy", "cuoi": "Thấy cả hai và tủ bánh", "hanhDong": "Bà đẩy đĩa bánh về phía Gà" },
+    { "id": "s004", "boiCanh": "tiem-banh", "nhanVat": [], "dur": 0.8, "thoai": "",
+      "camera": { "loai": "dung", "gocMay": "tren-xuong", "coKhung": ["dac-ta", "dac-ta"] }, "hinh": 1,
+      "dau": "Cận đĩa bánh có tờ giấy ghi số 7" },
+    { "id": "s005", "boiCanh": "tiem-banh", "nhanVat": ["ga"], "dur": 1.3, "thoai": "Con số đó… là của tôi?",
+      "camera": { "loai": "doiHuong", "gocMay": "ngang-mat", "coKhung": ["trung", "can"] }, "hinh": 3,
+      "dau": "Gà cầm tờ giấy, cúi nhìn", "giua": "Gà giật mình nhảy lên, giấy bay khỏi tay", "cuoi": "Gà đáp xuống, tờ giấy rơi trên đầu",
+      "hanhDong": "Gà nhảy lên rồi rơi xuống, tờ giấy bay theo vòng cung" },
+    { "id": "s006", "boiCanh": "pho", "nhanVat": ["ga"], "dur": 1.1, "thoai": "",
+      "camera": { "loai": "theo", "gocMay": "ngang-mat", "coKhung": ["trung", "trung"] }, "hinh": 2,
+      "dau": "Gà chạy ra khỏi cửa tiệm", "cuoi": "Gà chạy tới cuối phố", "hanhDong": "Gà chạy từ trái sang phải, camera bám theo" }
+  ]
+}
