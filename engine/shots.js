@@ -44,6 +44,7 @@ import { resolveSeaWeather, seaWeatherAmp } from './seaweather.js';
 import { gioThoiTiet } from './envs/gio-thoi-tiet.js';
 import { FACE_PRESETS } from './r15.js';
 import { createDatMay } from './dat-may.js';
+import { themSong } from './blocky/song.js';   // idle sống (ô FX idleSong), mã chép từ blocky-shorts
 import { moc, qua1, qua3, mayTuyetDoi, viTri, huongThan } from './diem-giua.js';
 const lerp3 = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
 // tiến độ cục bộ trong một đoạn con của shot: win = [k0,k1]
@@ -270,6 +271,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
       let want = s.face || pose.face || a._defaultFace;
       if (talk && AUTO.nhep !== false && [].concat(talk).includes(name) && want) want = talkFace(want.split('~')[0], t);
       if (want && a.options.face !== want) { a.setFace(want); a.animate(anim, at, opt); }   // đổi mặt xong dựng lại pose → hướng mắt không phụ thuộc shot trước (tất định)
+      if (AUTO.idleSong) themSong(a, name, anim, at);   // idle sống (engine/blocky/song.js): thở + lắc đầu lệch pha theo tên; tắt = không đụng gì
       if (s.pose) applyExtra(a, s.pose, ke);
       // vật cầm tay
       for (const side of ['holdR', 'holdL', 'hold']) if (s[side]) holdProp(a, s[side], side);

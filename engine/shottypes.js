@@ -24,6 +24,7 @@
 // Loại bám nhân vật (closeup, reaction, insert…) không ghi `at` → diễn viên đứng đúng chỗ shot trước để lại.
 // Mọi thứ là hàm thuần của dữ liệu (không random) → cùng shots.js ra cùng phim.
 
+import { apCoCanh, coOn } from './blocky/co-canh.js';   // cỡ cảnh `co:` (ô FX coCanh)
 const PI = Math.PI;
 export const WALK_SPEED = 6;    // stud/giây, khớp nhịp bước walk R15 (speed 1.6)
 export const RUN_SPEED = 13;
@@ -322,6 +323,11 @@ export function expandShot(sh, ctx = {}, state = { at: null, actors: {} }) {
   if (who && made.cast[who]) { if (sh.face && !made.cast[who].face) made.cast[who].face = sh.face; }
   for (const o of others.slice(1)) if (!made.cast[o]) made.cast[o] = { at: add(place.pos, [f, 3], [s, 2]), ry, anim: sh.withAnim || 'idle' };
   for (const c of Object.values(made.cast)) for (const k of Object.keys(c)) if (c[k] === undefined) delete c[k];
+  if (sh.co && coOn() && who) {   // cỡ cảnh: dist/h/look tính từ chiều cao khung (engine/blocky/co-canh.js); nhiều người → tự nới
+    const ps = [who, ...others].map((n) => made.cast[n]?.at).filter(Array.isArray);
+    let spread = 0; for (const a of ps) for (const b of ps) spread = Math.max(spread, Math.hypot(a[0] - b[0], a[2] - b[2]));
+    made.cam = apCoCanh(made.cam, sh.co, { goc: sh.goc, spread });
+  }
   let cam = applyMove(made.cam, sh.move ?? T.move);
   if (sh.cam) cam = { ...cam, ...sh.cam };
   const cast = { ...made.cast };

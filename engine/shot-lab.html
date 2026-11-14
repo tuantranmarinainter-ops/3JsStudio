@@ -57,6 +57,13 @@ const LAB_SHOTS = {
     { id: 'g1', dur: 1.5, type: 'hug', at: 'lab', who: 'hero', with: 'mom' },
     { id: 'g2', dur: 1.5, type: 'hug', at: 'lab', who: 'hero', with: 'mom', side: 'left' },
   ],
+  // cỡ cảnh `co:` (engine/blocky/co-canh.js): cùng một loại shot, ba cỡ khác nhau
+  closeup: [
+    { id: 'c1', dur: 1.2, type: 'closeup', at: 'lab', who: 'hero', co: 'can' },
+    { id: 'c2', dur: 1.2, type: 'closeup', at: 'lab', who: 'hero', co: 'trung' },
+    { id: 'c3', dur: 1.2, type: 'closeup', at: 'lab', who: 'hero', co: 'toanThan' },
+    { id: 'c4', dur: 1.2, type: 'closeup', at: 'lab', who: 'hero' },
+  ],
   fall: [
     { id: 'f1', dur: 1.2, type: 'fall', at: 'lab', who: 'hero' },
     { id: 'f2', dur: 1.2, type: 'fall', who: 'hero', anim: 'fall', turn: 0.6 },
@@ -81,7 +88,7 @@ const houses = { family: createHouse(THREE, { style: 'family', name: 'house_fami
 houses.illustration = houses.illus;
 for (const h of Object.values(houses)) stage.scene.add(h.root);
 const props = { card: makePostcard(THREE, 'island', { w: 2.6 }) };
-const actors = (TYPE === 'hug' || TYPE === 'fall') ? await buildCast(THREE, { hero: { shirt: '#e74c3c', face: 'smile' }, mom: { shirt: '#8e44ad', skirt: '#5d4037', hair: 'braids' } }) : {};
+const actors = (TYPE === 'hug' || TYPE === 'fall' || TYPE === 'closeup') ? await buildCast(THREE, { hero: { shirt: '#e74c3c', face: 'smile' }, mom: { shirt: '#8e44ad', skirt: '#5d4037', hair: 'braids' } }) : {};
 for (const a of Object.values(actors)) stage.scene.add(a.root);
 
 const places = resolvePlaces({ lab: { pos: [0, 0, 0], ry: 0 } }, {});
