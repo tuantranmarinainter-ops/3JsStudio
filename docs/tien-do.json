@@ -19,8 +19,8 @@
     {
      "ten": "3. Chạy Codex vẽ hình song song",
      "tt": "do",
-     "ghiChu": "Code xong, 10 test qua với Codex giả: tools/codex-ve.mjs. CHƯA chạy Codex thật: chưa biết gpt-6-luna có vẽ được hình và lệnh có chạy đúng trên Windows không. Cần bạn cho phép chạy thử 1 lần (tốn hạn mức Codex).",
-     "pt": 80
+     "ghiChu": "Chạy Codex thật 14/11: gpt-6-luna low vẽ đủ 4 ảnh tham chiếu bộ mẫu trong 170 giây, 41.204 token; lệnh chạy đúng trên Windows. Chưa thử: nhiều cụm song song thật, chế độ vẽ hình shot có đính kèm ảnh, chất lượng hình chờ bạn xem.",
+     "pt": 90
     },
     {
      "ten": "4. Trang duyệt bảng shot + ảnh tham chiếu",
