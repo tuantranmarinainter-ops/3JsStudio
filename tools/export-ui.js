@@ -91,8 +91,13 @@ async function init() {
     #xapp .xsh, #xapp .xstep { padding: 5px 9px; }
     #xshinfo, #xftot, #xshot { font-variant-numeric: tabular-nums; }
 
-    #xannbox { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); width: min(460px, 92%); background: var(--panel); border: 1px solid var(--acc); border-radius: 10px; padding: 12px; box-shadow: 0 14px 40px rgba(0,0,0,.55); z-index: 20; display: none; flex-direction: column; gap: 8px; }
+    #xannbox { position: fixed; left: 0; top: 0; width: min(320px, calc(100vw - 16px)); max-height: calc(100vh - 16px); overflow: auto; background: var(--panel); border: 1px solid var(--acc); border-radius: 10px; padding: 0; box-shadow: 0 14px 40px rgba(0,0,0,.55); z-index: 40; display: none; flex-direction: column; }
     #xannbox.on { display: flex; }
+    #xannbox .dh { display: flex; align-items: center; gap: 4px; padding: 6px 8px 6px 12px; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; background: color-mix(in srgb, var(--acc) 22%, var(--panel)); border-radius: 9px 9px 0 0; position: sticky; top: 0; }
+    #xannbox.drag .dh { cursor: grabbing; } #xannbox.drag, #xannbox.drawing { pointer-events: none; }
+    #xannbox .dh button { padding: 2px 8px; flex: none; }
+    #xannbox .bd { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px 12px; }
+    #xannbox.min .bd { display: none; } #xannbox.min .dh { border-radius: 9px; }
     #xannbox .tools { display: flex; gap: 5px; flex-wrap: wrap; }
     #xannbox .tl { padding: 4px 8px; }
     #xannbox .tl[data-tool].act { background: var(--bad); border-color: var(--bad); color: #fff; }
@@ -199,12 +204,14 @@ async function init() {
       <div id="xview">
         <div id="xbadge"><span class="pill" id="xbshot"></span><span class="pill" id="xbfr"></span><span class="pill" id="xbtime"></span></div>
         <div id="xannbox">
-          <div class="row" style="margin-bottom:0"><b id="xmtitle" style="flex:1"></b><button id="xmclose" title="Huỷ (Esc)">✕</button></div>
+          <div class="dh" id="xmdh" title="Kéo thanh này để di chuyển khung"><span aria-hidden="true">⠿</span><b id="xmtitle" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b><button id="xmreset" title="Về vị trí mặc định (bên phải video)">⌖</button><button id="xmmin" title="Thu gọn / mở rộng">–</button><button id="xmclose" title="Huỷ (Esc)">✕</button></div>
+          <div class="bd">
           <div class="muted">Vẽ lên khung hình để chỉ chỗ lỗi (video tạm dừng). Nét vẽ KHÔNG nằm trong file MP4 xuất ra.</div>
           <div class="tools" id="xanntools"><button class="tl act" data-tool="pen">✏ Bút</button><button class="tl" data-tool="ell">◯ Elip</button><button class="tl" data-tool="arrow">➚ Mũi tên</button><button class="tl" id="xundo">↶ Hoàn tác</button><button class="tl" id="xclr">🗑 Xoá nét</button></div>
           <textarea id="xnote" placeholder="Lỗi là gì? (gõ hoặc bấm 🎤 để nói · Ctrl+Enter lưu · Esc huỷ)"></textarea>
           <div class="row" style="margin:0"><label class="chk" style="flex:2"><input id="xscope" type="checkbox" checked> Lỗi của cả shot</label><button id="xmic">🎤 Nói</button><button id="xsave" class="main">Lưu marker</button></div>
           <div id="xmicst" class="muted"></div>
+          </div>
         </div>
       </div>
       <div class="transport">
@@ -493,26 +500,66 @@ async function init() {
   const apos = (e) => { const r = annCv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * AW, (e.clientY - r.top) / r.height * AH]; };
   annCv.addEventListener('pointerdown', (e) => {
     if (!annotating || e.button > 0) return; e.preventDefault(); annCv.setPointerCapture(e.pointerId);
-    const p = apos(e); cur = tool === 'pen' ? { type: 'pen', pts: [p] } : { type: tool, a: p, b: p }; redrawAnn();
+    const p = apos(e); cur = tool === 'pen' ? { type: 'pen', pts: [p] } : { type: tool, a: p, b: p }; redrawAnn(); abox.classList.add('drawing');
   });
   annCv.addEventListener('pointermove', (e) => {
     if (!cur) return; const p = apos(e);
     if (cur.type === 'pen') cur.pts.push(p); else cur.b = p; redrawAnn();
   });
-  const endStroke = () => { if (!cur) return; strokes.push(cur); cur = null; redrawAnn(); };
+  const endStroke = () => { abox.classList.remove('drawing'); if (!cur) return; strokes.push(cur); cur = null; redrawAnn(); };
   annCv.addEventListener('pointerup', endStroke); annCv.addEventListener('pointercancel', endStroke);
   for (const b of document.querySelectorAll('#xanntools .tl[data-tool]')) b.onclick = () => {
     tool = b.dataset.tool; for (const o of document.querySelectorAll('#xanntools .tl[data-tool]')) o.classList.toggle('act', o === b);
   };
   $('xundo').onclick = () => { strokes.pop(); redrawAnn(); };
   $('xclr').onclick = () => { strokes = []; cur = null; redrawAnn(); };
+  // ---- khung ghi chú NỔI: kéo bằng thanh tiêu đề, thu gọn, về mặc định (bên phải video), nhớ vị trí ----
+  const abox = $('xannbox'), AM = 8, AKEY = 'xannpos';
+  let aPos = null;   // {x,y,c} khi người dùng đã kéo/thu gọn; null = vị trí mặc định theo hộp bao video
+  try { const j = JSON.parse(localStorage.getItem(AKEY) || 'null'); if (j && isFinite(j.x) && isFinite(j.y)) aPos = { x: +j.x, y: +j.y, c: !!j.c }; } catch {}
+  const aSave = () => { try { aPos ? localStorage.setItem(AKEY, JSON.stringify(aPos)) : localStorage.removeItem(AKEY); } catch {} };
+  const aApply = (x, y) => {
+    const W = abox.offsetWidth, H = abox.offsetHeight;
+    x = Math.max(AM, Math.min(x, innerWidth - W - AM)); y = Math.max(AM, Math.min(y, innerHeight - H - AM));
+    abox.style.left = x + 'px'; abox.style.top = y + 'px'; return [x, y];
+  };
+  function placeAnn() {
+    if (!annotating) return;
+    if (aPos) { abox.classList.toggle('min', aPos.c); const [x, y] = aApply(aPos.x, aPos.y); aPos.x = x; aPos.y = y; return; }
+    const r = wrap.getBoundingClientRect(); abox.classList.remove('min'); const W = abox.offsetWidth, H = abox.offsetHeight;
+    let x, y, c = false;
+    if (innerWidth - r.right - 12 - AM >= W) { x = r.right + 12; y = r.top; }                       // đủ chỗ bên phải video
+    else if (r.bottom + 8 + H <= innerHeight - AM) { x = (innerWidth - W) / 2; y = r.bottom + 8; }   // màn hẹp: dưới video
+    else { c = true; abox.classList.add('min'); x = (innerWidth - W) / 2; y = innerHeight; }          // hết chỗ: dán đáy, thu gọn
+    abox.classList.toggle('min', c); aApply(x, y);
+    if (c) { const b = abox.getBoundingClientRect(); if (b.top < r.bottom && b.bottom > r.top && b.left < r.right && b.right > r.left) abox.style.top = Math.max(AM, innerHeight - abox.offsetHeight - AM) + 'px'; }
+  }
+  addEventListener('resize', placeAnn);
+  try { new ResizeObserver(placeAnn).observe(wrap); } catch {}
+  $('xmreset').onclick = () => { aPos = null; aSave(); placeAnn(); };
+  $('xmmin').onclick = () => {
+    const b = abox.getBoundingClientRect(); const c = !abox.classList.contains('min');
+    aPos = { x: b.left, y: b.top, c }; abox.classList.toggle('min', c); placeAnn(); aSave(); if (!c) $('xnote').focus();
+  };
+  { let d = null;
+    $('xmdh').addEventListener('pointerdown', (e) => {
+      if (e.button > 0 || e.target.closest('button')) return; e.preventDefault();
+      const b = abox.getBoundingClientRect(); d = { id: e.pointerId, dx: e.clientX - b.left, dy: e.clientY - b.top };
+      try { $('xmdh').setPointerCapture(e.pointerId); } catch {} abox.classList.add('drag');
+    });
+    $('xmdh').addEventListener('pointermove', (e) => {
+      if (!d || e.pointerId !== d.id) return; const [x, y] = aApply(e.clientX - d.dx, e.clientY - d.dy); aPos = { x, y, c: abox.classList.contains('min') };
+    });
+    const dEnd = (e) => { if (!d) return; d = null; abox.classList.remove('drag'); aSave(); };
+    $('xmdh').addEventListener('pointerup', dEnd); $('xmdh').addEventListener('pointercancel', dEnd);
+  }
   function setAnnotate(on) {
     if (on && busy) return;
     annotating = on; if (on && playing) pause();
     wrap.classList.toggle('annot', on); $('xannbox').classList.toggle('on', on);
     $('xannbtn').classList.toggle('act', on);
     if (!on) { stopMic(); strokes = []; cur = null; redrawAnn(); $('xnote').value = ''; $('xmicst').textContent = ''; }
-    else { try { syncUi(+$('xseek').value); } catch {} $('xnote').focus(); }
+    else { try { syncUi(+$('xseek').value); } catch {} placeAnn(); if (!abox.classList.contains('min')) $('xnote').focus({ preventScroll: true }); }
   }
   $('xannbtn').onclick = () => { noteFromList = false; setAnnotate(!annotating); };
   $('xmclose').onclick = () => setAnnotate(false);
