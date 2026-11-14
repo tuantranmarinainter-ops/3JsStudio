@@ -30,15 +30,15 @@
     },
     {
      "ten": "5. Kit → shots.js tự động",
-     "tt": "dang",
-     "ghiChu": "Đợt 2. Vừa. Chọn loại shot theo trường chuyển động, điền camera từ kit; Claude chỉ sửa shot lệch.",
-     "pt": 20
+     "tt": "do",
+     "ghiChu": "Đợt 2. Code xong, 9 test qua: tools/kit-shots.mjs sinh shots.tao.js từ kit. CHƯA dựng hình thật từ file sinh ra. Shot 3 hình, shot đổi hướng và shot đám đông bị đánh dấu CẦN SỬA TAY vì engine chưa đáp ứng.",
+     "pt": 70
     },
     {
      "ten": "6. Kiểm chuyển động",
-     "tt": "dang",
-     "ghiChu": "Đợt 2. Vừa. Chụp khung đầu và cuối mỗi shot, so với hình đầu/cuối của storyboard; báo shot đứng im hoặc đi sai hướng.",
-     "pt": 20
+     "tt": "do",
+     "ghiChu": "Đợt 2. Code xong, 19 test qua: tools/kiem-chuyen-dong.mjs. Chạy thật trên Tập 3 (ep002): 104 shot trong 85 giây, 5 shot đứng im hoàn toàn (s047, s088, s098, s112, s114). CHƯA chạy chế độ so với kit trên trang thật; quy ước xoay toạ độ cần thống nhất với kit-shots.",
+     "pt": 75
     },
     {
      "ten": "7. Điểm khớp storyboard từng shot",
@@ -60,6 +60,11 @@
      "tt": "do",
      "pt": 75,
      "ghiChu": "Chạy được với khoá của bạn: node tools/roblox.mjs tim \"từ khoá\" / tai <id> → một GLB trong assets/nhap/. Thử thật 4 mẫu, số tam giác khớp Creator Store (gấu bông 7016/7016). CHƯA: chưa ai nhìn GLB bằng mắt; mẫu thật chưa cái nào ra ảnh vân; Union và decal chưa hỗ trợ; chưa nối vào trang duyệt nhiều ứng viên."
+    },
+    {
+     "ten": "11. Engine: điểm giữa cho camera + loại shot đổi hướng",
+     "tt": "cho",
+     "ghiChu": "Cần bạn quyết. Engine chỉ nội suy camera đầu→cuối, nên shot 3 hình (nhảy, ngã, quay người) chưa tự động được. Thêm điểm giữa là sửa engine dùng chung cho mọi tập. Trả lời 'làm' hoặc 'để sau'."
     }
    ]
   },
