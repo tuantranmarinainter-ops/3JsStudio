@@ -31,24 +31,26 @@
     {
      "ten": "5. Kit → shots.js tự động",
      "tt": "do",
-     "ghiChu": "Đợt 2. Code xong, 9 test qua: tools/kit-shots.mjs sinh shots.tao.js từ kit. CHƯA dựng hình thật từ file sinh ra. Shot 3 hình, shot đổi hướng và shot đám đông bị đánh dấu CẦN SỬA TAY vì engine chưa đáp ứng.",
-     "pt": 70
+     "ghiChu": "Đợt 2. Chạy trọn chuỗi trên tập thử 6 shot (episodes/_mau-kit): kit → shots.js → kiểm chuyển động, 0 lỗi. CHƯA xem hình tập thử bằng mắt; shot 3 hình vẫn chỉ đi đầu→cuối vì engine chưa có điểm giữa camera (việc 11).",
+     "pt": 85
     },
     {
      "ten": "6. Kiểm chuyển động",
      "tt": "do",
-     "ghiChu": "Đợt 2. Code xong, 19 test qua: tools/kiem-chuyen-dong.mjs. Chạy thật trên Tập 3 (ep002): 104 shot trong 85 giây, 5 shot đứng im hoàn toàn (s047, s088, s098, s112, s114). CHƯA chạy chế độ so với kit trên trang thật; quy ước xoay toạ độ cần thống nhất với kit-shots.",
-     "pt": 75
+     "ghiChu": "Đợt 2. Chạy thật có so với kit trên tập thử: 6 shot, 0 lỗi, 1 cảnh báo (shot tĩnh có chủ ý). Tập 3 (ep002): 5 shot đứng im s047, s088, s098, s112, s114. Chưa thử với kit do Codex đo từ hình thật.",
+     "pt": 90
     },
     {
      "ten": "7. Điểm khớp storyboard từng shot",
-     "tt": "chua",
-     "ghiChu": "Đợt 3. Vừa. Chấm đạt/lệch/hỏng theo ngưỡng, đưa bảng trạng thái từng shot vào trang tiến độ."
+     "tt": "do",
+     "ghiChu": "Đợt 3. tools/khop-storyboard.mjs, 9 test qua. Thử trên 6 shot Tập 3: hình đúng 0,86–1,00 (đạt), hình tráo 0,26–0,66. Chỉ đo bố cục thô, không bắt nhầm nhân vật/đồ vật. CHƯA thử với tranh AI thật; ngưỡng 0,7/0,4 có thể phải chỉnh. Bảng trạng thái shot trên trang tiến độ đã có code, chưa có dữ liệu thật để hiện.",
+     "pt": 70
     },
     {
      "ten": "8. Ngưỡng độ nặng kiểm sớm",
-     "tt": "chua",
-     "ghiChu": "Đợt 3. Nhỏ. Dung lượng, thời gian mở, số shader kiểm ngay sau bước dựng bối cảnh."
+     "tt": "do",
+     "ghiChu": "Đợt 3. node tools/do-nang.mjs <ep>, 6 test qua. Tập 3 (ep002): bản gộp 58,3 MB (LỖI), mở trang 33,3 s (LỖI), 120 shader (CẢNH BÁO). Còn yếu: chưa chỉ ra được thứ gì làm nặng (chỉ tìm thấy ~3 MB tài sản).",
+     "pt": 80
     },
     {
      "ten": "9. Nối R6 + 37 biểu cảm cho nhân vật phụ",

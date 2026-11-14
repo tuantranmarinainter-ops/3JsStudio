@@ -80,3 +80,15 @@ chuỗi có ký tự `�` hoặc `?` nằm giữa chữ cái tiếng Việt →
 Bộ mẫu để test: `tools/tests/fixtures/dau-vao-mau/` (bang-shot.json 6 shot = 12 hình, kit.json đạt). Test: `node --test tools/tests/kiem-bang-shot.test.mjs tools/tests/kiem-kit.test.mjs tools/tests/codex-ve.test.mjs tools/tests/duyet-bang-shot.test.mjs` (57 test, dùng Codex giả `tools/tests/fixtures/codex-gia.mjs`).
 
 **Chưa kiểm thật:** gọi `codex` thật trên Windows (trích dẫn lệnh, `gpt-6-luna` có vẽ được hình không); trang duyệt chưa được xem bằng mắt.
+
+## Đổi toạ độ
+
+Toạ độ trong kit tính theo **tâm sàn bối cảnh** của kit; shots.js và trang tập dùng toạ độ **thế giới** của bối cảnh engine. Hai công cụ `tools/kit-shots.mjs` (`--goc`) và `tools/kiem-chuyen-dong.mjs` (`--goc`) cùng dùng MỘT hàm đổi: `tools/kit-toa-do.mjs` (`doiDiem`, `doiHuongRad`, `chonGoc`).
+
+File `goc.json`: `{ "<boiCanh của kit>": { "goc": [x,y,z], "xoay": độ, "env": "<tên env engine>" } }` (`env` chỉ kit-shots dùng, để ghi `env` của shot; mặc định = tên bối cảnh kit). Có thể ghi phẳng `{ "goc": …, "xoay": … }` để dùng chung mọi bối cảnh.
+
+Quy ước: **xoay trước, dịch sau**. Xoay quanh trục Y, `xoay` dương = từ +Z quay về +X (cùng chiều engine: nhân vật quay θ thì mặt +Z thành (sinθ, cosθ)):
+`x' = gx + x·cosθ + z·sinθ` · `y' = gy + y` · `z' = gz − x·sinθ + z·cosθ`. Hướng nhân vật: `ry = (huong + xoay)` độ → rad. Ví dụ `xoay: 90`: +Z kit → +X thế giới, +X kit → −Z thế giới.
+
+Tập thử `episodes/_mau-kit/` (6 shot, `shop-in` + `e3-pho`, Gà + `ba-ban-banh`): `node tools/kit-shots.mjs tools/tests/fixtures/dau-vao-mau --goc episodes/_mau-kit/goc.json --ra episodes/_mau-kit/shots.js` rồi
+`node tools/kiem-chuyen-dong.mjs episodes/_mau-kit/index.html --kit tools/tests/fixtures/dau-vao-mau --goc episodes/_mau-kit/goc.json`.

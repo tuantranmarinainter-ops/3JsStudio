@@ -1,12 +1,13 @@
 // kit-shots.mjs — đổi bộ kit (kich-ban/<ep>/bang-shot.json + kit.json) thành shots.js CÓ chuyển động.
 // Dùng: node tools/kit-shots.mjs kich-ban/<ep> [--ra <file>] [--goc <file.json>]
-//   --goc: { "<boiCanh>": { "goc": [x,y,z], "xoay": độ } } — đổi toạ độ kit (gốc = tâm sàn bối cảnh) → toạ độ thế giới.
+//   --goc: { "<boiCanh>": { "goc": [x,y,z], "xoay": độ, "env": "<tên env engine>"? } } (quy ước: tools/kit-toa-do.mjs) — đổi toạ độ kit (gốc = tâm sàn bối cảnh) → toạ độ thế giới.
 // Thoát: 0 xong · 1 sai cách dùng/đọc file · 2 kit còn lỗi (kiemKit --khong-hinh).
 // Đặc tả: docs/quy-trinh-dau-vao.md. Loại shot: engine/shottypes.js. Camera p/l/p2/l2/fov/fov2: engine/shots.js (placeCamera).
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { kiemKit } from './kiem-kit.mjs';
+import { doiDiem, doiHuongRad, chonGoc } from './kit-toa-do.mjs';
 import { SHOT_TYPES } from '../engine/shottypes.js';
 
 // ---- BẢNG ÁNH XẠ (dễ sửa): số nhân vật (0,1,2,3=3 trở lên) × camera.loai → type của engine/shottypes.js ----
@@ -37,12 +38,11 @@ export function chonLoai(bs, n) {
   return t;
 }
 
-// toạ độ kit → thế giới: xoay quanh Y (cùng quy ước engine: +Z quay θ → (sinθ, cosθ)) rồi cộng gốc
-function bienDoi(g = {}) {
-  const goc = g.goc || [0, 0, 0], th = (g.xoay || 0) * RAD, c = Math.cos(th), s = Math.sin(th);
+// toạ độ kit → thế giới: quy ước chung ở tools/kit-toa-do.mjs (xoay quanh Y rồi cộng gốc), làm tròn 3 số lẻ
+function bienDoi(g) {
   return {
-    diem: (p) => [r3(goc[0] + p[0] * c + p[2] * s), r3(goc[1] + p[1]), r3(goc[2] - p[0] * s + p[2] * c)],
-    huong: (h) => r3(((h || 0) + (g.xoay || 0)) * RAD),
+    diem: (p) => doiDiem(p, g).map(r3),
+    huong: (h) => r3(doiHuongRad(h, g)),
   };
 }
 
@@ -55,7 +55,7 @@ export function kitSangShots(bangShot, kit, goc = {}) {
   const kitNv = new Map(kit.nhanVat.map((n) => [n.id, n]));
   for (const bs of bangShot.shots) {
     const k = kitShot.get(bs.id);
-    const T = bienDoi(goc[bs.boiCanh]);
+    const G = chonGoc(goc, bs.boiCanh), T = bienDoi(G);
     const ids = bs.nhanVat || [];
     const n = ids.length;
     const loai = bs.camera.loai;
@@ -97,7 +97,7 @@ export function kitSangShots(bangShot, kit, goc = {}) {
       cast[id] = c;
     }
 
-    const s = { id: bs.id, dur: bs.dur, type, env: bs.boiCanh };
+    const s = { id: bs.id, dur: bs.dur, type, env: (G && G.env) || bs.boiCanh };
     if (who) s.who = who;
     if (others.length) s.with = others.length === 1 ? others[0] : others;
     s.cam = cam;

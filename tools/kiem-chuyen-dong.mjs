@@ -8,12 +8,13 @@
 //   Mã thoát: 0 không lỗi · 1 có lỗi.
 //
 // Mẫu đo (mau) của một shot: { id, dau, giua, cuoi, nvLayDuoc }, mỗi mốc = { cam:{p:[x,y,z], d:[x,y,z] đơn vị, fov}, nv:{ <tên>:{p:[x,y,z], yaw:độ} } }.
-// Quy ước xoay quanh trục Y (như three.js): x' = x·cosθ + z·sinθ ; z' = −x·sinθ + z·cosθ ; rồi cộng `goc`.
+// Quy ước xoay/dịch: tools/kit-toa-do.mjs (dùng chung với kit-shots).
 import { createServer } from 'http';
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { extname, join, resolve, relative, isAbsolute, dirname } from 'path';
 import { pathToFileURL, fileURLToPath } from 'url';
+import { doiDiem, chonGoc } from './kit-toa-do.mjs';
 
 // ---- NGƯỠNG ----
 export const NGUONG = {
@@ -51,12 +52,8 @@ function lechDuong(a, b, m) {
   return len(cross(sub(m, a), ab)) / l / l;
 }
 
-/** Đổi điểm p (toạ độ bối cảnh của kit) sang toạ độ thế giới theo {goc:[x,y,z], xoay:độ}. */
-export function doiToaDo(p, goc) {
-  const g = goc && goc.goc ? goc.goc : [0, 0, 0];
-  const th = ((goc && goc.xoay) || 0) * RAD, c = Math.cos(th), s = Math.sin(th);
-  return [p[0] * c + p[2] * s + g[0], p[1] + g[1], -p[0] * s + p[2] * c + g[2]];
-}
+/** Đổi điểm p (toạ độ bối cảnh của kit) sang thế giới — quy ước chung ở tools/kit-toa-do.mjs. */
+export const doiToaDo = doiDiem;
 
 // điểm nhìn ước lượng: giao gần nhất của tia đầu và tia cuối (hoặc 10 stud trước camera đầu nếu song song)
 function diemNhin(c0, c1) {
@@ -122,7 +119,12 @@ export function chamShot(mau, { bangShot, kit, goc } = {}) {
   const cacTen = Object.keys(mau.dau.nv || {});
   if (mau.nvCoCast && !mau.nvLayDuoc && !cacTen.length) canhBao.push('không lấy được vị trí nhân vật, chỉ đo camera');
 
-  if (dungHoanToan) loi.push('ĐỨNG IM HOÀN TOÀN: camera và nhân vật không đổi từ đầu đến cuối shot');
+  if (dungHoanToan) {
+    const msg = 'ĐỨNG IM HOÀN TOÀN: camera và nhân vật không đổi từ đầu đến cuối shot';
+    // bảng shot khai loại dung với hinh=1 (khung tĩnh có chủ ý, vd. bưu thiếp cận) → cảnh báo; hinh ≥ 2 vẫn lỗi (KHÔNG CÓ CHUYỂN ĐỘNG bên dưới)
+    if (loaiBang === 'dung' && !(bangShot.hinh >= 2)) canhBao.push(msg + ' — bảng shot ghi loại dung, hinh 1');
+    else loi.push(msg);
+  }
   else if (cs.camDungIm) {
     const msg = `CAMERA ĐỨNG IM: dịch ${f2(cs.dich)} stud, hướng ${f2(cs.huong)}°, fov ${f2(cs.dFov)}° (luật: camera gần như không bao giờ đứng yên)`;
     if (loaiBang === 'dung') canhBao.push(msg + ' — bảng shot ghi loại dung');
@@ -138,7 +140,7 @@ export function chamShot(mau, { bangShot, kit, goc } = {}) {
   }
 
   if (kit && kit.may) {
-    const g = goc && (goc.goc || goc.xoay !== undefined ? goc : (bangShot && goc[bangShot.boiCanh])) || null;
+    const g = chonGoc(goc, bangShot && bangShot.boiCanh);
     for (const moc of ['dau', 'cuoi']) {
       const k = kit.may[moc], m = mau[moc] && mau[moc].cam;
       if (!k || !m) continue;
@@ -155,7 +157,7 @@ export function chamShot(mau, { bangShot, kit, goc } = {}) {
         if (!nv[moc]) continue;
         const m = mau[moc] && mau[moc].nv && mau[moc].nv[nv.id];
         if (!m) { if (mau.nvLayDuoc) canhBao.push(`không thấy nhân vật "${nv.id}" ở mốc ${moc} để so với kit`); continue; }
-        const dv = len(sub(m.p, doiToaDo(nv[moc], goc && (goc.goc || goc.xoay !== undefined ? goc : (bangShot && goc[bangShot.boiCanh])) || null)));
+        const dv = len(sub(m.p, doiToaDo(nv[moc], chonGoc(goc, bangShot && bangShot.boiCanh))));
         if (dv > NGUONG.kitNvStud) loi.push(`NHÂN VẬT LỆCH: ${nv.id} ${moc} lệch ${f2(dv)} stud so với kit`);
       }
     }

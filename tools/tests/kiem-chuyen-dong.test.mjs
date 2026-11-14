@@ -105,3 +105,10 @@ test('kit có đổi toạ độ bằng goc theo bối cảnh', () => {
   const r2 = chamShot(mau(cam([10, 2, 0], [-1, 0, 0]), cam([5, 2, 0], [-1, 0, 0])), { bangShot: bang('zoomIn'), kit: kitMay(KD, KC), goc: xoay });
   assert.deepEqual(r2.loi, []);
 });
+test('bảng ghi dung hinh 1, đứng im hoàn toàn: chỉ cảnh báo; hinh 2 vẫn lỗi', () => {
+  const c = cam([0, 2, 10], T);
+  const a = chamShot(mau(c, c), { bangShot: bang('dung', 1) });
+  assert.equal(a.loi.length, 0); assert.ok(a.canhBao.some((x) => x.startsWith('ĐỨNG IM HOÀN TOÀN')));
+  assert.ok(chamShot(mau(c, c), { bangShot: bang('dung', 2) }).loi.length >= 1);
+  assert.ok(chamShot(mau(c, c)).loi.some((x) => x.startsWith('ĐỨNG IM HOÀN TOÀN')));
+});

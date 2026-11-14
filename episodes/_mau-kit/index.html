@@ -1,0 +1,215 @@
+<!doctype html>
+<!-- _mau-kit — tập thử của chuỗi kit-shots → kiem-chuyen-dong (chép khung từ ep002, không giọng/nhạc/phụ đề).
+     Xem: node tools/kiem-chuyen-dong.mjs episodes/_mau-kit/index.html --kit tools/tests/fixtures/dau-vao-mau --goc episodes/_mau-kit/goc.json -->
+<html lang="vi" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>_mau-kit</title>
+    <script src="/vendor/gsap/gsap.min.js"></script>
+    <script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/", "troika-three-text": "/vendor/troika/troika-three-text.esm.js", "troika-three-utils": "/vendor/troika/troika-three-utils.esm.js", "troika-worker-utils": "/vendor/troika/troika-worker-utils.esm.js", "webgl-sdf-generator": "/vendor/troika/webgl-sdf-generator.mjs", "bidi-js": "/vendor/troika/bidi.mjs" } }</script>
+    <style>
+      @font-face { font-family: 'Be Vietnam Pro'; font-weight: 900; font-style: normal; src: url('/assets/fonts/BeVietnamPro-Black.ttf') format('truetype'); }
+      @font-face { font-family: 'Patrick Hand'; font-style: normal; src: url('/assets/fonts/PatrickHand-Regular.ttf') format('truetype'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+      #stage { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+      #cap, #title {
+        position: absolute; left: 40px; right: 40px; text-align: center;
+        font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; line-height: 1.12; color: #fff;
+        -webkit-text-stroke: 14px #15121c; paint-order: stroke fill; text-shadow: 0 6px 0 rgba(0,0,0,0.35);
+      }
+      #cap { top: 1250px; font-size: 84px; transform-origin: 50% 60%; }
+      #title { top: 260px; font-size: 104px; color: #ffe066; transform-origin: 50% 50%; }   /* chữ nổi đặc biệt: trường `text` của shot */
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="124.490" data-width="1080" data-height="1920" data-fps="30">
+      <canvas id="stage" width="1080" height="1920"></canvas>
+      <div id="title" class="clip" data-start="0" data-duration="124.490" data-track-index="1"></div>
+      <div id="cap" class="clip" data-start="0" data-duration="124.490" data-track-index="2"></div>
+      <!-- Các lớp tiếng động + nhạc nền (sfx_nen / sfx_buoc-chan / sfx_khoanh-khac / music_nhac .ogg) KHÔNG khai ở đây: trang tự thêm thẻ <audio>
+           cho file nào có thật trong thư mục tập (xem addAudioLayers bên dưới) — tập chưa có nhạc/tiếng nền thì không lỗi 404 khi bundle. -->
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines['main'] = gsap.timeline({ paused: true });
+    </script>
+
+    <script type="module">
+      import * as THREE from 'three';
+      import { createStage } from '/engine/stage.js';
+      import { propKit } from '/engine/props.js';
+      import { createEnvs, ENV_ASSETS } from '/engine/envs.js';
+      import { buildPropsKB, datDaoCu, ganDaoCu, noiNhom, PROP_SLOTS } from '/engine/props-kb.js';
+      import { createAssetLib } from '/engine/assets.js';
+      import { buildTimeline } from '/engine/timeline.js';
+      import { createDirector } from '/engine/shots.js';
+      import { installMeasure } from '/engine/measure.js';
+      import { expandShots, resolvePlaces } from '/engine/shottypes.js';
+      import { buildTown, TOWN_ASSETS, registerTownEnv } from '/engine/town.js';
+      import { buildCast, crowdNames } from '/engine/cast.js';
+      import { createPost, FX_DEFAULTS, FX_LABELS } from '/engine/post.js';
+      import { EPISODE } from '/episodes/_mau-kit/episode.js';
+      import { SHOTS } from '/episodes/_mau-kit/shots.js';
+      import { createCredits } from '/engine/credits.js';
+      import { applyGrunge } from '/engine/grunge.js';
+      import { applyMaterials, MATS } from '/engine/materials.js';
+      import { CAPTIONS } from '/episodes/_mau-kit/captions.js';
+
+      await document.fonts.load("900 84px 'Be Vietnam Pro'", 'Việt ữ ầ ặ').catch(() => {});
+      await document.fonts.load("40px 'Patrick Hand'", 'Tiệm gấu').catch(() => {});   // chữ viết tay trên đạo cụ (engine/props-kb.js)
+      const q = new URLSearchParams(location.search);
+      // propsKb: đạo cụ theo kịch bản (EPISODE.props) — tắt: ?props=0 hoặc setOptions({ propsKb: false })
+      const OPTS = { lang: 'vi', subs: q.get('subs') !== '0', voice: q.get('voice') !== '0', propsKb: q.get('props') !== '0' };
+      const FPS = EPISODE.fps || 30;
+      // LỚP TIẾNG ĐỘNG + NHẠC (tools/sfx/mix.py, tools/music/mix.py): thêm <audio data-sfx-layer> cho từng file CÓ THẬT trong thư mục tập, trước __ready
+      // (trình phát tools/export-ui.js đọc các thẻ này sau __ready; bản gộp: tools/bundle.mjs nhúng file đã tải ở bước này, src lấy qua __embedURL).
+      // File thiếu (404) hoặc gần rỗng (< 50 KB, vd. bước chân nhà khi tập không có nhà có chân) thì bỏ qua êm.
+      async function addAudioLayers() {
+        const EPD = '/episodes/_mau-kit/', root = document.getElementById('root');
+        const LAYERS = [['sfx_nen.ogg', 'nen', 'Tiếng nền (gió, sóng, mưa…)'], ['sfx_buoc-chan.ogg', 'buoc-chan', 'Bước chân nhà (rầm)'],
+          ['sfx_khoanh-khac.ogg', 'khoanh-khac', 'Tiếng động theo cảnh'], ['music_nhac.ogg', 'nhac', 'Nhạc nền']];
+        let track = 4;
+        for (const [file, layer, label] of LAYERS) {
+          try {
+            const r = await fetch(EPD + file); if (!r.ok) continue;
+            if ((await r.blob()).size < 50000) continue;
+            const a = document.createElement('audio');
+            a.id = file.replace(/\.ogg$/, ''); a.className = 'clip'; a.dataset.start = '0'; a.dataset.trackIndex = String(track++); a.dataset.volume = '1';
+            a.dataset.sfxLayer = layer; a.dataset.label = label; a.setAttribute('data-track-index', a.dataset.trackIndex);
+            a.src = (window.__embedURL && window.__embedURL(EPD + file)) || EPD + file;
+            root.appendChild(a);
+          } catch (e) {}
+        }
+      }
+      await addAudioLayers();
+
+      // TIẾNG ANH (tuỳ chọn, mỗi ngôn ngữ MỘT giọng): narration_en.ogg (nén từ narration_en.mp3 bởi tools/en/tts_en.py) + captions_en.json
+      // (chuyển từ captions_en.js) + narration_en.levels.json (nhép miệng). Tập chưa có tiếng Anh → bỏ qua êm, ô Ngôn ngữ chỉ còn Việt
+      // (tools/export-ui.js tự ẩn mục English khi không có <audio data-lang="en">). ?lang=en hoặc setOptions({ lang: 'en' }).
+      const CAPS = { vi: CAPTIONS, en: null };
+      async function addEnglish() {
+        const EPD = '/episodes/_mau-kit/';
+        try {
+          const rc = await fetch(EPD + 'captions_en.json'); if (!rc.ok) return;
+          const ra = await fetch(EPD + 'narration_en.ogg'); if (!ra.ok) return;
+          if ((await ra.blob()).size < 20000) return;
+          CAPS.en = await rc.json();
+          const a = document.createElement('audio');
+          a.id = 'narration_en'; a.dataset.lang = 'en'; a.dataset.volume = '0'; a.preload = 'auto';   // không phải clip HyperFrames: nút Xuất MP4 chọn theo ngôn ngữ
+          a.src = (window.__embedURL && window.__embedURL(EPD + 'narration_en.ogg')) || EPD + 'narration_en.ogg';
+          document.getElementById('root').appendChild(a);
+        } catch (e) { CAPS.en = null; }
+      }
+      await addEnglish();
+      if (CAPS.en && q.get('lang') === 'en') OPTS.lang = 'en';
+      const stage = createStage(THREE, { canvas: document.getElementById('stage'), ground: null, fov: 40 });
+      const K = propKit(THREE);
+      const A = createAssetLib(THREE);
+      await A.load([...ENV_ASSETS, ...TOWN_ASSETS]);          // tải hết GLB trước khi seek
+      const envs = createEnvs(THREE, stage, K, A);
+      const town = buildTown(THREE, A, { seed: EPISODE.seed ?? 1, ...(EPISODE.town || {}) });
+      registerTownEnv(envs, stage, town, { name: 'kenneyTown', light: EPISODE.light || 'day' });
+      const townEnv = EPISODE.env || 'kenneyTown';
+      // env riêng của tập (shot.env): env chưa có trong engine/envs.js (import tĩnh) → nạp động engine/envs/<tên>.js (export default bộ dựng,
+      //   tuỳ chọn LIGHT, ASSETS, PROP_SLOTS). Chưa có file → env tạm (sàn trống) + cảnh báo, phim vẫn chạy.
+      const slots = { ...PROP_SLOTS };
+      for (const n of [...new Set(SHOTS.map((s) => s.env).filter(Boolean))]) {
+        if (n === townEnv || n === 'kenneyTown') continue;
+        let m = null;
+        try { m = await import(`/engine/envs/${n}.js`); } catch (e) { if (!envs.envs[n]) console.warn(`[env] chưa có engine/envs/${n}.js → env tạm (sàn trống):`, e?.message || e); }
+        if (m?.PROP_SLOTS) slots[n] = { ...(slots[n] || {}), ...m.PROP_SLOTS };
+        if (envs.envs[n]) continue;
+        if (m?.ASSETS?.length) await A.load(m.ASSETS);
+        envs.define(n, m?.LIGHT || 'day', m?.default || ((g, e, H) => { g.add(H.plane(80, 80, H.mat('#8d8a84'), 0, n + '_san_tam')); }));
+      }
+      const places = resolvePlaces(EPISODE.places, town.places);
+      const actors = await buildCast(THREE, EPISODE.actors, { seed: EPISODE.seed ?? 1 });
+      for (const a of Object.values(actors)) stage.scene.add(a.root);
+      // ĐẠO CỤ theo kịch bản (engine/props-kb.js): đặt (datDaoCu) → dựng (buildPropsKB: PROPS_KB rồi propKit) → gắn vào shot (ganDaoCu)
+      const dat = datDaoCu(EPISODE.props || {}, places, { townEnv, envs: Object.keys(envs.envs), slots });
+      const props = buildPropsKB(THREE, EPISODE.props || {}, { K, dat });
+      for (const p of Object.values(props)) stage.scene.add(p);
+      // vân bụi/đồ cũ (engine/grunge.js, ô "worn"/"grime") rồi chất liệu thật (engine/materials.js, ô "mats"; vá SAU grunge) — đúng thứ tự như ep001.
+      // EPISODE.wear = { <diễn viên>: mức cũ } (mặc định 1). IBL, trời, mô hình quét (scans) nằm sẵn trong engine/envs.js nên tự có.
+      for (const [n, a] of Object.entries(actors)) applyGrunge(THREE, a.root, 'char', { amount: (EPISODE.wear || {})[n] || 1 });
+      applyGrunge(THREE, stage.scene, 'build');
+      applyMaterials(THREE, stage.scene);
+      await MATS.ready;   // ảnh vân CC0 tải xong trước khi vẽ (không fetch lúc seek)
+      const SHOTS2 = ganDaoCu(SHOTS, { props: EPISODE.props || {}, dat, actors: EPISODE.actors || {}, townEnv });
+      // shot ngắn theo loại → cam/cast đầy đủ (liên tục địa điểm + vị trí diễn viên giữa các shot); noiNhom: nhóm (bears) chạy cùng, stance, camera trong phòng
+      const shots = noiNhom(expandShots(SHOTS2, { places, crowd: crowdNames(EPISODE.actors), env: townEnv, light: EPISODE.light, fps: FPS }), { slots });
+      const tl = buildTimeline(shots, FPS);
+      // GHI CÔNG cuối phim (engine/credits.js): ảnh episodes/<ep>/ghi-cong.png (tools/ghi-cong.mjs) phủ lên 3 giây cuối, tắt được (?credits=0|1 hoặc setOptions({ credits })).
+      // Mặc định TẮT (người dùng chốt 2026-11-13); bật bằng EPISODE.credits = true, ?credits=1 hoặc công tắc trình phát.
+      const credits = await createCredits({ root: document.getElementById('root'), src: '/episodes/_mau-kit/ghi-cong.png', total: tl.total,
+        on: q.get('credits') !== null ? q.get('credits') !== '0' : EPISODE.credits === true });
+      window.__credits = credits;   // tools/export-ui.js vẽ ảnh này vào khung xuất MP4
+      const director = createDirector({ THREE, stage, envs, K, actors, houses: {}, props, fx: {}, episode: EPISODE });
+      const post = createPost(THREE, stage, { actors: Object.values(actors).map((a) => a.root) });
+      post.set({ faceLive: EPISODE.faceLive !== false, tangXa: EPISODE.tangXa !== false });   // như ep001 (mặc định bật; tập đã chốt hình đặt false)
+      if (q.get('fx') !== null) { const on = new Set(q.get('fx').split(',')); post.set(Object.fromEntries(Object.keys(FX_DEFAULTS).map((k) => [k, on.has(k)]))); }
+      stage.draw = (t) => post.render({ t, ...envs.last, focus: stage.target });
+      window.__post = post;
+
+      // Nhép miệng (shot có `talk`): đường bao âm lượng narration.levels.json (tools/levels.py). Chỉ nạp khi tập có shot `talk` (không thì khỏi probe 404);
+      // thiếu file → mức 0 (miệng im), không lỗi. Nạp TRƯỚC khi seek.
+      const LEVELS = {};
+      if (SHOTS.some((s) => s.talk)) for (const [lang, f] of [['vi', 'narration.levels.json'], ['en', 'narration_en.levels.json']]) {
+        if (lang === 'en' && !CAPS.en) continue;
+        try { const r = await fetch('/episodes/_mau-kit/' + f); if (r.ok) LEVELS[lang] = (await r.json()).d; } catch (e) {}
+      }
+      globalThis.__nhep = { level: (t) => { const d = OPTS.voice && LEVELS[OPTS.lang]; return d ? (+d[Math.floor(t * 30 + 1e-6)] || 0) : 0; } };
+
+      // phụ đề (captions.js: [t0, t1, chữ]) + chữ nổi của shot (trường text), bật nảy 0.12 s
+      const cap = document.getElementById('cap'), title = document.getElementById('title');
+      let lastCap = -1, lastTitle = null;
+      const pop = (k) => `scale(${0.82 + 0.18 * (1 - Math.pow(1 - Math.min(1, k), 3))})`;
+      function overlay(t, shot, local) {
+        const L = OPTS.subs ? (CAPS[OPTS.lang] || CAPTIONS) : [];
+        let i = -1; for (let j = 0; j < L.length; j++) { if (L[j][0] <= t + 1e-4 && t < L[j][1]) { i = j; break; } }
+        if (i !== lastCap) { cap.textContent = i >= 0 ? L[i][2] : ''; lastCap = i; }
+        cap.style.transform = pop(i >= 0 ? (t - L[i][0]) / 0.12 : 1);
+        const txt = shot.text || '';
+        if (txt !== lastTitle) { title.textContent = txt; lastTitle = txt; }
+        title.style.transform = pop(local / 0.15);
+      }
+
+      stage.onFrame((t) => {
+        const T = Math.min(t, tl.total - 1e-4);
+        const { shot, local, k, prev } = tl.at(T);
+        director.render(shot, local, k, T, prev);   // prev = shot trước (mặt sống chuyển biểu cảm mềm)
+        if (!OPTS.propsKb) for (const p of Object.values(props)) p.visible = false;
+        overlay(T, shot, local);
+        credits.update(T);
+      });
+      for (const e of Object.values(envs.envs)) e.group.visible = true;
+      stage.renderer.compile(stage.scene, stage.camera);
+      for (const e of Object.values(envs.envs)) e.group.visible = false;
+      stage.start();
+      window.renderAt = (t) => stage.renderAt(t);
+      window.__shots = tl;
+      window.__stage = stage;
+      installMeasure({ THREE, stage, shots: tl });   // window.__measure(t) / window.__mask(t) cho tool kiểm luật
+      window.__places = places;
+      window.__props = props; window.__datDaoCu = dat;   // tool kiểm / test: vị trí đạo cụ đã đặt
+      window.getOptions = () => ({ ...OPTS, vid: {}, voices: [], fx: post.options, fxLabels: FX_LABELS, credits: credits.on });
+      window.setOptions = (o = {}) => {
+        if (o.lang && CAPS[o.lang]) OPTS.lang = o.lang;   // chỉ ngôn ngữ có đủ phụ đề + giọng
+        if (o.subs !== undefined) OPTS.subs = !!o.subs;
+        if (o.propsKb !== undefined) OPTS.propsKb = !!o.propsKb;
+        if (o.credits !== undefined) credits.setOn(o.credits);
+        if (o.voice !== undefined) OPTS.voice = !!o.voice;
+        if (o.fx) post.set(o.fx);
+        lastCap = -2;
+        for (const a of document.querySelectorAll('audio[data-lang]')) a.dataset.volume = (OPTS.voice && a.dataset.lang === OPTS.lang) ? '1' : '0';
+        return window.getOptions();
+      };
+      window.setOptions({});
+      window.__ready = true;
+    </script>
+  </body>
+</html>
