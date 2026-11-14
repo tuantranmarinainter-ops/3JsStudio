@@ -123,20 +123,25 @@ export function createR6(THREE, opts = {}) {
   const parts = { root, body, torso, head, rightArm, leftArm, rightLeg, leftLeg, hat };
   const materials = { skin, shirt: torso.children[0].material, pants: pantsMat, face: faceMat };
 
+  let shown;   // mặt đang vẽ trên canvas
+  const draw = (expr, force) => {
+    if (!force && expr === shown) return;
+    shown = expr;
+    (o.faceStyle === 'cartoon' ? drawCartoonFace : drawFace)(faceCanvas, o.skin, expr, o);
+    faceTex.needsUpdate = true;
+  };
   const char = {
     parts,
     root,
     materials,
     options: o,
-    setFace(expr) {
-      o.face = expr;
-      (o.faceStyle === 'cartoon' ? drawCartoonFace : drawFace)(faceCanvas, o.skin, expr, o);
-      faceTex.needsUpdate = true;
-    },
+    // setFace = đặt mặt MẶC ĐỊNH (tư thế không khai face sẽ dùng mặt này); showFace = chỉ đổi mặt đang hiển thị
+    setFace(expr) { o.face = expr; draw(expr, true); },
+    showFace(expr) { draw(expr, false); },
     // gắn vật vào bộ phận (vd. thiếp vào tay phải): attach('rightArm', mesh, [x,y,z])
     attach(part, obj, pos = [0, -1.6, 0.6]) { parts[part].add(obj); obj.position.set(...pos); return obj; },
     setColors({ skin: s, shirt, pants } = {}) {
-      if (s) { o.skin = s; skin.color.set(s); char.setFace(o.face); }
+      if (s) { o.skin = s; skin.color.set(s); draw(shown, true); }
       if (shirt) { o.shirt = shirt; materials.shirt.color.set(shirt); }
       if (pants) { o.pants = pants; pantsMat.color.set(pants); }
     },
@@ -153,6 +158,8 @@ export function createR6(THREE, opts = {}) {
   };
 
   root.userData.setFace = (f) => char.setFace(f);
+  root.userData.showFace = (f) => char.showFace(f);
+  root.userData.defaultFace = () => o.face;
   char.setFace(o.face);
   char.setHat(o.hat, o.hatColor);
   return char;
@@ -560,7 +567,6 @@ export function mixPose(a, b, w) {
   return out;
 }
 
-const lastFace = new WeakMap();
 export function applyPose(parts, pose) {
   for (const j of JOINTS) {
     const r = pose[j] || {};
@@ -569,14 +575,15 @@ export function applyPose(parts, pose) {
   const b = pose.body || {};
   parts.body.position.set(b.x || 0, b.y || 0, b.z || 0);
   parts.body.rotation.set(b.rx || 0, b.ry || 0, b.rz || 0);
-  // mặt: chỉ vẽ lại khi đổi (đọc từ hàm setFace trên đối tượng char nếu có)
-  if (pose.face && parts.root.userData.setFace && lastFace.get(parts.root) !== pose.face) {
-    lastFace.set(parts.root, pose.face);
-    parts.root.userData.setFace(pose.face);
+  // mặt = hàm thuần của trạng thái: pose.face, không có thì mặt mặc định hiện hành (không giữ mặt lần gọi trước).
+  // Chỉ vẽ lại canvas khi mặt thực sự đổi (showFace tự bỏ qua nếu trùng mặt đang hiển thị).
+  const u = parts.root.userData;
+  if (u.showFace) {
+    const want = pose.face || (u.defaultFace && u.defaultFace());
+    if (want) u.showFace(want);
   }
 }
 
-// Tạo màu ngẫu nhiên có seed cho dân thị trấn
 export function randomLook(seed = 1) {
   let s = seed >>> 0 || 1;
   const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
