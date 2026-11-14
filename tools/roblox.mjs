@@ -162,7 +162,7 @@ export async function taiAsset(id, o = {}) {
   if (!r.ok) throw new Error(`asset ${id}: HTTP ${r.status}` + (ban(r.status) ? ` sau ${soLan(o)} lần thử` : ''));
   const j = await r.json();
   const loc = j.location || j.locations?.[0]?.location;
-  if (!loc) throw new Error(`asset ${id}: ` + (j.errors?.[0] ? `Roblox từ chối (${j.errors[0].code}: ${j.errors[0].message}) — asset riêng tư của tác giả, Open Cloud không tải được` : 'không có location'));
+  if (!loc) throw new Error(`asset ${id}: ` + (j.errors?.[0] ? `Roblox từ chối (${j.errors[0].code}: ${j.errors[0].message}) — asset riêng tư hoặc chưa được duyệt, Open Cloud không tải được` : 'không có location'));
   let c;
   try { c = await thuLai(() => (o.fetch || fetch)(loc), o); } catch (e) { throw new Error(`asset ${id}: CDN ${e.message}`); }   // CDN: không gửi khoá
   if (!c.ok) throw new Error(`asset ${id}: CDN HTTP ${c.status}` + (ban(c.status) ? ` sau ${soLan(o)} lần thử` : ''));

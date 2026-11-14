@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { taiAsset, songSong, demRequest } from './roblox.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const API = 'https://apis.roblox.com';
@@ -21,24 +22,7 @@ function khoa() {
 const che = (s) => { const k = khoa(); return k ? String(s).split(k).join('***') : String(s); };
 function loi(m) { console.error(che('LỖI: ' + m)); process.exit(1); }
 
-let soRequest = 0;
-async function taiAsset(id) {
-  const k = khoa(); if (!k) loi('thiếu ROBLOX_API_KEY trong .env.local');
-  let r;
-  for (let i = 0; i < 4; i++) {
-    soRequest++;
-    r = await fetch(`${API}/asset-delivery-api/v1/assetId/${id}`, { headers: { 'x-api-key': k } });
-    if (r.status === 429 || r.status >= 500) { await new Promise((s) => setTimeout(s, 2000 * (i + 1))); continue; }
-    break;
-  }
-  if (!r.ok) throw new Error(`asset ${id}: HTTP ${r.status}`);
-  const j = await r.json();
-  const loc = j.location || j.locations?.[0]?.location;
-  if (!loc) throw new Error(`asset ${id}: không có location`);
-  const c = await fetch(loc);                           // CDN: không gửi khoá
-  if (!c.ok) throw new Error(`asset ${id}: CDN HTTP ${c.status}`);
-  return Buffer.from(await c.arrayBuffer());
-}
+// Tải dùng chung với tools/roblox.mjs: thử lại 429/5xx (0,5 s · 1,5 s · 4 s) ở cả bước location lẫn CDN, song song có trần.
 export function loaiAnh(b) {
   if (b.length > 8 && b[0] === 0x89 && b[1] === 0x50) return 'png';
   if (b.length > 3 && b[0] === 0xff && b[1] === 0xd8) return 'jpg';
@@ -46,12 +30,12 @@ export function loaiAnh(b) {
   return null;
 }
 /** Một id Decal có thể trả XML bọc <url>…id=ẢNH THẬT</url> — xử lý cả hai. Trả {file, anhId}. */
-async function taiAnh(id, dir) {
+async function taiAnh(id, dir, o = {}) {
   for (const e of ['png', 'jpg', 'webp']) { const f = path.join(dir, `${id}.${e}`); if (fs.existsSync(f)) return { file: f, cache: true }; }
-  let b = await taiAsset(id), e = loaiAnh(b), that = id;
+  let b = await taiAsset(id, o), e = loaiAnh(b), that = id;
   if (!e) {
     const m = b.toString('latin1', 0, 4000).match(/<url>[^<]*?(\d{4,})[^<]*<\/url>/);
-    if (m) { that = m[1]; b = await taiAsset(that); e = loaiAnh(b); }
+    if (m) { that = m[1]; b = await taiAsset(that, o); e = loaiAnh(b); }
   }
   if (!e) throw new Error(`ảnh ${id}: không nhận ra định dạng`);
   const f = path.join(dir, `${id}.${e}`); fs.writeFileSync(f, b);
@@ -96,15 +80,16 @@ async function cmdTai(id) {
   const ds = gomIdAnh(JSON.parse(d.stdout));
   const ids = [...new Set(ds.map((x) => x.id))];
   const bang = [], hong = [];
-  for (const i of ids) {
-    try {
-      const r = await taiAnh(i, dA);
-      const info = thongTinPng(fs.readFileSync(r.file)) || {};
-      bang.push({ id: i, file: path.basename(r.file), ...info, noi: ds.filter((x) => x.id === i).map((x) => x.duong) });
-    } catch (e) { hong.push({ id: i, loi: che(e.message) }); }
-  }
+  const k = process.argv.indexOf('--song-song'), tran = k > 0 && Number(process.argv[k + 1]) > 0 ? Number(process.argv[k + 1]) : 6;
+  const kq = await songSong(ids, (i, _n, giam) => taiAnh(i, dA, { khi429: giam }), { tran });   // gặp 429 thì trần tự giảm một nửa
+  ids.forEach((i, n) => {
+    const r = kq[n];
+    if (!r.ok) { hong.push({ id: i, loi: che(r.loi.message) }); return; }
+    const info = thongTinPng(fs.readFileSync(r.v.file)) || {};
+    bang.push({ id: i, file: path.basename(r.v.file), ...info, noi: ds.filter((x) => x.id === i).map((x) => x.duong) });
+  });
   fs.writeFileSync(path.join(dir, 'anh.json'), JSON.stringify({ id, anh: bang, hong }, null, 1));
-  console.log(`model: ${path.relative(ROOT, mf)} (${fs.statSync(mf).size} byte) · ${ids.length} id ảnh · tải được ${bang.length} · hỏng ${hong.length} · ${soRequest} request`);
+  console.log(`model: ${path.relative(ROOT, mf)} (${fs.statSync(mf).size} byte) · ${ids.length} id ảnh · tải được ${bang.length} · hỏng ${hong.length} · ${demRequest()} request · song song ${tran}${kq.tranCuoi < tran ? ` (giảm còn ${kq.tranCuoi} vì 429)` : ''}`);
   if (hong.length) console.log('hỏng:', hong.slice(0, 10).map((h) => `${h.id} (${h.loi})`).join('; '));
 }
 function cmdKe(id) {
