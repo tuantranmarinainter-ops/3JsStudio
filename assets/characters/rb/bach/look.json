@@ -1,34 +1,34 @@
 {
  "ten": "bach",
- "robloxId": "18541446276",
- "nhanVat": "李爺",
+ "robloxId": "126608988",
+ "nhanVat": "Model",
  "mau": {
-  "head": "#cc8e69",
-  "torso": "#cc8e69",
-  "leftArm": "#cc8e69",
-  "rightArm": "#cc8e69",
-  "leftLeg": "#cc8e69",
-  "rightLeg": "#cc8e69"
+  "head": "#ffc9c9",
+  "torso": "#ffc9c9",
+  "leftArm": "#ffc9c9",
+  "rightArm": "#ffc9c9",
+  "leftLeg": "#111111",
+  "rightLeg": "#111111"
  },
  "shirt": true,
  "pants": true,
  "tshirt": false,
  "acc": {
   "soNode": 1,
-  "tamGiac": 492,
+  "tamGiac": 1978,
   "dauCao": 1.25,
   "dauRong": 1.25
  },
  "phuKien": [
-  "HipsterGlasses"
+  "WhiteCharmerHair"
  ],
- "shirtId": "3303916475",
- "pantsId": "3303919893",
- "tieuDe": "李爺",
- "tacGia": "tigerNOOB001",
- "moTa": "ông Bách",
+ "shirtId": "125549749",
+ "pantsId": "125549754",
+ "tieuDe": "Old Steampunk Man",
+ "tacGia": "AmericanSkeleton",
+ "moTa": "ông Bách (chốt đợt 3)",
  "canhBao": [
-  "ảnh 18532088621: asset 18532088621: Roblox từ chối (403: Requested asset is archived) — asset riêng tư hoặc chưa được duyệt, Open Cloud không tải được: cảnh báo",
-  "ảnh 18532091108: asset 18532091108: Roblox từ chối (403: Requested asset is archived) — asset riêng tư hoặc chưa được duyệt, Open Cloud không tải được: cảnh báo"
+  "không phải R6 (rigType null)",
+  "có CharacterMesh (thân lưới riêng) — bỏ, dùng khối R6"
  ]
 }

@@ -17,30 +17,40 @@ Thay mọi nhân vật ep003 (trừ Gà) bằng NPC Roblox Creator Store, có c�
   Chưa chọn: thợ may ("tìm thêm model người lớn R6 khối vuông"), gấu ("duyệt lại tìm từ khoá teddy bear").
 - Agent soi ảnh bản dựng: mayor, mayor_ngu, linh, be_vang, be_ngoc, dan_13 ĐẠT; banh lỗi nhẹ (râu thưa, lệch); bach LỖI (áo quần của mẫu là Decal rời, 2 ảnh bị 403 "archived", tóc là hình vẽ).
 
-## ĐANG CHỜ NGƯỜI DÙNG — đợt 3: `dist/ep003-npc_duyet.html` (`node tools/duyet.mjs ep003-npc dung`)
-- Đợt 2 (`dot-02.ketqua.json`): ảnh từng nhân vật bị CẮT SAI (look.mjs chụp nửa cỡ canvas, tôi cắt theo cỡ canvas) → đen / lẫn người. Chỉ TIN: `npc_xacnhan` = đạt (6 vai),
-  `npc_gau2__5` = gấu 8648724784 (nâu nhạt nơ vàng, NGỒI, khối liền ~20 nghìn tam giác, không xương — chưa rõ dùng cho Bắp hay gấu trưng bày, phải hỏi), `npc_may2__4` = uv_may_3 (112507919413426, chọn theo ảnh gốc).
-  KHÔNG tin: `npc_bach2`, `npc_dan2`. Người dùng nói "ảnh ông Bách đã chọn nhưng lấy nhân vật thứ 2" (ảnh lệch chứa uv_bach_1 + uv_bach_2 → có thể ý là uv_bach_2).
-- Đợt 3 (`dot-03.json`) hỏi lại với ảnh đúng: `npc_bach3` (thứ tự: uv_bach_1, 4, 2, 3, 6, bach), `npc_may3` (uv_may_2, 5, 8, 3, 4, 1), `npc_dan3` (dan_01…16, chọn nhiều).
-- Cắt ảnh từ ảnh look.mjs: LUÔN chia theo kích thước ảnh thật (ảnh = nửa cỡ canvas), chụp với `&cell=520` để mỗi ô 260 px.
+## CHỐT (đợt 1 + 2 + 3, 14/11) — `assets/characters/rb/nguon.json`
+| vai ep003 | `rb` | Roblox id | ghi chú |
+|---|---|---|---|
+| bach | `bach` | 126608988 | chốt đợt 3 (ông tóc bạc, gile nâu); mẫu gốc có CharacterMesh → dùng khối R6 |
+| mayor | `mayor` | 83527751194934 | |
+| mayor_ngu | `mayor_ngu` | đầu 83527751194934 + áo quần 123126413388497 | |
+| linh_a, linh_b | `linh` | 107895271287060 | một mẫu cho cả hai |
+| banh | `banh` | 6270043601 | |
+| may | `may` | 118400431811478 | chốt đợt 3 (cô trẻ mũ bucket) |
+| be_vang, be_ngoc | `be_vang`, `be_ngoc` | 135634323232287, 119429811638939 | `them.scale 0.84` |
+| dan_a/b/c | chọn trong `dan_01, 04, 05, 09, 10, 12, 14, 15, 16` | pack 84294762238979 + 8598090797, 604065110, 12170843804 | gợi ý dan_a=`dan_04`, dan_b=`dan_09`, dan_c=`dan_15` |
+| bap, gau_vi, gau_tui | — | người dùng chọn 8648724784 (gấu nâu nhạt nơ vàng, NGỒI, khối liền ~20 nghìn tam giác, KHÔNG xương) | CHƯA LÀM — chưa rõ dùng cho Bắp hay gấu trưng bày; phải hỏi + việc dựng xương riêng |
 
-## Việc còn lại (theo thứ tự)
-1. Nhận kết quả đợt 2 (`duyet.mjs ep003-npc nhan <file>`). Trong `nguon.json`: đổi `bach`, thêm `may` theo lựa chọn; xoá các `uv_*` không dùng + thư mục của chúng; bỏ dân làng không chọn. `node tools/npc-roblox.mjs dung`.
-2. Nối `engine/cast.js` (báo phiên face-pack trước khi sửa; file đang sạch): actor `{ r6: 1, rb: '<tên>' }` → nạp `r6-roblox.js` một lần, `loadRbLooks` cho mọi tên `rb`,
-   tạo rig bằng `rbRigOptions(res)` thay cho `R6_LOOKS[o.look]`, rồi `applyRbLook`. Phải bật/tắt được: `EPISODE.fx.rbNpc === false` hoặc `?rb=0` → dùng `look` cũ (giữ `look` trong actor).
-3. `assets/manifest.json`: thêm các dòng in ra từ `node tools/npc-roblox.mjs manifest <tên…>` (file đang có thay đổi chưa commit của phiên khác → chỉ thêm dòng mình, commit riêng hunk).
-4. Kiểm: `node tools/look.mjs engine/r6-roblox-lab.html?... --t …` với `anim=walk`, `talk`, `idle`; `--det`; `shaders.mjs`; `do-nang.mjs ep003 --trang …`.
-5. Gấu: nếu người dùng chọn mẫu → khảo sát riêng (đa số là khối liền không xương). Mặc định giữ `engine/bear-glb.js`.
-6. Nhắn phiên ep003 (KHÔNG tự sửa `episodes/ep003/*`). Dòng cần đổi trong `episodes/ep003/episode.js` → `actors` (giữ `look` làm dự phòng):
+## Đã nối engine (commit sau 099a115)
+- `engine/cast.js`: actor `{ r6: 1, look: '<dự phòng>', rb: '<tên>' }` → `loadRbLooks` một lần trước `__ready`, `rbRigOptions` đè lên look, `applyRbLook`.
+  TẮT: `globalThis.__rbNpc = false` hoặc `?rb=0` → về `look` vẽ tay. (Tập muốn có ô bật/tắt trong trình phát: nối `EPISODE.fx.rbNpc` → `globalThis.__rbNpc` như `__bearGlb` — CHƯA làm, thuộc file của tập.)
+- Kiểm qua đường cast (`engine/r6-roblox-lab.html?…&cast=1`): tất định OK (`look.mjs --det`), đi (`anim=walk`) chụp được, `rb=0` ra look cũ (35% điểm ảnh khác), 5 test qua.
+  CHƯA kiểm: nói (không có anim tên `talk`; miệng nói là việc của bộ mặt), trong tập thật, bản gộp `dist/`.
+- Lỗi đã sửa theo góp ý người dùng: (1) ảnh trang duyệt cắt sai → đen/lẫn người; (2) "râu tóc xoay sai" = đầu engine (bán kính 0,68) to hơn đầu Roblox (0,625) nên đâm xuyên phụ kiện → phụ kiện nở ngang 1,11, dọc 1,06.
+- `assets/manifest.json`: đã CHÈN 17 dòng `characters/rb/*` (sau `characters/bap2`) vào bản làm việc nhưng CHƯA commit — file đang có thay đổi chưa commit của phiên khác; dòng của tôi sẽ đi cùng lần commit manifest kế tiếp.
+
+## Việc còn lại
+1. Phiên ep003 đổi `episodes/ep003/episode.js` → `actors` (giữ `look` làm dự phòng), rồi soi lại khung cận mặt (bach 8 shot, mayor 4; tóc/mũ Roblox cao hơn tóc vẽ tay, `wide` luôn 1):
    ```
-   bach: {"r6":1,"look":"bach","rb":"bach"},        mayor: {"r6":1,"look":"mayor","rb":"mayor"},
+   bach: {"r6":1,"look":"bach","rb":"bach"},          mayor: {"r6":1,"look":"mayor","rb":"mayor"},
    mayor_ngu: {"r6":1,"look":"mayor_ngu","rb":"mayor_ngu"},
-   linh_a: {"r6":1,"look":"linh_a","rb":"linh"},    linh_b: {"r6":1,"look":"linh_b","rb":"linh"},
-   banh: {"r6":1,"look":"banh","rb":"banh"},        may: {"r6":1,"look":"may","rb":"may"},
+   linh_a: {"r6":1,"look":"linh_a","rb":"linh"},      linh_b: {"r6":1,"look":"linh_b","rb":"linh"},
+   banh: {"r6":1,"look":"banh","rb":"banh"},          may: {"r6":1,"look":"may","rb":"may"},
    be_vang: {"r6":1,"look":"be_vang","rb":"be_vang"}, be_ngoc: {"r6":1,"look":"be_ngoc","rb":"be_ngoc"},
-   dan_a/b/c: {"r6":1,"look":"dan_a","rb":"dan_NN"}   (NN theo người dùng chọn ở khe npc_dan2)
+   dan_a: {"r6":1,"look":"dan_a","rb":"dan_04"},      dan_b: {"r6":1,"look":"dan_b","rb":"dan_09"},      dan_c: {"r6":1,"look":"dan_c","rb":"dan_15"},
    ```
-   Lưu ý cho ep003: `scale 0.84` của hai bé nằm trong `look.them`; `wide` luôn 1 (thị trưởng không còn rộng 1.2); mũ/tóc Roblox cao hơn tóc vẽ tay → soi lại khung cận mặt (bach 8 shot, mayor 4).
+2. Gấu: hỏi người dùng mẫu 8648724784 dùng cho vai nào; nếu cho Bắp → việc riêng (dựng xương trong Blender bằng `tools/blender/nhap_rig.py` hoặc tách khối).
+3. Nén `assets/characters/rb` (8,6 MB, PNG 585×559 ~330 KB/ảnh) trước khi gộp `dist/`; công cụ gộp phải nhúng được `look.json`/PNG/`acc.glb` (chưa kiểm `tools/bundle`).
+4. Commit `assets/manifest.json` khi file hết thay đổi của phiên khác.
 
 ## Giới hạn đã biết
 - Mặt = bộ mặt engine (không lấy mặt Roblox). Decal rời trên thân (kiểu mẫu 李爺) chưa hỗ trợ. Râu/tóc nhiều lớp alpha mỏng hơn gốc.

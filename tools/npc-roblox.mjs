@@ -62,7 +62,7 @@ export async function tachPhuKien(glbVao, glbRa) {
     const ten = n.getName(), nb = n === dau ? null : getBounds(n), c = nb && [0, 1, 2].map((i) => (nb.min[i] + nb.max[i]) / 2 - tam[i]);
     const laThan = THAN.test(ten) || /_decal(\.\d+)?$/.test(ten);
     if (laThan || !c || Math.abs(c[0]) > 1.6 || Math.abs(c[2]) > 1.6 || c[1] < -1.1 || c[1] > 2.6) { scene.removeChild(n); n.dispose(); continue; }
-    const t = n.getTranslation(); n.setTranslation([t[0] - tam[0], t[1] - tam[1], t[2] - tam[2]]); so++;
+    const t = n.getTranslation(); n.setTranslation([t[0] - tam[0], t[1] - tam[1], t[2] - tam[2]]); so++;   // roblox.mjs tai --nhan-vat đã dựng thẳng, nhìn −Z
     for (const p of n.getMesh()?.listPrimitives() || []) tg += (p.getIndices()?.getCount() || p.getAttribute('POSITION').getCount()) / 3;
   }
   if (!so) return null;

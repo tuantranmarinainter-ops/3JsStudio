@@ -70,10 +70,17 @@ export async function buildCast(THREE, actors = {}, { seed = 1, facePack } = {})
   // Thân R6 (r6:1): nạp ĐỘNG rig + thư viện ngoại hình + bộ mặt của tập (engine/face-pack.js; một lần cho cả tập)
   let r6Res = null;
   if (plan.some((p) => p.kind === 'r6')) { const [RG, LK] = await Promise.all([import('./r6-rig.js'), import('./r6-looks.js')]); const FP = await import('./face-pack.js'); r6Res = { create: RG.createR6Rig, looks: LK.R6_LOOKS, faceSet: await FP.loadFacePacks(THREE, facePack) }; }   // facePack = EPISODE.facePack ('altiwyre' | 'emote37'; thiếu → bộ cũ)
+  // Diện mạo NPC Roblox trên thân R6 (actor { r6: 1, look: '<dự phòng>', rb: '<tên trong assets/characters/rb>' } — engine/r6-roblox.js). TẮT: globalThis.__rbNpc = false (EPISODE.fx.rbNpc) hoặc ?rb=0 → dùng `look` vẽ tay.
+  let rbRes = null, RBM = null;
+  const rbOn = globalThis.__rbNpc !== false && !(typeof location !== 'undefined' && /[?&]rb=0/.test(location.search));
+  const rbNames = rbOn ? plan.filter((p) => p.kind === 'r6' && p.opts?.rb).map((p) => p.opts.rb) : [];
+  if (rbNames.length) { RBM = await import('./r6-roblox.js'); rbRes = await RBM.loadRbLooks(THREE, rbNames); }
   let bearIdx = 0;
   const make = async (name, o, kind = 'r15') => {
     let a;
-    if (kind === 'r6') a = wrapFaces(r6Res.create(THREE, { name, ...(r6Res.looks[o.look] || {}), ...o, faceSet: r6Res.faceSet, facePack: true }), () => true);
+    if (kind === 'r6') { const rs = rbRes && o.rb ? rbRes[o.rb] : null;
+      a = wrapFaces(r6Res.create(THREE, { name, ...(r6Res.looks[o.look] || {}), ...o, ...(rs ? RBM.rbRigOptions(rs) : {}), faceSet: r6Res.faceSet, facePack: true }), () => true);
+      if (rs) RBM.applyRbLook(THREE, a, rs); }
     else if (kind === 'ga') a = wrapFaces(createGa(THREE, { name, face: 'smile', ...o, ...gaRes }), GA_KNOWN);
     else if (kind === 'bear') { const bi = bearIdx++; a = wrapFaces((bearGlbOn() && createBearGlb(THREE, { name, glbIndex: bi, ...o })) || createBear(THREE, { name, ...o }), () => true); }
     else a = wrapFaces(createR15(THREE, { name, face: 'smile', ...o, body, textures: await loadCharacterTextures(THREE, name) }), R15_KNOWN);

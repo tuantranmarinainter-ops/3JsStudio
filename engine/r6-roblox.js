@@ -16,6 +16,7 @@ export const RB_KHUON = {
 };
 // thứ tự vật liệu BoxGeometry: +x, −x, +y, −y, +z, −z. Nhân vật nhìn +Z, bên TRÁI của nhân vật = +X.
 export const RB_MAT_ORDER = ['L', 'R', 'U', 'D', 'F', 'B'];
+const HEAD_R_ENGINE = 0.68;   // = HR trong engine/r6-rig.js
 const HEAD_RB = 1.25;   // đường kính + chiều cao đầu R6 Roblox (stud)
 
 const taiAnh = (url) => new Promise((ok) => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => ok(null); im.src = url; });
@@ -67,8 +68,9 @@ export function applyRbLook(THREE, char, res, { px = 2 } = {}) {
   char.materials.shirt = than[4]; char.materials.pants = chan[4];
   if (res.acc) {
     const hd = char.khung?.dau, g = new THREE.Group(); g.name = 'rb_acc';
-    const k = (hd ? hd.cao : 1.3) / HEAD_RB;                       // đầu Roblox 1.25 stud → đầu engine
-    g.scale.setScalar(k); g.position.set(...(hd ? hd.tam : [0, 0.67, 0])); g.rotation.y = Math.PI;   // Roblox nhìn −Z → engine nhìn +Z
+    // đầu Roblox: trụ bán kính 0,625 cao 1,25; đầu engine: bán kính 0,68 cao 1,3 → phụ kiện phải nở NGANG nhiều hơn dọc, dư 2% để đầu không đâm xuyên râu/tóc (lỗi 14/11: râu tóc trông như xoay lệch)
+    const ky = (hd ? hd.cao : 1.3) / HEAD_RB * 1.02, kxz = HEAD_R_ENGINE / (HEAD_RB / 2) * 1.02;
+    g.scale.set(kxz, ky, kxz); g.position.set(...(hd ? hd.tam : [0, 0.67, 0])); g.rotation.y = Math.PI;   // Roblox nhìn −Z → engine nhìn +Z
     const c = res.acc.clone(true);
     c.traverse((x) => { if (!x.isMesh) return; x.castShadow = true; x.receiveShadow = true; x.material = x.material.clone(); x.material.metalness = 0; x.material.roughness = 0.8;
       x.material.userData.matDecl = /hair|beard|toc|rau/i.test(x.name) ? 'hair' : 'plastic'; x.material.userData.matNguon = 'khai-bao'; });

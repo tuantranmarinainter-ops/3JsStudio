@@ -1,0 +1,29 @@
+{
+ "tap": "ep003-npc",
+ "dot": 3,
+ "luc": "2026-11-14T04:29:38.573Z",
+ "gau": null,
+ "duyet": [],
+ "sua": [],
+ "chuaChon": [],
+ "chon": {
+  "npc_bach3": "npc_bach3__3",
+  "npc_may3": "npc_may3__5",
+  "npc_dan3": [
+   "npc_dan3__5",
+   "npc_dan3__4",
+   "npc_dan3__1",
+   "npc_dan3__9",
+   "npc_dan3__10",
+   "npc_dan3__12",
+   "npc_dan3__16",
+   "npc_dan3__14",
+   "npc_dan3__15"
+  ]
+ },
+ "ghiChu": {
+  "npc_dan3": "nhiều dân làng bị lỗi râu, tóc xoay không đúng (người dùng) → đã sửa tỉ lệ gắn phụ kiện"
+ },
+ "doiTuDot": {},
+ "giuTuDot": {}
+}

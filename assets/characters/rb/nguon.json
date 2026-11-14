@@ -1,7 +1,7 @@
 {
  "bach": {
-  "id": "18541446276",
-  "moTa": "ông Bách"
+  "id": "126608988",
+  "moTa": "ông Bách (chốt đợt 3)"
  },
  "mayor": {
   "id": "83527751194934",
@@ -24,6 +24,10 @@
   "id": "6270043601",
   "moTa": "người làm bánh"
  },
+ "may": {
+  "id": "118400431811478",
+  "moTa": "cô thợ may (chốt đợt 3)"
+ },
  "be_vang": {
   "id": "135634323232287",
   "them": {
@@ -38,9 +42,35 @@
   },
   "moTa": "bé Ngọc"
  },
- "dan_13": {
-  "id": "3706386033",
-  "moTa": "nữ nông dân"
+ "dan_01": {
+  "id": "84294762238979",
+  "nv": 0,
+  "moTa": "dân làng (pack Civilians #1)"
+ },
+ "dan_04": {
+  "id": "84294762238979",
+  "nv": 3,
+  "moTa": "dân làng (pack Civilians #4)"
+ },
+ "dan_05": {
+  "id": "84294762238979",
+  "nv": 4,
+  "moTa": "dân làng (pack Civilians #5)"
+ },
+ "dan_09": {
+  "id": "84294762238979",
+  "nv": 8,
+  "moTa": "dân làng (pack Civilians #9)"
+ },
+ "dan_10": {
+  "id": "84294762238979",
+  "nv": 9,
+  "moTa": "dân làng (pack Civilians #10)"
+ },
+ "dan_12": {
+  "id": "84294762238979",
+  "nv": 11,
+  "moTa": "dân làng (pack Civilians #12)"
  },
  "dan_14": {
   "id": "8598090797",
@@ -53,133 +83,5 @@
  "dan_16": {
   "id": "12170843804",
   "moTa": "nam tóc nâu áo đen"
- },
- "dan_01": {
-  "id": "84294762238979",
-  "nv": 0,
-  "moTa": "dân làng (pack Civilians #1)"
- },
- "dan_02": {
-  "id": "84294762238979",
-  "nv": 1,
-  "moTa": "dân làng (pack Civilians #2)"
- },
- "dan_03": {
-  "id": "84294762238979",
-  "nv": 2,
-  "moTa": "dân làng (pack Civilians #3)"
- },
- "dan_04": {
-  "id": "84294762238979",
-  "nv": 3,
-  "moTa": "dân làng (pack Civilians #4)"
- },
- "dan_05": {
-  "id": "84294762238979",
-  "nv": 4,
-  "moTa": "dân làng (pack Civilians #5)"
- },
- "dan_06": {
-  "id": "84294762238979",
-  "nv": 5,
-  "moTa": "dân làng (pack Civilians #6)"
- },
- "dan_07": {
-  "id": "84294762238979",
-  "nv": 6,
-  "moTa": "dân làng (pack Civilians #7)"
- },
- "dan_08": {
-  "id": "84294762238979",
-  "nv": 7,
-  "moTa": "dân làng (pack Civilians #8)"
- },
- "dan_09": {
-  "id": "84294762238979",
-  "nv": 8,
-  "moTa": "dân làng (pack Civilians #9)"
- },
- "dan_10": {
-  "id": "84294762238979",
-  "nv": 9,
-  "moTa": "dân làng (pack Civilians #10)"
- },
- "dan_11": {
-  "id": "84294762238979",
-  "nv": 10,
-  "moTa": "dân làng (pack Civilians #11)"
- },
- "dan_12": {
-  "id": "84294762238979",
-  "nv": 11,
-  "moTa": "dân làng (pack Civilians #12)"
- },
- "uv_bach_1": {
-  "id": "70644652180683",
-  "moTa": "ứng viên ông Bách"
- },
- "uv_bach_2": {
-  "id": "126608988",
-  "moTa": "ứng viên ông Bách"
- },
- "uv_bach_3": {
-  "id": "15816956489",
-  "moTa": "ứng viên ông Bách"
- },
- "uv_bach_4": {
-  "id": "16037100653",
-  "moTa": "ứng viên ông Bách"
- },
- "uv_bach_5": {
-  "id": "4003555933",
-  "moTa": "ứng viên ông Bách"
- },
- "uv_bach_6": {
-  "id": "131405452688512",
-  "moTa": "ứng viên ông Bách"
- },
- "uv_may_1": {
-  "id": "12109583351",
-  "moTa": "ứng viên thợ may"
- },
- "uv_may_2": {
-  "id": "16198634320",
-  "moTa": "ứng viên thợ may"
- },
- "uv_may_3": {
-  "id": "112507919413426",
-  "moTa": "ứng viên thợ may"
- },
- "uv_may_4": {
-  "id": "118400431811478",
-  "moTa": "ứng viên thợ may"
- },
- "uv_may_5": {
-  "id": "72858972549384",
-  "moTa": "ứng viên thợ may"
- },
- "uv_may_6": {
-  "id": "11262472256",
-  "moTa": "ứng viên thợ may"
- },
- "uv_may_7": {
-  "id": "99243652986564",
-  "moTa": "ứng viên thợ may"
- },
- "uv_may_8": {
-  "id": "135331401553316",
-  "moTa": "ứng viên thợ may"
- },
- "uv_may_9": {
-  "id": "97588997527305",
-  "moTa": "ứng viên thợ may"
- },
- "uv_may_10": {
-  "id": "102734702851457",
-  "moTa": "ứng viên thợ may"
- },
- "uv_may_11": {
-  "id": "4696086001",
-  "moTa": "ứng viên thợ may"
  }
 }

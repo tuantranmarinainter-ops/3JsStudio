@@ -25,11 +25,13 @@ scene.add(new THREE.HemisphereLight('#ffffff', '#8a8f98', 1.5)); const d = new T
 const cam = new THREE.OrthographicCamera(-cols * UW / 2, cols * UW / 2, rows * UH / 2, -rows * UH / 2, 0.1, 200); cam.position.set(0, 0, 60);
 await loadFacePacks(THREE, q.get('pack') || 'altiwyre');
 const res = RB ? await loadRbLooks(THREE, names) : {};
+// &cast=1 → tạo nhân vật qua engine/cast.js (đúng đường mà tập phim dùng: actor { r6:1, look, rb }); khi đó &rb=0 thử công tắc tắt của cast.
+const viaCast = q.get('cast') === '1' ? await (await import('./cast.js')).buildCast(THREE, Object.fromEntries(names.map((n) => [n, { r6: 1, look: R6_LOOKS[n] ? n : 'dan_a', rb: n }])), { facePack: q.get('pack') || 'altiwyre' }) : null;
 window.__cells = []; const chars = [];
 names.forEach((ten, i) => {
   const c = i % cols, r = Math.floor(i / cols), rs = res[ten];
-  const a = createR6Rig(THREE, { name: ten, ...(rs ? rbRigOptions(rs) : (R6_LOOKS[ten] || R6_LOOKS[ten.replace(/_\d+$/, '_a')] || {})), facePack: true });
-  if (rs) applyRbLook(THREE, a, rs);
+  const a = viaCast ? viaCast[ten] : createR6Rig(THREE, { name: ten, ...(rs ? rbRigOptions(rs) : (R6_LOOKS[ten] || R6_LOOKS[ten.replace(/_\d+$/, '_a')] || {})), facePack: true });
+  if (rs && !viaCast) applyRbLook(THREE, a, rs);
   const g = new THREE.Group(); g.name = 'o_' + ten; g.add(a.root); g.position.set((c - (cols - 1) / 2) * UW, ((rows - 1) / 2 - r) * UH - UH / 2 + 0.5, 0); scene.add(g);
   chars.push({ a, g, ten }); window.__cells.push({ ten, x: c * CELL, y: r * CH, w: CELL, h: CH });
 });
