@@ -19,7 +19,8 @@ if (process.argv[2] === 'nhan') {
   await new Promise(() => {});
 }
 
-const d = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs/tien-do.json'), 'utf8'));
+const OUT = process.env.TIEN_DO_RA || ROOT;   // chỉ để test: thư mục gốc ghi dist/ + output/artifact/ (mặc định = repo)
+const d = JSON.parse(fs.readFileSync(process.env.TIEN_DO_JSON || path.join(ROOT, 'docs/tien-do.json'), 'utf8'));
 const TT = { dang: ['Đang làm', 'run'], do: ['Làm dở', 'part'], chua: ['Chưa làm', 'todo'], cho: ['Đang chờ', 'wait'], xong: ['Xong', 'ok'] };
 const e = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const all = d.nhom.flatMap((n) => n.viec.map((v) => ({ ...v, nhom: n.ten, tap: n.tap || '' })));
@@ -35,6 +36,58 @@ const the = [['can', `Cần bạn`, (d.canBan || []).length], ...Object.entries(
   ...[...new Set(d.nhom.map((n) => n.tap).filter(Boolean))].map((t) => ['tap:' + t, t, all.filter((v) => v.tap === t).length])];   // mỗi tập một thẻ riêng (khoá `tap` của nhóm)
 const macDinh = dem('dang') ? 'dang' : 'can';
 
+// ---- Bảng trạng thái từng shot (tuỳ chọn): khoá `shotTheoTap` trong tien-do.json; thiếu khoá/thiếu file → bỏ qua lặng lẽ ----
+const docJson = (f) => { try { return JSON.parse(fs.readFileSync(path.resolve(ROOT, f), 'utf8')); } catch { return null; } };
+const mangHoa = (x) => Array.isArray(x) ? x : (x && typeof x === 'object' ? Object.entries(x).map(([k, v]) => ({ id: k, ...(v && typeof v === 'object' ? v : {}) })) : []);
+const dsLoi = (x) => Array.isArray(x) ? x.map(String) : (x ? [String(x)] : []);
+const gomShot = (m) => {
+  const kj = m.khop ? docJson(m.khop) : null, cj = m.chuyenDong ? docJson(m.chuyenDong) : null;
+  if (!kj && !cj) return null;
+  const kh = kj && kj.shots && typeof kj.shots === 'object' && !Array.isArray(kj.shots) ? kj.shots : {};
+  const cd = new Map(mangHoa(cj && cj.shots !== undefined ? cj.shots : cj).filter((x) => x && x.id != null).map((x) => [String(x.id), x]));
+  const ids = [...new Set([...Object.keys(kh), ...cd.keys()])].sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+  return ids.map((sid) => {
+    const k = kh[sid], c = cd.get(sid), loi = c ? dsLoi(c.loi) : [], cb = c ? dsLoi(c.canhBao) : [];
+    const ktt = k && ['dat', 'lech', 'hong'].includes(k.tt) ? k.tt : null;
+    const tt = (ktt === 'hong' || loi.length) ? 'hong' : (ktt === 'lech' || cb.length) ? 'lech' : (ktt || c) ? 'dat' : 'thieu';
+    const ghi = [];
+    if (k) { if (k.diem != null) ghi.push('điểm khớp ' + k.diem); if (k.nguocHuong) ghi.push('ngược hướng'); if (k.ghiChu) ghi.push(String(k.ghiChu)); }
+    if (loi.length) ghi.push('lỗi chuyển động: ' + loi.join('; '));
+    if (cb.length) ghi.push('cảnh báo chuyển động: ' + cb.join('; '));
+    if (c && c.camDungIm) ghi.push('camera đứng im');
+    if (c && c.nvDungIm) ghi.push('nhân vật đứng im');
+    return { id: sid, tt, ghi: ghi.join(' · ') || (tt === 'thieu' ? 'chưa có dữ liệu' : 'không có ghi chú') };
+  });
+};
+const SHOT_TT = { dat: ['✔', 'Đạt'], lech: ['▲', 'Lệch'], hong: ['✖', 'Hỏng'], thieu: ['?', 'Thiếu'] };
+const shotTap = (Array.isArray(d.shotTheoTap) ? d.shotTheoTap : []).map((m) => ({ tap: String(m.tap || ''), ds: gomShot(m) })).filter((x) => x.tap && x.ds);
+if (shotTap.length) the.push(...shotTap.map((x) => ['shot:' + x.tap, 'Shot · ' + x.tap, x.ds.length]));
+const bangShot = (x) => {
+  const n = Object.fromEntries(Object.keys(SHOT_TT).map((k) => [k, x.ds.filter((s) => s.tt === k).length])), tong = Math.max(1, x.ds.length);
+  return `<div class="shotp" data-k="shot:${e(x.tap)}" hidden><div class="sdem num">${Object.entries(SHOT_TT).map(([k, [ky, t]]) => `<span class="st-${k}">${ky} ${t} ${n[k]}</span>`).join(' · ')} · tổng ${x.ds.length}</div>` +
+    `<div class="sbar" role="img" aria-label="Tỉ lệ trạng thái shot">${Object.keys(SHOT_TT).map((k) => n[k] ? `<i class="sb-${k}" style="width:${(n[k] / tong * 100).toFixed(2)}%" title="${SHOT_TT[k][1]} ${n[k]}"></i>` : '').join('')}</div>` +
+    `<div class="sgrid">${x.ds.map((s) => `<button type="button" class="sc sc-${s.tt}" data-note="${e(s.id + ' — ' + SHOT_TT[s.tt][1] + ': ' + s.ghi)}"><b>${e(s.id)}</b><span>${SHOT_TT[s.tt][0]} ${SHOT_TT[s.tt][1]}</span></button>`).join('')}</div>` +
+    `<div class="snote mu" role="status" aria-live="polite">Bấm một ô để xem điểm khớp và lỗi chuyển động.</div></div>`;
+};
+const shotHtml = shotTap.map(bangShot).join('');
+const shotCss = shotTap.length ? `
+:root { --bad:#b3261e; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bad:#ff7b72 } }
+:root[data-theme="dark"] { --bad:#ff7b72 }
+.shotp { display: flex; flex-direction: column; gap: 8px; } .sdem { font-size: 13px; font-weight: 600; }
+.st-dat { color: var(--ok); } .st-lech { color: var(--part); } .st-hong { color: var(--bad); } .st-thieu { color: var(--todo); }
+.sbar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--line); }
+.sb-dat { background: var(--ok); } .sb-lech { background: var(--part); } .sb-hong { background: var(--bad); } .sb-thieu { background: var(--todo); }
+.sgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 6px; }
+.sc { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-left-width: 4px; border-radius: 6px; padding: 5px 7px; font: inherit; font-size: 12px; cursor: pointer; min-width: 0; text-align: left; }
+.sc b { font-size: 13px; overflow-wrap: anywhere; } .sc[aria-pressed="true"] { outline: 2px solid var(--acc); outline-offset: 1px; }
+.sc-dat { border-left-color: var(--ok); } .sc-dat span { color: var(--ok); } .sc-lech { border-left-color: var(--part); } .sc-lech span { color: var(--part); }
+.sc-hong { border-left-color: var(--bad); } .sc-hong span { color: var(--bad); } .sc-thieu { border-left-color: var(--todo); border-left-style: dashed; } .sc-thieu span { color: var(--todo); }
+.snote { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; overflow-wrap: anywhere; }` : '';
+const shotJs = shotTap.length ? `document.querySelectorAll('#ds .shotp').forEach((p) => { p.hidden = p.dataset.k !== k; }); if (k.startsWith('shot:')) document.getElementById('trong').hidden = true; ` : '';
+const shotJs2 = shotTap.length ? `
+document.querySelectorAll('.shotp').forEach((p) => { const nt = p.querySelector('.snote'); p.querySelectorAll('.sc').forEach((b) => { b.onclick = () => { p.querySelectorAll('.sc').forEach((x) => x.setAttribute('aria-pressed', x === b)); nt.textContent = b.dataset.note; }; }); });` : '';
+
 const than = (artifact) => `
 <main>
 <h1>Tiến độ 3JS Studio</h1>
@@ -48,7 +101,7 @@ const than = (artifact) => `
 ${(d.canBan || []).map((x) => `<div class="v can" data-tt="can"><div>${e(x)}</div>${o('CẦN: ' + x)}</div>`).join('')}
 ${Object.keys(TT).map((k) => all.filter((v) => v.tt === k).map(dong).join('')).join('')}
 ${(d.daChot || []).map(([k, t]) => `<div class="v" data-tt="chot"><div class="hd"><span class="k">${e(k)}</span></div><div>${e(t)}</div>${o('ĐÃ CHỐT: ' + t)}</div>`).join('')}
-<div class="v trong" id="trong" hidden>Không có mục nào trong thẻ này.</div>
+<div class="v trong" id="trong" hidden>Không có mục nào trong thẻ này.</div>${shotHtml}
 </div>
 ${(d.link || []).length && !artifact ? `<h2>Mở nhanh</h2><div class="lk">${d.link.map((l) => `<a href="${e(l.href)}">${e(l.ten)}</a>`).join('')}</div>` : ''}
 <h2>Ghi chú chung</h2>
@@ -85,7 +138,7 @@ textarea { height: 100px; resize: vertical; }
 .send { position: sticky; bottom: env(safe-area-inset-bottom, 0px); background: var(--bg); padding-block: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; border-top: 1px solid var(--line); }
 .send button { background: var(--acc); color: #fff; border: 0; border-radius: 8px; padding: 10px 16px; font: inherit; font-weight: 600; cursor: pointer; } .send button.phu { background: var(--panel); color: var(--fg); border: 1px solid var(--line); }
 [hidden] { display: none !important; }
-.lk { display: flex; gap: 14px; flex-wrap: wrap; } a { color: var(--acc); }`;
+.lk { display: flex; gap: 14px; flex-wrap: wrap; } a { color: var(--acc); }${shotCss}`;
 
 const js = (artifact) => `
 const os = [...document.querySelectorAll('.o')], tl = document.getElementById('tl'), st = document.getElementById('st');
@@ -94,9 +147,9 @@ const ghi = () => { try { localStorage.setItem('td', JSON.stringify(luu)); } cat
 os.forEach((x) => { x.value = luu[x.dataset.k] || ''; x.classList.toggle('co', !!x.value); x.oninput = () => { luu[x.dataset.k] = x.value; x.classList.toggle('co', !!x.value); ghi(); }; });
 tl.value = luu.__tl || ''; tl.oninput = () => { luu.__tl = tl.value; ghi(); };
 const chon = (k) => { let n = 0; document.querySelectorAll('#ds .v[data-tt]').forEach((v) => { const on = k.startsWith('tap:') ? v.dataset.tap === k.slice(4) : k === 'tatca' ? (v.dataset.tt !== 'chot' && v.dataset.tt !== 'can') : v.dataset.tt === k; v.hidden = !on; if (on) n++; });
-  document.getElementById('trong').hidden = n > 0; document.querySelectorAll('.tabs button').forEach((b) => b.setAttribute('aria-selected', b.dataset.tab === k)); luu.__tab = k; ghi(); };
+  document.getElementById('trong').hidden = n > 0; document.querySelectorAll('.tabs button').forEach((b) => b.setAttribute('aria-selected', b.dataset.tab === k)); ${shotJs}luu.__tab = k; ghi(); };
 document.querySelectorAll('.tabs button').forEach((b) => { b.onclick = () => chon(b.dataset.tab); });
-chon(${JSON.stringify(macDinh)});
+chon(${JSON.stringify(macDinh)});${shotJs2}
 const gom = () => [...os.filter((x) => x.value.trim()).map((x) => '- ' + x.dataset.k + ' → ' + x.value.trim()), tl.value.trim()].filter(Boolean).join('\\n');
 const xoa = () => { os.forEach((x) => { x.value = ''; x.classList.remove('co'); }); tl.value = ''; luu = { __tab: luu.__tab }; ghi(); };
 document.getElementById('chep').onclick = async () => { const t = gom(); if (!t) { st.textContent = 'Chưa có ô nào được ghi'; return; }
@@ -108,7 +161,7 @@ document.getElementById('gui').onclick = async () => { const nd = gom(); if (!nd
   catch { st.textContent = 'Không gửi được (máy nhận chưa bật) → bấm Chép rồi dán vào chat'; } };`}`;
 
 const font = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap">';
-fs.mkdirSync(path.join(ROOT, 'dist'), { recursive: true }); fs.mkdirSync(path.join(ROOT, 'output/artifact'), { recursive: true });
-fs.writeFileSync(path.join(ROOT, 'dist/tien-do.html'), `<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>Tiến độ 3JS Studio</title><meta name="viewport" content="width=device-width,initial-scale=1">${font}<style>${css}</style></head><body>${than(false)}<script>${js(false)}</script></body></html>`);
-fs.writeFileSync(path.join(ROOT, 'output/artifact/tien-do.html'), `<title>Tiến độ 3JS Studio</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n${font}\n<style>${css}</style>${than(true)}<script>${js(true)}</script>\n`);
+fs.mkdirSync(path.join(OUT, 'dist'), { recursive: true }); fs.mkdirSync(path.join(OUT, 'output/artifact'), { recursive: true });
+fs.writeFileSync(path.join(OUT, 'dist/tien-do.html'), `<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>Tiến độ 3JS Studio</title><meta name="viewport" content="width=device-width,initial-scale=1">${font}<style>${css}</style></head><body>${than(false)}<script>${js(false)}</script></body></html>`);
+fs.writeFileSync(path.join(OUT, 'output/artifact/tien-do.html'), `<title>Tiến độ 3JS Studio</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n${font}\n<style>${css}</style>${than(true)}<script>${js(true)}</script>\n`);
 console.log(`tien-do: ${all.length} việc, tổng ${tongPt}% — ` + Object.entries(TT).map(([k, [t]]) => `${t} ${dem(k)}`).join(', ') + ` · token ${fTok(tongTok)}`);
