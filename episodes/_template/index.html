@@ -132,7 +132,7 @@
         envs.define(n, m?.LIGHT || 'day', m?.default || ((g, e, H) => { g.add(H.plane(80, 80, H.mat('#8d8a84'), 0, n + '_san_tam')); }));
       }
       const places = resolvePlaces(EPISODE.places, town.places);
-      const actors = await buildCast(THREE, EPISODE.actors, { seed: EPISODE.seed ?? 1 });
+      const actors = await buildCast(THREE, EPISODE.actors, { seed: EPISODE.seed ?? 1, facePack: EPISODE.facePack });
       for (const a of Object.values(actors)) stage.scene.add(a.root);
       // ĐẠO CỤ theo kịch bản (engine/props-kb.js): đặt (datDaoCu) → dựng (buildPropsKB: PROPS_KB rồi propKit) → gắn vào shot (ganDaoCu)
       const dat = datDaoCu(EPISODE.props || {}, places, { townEnv, envs: Object.keys(envs.envs), slots });

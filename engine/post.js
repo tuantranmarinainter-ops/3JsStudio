@@ -35,7 +35,7 @@ import { CLOTH } from './cloth.js';
 import { MAST } from './mastbreak.js';
 import { MATS } from './materials.js';
 
-export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true, backdrop: true, matTex: true, flowers: true, traffic: true, villagers: true, pvTrees: true, familyPhoto: true, realWindow: true, houseStairs: true, stairsFold: true, daTron: true, raft: true, wreckSplit: true, faceLive: true, gioThoiTiet: true, denNhanVat: true, tangXa: true, seaDecor: true, nhep: true, chuTungChu: true, troikaText: false };
+export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true, backdrop: true, matTex: true, flowers: true, traffic: true, villagers: true, pvTrees: true, familyPhoto: true, realWindow: true, houseStairs: true, stairsFold: true, daTron: true, raft: true, wreckSplit: true, faceLive: true, gioThoiTiet: true, denNhanVat: true, tangXa: true, seaDecor: true, nhep: true, chuTungChu: true, matEmote: true, matAlti: true, troikaText: false };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
@@ -66,7 +66,7 @@ export const FX_LABELS = {
   daTron: 'Da nhân vật trơn (không phủ bụi kiểu nhà → hết viền 2 bên mặt)',
   raft: 'Bè gỗ thay thuyền (đảo)',
   wreckSplit: 'Xác tàu đứt đôi (rạn san hô)',
-  nhep: 'Nhép miệng theo giọng đọc (shot có talk)', chuTungChu: 'Phụ đề từng chữ (chữ đang đọc sáng hơn)', troikaText: 'Chữ bưu thiếp sắc nét (troika SDF thay chữ canvas)',
+  nhep: 'Nhép miệng theo giọng đọc (shot có talk)', chuTungChu: 'Phụ đề từng chữ (chữ đang đọc sáng hơn)', matEmote: 'Mặt emote 37 ảnh cho mọi nhân vật (tắt = mặt vẽ cũ)', matAlti: 'Bộ mặt AltiWyre cho nhân vật R6 (tập có facePack: altiwyre; tắt = bộ 37 emote cũ)', troikaText: 'Chữ bưu thiếp sắc nét (troika SDF thay chữ canvas)',
   faceLive: 'Mặt sống: đổi biểu cảm mềm, chớp mắt, ánh nhìn, đồng tử theo ánh sáng',
   gioThoiTiet: 'Giờ + thời tiết theo shot (time / weather)',
   denNhanVat: 'Đèn nhân vật bám camera (mặt luôn đọc được; chỉ tập dùng time/weather)',
@@ -254,7 +254,7 @@ export function createPost(THREE, stage, { actors = [], paint: paintOpts = {}, a
     get paintDepth() { return paintDepth; }, set paintDepth(v) { paintDepth = ['own', 'ao', 'flat'].includes(v) ? v : 'own'; },
     get smaaReady() { return smaaReady; },
     get options() { return { ...fx }; },
-    set(o = {}) { for (const k of Object.keys(FX_DEFAULTS)) if (o[k] !== undefined) fx[k] = !!o[k]; CLOTH.on.value = fx.cloth ? 1 : 0; MAST.on.value = fx.mast ? 1 : 0; const AF = (globalThis.__autoFx ||= {}); for (const k of ['foot', 'prints', 'wind', 'breath', 'ibl', 'scans', 'sea2', 'skybox', 'stormSky', 'shotSky', 'skyCubic', 'skyScale', 'grass', 'sway', 'cloudShade', 'farwoods', 'backdrop', 'faceLive', 'gioThoiTiet', 'denNhanVat', 'tangXa', 'seaDecor', 'nhep', 'chuTungChu']) AF[k] = fx[k]; return { ...fx }; },
+    set(o = {}) { for (const k of Object.keys(FX_DEFAULTS)) if (o[k] !== undefined) fx[k] = !!o[k]; CLOTH.on.value = fx.cloth ? 1 : 0; MAST.on.value = fx.mast ? 1 : 0; const AF = (globalThis.__autoFx ||= {}); for (const k of ['foot', 'prints', 'wind', 'breath', 'ibl', 'scans', 'sea2', 'skybox', 'stormSky', 'shotSky', 'skyCubic', 'skyScale', 'grass', 'sway', 'cloudShade', 'farwoods', 'backdrop', 'faceLive', 'gioThoiTiet', 'denNhanVat', 'tangXa', 'seaDecor', 'nhep', 'chuTungChu', 'matEmote', 'matAlti']) AF[k] = fx[k]; return { ...fx }; },
     render, resize,
   };
 }

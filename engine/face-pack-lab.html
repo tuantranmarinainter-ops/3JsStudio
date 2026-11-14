@@ -33,6 +33,6 @@ names.forEach((ten, i) => {
   g.position.set((c - (cols - 1) / 2) * U, ((rows - 1) / 2 - r) * U, 0); g.rotation.y = yaw;
   window.__cells.push({ ten, x: c * CELL, y: r * CELL, w: CELL, h: CELL });
 });
-window.THREE = THREE; window.__scene = scene;
+window.THREE = THREE; window.__scene = scene; window.__stage = { renderer, scene, camera: cam };   // cho tools/shaders.mjs
 renderer.render(scene, cam); window.__ready = true;
 </script></body></html>

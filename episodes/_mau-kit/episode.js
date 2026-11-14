@@ -5,6 +5,7 @@ export const EPISODE = {
   title: "Tập thử kit → shots",
   fps: 30,
   seed: 1,
+  facePack: 'altiwyre',                     // bộ mặt nhân vật R6: 'altiwyre' | 'emote37' (engine/face-pack.js)
   rule: "Tập thử kỹ thuật, không có cốt truyện.",
   env: "kenneyTown",
   light: "day",

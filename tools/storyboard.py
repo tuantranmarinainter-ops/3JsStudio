@@ -464,6 +464,7 @@ def write_episode(ep, meta, shots, lines, total, src, board_file, frames, force,
         'twist': meta.get('twist', ''), 'solution': meta.get('solution', meta.get('loi giai', '')),
         'env': meta.get('env', 'kenneyTown'), 'light': meta.get('light', 'day'), 'town': meta.get('town', {'blocks': 3}),
         'actors': actors, 'places': places, 'props': props or {},
+        'facePack': meta.get('facePack', 'altiwyre'),   # bộ mặt nhân vật R6 (engine/face-pack.js): tập mới mặc định AltiWyre
     }
     body = ',\n'.join(f'  {k}: {js(v)}' for k, v in E.items())
     (out / 'episode.js').write_text(

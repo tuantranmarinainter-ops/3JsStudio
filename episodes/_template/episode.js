@@ -5,6 +5,7 @@ export const EPISODE = {
   fps: 30,
   credits: true,                            // ảnh ghi công 3 giây cuối (tools/ghi-cong.mjs → ghi-cong.png); có file ảnh thì mặc định bật, người xem tắt được
   seed: 7,                                  // thị trấn + dân giống hệt mỗi lần render
+  facePack: 'altiwyre',                     // bộ mặt nhân vật R6: 'altiwyre' | 'emote37' (engine/face-pack.js)
   rule: 'Ai đi bộ cũng phải nhảy',
   weakness: '',
   twist: '',
