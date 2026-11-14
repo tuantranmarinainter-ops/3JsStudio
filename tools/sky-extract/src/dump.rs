@@ -72,7 +72,7 @@ fn part_json(dom: &WeakDom, r: Ref, inst: &Instance) -> Option<Value> {
     for &c in inst.children() {
         let Some(ch) = dom.get_by_ref(c) else { continue };
         match ch.class.as_str() {
-            "SpecialMesh" => {
+            "SpecialMesh" | "CylinderMesh" | "BlockMesh" => {
                 let scale = match prop(ch, "Scale") {
                     Some(Variant::Vector3(v)) => vec3(v),
                     _ => json!([1, 1, 1]),
@@ -86,7 +86,12 @@ fn part_json(dom: &WeakDom, r: Ref, inst: &Instance) -> Option<Value> {
                     "textureId": id_of(ch, TEXTURE_PROPS),
                     "scale": scale,
                     "offset": offset,
-                    "meshType": enum_of(ch, "MeshType"),
+                    "meshType": match ch.class.as_str() {
+                        "CylinderMesh" => Some(4),
+                        "BlockMesh" => Some(6),
+                        _ => enum_of(ch, "MeshType"),
+                    },
+                    "class": ch.class,
                 }));
             }
             "SurfaceAppearance" => {
@@ -99,8 +104,42 @@ fn part_json(dom: &WeakDom, r: Ref, inst: &Instance) -> Option<Value> {
                 "texture": id_of(ch, DECAL_PROPS),
                 "face": enum_of(ch, "Face"),
                 "transparency": f32_of(ch, "Transparency", 0.0),
+                "studsPerTile": [f32_of(ch, "StudsPerTileU", 2.0), f32_of(ch, "StudsPerTileV", 2.0)],
             })),
             _ => {}
+        }
+    }
+    // UnionOperation…: liệt kê thuộc tính CSG (kiểu + số byte); nếu đặt SKY_DUMP_BIN=<thư mục> thì ghi dữ liệu nhị phân ra file.
+    let mut csg = serde_json::Map::new();
+    if inst.class.ends_with("Operation") {
+        let dir = std::env::var("SKY_DUMP_BIN").ok();
+        for (k, v) in inst.properties.iter() {
+            let name = k.as_str();
+            let bytes: Option<Vec<u8>> = match v {
+                Variant::BinaryString(b) => Some(<rbx_dom_weak::types::BinaryString as AsRef<[u8]>>::as_ref(b).to_vec()),
+                Variant::SharedString(b) => Some(b.data().to_vec()),
+                _ => None,
+            };
+            match bytes {
+                Some(b) => {
+                    let mut file = Value::Null;
+                    if let (Some(d), false) = (&dir, b.is_empty()) {
+                        let f = Path::new(d).join(format!("{}_{}.bin", format!("{r:?}").replace(|c: char| !c.is_ascii_digit(), ""), name));
+                        if std::fs::write(&f, &b).is_ok() {
+                            file = json!(f.to_string_lossy());
+                        }
+                    }
+                    csg.insert(name.to_string(), json!({ "bytes": b.len(), "file": file }));
+                }
+                None if ["AssetId", "Content", "MeshContent", "MeshId"].contains(&name) || name.contains("Data") => {
+                    csg.insert(name.to_string(), json!({ "id": asset_id(&asset_text(v)), "text": asset_text(v).chars().take(80).collect::<String>() }));
+                }
+                None => {}
+            }
+        }
+        if std::env::var("SKY_DUMP_ALL").is_ok() {
+            let names: Vec<String> = inst.properties.iter().map(|(k, v)| format!("{}:{:?}", k.as_str(), v.ty())).collect();
+            csg.insert("_all".into(), json!(names));
         }
     }
     let initial = match prop(inst, "InitialSize") {
@@ -127,6 +166,8 @@ fn part_json(dom: &WeakDom, r: Ref, inst: &Instance) -> Option<Value> {
         "colorMap": color_map,
         "specialMeshes": specials,
         "decals": decals,
+        "csg": csg,
+        "usePartColor": matches!(prop(inst, "UsePartColor"), Some(Variant::Bool(true))),
     }))
 }
 
@@ -143,6 +184,37 @@ pub fn dump_parts(path: &Path) -> Result<Value, String> {
         }
     }
     Ok(json!({ "parts": parts }))
+}
+
+/// Ghi mọi thuộc tính nhị phân (BinaryString/SharedString) khác rỗng của mọi instance ra `<out>/<n>_<Class>_<Prop>.bin`.
+/// Dùng cho asset CSG (PartOperationAsset: MeshData, ChildData).
+pub fn dump_bins(path: &Path, out: &Path) -> Result<Value, String> {
+    let dom = load(path)?;
+    std::fs::create_dir_all(out).map_err(|e| e.to_string())?;
+    let mut list = Vec::new();
+    let mut stack = vec![dom.root_ref()];
+    let mut n = 0;
+    while let Some(r) = stack.pop() {
+        let Some(inst) = dom.get_by_ref(r) else { continue };
+        stack.extend(inst.children().iter().rev().copied());
+        let mut names: Vec<&str> = inst.properties.iter().map(|(k, _)| k.as_str()).collect();
+        names.sort_unstable();
+        for name in names {
+            let bytes: Vec<u8> = match prop(inst, name) {
+                Some(Variant::BinaryString(b)) => <rbx_dom_weak::types::BinaryString as AsRef<[u8]>>::as_ref(b).to_vec(),
+                Some(Variant::SharedString(b)) => b.data().to_vec(),
+                _ => continue,
+            };
+            if bytes.is_empty() {
+                continue;
+            }
+            let f = out.join(format!("{n}_{}_{name}.bin", inst.class));
+            std::fs::write(&f, &bytes).map_err(|e| e.to_string())?;
+            list.push(json!({ "class": inst.class, "name": inst.name, "prop": name, "bytes": bytes.len(), "file": f.to_string_lossy() }));
+        }
+        n += 1;
+    }
+    Ok(json!({ "bins": list }))
 }
 
 #[cfg(test)]

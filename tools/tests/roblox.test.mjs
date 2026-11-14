@@ -67,3 +67,39 @@ test('phân tích đối số + nhận diện ảnh', () => {
   assert.equal(loaiAnh(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0, 0, 0, 0, 0])), 'png');
   assert.equal(loaiAnh(Buffer.from('<roblox')), null);
 });
+
+// ----- đợt 2: tóm tắt model, ứng viên trang duyệt, nguồn roblox trong nhap-model -----
+import { tomTatParts, ungVienDuyet, GIAY_PHEP } from '../roblox.mjs';
+import { giayPhepHopLe, rbThongTin, fileUngVien, sapXepUngVien } from '../nhap-model.mjs';
+
+test('tomTatParts: đếm loại mảnh, ảnh vân, decal, Union và số request cần', () => {
+  const p = (o) => ({ class: 'Part', shape: 'Block', specialMeshes: [], decals: [], ...o });
+  const t = tomTatParts([
+    p({ decals: [{ texture: '11' }, { texture: '11' }, { texture: null }] }),
+    p({ class: 'MeshPart', meshId: '21', textureId: '12' }),
+    p({ class: 'MeshPart', meshId: '21', colorMap: '13' }),
+    p({ specialMeshes: [{ meshId: '22', textureId: '14' }] }),
+    p({ class: 'UnionOperation', csg: { Content: { id: '31' } } }),
+    p({ class: 'WedgePart', shape: 'Wedge' }),
+  ]);
+  assert.equal(t.part, 6); assert.equal(t.mesh, 2); assert.equal(t.anh, 4); assert.equal(t.decal, 2); assert.equal(t.union, 1);
+  assert.equal(t.request, 1 + 2 + 4 + 1);
+  assert.deepEqual(t.loai, { 'Part/Block': 2, MeshPart: 2, UnionOperation: 1, WedgePart: 1 });
+});
+test('ungVienDuyet: đủ trường cho trang duyệt (ảnh, tam giác, tác giả, link, giấy phép)', () => {
+  const [a, b] = ungVienDuyet(ketQuaTim(MAU, { tamGiacMax: 20000 }), { 1: '.cache/roblox/1/thumb.png' });
+  assert.deepEqual(a, { id: 'roblox:1', ten: 'Gau mien phi', anh: ['.cache/roblox/1/thumb.png'], link: 'https://create.roblox.com/store/asset/1', linkTen: 'Creator Store',
+    nguon: 'roblox', tacGia: 'tac_gia', giayPhep: 'Roblox Creator Store', tamGiac: 1000, phu: '90% thích' });
+  assert.deepEqual(b.anh, []); assert.equal(b.phu, '');
+});
+test('nhap-model: roblox là nguồn hợp lệ, ứng viên vào file duyệt kèm ảnh xem trước', async () => {
+  assert.equal(GIAY_PHEP, 'Roblox Creator Store');
+  assert.ok(giayPhepHopLe('Roblox Creator Store')); assert.ok(!giayPhepHopLe('Roblox'));
+  const ds = sapXepUngVien(ketQuaTim(MAU, { tamGiacMax: 20000 }).map(rbThongTin), 'vua');
+  assert.equal(ds[0].gp.ma, 'Roblox Creator Store'); assert.equal(ds[0].url, 'https://create.roblox.com/store/asset/1');
+  const f = await fileUngVien('Teddy Bear', ds, { nhan: { 'ly-tuong': 'lý tưởng' }, layAnh: async (ids) => Object.fromEntries(ids.map((i) => [i, `thumb-${i}.png`])) });
+  assert.equal(f.nhomId, 'model-teddy-bear'); assert.equal(f.khe.length, 1); assert.equal(f.khe[0].id, 'teddy-bear');
+  const u = f.khe[0].ungVien[0];
+  assert.equal(u.id, 'roblox:1'); assert.deepEqual(u.anh, ['thumb-1.png']); assert.equal(u.nguon, 'roblox');
+  assert.equal(u.giayPhep, 'Roblox Creator Store'); assert.equal(u.tamGiac, 1000); assert.equal(u.tacGia, 'tac_gia'); assert.equal(u.phu, 'lý tưởng');
+});

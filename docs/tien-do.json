@@ -59,9 +59,9 @@
     },
     {
      "ten": "10. Tìm và tải mẫu Roblox Creator Store (không cần Studio)",
-     "tt": "do",
-     "pt": 75,
-     "ghiChu": "Chạy được với khoá của bạn: node tools/roblox.mjs tim \"từ khoá\" / tai <id> → một GLB trong assets/nhap/. Thử thật 4 mẫu, số tam giác khớp Creator Store (gấu bông 7016/7016). CHƯA: chưa ai nhìn GLB bằng mắt; mẫu thật chưa cái nào ra ảnh vân; Union và decal chưa hỗ trợ; chưa nối vào trang duyệt nhiều ứng viên."
+     "tt": "xong",
+     "pt": 100,
+     "ghiChu": "14/11: node tools/roblox.mjs tim / xem / tai <id> → GLB thô ở output/roblox/glb/; vào kho + manifest: node tools/nhap-model.mjs nhap roblox:<id> --ten … --loai …. Đã soi bằng mắt 12 mẫu so với ảnh Creator Store (output/roblox/<id>/sheet.jpg): hộp/trụ/nêm/nêm góc, MeshPart mịn, ảnh vân (TextureID, ColorMap), Decal, Union (lưới thật, giải mã CSGMDL) đều đúng. Roblox là một nguồn của nhap-model tim (--nguon roblox, --ung-vien file.json → duyet.mjs them-ung-vien: ảnh xem trước, tam giác, tác giả, link). CÒN: chất liệu có sẵn của Roblox (gạch, gỗ…) chỉ ra màu phẳng; Decal trên cầu/trụ/nêm bị bỏ; Union thiếu asset CSG thì dựng hộp bao (có ghi rõ)."
     },
     {
      "ten": "11. Engine: điểm giữa cho camera + loại shot đổi hướng",

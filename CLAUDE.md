@@ -19,7 +19,7 @@ Cảnh 3D dựng bằng three.js + engine tự viết (`engine/`). Sản phẩm 
   `file:///S:/3JS%20Studio/dist/<file>.html` (bản xem thử khi chưa chốt: `dist/<ep>_xem-thu.html`).
 - **Trang tiến độ:** mỗi khi xong/đổi trạng thái một việc → sửa `docs/tien-do.json`, chạy `node tools/tien-do.mjs`, và **kèm link**
   `file:///S:/3JS%20Studio/dist/tien-do.html` ở cuối câu trả lời (người dùng không phải hỏi tiến độ).
-  Bản xem trên điện thoại: `node tools/tien-do-artifact.mjs` rồi đăng lại `output/artifact/tien-do.html` lên artifact
+  Bản xem trên điện thoại: `node tools/tien-do.mjs` (dựng cả hai bản) rồi đăng lại `output/artifact/tien-do.html` lên artifact
   https://claude.ai/artifact/HZXy4g9aPUZYGUDdiYmRiW (truyền `url` này) — đăng lại mỗi lần cập nhật tiến độ.
 - **Mọi tính năng mới phải bật/tắt được** trong trình phát (ngôn ngữ, giọng, phụ đề, tiếng, hiệu ứng hình…).
 - Bộ kịch bản người dùng đưa (khung ảnh + mô tả) là **tài sản của họ** → làm luôn, không hỏi lại về nguồn.
@@ -44,6 +44,7 @@ Cảnh 3D dựng bằng three.js + engine tự viết (`engine/`). Sản phẩm 
 | `python tools/storyboard.py …` / `python tools/video2kb.py …` | kịch bản → tập mới / video → kịch bản (skill `nhap-kich-ban`, `video-sang-kich-ban`) |
 | `python tools/voices_build.py <ep> sample|vi|en|index` | giọng nhiều giọng, trang nghe thử |
 | `node tools/nhap-model.mjs tim|nhap|kiem` | nhập model qua Blender (`docs/nhap-model.md`) |
+| `node tools/roblox.mjs tim "<từ khoá>" [--ung-vien f.json]` / `xem <id>` / `tai <id>` | mẫu miễn phí Roblox Creator Store → GLB (vân, decal, Union); vào kho: `nhap-model.mjs nhap roblox:<id> --ten … --loai …` |
 | `node tools/nen-model.mjs <file.glb|.gltf> … [--thu]` | nén model tại chỗ (bỏ trùng, lượng tử hoá lưới, ảnh vân WebP ≤ 1k); so bản gốc/bản nén bằng `tools/xem-model.html` + `look.mjs --ref` |
 | `node tools/feedback.mjs --latest` | đọc góp ý từ trình phát (skill `gop-y`) |
 | `PROFILE=1 node tools/look.mjs …` (cũng cho `shaders.mjs`, `bundle.mjs`, test) | **mở trang nhanh gấp ~4 lần** (28 s → 6 s) nhờ giữ shader đã dịch ở `.cache/chrome-profile/`; ảnh giống hệt. Mặc định tắt; không dùng cùng `GL=swiftshader` |
