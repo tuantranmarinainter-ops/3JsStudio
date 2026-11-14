@@ -42,3 +42,6 @@ assets/polyhaven-tex/*/512/
 
 # file hệ thống của Windows
 Desktop.ini
+
+# thư mục bàn giao cho người ở máy khác (tạo lại bằng tools/ban-giao.mjs)
+ban-giao/
