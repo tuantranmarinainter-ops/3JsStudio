@@ -84,6 +84,27 @@ def cyl(axis='x', seg=16):   # trục dọc X (Part Cylinder của Roblox) hoặ
         n = (s + 1) % seg; F.append((s, n, n + seg, s + seg))
     return V, F
 
+def dau(seg=20, buoc=4, bo=0.25):
+    """Đầu R6 (SpecialMesh Head): trụ đứng bo tròn mép trên/dưới, đường kính 1, cao 1. Lưới thật là file có sẵn trong Roblox, không tải được."""
+    vong = []
+    for i in range(buoc + 1):
+        t = -math.pi / 2 + (math.pi / 2) * i / buoc
+        vong.append((0.5 - bo + bo * math.cos(t), -0.5 + bo + bo * math.sin(t)))
+    for i in range(buoc + 1):
+        t = (math.pi / 2) * i / buoc
+        vong.append((0.5 - bo + bo * math.cos(t), 0.5 - bo + bo * math.sin(t)))
+    V = [(r * math.cos(2 * math.pi * k / seg), y, r * math.sin(2 * math.pi * k / seg)) for r, y in vong for k in range(seg)]
+    F = []
+    for j in range(len(vong) - 1):
+        for k in range(seg):
+            a, b = j * seg + k, j * seg + (k + 1) % seg
+            F.append((a, a + seg, b + seg, b))
+    c0, c1, n = len(V), len(V) + 1, (len(vong) - 1) * seg
+    V += [(0, -0.5, 0), (0, 0.5, 0)]
+    for k in range(seg):
+        F.append((c0, k, (k + 1) % seg)); F.append((c1, n + (k + 1) % seg, n + k))
+    return V, F
+
 # ---------- vật liệu ----------
 _mat = {}
 def vat_lieu(rgb, anh=None, alpha=1.0):
@@ -307,6 +328,21 @@ for p in D['parts']:
         a0 = anh_cua(sm.get('textureId'))
         a = ghep_anh(srgb, [(a0, 1.0)]) if (a0 and UV) else None
         them(ten, Vl, T, UV if a else None, M, vat_lieu(rgb if not a else (1, 1, 1), a, alpha), min_=True, N=Nl); continue
+    if sm and not sm.get('meshId') and sm.get('meshType') == 0 and sm.get('class', 'SpecialMesh') == 'SpecialMesh':
+        V, F = dau()
+        sc = [size[0] / 2 * sm['scale'][0], size[1] * sm['scale'][1], size[2] * sm['scale'][2]]   # part đầu 2×1×1 → đầu tròn rộng = sâu
+        of = sm['offset']
+        Vl = [(v[0] * sc[0] + of[0], v[1] * sc[1] + of[1], v[2] * sc[2] + of[2]) for v in V]
+        lop = [(IMGS[d['texture']], 1.0 - d.get('transparency', 0)) for d in p.get('decals') or []
+               if d.get('texture') in IMGS and d.get('face') in (5, None)]
+        bo_qua.append({'ten': ten, 'lyDo': 'đầu R6 là lưới có sẵn của Roblox (không tải được) → dựng trụ bo tròn %d tam giác' % sum(len(f) - 2 for f in F)})
+        if lop:      # mặt: chiếu phẳng lên nửa trước (-Z); nửa sau trỏ vào góc ảnh (trong suốt → màu da)
+            UVd = [(0.5 - v[0], 0.5 - v[1]) if v[2] < -1e-6 else (0.004, 0.004) for v in V]
+            a = ghep_anh(srgb, lop)
+            them(ten, Vl, F, UVd, M, vat_lieu((1, 1, 1), a, alpha), min_=True); so_decal += len(lop)
+        else:
+            them(ten, Vl, F, None, M, vat_lieu(rgb, None, alpha), min_=True)
+        continue
     if sm and not sm.get('meshId'):
         (V, F), xs = hinh_special(sm.get('meshType'), sm.get('class'))
         if xs: bo_qua.append({'ten': ten, 'lyDo': 'SpecialMesh loại %s dựng xấp xỉ' % sm.get('meshType')})

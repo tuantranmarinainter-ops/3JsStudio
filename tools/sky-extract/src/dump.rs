@@ -321,8 +321,20 @@ fn character_json(dom: &WeakDom, r: Ref, model: &Instance, humanoid: &Instance) 
         }
         desc = Value::Object(m);
     }
+    // ref của mọi BasePart hậu duệ (kể cả Handle của phụ kiện) — để tách đúng khi nhiều nhân vật trùng tên/đường dẫn
+    let mut part_refs = Vec::new();
+    let mut st: Vec<Ref> = model.children().iter().rev().copied().collect();
+    while let Some(c) = st.pop() {
+        let Some(ch) = dom.get_by_ref(c) else { continue };
+        if is_part(ch) {
+            part_refs.push(format!("{c:?}"));
+        }
+        st.extend(ch.children().iter().rev().copied());
+    }
     json!({
         "path": full_path(dom, r),
+        "ref": format!("{r:?}"),
+        "partRefs": part_refs,
         "ten": model.name,
         "rigType": enum_of(humanoid, "RigType"),
         "bodyColors": body_colors,
@@ -427,6 +439,7 @@ mod tests {
         assert_eq!(nv.len(), 1);
         let a = &nv[0];
         assert_eq!(a["path"], "NPC");
+        assert_eq!(a["partRefs"].as_array().unwrap().len(), 2);
         assert_eq!(a["rigType"], 0);
         assert_eq!(a["shirt"], "111");
         assert_eq!(a["pants"], "222");

@@ -123,3 +123,72 @@ test('chonIdAnh: gỡ asset bọc ngoài — ưu tiên ShirtTemplate/Texture, b�
   assert.equal(chonIdAnh([{ prop: 'SoundId', id: '1' }, { prop: 'Image', id: '3' }]), '3');
   assert.equal(chonIdAnh([{ prop: 'MeshId', id: '1' }]), null); assert.equal(chonIdAnh(undefined), null);
 });
+
+// ----- đợt 4: thử lại có giãn cách, tải song song có trần, tách pack (fetch giả, không gọi mạng) -----
+import { thuLai, taiAsset, songSong, tachNhom, chonNhanVat, GIAN_THU_LAI } from '../roblox.mjs';
+const res = (status, body = '') => ({ status, ok: status >= 200 && status < 300, json: async () => JSON.parse(body), arrayBuffer: async () => Buffer.from(body) });
+const fetchGia = (kichBan) => { const goi = []; const f = async (url, opts) => { goi.push({ url, khoa: opts?.headers?.['x-api-key'] }); const k = kichBan.shift(); if (k instanceof Error) throw k; return k; }; f.goi = goi; return f; };
+
+test('thuLai: 503 → 429 → 200, chờ đúng 0,5 s rồi 1,5 s, báo 429 một lần', async () => {
+  const cho = []; let n429 = 0; const kb = [res(503), res(429), res(200, 'ok')];
+  const r = await thuLai(async () => kb.shift(), { ngu: async (ms) => cho.push(ms), khi429: () => n429++ });
+  assert.equal(r.status, 200); assert.deepEqual(cho, [500, 1500]); assert.equal(n429, 1);
+  assert.deepEqual(GIAN_THU_LAI, [500, 1500, 4000]);
+});
+test('thuLai: hết 3 lượt thử lại thì trả response lỗi cuối; 404 không thử lại; lỗi mạng cũng thử lại', async () => {
+  const cho = []; let n = 0;
+  const r = await thuLai(async () => { n++; return res(503); }, { ngu: async (ms) => cho.push(ms) });
+  assert.equal(r.status, 503); assert.equal(n, 4); assert.deepEqual(cho, [500, 1500, 4000]);
+  n = 0; assert.equal((await thuLai(async () => { n++; return res(404); }, { ngu: async () => {} })).status, 404); assert.equal(n, 1);
+  const kb = [new Error('ECONNRESET'), res(200)];
+  assert.equal((await thuLai(async () => { const k = kb.shift(); if (k instanceof Error) throw k; return k; }, { ngu: async () => {} })).status, 200);
+  await assert.rejects(thuLai(async () => { throw new Error('ECONNRESET'); }, { ngu: async () => {} }), /lỗi mạng: ECONNRESET/);
+});
+test('taiAsset: thử lại ở cả bước location lẫn CDN; khoá chỉ gửi cho Open Cloud, không gửi CDN', async () => {
+  const loc = JSON.stringify({ location: 'https://cdn.example/x' });
+  const f = fetchGia([res(503), res(200, loc), res(503), res(503), res(200, 'DULIEU')]);
+  const b = await taiAsset('123', { fetch: f, khoa: 'KHOA-GIA', ngu: async () => {} });
+  assert.equal(b.toString(), 'DULIEU'); assert.equal(f.goi.length, 5);
+  assert.deepEqual(f.goi.map((g) => g.khoa), ['KHOA-GIA', 'KHOA-GIA', undefined, undefined, undefined]);
+  assert.ok(f.goi[0].url.endsWith('/assetId/123')); assert.equal(f.goi[4].url, 'https://cdn.example/x');
+});
+test('taiAsset: hết lượt mới báo lỗi, ghi rõ id và bước hỏng; lỗi không lộ khoá', async () => {
+  const loc = JSON.stringify({ location: 'https://cdn.example/x' });
+  const o = (kb) => ({ fetch: fetchGia(kb), khoa: 'KHOA-GIA', ngu: async () => {} });
+  await assert.rejects(taiAsset('77', o([res(200, loc), res(503), res(503), res(503), res(503)])), (e) => /asset 77: CDN HTTP 503 sau 4 lần thử/.test(e.message) && !e.message.includes('KHOA-GIA'));
+  await assert.rejects(taiAsset('78', o([res(500), res(500), res(500), res(500)])), /asset 78: HTTP 500 sau 4 lần thử/);
+  await assert.rejects(taiAsset('79', o([res(200, JSON.stringify({ errors: [{ code: 403, message: 'User is not authorized to access Asset.' }] }))])), /asset 79: Roblox từ chối \(403/);
+  await assert.rejects(taiAsset('80', o([res(404)])), /asset 80: HTTP 404$/);
+});
+test('songSong: không vượt trần, giữ thứ tự kết quả, lỗi của một việc không chặn việc khác', async () => {
+  let dang = 0, dinh = 0;
+  const kq = await songSong([...Array(20).keys()], async (x) => { dang++; dinh = Math.max(dinh, dang); await new Promise((s) => setTimeout(s, 2)); dang--; if (x === 7) throw new Error('hỏng 7'); return x * 2; }, { tran: 6 });
+  assert.equal(dinh, 6); assert.equal(kq.dinh, 6); assert.equal(kq.length, 20);
+  assert.deepEqual(kq.filter((r) => r.ok).map((r) => r.v), [...Array(20).keys()].filter((x) => x !== 7).map((x) => x * 2));
+  assert.equal(kq[7].ok, false); assert.equal(kq[7].loi.message, 'hỏng 7');
+  assert.equal((await songSong([], async () => 1)).length, 0);
+});
+test('songSong: gặp 429 thì trần giảm một nửa (6 → 3 → 1), không xuống dưới 1', async () => {
+  let dang = 0; const dinhSau = [];
+  const kq = await songSong([...Array(30).keys()], async (x, _k, giam) => {
+    dang++; if (x === 0 || x === 12) giam();
+    await new Promise((s) => setTimeout(s, 2));
+    if (x >= 20) dinhSau.push(dang);
+    dang--; return x;
+  }, { tran: 6 });
+  assert.equal(kq.tranCuoi, 1); assert.equal(kq.dinh, 6); assert.ok(Math.max(...dinhSau) <= 1); assert.ok(kq.every((r) => r.ok));
+  const k2 = await songSong([1, 2, 3], async (_x, _k, giam) => { giam(); giam(); giam(); giam(); }, { tran: 2 });
+  assert.equal(k2.tranCuoi, 1);
+});
+test('tachNhom: hai nhân vật TRÙNG đường dẫn vẫn tách đúng theo partRefs; phần còn lại thành nhóm riêng', () => {
+  const I = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+  const p = (ref, name, pth, pos) => ({ ref, name, path: pth, cframe: { pos, rot: I } });
+  const parts = [p('a1', 'HumanoidRootPart', 'M.NPC', [0, 3, 0]), p('a2', 'Head', 'M.NPC', [0, 4.5, 0]), p('b1', 'HumanoidRootPart', 'M.NPC', [9, 3, 0]), p('b2', 'Head', 'M.NPC', [9, 4.5, 0]), p('c1', 'San', 'M', [0, 0, 0])];
+  const nv = [{ path: 'M.NPC', partRefs: ['a1', 'a2'] }, { path: 'M.NPC', partRefs: ['b1', 'b2'] }];
+  const g = tachNhom(parts, nv);
+  assert.deepEqual(g.map((x) => [x.ten, x.slug, x.parts.map((q) => q.ref).join(',')]), [['M.NPC#1', 'npc', 'a2'], ['M.NPC#2', 'npc-2', 'b2'], ['(còn lại)', 'con-lai', 'c1']]);
+  assert.deepEqual(g[1].parts[0].cframe.pos, [0, 1.5, 0]);                 // nhân vật thứ hai cũng về gốc
+  assert.equal(chonNhanVat(nv, 'M.NPC#2'), nv[1]); assert.equal(chonNhanVat(nv, 'M.NPC'), nv[0]); assert.equal(chonNhanVat(nv, '#2'), nv[1]); assert.equal(chonNhanVat(nv, 'X'), null);
+  const k = tachNhom([p('1', 'A', 'Nha.Ban', [0, 0, 0]), p('2', 'B', 'Nha.Ban.Chan', [0, 0, 0]), p('3', 'C', 'Nha.Ghe', [0, 0, 0]), p('4', 'D', 'Nha', [0, 0, 0])], []);
+  assert.deepEqual(k.map((x) => [x.slug, x.parts.length]), [['ban', 2], ['ghe', 1], ['goc', 1]]);
+});
