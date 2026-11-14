@@ -126,6 +126,12 @@
      "tt": "dang",
      "pt": 45,
      "ghiChu": "nhân vật R6 + phòng Gà đã có vật liệu (phòng: 58 vật liệu được vá, 14 mặt sáng/kính cố ý để nguyên); nhà máy, phố, tiệm = 0/150 (sẽ khai khi dựng lại); đạo cụ mới của phòng đã khai"
+    },
+    {
+     "ten": "Duyệt lại asset theo Roblox (chỉ Creator Store)",
+     "tt": "cho",
+     "pt": 20,
+     "ghiChu": "14/11: kiểm kê 71 món (phố 21 · tiệm 14 · nhà máy 15 · phòng 11 · đạo cụ khác 10). ĐỢT 1 = tiệm bánh + tiệm may (14 món, 70 ứng viên Roblox, đã tải GLB + chụp so với ảnh gốc: khớp 50 · mất màu 11 · lỗi hình 8 · không tải 1) → CHỜ người dùng duyệt ở dist/ep003_duyet.html. Chưa thay gì trong bối cảnh. Còn 4 đợt: phòng, nhà máy, phố, đạo cụ khác (57 món)."
     }
    ],
    "tap": "Tập 3"

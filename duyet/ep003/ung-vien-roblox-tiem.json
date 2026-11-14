@@ -1,0 +1,945 @@
+{
+ "nhomId": "roblox-tiem",
+ "ten": "Roblox — tiệm bánh + tiệm may (đợt 1/5)",
+ "mota": "Mỗi món chọn MỘT mẫu Roblox (hoặc \"Không cái nào\"). Ảnh: trái = ảnh gốc trên Creator Store, hai ô phải = bản GLB ta đã tải và ghép (để thấy có mất màu/lỗi hình không). Chỉ mẫu miễn phí, không script. Ứng viên đầu là khuyên dùng. Chưa thay gì trong bối cảnh — chốt xong mới dựng lại tiệm (shot s004–s007).",
+ "khe": [
+  {
+   "id": "tiem_banh_quay",
+   "ten": "Quầy gỗ tiệm bánh (có hốc dưới quầy)",
+   "phu": "cần ~18×3.6×3.6 stud · x1 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_banh_quay__1",
+     "ten": "Classic Display case",
+     "anh": "output/ep003/roblox/duyet/8285794887.jpg",
+     "link": "https://create.roblox.com/store/asset/8285794887",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "8285794887",
+     "tacGia": "Karjaisu",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 192,
+     "phu": "Tủ kính dài, thân gỗ vàng · ✅ GLB khớp ảnh · GLB 13.3×4.3×3.2 stud"
+    },
+    {
+     "id": "tiem_banh_quay__2",
+     "ten": "Rifle Showcase",
+     "anh": "output/ep003/roblox/duyet/15638408598.jpg",
+     "link": "https://create.roblox.com/store/asset/15638408598",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "15638408598",
+     "tacGia": "recru78",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 7070,
+     "phu": "Quầy gỗ nâu, mặt kính, mái đen · ✅ GLB khớp ảnh · GLB 2.8×5.5×10.1 stud"
+    },
+    {
+     "id": "tiem_banh_quay__3",
+     "ten": "Wooden Display",
+     "anh": "output/ep003/roblox/duyet/8164654541.jpg",
+     "link": "https://create.roblox.com/store/asset/8164654541",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "8164654541",
+     "tacGia": "XxDoll_Face22xX",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 1486,
+     "phu": "Tủ kính bánh hai tầng, chân gỗ · 🎨 GLB mất màu/vân (hình đúng) (kính cong thành hộp, mất vân gỗ) · GLB 6.2×5.46×2.34 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_quay__4",
+     "ten": "Coffee bar Without union.",
+     "anh": "output/ep003/roblox/duyet/925628395.jpg",
+     "link": "https://create.roblox.com/store/asset/925628395",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "925628395",
+     "tacGia": "Duck_Ify",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 444,
+     "phu": "Cả góc tiệm: quầy, tường, tủ · ⚠ GLB lỗi hình (là cả cảnh, không phải một quầy) · GLB 12.1×7.41×8.07 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_quay__5",
+     "ten": "VersaceTable",
+     "anh": "output/ep003/roblox/duyet/131241201271216.jpg",
+     "link": "https://create.roblox.com/store/asset/131241201271216",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "131241201271216",
+     "tacGia": "Lewihu071022",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 132,
+     "phu": "Tủ kính trắng viền vàng · 🎨 GLB mất màu/vân (hình đúng) (mất vân gỗ/đá, thành xám trắng phẳng) · GLB 4×2.93×2 stud · tỉ lệ khác mong muốn"
+    }
+   ]
+  },
+  {
+   "id": "tiem_banh_ke",
+   "ten": "Kệ 3 tầng bánh (tường bắc)",
+   "phu": "cần ~12×10×2 stud · x1 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_banh_ke__1",
+     "ten": "Free Bakery Rack - Procedural Floors",
+     "anh": "output/ep003/roblox/duyet/93030342204194.jpg",
+     "link": "https://create.roblox.com/store/asset/93030342204194",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "93030342204194",
+     "tacGia": "At0_mik",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 1952,
+     "phu": "Xe kệ sắt có khay bánh mì · ⛔ không tải được (không tải được GLB) · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_ke__2",
+     "ten": "Estante",
+     "anh": "output/ep003/roblox/duyet/16229345162.jpg",
+     "link": "https://create.roblox.com/store/asset/16229345162",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "16229345162",
+     "tacGia": "ghostcra231",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 120,
+     "phu": "Khung đen ba giỏ đan · 🎨 GLB mất màu/vân (hình đúng) (giỏ mất vân đan, thành khối vàng nhạt) · GLB 4.26×5.34×2 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_ke__3",
+     "ten": "Doughnut Stand",
+     "anh": "output/ep003/roblox/duyet/1518522314.jpg",
+     "link": "https://create.roblox.com/store/asset/1518522314",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "1518522314",
+     "tacGia": "Nidza_Gaming",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 474,
+     "phu": "Kệ gỗ ba tầng, kính cong · ✅ GLB khớp ảnh · GLB 10.62×4.87×2.51 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_ke__4",
+     "ten": "빵",
+     "anh": "output/ep003/roblox/duyet/14529433497.jpg",
+     "link": "https://create.roblox.com/store/asset/14529433497",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "14529433497",
+     "tacGia": "qqwqqw123123123",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 15778,
+     "phu": "Kệ sắt bốn tầng đầy bánh mì · ✅ GLB khớp ảnh · GLB 4.01×6.38×2 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_ke__5",
+     "ten": "Shelve BY ##################",
+     "anh": "output/ep003/roblox/duyet/13083668781.jpg",
+     "link": "https://create.roblox.com/store/asset/13083668781",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "13083668781",
+     "tacGia": "cacchinasoffice43",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 120,
+     "phu": "Kệ sắt năm tầng trống · ✅ GLB khớp ảnh · GLB 4.94×14.43×10.96 stud · tỉ lệ khác mong muốn"
+    }
+   ]
+  },
+  {
+   "id": "tiem_banh_ban_bay",
+   "ten": "Bàn bày bánh bên khách",
+   "phu": "cần ~7×2.7×2.9 stud · x1 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_banh_ban_bay__1",
+     "ten": "Glass case",
+     "anh": "output/ep003/roblox/duyet/9223832137.jpg",
+     "link": "https://create.roblox.com/store/asset/9223832137",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "9223832137",
+     "tacGia": "fitnesstett",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 216,
+     "phu": "Bàn gỗ nâu, khung kính trên · ✅ GLB khớp ảnh · GLB 4.51×3.52×2.95 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_ban_bay__2",
+     "ten": "Classic Display case",
+     "anh": "output/ep003/roblox/duyet/8285794887.jpg",
+     "link": "https://create.roblox.com/store/asset/8285794887",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "8285794887",
+     "tacGia": "Karjaisu",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 192,
+     "phu": "Tủ kính dài thân gỗ vàng · ✅ GLB khớp ảnh · GLB 13.3×4.3×3.2 stud"
+    },
+    {
+     "id": "tiem_banh_ban_bay__3",
+     "ten": "Large Granite Counter",
+     "anh": "output/ep003/roblox/duyet/23536513.jpg",
+     "link": "https://create.roblox.com/store/asset/23536513",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "23536513",
+     "tacGia": "Platone",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 60,
+     "phu": "Bàn mặt xám, hốc dưới · 🎨 GLB mất màu/vân (hình đúng) (mất khay nhấp nhô trong hốc) · GLB 8×3.6×4 stud"
+    },
+    {
+     "id": "tiem_banh_ban_bay__4",
+     "ten": "VersaceTable",
+     "anh": "output/ep003/roblox/duyet/131241201271216.jpg",
+     "link": "https://create.roblox.com/store/asset/131241201271216",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "131241201271216",
+     "tacGia": "Lewihu071022",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 132,
+     "phu": "Tủ kính trắng viền vàng · 🎨 GLB mất màu/vân (hình đúng) (mất vân đá/gỗ, thành trắng phẳng) · GLB 4×2.93×2 stud"
+    },
+    {
+     "id": "tiem_banh_ban_bay__5",
+     "ten": "Wooden Display",
+     "anh": "output/ep003/roblox/duyet/8164654541.jpg",
+     "link": "https://create.roblox.com/store/asset/8164654541",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "8164654541",
+     "tacGia": "XxDoll_Face22xX",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 1486,
+     "phu": "Tủ kính bánh hai tầng · 🎨 GLB mất màu/vân (hình đúng) (kính cong thành hộp, mất vân gỗ) · GLB 6.2×5.46×2.34 stud · tỉ lệ khác mong muốn"
+    }
+   ]
+  },
+  {
+   "id": "tiem_gio_banh",
+   "ten": "Giỏ + ổ bánh mì / sừng bò",
+   "phu": "cần ~2.6×1.5×1.8 stud · x12 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_gio_banh__1",
+     "ten": "brot",
+     "anh": "output/ep003/roblox/duyet/16428226560.jpg",
+     "link": "https://create.roblox.com/store/asset/16428226560",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "16428226560",
+     "tacGia": "Ericzockt011",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 832,
+     "phu": "Hai ổ bánh mì dài nướng vàng · ✅ GLB khớp ảnh · GLB 1.51×0.53×3.55 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_gio_banh__2",
+     "ten": "party.exe # ###### #### #####",
+     "anh": "output/ep003/roblox/duyet/2423487752.jpg",
+     "link": "https://create.roblox.com/store/asset/2423487752",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "2423487752",
+     "tacGia": "HuskyNinja09",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 1588,
+     "phu": "Ba ổ bánh tròn dính nhau · ⚠ GLB lỗi hình (thành khối hộp vàng khổng lồ) · GLB 89.22×24.44×84.45 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_gio_banh__3",
+     "ten": "빵들",
+     "anh": "output/ep003/roblox/duyet/14029098252.jpg",
+     "link": "https://create.roblox.com/store/asset/14029098252",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "14029098252",
+     "tacGia": "Hex3088",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 1788,
+     "phu": "Khay xám có bánh mì, bánh bông lan · ✅ GLB khớp ảnh · GLB 5×2×4 stud"
+    },
+    {
+     "id": "tiem_gio_banh__4",
+     "ten": "another mate im running out of names",
+     "anh": "output/ep003/roblox/duyet/5835206920.jpg",
+     "link": "https://create.roblox.com/store/asset/5835206920",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "5835206920",
+     "tacGia": "Yestxyl",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 336,
+     "phu": "Giỏ nâu tròn rỗng · ✅ GLB khớp ảnh · GLB 102.5×40×102.5 stud"
+    },
+    {
+     "id": "tiem_gio_banh__5",
+     "ten": "Basket of Bread",
+     "anh": "output/ep003/roblox/duyet/11686154113.jpg",
+     "link": "https://create.roblox.com/store/asset/11686154113",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "11686154113",
+     "tacGia": "4w4qz",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 6868,
+     "phu": "Giỏ đan tròn đựng ổ bánh mì · ✅ GLB khớp ảnh · GLB 2.42×1.85×2.09 stud · 100% thích"
+    }
+   ]
+  },
+  {
+   "id": "tiem_banh_dai",
+   "ten": "Giỏ bánh mì dài dựng",
+   "phu": "cần ~3×4×2 stud · x1 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_banh_dai__1",
+     "ten": "Basket",
+     "anh": "output/ep003/roblox/duyet/6220987037.jpg",
+     "link": "https://create.roblox.com/store/asset/6220987037",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "6220987037",
+     "tacGia": "superfriend1471",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 2372,
+     "phu": "Giỏ đan nan thưa, miệng tròn · ✅ GLB khớp ảnh · GLB 3×1.24×3 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_dai__2",
+     "ten": "another mate im running out of names",
+     "anh": "output/ep003/roblox/duyet/5835206920.jpg",
+     "link": "https://create.roblox.com/store/asset/5835206920",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "5835206920",
+     "tacGia": "Yestxyl",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 336,
+     "phu": "Giỏ nâu tròn rỗng · ✅ GLB khớp ảnh · GLB 102.5×40×102.5 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_dai__3",
+     "ten": "Wood Container",
+     "anh": "output/ep003/roblox/duyet/12690350173.jpg",
+     "link": "https://create.roblox.com/store/asset/12690350173",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "12690350173",
+     "tacGia": "StoomRBLX",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 156,
+     "phu": "Thùng gỗ nan thấp, hình chữ nhật · ✅ GLB khớp ảnh · GLB 6×2.5×4 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_dai__4",
+     "ten": "Crate",
+     "anh": "output/ep003/roblox/duyet/13969367027.jpg",
+     "link": "https://create.roblox.com/store/asset/13969367027",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "13969367027",
+     "tacGia": "manpoopsyay2",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 300,
+     "phu": "Thùng gỗ nan thưa, hình chữ nhật · ✅ GLB khớp ảnh · GLB 4.1×1.5×2.67 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_dai__5",
+     "ten": "Tower/Cage",
+     "anh": "output/ep003/roblox/duyet/12875856956.jpg",
+     "link": "https://create.roblox.com/store/asset/12875856956",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "12875856956",
+     "tacGia": "monuqio",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 3888,
+     "phu": "Giỏ gỗ nan cao hình trụ · ✅ GLB khớp ảnh · GLB 28.52×60.49×28.3 stud"
+    }
+   ]
+  },
+  {
+   "id": "tiem_banh_bien",
+   "ten": "Biển ổ bánh trên tường",
+   "phu": "cần ~6.4×3.6×0.2 stud · x1 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_banh_bien__1",
+     "ten": "Billy's Bread",
+     "anh": "output/ep003/roblox/duyet/5672435073.jpg",
+     "link": "https://create.roblox.com/store/asset/5672435073",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "5672435073",
+     "tacGia": "BIakeyWakey",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 60,
+     "phu": "Hộp bánh mì có biển chữ · 🎨 GLB mất màu/vân (hình đúng) (mất hình biển Billy Bob's, thành hộp trơn) · GLB 2.51×1.31×1.55 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_bien__2",
+     "ten": "Pan caik sign",
+     "anh": "output/ep003/roblox/duyet/11575356113.jpg",
+     "link": "https://create.roblox.com/store/asset/11575356113",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "11575356113",
+     "tacGia": "stoutsytail",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 62,
+     "phu": "Biển ngang trắng hình bánh kếp · ✅ GLB khớp ảnh · GLB 1.01×13.2×47 stud"
+    },
+    {
+     "id": "tiem_banh_bien__3",
+     "ten": "TOAST Billboard",
+     "anh": "output/ep003/roblox/duyet/3485815.jpg",
+     "link": "https://create.roblox.com/store/asset/3485815",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "3485815",
+     "tacGia": "TheSolidSnake",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 62,
+     "phu": "Biển đứng trắng in bánh mì nướng · ✅ GLB khớp ảnh · GLB 1.01×27.6×19 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_bien__4",
+     "ten": "Price board",
+     "anh": "output/ep003/roblox/duyet/118515482519746.jpg",
+     "link": "https://create.roblox.com/store/asset/118515482519746",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "118515482519746",
+     "tacGia": "mateuszomg53",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 26,
+     "phu": "Bảng đen viết thực đơn bánh · ✅ GLB khớp ảnh · GLB 4.11×4.92×0.25 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_bien__5",
+     "ten": "COOKIE",
+     "anh": "output/ep003/roblox/duyet/7428470180.jpg",
+     "link": "https://create.roblox.com/store/asset/7428470180",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "7428470180",
+     "tacGia": "joaogs_gm",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 26,
+     "phu": "Biển bánh quy trên cột đen · ✅ GLB khớp ảnh · GLB 61.46×98.14×1.18 stud · tỉ lệ khác mong muốn"
+    }
+   ]
+  },
+  {
+   "id": "tiem_banh_cua",
+   "ten": "Cửa kính mặt tiền + cửa sổ tiệm bánh",
+   "phu": "cần ~4.4×7.6×0.5 stud · x1 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_banh_cua__1",
+     "ten": "Glass Door",
+     "anh": "output/ep003/roblox/duyet/109285892664305.jpg",
+     "link": "https://create.roblox.com/store/asset/109285892664305",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "109285892664305",
+     "tacGia": "Blox_Dylan",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 160,
+     "phu": "Cửa kính đôi, khung xám · ✅ GLB khớp ảnh · GLB 10×7×1.4 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_cua__2",
+     "ten": "lalalalalalalalaitsanagelk",
+     "anh": "output/ep003/roblox/duyet/159103694.jpg",
+     "link": "https://create.roblox.com/store/asset/159103694",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "159103694",
+     "tacGia": "Yasune",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 1248,
+     "phu": "Cửa kính đôi, khung tường trắng · ✅ GLB khớp ảnh · GLB 2.1×8.4×14 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_cua__3",
+     "ten": "Door",
+     "anh": "output/ep003/roblox/duyet/13303757073.jpg",
+     "link": "https://create.roblox.com/store/asset/13303757073",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "13303757073",
+     "tacGia": "gestlasd666",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 168,
+     "phu": "Cửa kính lớn khung mảnh · ✅ GLB khớp ảnh · GLB 9.5×8.6×0.6 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_cua__4",
+     "ten": "Shop model",
+     "anh": "output/ep003/roblox/duyet/10249569688.jpg",
+     "link": "https://create.roblox.com/store/asset/10249569688",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "10249569688",
+     "tacGia": "dreameeyx",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 556,
+     "phu": "Cửa sổ kính khung đen, chữ SHOP · ✅ GLB khớp ảnh · GLB 14.43×18.81×11.65 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_banh_cua__5",
+     "ten": "Modern WINDOW",
+     "anh": "output/ep003/roblox/duyet/9619970804.jpg",
+     "link": "https://create.roblox.com/store/asset/9619970804",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "9619970804",
+     "tacGia": "mattromani",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 108,
+     "phu": "Cửa kính đôi khung đen · ✅ GLB khớp ảnh · GLB 13.02×13.7×0.38 stud · tỉ lệ khác mong muốn"
+    }
+   ]
+  },
+  {
+   "id": "tiem_may_ban",
+   "ten": "Bàn thợ may gỗ + cuộn chỉ tím",
+   "phu": "cần ~9.4×2.8×4 stud · x1 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_may_ban__1",
+     "ten": "mesa con maquina de coser",
+     "anh": "output/ep003/roblox/duyet/9424009484.jpg",
+     "link": "https://create.roblox.com/store/asset/9424009484",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "9424009484",
+     "tacGia": "yanet_lusi",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 884,
+     "phu": "Bàn hồng có máy may · ✅ GLB khớp ảnh · GLB 12.68×7×5.85 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_may_ban__2",
+     "ten": "SEWING TABLE.",
+     "anh": "output/ep003/roblox/duyet/5826997450.jpg",
+     "link": "https://create.roblox.com/store/asset/5826997450",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "5826997450",
+     "tacGia": "The80s_guy5",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 2246,
+     "phu": "Bàn gỗ chữ L, hai máy may · ✅ GLB khớp ảnh · GLB 10×4.47×9 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_may_ban__3",
+     "ten": "Table",
+     "anh": "output/ep003/roblox/duyet/8369023721.jpg",
+     "link": "https://create.roblox.com/store/asset/8369023721",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "8369023721",
+     "tacGia": "m4rShy19",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 396,
+     "phu": "Bàn gỗ vuông, cuộn vải trong · ✅ GLB khớp ảnh · GLB 4×4.5×4.1 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_may_ban__4",
+     "ten": "Small bar",
+     "anh": "output/ep003/roblox/duyet/115843601.jpg",
+     "link": "https://create.roblox.com/store/asset/115843601",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "115843601",
+     "tacGia": "bricktheorem",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 7512,
+     "phu": "Bàn thợ có kệ ly và tủ · ✅ GLB khớp ảnh · GLB 6×6×11.01 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_may_ban__5",
+     "ten": "Tabley",
+     "anh": "output/ep003/roblox/duyet/13675261646.jpg",
+     "link": "https://create.roblox.com/store/asset/13675261646",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "13675261646",
+     "tacGia": "AccioWaffles",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 62,
+     "phu": "Bàn gỗ dài, lưỡi cưa đỏ · ✅ GLB khớp ảnh · GLB 12×5.51×22 stud"
+    }
+   ]
+  },
+  {
+   "id": "tiem_may_ke",
+   "ten": "Kệ gỗ cao + hộp mây/giấy",
+   "phu": "cần ~9.4×12×2.2 stud · x1 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_may_ke__1",
+     "ten": "Shelf 'n Boxes",
+     "anh": "output/ep003/roblox/duyet/3193920523.jpg",
+     "link": "https://create.roblox.com/store/asset/3193920523",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "3193920523",
+     "tacGia": "MayorGnarwhal",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 1224,
+     "phu": "Kệ sắt ba tầng chất thùng gỗ · ✅ GLB khớp ảnh · GLB 19.69×22.75×7.32 stud"
+    },
+    {
+     "id": "tiem_may_ke__2",
+     "ten": "Hardware Shelf",
+     "anh": "output/ep003/roblox/duyet/1348258220.jpg",
+     "link": "https://create.roblox.com/store/asset/1348258220",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "1348258220",
+     "tacGia": "Vauban_Man",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 1548,
+     "phu": "Kệ xám hai tầng chất thùng nâu · ✅ GLB khớp ảnh · GLB 3.62×11.3×9.53 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_may_ke__3",
+     "ten": "warehouse",
+     "anh": "output/ep003/roblox/duyet/9743346537.jpg",
+     "link": "https://create.roblox.com/store/asset/9743346537",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "9743346537",
+     "tacGia": "Bungaro",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 3240,
+     "phu": "Kệ sắt cao chất thùng gỗ sáng · ✅ GLB khớp ảnh · GLB 8×12.9×4.3 stud"
+    },
+    {
+     "id": "tiem_may_ke__4",
+     "ten": "White simple shelf",
+     "anh": "output/ep003/roblox/duyet/5198035978.jpg",
+     "link": "https://create.roblox.com/store/asset/5198035978",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "5198035978",
+     "tacGia": "killformeonly",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 144,
+     "phu": "Kệ trắng tám ô vuông · ✅ GLB khớp ảnh · GLB 5.38×10.76×2.24 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_may_ke__5",
+     "ten": "Model",
+     "anh": "output/ep003/roblox/duyet/115161705965085.jpg",
+     "link": "https://create.roblox.com/store/asset/115161705965085",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "115161705965085",
+     "tacGia": "GOIABA3320",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 2988,
+     "phu": "Kệ gỗ rộng chất thùng gỗ · ✅ GLB khớp ảnh · GLB 18.1×16.05×4.76 stud"
+    },
+    {
+     "id": "tiem_may_ke__6",
+     "ten": "Small wood shelf",
+     "anh": "output/ep003/roblox/duyet/5596560335.jpg",
+     "link": "https://create.roblox.com/store/asset/5596560335",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "5596560335",
+     "tacGia": "tinyloinmaker",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 72,
+     "phu": "Cột gỗ cao có ngăn lệch · 🎨 GLB mất màu/vân (hình đúng) (mất vân gỗ, thành khối màu be) · GLB 4×15×4 stud · tỉ lệ khác mong muốn"
+    }
+   ]
+  },
+  {
+   "id": "tiem_may_ke_vai",
+   "ten": "Giá cuộn vải pastel (tường đông)",
+   "phu": "cần ~1.2×5×5.4 stud · x1 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_may_ke_vai__1",
+     "ten": "[FREE] Hose Rack",
+     "anh": "output/ep003/roblox/duyet/5571031045.jpg",
+     "link": "https://create.roblox.com/store/asset/5571031045",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "5571031045",
+     "tacGia": "SFD_Dev",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 8468,
+     "phu": "Xe kệ đỏ có cuộn chỉ, vải · ✅ GLB khớp ảnh · GLB 9.67×5.76×2.72 stud"
+    },
+    {
+     "id": "tiem_may_ke_vai__2",
+     "ten": "my building set",
+     "anh": "output/ep003/roblox/duyet/396468038.jpg",
+     "link": "https://create.roblox.com/store/asset/396468038",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "396468038",
+     "tacGia": "fluidmacanik",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 3816,
+     "phu": "Giá ngang chất cuộn vải · ⚠ GLB lỗi hình (cuộn tròn thành hộp vuông, lệch màu) · GLB 13.06×5×3.85 stud"
+    },
+    {
+     "id": "tiem_may_ke_vai__3",
+     "ten": "Jemuran Stainles Steel",
+     "anh": "output/ep003/roblox/duyet/4828193868.jpg",
+     "link": "https://create.roblox.com/store/asset/4828193868",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "4828193868",
+     "tacGia": "VanzierFX",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 264,
+     "phu": "Giá phơi xếp chéo, xanh · ✅ GLB khớp ảnh · GLB 7.57×5.91×4.98 stud"
+    },
+    {
+     "id": "tiem_may_ke_vai__4",
+     "ten": "Tire Rack",
+     "anh": "output/ep003/roblox/duyet/97257267556747.jpg",
+     "link": "https://create.roblox.com/store/asset/97257267556747",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "97257267556747",
+     "tacGia": "JEFFY19245",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 6480,
+     "phu": "Khung xanh dương nhiều thanh vàng · ⚠ GLB lỗi hình (thanh thành tấm phẳng, thanh chéo méo) · GLB 4.49×9.29×11.27 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_may_ke_vai__5",
+     "ten": "Slyifern's Shelf",
+     "anh": "output/ep003/roblox/duyet/78203741379477.jpg",
+     "link": "https://create.roblox.com/store/asset/78203741379477",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "78203741379477",
+     "tacGia": "Nexuz056",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 296,
+     "phu": "Kệ sắt đen năm tầng lưới · ✅ GLB khớp ảnh · GLB 3.12×9.39×7.76 stud · tỉ lệ khác mong muốn"
+    }
+   ]
+  },
+  {
+   "id": "tiem_ma_no_canh",
+   "ten": "Ma-nơ-canh kem",
+   "phu": "cần ~2.7×7.3×2.7 stud · x1 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_ma_no_canh__1",
+     "ten": "tool",
+     "anh": "output/ep003/roblox/duyet/5275694610.jpg",
+     "link": "https://create.roblox.com/store/asset/5275694610",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "5275694610",
+     "tacGia": "Tona1186",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 716,
+     "phu": "Ma-nơ-canh thân kem, đầu gỗ · ✅ GLB khớp ảnh · GLB 1.36×5.52×1.19 stud"
+    },
+    {
+     "id": "tiem_ma_no_canh__2",
+     "ten": "mannequin",
+     "anh": "output/ep003/roblox/duyet/13060363552.jpg",
+     "link": "https://create.roblox.com/store/asset/13060363552",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "13060363552",
+     "tacGia": "AimeeBird13",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 1698,
+     "phu": "Ma-nơ-canh kem có tay, váy · ✅ GLB khớp ảnh · GLB 2.11×5.35×1.51 stud"
+    },
+    {
+     "id": "tiem_ma_no_canh__3",
+     "ten": "Mannequin",
+     "anh": "output/ep003/roblox/duyet/8260703234.jpg",
+     "link": "https://create.roblox.com/store/asset/8260703234",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "8260703234",
+     "tacGia": "akwaxi",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 4390,
+     "phu": "Ma-nơ-canh nữ dáng thon, chân kem · ✅ GLB khớp ảnh · GLB 0.37×1.5×0.37 stud"
+    },
+    {
+     "id": "tiem_ma_no_canh__4",
+     "ten": "Mannequin",
+     "anh": "output/ep003/roblox/duyet/5583764952.jpg",
+     "link": "https://create.roblox.com/store/asset/5583764952",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "5583764952",
+     "tacGia": "BeSquiffy",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 896,
+     "phu": "Ma-nơ-canh hồng thấp poly · 🎨 GLB mất màu/vân (hình đúng) (màu và dáng lệch, thân méo) · GLB 3.03×7.01×1.97 stud"
+    },
+    {
+     "id": "tiem_ma_no_canh__5",
+     "ten": "Hello Neighbor old art Mannequin [visible mesh}",
+     "anh": "output/ep003/roblox/duyet/8465833034.jpg",
+     "link": "https://create.roblox.com/store/asset/8465833034",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "8465833034",
+     "tacGia": "Lenovodirector",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 2216,
+     "phu": "Ma-nơ-canh có tay gỗ, đế nâu · ✅ GLB khớp ảnh · GLB 1.87×5.52×1.76 stud"
+    }
+   ]
+  },
+  {
+   "id": "tiem_cuon_chi",
+   "ten": "Cuộn chỉ tím/kem",
+   "phu": "cần ~1.6×1.6×1.6 stud · x4 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_cuon_chi__1",
+     "ten": "Тормозная Жидкость",
+     "anh": "output/ep003/roblox/duyet/16426192654.jpg",
+     "link": "https://create.roblox.com/store/asset/16426192654",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "16426192654",
+     "tacGia": "Gipouito",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 288,
+     "phu": "Cuộn chỉ vàng, nắp xám · ✅ GLB khớp ảnh · GLB 0.68×1.47×0.68 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_cuon_chi__2",
+     "ten": "Disinfectant",
+     "anh": "output/ep003/roblox/duyet/13987173497.jpg",
+     "link": "https://create.roblox.com/store/asset/13987173497",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "13987173497",
+     "tacGia": "BLOOOOOODY1",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 288,
+     "phu": "Cuộn chỉ xanh dương · ⚠ GLB lỗi hình (hình méo, có que đen dư) · GLB 0.45×1.2×1 stud"
+    },
+    {
+     "id": "tiem_cuon_chi__3",
+     "ten": "Cola Soda",
+     "anh": "output/ep003/roblox/duyet/5493781050.jpg",
+     "link": "https://create.roblox.com/store/asset/5493781050",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "5493781050",
+     "tacGia": "ifyouaremethaniamyou",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 300,
+     "phu": "Cuộn chỉ đỏ nắp xám · ⚠ GLB lỗi hình (thành khối hộp đỏ) · GLB 0.67×1.08×0.68 stud"
+    },
+    {
+     "id": "tiem_cuon_chi__4",
+     "ten": "Normal Spool",
+     "anh": "output/ep003/roblox/duyet/7226131615.jpg",
+     "link": "https://create.roblox.com/store/asset/7226131615",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "7226131615",
+     "tacGia": "sadjhj",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 252,
+     "phu": "Ống chỉ gỗ hai đầu loe · ✅ GLB khớp ảnh · GLB 2×2.03×1.93 stud"
+    }
+   ]
+  },
+  {
+   "id": "tiem_den_treo",
+   "ten": "Đèn treo hổ phách",
+   "phu": "cần ~1.5×3×1.5 stud · x4 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_den_treo__1",
+     "ten": "Light",
+     "anh": "output/ep003/roblox/duyet/12957875151.jpg",
+     "link": "https://create.roblox.com/store/asset/12957875151",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "12957875151",
+     "tacGia": "JimmyTheTimmyTheJim",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 182,
+     "phu": "Đèn chụp nâu rỉ sét · ✅ GLB khớp ảnh · GLB 1.56×3.07×1.56 stud"
+    },
+    {
+     "id": "tiem_den_treo__2",
+     "ten": "Lantern",
+     "anh": "output/ep003/roblox/duyet/7259109730.jpg",
+     "link": "https://create.roblox.com/store/asset/7259109730",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "7259109730",
+     "tacGia": "Exter_Models",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 500,
+     "phu": "Đèn lồng kính khung đen · ⚠ GLB lỗi hình (vật thể đen lộn xộn che mất đèn) · GLB 4.08×4.5×4.08 stud"
+    },
+    {
+     "id": "tiem_den_treo__3",
+     "ten": "LampModel",
+     "anh": "output/ep003/roblox/duyet/119455001219910.jpg",
+     "link": "https://create.roblox.com/store/asset/119455001219910",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "119455001219910",
+     "tacGia": "CatManDeveloper",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 1532,
+     "phu": "Đèn chụp xám tròn · ✅ GLB khớp ảnh (kích thước gốc rất lớn, cần thu nhỏ) · GLB 180.23×207.34×180.23 stud"
+    },
+    {
+     "id": "tiem_den_treo__4",
+     "ten": "Hanging light",
+     "anh": "output/ep003/roblox/duyet/5647287836.jpg",
+     "link": "https://create.roblox.com/store/asset/5647287836",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "5647287836",
+     "tacGia": "simoxusofficial",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 4880,
+     "phu": "Đèn chụp xám đen · ⚠ GLB lỗi hình (chụp đèn thành hộp vuông) · GLB 1.65×3.99×1.65 stud"
+    },
+    {
+     "id": "tiem_den_treo__5",
+     "ten": "Hanging / Swinging Lanturn",
+     "anh": "output/ep003/roblox/duyet/8399920809.jpg",
+     "link": "https://create.roblox.com/store/asset/8399920809",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "8399920809",
+     "tacGia": "A_RandomPuppy",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 3314,
+     "phu": "Đèn lồng nhỏ treo dây dài · ✅ GLB khớp ảnh · GLB 2×14.15×2 stud · tỉ lệ khác mong muốn"
+    }
+   ]
+  },
+  {
+   "id": "tiem_cua_may",
+   "ten": "Cửa gỗ tiệm may + cửa sổ",
+   "phu": "cần ~4.4×7.6×0.5 stud · x1 · shot s004, s005, s006, s007 · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải",
+   "ungVien": [
+    {
+     "id": "tiem_cua_may__1",
+     "ten": "деревянная дверь ## #######",
+     "anh": "output/ep003/roblox/duyet/8630303745.jpg",
+     "link": "https://create.roblox.com/store/asset/8630303745",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "8630303745",
+     "tacGia": "FoLzI_BloX",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 648,
+     "phu": "Cửa gỗ bốn ô kính, tay nắm vàng · 🎨 GLB mất màu/vân (hình đúng) (mất vân gỗ, kính xanh dương chói) · GLB 7.55×14.13×0.98 stud"
+    },
+    {
+     "id": "tiem_cua_may__2",
+     "ten": "Door",
+     "anh": "output/ep003/roblox/duyet/2897417737.jpg",
+     "link": "https://create.roblox.com/store/asset/2897417737",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "2897417737",
+     "tacGia": "xCoIi_n",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 94,
+     "phu": "Cửa gỗ ván, ô sổ xám · 🎨 GLB mất màu/vân (hình đúng) (thành khối trơn, mất vân ván) · GLB 6×12×2 stud"
+    },
+    {
+     "id": "tiem_cua_may__3",
+     "ten": "Door Nana",
+     "anh": "output/ep003/roblox/duyet/99909233715850.jpg",
+     "link": "https://create.roblox.com/store/asset/99909233715850",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "99909233715850",
+     "tacGia": "swisdewr",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 436,
+     "phu": "Cửa gỗ nhạt có khung tối · ✅ GLB khớp ảnh · GLB 1.04×8.52×5.36 stud"
+    },
+    {
+     "id": "tiem_cua_may__4",
+     "ten": "Door",
+     "anh": "output/ep003/roblox/duyet/10155379849.jpg",
+     "link": "https://create.roblox.com/store/asset/10155379849",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "10155379849",
+     "tacGia": "elljamc",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 96,
+     "phu": "Cửa nâu khung đen, ô kính trên · ✅ GLB khớp ảnh · GLB 6.71×7.55×0.35 stud · tỉ lệ khác mong muốn"
+    },
+    {
+     "id": "tiem_cua_may__5",
+     "ten": "Door1",
+     "anh": "output/ep003/roblox/duyet/3437890126.jpg",
+     "link": "https://create.roblox.com/store/asset/3437890126",
+     "nguon": "Roblox Creator Store",
+     "robloxId": "3437890126",
+     "tacGia": "ninjajac21",
+     "giayPhep": "Roblox Creator Store (miễn phí)",
+     "tamGiac": 2896,
+     "phu": "Cửa gỗ ván tối, mái hiên · ✅ GLB khớp ảnh · GLB 6.42×7.61×0.92 stud · tỉ lệ khác mong muốn"
+    }
+   ]
+  }
+ ]
+}
