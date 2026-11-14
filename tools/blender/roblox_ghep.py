@@ -336,8 +336,8 @@ for p in D['parts']:
         lop = [(IMGS[d['texture']], 1.0 - d.get('transparency', 0)) for d in p.get('decals') or []
                if d.get('texture') in IMGS and d.get('face') in (5, None)]
         bo_qua.append({'ten': ten, 'lyDo': 'đầu R6 là lưới có sẵn của Roblox (không tải được) → dựng trụ bo tròn %d tam giác' % sum(len(f) - 2 for f in F)})
-        if lop:      # mặt: chiếu phẳng lên nửa trước (-Z); nửa sau trỏ vào góc ảnh (trong suốt → màu da)
-            UVd = [(0.5 - v[0], 0.5 - v[1]) if v[2] < -1e-6 else (0.004, 0.004) for v in V]
+        if lop:      # mặt: chiếu phẳng lên nửa trước (-Z); nửa sau lấy cột mép ảnh (trong suốt → màu da)
+            UVd = [(0.5 - v[0], 0.5 - v[1]) if v[2] < -1e-6 else (0.004 if v[0] > 0 else 0.996, 0.5 - v[1]) for v in V]   # nửa sau: dính vào cột mép ảnh cùng phía (không quét ngang qua mặt)
             a = ghep_anh(srgb, lop)
             them(ten, Vl, F, UVd, M, vat_lieu((1, 1, 1), a, alpha), min_=True); so_decal += len(lop)
         else:
