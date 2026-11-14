@@ -9,6 +9,7 @@ export const EPISODE = {
   title: "Ở thị trấn này — Món đồ biến mất trong phòng khóa kín",
   fps: 30,
   seed: 7,
+  facePack: 'altiwyre',   // bộ mặt nhân vật R6: 'altiwyre' | 'emote37' (engine/face-pack.js); ô FX matAlti tắt = 37 emote cũ
   rule: "Ở thị trấn này, đồ đạc liên tục biến mất, dù căn phòng đã được khóa kín.",
   weakness: "Tôi mất sợi dây chuyền bà để lại — và con gấu bông tôi tin nhất lại là kẻ lấy.",
   twist: "Ông Bách hiền lành phát gấu miễn phí chính là chủ mưu: gấu bông đi trộm về nhà máy; ông tự báo mất để che mắt.",
