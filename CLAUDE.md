@@ -67,6 +67,7 @@ dist/          bản gộp HTML (không vào git)      output/  ảnh, video ki�
 refs/          ảnh chuẩn so khung               .cache/  giọng, tiếng động đã tạo
 ```
 - **Handoff / báo cáo mới** ghi vào `docs/handoff/<tên>.md`; ở gốc repo chỉ có `HANDOFF.md` của phiên điều phối.
+  Mọi handoff mở đầu bằng khối **ĐIỂM DỪNG** (≤ 25 dòng, GHI ĐÈ mỗi lần cập nhật, không nối thêm) theo mẫu `docs/handoff/_mau.md`.
 - **Ảnh và video kiểm tra** chỉ ghi vào `output/<tên-việc>/`; file tạm của script ghi vào `output/_tmp/`. Không ghi vào gốc repo.
 
 ## Luật camera "dồn dập" (bắt buộc cho mọi shot)
@@ -107,6 +108,10 @@ refs/          ảnh chuẩn so khung               .cache/  giọng, tiếng đ
   Riêng dây chuyền `lam-phim` thì theo "Quy tắc agent" trong skill đó.
 - **Mỗi agent sở hữu file riêng**: bối cảnh = `engine/envs/<tên>.js`; shot = dải dòng trong `shots.js` (sửa từng dòng bằng Edit).
   Không giao 2 agent cùng một file; không sửa engine dùng chung nếu không được giao. Chia đều, ≤ 3–4 lỗi mỗi agent.
+- **Hợp đồng trả kết quả** — kết mỗi đề bài giao agent bằng: "Ghi đầy đủ vào `output/<tên-việc>/bao-cao.md`. Chỉ trả về: (1) đường dẫn
+  đã ghi, (2) tối đa 5 gạch đầu dòng kết luận kèm file:dòng, (3) mục bị chặn / chưa kiểm được, mỗi mục 1 dòng. Không chép lại nội dung
+  đã đọc." Agent chính kiểm file đó (và file agent nói đã sửa) CÓ trên đĩa trước khi dùng báo cáo; thiếu file = việc chưa xong,
+  nhắn lại đúng agent đó chứ không sinh agent mới.
 - **Chụp kiểm nhanh**: agent chỉ chụp đúng shot mình sửa (`look.mjs --shots …`), mỗi agent `--out output/look/<tên-agent>` riêng.
 - **Người dùng báo lỗi theo frame** → `look.mjs --frames 676,1262` (chỉ chụp phân cảnh chứa frame đó). Không chụp cả phim để tìm lỗi.
 - **Kiểm bằng số trước, mở ảnh sau**: lưu chuẩn `look.mjs … --pose --out refs/<tên>`; sau khi sửa chạy

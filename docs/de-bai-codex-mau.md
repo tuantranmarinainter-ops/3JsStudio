@@ -51,8 +51,11 @@ Mức `3` thêm `giua: …`. Mức `1` chỉ có `dau: …`.
 - Nhân vật vẽ theo ảnh tham chiếu đính kèm, không tự đổi tỉ lệ hay màu.
 - Làm theo từng cụm bối cảnh; xong thì ghi `tien-do-<cụm>.txt` (shot nào xong, shot nào không vẽ được và vì sao).
 - Không sửa mô tả shot. Thấy mô tả mâu thuẫn thì ghi vào `tien-do-<cụm>.txt`, không tự đoán.
+- Câu trả lời cuối chỉ gồm: đường dẫn `tien-do-<cụm>.txt`, số hình đã vẽ / số hình được giao, danh sách shot không vẽ được (mỗi shot 1 dòng).
+  Không kể lại quá trình, không chép mô tả shot.
 
 ## 4. Kiểm trước khi Claude nhận
 
-- Đủ file theo `hinh:` của từng shot, đúng tên, đúng tỉ lệ 9:16.
+- Kiểm trên ĐĨA trước, không tin lời báo: đủ file theo `hinh:` của từng shot, đúng tên, đúng tỉ lệ 9:16 (`node tools/kiem-kit.mjs`).
+  Claude chỉ đọc `tien-do-<cụm>.txt`, không đọc log `-o` của Codex trừ khi cụm đó thiếu hình.
 - Agent phụ soi nhanh từng shot nhiều hình: bối cảnh và cỡ nhân vật có nhất quán giữa các hình không; lệch thì trả Codex đúng một vòng.

@@ -71,6 +71,7 @@ Chưa vào tập mẫu (riêng ep001, làm tay khi cần): phụ đề từng ch
 - **KHÔNG dùng Haiku** cho dây chuyền này. Sonnet cho viết code/dựng asset/rà soát; Opus chỉ cho thiết kế khó (kiến trúc engine, rig, lỗi khó tìm).
 - **Mỗi agent sở hữu file riêng** (đúng cột `file` của `canAgent`); không hai agent cùng một file. Không sửa `engine/` dùng chung nếu không được giao.
 - Giao việc rõ: mục tiêu, phạm vi file, đã loại trừ gì, "xong khi nào" (tool nào chạy sạch). Không giao cùng một việc cho hai agent, không tự làm lại việc đã giao.
+- **Hợp đồng trả kết quả**: kết mỗi đề bài bằng "Ghi đầy đủ vào `output/<ep>/agent/<việc>.md`. Chỉ trả về: đường dẫn đã ghi, tối đa 5 gạch đầu dòng kết luận kèm file:dòng, mục bị chặn / chưa kiểm được. Không chép lại nội dung đã đọc." Trước khi dùng báo cáo: kiểm file báo cáo và file ở cột `file` của `canAgent` có trên đĩa và có đổi (`git diff --stat`); thiếu = việc chưa xong, nhắn lại đúng agent đó.
 - **Implementer/agent không commit.** Agent chính kiểm diff + chạy test/tool rồi mới commit.
 - Kiểm hình bằng số trước (`look.mjs --pose`, `kiem-luat`), chỉ mở ảnh khi số báo lệch; ảnh nằm trên đĩa, không dán vào chat.
 

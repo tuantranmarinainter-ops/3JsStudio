@@ -328,6 +328,21 @@
      "ten": "Công cụ đồng bộ tập mẫu → tập đã sinh + bước kiểm \"chuẩn tập 1\" trong dây chuyền",
      "tt": "chua",
      "ghiChu": "hiện sửa tập mẫu không lan sang tập 2"
+    },
+    {
+     "ten": "Nghiên cứu repo claude-code-game-studios → 12 cải tiến đề xuất cho xưởng",
+     "tt": "xong",
+     "ghiChu": "Báo cáo: docs/nghien-cuu-game-studios.md. Lợi ích là suy luận từ đọc, chưa đo."
+    },
+    {
+     "ten": "Cải tiến 1–3: agent phụ trả kết quả ngắn ra file · khối ĐIỂM DỪNG đầu HANDOFF · cấm lệnh git phá checkout chung",
+     "tt": "xong",
+     "ghiChu": "CLAUDE.md, skill lam-phim, docs/de-bai-codex-mau.md, docs/handoff/_mau.md, .claude/settings.json. Đã thử: git stash bị chặn. Khối ĐIỂM DỪNG của HANDOFF.md cần phiên điều phối xác nhận lại nội dung."
+    },
+    {
+     "ten": "Cải tiến 4–12 từ nghiên cứu (CHƯA KIỂM ĐƯỢC trong bộ kiểm, hook mở phiên, tách skill dài…)",
+     "tt": "cho",
+     "ghiChu": "chờ người dùng chọn"
     }
    ]
   },
