@@ -81,13 +81,21 @@ jobs:
       - uses: actions/checkout@v4
       - name: ffmpeg
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
       - uses: actions/download-artifact@v4
         with: { path: parts, pattern: "part-*", merge-multiple: true }
-      - name: Ghép (video nối liền + 1 track giọng đọc cả phim)
+      - name: Trộn âm thanh (giọng + nhạc + sfx căn theo đỉnh âm, chuẩn -14 LUFS)
+        run: |
+          EP=${{ needs.plan.outputs.ep }}
+          pip install -q numpy
+          python3 tools/mix.py "$EP" --out mix.m4a | tee mix.md
+          { echo "## Âm thanh"; cat mix.md; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Ghép (video nối liền + 1 track âm thanh cả phim)
         run: |
           EP=${{ needs.plan.outputs.ep }}
           ls parts/*.mp4 | sort | sed "s#^#file '$PWD/#; s#\$#'#" > list.txt; cat list.txt
-          AUDIO=episodes/$EP/narration.mp3
+          AUDIO=mix.m4a; [ -f "$AUDIO" ] || AUDIO=episodes/$EP/narration.mp3
           if [ -f "$AUDIO" ]; then
             ffmpeg -v error -y -f concat -safe 0 -i list.txt -i "$AUDIO" -map 0:v -map 1:a -c:v copy -c:a aac -b:a 192k -shortest -movflags +faststart "$EP.mp4"
           else
@@ -96,6 +104,13 @@ jobs:
           N=$(ffprobe -v error -count_frames -select_streams v:0 -show_entries stream=nb_read_frames -of csv=p=0 "$EP.mp4")
           echo "frames=$N (cần ${{ needs.plan.outputs.frames }})"
           [ "$N" = "${{ needs.plan.outputs.frames }}" ] || { echo "::error::Số frame $N khác ${{ needs.plan.outputs.frames }}"; exit 1; }
+      - name: Dò pop / nhảy hình (chỉ báo, không chặn)
+        continue-on-error: true
+        run: |
+          EP=${{ needs.plan.outputs.ep }}
+          python3 tools/popscan.py "$EP.mp4" --ep "$EP" --report popscan.md || true
+          cat popscan.md >> "$GITHUB_STEP_SUMMARY"
+          grep -E "^\| (pop|jump|flicker) " popscan.md | while read -r l; do echo "::warning::$l"; done
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ needs.plan.outputs.ep }}-mp4

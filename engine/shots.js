@@ -10,6 +10,9 @@
 //     props: { <tên>: { at, to, ry, rx, rz, s, parent } },  fx: { cards:{at,t0}, dust:[{at,t0}] },
 //     room:  { tilt, roll, view, dense },  fn(ctx) }
 // Giá trị số dạng [a, b] = nội suy a→b theo tiến độ shot (ease mặc định smooth, đi bộ thì tuyến tính).
+// ease: linear | smooth | in | out | inout | back | spring | springFast | springSoft.
+
+import { springEase } from './spring.js';
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 const EASE = {
@@ -19,6 +22,10 @@ const EASE = {
   out: (k) => 1 - Math.pow(1 - k, 3),
   inout: (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2),
   back: (k) => { const c = 1.70158; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); },
+  // lò xo (engine/spring.js): tới đích nhanh, vượt nhẹ ~4% rồi yên; 'springFast' yên ở 60% shot rồi đứng im
+  spring: (k) => springEase(k),
+  springFast: (k) => springEase(k, { settle: 0.6 }),
+  springSoft: (k) => springEase(k, { damp: 0.9, bounces: 1.2 }),
 };
 export const ease = (name, k) => (EASE[name] || EASE.smooth)(clamp01(k));
 const isRange = (v) => Array.isArray(v) && v.length === 2 && typeof v[0] === 'number';

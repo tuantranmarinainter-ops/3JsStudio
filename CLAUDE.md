@@ -96,6 +96,12 @@ Render 140 shot:
 - Render theo **đoạn**: `npx hyperframes render --start a --end b -o output/part_NN.mp4` (~10–20 shot/đoạn),
   chỉ render lại đoạn có shot bị sửa; ghép bằng FFmpeg (concat). `--workers` để chạy song song trong 1 lần render.
 - Root composition: `data-width="1080" data-height="1920" data-fps="30"`.
+- Dò lỗi sau render: `python3 tools/popscan.py output/ep001.mp4 --ep ep001 [--thumbs dir]` → báo `pop` (1 frame lạc),
+  `jump` (nhảy hình giữa shot), `flicker` (nháy liên tục) theo id shot; điểm cắt cảnh tự bỏ qua. Workflow render tự chạy.
+- Âm thanh cuối: `python3 tools/mix.py ep001` → giọng + nhạc (`music.*`, tự hạ khi có giọng) + `sfx` của shot,
+  chuẩn hoá -14 LUFS. SFX đặt theo **đỉnh âm** của file (file ở `assets/sfx/`). Workflow render tự dùng `mix.m4a`.
+- Chuyển động mềm có nảy nhẹ: `ease: 'spring' | 'springFast' | 'springSoft'` trong shot; trong `fn`/engine dùng
+  `engine/spring.js` (`springTrack` = tổng 1 lò xo cho mỗi lần đổi đích → vẫn là hàm thuần của t).
 - Claude chủ yếu sửa `shots.js`/`episode.js`, hạn chế sửa `engine/`.
 
 ## Quy tắc kỹ thuật (bắt buộc)
