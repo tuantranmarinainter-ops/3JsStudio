@@ -4,6 +4,9 @@
 //   node tools/roblox.mjs tim "teddy bear" --ung-vien output/roblox/ung-vien.json   (file ứng viên + ảnh xem trước cho trang duyệt)
 //   node tools/roblox.mjs xem <id|link>                                          (đếm part / mesh / ảnh vân / Union, 1 request)
 //   node tools/roblox.mjs tai <id|link> [--ra output/roblox/glb/roblox-<id>.glb] [--toi-da-request 40] [--anh-max 512]
+//   node tools/roblox.mjs tai <id> --nhan-vat "<path>"     (chỉ ghép một nhân vật của pack, dựng thẳng ở gốc; path lấy từ `xem`)
+//   node tools/roblox.mjs anh <id|link> [--ra f.png]        (ảnh áo/quần/mặt giữ alpha → output/roblox/anh/; id asset bọc ngoài tự gỡ)
+// Diện mạo nhân vật (R6/R15): .cache/roblox/<id>/dump.json key `nhanVat` (rigType, bodyColors, shirt, pants, tshirt, accessories, attachments…)
 // Đưa vào kho + manifest: node tools/nhap-model.mjs nhap roblox:<id> --ten <tên> --loai <loại>
 // Khoá ROBLOX_API_KEY đọc từ .env.local, chỉ gửi qua header x-api-key; KHÔNG bao giờ in ra / ghi lại / đưa vào URL.
 // Cache: .cache/roblox/<id>/ (model, mesh, ảnh, nguon.json). Không tự sửa assets/manifest.json.
@@ -138,12 +141,42 @@ async function taiAnh(id, dir) {
   for (const e of ['png', 'jpg', 'webp']) { const f = path.join(dir, `${id}.${e}`); if (fs.existsSync(f)) return f; }
   let b = await taiAsset(id);
   let e = loaiAnh(b);
-  if (!e) {                                            // Decal/Texture bọc: <url>…id=XXX</url>
-    const m = b.toString('latin1', 0, 4000).match(/<url>[^<]*?(\d{4,})[^<]*<\/url>/);
-    if (m) { b = await taiAsset(m[1]); e = loaiAnh(b); }
+  if (!e) {                                            // asset bọc ngoài (Decal, Shirt, Pants, T-Shirt…): lấy id ảnh bên trong
+    const trong = idAnhTrong(b, dir, id);
+    if (trong) { b = await taiAsset(trong); e = loaiAnh(b); }
   }
   if (!e) throw new Error(`ảnh ${id}: không nhận ra định dạng`);
   const f = path.join(dir, `${id}.${e}`); fs.writeFileSync(f, b); return f;
+}
+
+/** Asset bọc ngoài → id ảnh bên trong. XML: thẻ <url>; nhị phân (rbxm): đọc bằng `sky-extract dump` (key lienKet). */
+export function chonIdAnh(lienKet) {
+  const uu = ['ShirtTemplate', 'PantsTemplate', 'Graphic', 'Texture', 'TextureID', 'TextureId', 'ColorMap'];
+  const ds = (lienKet || []).filter((l) => l.id);
+  return (ds.find((l) => uu.includes(l.prop)) || ds.find((l) => !/Mesh|Sound|Anim/i.test(l.prop)) || {}).id || null;
+}
+function idAnhTrong(b, dir, id) {
+  const dau = b.toString('latin1', 0, 8);
+  if (!dau.startsWith('<roblox')) return null;
+  if (!dau.startsWith('<roblox!')) {
+    const m = b.toString('latin1', 0, 8000).match(/<url>[^<]*?(\d{4,})[^<]*<\/url>/);
+    return m ? m[1] : null;
+  }
+  const f = path.join(dir, `_boc_${id}.rbxm`); fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(f, b);
+  const d = chay(SKY, ['dump', f]);
+  try { return d.status === 0 ? chonIdAnh(JSON.parse(d.stdout).lienKet) : null; } catch { return null; } finally { fs.rmSync(f, { force: true }); }
+}
+async function cmdAnh(a) {
+  const id = layId(a._[0]); if (!id) loi('cách dùng: anh <id|link> [--ra file.png]');
+  tranRequest = Number(a['toi-da-request']) > 0 ? Number(a['toi-da-request']) : 5;
+  const dA = path.join(ROOT, '.cache', 'roblox', '_anh'); fs.mkdirSync(dA, { recursive: true });
+  const f = await taiAnh(id, dA), e = path.extname(f);
+  let ra = a.ra && a.ra !== true ? path.resolve(ROOT, String(a.ra)) : path.join(ROOT, 'output', 'roblox', 'anh', `${id}${e}`);
+  if (path.extname(ra).toLowerCase() !== e) ra = ra.replace(/\.[^.\\/]*$/, '') + e;      // giữ nguyên byte gốc (alpha còn nguyên) → đuôi theo định dạng thật
+  fs.mkdirSync(path.dirname(ra), { recursive: true }); fs.copyFileSync(f, ra);
+  const b = fs.readFileSync(ra);
+  const kt = e === '.png' ? `${b.readUInt32BE(16)}×${b.readUInt32BE(20)}, ${[0, 0, 'RGB', 'bảng màu', 'xám+alpha', 0, 'RGBA'][b[25]] || 'xám'}` : e.slice(1);
+  in_(`Đã ghi ${path.relative(ROOT, ra)} (${kt}, ${b.length} byte)`);
 }
 
 const SKY = path.join(ROOT, 'tools', 'sky-extract', 'bin', 'sky-extract.exe');
@@ -156,7 +189,12 @@ async function cmdTai(a) {
   const dM = path.join(dir, 'mesh'), dA = path.join(dir, 'anh');
   for (const d of [dir, dM, dA, path.dirname(ra)]) fs.mkdirSync(d, { recursive: true });
   tranRequest = Number(a['toi-da-request']) > 0 ? Number(a['toi-da-request']) : 40;
-  const parts = await layParts(id, dir);
+  let parts = await layParts(id, dir);
+  if (a['nhan-vat'] && a['nhan-vat'] !== true) {
+    const nv = String(a['nhan-vat']), ds = parts.nhanVat.map((x) => x.path);
+    parts = motNhanVat(parts, nv);
+    if (!parts.length) loi(`không có nhân vật "${nv}" — trong model có: ${ds.join(' | ') || '(không có Model nào chứa Humanoid)'}`);
+  }
   // 3. mesh + ảnh
   const meshIds = new Set(), imgIds = new Set(), canhBao = [];
   for (const p of parts) {
@@ -183,9 +221,22 @@ async function layParts(id, dir) {
   // 2. dump
   const d = chay(SKY, ['dump', mf]);
   if (d.status !== 0) loi('sky-extract dump lỗi: ' + (d.stderr || '').slice(0, 300));
-  const parts = JSON.parse(d.stdout).parts;
-  fs.writeFileSync(path.join(dir, 'dump.json'), JSON.stringify({ parts }, null, 1));
+  const j = JSON.parse(d.stdout), parts = j.parts;
+  fs.writeFileSync(path.join(dir, 'dump.json'), JSON.stringify({ parts, nhanVat: j.nhanVat || [] }, null, 1));
+  parts.nhanVat = j.nhanVat || [];
   return parts;
+}
+/** Chỉ giữ các mảnh của một nhân vật (path = đường dẫn Model có Humanoid) và dựng thẳng: bỏ hướng xoay của HumanoidRootPart/Torso. */
+export function motNhanVat(parts, nv) {
+  const ds = parts.filter((p) => p.path === nv || p.path.startsWith(nv + '.'));
+  const goc = ds.find((p) => p.path === nv && p.name === 'HumanoidRootPart') || ds.find((p) => p.path === nv && /^(Torso|LowerTorso|UpperTorso)$/.test(p.name));
+  if (!goc) return ds;
+  const R = goc.cframe.rot, t0 = goc.cframe.pos;                 // R0ᵀ·(x − t0), R0ᵀ·R
+  const Tv = (v) => [0, 1, 2].map((i) => R[0][i] * v[0] + R[1][i] * v[1] + R[2][i] * v[2]);
+  return ds.filter((p) => p.name !== 'HumanoidRootPart' || p.path !== nv).map((p) => {
+    const r = p.cframe.rot, cot = [0, 1, 2].map((c) => Tv([r[0][c], r[1][c], r[2][c]]));
+    return { ...p, cframe: { pos: Tv(p.cframe.pos.map((x, i) => x - t0[i])), rot: [0, 1, 2].map((i) => [cot[0][i], cot[1][i], cot[2][i]]) } };
+  });
 }
 /** Đếm loại mảnh + ảnh vân của một model (để chọn mẫu trước khi tải hết mesh). */
 export function tomTatParts(parts) {
@@ -204,10 +255,12 @@ export function tomTatParts(parts) {
 }
 async function cmdXem(a) {
   const id = layId(a._[0]); if (!id) loi('cách dùng: xem <id|link>');
-  const t = tomTatParts(await layParts(id, path.join(ROOT, '.cache', 'roblox', id)));
-  if (a.json) { console.log(JSON.stringify({ id, ...t })); return; }
+  const ps = await layParts(id, path.join(ROOT, '.cache', 'roblox', id));
+  const t = tomTatParts(ps);
+  if (a.json) { console.log(JSON.stringify({ id, ...t, nhanVat: ps.nhanVat })); return; }
   in_(`${id}: ${t.part} part — ${Object.entries(t.loai).map(([k, v]) => `${k}×${v}`).join(', ')}`);
   in_(`mesh: ${t.mesh} · ảnh vân: ${t.anh} (decal ${t.decal}) · Union: ${t.union} · tải đủ cần ~${t.request} request`);
+  for (const n of ps.nhanVat) in_(`nhân vật "${n.path}": ${n.rigType === 1 ? 'R15' : n.rigType === 0 ? 'R6' : 'rig ?'} · áo ${n.shirt || '—'} · quần ${n.pants || '—'} · áo phông ${n.tshirt || '—'} · phụ kiện ${n.accessories.length}${n.bodyColors ? '' : ' · không có BodyColors'}`);
 }
 async function taiTiep(a, id, ra, dir, dM, dA, parts, meshIds, imgIds, canhBao) {
   const meshes = {}, anh = {}, csg = {};
@@ -345,6 +398,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     if (lenh === 'tim') await cmdTim(a);
     else if (lenh === 'tai') await cmdTai(a);
     else if (lenh === 'xem') await cmdXem(a);
-    else console.log('Cách dùng:\n  node tools/roblox.mjs tim "<từ khoá>" [--so 20] [--tam-giac-max N] [--co-script] [--json] [--ung-vien file.json [--khe id]]\n  node tools/roblox.mjs xem <id|link>      (đếm part/mesh/ảnh vân/Union, chỉ tốn 1 request)\n  node tools/roblox.mjs tai <id|link> [--ra file.glb] [--ten "tên"] [--toi-da-request 40] [--anh-max 512] [--json]');
+    else if (lenh === 'anh') await cmdAnh(a);
+    else console.log('Cách dùng:\n  node tools/roblox.mjs tim "<từ khoá>" [--so 20] [--tam-giac-max N] [--co-script] [--json] [--ung-vien file.json [--khe id]]\n  node tools/roblox.mjs xem <id|link>      (đếm part/mesh/ảnh vân/Union, chỉ tốn 1 request)\n  node tools/roblox.mjs tai <id|link> [--ra file.glb] [--ten "tên"] [--toi-da-request 40] [--anh-max 512] [--json] [--nhan-vat "<path>"]\n  node tools/roblox.mjs anh <id|link> [--ra file.png]   (tải ảnh giữ nguyên alpha; id Shirt/Pants/Decal bọc ngoài tự gỡ)');
   } catch (e) { loi(e.message || e); }
 }

@@ -103,3 +103,23 @@ test('nhap-model: roblox là nguồn hợp lệ, ứng viên vào file duyệt k
   assert.equal(u.id, 'roblox:1'); assert.deepEqual(u.anh, ['thumb-1.png']); assert.equal(u.nguon, 'roblox');
   assert.equal(u.giayPhep, 'Roblox Creator Store'); assert.equal(u.tamGiac, 1000); assert.equal(u.tacGia, 'tac_gia'); assert.equal(u.phu, 'lý tưởng');
 });
+
+// ----- đợt 3: nhân vật (NPC) -----
+import { motNhanVat, chonIdAnh } from '../roblox.mjs';
+test('motNhanVat: chỉ giữ mảnh của nhân vật, bỏ HumanoidRootPart, dựng thẳng về gốc', () => {
+  const quay = [[0, 0, 1], [0, 1, 0], [-1, 0, 0]];                       // xoay 90° quanh Y
+  const p = (name, pth, pos) => ({ name, path: pth, cframe: { pos, rot: quay } });
+  const r = motNhanVat([p('HumanoidRootPart', 'Pack.A', [10, 3, 5]), p('Head', 'Pack.A', [10, 4.5, 5]), p('Left Arm', 'Pack.A', [10, 3, 6.5]),
+    p('Handle', 'Pack.A.Hair', [10, 5, 5]), p('Head', 'Pack.AB', [0, 0, 0]), p('Head', 'Pack.B', [20, 4.5, 5])], 'Pack.A');
+  assert.deepEqual(r.map((x) => x.name), ['Head', 'Left Arm', 'Handle']);
+  const gan = (a, b) => a.every((v, i) => Math.abs(v - b[i]) < 1e-9);
+  assert.ok(gan(r[0].cframe.pos, [0, 1.5, 0])); assert.ok(gan(r[2].cframe.pos, [0, 2, 0]));
+  assert.ok(gan(r[1].cframe.pos, [-1.5, 0, 0]));                          // R0ᵀ·(0,0,1.5)
+  assert.ok(r[0].cframe.rot.every((h, i) => gan(h, [[1, 0, 0], [0, 1, 0], [0, 0, 1]][i])));
+  assert.equal(motNhanVat([p('Head', 'X', [0, 0, 0])], 'Khong').length, 0);
+});
+test('chonIdAnh: gỡ asset bọc ngoài — ưu tiên ShirtTemplate/Texture, bỏ mesh/âm thanh', () => {
+  assert.equal(chonIdAnh([{ prop: 'MeshId', id: '1' }, { prop: 'ShirtTemplate', id: '2' }]), '2');
+  assert.equal(chonIdAnh([{ prop: 'SoundId', id: '1' }, { prop: 'Image', id: '3' }]), '3');
+  assert.equal(chonIdAnh([{ prop: 'MeshId', id: '1' }]), null); assert.equal(chonIdAnh(undefined), null);
+});
