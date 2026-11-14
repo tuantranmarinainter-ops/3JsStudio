@@ -96,7 +96,34 @@ dg = '<section data-p="dg" hidden><h2>Đánh giá</h2><div class="list">' + ''.j
 kn = ('<section data-p="kn" hidden><div class="box"><h3>Hướng đi tôi khuyên</h3><p>Ghép Tập 3 và Tập 4: lấy tham chiếu bối cảnh và góc máy của Tập 4 làm chuẩn hình, nhưng giữ cách dựng shot có chuyển động và khả năng tự tìm tài sản của Tập 3. Thêm bảng bố trí vào đầu vào, dựng theo cụm bối cảnh có duyệt, và đặt một thước đo khớp khung tự động trước khi tới tay bạn.</p></div>'
       + '<div class="list">' + ''.join(f'<article class="box kn"><div class="hd"><span class="so">{e(n)}</span><span class="ut {e(u)}">ưu tiên {e(u)}</span></div><h3>{i + 1}. {e(t)}</h3><p>{e(m)}</p><p class="mu"><span class="k">Vì sao</span> {e(v)}</p></article>' for i, (n, t, m, v, u) in enumerate(KHUYEN))
       + '</div><div class="warn">Các khuyến nghị là nhận định của Claude từ số liệu trên trang này và từ những gì diễn ra trong các phiên làm việc; chưa có cái nào được thử nghiệm để chứng minh hiệu quả. Nên thử trọn bộ trên một cụm bối cảnh của Tập 4 (ví dụ nhà máy, 33 shot) rồi so số trước khi áp cho cả tập.</div></section>')
-tabs = [('tq', 'Tổng quan')] + [(f't{i}', p['ten']) for i, p in enumerate(PP)] + [('dg', 'Đánh giá'), ('kn', 'Khuyến nghị')]
+_qs = open(R + '/docs/quy-trinh-so-do.html', encoding='utf-8').read()
+_qs = _qs[_qs.index('<div class="leg">'):_qs.index('</main>')]
+qtr = '<section data-p="qt" hidden><div class="box"><h3>Từ bộ kit đến video hoàn chỉnh</h3><p>Quy trình đề xuất, ghép cái được của Tập 3 (chuyển động, tự nối kho tài sản) với cái được của Tập 4 (bối cảnh và camera theo số đo).</p></div><div class="qt">' + _qs + '</div></section>'
+QT_CSS = """
+:root{--q-nd:#b7791f;--q-cx:#7c4dbd;--q-cl:#2f6fd0;--q-may:#2e8b57;--q-loop:#c2410c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--q-nd:#e0a94a;--q-cx:#b08ae6;--q-cl:#6ea3f0;--q-may:#5fc48c;--q-loop:#f08a55}}
+:root[data-theme="dark"]{--q-nd:#e0a94a;--q-cx:#b08ae6;--q-cl:#6ea3f0;--q-may:#5fc48c;--q-loop:#f08a55}
+.qt .leg{display:flex;flex-wrap:wrap;gap:8px 16px;margin:0 0 16px;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;font-size:13px;color:var(--mu)}
+.qt .who{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--mu);white-space:nowrap}
+.qt .who i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.qt .nd i{background:var(--q-nd)}.qt .cx i{background:var(--q-cx)}.qt .cl i{background:var(--q-cl)}.qt .may i{background:var(--q-may)}
+.qt .st{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--line);border-radius:10px;padding:12px 14px}
+.qt .st.nd{border-left-color:var(--q-nd)}.qt .st.cx{border-left-color:var(--q-cx)}.qt .st.cl{border-left-color:var(--q-cl)}.qt .st.may{border-left-color:var(--q-may)}
+.qt .hd{gap:6px 10px;margin-bottom:4px}.qt .n{font-weight:800;color:var(--mu);font-variant-numeric:tabular-nums}.qt .t{font-weight:800;font-size:16px}
+.qt .st p{margin:4px 0 0;color:var(--mu)}.qt .out{margin-top:8px;font-size:13px;color:var(--mu)}.qt .out b{color:var(--fg)}
+.qt code{font:12px ui-monospace,Consolas,monospace;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:0 4px;word-break:break-word}
+.qt .ar{display:flex;justify-content:center;height:26px;position:relative}.qt .ar::before{content:"";width:2px;height:100%;background:var(--mu)}
+.qt .ar::after{content:"";position:absolute;bottom:0;border:6px solid transparent;border-top-color:var(--mu);border-bottom:0}
+.qt .gate{background:var(--warnbg);border:1.5px dashed var(--warn);border-radius:10px;padding:10px 14px}.qt .gate .t{font-size:15px}
+.qt .back{margin-top:6px;font-size:13px;color:var(--q-loop);font-weight:600}
+.qt .par{display:grid;grid-template-columns:1fr 1fr;gap:12px}.qt .parL,.qt .lab{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--mu)}.qt .parL{text-align:center;margin-bottom:8px}
+.qt .col{display:flex;flex-direction:column;gap:8px}.qt .wrapPar{border:1px solid var(--line);border-radius:12px;padding:12px}
+.qt .end{background:var(--panel);border:2px solid var(--q-may);border-radius:10px;padding:14px;text-align:center;font-weight:800;font-size:16px}
+.qt .tag{font-size:11px;font-weight:600;color:var(--q-loop);border:1px solid var(--q-loop);border-radius:99px;padding:0 7px;white-space:nowrap}
+.qt .note{margin-top:20px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--mu);font-size:14px}.qt .note b{color:var(--fg)}
+@media (max-width:620px){.qt .par{grid-template-columns:1fr}}
+"""
+tabs = [('tq', 'Tổng quan')] + [(f't{i}', p['ten']) for i, p in enumerate(PP)] + [('dg', 'Đánh giá'), ('kn', 'Khuyến nghị'), ('qt', 'Quy trình')]
 page = f'''<title>Tổng kết bốn tập</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap">
@@ -128,7 +155,7 @@ button:focus-visible,input:focus-visible{{outline:2px solid var(--acc);outline-o
 th,td{{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}}thead th{{font-size:12px;color:var(--mu);font-weight:600}}tbody th,th:first-child{{text-align:left;font-weight:600}}tbody tr:last-child th,tbody tr:last-child td{{border-bottom:0}}
 table.pp td{{text-align:left}}table.pp th small{{display:block;font-weight:400;color:var(--mu);font-size:12px}}
 .warn,.thieu-note{{background:var(--warnbg);border:1px solid var(--warn);border-radius:8px;padding:10px 12px;font-size:14px}}.thieu-note{{padding:6px 10px;font-size:13px}}
-</style>
+{QT_CSS}</style>
 <main>
 <header><h1>Tổng kết bốn tập</h1><p class="mu">3JS Studio · lập lúc {e(SU.get("lap_luc"))} · token, thời gian và việc sửa của từng tập; ưu nhược từng cách làm; đánh giá và khuyến nghị</p></header>
 <nav class="tabs" role="tablist">{"".join(f'<button role="tab" data-tab="{k}" aria-selected="{"true" if k == "tq" else "false"}">{e(n)}</button>' for k, n in tabs)}</nav>
@@ -136,6 +163,7 @@ table.pp td{{text-align:left}}table.pp th small{{display:block;font-weight:400;c
 {"".join(tap_sec(i, p) for i, p in enumerate(PP))}
 {dg}
 {kn}
+{qtr}
 <div class="warn"><b>Tập 1 không so sánh được một cách khách quan</b>: phần lớn công việc của nó làm bằng một tài khoản Claude khác nên thiếu nhật ký. Ba tập còn lại: số token và giờ lấy từ nhật ký Claude Code trên máy này (không gồm Codex); việc gán cho từng tập là ước lượng. Tập 2 gồm cả công dựng engine và studio. Danh sách việc sửa do agent lập từ lịch sử commit và file bàn giao, chưa đối chiếu từng dòng. Tập 3 và Tập 4 chưa xong.</div>
 </main>
 <div id="tip" hidden></div>

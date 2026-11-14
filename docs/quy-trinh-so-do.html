@@ -1,0 +1,180 @@
+<title>Quy trình kit → video</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --bg:#f6f5f1; --card:#ffffff; --ink:#1d1c1a; --ink2:#55524c; --mut:#8a867d; --line:#dcd9d0;
+  --nd:#b7791f; --cx:#7c4dbd; --cl:#2f6fd0; --may:#2e8b57; --gate:#fff6df; --gateL:#e2b84a; --loop:#c2410c;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#161513; --card:#211f1c; --ink:#f0ede6; --ink2:#bdb8ad; --mut:#8d887d; --line:#3a3731;
+    --nd:#e0a94a; --cx:#b08ae6; --cl:#6ea3f0; --may:#5fc48c; --gate:#2e2716; --gateL:#a8842c; --loop:#f08a55;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#161513; --card:#211f1c; --ink:#f0ede6; --ink2:#bdb8ad; --mut:#8d887d; --line:#3a3731;
+  --nd:#e0a94a; --cx:#b08ae6; --cl:#6ea3f0; --may:#5fc48c; --gate:#2e2716; --gateL:#a8842c; --loop:#f08a55;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:24px;line-height:1.2;margin:0 0 6px}
+.sub{color:var(--ink2);margin:0 0 16px}
+.leg{display:flex;flex-wrap:wrap;gap:8px 16px;margin:0 0 20px;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:10px;font-size:13px;color:var(--ink2)}
+.who{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink2);white-space:nowrap}
+.who i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.nd i{background:var(--nd)} .cx i{background:var(--cx)} .cl i{background:var(--cl)} .may i{background:var(--may)}
+.st{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--line);border-radius:10px;padding:12px 14px}
+.st.nd{border-left-color:var(--nd)} .st.cx{border-left-color:var(--cx)} .st.cl{border-left-color:var(--cl)} .st.may{border-left-color:var(--may)}
+.hd{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px;margin-bottom:4px}
+.n{font-weight:700;color:var(--mut);font-variant-numeric:tabular-nums}
+.t{font-weight:700;font-size:16px}
+.st p{margin:4px 0 0;color:var(--ink2)}
+.out{margin-top:8px;font-size:13px;color:var(--ink2)}
+.out b{color:var(--ink)}
+code{font:12px ui-monospace,Consolas,monospace;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:0 4px;word-break:break-word}
+.ar{display:flex;justify-content:center;height:26px;position:relative}
+.ar::before{content:"";width:2px;height:100%;background:var(--mut)}
+.ar::after{content:"";position:absolute;bottom:0;border:6px solid transparent;border-top-color:var(--mut);border-bottom:0}
+.gate{background:var(--gate);border:1.5px dashed var(--gateL);border-radius:10px;padding:10px 14px}
+.gate .t{font-size:15px}
+.back{margin-top:6px;font-size:13px;color:var(--loop);font-weight:600}
+.par{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.parL{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mut);text-align:center;margin-bottom:8px}
+.col{display:flex;flex-direction:column;gap:8px}
+.col .lab{font-size:12px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
+.wrapPar{border:1px solid var(--line);border-radius:12px;padding:12px}
+.end{background:var(--card);border:2px solid var(--may);border-radius:10px;padding:14px;text-align:center;font-weight:700;font-size:16px}
+.tag{font-size:11px;font-weight:700;color:var(--loop);border:1px solid var(--loop);border-radius:99px;padding:0 7px;white-space:nowrap}
+.note{margin-top:24px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink2);font-size:14px}
+.note b{color:var(--ink)}
+@media (max-width:620px){.par{grid-template-columns:1fr}}
+</style>
+<main>
+<h1>Quy trình: từ bộ kit đến video hoàn chỉnh</h1>
+<p class="sub">Quy trình đề xuất, ghép cái được của Tập 3 (chuyển động, tự nối kho tài sản) với cái được của Tập 4 (bối cảnh và camera theo số đo).</p>
+
+<div class="leg">
+  <span class="who nd"><i></i>Bạn</span>
+  <span class="who cx"><i></i>Codex</span>
+  <span class="who cl"><i></i>Claude</span>
+  <span class="who may"><i></i>Máy kiểm tự động</span>
+  <span>Khung nét đứt = cổng duyệt của bạn</span>
+</div>
+
+<div class="st nd">
+  <div class="hd"><span class="n">0</span><span class="t">Đầu vào: gói kịch bản</span><span class="who nd"><i></i>Bạn</span></div>
+  <p>Khung ảnh storyboard, mô tả từng shot, ảnh nhân vật và bối cảnh, lời kể.</p>
+  <div class="out"><b>Ra:</b> <code>kich-ban/&lt;ep&gt;-goi/</code></div>
+</div>
+<div class="ar"></div>
+
+<div class="st cx">
+  <div class="hd"><span class="n">1</span><span class="t">Tạo bộ kit</span><span class="who cx"><i></i>Codex</span><span class="tag">phần chuyển động: chưa thử</span></div>
+  <p>Đo từ ảnh theo một mẫu cố định: nhân vật, tỉ lệ, bối cảnh và kích thước, vật liệu, ánh sáng, góc máy và cỡ khung của từng shot.</p>
+  <p>Mỗi shot ghi thêm chuyển động: loại chuyển động camera, khung đầu và khung cuối, hành động của từng nhân vật.</p>
+  <div class="out"><b>Ra:</b> <code>kit.json</code> + <code>KIT.html</code></div>
+</div>
+<div class="ar"></div>
+
+<div class="st may">
+  <div class="hd"><span class="n">2</span><span class="t">Kiểm kit bằng máy</span><span class="who may"><i></i>Máy</span></div>
+  <p>Đủ trường cho mọi shot, số đo nằm trong ngưỡng, chữ tiếng Việt không hỏng dấu, shot nào cũng có chuyển động.</p>
+  <div class="out"><b>Công cụ:</b> <code>kiem-kit.mjs</code></div>
+  <div class="back">↺ Thiếu hoặc sai → trả Codex sửa. Chỉ đi một vòng.</div>
+</div>
+<div class="ar"></div>
+
+<div class="gate">
+  <div class="hd"><span class="t">Cổng duyệt 1: bộ kit</span><span class="who nd"><i></i>Bạn</span></div>
+  <div class="out">Xem trang kit, chốt nhân vật, bảng màu, tỉ lệ. Chưa dựng gì trước khi qua cổng này.</div>
+</div>
+<div class="ar"></div>
+
+<div class="wrapPar">
+  <div class="parL">Chạy song song sau khi kit được duyệt</div>
+  <div class="par">
+    <div class="col">
+      <div class="lab">Nhánh hình</div>
+      <div class="st cl">
+        <div class="hd"><span class="n">3</span><span class="t">Tài nguyên</span><span class="who cl"><i></i>Claude</span></div>
+        <p>Tìm model ở Kenney, Sketchfab, Poly Pizza, Polyfork, Roblox. Mỗi món đưa nhiều ứng viên, nhập qua Blender.</p>
+        <div class="out"><b>Ra:</b> trang duyệt đợt → <code>assets/</code> + manifest</div>
+      </div>
+      <div class="gate">
+        <div class="hd"><span class="t">Cổng duyệt 2: model</span><span class="who nd"><i></i>Bạn</span></div>
+        <div class="out">Chốt từng món trên trang duyệt.</div>
+      </div>
+      <div class="st cl">
+        <div class="hd"><span class="n">4</span><span class="t">Dựng bối cảnh và nhân vật</span><span class="who cl"><i></i>Claude</span></div>
+        <p>Mỗi bối cảnh một file theo số đo của kit. Gà, dân làng R6, bộ biểu cảm, ánh sáng.</p>
+        <div class="out"><b>Ra:</b> <code>engine/envs/&lt;tên&gt;.js</code>, <code>episode.js</code></div>
+      </div>
+      <div class="st cl">
+        <div class="hd"><span class="n">5</span><span class="t">Dựng shot</span><span class="who cl"><i></i>Claude</span></div>
+        <p>Mỗi shot một dòng: chọn loại shot có sẵn của engine, điền camera và chuyển động lấy từ kit.</p>
+        <div class="out"><b>Ra:</b> <code>shots.js</code></div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="lab">Nhánh tiếng</div>
+      <div class="st cl">
+        <div class="hd"><span class="n">6</span><span class="t">Giọng đọc và phụ đề</span><span class="who cl"><i></i>Claude</span></div>
+        <p>Giọng Việt CapCut, giọng Anh Edge, phụ đề theo mốc lời kể.</p>
+        <div class="out"><b>Ra:</b> trang nghe thử</div>
+      </div>
+      <div class="gate">
+        <div class="hd"><span class="t">Cổng duyệt 3: giọng</span><span class="who nd"><i></i>Bạn</span></div>
+        <div class="out">Nghe thử, chốt giọng.</div>
+      </div>
+      <div class="st cl">
+        <div class="hd"><span class="n">7</span><span class="t">Tiếng động và nhạc</span><span class="who cl"><i></i>Claude</span></div>
+        <p>Ba lớp: nền theo bối cảnh, bước chân, khoảnh khắc. Nhạc một track liền.</p>
+        <div class="out"><b>Ra:</b> <code>sfx/*.ogg</code></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ar"></div>
+
+<div class="st may">
+  <div class="hd"><span class="n">8</span><span class="t">Kiểm cả phim bằng máy</span><span class="who may"><i></i>Máy</span></div>
+  <p>So từng shot với khung storyboard, đo độ sáng, tư thế, khung đầu và khung cuối, tua tới lui ra cùng hình, số shader và thời gian mở trang.</p>
+  <div class="out"><b>Công cụ:</b> <code>look.mjs</code>, <code>shaders.mjs</code>, <code>npm test</code></div>
+  <div class="back">↺ Shot lệch → quay lại bước 4 hoặc 5, chỉ sửa shot đó.</div>
+</div>
+<div class="ar"></div>
+
+<div class="st cl">
+  <div class="hd"><span class="n">9</span><span class="t">Hậu kỳ và bản xem thử</span><span class="who cl"><i></i>Claude</span></div>
+  <p>Màu theo cảnh, toả sáng, mờ hậu cảnh, rồi gộp tất cả thành một file.</p>
+  <div class="out"><b>Ra:</b> <code>dist/&lt;ep&gt;_xem-thu.html</code></div>
+</div>
+<div class="ar"></div>
+
+<div class="gate">
+  <div class="hd"><span class="t">Cổng duyệt 4: bắt lỗi theo shot</span><span class="who nd"><i></i>Bạn</span></div>
+  <div class="out">Xem trong khung studio, bấm M ghi chú từng shot, bấm Gửi tới Claude.</div>
+  <div class="back">↺ Có góp ý → Claude sửa đúng shot đó → kiểm lại bước 8 → bản xem thử mới.</div>
+</div>
+<div class="ar"></div>
+
+<div class="st cl">
+  <div class="hd"><span class="n">10</span><span class="t">Gộp bản chốt và xuất thử</span><span class="who cl"><i></i>Claude</span><span class="who may"><i></i>Máy</span></div>
+  <p>Gộp bản cuối, máy bấm thử nút Xuất ở mọi tổ hợp độ phân giải, giọng và phụ đề.</p>
+  <div class="out"><b>Ra:</b> <code>dist/&lt;ep&gt;.html</code></div>
+</div>
+<div class="ar"></div>
+
+<div class="st nd">
+  <div class="hd"><span class="n">11</span><span class="t">Xuất MP4</span><span class="who nd"><i></i>Bạn</span></div>
+  <p>Mở file HTML, bấm Xuất MP4 (1080p, 2K hoặc 4K). Máy bạn render bằng GPU.</p>
+</div>
+<div class="ar"></div>
+
+<div class="end">Video hoàn chỉnh 1080×1920</div>
+
+<div class="note">
+  <b>Phần đã chạy thật và phần chưa.</b> Các bước 3 đến 11 đã dùng ở Tập 3 và Tập 4. Bước 1 với phần chuyển động trong kit và bước 2 kiểm kit trước khi nhận là khuyến nghị rút ra từ Tập 4, chưa được thử trên tập nào.
+</div>
+</main>
