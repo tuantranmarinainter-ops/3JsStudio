@@ -1,5 +1,18 @@
 # ep003 — Duyệt lại asset theo Roblox (handoff 14/11)
 
+<!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
+## ĐIỂM DỪNG
+- **Cập nhật:** 2026-11-14 15:35
+- **Nhánh:** `ep1-v2`
+- **Đang làm:** không — đợt 4 (NHÀ) đã chốt, đã thay vào `engine/envs/e3-pho.js`, đã gộp `dist/ep003_xem-thu.html`.
+- **Bước kế tiếp:** người dùng xem bản xem thử; sau đó đợt 5 (PHỐ: đèn, cây, ghế, chậu, mái hiên xanh lam…) theo "Cách làm một đợt" bên dưới.
+- **Đang chờ:** người dùng duyệt đợt 2 (biển tiệm bánh) và nhận xét nhà mới trong bản xem thử.
+- **File đang dở (chưa commit):** không (của việc này). `duyet/ep003/dot-03.ketqua.json` do phiên ep003 ghi, chưa commit.
+- **Đang chạy nền:** không
+- **Đạt khi:** mọi đợt 1–8 đã chốt + thay vào bối cảnh, `?rb=0` vẫn về bản khối.
+- **Câu hỏi còn mở:** (1) nhà thị trưởng: biệt thự lùi sau sân 9,8 + sảnh cửa bằng khối — người dùng có chịu không, hay muốn mặt tiền phẳng sát vỉa hè như bản khối? (2) cửa sổ nhà Roblox ít và nhỏ nên phố đêm ít ô sáng hơn bản khối — có cần thêm ô sáng dán lên mặt tiền không?
+<!-- /ĐIỂM DỪNG -->
+
 Yêu cầu người dùng: duyệt lại TOÀN BỘ asset ep003 theo vibe Roblox, chỉ lấy từ Roblox Creator Store, mỗi món **10 ứng viên**;
 món nhiều biến thể (cây, đất đá, nhà nền…) đánh dấu `chonNhieu: true` trên khe (trang duyệt có nút "Chọn hết", kết quả `chon[mon]` = mảng).
 Chốt đợt nào → nhập + thay vào bối cảnh đó → `look.mjs` + `shaders.mjs` → gộp `dist/ep003_xem-thu.html`.
@@ -10,7 +23,7 @@ Chốt đợt nào → nhập + thay vào bối cảnh đó → `look.mjs` + `sh
 | 1 | tiệm bánh + tiệm may, 14 món × 5 ứng viên | ĐÃ CHỐT 13 món, đã thay vào `engine/envs/e3-tiem.js` (biển bị loại) |
 | 2 | biển tiệm bánh, 10 ứng viên mới | CHỜ DUYỆT |
 | 3 | SKY 6 mặt cho từng thời điểm (ngày, hoàng hôn, đêm) — `tools/sky-extract/`, `tools/sky-import.mjs`, `engine/sky-lab.html?sky=` | chưa |
-| 4 | NHÀ ngoại thất: nhà Gà, tiệm gấu, tiệm bánh, tiệm may, nhà thị trưởng, nhà ngã ba, nhà máy xa, tháp chuông, nhà nền (chọn nhiều) — 9 món × 10 mẫu | CHỜ DUYỆT (`duyet/ep003/dot-03.json`, nhóm `roblox-nha`) — chưa thay gì trong `e3-pho.js` |
+| 4 | NHÀ ngoại thất: nhà Gà, tiệm gấu, tiệm bánh, tiệm may, nhà thị trưởng, nhà ngã ba, nhà máy xa, tháp chuông, nhà nền (chọn nhiều) — 9 món × 10 mẫu | ĐÃ CHỐT 14/11 (`duyet/ep003/dot-03.ketqua.json`: 8 món 1 mẫu, nhà nền 7 mẫu) → đã nhập 15 model `nhap/pho-*` và thay vào `engine/envs/e3-pho.js` (`?rb=0` = bản khối) |
 | 5 | PHỐ: đèn đường, trụ chặn, cây (chọn nhiều), ghế, hộp hoa, chậu cây (chọn nhiều), biển treo, bàn trưng, cổng rào, mái hiên xanh lam, đường/vỉa hè/biển báo | chưa |
 | 6 | nhà máy nội thất (15 món) | chưa |
 | 7 | phòng Gà (11 món) | chưa |
@@ -56,3 +69,17 @@ Kiểm kê đủ 71 món (file, shot, cỡ stud): `output/ep003/roblox/kiem-ke.j
   cân nhắc `nen-model.mjs` hoặc cắt bớt trước khi nhân bản nhà nền (~32 căn).
 - Chưa có trong đợt này: `pho_hien_xanh_lam` (mái hiên Bắp ngồi, s042–s043) — phụ thuộc mẫu nhà nền được chọn, để sang đợt 5.
 
+## Đợt 4 — đã thay vào phố (14/11)
+- Model: `assets/nhap/pho-{nha-ga,tiem-gau,tiem-banh,tiem-may,nha-thi-truong,nha-nga-ba,nha-may,thap-chuong,nha-nen-1..7}.glb` (2,4 MB, ~105k tam giác cả phố; 3 mẫu `--cho-phep-nang`).
+- `e3-pho.js`: bảng `NHA` (mặt trước + phần hộp bao dùng làm mặt tiền/chân, đo bằng tia) + `nhaGlb(f, id, tên, { w, H | cao:[fy, y], D, lui, lat, kep })` co model vừa LÔ đất cũ
+  (kit2 đặt máy + nhân vật theo toạ độ tuyệt đối nên nhà phải theo bố cục cũ, co KHÔNG đều). `nhaNen()` xoay vòng 7 mẫu nền theo `seed`; `NEN_CAO` = chiều cao từng mẫu.
+- Phần giữ bằng khối vì là "chức năng": bàn trưng + biển tiệm gấu, kệ kính/biển 3 tiệm, SẢNH CỬA thị trưởng (hốc, cửa mở được, 3 bậc, hiên) đặt trước biệt thự lùi 9,8 + tường rào/giậu/cây sân,
+  LAN CAN gỗ cao trên ban công nhà Gà (lan can model chỉ cao 1,6 ở tỉ lệ này), nhà mái hiên xanh lam (đợt 5), các dãy "hàng 2" phía xa.
+- Số đo đã khớp bằng tia: sàn ban công y 9,50 (điểm `ban_cong`), mép lan can x −9,95, vỉa hè trước nhà Gà y 0,4. Bậc thềm model tại [-12.4, ·, 27] cao 1,36 (shot s072/s073 đặt Gà ở y 1,0 → chân chìm ~0,35, chưa sửa vì là lớp shot).
+- Đêm: `setNight` nâng sáng vật liệu GLB như `litMats` (có trần cho màu rực), kính trong suốt + màu ô cửa trong `RB_KINH` (theo TỪNG model) phát sáng ấm. Đừng gộp màu kính chung: `#04afec` là mái nhà nền 4.
+- Công cụ đo không cần mở ảnh (ở `output/_tmp/`, không vào git): `rb-do-nha.mjs` (bản vẽ 5 mặt có lưới 0..1), `rb-mat-tien.mjs <tên>:<±X|±Z>` (lưới độ sâu mặt tiền bằng tia),
+  `rb-do-pho.mjs` (hộp bao thế giới từng nhà + dò độ cao mặt đứng), `rb-soi-diem.mjs <t> <x,y>…` (điểm ảnh này là vật gì; không điểm = liệt kê điểm kính), `rb-vat-lieu.mjs`, `rb-commit-nha.mjs` (commit riêng mục manifest của mình).
+- Lưu ý: máy quay THẬT của shot phố khác số trong `shots-pho.js` (lớp kit2 ghi đè) → muốn biết máy nhìn gì thì dùng `rb-soi-diem.mjs`, đừng suy từ `cam:` của shot.
+- Kiểm: 3 lượt agent soi 20 shot (không còn lỗi nặng); `shaders.mjs` 139 program (bằng trước khi thay); 404 `sfx_buoc-chan.ogg` + `captions_en.json` có từ trước, không liên quan.
+- Còn hạn chế: nhà Roblox ít cửa sổ → phố đêm ít ô sáng; mái xanh lơ nhà nền 4 hơi sáng về đêm; chữ trên tường nhà máy bị ngược ngay trong GLB (việc của phiên công cụ Roblox);
+  tiệm gấu: ô kính là tấm ảnh phẳng; nhà nền 6 (kiểu lego 13 stud phóng to) thô khi đứng gần — đã tránh đặt sau lưng gấu ở s047/s048.

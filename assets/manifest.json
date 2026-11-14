@@ -13518,5 +13518,332 @@
   "loai": "phu-kien",
   "tris": 1036,
   "tris_goc": 1036
+ },
+ {
+  "id": "nhap/pho-nha-ga",
+  "src": "assets/nhap/pho-nha-ga.glb",
+  "source": "create.roblox.com/store/asset/88741601",
+  "license": "Roblox Creator Store",
+  "credit": "“Two Story House” by luckystarboy (https://create.roblox.com/store/asset/88741601), Roblox Creator Store",
+  "title": "Two Story House",
+  "author": "luckystarboy",
+  "scale": 1,
+  "bbox": [
+   86,
+   62.4,
+   70
+  ],
+  "nodes": [
+   "pho-nha-ga"
+  ],
+  "loai": "chu-dao",
+  "tris": 13798,
+  "tris_goc": 13798,
+  "duyetNang": "người dùng chốt đợt nhà 14/11"
+ },
+ {
+  "id": "nhap/pho-tiem-gau",
+  "src": "assets/nhap/pho-tiem-gau.glb",
+  "source": "create.roblox.com/store/asset/9518202244",
+  "license": "Roblox Creator Store",
+  "credit": "“Bricks” by Execoz (https://create.roblox.com/store/asset/9518202244), Roblox Creator Store",
+  "title": "Bricks",
+  "author": "Execoz",
+  "scale": 1,
+  "bbox": [
+   15.782,
+   15.848,
+   14.505
+  ],
+  "nodes": [
+   "pho-tiem-gau"
+  ],
+  "loai": "lon",
+  "tris": 1548,
+  "tris_goc": 1548
+ },
+ {
+  "id": "nhap/pho-tiem-banh",
+  "src": "assets/nhap/pho-tiem-banh.glb",
+  "source": "create.roblox.com/store/asset/4824351218",
+  "license": "Roblox Creator Store",
+  "credit": "“Blakes Store” by therealprincess_kurt (https://create.roblox.com/store/asset/4824351218), Roblox Creator Store",
+  "title": "Blakes Store",
+  "author": "therealprincess_kurt",
+  "scale": 1,
+  "bbox": [
+   28.2,
+   13.213,
+   16.612
+  ],
+  "nodes": [
+   "pho-tiem-banh"
+  ],
+  "loai": "lon",
+  "tris": 1268,
+  "tris_goc": 1268
+ },
+ {
+  "id": "nhap/pho-tiem-may",
+  "src": "assets/nhap/pho-tiem-may.glb",
+  "source": "create.roblox.com/store/asset/8372522289",
+  "license": "Roblox Creator Store",
+  "credit": "“c u” by Koreann_Banana (https://create.roblox.com/store/asset/8372522289), Roblox Creator Store",
+  "title": "c u",
+  "author": "Koreann_Banana",
+  "scale": 1,
+  "bbox": [
+   28.718,
+   21.602,
+   27.067
+  ],
+  "nodes": [
+   "pho-tiem-may"
+  ],
+  "loai": "lon",
+  "tris": 3032,
+  "tris_goc": 3032,
+  "xapXi": [
+   "ThreeDTextHandle: trong suốt (transparency 1.00)",
+   "ThreeDTextBoundingBox: trong suốt (transparency 1.00)",
+   "ThreeDTextHandle: trong suốt (transparency 1.00)",
+   "ThreeDTextBoundingBox: trong suốt (transparency 1.00)"
+  ]
+ },
+ {
+  "id": "nhap/pho-nha-thi-truong",
+  "src": "assets/nhap/pho-nha-thi-truong.glb",
+  "source": "create.roblox.com/store/asset/90047900",
+  "license": "Roblox Creator Store",
+  "credit": "“Version of My actual house *Gungle*” by Gungle (https://create.roblox.com/store/asset/90047900), Roblox Creator Store",
+  "title": "Version of My actual house *Gungle*",
+  "author": "Gungle",
+  "scale": 1,
+  "bbox": [
+   97.8,
+   78.8,
+   83.274
+  ],
+  "nodes": [
+   "pho-nha-thi-truong"
+  ],
+  "loai": "chu-dao",
+  "tris": 20956,
+  "tris_goc": 20956,
+  "duyetNang": "người dùng chốt đợt nhà 14/11"
+ },
+ {
+  "id": "nhap/pho-nha-nga-ba",
+  "src": "assets/nhap/pho-nha-nga-ba.glb",
+  "source": "create.roblox.com/store/asset/9987536247",
+  "license": "Roblox Creator Store",
+  "credit": "“Chicago Corner Building ” by theroosmaryn (https://create.roblox.com/store/asset/9987536247), Roblox Creator Store",
+  "title": "Chicago Corner Building ",
+  "author": "theroosmaryn",
+  "scale": 1,
+  "bbox": [
+   34.37,
+   33.3,
+   24.55
+  ],
+  "nodes": [
+   "pho-nha-nga-ba"
+  ],
+  "loai": "lon",
+  "tris": 3294,
+  "tris_goc": 3294
+ },
+ {
+  "id": "nhap/pho-nha-may",
+  "src": "assets/nhap/pho-nha-may.glb",
+  "source": "create.roblox.com/store/asset/9660733854",
+  "license": "Roblox Creator Store",
+  "credit": "“Завод для Хомска” by Jon1ssPL (https://create.roblox.com/store/asset/9660733854), Roblox Creator Store",
+  "title": "Завод для Хомска",
+  "author": "Jon1ssPL",
+  "scale": 1,
+  "bbox": [
+   138.294,
+   86.656,
+   44.594
+  ],
+  "nodes": [
+   "pho-nha-may"
+  ],
+  "loai": "lon",
+  "tris": 7840,
+  "tris_goc": 7840,
+  "duyetNang": "người dùng chốt đợt nhà 14/11"
+ },
+ {
+  "id": "nhap/pho-thap-chuong",
+  "src": "assets/nhap/pho-thap-chuong.glb",
+  "source": "create.roblox.com/store/asset/2533711892",
+  "license": "Roblox Creator Store",
+  "credit": "“Bell Tower” by logoffkid (https://create.roblox.com/store/asset/2533711892), Roblox Creator Store",
+  "title": "Bell Tower",
+  "author": "logoffkid",
+  "scale": 1,
+  "bbox": [
+   22,
+   74.8,
+   22
+  ],
+  "nodes": [
+   "pho-thap-chuong"
+  ],
+  "loai": "lon",
+  "tris": 1384,
+  "tris_goc": 1384
+ },
+ {
+  "id": "nhap/pho-nha-nen-1",
+  "src": "assets/nhap/pho-nha-nen-1.glb",
+  "source": "create.roblox.com/store/asset/117565094258249",
+  "license": "Roblox Creator Store",
+  "credit": "“Small cartoon house” by DragonLordAaron (https://create.roblox.com/store/asset/117565094258249), Roblox Creator Store",
+  "title": "Small cartoon house",
+  "author": "DragonLordAaron",
+  "scale": 1,
+  "bbox": [
+   45.352,
+   29.018,
+   40.177
+  ],
+  "nodes": [
+   "pho-nha-nen-1"
+  ],
+  "loai": "lon",
+  "tris": 1736,
+  "tris_goc": 1736
+ },
+ {
+  "id": "nhap/pho-nha-nen-2",
+  "src": "assets/nhap/pho-nha-nen-2.glb",
+  "source": "create.roblox.com/store/asset/4981038665",
+  "license": "Roblox Creator Store",
+  "credit": "“Low Poly House 1” by Hey_ItsJohn (https://create.roblox.com/store/asset/4981038665), Roblox Creator Store",
+  "title": "Low Poly House 1",
+  "author": "Hey_ItsJohn",
+  "scale": 1,
+  "bbox": [
+   12.6,
+   14.212,
+   12.868
+  ],
+  "nodes": [
+   "pho-nha-nen-2"
+  ],
+  "loai": "lon",
+  "tris": 3416,
+  "tris_goc": 3416
+ },
+ {
+  "id": "nhap/pho-nha-nen-3",
+  "src": "assets/nhap/pho-nha-nen-3.glb",
+  "source": "create.roblox.com/store/asset/17330839611",
+  "license": "Roblox Creator Store",
+  "credit": "“Starter house” by LennuBoo (https://create.roblox.com/store/asset/17330839611), Roblox Creator Store",
+  "title": "Starter house",
+  "author": "LennuBoo",
+  "scale": 1,
+  "bbox": [
+   26,
+   24,
+   31
+  ],
+  "nodes": [
+   "pho-nha-nen-3"
+  ],
+  "loai": "lon",
+  "tris": 1418,
+  "tris_goc": 1418,
+  "xapXi": [
+   "Yellow Shondi: trong suốt (transparency 1.00)"
+  ]
+ },
+ {
+  "id": "nhap/pho-nha-nen-4",
+  "src": "assets/nhap/pho-nha-nen-4.glb",
+  "source": "create.roblox.com/store/asset/12468173054",
+  "license": "Roblox Creator Store",
+  "credit": "“Cartoon House” by Terolax (https://create.roblox.com/store/asset/12468173054), Roblox Creator Store",
+  "title": "Cartoon House",
+  "author": "Terolax",
+  "scale": 1,
+  "bbox": [
+   35.899,
+   20,
+   32.161
+  ],
+  "nodes": [
+   "pho-nha-nen-4"
+  ],
+  "loai": "lon",
+  "tris": 2584,
+  "tris_goc": 2584
+ },
+ {
+  "id": "nhap/pho-nha-nen-5",
+  "src": "assets/nhap/pho-nha-nen-5.glb",
+  "source": "create.roblox.com/store/asset/6284593498",
+  "license": "Roblox Creator Store",
+  "credit": "“Cartoon House” by FreedomSlows (https://create.roblox.com/store/asset/6284593498), Roblox Creator Store",
+  "title": "Cartoon House",
+  "author": "FreedomSlows",
+  "scale": 1,
+  "bbox": [
+   47.2,
+   29,
+   51
+  ],
+  "nodes": [
+   "pho-nha-nen-5"
+  ],
+  "loai": "lon",
+  "tris": 3948,
+  "tris_goc": 3948
+ },
+ {
+  "id": "nhap/pho-nha-nen-6",
+  "src": "assets/nhap/pho-nha-nen-6.glb",
+  "source": "create.roblox.com/store/asset/14503068704",
+  "license": "Roblox Creator Store",
+  "credit": "“Mini Classic Starter House” by Jackarar0 (https://create.roblox.com/store/asset/14503068704), Roblox Creator Store",
+  "title": "Mini Classic Starter House",
+  "author": "Jackarar0",
+  "scale": 1,
+  "bbox": [
+   13.2,
+   10.2,
+   13.8
+  ],
+  "nodes": [
+   "pho-nha-nen-6"
+  ],
+  "loai": "lon",
+  "tris": 1616,
+  "tris_goc": 1616
+ },
+ {
+  "id": "nhap/pho-nha-nen-7",
+  "src": "assets/nhap/pho-nha-nen-7.glb",
+  "source": "create.roblox.com/store/asset/9964630082",
+  "license": "Roblox Creator Store",
+  "credit": "“Low-Poly House” by Dreni_2 (https://create.roblox.com/store/asset/9964630082), Roblox Creator Store",
+  "title": "Low-Poly House",
+  "author": "Dreni_2",
+  "scale": 1,
+  "bbox": [
+   33.5,
+   27.08,
+   45.5
+  ],
+  "nodes": [
+   "pho-nha-nen-7"
+  ],
+  "loai": "lon",
+  "tris": 786,
+  "tris_goc": 786
  }
 ]

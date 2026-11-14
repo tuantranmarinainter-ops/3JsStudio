@@ -29,7 +29,7 @@
 //   hien_doi_dien = mặt trên mái hiên xanh lam [11.8,9.9,34,−π/2]. Đạo cụ nhỏ (gấu, giấy, đồng hồ, nhẫn, ví) do hệ đạo cụ đặt — env không dựng.
 // ĐÊM / NGÀY: env tự đọc ctx.light (shot time:'dem' → 'night'; còn lại → 'day'); shot cũng có thể gọi e.setNight(0..1). Cửa thị trưởng: ctx.cuaThiTruong 0..1 (mặc định 0 = đóng) hoặc e.setDoor(k).
 export const LIGHT = 'day';
-export const ASSETS = [];
+export const ASSETS = ['pho-nha-ga', 'pho-tiem-gau', 'pho-tiem-banh', 'pho-tiem-may', 'pho-nha-thi-truong', 'pho-nha-nga-ba', 'pho-nha-may', 'pho-thap-chuong', 'pho-nha-nen-1', 'pho-nha-nen-2', 'pho-nha-nen-3', 'pho-nha-nen-4', 'pho-nha-nen-5', 'pho-nha-nen-6', 'pho-nha-nen-7'].map((n) => 'nhap/' + n);   // nhà Roblox Creator Store (đợt nhà 14/11); thiếu model hoặc ?rb=0 → bản khối
 export const DIEM = {
   pho_nam: [0, 0.4, 50], pho_giua: [0, 0.4, -8], pho_bac: [0, 0.4, -62],
   truoc_nha_ga: [-11.2, 0.4, 27], truoc_tiem_gau: [-14.4, 0.4, 1.4], khach_tiem_gau: [-10, 0.4, 1.4],
@@ -43,7 +43,7 @@ export const PROP_SLOTS = {
 };
 
 export default function build(g, e, H) {
-  const { ganTang, THREE, hash, LIGHTS } = H;
+  const { ganTang, THREE, hash, LIGHTS, fit } = H;
   e.diem = DIEM;
   const SW = 0.4;   // mặt vỉa hè
   const tBack = new THREE.Group(), tMid = new THREE.Group(), tFront = new THREE.Group();
@@ -239,10 +239,66 @@ export default function build(g, e, H) {
     for (const dz of [-len / 2 + 0.5, len / 2 - 0.5]) { mid.box(x, SW + 0.85, z + dz, 1.5, 1.7, 0.4, '#1E2024'); mid.box(x - dir * 0.8, SW + 2.2, z + dz, 0.4, 3.6, 0.4, '#1E2024'); }
   };
 
+  // ============ NHÀ GLB ROBLOX (đợt nhà 14/11) — ?rb=0 trên URL hoặc thiếu model → mọi nhà về bản dựng bằng khối bên dưới ============
+  // NHA = số đo từng model (bản vẽ output/ep003/roblox/do-nha, phần 0..1 của hộp bao): truoc = mặt tiền của MODEL; n = phạm vi mặt tiền theo trục ngang;
+  // s = [mặt tường trước, mặt sau] theo trục sâu; y = [đáy dùng (mặt trên tấm nền kèm theo), đỉnh]; xoay = độ quanh Y để nắn model nằm chéo trong hộp bao.
+  const RB = !/[?&]rb=0(&|$)/.test(globalThis.location?.search || '');
+  // màu ô cửa sổ ĐỤC của từng model (đã dò bằng tia trên mặt tiền; kính trong suốt thì tự nhận). KHÔNG gộp chung: #04afec là MÁI của nhà nền 4, #1b2a35 là chân tường nhà nền 4
+  const RB_KINH = { 'pho-tiem-may': ['80bbdb'], 'pho-nha-nga-ba': ['1b2a35'], 'pho-nha-nen-1': ['ffff00'], 'pho-nha-nen-4': ['ffff00', 'ffb000'] };
+  const rbMats = new Set();   // vật liệu của nhà GLB: đêm nâng sáng như litMats, kính/ô cửa phát sáng ấm (setNight)
+  const gomRb = (o, id) => o.traverse((q) => { if (q.isMesh) { q.castShadow = true; q.receiveShadow = true; for (const mt of [].concat(q.material)) { if (!rbMats.has(mt)) { const u = mt.userData; u.rb0 = u.rb0 && u.rb0.isColor ? u.rb0 : mt.color.clone(); u.rbE = u.rbE && u.rbE.isColor ? u.rbE : mt.emissive.clone(); u.rbK = mt.transparent || mt.opacity < 1 || (RB_KINH[id] || []).includes(u.rb0.getHexString()); } rbMats.add(mt); } } });
+  const NHA = {
+    'pho-nha-ga': { truoc: '-Z', n: [0.27, 0.95], s: [0.14, 0.94], y: [0.02, 1] },          // nhà chữ L: cánh fx < 0,27 lùi sau; ban công mặt −Z, sàn fy 0,33
+    'pho-tiem-gau': { truoc: '+X', n: [0.01, 0.99], s: [0.8, 0], y: [0, 1] },               // mái hiên nhô fx 0,8..1; tường chắn mái fy 0,73..1
+    'pho-tiem-banh': { truoc: '-Z', n: [0, 1], s: [0.12, 1], y: [0, 1] },
+    'pho-tiem-may': { truoc: '+Z', n: [0.01, 0.99], s: [0.86, 0], y: [0.03, 1] },           // biển đứng trên mái fy 0,77..1
+    'pho-nha-thi-truong': { truoc: '-Z', n: [0.02, 0.98], s: [0.19, 0.99], y: [0, 1] },     // hiên cột + dốc nhô tới fz 0,03
+    'pho-nha-nga-ba': { truoc: '+Z', n: [0.01, 0.99], s: [0.99, 0.01], y: [0.03, 1] },      // góc vát (+X,+Z)
+    'pho-nha-may': { truoc: '+Z', n: [0, 1], s: [1, 0], y: [0, 1] },                        // hai ống khói ở fx 0,79; thân cao fy 0,6
+    'pho-nha-nen-1': { truoc: '-Z', n: [0.03, 0.97], s: [0.1, 0.97], y: [0, 1], xoay: -12.5 },
+    'pho-nha-nen-2': { truoc: '+X', n: [0.13, 0.87], s: [0.95, 0.05], y: [0, 1] },
+    'pho-nha-nen-3': { truoc: '-X', n: [0.07, 0.93], s: [0.15, 0.93], y: [0.05, 1] },
+    'pho-nha-nen-4': { truoc: '-Z', n: [0.04, 0.95], s: [0.04, 0.96], y: [0, 1] },
+    'pho-nha-nen-5': { truoc: '+Z', n: [0.02, 0.98], s: [0.94, 0.06], y: [0.02, 1] },
+    'pho-nha-nen-6': { truoc: '+Z', n: [0.04, 0.96], s: [0.92, 0.02], y: [0, 1] },
+    'pho-nha-nen-7': { truoc: '-Z', n: [0.04, 0.96], s: [0.26, 0.95], y: [0.15, 1] },       // bệ gỗ fy 0..0,15 chìm xuống đất
+  };
+  const RY0 = { '+Z': 0, '-Z': Math.PI, '+X': -Math.PI / 2, '-X': Math.PI / 2 }, _bx = new THREE.Box3(), _sz = new THREE.Vector3();
+  // Đặt model vào lô của khung mặt tiền f (face(...) hoặc { W, ry }): du = tâm mặt tiền; w = bề ngang mặt tiền (stud);
+  // H = cao từ đáy dùng tới đỉnh | cao = [fy, y] (điểm fy của model nằm ở cao độ y); D = sâu (mặc định co theo bề ngang); kep = [min, max] tỉ lệ ngang/dọc cho phép;
+  // lui = lùi mặt tường trước vào trong; y0 = cao độ đáy; lat = lật gương trái–phải. Trả { g, du(f), y(f) } (đổi phần 0..1 của model → du / cao độ) hoặc null.
+  const nhaGlb = (f, id, name, { du = 0, w, H: cao0, cao, D, kep, lui = 0, y0 = 0, lat = false, tang = tMid }) => {
+    const m = NHA[id]; if (!RB || !fit || !m) return null; const o = fit('nhap/' + id, 1); if (!o) return null;
+    const pre = new THREE.Group(); pre.add(o); pre.rotation.y = (m.xoay || 0) * Math.PI / 180; pre.updateMatrixWorld(true);
+    _bx.setFromObject(pre, true); _bx.getSize(_sz);
+    const N = m.truoc[1] === 'Z' ? 'x' : 'z', S = N === 'x' ? 'z' : 'x', tai = (ax, fr) => _bx.min[ax] + _sz[ax] * fr;
+    pre.position[N] -= tai(N, (m.n[0] + m.n[1]) / 2); pre.position[S] -= tai(S, m.s[0]); pre.position.y -= tai('y', m.y[0]);
+    const quay = new THREE.Group(); quay.add(pre); quay.rotation.y = RY0[m.truoc];   // mặt tiền của model → +Z cục bộ
+    const ky = cao ? (cao[1] - y0) / ((cao[0] - m.y[0]) * _sz.y) : cao0 / ((m.y[1] - m.y[0]) * _sz.y);
+    let kw = w / ((m.n[1] - m.n[0]) * _sz[N]); if (kep) kw = Math.min(Math.max(kw, ky * kep[0]), ky * kep[1]);
+    const kd = D ? D / (Math.abs(m.s[1] - m.s[0]) * _sz[S]) : kw;
+    const co = new THREE.Group(); co.add(quay); co.scale.set(lat ? -kw : kw, ky, kd);
+    const g0 = new THREE.Group(); g0.name = name; g0.add(co); const [x, z] = f.W(du, -lui); g0.position.set(x, y0, z); g0.rotation.y = f.ry;
+    gomRb(o, id); tang.add(g0);
+    const sm = (m.truoc === '+Z' || m.truoc === '-X' ? 1 : -1) * (lat ? -1 : 1) * (f.side === -1 ? -1 : 1), wN = _sz[N] * kw, hY = _sz.y * ky, fc = (m.n[0] + m.n[1]) / 2;
+    return { g: g0, kw, ky, kd, du: (fr) => du + sm * (fr - fc) * wN, y: (fr) => y0 + (fr - m.y[0]) * hY };
+  };
+  // nhà nền hai dãy + ngã ba: 7 mẫu người dùng chọn, xoay vòng theo seed (o.glb = ép một mẫu); cao theo số tầng của mẫu
+  const NEN = [1, 2, 3, 4, 5, 6, 7].map((k) => 'pho-nha-nen-' + k);
+  const NEN_CAO = { 'pho-nha-nen-1': 21, 'pho-nha-nen-2': 21, 'pho-nha-nen-3': 22, 'pho-nha-nen-4': 20, 'pho-nha-nen-5': 22, 'pho-nha-nen-6': 19, 'pho-nha-nen-7': 19, 'pho-nha-nga-ba': 24 };
+  const nhaNen = (f, w, seed, o = {}) => { const id = o.glb || NEN[seed % NEN.length]; return nhaGlb(f, id, 'pho_nha_nen_' + seed, { w: w - 2, H: NEN_CAO[id], kep: [0.7, 1.35], lui: 0.4 }); };
   // ============ NHÀ TÂY ============
   const WEST = { ga: 30, gau: 5, banh: -20, may: -43, tt: -68 };
   // ---------- NHÀ GÀ ----------
   { const f = face(-1, WEST.ga), w = 24, D = 20, H = 17, wall = '#8FA67A', teal = '#1F4A4A', cream = '#EAD9B5';
+    // GLB Roblox: sàn ban công của model (mặt sàn đo bằng tia = fy 0,346) đặt đúng y 9,5 = điểm ban_cong; mặt tiền (phần fx 0,27..0,95) phủ lô z 18..42, cánh sau thò về phía tiệm gấu
+    if (nhaGlb(f, 'pho-nha-ga', 'pho_nha_ga', { w: 24, cao: [0.346, 9.5], D: 24.5, y0: 0.3 })) {
+      // lan can gỗ cao ngang ngực (lan can của model chỉ cao 1,6 ở tỉ lệ này → không đọc ra ban công): mép trước x −9,95, hai đầu z 19,25 / 41,9 (đo bằng tia)
+      const go = '#a05f35', rv = 4.05, a = -10.75, b = 11.9, n = 10;
+      for (let k = 0; k <= n; k++) { const du = a + (b - a) * k / n; f.b(du, rv, 9.5, 0.5, 0.5, 3.1, go); if (k < n) for (let j = 1; j <= 2; j++) f.b(du + (b - a) / n * j / 3, rv, 11.1, 0.2, 0.2, 1.3, go); }
+      f.b((a + b) / 2, rv, 12.4, b - a + 0.6, 0.6, 0.35, go);
+      for (const du of [a, b]) { f.b(du, rv / 2 + 0.1, 12.4, 0.6, rv - 0.2, 0.35, go); f.b(du, 2.0, 9.5, 0.5, 0.5, 3.1, go); for (const v of [1.0, 3.0]) f.b(du, v, 11.1, 0.2, 0.2, 1.3, go); }
+    } else {
     shellOf(f, w, D, H, wall, cream, { boards: '#7B8F68' });
     const [x0, x1, z0, z1] = ext(f, w, D); roof(x0, x1, z0, z1, H, 6.2, 'x', '#7A3A2A', wall, { lineCol: '#66301f', cap: '#5e2a1d' });
     win(f, 0, 19.2, 2.8, 2.6, teal, 'lit', { cols: 2, rows: 2 });   // cửa sổ đầu hồi
@@ -262,9 +318,18 @@ export default function build(g, e, H) {
     for (let i = 0; i < 12; i++) { const hh = 4.0 + hash(i, 61) * 5.4, su = bd + bw / 2 - 0.4 + (hash(i, 62) - 0.5) * 1.6; f.b(su, bdp - 0.4 + (hash(i, 63) - 0.5) * 1.6, 9.5 + i * 0.6, 1.2 + hash(i, 64) * 0.8, 1.2, 1.1 + hash(i, 65) * 0.8, ['#7FA037', '#6a9030', '#8fb040'][i % 3]); void hh; }
     pot(f, -7, 3.2, SW, '#4E7A32'); pot(f, 1.6, 3.2, SW, '#4E7A32');
     lantern(f, 0.2, 6.2);
+    }
   }
   // ---------- TIỆM GẤU (thụt vào 1,6 → hiên rộng) ----------
   { const f = face(-1, WEST.gau, 1.6), w = 26, D = 20, H = 17, wall = '#C46A44', cream = '#EAD9B5', teal = '#2B7E80';
+    const G = nhaGlb(f, 'pho-tiem-gau', 'pho_tiem_gau', { w: 26, H: 18, D: 20, lat: true });
+    if (G) {   // GLB Roblox (lật gương để ô kính lớn nằm sau bàn trưng): kệ kính gấu đặt vào ô kính của model, biển đầu gấu trên tường chắn mái, biển treo hạ xuống dưới mái hiên
+      f.plane(G.du(0.69), 0.14, G.y(0.38), 10.2, 4.6, dispMat(dispTex('gau', 512, 256)), 'pho_ke_kinh_tiem_gau');
+      f.plane(0, 0.3, G.y(1) + 2.9, 5.6, 5.6, signMat(texPlaque), 'pho_bien_dau_gau'); for (const s of [-1, 1]) f.b(s * 1.5, 0.1, G.y(1) - 0.3, 0.3, 0.3, 1.0, '#1E2024');
+      f.plane(G.du(0.275), -2.6, (G.y(0.085) + G.y(0.585)) / 2, 13, 10.4, dispMat(dispTex('gau', 640, 512)), 'pho_gian_trong_tiem_gau');   // mặt tiền model để hở (fz 0,10..0,45): nhìn vào thấy kệ gấu thay vì hộp trắng rỗng
+      { const du = 11.6, dy = -4.4; f.b(du, 1.8, 14.5 + dy, 0.35, 3.6, 0.35, '#1E2024'); f.b(du, 3.0, 11.3 + dy, 0.25, 0.25, 3.3, '#1E2024'); const [x, z] = f.W(du, 3.0); const m = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 3.0), signMat(texHang)); m.position.set(x, 11.8 + dy, z); m.rotation.y = 0; m.name = 'pho_bien_treo_gau'; tMid.add(m); }
+      lantern(f, -11.6, 6.8);
+    } else {
     shellOf(f, w, D, H, wall, cream);
     const [x0, x1, z0, z1] = ext(f, w, D); roof(x0, x1, z0, z1, H, 6.4, 'z', '#8C3A2A', wall, { lineCol: '#762f22', cap: '#6e2a1e' });
     door(f, 7.2, 4.2, 7.6, SW, '#1F5560', cream);
@@ -275,14 +340,22 @@ export default function build(g, e, H) {
     f.plane(0, 0.16, 13.4, 7, 7, signMat(texPlaque), 'pho_bien_dau_gau');
     // biển treo vuông góc với tường trên tay sắt (S003)
     { const du = 11.6; f.b(du, 1.8, 14.5, 0.35, 3.6, 0.35, '#1E2024'); f.b(du, 3.0, 11.3, 0.25, 0.25, 3.3, '#1E2024'); const [x, z] = f.W(du, 3.0); const m = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 3.0), signMat(texHang)); m.position.set(x, 11.8, z); m.rotation.y = 0; m.name = 'pho_bien_treo_gau'; tMid.add(m); }
+    planterBox(f, 3.4, 1.4, 3.0);
+    lantern(f, 2.4, 6.8); lantern(f, -11.6, 6.8);
+    }
     // bàn trưng ngoài hiên (mặt bàn y 3,15; dài 11 từ du −9.5..1.5)
     { const du = -4, dv = 3.7; f.b(du, dv, SW + 2.4, 11, 2.2, 0.35, '#8A5A33'); for (const [a, bb] of [[-5.1, 2.8], [5.1, 2.8], [-5.1, 4.6], [5.1, 4.6]]) f.b(du + a, bb, SW, 0.5, 0.5, 2.4, '#6A4325'); f.b(du, 4.7, SW + 0.9, 10.6, 0.2, 1.4, '#7a4f2c'); f.b(du, 2.7, SW + 0.9, 10.6, 0.2, 1.4, '#7a4f2c'); }
-    planterBox(f, 3.4, 1.4, 3.0);
     pot(f, -11.6, 2.2, SW, '#4E7A32', '#F5F0E0', 0.9);
-    lantern(f, 2.4, 6.8); lantern(f, -11.6, 6.8);
   }
   // ---------- TIỆM BÁNH ----------
   { const f = face(-1, WEST.banh), w = 24, D = 20, H = 14, wall = '#E3C9A0', cream = '#F0E4CF', wood = '#8A5A33';
+    const G = nhaGlb(f, 'pho-tiem-banh', 'pho_tiem_banh', { w: 24, H: 16, D: 20 });
+    if (G) {   // GLB Roblox: ô kính trưng bánh lớn bên trái cửa (che 2 cửa sổ nhỏ của model), biển ổ bánh dựng trên tường chắn mái
+      win(f, -6.9, 2.8, 10, 4.8, wood, 'none', { cols: 4, rows: 1 });
+      f.plane(-6.9, 0.08, 5.2, 10, 4.8, dispMat(dispTex('banh', 768, 256)), 'pho_ke_kinh_tiem_banh');
+      f.plane(0, -0.3, G.y(1) + 2.6, 8.4, 4.6, signMat(texBread), 'pho_bien_o_banh');
+      for (const s of [-1, 1]) f.b(s * 3.4, -0.5, G.y(1) - 0.4, 0.3, 0.3, 1.2, '#1E2024');
+    } else {
     shellOf(f, w, D, H, wall, cream, { band: false });
     const [x0, x1, z0, z1] = ext(f, w, D); roof(x0, x1, z0, z1, H, 8.4, 'x', '#8C3A2A', wall, { lineCol: '#762f22', cap: '#6e2a1e' });
     f.plane(0, 0.22, 17.2, 8.4, 4.6, signMat(texBread), 'pho_bien_o_banh');
@@ -292,13 +365,21 @@ export default function build(g, e, H) {
     door(f, 8.8, 4.0, 7.4, SW, wood, wood);
     win(f, -7.5, 10.6, 3.6, 3.2, '#6e4423', 'lit'); win(f, 7.5, 10.6, 3.6, 3.2, '#6e4423', 'lit');
     awning(f, { du0: -11, du1: 11, y: 8.8, proj: 4.6, drop: 1.9, cols: ['#B03A2A', '#F0E4CF'], stripe: 1.6, valance: 1.2, scallop: true });
+    lantern(f, -11.4, 7.2); lantern(f, 5.2, 7.2);
+    }
     planterBox(f, 4.4, 2.8, 2.6);
     pot(f, 11.5, 2.2, SW, '#4E7A32');
-    lantern(f, -11.4, 7.2); lantern(f, 5.2, 7.2);
     bench(-11.4, WEST.banh - 13.0, 7);   // tại ranh tiệm bánh / tiệm may, quay ra phố
   }
   // ---------- TIỆM MAY ----------
   { const f = face(-1, WEST.may), w = 22, D = 20, H = 16, wall = '#8C70A8', cream = '#E8D8C0', dark = '#4a2f60';
+    const G = nhaGlb(f, 'pho-tiem-may', 'pho_tiem_may', { w: 22, H: 20, D: 20 });
+    if (G) {   // GLB Roblox: hai kệ kính (ma-nơ-canh, vải) đặt trong ô kính lớn của model; biển cuộn chỉ che biển chữ trên mái
+      f.plane(G.du(0.2), 0.14, G.y(0.31), 5.2, 4.8, dispMat(dispTex('may', 384, 288)), 'pho_ke_kinh_tiem_may');
+      f.plane(G.du(0.45), 0.14, G.y(0.31), 4.4, 4.8, dispMat(dispTex('vai', 256, 256)), 'pho_ke_kinh_vai');
+      f.plane(G.du(0.5), 0.3, G.y(0.885), 4.6, 4.6, signMat(texSpool), 'pho_bien_cuon_chi');
+      lantern(f, G.du(0.6), 7.0);
+    } else {
     shellOf(f, w, D, H, wall, cream, { band: false });
     const [x0, x1, z0, z1] = ext(f, w, D); roof(x0, x1, z0, z1, H, 5.6, 'z', '#6E3A36', wall, { lineCol: '#5a2e2b', cap: '#4e2825' });
     f.plane(0.4, 0.2, 13.1, 4.4, 5.4, signMat(texSpool), 'pho_bien_cuon_chi');
@@ -310,26 +391,59 @@ export default function build(g, e, H) {
     win(f, -7, 10.6, 3.4, 4.0, cream, 'lit'); win(f, 7.5, 10.6, 3.4, 4.0, cream, 'lit');
     awning(f, { du0: -9.6, du1: 9.6, y: 8.6, proj: 4.2, drop: 1.8, cols: ['#6A4A82', '#5f4376'], stripe: 1.6, valance: 1.1 });
     lantern(f, -1.6, 7.0); lantern(f, 5.6, 7.0);
+    }
     pot(f, 10.2, 2.2, SW, '#4E7A32', '#8B6FC0', 0.9); pot(f, -10.4, 2.2, SW, '#4E7A32', '#8B6FC0', 0.9);
   }
   // ---------- NHÀ THỊ TRƯỞNG (hiên 3 bậc đá, cửa mở được) ----------
-  let doorPivot = null;
+  let doorPivot = null, sanThiTruong = false;
   { const f = face(-1, WEST.tt), w = 26, D = 22, H = 17, wall = '#4A5A66', cream = '#E3D3B0', FL = 2.8, DW = 5.2, DH = 8.0;
+    // GLB Roblox = THÂN biệt thự lùi sau 9,8 (hiên cột của model nằm khuất sau sảnh); phần chức năng giữ bằng khối: SẢNH CỬA nhô ra (hốc đại sảnh, cửa mở được, 3 bậc đá, hiên 2 cột) đúng vị trí cũ
+    const TT = nhaGlb(f, 'pho-nha-thi-truong', 'pho_nha_thi_truong', { w: 26, H: 28, D: 18, lui: 9.8 });
+    if (TT) { const br = '#7c5c46', sat = '#1E2024'; sanThiTruong = true;
+      for (const s of [-1, 1]) f.b(s * 3.9, -5, 0, 2.6, 10, FL + DH + 2.6, br);   // hai má sảnh (du 2,6..5,2), sâu tới tường biệt thự
+      f.b(0, -5, FL + DH, DW, 10, 2.6, br); f.b(0, -3, 0, DW, 6, FL, '#8A857F'); f.b(0, -8, 0, DW, 4, FL + DH, br);   // trán sảnh + nền + khối đặc sau hốc
+      f.b(0, -5, FL + DH + 2.6, 11.2, 10.8, 0.7, cream); f.b(0, -5, FL + DH + 3.3, 9.8, 9.6, 0.6, '#635f62');   // gờ + mái sảnh
+      for (const s of [-1, 1]) {   // sân trước hai bên sảnh: tường gạch thấp + hàng rào sắt + giậu xanh trên đường mặt tiền
+        f.b(s * 9.1, -0.4, 0, 7.8, 0.8, 2.4, br); f.b(s * 9.1, -0.4, 2.4, 8.0, 1.0, 0.3, cream);
+        for (let k = 0; k < 6; k++) f.b(s * (5.9 + k * 1.2), -0.4, 2.7, 0.22, 0.22, 2.3, sat); f.b(s * 9.1, -0.4, 4.7, 7.6, 0.2, 0.2, sat);
+        f.b(s * 12.9, -0.4, 0, 0.9, 1.0, 5.6, br); f.b(s * 12.9, -0.4, 5.6, 1.2, 1.3, 0.35, cream);
+        f.b(s * 9.0, -1.9, 0, 7.2, 1.6, 4.3, '#4E7A32'); f.b(s * 9.0, -1.9, 4.3, 6.6, 1.2, 0.5, '#5c8a3a');
+      }
+      f.b(-13.2, -4.9, 0, 0.8, 9.8, 5.6, br); f.b(-13.2, -4.9, 5.6, 1.1, 10.0, 0.35, cream);   // bịt đầu bắc sân (nhìn từ ngã ba không xuyên qua sân)
+    }
     const hole = (y0, y1) => y0 < FL + DH && y1 > FL;
     // thân chia mảnh quanh khung cửa: tường ngoài dày 1 + hốc đại sảnh sâu 5 (hộp sơn kem) + thân đặc phía sau
+    if (!TT) {
     f.b(0, -(D + 6) / 2 - 0.0, 0, w, D - 6, H, wall);   // phía sau hốc (dv −6 … −D)
+    }
+    if (!TT) {
     for (const s of [-1, 1]) f.b(s * ((w + DW) / 4), -3, 0, (w - DW) / 2, 6, H, wall);
+    }
+    if (!TT) {
     f.b(0, -3, FL + DH, DW, 6, H - FL - DH, wall); f.b(0, -3, 0, DW, 6, FL, '#8A857F');
+    }
     // hốc: tường trong sơn kem + sàn gỗ
     f.b(0, -3, FL, DW, 6, 0.3, '#7a5636'); for (const s of [-1, 1]) f.b(s * (DW / 2 - 0.1), -3, FL + 0.3, 0.2, 5.9, DH - 0.3, '#cdbb98'); f.b(0, -3, FL + DH - 0.2, DW, 5.9, 0.2, '#cdbb98');
     f.b(0, -5.95, FL, DW, 0.1, DH, '#ffffff', inner);
+    if (!TT) {
     f.b(0, 0.3, 0, w, 0.6, 1.5 + SW, '#8A857F');
+    }
+    if (!TT) {
     for (const s of [-1, 1]) f.b(s * (w / 2 - 0.4), 0.2, 0, 0.8, 0.4, H, cream);
+    }
+    if (!TT) {
     f.b(0, 0.15, H - 0.5, w + 0.6, 0.9, 0.7, cream);
+    }
+    if (!TT) {
     for (let y = 2.2; y < H - 0.5; y += 1.3) { for (const [a, b2] of [[-w / 2 + 0.8, -DW / 2 - 0.5], [DW / 2 + 0.5, w / 2 - 0.8]]) f.b((a + b2) / 2, 0.04, y, b2 - a, 0.1, 0.1, '#3d4b56', mid, true); if (!hole(y, y + 0.1)) f.b(0, 0.04, y, DW + 1, 0.1, 0.1, '#3d4b56', mid, true); }
+    }
     f.b(0, 0.25, FL + DH + 0.9, DW + 1.4, 0.8, 0.9, cream); for (const s of [-1, 1]) f.b(s * (DW / 2 + 0.45), 0.4, FL, 0.8, 0.8, DH + 0.9, cream);
+    if (!TT) {
     const [x0, x1, z0, z1] = ext(f, w, D); roof(x0, x1, z0, z1, H, 6.2, 'z', '#3A3A44', wall, { lineCol: '#2e2e36', cap: '#26262d' });
+    }
+    if (!TT) {
     win(f, -8, 5.4, 3.8, 4.4, cream, 'lit', { rows: 3 }); win(f, 8, 5.4, 3.8, 4.4, cream, 'lit', { rows: 3 }); win(f, -8, 11.8, 3.8, 4.4, cream, 'lit', { rows: 3 }); win(f, 8, 11.8, 3.8, 4.4, cream, 'dark', { rows: 3 });
+    }
     // 3 bậc đá #8A857F (mặt bậc y 2,8 / 2,07 / 1,33) + sàn hiên
     f.b(0, 0.65, 0, 9.6, 1.3, FL - 0.03, '#8A857F'); f.b(0, 1.75, 0, 9.0, 1.1, FL - 0.76, '#9a958e'); f.b(0, 2.85, 0, 9.6, 1.1, FL - 1.5, '#8f8a84');
     for (const s of [-1, 1]) { f.b(s * 4.1, 1.7, 0, 0.7, 3.4, 3.4, '#8A857F'); }
@@ -351,6 +465,7 @@ export default function build(g, e, H) {
   const palettes = [['#D9B896', '#7A3A2A'], ['#A9C0A0', '#6a3a30'], ['#C7B2D6', '#4a3a50'], ['#E3C9A0', '#8C3A2A'], ['#9FB8C9', '#5a4a4a'], ['#E8DCC0', '#6E3A36'], ['#d9a98a', '#4e3a3a']];
   const plain = (side, c, w, wall, roofC, seed, o = {}) => {
     const f = face(side, c, o.set || 0), D = o.D || 20, H = o.H || 16, trim = o.trim || '#E8D8C0';
+    if (nhaNen(f, w, seed, o)) return f;   // GLB Roblox; null → bản khối bên dưới
     shellOf(f, w, D, H, wall, trim, { band: o.band !== false });
     const [x0, x1, z0, z1] = ext(f, w, D); roof(x0, x1, z0, z1, H, o.rise || 5.8, worldRidge(f, o.ridge || (hash(seed, 3) < 0.4 ? 'perp' : 'par')), roofC, wall, {});
     const dd = (hash(seed, 4) - 0.5) * (w - 10);
@@ -375,24 +490,27 @@ export default function build(g, e, H) {
   // nam của phố: hai dãy kéo dài tới z=+110 (nhà nền ít chi tiết hơn)
   for (let k = 0; k < 3; k++) { const [wc, rc] = palettes[(k + 1) % 7], [wc2, rc2] = palettes[(k + 4) % 7]; plain(-1, 54 + 24 * k, 24, wc, rc, 30 + k, { D: 18 }); plain(1, 58 + 24 * k, 22, wc2, rc2, 40 + k, { D: 18 }); }
   // ============ NGÃ BA: dãy bắc (mặt quay nam) + đường ngang ============
-  { const xs = [-4, 20, 44, 68, 92]; xs.forEach((x, i) => { const [wc, rc] = palettes[(i + 2) % 7]; plain('B', x, 22, wc, rc, 60 + i, { D: 20, H: 16 + (i % 2) * 2 }); });
+  { const xs = [-4, 20, 44, 68, 92]; xs.forEach((x, i) => { const [wc, rc] = palettes[(i + 2) % 7]; plain('B', x, 22, wc, rc, 60 + i, { D: 20, H: 16 + (i % 2) * 2, glb: i === 0 || i === 3 ? 'pho-nha-nga-ba' : i === 1 ? 'pho-nha-nen-4' : null }); });
     // nhà đông nam đường ngang (mặt quay bắc, z=−77): dựng bằng khối xoay — dùng face 'B' lật: tạo thủ công
-    const south = (x, w, wall, roofC, seed) => { const D = 20, H = 16, z1 = -77, z0 = z1 + D; mid.box(x, H / 2, (z0 + z1) / 2, w, H, D, wall); roof(x - w / 2, x + w / 2, z1, z0, H, 5.6, hash(seed, 3) < 0.5 ? 'x' : 'z', roofC, wall, {});
+    const south = (x, w, wall, roofC, seed) => { if (nhaNen({ W: (du, dv) => [x + du, -77 - dv], ry: Math.PI }, w, seed, { glb: seed === 71 ? 'pho-nha-nga-ba' : null })) return; const D = 20, H = 16, z1 = -77, z0 = z1 + D; mid.box(x, H / 2, (z0 + z1) / 2, w, H, D, wall); roof(x - w / 2, x + w / 2, z1, z0, H, 5.6, hash(seed, 3) < 0.5 ? 'x' : 'z', roofC, wall, {});
       for (const dx of [-w / 2 + 4, 0, w / 2 - 4]) { glassL.box(x + dx, 5.4, z1 - 0.1, 3.4, 4.2, 0.2, '#ffffff'); mid.box(x + dx, 5.4, z1 - 0.3, 4.4, 0.5, 0.6, '#E8D8C0'); mid.box(x + dx, 3.0, z1 - 0.3, 4.6, 0.5, 0.8, '#E8D8C0'); glassD.box(x + dx, 12.2, z1 - 0.1, 3.4, 4.0, 0.2, '#ffffff'); mid.box(x + dx, 14.4, z1 - 0.3, 4.4, 0.5, 0.6, '#E8D8C0'); }
       mid.box(x + w / 2 - 6, 3.8, z1 - 0.3, 4.4, 7.4, 0.6, '#E8D8C0'); mid.box(x + w / 2 - 6, 3.8, z1 - 0.15, 4, 7.4, 0.4, ['#6a4325', '#2a4a50'][seed % 2]); };
     south(50, 24, '#D9B896', '#7A3A2A', 71); south(75, 24, '#A9C0A0', '#6a3a30', 72);
     // nhánh tây ngắn: nhà chặn đầu (mặt quay +X, x=−35) + nhà góc tây
-    plain(-1, -91, 22, '#9FB8C9', '#5a4a4a', 80, { set: 21, D: 18 });
+    plain(-1, -91, 22, '#9FB8C9', '#5a4a4a', 80, { set: 21, D: 18, glb: 'pho-nha-nga-ba' });
   }
 
   // ============ NHÀ MÁY (xa) ============
   { const x0 = 112, x1 = 152, z0 = -112, z1 = -72, H = 22, br = '#8A3A2C';
+    // GLB Roblox (lật gương: hai ống khói về phía bắc như bản khối; mặt dài quay −X ra cổng). Thân cao 27, ống khói ~45
+    if (!nhaGlb({ W: (du, dv) => [x0 - dv, -92 + du], ry: -Math.PI / 2 }, 'pho-nha-may', 'pho_nha_may', { w: 64, cao: [0.6, 27], D: 22, lat: true, tang: tBack })) {
     back.box((x0 + x1) / 2, H / 2, (z0 + z1) / 2, x1 - x0, H, z1 - z0, br);
     for (let z = z0 + 3; z < z1; z += 6) back.box(x0 - 0.3, H / 2, z, 0.8, H, 1.2, '#7a3226');
     for (let z = z0 + 6; z < z1 - 3; z += 7) for (let y = 6; y < H - 3; y += 6) { glassL.box(x0 - 0.15, y + 1.6, z, 0.3, 3.2, 2.8, '#ffffff'); back.box(x0 - 0.4, y + 1.6, z, 0.3, 3.8, 3.4, '#1F4A4A'); }
     back.box(x0 - 0.2, 2.2, -92, 0.6, 4.4, 8, '#1F4A4A');
     for (let i = 0; i < 4; i++) back.box(x0 + 10 + i * 9, H + 2.4, (z0 + z1) / 2 + 6, 8, 4.8, 36, '#4a4a52', 0, 0, 0.0);
     back.box(146, 34, -104, 5, 68, 5, '#7a3226'); back.box(146, 68.8, -104, 6.4, 1.6, 6.4, '#2a2a30'); back.box(146, 3, -104, 7, 6, 7, '#6a2c20');
+    }
     // hàng rào sắt + cổng 2 cánh tại x=106
     const fenceC = '#1A3C3C';
     for (let z = -110; z <= -72; z += 2.4) { if (Math.abs(z + 91) < 4.6) continue; back.box(106, 4.5, z, 0.45, 9, 0.45, fenceC); back.box(106, 9.2, z, 0.8, 0.8, 0.8, fenceC); }
@@ -401,8 +519,11 @@ export default function build(g, e, H) {
     flat('pho_san_nha_may', null, 106, 156, -114, -70, 0.06, 1, tBack, { mat: new THREE.MeshStandardMaterial({ color: '#7C7A80', roughness: 0.95 }) });
   }
   // tháp chuông xa
+  { const th = RB && fit ? fit('nhap/pho-thap-chuong', 58) : null;   // GLB Roblox, cao 58
+    if (th) { gomRb(th, 'pho-thap-chuong'); th.name = 'pho_thap_chuong'; th.position.set(-70, 0, -190); tBack.add(th); } else {
   back.box(-70, 20, -190, 10, 40, 10, '#d9c9a8'); back.box(-70, 44, -190, 7, 8, 7, '#cdbb98'); back.box(-70, 50, -190, 8, 1, 8, '#3A3A44'); for (const [ax, az, bx, bz] of [[-74.5, -194.5, -65.5, -194.5], [-65.5, -194.5, -65.5, -185.5], [-65.5, -185.5, -74.5, -185.5], [-74.5, -185.5, -74.5, -194.5]]) back.tri([ax, 50.5, az], [bx, 50.5, bz], [-70, 58, -190], '#3A3A44');
   glassL.box(-70, 44, -185.4, 3, 4, 0.3, '#ffffff');
+    } }
 
   // ============ ĐƯỜNG + VỈA HÈ + MẶT ĐẤT ============
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.MeshStandardMaterial({ color: '#7f8f5d', roughness: 1 })); ground.rotation.x = -Math.PI / 2; ground.position.y = -0.12; ground.name = 'pho_dat'; litMats.push(ground.material); ground.receiveShadow = true; ground.userData.matKind = 'none'; tMid.add(ground);
@@ -436,6 +557,7 @@ export default function build(g, e, H) {
   tree(11.8, 118, 26, 1); tree(-11.8, 122, 24, 2); tree(11.8, 78, 15, 3); tree(-11.8, 70, 14, 4);
   tree(-40, 30, 22, 6); tree(42, 60, 22, 7); tree(75, 10, 24, 8); tree(-70, -30, 20, 9); tree(-48, -75, 22, 10); tree(40, -30, 20, 11); tree(-26, -112, 22, 12);
   tree(12.4, -78.8, 12, 13); tree(-12.5, -80.5, 11, 14); tree(30, -100.8 + 3, 10, 15);
+  if (sanThiTruong) { tree(-19, -58.8, 13, 16); tree(-19.3, -77.0, 12, 17); }   // cây trong sân trước biệt thự (che hông tiệm may khi máy nhìn dọc mặt tiền — s092)
   // nhà nền hàng 2 (xa phố): khối thấp có mái, rải theo seed
   for (let k = 0; k < 6; k++) { const [wc, rc] = palettes[k % 7]; const z = 100 - k * 26; for (const [x, s] of [[-52, -1], [58, 1]]) { const w = 18 + hash(k + s, 31) * 8, H = 12 + hash(k, 32 + s) * 6, D = 16; const cz = z + (hash(k, 33 + s) - 0.5) * 6; back.box(x, H / 2, cz, D, H, w, wc); const sd = k * 2 + (s > 0 ? 1 : 0); const rr0 = roofBack(x, cz, D, w, H, rc, sd); void rr0; for (const dz of [-w / 4, w / 4]) { (hash(k + dz, 8 + s) < 0.5 ? glassL : glassD).box(x - s * (D / 2 + 0.1), 6, cz + dz, 0.2, 3.4, 3.2, '#ffffff'); } } }
   function roofBack(x, cz, D, w, H, rc, sd) { const ri = 5; if (hash(sd, 9) < 0.5) { for (const sg of [-1, 1]) back.box(x, H + ri / 2, cz + sg * w / 4, D + 1.6, 0.8, w / 2 / Math.cos(Math.atan2(ri, w / 2)), rc, sg * Math.atan2(ri, w / 2) * 1, 0, 0); back.tri([x - D / 2, H, cz - w / 2], [x - D / 2, H, cz + w / 2], [x - D / 2, H + ri, cz], rc); back.tri([x + D / 2, H, cz - w / 2], [x + D / 2, H, cz + w / 2], [x + D / 2, H + ri, cz], rc); } else back.box(x, H + 0.6, cz, D + 1.4, 1.2, w + 1.4, rc); }
@@ -456,6 +578,8 @@ export default function build(g, e, H) {
     const night = n > 0.5; if (nightNow === night) return; nightNow = night;
     matLit.color.set(night ? '#ffb347' : '#b5d6ea'); matDark.color.set(night ? '#1b2a4a' : '#7fa3bf'); matBulb.color.set(night ? '#ffc060' : '#ffe9b8'); matInner.color.set(night ? '#e8aa5a' : '#6b5640');
     for (const m of litMats) { m.color.setScalar(night ? 4.2 : 1); m.emissive.set(night ? '#24325c' : '#1e160e'); m.emissiveIntensity = 1; }
+    for (const m of rbMats) { const u = m.userData;
+      m.color.copy(u.rb0).multiplyScalar(night && !u.rbK ? Math.min(4.2, 3.2 / Math.max(u.rb0.r, u.rb0.g, u.rb0.b, 0.01)) : 1);   /* màu sáng/rực (trắng, mái xanh lơ) nâng ít hơn để không loá */ if (night) m.emissive.set(u.rbK ? '#ffb347' : '#24325c'); else m.emissive.copy(u.rbE); m.emissiveIntensity = night && u.rbK ? 0.9 / Math.max(0.3, m.opacity) : 1; }
     poolMesh.visible = night; for (const m of signMats) m.emissiveIntensity = night ? 0.42 : 0.05; for (const m of dispMats) m.color.set(night ? '#ffffff' : '#c9c2b4');
   };
   setNight(0);
