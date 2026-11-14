@@ -1,0 +1,26 @@
+{
+ "tap": "ep003-npc",
+ "dot": 2,
+ "luc": "2026-11-14T04:23:52.555Z",
+ "gau": null,
+ "duyet": [],
+ "sua": [],
+ "chuaChon": [],
+ "chon": {
+  "npc_xacnhan": "npc_xacnhan__1",
+  "npc_dan2": [
+   "npc_dan2__4",
+   "npc_dan2__3",
+   "npc_dan2__1",
+   "npc_dan2__6"
+  ],
+  "npc_bach2": "npc_bach2__1",
+  "npc_may2": "npc_may2__4",
+  "npc_gau2": "npc_gau2__5"
+ },
+ "ghiChu": {
+  "npc_bach2": "(Claude ghi) ảnh cắt ở đợt này bị LỆCH/ĐEN do lỗi công cụ — lựa chọn bach2, dan2 không tin được, hỏi lại ở đợt 3. Người dùng nói: ảnh ông Bách đã chọn nhưng lấy nhân vật thứ 2."
+ },
+ "doiTuDot": {},
+ "giuTuDot": {}
+}

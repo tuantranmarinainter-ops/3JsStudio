@@ -17,8 +17,12 @@ Thay mọi nhân vật ep003 (trừ Gà) bằng NPC Roblox Creator Store, có c�
   Chưa chọn: thợ may ("tìm thêm model người lớn R6 khối vuông"), gấu ("duyệt lại tìm từ khoá teddy bear").
 - Agent soi ảnh bản dựng: mayor, mayor_ngu, linh, be_vang, be_ngoc, dan_13 ĐẠT; banh lỗi nhẹ (râu thưa, lệch); bach LỖI (áo quần của mẫu là Decal rời, 2 ảnh bị 403 "archived", tóc là hình vẽ).
 
-## ĐANG CHỜ NGƯỜI DÙNG — đợt 2: `dist/ep003-npc_duyet.html` (`node tools/duyet.mjs ep003-npc dung`)
-Khe: `npc_xacnhan` (6 vai đã chốt), `npc_dan2` (chọn trong 16 dân làng), `npc_bach2` (uv_bach_1 khuyên dùng), `npc_may2` (uv_may_2 khuyên dùng), `npc_gau2` (12 gấu; "Không cái nào" = giữ GLB gấu).
+## ĐANG CHỜ NGƯỜI DÙNG — đợt 3: `dist/ep003-npc_duyet.html` (`node tools/duyet.mjs ep003-npc dung`)
+- Đợt 2 (`dot-02.ketqua.json`): ảnh từng nhân vật bị CẮT SAI (look.mjs chụp nửa cỡ canvas, tôi cắt theo cỡ canvas) → đen / lẫn người. Chỉ TIN: `npc_xacnhan` = đạt (6 vai),
+  `npc_gau2__5` = gấu 8648724784 (nâu nhạt nơ vàng, NGỒI, khối liền ~20 nghìn tam giác, không xương — chưa rõ dùng cho Bắp hay gấu trưng bày, phải hỏi), `npc_may2__4` = uv_may_3 (112507919413426, chọn theo ảnh gốc).
+  KHÔNG tin: `npc_bach2`, `npc_dan2`. Người dùng nói "ảnh ông Bách đã chọn nhưng lấy nhân vật thứ 2" (ảnh lệch chứa uv_bach_1 + uv_bach_2 → có thể ý là uv_bach_2).
+- Đợt 3 (`dot-03.json`) hỏi lại với ảnh đúng: `npc_bach3` (thứ tự: uv_bach_1, 4, 2, 3, 6, bach), `npc_may3` (uv_may_2, 5, 8, 3, 4, 1), `npc_dan3` (dan_01…16, chọn nhiều).
+- Cắt ảnh từ ảnh look.mjs: LUÔN chia theo kích thước ảnh thật (ảnh = nửa cỡ canvas), chụp với `&cell=520` để mỗi ô 260 px.
 
 ## Việc còn lại (theo thứ tự)
 1. Nhận kết quả đợt 2 (`duyet.mjs ep003-npc nhan <file>`). Trong `nguon.json`: đổi `bach`, thêm `may` theo lựa chọn; xoá các `uv_*` không dùng + thư mục của chúng; bỏ dân làng không chọn. `node tools/npc-roblox.mjs dung`.
