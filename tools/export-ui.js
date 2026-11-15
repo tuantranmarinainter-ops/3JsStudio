@@ -216,6 +216,7 @@ async function init() {
       </div>
       <div class="transport">
         <div class="grp"><button id="xplay">▶ Xem</button></div>
+        <div class="grp" id="x3drow" style="display:none" title="Phim = khung hình xuất ra · 3D = camera tự do xem cả cảnh (chỉ xem, không sửa)"><button id="xmphim" class="on">🎬 Phim</button><button id="xm3d">🧊 3D</button></div>
         <div class="grp" id="xshotrow" style="display:none"><span class="lb">Shot</span><button class="xsh" data-d="-1" title="Shot trước (phím [)">◀</button><select id="xshsel" title="Nhảy tới shot"></select><button class="xsh" data-d="1" title="Shot sau (phím ])">▶</button><button class="xsh" data-d="0" title="Về đầu shot này">↺</button><span id="xshinfo" class="muted"></span></div>
         <div class="grp"><span class="lb">Frame</span>${stepBtn(-10)}${stepBtn(-1)}<input id="xframe" type="number" min="0" step="1" value="0">${stepBtn(1)}${stepBtn(10)}<span id="xftot" class="muted"></span><span id="xshot" class="muted"></span></div>
         <div class="grp"><button id="xannbtn" title="Đánh dấu lỗi tại đây (phím M)">⚑ Marker <kbd>M</kbd></button></div>
@@ -446,6 +447,15 @@ async function init() {
   $('xduck').onchange = () => { if (playing) applyMusicVolume(nowT()); };
   $('xseek').oninput = () => { if (playing) pause(); show(+$('xseek').value); };
   try { initShots(); show(+$('xseek').value); } catch (e) { console.warn('shot ui', e); }
+  // ---- CHẾ ĐỘ 3D (engine/che-do-3d.js): Phim | 3D. Chỉ xem; tự về Phim trước khi Xuất MP4 / vẽ marker ----
+  const c3d = window.__che3d;
+  if (c3d) {
+    $('x3drow').style.display = 'flex';
+    const mode = (on3) => { $('xmphim').classList.toggle('on', !on3); $('xm3d').classList.toggle('on', on3); $('xbadge').style.zIndex = on3 ? '5' : ''; };
+    c3d.onChange(mode);
+    $('xmphim').onclick = () => { c3d.tat(); $('xmphim').blur(); };
+    $('xm3d').onclick = () => { if (busy) return; if (annotating) setAnnotate(false); c3d.bat($('xview')); $('xm3d').blur(); };
+  }
   addEventListener('keydown', (e) => { if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !annotating) { e.preventDefault(); playing ? pause() : play(); } });
   // phím M = Marker (ghi chú nhanh tại frame đang xem); Esc = huỷ bảng ghi chú
   addEventListener('keydown', (e) => {
@@ -555,6 +565,7 @@ async function init() {
   }
   function setAnnotate(on) {
     if (on && busy) return;
+    if (on && window.__che3d?.on) window.__che3d.tat();   // marker vẽ lên khung Phim
     annotating = on; if (on && playing) pause();
     wrap.classList.toggle('annot', on); $('xannbox').classList.toggle('on', on);
     $('xannbtn').classList.toggle('act', on);
@@ -846,6 +857,7 @@ async function init() {
   $('xgo').onclick = async () => {
     if (busy) return;
     pause(); setAnnotate(false);
+    if (window.__che3d?.on) { const p = window.__che3d.tat(); if (p && p.then) await p; }   // xuất luôn từ khung Phim
     const P = PRESETS[$('xres').value];
     const ts = Math.max(0, +$('xs').value || 0), te = Math.min(DUR, +$('xe').value || DUR);
     const f0 = Math.round(ts * FPS), f1 = Math.round(te * FPS), N = f1 - f0;

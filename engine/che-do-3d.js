@@ -1,0 +1,352 @@
+// che-do-3d.js — CHẾ ĐỘ 3D của trình phát (giai đoạn 1: XEM). Kế hoạch: docs/handoff/studio-che-do-3d.md
+// Cùng scene tại cùng t, nhìn qua CAMERA TỰ DO trong khung rộng; vẽ chóp + đường đi camera của shot, nhãn nhân vật/đạo cụ/địa điểm.
+// Chỉ xem: không sửa cảnh, không ghi file. Khi CHƯA bật thì module không tạo gì (0 object, 0 shader) → chế độ Phim y nguyên.
+//
+//   installChe3D({ THREE, stage, tl, actors, props, places, q })  → window.__che3d = { bat(container?), tat(), on, goc(ten), … }
+//   Trang dev: ?che3d=1 hiện nút "3D" nổi. Trình phát (tools/export-ui.js) tự gắn nút Phim | 3D vào khung hình.
+//
+// Điều khiển (giống Unreal, chế độ bay): GIỮ CHUỘT PHẢI = nhìn quanh; W A S D = tới/trái/lùi/phải, Q xuống, E lên,
+//   Shift = nhanh ×3, lăn chuột khi giữ chuột phải = đổi tốc độ. Chuột trái kéo = xoay quanh điểm nhìn, chuột giữa = kéo ngang,
+//   lăn = zoom theo con trỏ (OrbitControls của three.js). Điện thoại: 1 ngón xoay, 2 ngón chụm/kéo.
+// Vòng rAF CHỈ chạy khi đang giữ phím di chuyển — chỉ vẽ lại camera tự do, không chạy lại onFrame, không đụng thời gian phim.
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const CSS = `
+.c3d-wrap { position: absolute; inset: 0; z-index: 3; background: #0b0d12; overflow: hidden; touch-action: none; }
+.c3d-wrap.c3d-fixed { position: fixed; z-index: 2147483000; }
+.c3d-wrap canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block; outline: none; }
+.c3d-lab { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.c3d-lab div { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; font: 600 12px/1.2 "Be Vietnam Pro", system-ui, sans-serif;
+  padding: 2px 6px; border-radius: 9px; color: #fff; background: rgba(20,24,32,.78); border: 1px solid var(--c, #888); }
+.c3d-lab div.nv { --c: #4da3ff; } .c3d-lab div.dc { --c: #f2a154; } .c3d-lab div.dd { --c: #b98cff; color: #e6dbff; }
+.c3d-bar { position: absolute; left: 8px; top: 46px; right: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; z-index: 2;
+  font: 600 12px/1.3 "Be Vietnam Pro", system-ui, sans-serif; color: #e8ecf2; pointer-events: none; }
+.c3d-bar > * { pointer-events: auto; }
+.c3d-bar button { background: rgba(29,36,48,.92); color: #e8ecf2; border: 1px solid #2a3342; border-radius: 6px; padding: 5px 9px; cursor: pointer; font: inherit; }
+.c3d-bar button:hover { border-color: #4da3ff; } .c3d-bar button.on { border-color: #4da3ff; color: #4da3ff; }
+.c3d-bar label { background: rgba(29,36,48,.92); border: 1px solid #2a3342; border-radius: 6px; padding: 4px 8px; display: inline-flex; gap: 4px; align-items: center; cursor: pointer; }
+.c3d-help { position: absolute; left: 8px; bottom: 8px; right: 8px; font: 13px/1.45 system-ui, sans-serif; color: #8b96a8; background: rgba(14,17,22,.7); padding: 4px 8px; border-radius: 6px; pointer-events: none; }
+.c3d-help b { color: #f5d76e; }
+.c3d-btn { position: fixed; right: 16px; top: 16px; z-index: 2147483001; font: 700 28px system-ui, sans-serif; padding: 10px 22px; border-radius: 10px;
+  background: #1f6fd1; color: #fff; border: 2px solid #4da3ff; cursor: pointer; }
+`;
+
+export function installChe3D({ THREE, stage, tl, actors = {}, props = {}, places = {}, q } = {}) {
+  const { renderer, scene } = stage;
+  const canvas = renderer.domElement;
+  const W0 = stage.options.width, H0 = stage.options.height, ASPECT = W0 / H0;
+  let on = false, built = null, origDraw = null, curT = 0, wrap = null, home = null, canvasStyle = '', sizeObs = null;
+  let shotCam = { pos: new THREE.Vector3(), quat: new THREE.Quaternion(), fov: 50, target: new THREE.Vector3(), id: null };
+  const paths = new Map();   // id shot → mảng Vector3 vị trí camera (lấy mẫu)
+  let sampling = false, follow = true, show = { nv: true, dc: true, dd: true, cam: true };
+  const listeners = new Set();
+
+  // ---------- dựng lười: chỉ khi bật 3D lần đầu ----------
+  function build() {
+    const free = new THREE.PerspectiveCamera(55, 16 / 9, 0.1, 6000);
+    free.name = 'che3d_camera';
+    const helpers = new THREE.Scene(); helpers.name = 'che3d_phu';
+    const grid = new THREE.GridHelper(400, 100, 0x55606f, 0x2a313b); grid.name = 'che3d_luoi'; grid.position.y = 0.02;
+    grid.material.transparent = true; grid.material.opacity = 0.55; helpers.add(grid);
+    // chóp camera shot: khung dây trong hệ toạ độ camera (nhìn -Z), dựng lại khi fov/khoảng cách đổi
+    const frus = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0xffd23f, depthTest: false, transparent: true }));
+    frus.name = 'che3d_chop'; frus.renderOrder = 10; helpers.add(frus);
+    const path = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0xff7a3d, depthTest: false, transparent: true }));
+    path.name = 'che3d_duong'; path.renderOrder = 9; helpers.add(path);
+    const dots = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: 0xff7a3d, size: 11, sizeAttenuation: false, depthTest: false, transparent: true }));
+    dots.name = 'che3d_diem'; dots.renderOrder = 9; helpers.add(dots);
+    const look = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineDashedMaterial({ color: 0xffd23f, dashSize: 0.6, gapSize: 0.4, depthTest: false, transparent: true }));
+    look.name = 'che3d_huong'; look.renderOrder = 10; helpers.add(look);
+
+    const style = document.createElement('style'); style.textContent = CSS; document.head.appendChild(style);
+    const el = document.createElement('div'); el.className = 'c3d-wrap';
+    const lab = document.createElement('div'); lab.className = 'c3d-lab';
+    const bar = document.createElement('div'); bar.className = 'c3d-bar';
+    bar.innerHTML = `<button data-g="tren" title="Nhìn từ trên xuống (bản đồ)">⬇ Trên xuống</button><button data-g="truoc" title="Nhìn từ phía trước chỗ shot diễn">◉ Trước</button>`
+      + `<button data-g="shot" title="Đứng đúng chỗ camera của shot">🎥 Theo camera shot</button>`
+      + `<label title="Đổi shot thì camera tự do bay tới chỗ shot diễn"><input type="checkbox" data-o="follow" checked> Bám shot</label>`
+      + `<label><input type="checkbox" data-o="cam" checked> Camera</label><label><input type="checkbox" data-o="nv" checked> Nhân vật</label>`
+      + `<label><input type="checkbox" data-o="dc" checked> Đạo cụ</label><label><input type="checkbox" data-o="dd" checked> Địa điểm</label>`;
+    const help = document.createElement('div'); help.className = 'c3d-help';
+    help.innerHTML = '<b>Giữ chuột phải</b> nhìn · <b>W A S D</b> đi · <b>Q/E</b> xuống/lên · <b>Shift</b> nhanh · lăn khi giữ chuột phải = tốc độ · chuột trái xoay · chuột giữa kéo';
+    el.append(lab, bar, help);
+    bar.addEventListener('pointerdown', (e) => e.stopPropagation());   // nút/ô tích không bị OrbitControls hay chế độ bay bắt chuột
+    bar.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b?.dataset.g) { goc(b.dataset.g); b.blur(); } });
+    bar.addEventListener('change', (e) => {
+      const k = e.target.dataset.o; if (!k) return;
+      if (k === 'follow') follow = e.target.checked; else show[k] = e.target.checked;
+      e.target.blur();   // trả phím Space / ← → / [ ] cho trình phát
+      redraw();
+    });
+
+    const controls = new OrbitControls(free, el);
+    controls.zoomToCursor = true; controls.screenSpacePanning = true; controls.enableDamping = false;
+    controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.PAN, RIGHT: null };   // chuột phải = chế độ bay (bên dưới)
+    controls.maxDistance = 3000;
+    controls.addEventListener('change', () => redraw());
+
+    // ---- chế độ bay kiểu Unreal ----
+    const keys = new Set(); let rmb = false, speed = 20, raf = 0, last = 0, lookDist = 15;
+    const eul = new THREE.Euler(0, 0, 0, 'YXZ'), fwd = new THREE.Vector3(), right = new THREE.Vector3(), mv = new THREE.Vector3();
+    const syncTarget = () => { free.getWorldDirection(fwd); controls.target.copy(free.position).addScaledVector(fwd, lookDist); };
+    el.addEventListener('contextmenu', (e) => e.preventDefault());
+    el.addEventListener('pointerdown', (e) => {
+      if (e.button !== 2) return;
+      rmb = true; lookDist = Math.max(2, free.position.distanceTo(controls.target)); controls.enabled = false;
+      eul.setFromQuaternion(free.quaternion, 'YXZ'); el.setPointerCapture(e.pointerId); el.focus?.();
+    });
+    el.addEventListener('pointermove', (e) => {
+      if (!rmb) return;
+      eul.y -= e.movementX * 0.0032; eul.x = Math.max(-1.55, Math.min(1.55, eul.x - e.movementY * 0.0032)); eul.z = 0;
+      free.quaternion.setFromEuler(eul); syncTarget(); redraw();
+    });
+    const rmbUp = (e) => { if (!rmb || (e.type === 'pointerup' && e.button !== 2)) return; rmb = false; syncTarget(); controls.enabled = true; controls.update(); };
+    el.addEventListener('pointerup', rmbUp); el.addEventListener('pointercancel', rmbUp); el.addEventListener('lostpointercapture', rmbUp);
+    el.addEventListener('wheel', (e) => { if (!rmb) return; e.preventDefault(); e.stopImmediatePropagation(); speed = Math.max(1, Math.min(400, speed * (e.deltaY < 0 ? 1.2 : 1 / 1.2))); help.dataset.v = speed; }, { capture: true, passive: false });
+    const MOVE = { KeyW: 1, KeyA: 1, KeyS: 1, KeyD: 1, KeyQ: 1, KeyE: 1 };
+    const typing = (e) => /INPUT|TEXTAREA|SELECT/.test((e.target || {}).tagName || '') && e.target.type !== 'checkbox' && e.target.type !== 'range';
+    const kd = (e) => {
+      if (!on || typing(e) || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key === 'Shift') { keys.add('Shift'); return; }
+      if (!MOVE[e.code]) return;
+      e.preventDefault(); e.stopPropagation(); keys.add(e.code);
+      if (!raf) { last = performance.now(); raf = requestAnimationFrame(step); }
+    };
+    const ku = (e) => { keys.delete(e.code); if (e.key === 'Shift') keys.delete('Shift'); };
+    function step(now) {
+      const dt = Math.min(0.1, (now - last) / 1000); last = now;
+      let moving = false;
+      for (const k of keys) if (MOVE[k]) moving = true;
+      if (!moving || !on) { raf = 0; return; }
+      free.getWorldDirection(fwd); right.crossVectors(fwd, free.up).normalize();
+      mv.set(0, 0, 0);
+      if (keys.has('KeyW')) mv.add(fwd); if (keys.has('KeyS')) mv.sub(fwd);
+      if (keys.has('KeyD')) mv.add(right); if (keys.has('KeyA')) mv.sub(right);
+      if (keys.has('KeyE')) mv.y += 1; if (keys.has('KeyQ')) mv.y -= 1;
+      if (mv.lengthSq() > 0) {
+        mv.normalize().multiplyScalar(speed * (keys.has('Shift') ? 3 : 1) * dt);
+        free.position.add(mv); controls.target.add(mv); redraw();
+      }
+      raf = requestAnimationFrame(step);
+    }
+    addEventListener('keydown', kd, true); addEventListener('keyup', ku, true);
+    addEventListener('blur', () => keys.clear());
+
+    return { free, helpers, grid, frus, path, dots, look, el, lab, bar, controls, labels: new Map(), heights: new Map() };
+  }
+
+  // ---------- camera shot: đọc sau khi director đặt stage.camera ----------
+  function captureShot(t) {
+    const cam = stage.camera;
+    shotCam.pos.copy(cam.position); shotCam.quat.copy(cam.quaternion); shotCam.fov = cam.fov;
+    shotCam.target.copy(stage.target);
+    const id = tl?.at(Math.min(t, tl.total - 1e-4)).shot.id;
+    const changed = id !== shotCam.id; shotCam.id = id;
+    return changed;
+  }
+  function updateFrustum() {
+    const B = built, d = Math.max(2, Math.min(60, shotCam.pos.distanceTo(shotCam.target)));
+    const hh = d * Math.tan(THREE.MathUtils.degToRad(shotCam.fov) / 2), hw = hh * ASPECT;
+    const c = [[-hw, -hh], [hw, -hh], [hw, hh], [-hw, hh]].map(([x, y]) => [x, y, -d]);
+    const v = [];
+    for (const p of c) v.push(0, 0, 0, ...p);
+    for (let i = 0; i < 4; i++) v.push(...c[i], ...c[(i + 1) % 4]);
+    v.push(-hw * 0.4, hh * 1.08, -d, 0, hh * 1.4, -d, 0, hh * 1.4, -d, hw * 0.4, hh * 1.08, -d, hw * 0.4, hh * 1.08, -d, -hw * 0.4, hh * 1.08, -d);   // tam giác "phía trên"
+    B.frus.geometry.dispose(); B.frus.geometry = new THREE.BufferGeometry(); B.frus.geometry.setAttribute('position', new THREE.Float32BufferAttribute(v, 3));
+    B.frus.position.copy(shotCam.pos); B.frus.quaternion.copy(shotCam.quat);
+    B.look.geometry.dispose(); B.look.geometry = new THREE.BufferGeometry().setFromPoints([shotCam.pos, shotCam.target]); B.look.computeLineDistances();
+    const pts = paths.get(shotCam.id) || [];
+    B.path.geometry.dispose(); B.path.geometry = new THREE.BufferGeometry().setFromPoints(pts);
+    B.dots.geometry.dispose(); B.dots.geometry = new THREE.BufferGeometry().setFromPoints(pts.length ? [pts[0], pts[pts.length - 1]] : []);
+    for (const o of [B.frus, B.look, B.path, B.dots]) o.visible = show.cam;
+  }
+
+  // đường đi camera của shot: renderAt các mốc trong shot với draw TẮT (mọi thứ là hàm của t), rồi trả về t hiện tại
+  // Không tráo stage.draw (bật/tắt chen giữa sẽ khôi phục nhầm): draw3d tự bỏ qua khi đang lấy mẫu; t do người dùng rê tới
+  // trong lúc đó được ghi vào curT. Tắt 3D giữa chừng → dừng vòng, không lưu đường đi dở.
+  let sampleT = null;
+  async function samplePath(id) {
+    if (sampling || paths.has(id) || !tl || !on) return;
+    const sh = tl.list.find((s) => s.id === id); if (!sh) return;
+    sampling = true;
+    const pts = [];
+    try {
+      const N = 16;
+      for (let i = 0; i <= N && on; i++) {
+        const t = Math.min(tl.total - 1e-4, sh.t0 + (sh.dur - 1e-3) * (i / N));
+        sampleT = t;
+        const p = stage.renderAt(t); if (p && p.then) await p;
+        pts.push(stage.camera.position.clone());
+      }
+    } finally { sampling = false; sampleT = null; }
+    if (pts.length === 17) paths.set(id, pts);
+    const p = stage.renderAt(curT); if (p && p.then) await p;   // trả cảnh về đúng t (3D: vẽ lại kèm đường đi; đã tắt: khung Phim)
+    if (on && !paths.has(shotCam.id)) setTimeout(() => samplePath(shotCam.id), 0);   // shot đã đổi trong lúc lấy mẫu
+  }
+
+  // ---------- nhãn DOM chiếu lên khung ----------
+  const _v = new THREE.Vector3(), _box = new THREE.Box3();
+  const visibleDeep = (o) => { for (let x = o; x; x = x.parent) if (!x.visible) return false; return true; };
+  function labelItems() {
+    const out = [];
+    if (show.nv) for (const [n, a] of Object.entries(actors)) { if (a?.root) out.push(['nv:' + n, n, 'nv', a.root]); }
+    if (show.dc) for (const [n, p] of Object.entries(props)) out.push(['dc:' + n, n, 'dc', p]);
+    if (show.dd) for (const [n, p] of Object.entries(places)) if (p?.pos) out.push(['dd:' + n, '📍 ' + n, 'dd', p.pos]);
+    return out;
+  }
+  // nhãn chồng nhau thì bỏ bớt: ưu tiên nhân vật → đạo cụ → địa điểm, gần trước xa sau; ô chữ đè ô đã đặt thì ẩn
+  const PRI = { nv: 0, dc: 1, dd: 2 };
+  function updateLabels() {
+    const B = built, rect = B.el.getBoundingClientRect(), W = rect.width, H = rect.height;
+    const cand = [], camPos = B.free.position;
+    for (const [key, text, cls, obj] of labelItems()) {
+      if (Array.isArray(obj)) _v.set(obj[0], (obj[1] || 0) + 0.5, obj[2]);
+      else {
+        if (!visibleDeep(obj)) continue;
+        if (!B.heights.has(key)) { _box.setFromObject(obj); B.heights.set(key, _box.isEmpty() ? 2 : Math.max(0.5, _box.max.y - obj.getWorldPosition(_v).y)); }
+        obj.getWorldPosition(_v); _v.y += B.heights.get(key) + 0.4;
+      }
+      const dist = _v.distanceTo(camPos);
+      if (dist > 250) continue;
+      _v.project(B.free);
+      if (_v.z < -1 || _v.z > 1 || Math.abs(_v.x) > 1.05 || Math.abs(_v.y) > 1.05) continue;
+      cand.push({ key, text, cls, x: (_v.x + 1) / 2 * W, y: (1 - _v.y) / 2 * H, dist });
+    }
+    cand.sort((a, b) => PRI[a.cls] - PRI[b.cls] || a.dist - b.dist);
+    const placed = [], seen = new Set();
+    for (const c of cand) {
+      const w = c.text.length * 7 + 14, h = 19;
+      c.x = Math.max(w / 2 + 2, Math.min(W - w / 2 - 2, c.x)); c.y = Math.max(h + 2, Math.min(H - 2, c.y));   // không để chữ bị cắt ở mép
+      const r = [c.x - w / 2, c.y - h, c.x + w / 2, c.y];
+      if (placed.some((q) => r[0] < q[2] && r[2] > q[0] && r[1] < q[3] && r[3] > q[1])) continue;
+      placed.push(r);
+      let d = B.labels.get(c.key);
+      if (!d) { d = document.createElement('div'); d.className = c.cls; d.textContent = c.text; B.lab.appendChild(d); B.labels.set(c.key, d); }
+      d.style.left = c.x.toFixed(1) + 'px'; d.style.top = c.y.toFixed(1) + 'px'; d.style.display = '';
+      seen.add(c.key);
+    }
+    for (const [k, d] of B.labels) if (!seen.has(k)) d.style.display = 'none';
+  }
+
+  // ---------- vẽ ----------
+  function resize() {
+    if (!on) return;
+    const r = built.el.getBoundingClientRect(); if (r.width < 4 || r.height < 4) return;
+    const k = Math.min(window.devicePixelRatio || 1, 1.5);
+    renderer.setSize(Math.round(r.width * k), Math.round(r.height * k), false);
+    built.free.aspect = r.width / r.height; built.free.updateProjectionMatrix();
+    redraw();
+  }
+  function redraw() {
+    if (!on || sampling) return;
+    const B = built, fog = scene.fog, ac = renderer.autoClear;
+    scene.fog = null;   // sương của phim chỉnh theo khoảng cách camera shot → tắt TẠM khi nhìn xa (trả lại ngay sau khi vẽ)
+    try {
+      renderer.render(scene, B.free);
+      renderer.autoClear = false; renderer.clearDepth(); renderer.render(B.helpers, B.free);
+    } finally { renderer.autoClear = ac; scene.fog = fog; }
+    updateLabels();
+  }
+  function draw3d(t) {
+    if (sampling) { if (t !== sampleT) curT = t; return; }
+    curT = t;
+    const changed = captureShot(t);
+    if (changed && follow && built.ready) flyToShot();
+    built.ready = true;
+    updateFrustum(); redraw();
+    if (changed && !paths.has(shotCam.id)) setTimeout(() => samplePath(shotCam.id), 0);
+  }
+
+  // ---------- góc nhìn nhanh ----------
+  function flyToShot() {
+    const B = built, off = B.free.position.clone().sub(B.controls.target);
+    B.controls.target.copy(shotCam.target); B.free.position.copy(shotCam.target).add(off); B.controls.update();
+  }
+  function bounds() {
+    const box = new THREE.Box3();
+    for (const p of Object.values(places)) if (p?.pos) box.expandByPoint(_v.set(p.pos[0], p.pos[1] || 0, p.pos[2]));
+    for (const a of Object.values(actors)) if (a?.root && visibleDeep(a.root)) box.expandByPoint(a.root.getWorldPosition(_v));
+    box.expandByPoint(shotCam.target);
+    return box;
+  }
+  function goc(g) {
+    if (!on) return;
+    const B = built, c = B.controls;
+    if (g === 'tren') {
+      const box = bounds(), ctr = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3());
+      const ext = Math.max(30, size.x, size.z) * 0.75;
+      c.target.copy(ctr); B.free.position.set(ctr.x, ctr.y + ext / Math.tan(THREE.MathUtils.degToRad(B.free.fov / 2)), ctr.z + 0.01);
+    } else if (g === 'truoc') {
+      c.target.copy(shotCam.target); B.free.position.copy(shotCam.target).add(_v.set(0, 8, 28));
+    } else if (g === 'shot') {
+      c.target.copy(shotCam.target); B.free.position.copy(shotCam.pos);
+    }
+    c.update(); redraw();
+    for (const b of B.bar.querySelectorAll('button[data-g]')) b.classList.toggle('on', b.dataset.g === g);
+  }
+
+  // ---------- bật / tắt ----------
+  function bat(container) {
+    if (on) return api;
+    if (!built) built = build();
+    on = true;
+    const B = built;
+    home = { parent: canvas.parentNode, next: canvas.nextSibling };
+    canvasStyle = canvas.getAttribute('style');
+    const host = container || document.body;
+    B.el.classList.toggle('c3d-fixed', !container);
+    host.appendChild(B.el);
+    B.el.insertBefore(canvas, B.el.firstChild);   // khung rộng: cùng renderer (không dịch shader lại), chỉ đổi cỡ bộ đệm vẽ
+    B.el.tabIndex = -1;
+    origDraw = stage.draw;
+    stage.draw = (t) => draw3d(t);
+    try { sizeObs = new ResizeObserver(resize); sizeObs.observe(B.el); } catch (e) {}
+    const r = B.el.getBoundingClientRect(), k = Math.min(window.devicePixelRatio || 1, 1.5);
+    renderer.setSize(Math.max(4, Math.round(r.width * k)), Math.max(4, Math.round(r.height * k)), false);
+    B.free.aspect = Math.max(0.2, r.width / Math.max(1, r.height)); B.free.updateProjectionMatrix();
+    B.ready = false;
+    const p = stage.renderAt(curT = lastT());   // đọc camera shot ở t hiện tại
+    const first = () => { if (!B.started) { B.started = true; goc('truoc'); } else { if (follow) flyToShot(); updateFrustum(); redraw(); } };
+    if (p && p.then) p.then(first); else first();
+    for (const f of listeners) f(true);
+    return api;
+  }
+  function tat() {
+    if (!on) return api;
+    const B = built;
+    on = false;
+    try { sizeObs?.disconnect(); } catch (e) {}
+    stage.draw = origDraw; origDraw = null;
+    home.parent.insertBefore(canvas, home.next && home.next.parentNode === home.parent ? home.next : null);
+    if (canvasStyle === null) canvas.removeAttribute('style'); else canvas.setAttribute('style', canvasStyle);
+    B.el.remove();
+    renderer.setSize(W0, H0, false);   // đúng cỡ gốc của stage (setPixelRatio(1) không đổi)
+    const p = stage.renderAt(curT);    // khung Phim y như trước khi bật
+    for (const f of listeners) f(false);
+    return p || api;
+  }
+  // t hiện tại: lấy từ lần renderAt gần nhất (stage giữ lastT bên trong) — đọc qua lần vẽ kế tiếp; mặc định 0
+  let _lastT = 0;
+  const lastT = () => _lastT;
+  stage.onFrame((t) => { _lastT = t; });   // chỉ ghi lại t, không đổi gì trong cảnh
+
+  const api = {
+    bat, tat, goc,
+    get on() { return on; },
+    toggle: (c) => (on ? tat() : bat(c)),
+    onChange: (f) => { listeners.add(f); return () => listeners.delete(f); },
+    get shotCam() { return { pos: shotCam.pos.toArray(), target: shotCam.target.toArray(), fov: shotCam.fov, id: shotCam.id }; },
+    get camera() { return built?.free; },
+    paths,
+  };
+  window.__che3d = api;
+
+  // trang dev: ?che3d=1 → nút nổi "3D" (trình phát dùng nút riêng trong khung hình)
+  if (q && q.get('che3d') === '1' && !document.getElementById('xapp')) {
+    const b = document.createElement('button'); b.className = 'c3d-btn'; b.textContent = '3D';
+    const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
+    b.onclick = () => { api.toggle(); b.textContent = on ? 'Phim' : '3D'; };
+    document.body.appendChild(b);
+  }
+  return api;
+}

@@ -63,6 +63,7 @@
       import { applyGrunge } from '/engine/grunge.js';
       import { applyMaterials, MATS } from '/engine/materials.js';
       import { CAPTIONS } from '/episodes/_template/captions.js';
+      import { installChe3D } from '/engine/che-do-3d.js';   // chế độ 3D của trình phát (chỉ xem; chưa bật thì không tạo gì)
 
       await document.fonts.load("900 84px 'Be Vietnam Pro'", 'Việt ữ ầ ặ').catch(() => {});
       await document.fonts.load("40px 'Patrick Hand'", 'Tiệm gấu').catch(() => {});   // chữ viết tay trên đạo cụ (engine/props-kb.js)
@@ -217,6 +218,7 @@
       installMeasure({ THREE, stage, shots: tl });   // window.__measure(t) / window.__mask(t) cho tool kiểm luật
       window.__places = places;
       window.__props = props; window.__datDaoCu = dat;   // tool kiểm / test: vị trí đạo cụ đã đặt
+      installChe3D({ THREE, stage, tl, actors, props, places, q });   // window.__che3d; trang dev: ?che3d=1
       window.getOptions = () => ({ ...OPTS, vid: {}, voices: [], fx: post.options, fxLabels: FX_LABELS, credits: credits.on });
       window.setOptions = (o = {}) => {
         if (o.lang && CAPS[o.lang]) OPTS.lang = o.lang;   // chỉ ngôn ngữ có đủ phụ đề + giọng
