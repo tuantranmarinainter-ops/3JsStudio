@@ -1,0 +1,365 @@
+{
+ "nen": {
+  "label": "Tiếng nền (phòng, phố, xưởng…)",
+  "gain": 1.0,
+  "src": "sfx_nen.ogg",
+  "count": 10,
+  "missing": [],
+  "items": [
+   [
+    0,
+    4.22,
+    "town ambience day birds"
+   ],
+   [
+    4.22,
+    8.28,
+    "kitchen room tone quiet"
+   ],
+   [
+    8.28,
+    21.54,
+    "town ambience day birds"
+   ],
+   [
+    21.54,
+    28,
+    "kitchen room tone quiet"
+   ],
+   [
+    28,
+    70.59,
+    "night crickets ambience"
+   ],
+   [
+    70.59,
+    98.0,
+    "conveyor hum"
+   ],
+   [
+    98.0,
+    103.84,
+    "night crickets ambience"
+   ],
+   [
+    103.84,
+    111.94,
+    "town ambience day birds"
+   ],
+   [
+    111.94,
+    131.0,
+    "conveyor hum"
+   ],
+   [
+    131.0,
+    140.0,
+    "kitchen room tone quiet"
+   ]
+  ]
+ },
+ "khoanh-khac": {
+  "label": "Tiếng động theo cảnh",
+  "gain": 1.0,
+  "src": "sfx_khoanh-khac.ogg",
+  "count": 59,
+  "missing": [],
+  "items": [
+   [
+    0.65,
+    "door lock click",
+    "s001"
+   ],
+   [
+    2,
+    "soft magical chime",
+    "s002"
+   ],
+   [
+    4.75,
+    "gasp short",
+    "s004"
+   ],
+   [
+    7.45,
+    "magic poof",
+    "s007"
+   ],
+   [
+    8.9,
+    "squeaky toy",
+    "s008"
+   ],
+   [
+    10.9,
+    "squeaky toy",
+    "s009"
+   ],
+   [
+    12.4,
+    "paper rustle",
+    "s010"
+   ],
+   [
+    14.4,
+    "paper rustle",
+    "s011"
+   ],
+   [
+    18.2,
+    "paper rustle",
+    "s013"
+   ],
+   [
+    22.5,
+    "soft magical chime",
+    "s016"
+   ],
+   [
+    29.75,
+    "glass clink table",
+    "s021"
+   ],
+   [
+    31,
+    "cloth rustle",
+    "s022"
+   ],
+   [
+    38,
+    "cloth rustle",
+    "s026"
+   ],
+   [
+    42.3,
+    "cloth rustle",
+    "s029"
+   ],
+   [
+    43,
+    "wood squeak",
+    "s029"
+   ],
+   [
+    44,
+    "cloth rustle",
+    "s030"
+   ],
+   [
+    45.5,
+    "book slide",
+    "s031"
+   ],
+   [
+    46.8,
+    "cloth rustle",
+    "s032"
+   ],
+   [
+    47.35,
+    "magic poof",
+    "s033"
+   ],
+   [
+    49,
+    "window open",
+    "s034"
+   ],
+   [
+    51.7,
+    "soft whoosh",
+    "s036"
+   ],
+   [
+    53.15,
+    "glass clink table",
+    "s037"
+   ],
+   [
+    58.7,
+    "cloth rustle",
+    "s040"
+   ],
+   [
+    59.15,
+    "magic poof",
+    "s041"
+   ],
+   [
+    66,
+    "cloth rustle",
+    "s045"
+   ],
+   [
+    67,
+    "cloth rustle",
+    "s046"
+   ],
+   [
+    68.3,
+    "cloth rustle",
+    "s047"
+   ],
+   [
+    69.5,
+    "thud soft",
+    "s048"
+   ],
+   [
+    70.45,
+    "soft whoosh",
+    "s049"
+   ],
+   [
+    72,
+    "cloth rustle",
+    "s049"
+   ],
+   [
+    74.3,
+    "wood squeak",
+    "s051"
+   ],
+   [
+    76.2,
+    "metal clank",
+    "s052"
+   ],
+   [
+    78.2,
+    "small ring drop",
+    "s053"
+   ],
+   [
+    80.4,
+    "glass clink table",
+    "s054"
+   ],
+   [
+    80.85,
+    "dramatic sting",
+    "s055"
+   ],
+   [
+    87.4,
+    "marker squeak",
+    "s059"
+   ],
+   [
+    89.6,
+    "paper rustle",
+    "s061"
+   ],
+   [
+    91.3,
+    "metal clank",
+    "s062"
+   ],
+   [
+    93.9,
+    "necklace chain jingle",
+    "s064"
+   ],
+   [
+    95.2,
+    "gasp short",
+    "s065"
+   ],
+   [
+    97.95,
+    "whoosh",
+    "s066"
+   ],
+   [
+    103.65,
+    "door slam",
+    "s071"
+   ],
+   [
+    104.4,
+    "footsteps running pavement",
+    "s072"
+   ],
+   [
+    107.1,
+    "pocket watch tick",
+    "s074"
+   ],
+   [
+    111.95,
+    "whoosh",
+    "s078"
+   ],
+   [
+    112.6,
+    "glass window tap",
+    "s078"
+   ],
+   [
+    114,
+    "necklace chain jingle",
+    "s079"
+   ],
+   [
+    115.3,
+    "gasp short",
+    "s080"
+   ],
+   [
+    119.4,
+    "metal door slide",
+    "s083"
+   ],
+   [
+    124.7,
+    "cricket",
+    "s088"
+   ],
+   [
+    126.3,
+    "cardboard box thud",
+    "s090"
+   ],
+   [
+    127.9,
+    "cardboard box thud",
+    "s091"
+   ],
+   [
+    131.6,
+    "necklace chain jingle",
+    "s095"
+   ],
+   [
+    134.1,
+    "safe door close",
+    "s097"
+   ],
+   [
+    134.5,
+    "cloth rustle",
+    "s098"
+   ],
+   [
+    135.5,
+    "cloth rustle",
+    "s099"
+   ],
+   [
+    136.95,
+    "thud soft",
+    "s101"
+   ],
+   [
+    138.7,
+    "hollow pan bonk",
+    "s103"
+   ],
+   [
+    138.7,
+    "cartoon boing",
+    "s103"
+   ]
+  ]
+ }
+}
