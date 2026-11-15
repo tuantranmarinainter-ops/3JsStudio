@@ -4,6 +4,7 @@
 //   node tools/thu-vien-asset.mjs dung [--lam-lai] [--so 30] [--toi-thieu 10]   gộp + tìm phần còn thiếu + dựng trang
 //   node tools/thu-vien-asset.mjs gop                                           chỉ gộp + chia mục (in bảng)
 //   node tools/thu-vien-asset.mjs nhan <file.json>                              đọc kết quả chọn (file tải từ trang)
+//   node tools/thu-vien-asset.mjs codex <file.json>                             món "Nhờ Codex vẽ" → bản nháp đề bài output/thu-vien-asset/codex/
 //   node tools/thu-vien-asset.mjs mo [--cong N] [--mot-lan]                     máy chủ cục bộ nhận nút "Gửi tới Claude"
 // Dữ liệu vào: output/nghien-cuu-map/*/phan-tich-*.json. Cache tìm: .cache/thu-vien-asset/tim/<từ khoá>.json (không tìm lại; --lam-lai bỏ cache).
 // Ảnh mẫu: .cache/roblox/<id>/thumb.png (thumbnails.roblox.com) → dist/thu-vien-asset-anh/<id>.jpg (nhỏ, trang dùng đường dẫn tương đối).
@@ -265,6 +266,8 @@ export async function dung(opt = {}) {
     return { ...m, anhCat: ra.cat[m.khoa] || '', mauStore: mau, tuKhoaDung: r.tuKhoaDung, soTimDuoc: r.mau.length, loi: r.loi };
   });
   fs.mkdirSync(DIST, { recursive: true }); fs.mkdirSync(RA, { recursive: true });
+  fs.mkdirSync(path.join(RA, 'cat'), { recursive: true });   // ảnh cắt từ video, để đính kèm khi nhờ Codex vẽ
+  for (const m of du) if (m.anhCat.startsWith('data:image/jpeg;base64,')) fs.writeFileSync(path.join(RA, 'cat', m.khoa + '.jpg'), Buffer.from(m.anhCat.split(',')[1], 'base64'));
   const video = [...new Set(dao.map((o) => o.video))];
   const html = trang({ muc: MUC, mon: du, video, luc: new Date().toISOString() });
   const out = path.join(DIST, 'thu-vien-asset.html');
@@ -287,6 +290,43 @@ export function nhan(file) {
   fs.writeFileSync(f, JSON.stringify(kq, null, 1));
   const chon = Object.entries(kq.chon || {}).filter(([, v]) => v.mau?.length);
   return { file: f, soMonCoChon: chon.length, soMau: chon.reduce((s, [, v]) => s + v.mau.length, 0), canThem: kq.canThem || [], nhoCodex: kq.nhoCodex || [] };
+}
+
+/** Món "Nhờ Codex vẽ" → bản nháp đề bài cho Claude hoàn thiện (mô tả cụ thể) rồi giao Codex theo docs/de-bai-codex-mau.md. */
+export function soanDeCodex(file) {
+  const kq = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const dir = path.join(RA, 'codex'); fs.mkdirSync(dir, { recursive: true });
+  const cach = { van: 'Ảnh vân LIỀN MẠCH (seamless/tileable) vuông 1024×1024, nhìn thẳng chính diện, không bóng đổ, không viền, không phối cảnh; các cạnh đối nhau khớp liền. Phong cách sơn tay/Roblox, thấy rõ vân.',
+    troi: 'Ảnh bầu trời toàn cảnh dạng equirectangular 2:1 (2048×1024), không có mặt đất, không nhân vật; mây và dải màu như mô tả. Phong cách hoạt hình sơn tay.',
+    mac: 'Ảnh món đồ đơn lẻ, nền trơn sáng, nhìn chính diện 3/4, phong cách khối vuông Roblox (low poly), không nhân vật.' };
+  const ra = [];
+  for (const m of kq.nhoCodex || []) {
+    const loai = m.muc === 'van' ? 'van' : m.muc === 'troi' ? 'troi' : 'mac';
+    const f = path.join(dir, `de-bai-${bo(m.id)}.md`);
+    const anh = path.join(RA, 'cat', m.id + '.jpg');
+    fs.writeFileSync(f, `# Đề bài Codex — ${m.ten}
+
+> BẢN NHÁP do tool dựng từ dữ liệu phân tích. Claude đọc ảnh tham chiếu rồi viết lại phần "Mô tả cụ thể" trước khi giao (docs/de-bai-codex-mau.md: gpt-6-luna, low, -i ảnh).
+
+- Tên: ${m.ten} (${m.tenEn})
+- Loại: ${m.loai || m.muc}
+- Màu chủ đạo: ${(m.mau || []).join('; ')}
+- Vật liệu: ${(m.vatLieu || []).join('; ')}
+- Cỡ ô lặp / kích thước (stud): ${(m.coTu || []).join('; ') || 'không rõ'}
+- Ảnh tham chiếu (cắt từ video): ${fs.existsSync(anh) ? anh : '(chưa có — chạy dung)'}
+
+## Mô tả cụ thể (Claude hoàn thiện)
+${m.moTa || '(thêm: hình dạng, chi tiết, hoạ tiết, ánh sáng)'}
+
+## Yêu cầu hình
+${cach[loai]}
+
+## Ghi
+Lưu ảnh vào output/thu-vien-asset/codex/${bo(m.id)}.png. Không chép ảnh tham chiếu nguyên xi; vẽ tài sản MỚI tương tự.
+`);
+    ra.push(f);
+  }
+  return ra;
 }
 
 export function moMayChu({ cong = 8791, motLan = false } = {}) {
@@ -478,7 +518,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     if (lenh === 'dung') console.log(JSON.stringify(await dung({ lamLai: co('--lam-lai'), so: +gt('--so', 30), toiThieu: +gt('--toi-thieu', 10) }), null, 1));
     else if (lenh === 'gop') { const m = gopMon(docDaoCu()); for (const x of m) console.log(`${x.muc}/${x.con}\t${x.ten}\t(x${x.soLuong})`); console.log(`${m.length} món`); }
     else if (lenh === 'nhan' && r[0]) console.log(JSON.stringify(nhan(path.resolve(r[0])), null, 1));
+    else if (lenh === 'codex' && r[0]) console.log(soanDeCodex(path.resolve(r[0])).join('\n') || 'không có món nhờ Codex vẽ');
     else if (lenh === 'mo') moMayChu({ cong: +gt('--cong', 8791), motLan: co('--mot-lan') });
-    else { console.error('Dùng: node tools/thu-vien-asset.mjs dung [--lam-lai] [--so 30] [--toi-thieu 10] | gop | nhan <file.json> | mo [--cong N] [--mot-lan]'); process.exit(2); }
+    else { console.error('Dùng: node tools/thu-vien-asset.mjs dung [--lam-lai] [--so 30] [--toi-thieu 10] | gop | nhan <file.json> | codex <file.json> | mo [--cong N] [--mot-lan]'); process.exit(2); }
   } catch (e) { console.error('Lỗi: ' + (e.message || e)); process.exit(1); }
 }
