@@ -10,7 +10,7 @@ python tools/nghien_cuu_map.py kiem [<slug>]                                    
 python tools/nghien_cuu_map.py luoi <slug>                                       # kẻ lưới 10×10 lên shot đại diện → luoi/ (sau khi gộp)
 python tools/nghien_cuu_map.py bang-cat <slug>                                   # bảng ảnh cắt đạo cụ có số → output/nghien-cuu-map/_kiem/<slug>/
 python tools/thu_vien_map.py                                                     # gộp mọi phan-tich-*.json → dist/thu-vien-map.html
-node tools/thu-vien-asset.mjs dung|gop|nhan <file.json>|mo                    # gộp món trùng + 20 mẫu Creator Store/món (cache .cache/thu-vien-asset/, --lam-lai) → dist/thu-vien-asset.html; nhan = đọc kết quả chọn; mo = nhận nút Gửi tới Claude
+node tools/thu-vien-asset.mjs dung|gop|nhan <file.json>|mo                    # gộp món trùng + 30 mẫu/món (hiện 10; Creator Store, riêng mục Nhân vật = Avatar Shop catalog) (cache .cache/thu-vien-asset/, --lam-lai) → dist/thu-vien-asset.html; nhan = đọc kết quả chọn; mo = nhận nút Gửi tới Claude
 ```
 Dữ liệu mỗi video: `output/nghien-cuu-map/<slug>/` (shot_NNN.jpg, sheets/, frames/, dia-diem.json, phan-tich-*.json).
 

@@ -6,7 +6,7 @@
       rồi chạy tools/video2kb.py --loi off --no-am-thanh → output/nghien-cuu-map/<slug>/. Video đã cắt thì bỏ qua.
   python tools/nghien_cuu_map.py kiem [<slug>]
       bảng trạng thái: số shot · đã gộp (dia-diem.json đủ shot?) · địa điểm đã/ chưa phân tích · số đạo cụ · lỗi JSON.
-  python tools/nghien_cuu_map.py luoi <slug>       ảnh shot đại diện kẻ lưới 10×10 có nhãn → luoi/ (agent đọc khung theo ô)
+  python tools/nghien_cuu_map.py luoi <slug> [--shots s010,s020]   ảnh shot đại diện kẻ lưới 10×10 có nhãn → luoi/ (agent đọc khung theo ô)
   python tools/nghien_cuu_map.py bang-cat <slug>   bảng ảnh cắt đạo cụ có số → _kiem/<slug>/ (agent rẻ chấm đúng/sai)
 """
 import argparse, json, re, shutil, subprocess, sys, unicodedata
@@ -111,6 +111,8 @@ def luoi(a):
     for p in d.glob('phan-tich-*.json'):
         for x in json.loads(p.read_text(encoding='utf-8')):
             ids.update(o['shot'] for o in x.get('dao_cu') or [] if o.get('shot'))
+    if getattr(a, 'shots', None):   # thêm shot chỉ định: --shots s010,s020
+        ids.update(x.strip() for x in a.shots.split(',') if x.strip())
     (d / 'luoi').mkdir(exist_ok=True)
     try: font = ImageFont.truetype('C:/Windows/Fonts/arialbd.ttf', 15)
     except OSError: font = ImageFont.load_default()
@@ -164,7 +166,7 @@ def main():
     sp = ap.add_subparsers(dest='cmd', required=True)
     c = sp.add_parser('cat'); c.add_argument('thu_muc'); c.add_argument('--chi'); c.add_argument('--force', action='store_true')
     k = sp.add_parser('kiem'); k.add_argument('slug', nargs='?')
-    l = sp.add_parser('luoi'); l.add_argument('slug')
+    l = sp.add_parser('luoi'); l.add_argument('slug'); l.add_argument('--shots', help='thêm shot kẻ lưới, vd s010,s020')
     b = sp.add_parser('bang-cat'); b.add_argument('slug')
     a = ap.parse_args()
     {'cat': cat, 'kiem': kiem, 'luoi': luoi, 'bang-cat': bang_cat}[a.cmd](a)

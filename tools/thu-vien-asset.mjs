@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // thu-vien-asset.mjs — thư viện asset từ video tham khảo: gộp đạo cụ trùng, chia mục, tìm 20 mẫu Creator Store mỗi món,
 // dựng trang duyệt một file dist/thu-vien-asset.html (5 mẫu/lần, nút Làm mới, chọn nhiều, Gửi tới Claude).
-//   node tools/thu-vien-asset.mjs dung [--lam-lai] [--so 20] [--toi-thieu 5]   gộp + tìm phần còn thiếu + dựng trang
+//   node tools/thu-vien-asset.mjs dung [--lam-lai] [--so 30] [--toi-thieu 10]   gộp + tìm phần còn thiếu + dựng trang
 //   node tools/thu-vien-asset.mjs gop                                           chỉ gộp + chia mục (in bảng)
 //   node tools/thu-vien-asset.mjs nhan <file.json>                              đọc kết quả chọn (file tải từ trang)
 //   node tools/thu-vien-asset.mjs mo [--cong N] [--mot-lan]                     máy chủ cục bộ nhận nút "Gửi tới Claude"
@@ -21,6 +21,7 @@ const DIST = path.join(ROOT, 'dist');
 
 // ---------- mục + mục con ----------
 export const MUC = [
+  { id: 'nhan-vat', ten: 'Nhân vật', con: [['toc', 'Tóc'], ['mu', 'Mũ / nón'], ['kinh', 'Kính / mặt nạ'], ['lung-vai-co', 'Phụ kiện lưng, vai, cổ'], ['tay', 'Phụ kiện tay (đồ cầm)'], ['ao-quan', 'Áo / quần']] },
   { id: 'moi-truong', ten: 'Môi trường', con: [['cay-coi', 'Cây cối'], ['co-hoa', 'Cỏ hoa'], ['da-dia-hinh', 'Đá / địa hình'], ['nuoc', 'Nước']] },
   { id: 'duong-pho', ten: 'Đường phố', con: [['duong', 'Đường'], ['den', 'Đèn'], ['hang-rao', 'Hàng rào'], ['bien-hieu', 'Biển hiệu'], ['xe-co', 'Xe cộ']] },
   { id: 'nha', ten: 'Nhà và công trình', con: [['mat-tien', 'Nhà / mặt tiền'], ['tuong-san', 'Tường, sàn, trần'], ['cua', 'Cửa và cửa sổ']] },
@@ -101,6 +102,7 @@ const LUAT = [
 const NHOM_MUC = { 'cay-coi': ['moi-truong', 'cay-coi'], 'canh-quan': ['moi-truong', 'da-dia-hinh'], 'nha-cua': ['nha', 'mat-tien'], 'noi-that': ['noi-that', 'phong-khach'],
   'do-dung': ['do-dung', 'chung'], 'duong-pho': ['duong-pho', 'duong'], 'xe-co': ['duong-pho', 'xe-co'], 'bien-hieu': ['duong-pho', 'bien-hieu'], khac: ['khac', 'chung'] };
 
+const CON_NV = { toc: 'toc', mu: 'mu', kinh: 'kinh', 'lung-vai-co': 'lung-vai-co', tay: 'tay', 'ao-quan': 'ao-quan' };
 const bo = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const dienTich = (k) => (Array.isArray(k) && k.length === 4 ? Math.max(0, k[2]) * Math.max(0, k[3]) : 0);
 
@@ -123,12 +125,14 @@ export function gopMon(daoCu) {
   const map = new Map();
   for (const o of daoCu) {
     const chuoi = `${o.ten_en || ''} ${(o.tu_khoa_store || []).join(' ')}`.toLowerCase();
-    const l = LUAT.find((r) => r[4].test(chuoi));
+    const nv = o.nhom === 'nhan-vat';
+    const l = nv ? null : LUAT.find((r) => r[4].test(chuoi));
     let khoa, ten, muc, con;
-    if (l) [khoa, ten, muc, con] = l;
+    if (nv) { muc = 'nhan-vat'; con = CON_NV[o.nhom_con] || 'tay'; khoa = 'nv-' + con + '-' + bo((o.tu_khoa_store || [])[0] || o.ten_en || o.ten); ten = o.ten || o.ten_en; }
+    else if (l) [khoa, ten, muc, con] = l;
     else { khoa = bo((o.tu_khoa_store || [])[0] || o.ten_en || o.ten); ten = o.ten || o.ten_en; [muc, con] = NHOM_MUC[o.nhom] || NHOM_MUC.khac; }
     let m = map.get(khoa);
-    if (!m) { m = { khoa, ten, muc, con, tenEn: o.ten_en || '', mau: [], vatLieu: [], kichThuoc: [], tuKhoa: [], xuatHien: [], anh: null, _ds: -1, soLuong: 0 }; map.set(khoa, m); }
+    if (!m) { m = { khoa, ten, muc, con, avatar: nv, tenEn: o.ten_en || '', chiTiet: nv ? (o.chi_tiet || '') : '', mau: [], vatLieu: [], kichThuoc: [], tuKhoa: [], xuatHien: [], anh: null, _ds: -1, soLuong: 0 }; map.set(khoa, m); }
     for (const c of o.mau || []) if (!m.mau.includes(c)) m.mau.push(c);
     if (o.vat_lieu && !m.vatLieu.includes(o.vat_lieu)) m.vatLieu.push(o.vat_lieu);
     if (o.kich_thuoc_stud && !m.kichThuoc.includes(o.kich_thuoc_stud)) m.kichThuoc.push(o.kich_thuoc_stud);
@@ -143,31 +147,52 @@ export function gopMon(daoCu) {
 }
 
 // ---------- tìm mẫu (có cache theo từ khoá) ----------
-const SO_REQ = { tim: 0, anh: 0 };
+const SO_REQ = { tim: 0, catalog: 0, anh: 0 };
 function demFetch() {
   const goc = globalThis.fetch;
-  globalThis.fetch = (u, ...r) => { const s = String(u?.url || u); if (s.includes('assets:search')) SO_REQ.tim++; else if (s.includes('thumbnails.roblox.com')) SO_REQ.anh++; return goc(u, ...r); };
+  globalThis.fetch = (u, ...r) => { const s = String(u?.url || u); if (s.includes('assets:search')) SO_REQ.tim++; else if (s.includes('catalog.roblox.com')) SO_REQ.catalog++; else if (s.includes('thumbnails.roblox.com')) SO_REQ.anh++; return goc(u, ...r); };
 }
 const fCache = (tu) => path.join(CACHE, 'tim', bo(tu).slice(0, 80) + '.json');
 
-export async function timTheoTuKhoa(tu, { so = 20, lamLai = false, timMau } = {}) {
-  const f = fCache(tu);
-  if (!lamLai && fs.existsSync(f)) { try { return { mau: JSON.parse(fs.readFileSync(f, 'utf8')).mau, tuCache: true }; } catch {} }
-  const mau = (await timMau(tu, { so })).map((x) => ({ id: x.id, ten: x.ten, tacGia: x.tacGia, tamGiac: x.tamGiac, thich: x.thich, link: x.link }));
+const HANG_CAT = { luc: 0 };
+/** Avatar Shop (catalog.roblox.com, công khai, KHÔNG gửi khoá): tóc/phụ kiện/áo quần, ưu tiên miễn phí–rẻ. */
+export async function timCatalog(tu, { so = 30, loai = 'Accessories', giaMax = 100 } = {}) {
+  const q = new URLSearchParams({ Keyword: tu, Category: loai, Limit: String(so <= 10 ? 10 : so <= 28 ? 28 : so <= 30 ? 30 : so <= 60 ? 60 : 100), MaxPrice: String(giaMax), SortType: '0' });
+  let j = null;
+  for (let lan = 0; lan < 6 && !j; lan++) {
+    const cho = Math.max(0, HANG_CAT.luc + 1200 - Date.now()); HANG_CAT.luc = Date.now() + cho; if (cho) await new Promise((ok) => setTimeout(ok, cho));   // nối đuôi, cách nhau >= 1,2 s
+    const r = await fetch(`https://catalog.roblox.com/v1/search/items/details?${q}`);
+    if (r.ok) j = await r.json();
+    else if (r.status === 429 || r.status >= 500) await new Promise((ok) => setTimeout(ok, 4000 * (lan + 1)));
+    else throw new Error(`catalog HTTP ${r.status}`);
+  }
+  if (!j) throw new Error('catalog: hết lượt thử lại');
+  return (j.data || []).filter((x) => x.itemType === 'Asset' || x.itemType === undefined).map((x) => ({ id: String(x.id), ten: x.name || '', tacGia: x.creatorName || '', tamGiac: null, gia: x.priceStatus === 'Free' ? 0 : (x.price ?? x.lowestPrice ?? null), link: `https://www.roblox.com/catalog/${x.id}` })).slice(0, so);
+}
+
+export async function timTheoTuKhoa(tu, { so = 20, lamLai = false, timMau, avatar = false } = {}) {
+  const f = avatar ? fCache('catalog-' + tu) : fCache(tu);
+  let cu = null;
+  if (!lamLai && fs.existsSync(f)) { try { cu = JSON.parse(fs.readFileSync(f, 'utf8')); } catch {} }
+  if (cu && (cu.so || 20) >= so) return { mau: cu.mau, tuCache: true };
+  let moi;   // nâng kho 20 → 30: tìm lại một lần, giữ thứ tự mẫu cũ, chỉ thêm mẫu còn thiếu
+  if (avatar) moi = await timCatalog(tu, { so, loai: avatar });
+  else moi = (await timMau(tu, { so })).map((x) => ({ id: x.id, ten: x.ten, tacGia: x.tacGia, tamGiac: x.tamGiac, thich: x.thich, link: x.link }));
+  const mau = [...(cu?.mau || [])]; for (const x of moi) if (!mau.some((y) => y.id === x.id)) mau.push(x);
   fs.mkdirSync(path.dirname(f), { recursive: true });
-  fs.writeFileSync(f, JSON.stringify({ tuKhoa: tu, luc: new Date().toISOString(), mau }));
-  return { mau, tuCache: false };
+  fs.writeFileSync(f, JSON.stringify({ tuKhoa: tu, so, luc: new Date().toISOString(), mau }));
+  return { mau: mau.slice(0, Math.max(so, cu?.mau?.length || 0)), tuCache: false };
 }
 
 /** Mỗi món: thử từ khoá lần lượt, gộp bỏ trùng id, dừng khi đủ `so`; < toiThieu thì thử tiếp từ khoá kế (kể cả tên Anh). */
 export async function timChoMon(m, opt) {
-  const { so = 20, toiThieu = 5 } = opt;
+  const { so = 30, toiThieu = 10 } = opt;
   const ds = [...m.tuKhoa]; if (m.tenEn && !ds.map((x) => x.toLowerCase()).includes(m.tenEn.toLowerCase())) ds.push(m.tenEn);
   const mau = [], dung = [];
   for (const tu of ds.slice(0, 6)) {
     if (mau.length >= so) break;
     // từ khoá đầu luôn tìm; từ khoá kế chỉ thử khi chưa đủ `so` mà đã có thể thiếu (< toiThieu) hoặc còn cách xa so
-    const r = await timTheoTuKhoa(tu, opt);
+    const r = await timTheoTuKhoa(tu, { ...opt, avatar: m.avatar ? (m.con === 'ao-quan' ? 'Clothing' : 'Accessories') : false });
     dung.push(tu);
     for (const x of r.mau) if (!mau.some((y) => y.id === x.id)) mau.push(x);
     if (mau.length >= so) break;
@@ -212,7 +237,7 @@ function taoAnh(mon, thumbs) {
 
 // ---------- dựng ----------
 export async function dung(opt = {}) {
-  const so = opt.so || 20, toiThieu = opt.toiThieu || 5;
+  const so = opt.so || 30, toiThieu = opt.toiThieu || 10;
   const dao = docDaoCu();
   const mon = gopMon(dao);
   const { timMau, taiAnhXemTruoc } = await import('./roblox.mjs');
@@ -243,7 +268,7 @@ export async function dung(opt = {}) {
   const thongKe = {};
   for (const m of du) { const k = MUC.find((x) => x.id === m.muc).ten + ' / ' + MUC.find((x) => x.id === m.muc).con.find((c) => c[0] === m.con)[1]; thongKe[k] = (thongKe[k] || 0) + 1; }
   const tomTat = { daoCu: dao.length, mon: du.length, theoMuc: Object.fromEntries(MUC.map((x) => [x.ten, du.filter((m) => m.muc === x.id).length])), theoMucCon: thongKe,
-    request: { timKiem: SO_REQ.tim, anhXemTruoc: SO_REQ.anh, ghiChu: 'chỉ đếm request của lần chạy này; từ khoá đã có cache không tính' },
+    request: { timKiem: SO_REQ.tim, avatarShop: SO_REQ.catalog, anhXemTruoc: SO_REQ.anh, ghiChu: 'chỉ đếm request của lần chạy này; từ khoá đã có cache không tính' },
     duoi5: du.filter((m) => m.mauStore.length < 5).map((m) => ({ ten: m.ten, soMau: m.mauStore.length, tuKhoa: m.tuKhoaDung })),
     loiTim, trang: out, kichThuocMB: +(fs.statSync(out).size / 2 ** 20).toFixed(2) };
   fs.writeFileSync(path.join(RA, 'tom-tat.json'), JSON.stringify(tomTat, null, 1));
@@ -296,7 +321,7 @@ const jsonNhung = (o) => JSON.stringify(o).replace(/</g, '\u003c').split(' ').
 function trang(D) {
   const du = { muc: D.muc.map((m) => ({ id: m.id, ten: m.ten, con: m.con.map(([id, ten]) => ({ id, ten })) })), video: D.video, luc: D.luc,
     mon: D.mon.map((m) => ({ id: m.khoa, ten: m.ten, en: m.tenEn, muc: m.muc, con: m.con, mau: m.mau, vl: m.vatLieu, kt: m.kichThuoc, ct: m.anhCat, xh: m.xuatHien, sl: m.soLuong,
-      mauStore: m.mauStore.map((x) => [x.id, x.ten, x.tacGia, x.tamGiac]) })) };
+      mauStore: m.mauStore.map((x) => [x.id, x.ten, x.tacGia, x.tamGiac, x.gia ?? null]), av: !!m.avatar, ctNv: m.chiTiet || '' })) };
   return TRANG.replace('/*__DATA__*/null', jsonNhung(du));
 }
 
@@ -355,7 +380,7 @@ button.chinh{background:var(--acc);color:#fff;border-color:var(--acc)}button.on{
 <script>
 const D=/*__DATA__*/null;
 const KEY='thu-vien-asset:v1';
-const SO=5;
+const SO=10;
 let S={chon:{},trang:{},can:{}};
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const luu=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
@@ -366,7 +391,7 @@ const slChon=()=>Object.values(S.chon).reduce((s,o)=>s+Object.keys(o).length,0);
 function cap(){document.getElementById('dem').textContent='Đã chọn '+slChon()+' mẫu ở '+Object.values(S.chon).filter(o=>Object.keys(o).length).length+' món · cần thêm mẫu: '+Object.values(S.can).filter(Boolean).length}
 function tick(id,x){ // x=[id,ten,tacGia,tamGiac]
   const o=S.chon[id]||(S.chon[id]={});
-  if(o[x[0]])delete o[x[0]];else o[x[0]]={ten:x[1],tacGia:x[2],tamGiac:x[3]};
+  if(o[x[0]])delete o[x[0]];else o[x[0]]={ten:x[1],tacGia:x[2],tamGiac:x[3],gia:x[4]};
   luu();veLai(id)}
 function veLai(id){const cu=document.getElementById('m-'+id);if(cu)cu.replaceWith(hang(MON[id]));cap()}
 function tg(n){return n==null?'?':n>=1000?(n/1000).toFixed(1).replace('.0','')+'k':String(n)}
@@ -376,7 +401,7 @@ function hang(m){
   const hien=[];for(let i=0;i<Math.min(SO,n);i++)hien.push(m.mauStore[(off+i)%n]);
   const tr=E('div',{class:'tr'},
     E('img',{class:'ct',src:m.ct||'',alt:m.ten,loading:'lazy'}),
-    E('div',null,E('h4',null,m.ten),E('div',{class:'en'},m.en),
+    E('div',null,E('h4',null,m.ten),E('div',{class:'en'},m.en),m.ctNv?E('div',{class:'kv'},m.ctNv):null,
       E('div',{class:'kv'},E('div',null,...m.mau.slice(0,4).map(c=>E('span',null,E('span',{class:'sw',style:'background:'+(c.match(/#[0-9a-fA-F]{3,8}/)||['#ccc'])[0]}),c.replace(/#[0-9a-fA-F]{3,8}\s*/,'')+' '))),
         E('div',null,'Vật liệu: '+m.vl.slice(0,2).join(' · ')),E('div',null,'Cỡ: '+m.kt.slice(0,3).join(' · ')+' stud')),
       E('details',null,E('summary',null,'Xuất hiện '+m.xh.length+' lần'),...m.xh.map(x=>E('div',null,x.video+' · '+x.diaDiemTen+' · '+x.shot)))));
@@ -389,10 +414,10 @@ function hang(m){
   ph.append(bar);
   if(!n)ph.append(E('div',{class:'trong'},'Creator Store không có mẫu miễn phí phù hợp — đánh dấu "Cần thêm mẫu" để Claude tìm bằng từ khoá khác.'));
   else ph.append(E('div',{class:'luoi'},...hien.map(x=>E('button',{class:'mau'+(ch[x[0]]?' chon':''),onclick:()=>tick(m.id,x),title:x[1]},
-    E('img',{src:IMG(x[0]),alt:x[1],loading:'lazy'}),E('div',{class:'n'},x[1]||'(không tên)'),E('div',{class:'m'},(x[2]||'?')+' · '+x[0]+' · '+tg(x[3])+' tam giác')))));
+    E('img',{src:IMG(x[0]),alt:x[1],loading:'lazy'}),E('div',{class:'n'},x[1]||'(không tên)'),E('div',{class:'m'},(x[2]||'?')+' · '+x[0]+' · '+(m.av?('Avatar Shop · '+(x[4]===0?'Miễn phí':x[4]==null?'giá ?':x[4]+' R$')):tg(x[3])+' tam giác'))))));
   const da=E('div',{class:'da'},E('b',null,'Đã chọn ('+nch+'):'));
   if(!nch)da.append(E('span',{class:'mut'},'chưa chọn mẫu nào'));
-  for(const[id,v]of Object.entries(ch))da.append(E('span',{class:'chip',title:'Bấm để bỏ chọn',onclick:()=>tick(m.id,[id,v.ten,v.tacGia,v.tamGiac])},E('img',{src:IMG(id),alt:''}),(v.ten||id).slice(0,26)));
+  for(const[id,v]of Object.entries(ch))da.append(E('span',{class:'chip',title:'Bấm để bỏ chọn',onclick:()=>tick(m.id,[id,v.ten,v.tacGia,v.tamGiac,v.gia])},E('img',{src:IMG(id),alt:''}),(v.ten||id).slice(0,26)));
   ph.append(da);
   return E('section',{class:'mon'+(nch?' co-chon':''),id:'m-'+m.id},tr,ph)}
 function ve(){
@@ -405,10 +430,10 @@ function ve(){
       if(mc.con.length>1)main.append(E('h3',null,c.ten+' · '+dc.length));
       for(const m of dc)main.append(hang(m))}}
   nav.append(E('span',{class:'gap'}),E('a',{href:'#',onclick:e=>{e.preventDefault();const r=document.documentElement;const d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark'}},'◐ Sáng/tối'));
-  document.getElementById('gt').textContent=D.mon.length+' món từ '+D.video.join(', ')+' · 20 mẫu/món, hiện 5 mẫu mỗi lần · chọn được nhiều mẫu';
+  document.getElementById('gt').textContent=D.mon.length+' món từ '+D.video.join(', ')+' · 30 mẫu/món, hiện 10 mẫu mỗi lần (Làm mới quay vòng 3 trang) · chọn được nhiều mẫu';
   cap()}
 function ketQua(){
-  const chon={};for(const[id,o]of Object.entries(S.chon)){if(!MON[id]||!Object.keys(o).length)continue;chon[id]={ten:MON[id].ten,tenEn:MON[id].en,muc:MON[id].muc,con:MON[id].con,mau:Object.entries(o).map(([i,v])=>({id:i,ten:v.ten,tacGia:v.tacGia,tamGiac:v.tamGiac,link:'https://create.roblox.com/store/asset/'+i}))}}
+  const chon={};for(const[id,o]of Object.entries(S.chon)){if(!MON[id]||!Object.keys(o).length)continue;chon[id]={ten:MON[id].ten,tenEn:MON[id].en,muc:MON[id].muc,con:MON[id].con,mau:Object.entries(o).map(([i,v])=>({id:i,ten:v.ten,tacGia:v.tacGia,tamGiac:v.tamGiac,gia:v.gia,nguon:MON[id].av?'avatar-shop':'creator-store',link:(MON[id].av?'https://www.roblox.com/catalog/':'https://create.roblox.com/store/asset/')+i}))}}
   const can=Object.keys(S.can).filter(k=>S.can[k]&&MON[k]);
   const chua=D.mon.filter(m=>!chon[m.id]&&!can.includes(m.id)).map(m=>m.id);
   return JSON.stringify({ung:'thu-vien-asset',video:D.video,luc:new Date().toISOString(),chon,canThem:can.map(k=>({id:k,ten:MON[k].ten,tuKhoa:MON[k].en})),chuaChon:chua},null,1)}
@@ -438,10 +463,10 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const [lenh, ...r] = process.argv.slice(2);
   const co = (t) => r.includes(t), gt = (t, mac) => { const i = r.indexOf(t); return i >= 0 && r[i + 1] ? r[i + 1] : mac; };
   try {
-    if (lenh === 'dung') console.log(JSON.stringify(await dung({ lamLai: co('--lam-lai'), so: +gt('--so', 20), toiThieu: +gt('--toi-thieu', 5) }), null, 1));
+    if (lenh === 'dung') console.log(JSON.stringify(await dung({ lamLai: co('--lam-lai'), so: +gt('--so', 30), toiThieu: +gt('--toi-thieu', 10) }), null, 1));
     else if (lenh === 'gop') { const m = gopMon(docDaoCu()); for (const x of m) console.log(`${x.muc}/${x.con}\t${x.ten}\t(x${x.soLuong})`); console.log(`${m.length} món`); }
     else if (lenh === 'nhan' && r[0]) console.log(JSON.stringify(nhan(path.resolve(r[0])), null, 1));
     else if (lenh === 'mo') moMayChu({ cong: +gt('--cong', 8791), motLan: co('--mot-lan') });
-    else { console.error('Dùng: node tools/thu-vien-asset.mjs dung [--lam-lai] [--so 20] [--toi-thieu 5] | gop | nhan <file.json> | mo [--cong N] [--mot-lan]'); process.exit(2); }
+    else { console.error('Dùng: node tools/thu-vien-asset.mjs dung [--lam-lai] [--so 30] [--toi-thieu 10] | gop | nhan <file.json> | mo [--cong N] [--mot-lan]'); process.exit(2); }
   } catch (e) { console.error('Lỗi: ' + (e.message || e)); process.exit(1); }
 }
