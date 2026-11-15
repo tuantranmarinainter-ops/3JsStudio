@@ -10,7 +10,8 @@
 - **File đang dở (chưa commit):** không (các file khác trong cây là của phiên khác).
 - **Đang chạy nền:** không.
 - **Đạt khi (cả việc):** chạy 3 `npm test` song song → số Chrome ẩn gốc ≤ N, CPU không kẹt 100% kéo dài, tổng thời gian không tệ hơn quá 20%; không còn Chrome ẩn mồ côi sau test.
-- **Câu hỏi còn mở:** N = 2 hay 3 (khuyến nghị 2); có bật sẵn `PROFILE=1` không (khuyến nghị: chưa).
+- **Đã chốt (2026-11-15):** N = 3 (người dùng chọn; thay mọi chỗ "N" trong kế hoạch bằng 3 làm mặc định `CHROME_TOI_DA`; `SLOTS` hồ sơ PROFILE=1 hạ 8 → 4).
+- **Câu hỏi còn mở:** có bật sẵn `PROFILE=1` không (khuyến nghị: chưa).
 <!-- /ĐIỂM DỪNG -->
 
 ## Số đo hiện trạng (2026-11-15, máy 20 luồng)
