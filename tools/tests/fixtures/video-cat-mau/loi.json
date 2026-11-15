@@ -1,0 +1,25 @@
+{
+ "src": "asr",
+ "lines": [
+  {
+   "start": 0.1,
+   "end": 2.0,
+   "text": "Câu mẫu giả một."
+  },
+  {
+   "start": 3.0,
+   "end": 5.0,
+   "text": "Câu mẫu giả hai dài hơn chút."
+  },
+  {
+   "start": 12.0,
+   "end": 14.0,
+   "text": "Câu mẫu giả ba."
+  },
+  {
+   "start": 19.0,
+   "end": 21.0,
+   "text": "Câu mẫu giả bốn."
+  }
+ ]
+}
