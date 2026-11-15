@@ -42,3 +42,28 @@ test('cảnh báo: 1 nhân vật zoomOut, 2 nhân vật zoomIn, >20% hinh:3', ()
   assert.ok(kiemBangShot(e).canhBao.some((w) => /20%/.test(w.msg)));
 });
 test('thiếu mảng shots', () => { const d = sao(); delete d.shots; assert.ok(coLoi(d, /shots/)); });
+
+// ---- luật học từ nocodehack (cảnh báo) ----
+const coCb = (d, re) => kiemBangShot(d).canhBao.some((w) => re.test(w.msg));
+test('cb: dur < 0.8 s', () => { const d = sao(); d.shots[0].dur = 0.5; assert.ok(coCb(d, /giật hình/)); });
+test('cb: thoại đọc không kịp', () => { const d = sao(); d.shots[0].dur = 1; d.shots[0].thoai = 'Một câu thoại rất dài không thể đọc xong trong một giây.'; assert.ok(coCb(d, /thoại cần/)); });
+test('cb: thoại vừa đủ thì không báo', () => { const d = sao(); d.shots[0].dur = 3; d.shots[0].thoai = 'Ngắn thôi.'; assert.ok(!coCb(d, /thoại cần/)); });
+test('cb: hai shot liền cùng bối cảnh + camera', () => {
+  const d = sao(); d.shots[1].boiCanh = d.shots[0].boiCanh; d.shots[1].camera = structuredClone(d.shots[0].camera);
+  assert.ok(coCb(d, /đơn điệu/));
+});
+test('cb: nhân vật khai thừa', () => { const d = sao(); d.nhanVat.push({ id: 'thua', ten: 'Thừa', moTa: 'x' }); assert.ok(coCb(d, /"thua" khai báo nhưng không shot nào dùng/)); });
+test('cb: thiếu moTa', () => { const d = sao(); d.boiCanh[0].moTa = ''; assert.ok(coCb(d, /thiếu moTa/)); });
+test('cb: quá nhiều shot camera dung', () => {
+  const d = sao();
+  while (d.shots.length < 10) d.shots.push(structuredClone(d.shots[0]));
+  d.shots.forEach((s, i) => { s.id = 's' + String(i + 1).padStart(3, '0'); s.hinh = 1; s.camera.loai = 'dung'; });
+  assert.ok(coCb(d, /camera "dung"/));
+});
+test('cb: tổng thời lượng tập ngoài 120-180 s (chỉ khi >= 60 shot)', () => {
+  const d = sao();
+  while (d.shots.length < 60) d.shots.push(structuredClone(d.shots[0]));
+  d.shots.forEach((s, i) => { s.id = 's' + String(i + 1).padStart(3, '0'); s.dur = 1; });
+  assert.ok(coCb(d, /ngoài 120–180/));
+  assert.ok(!coCb(sao(), /ngoài 120–180/));
+});
