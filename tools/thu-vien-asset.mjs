@@ -289,7 +289,7 @@ export function nhan(file) {
   const f = path.join(dir, `ket-qua_${new Date().toISOString().replace(/[:.]/g, '-')}.json`);
   fs.writeFileSync(f, JSON.stringify(kq, null, 1));
   const chon = Object.entries(kq.chon || {}).filter(([, v]) => v.mau?.length);
-  return { file: f, soMonCoChon: chon.length, soMau: chon.reduce((s, [, v]) => s + v.mau.length, 0), canThem: kq.canThem || [], nhoCodex: kq.nhoCodex || [] };
+  return { file: f, soMonCoChon: chon.length, soMau: chon.reduce((s, [, v]) => s + v.mau.length, 0), canThem: kq.canThem || [], nhoCodex: kq.nhoCodex || [], nhoBlender: kq.nhoBlender || [] };
 }
 
 /** Món "Nhờ Codex vẽ" → bản nháp đề bài cho Claude hoàn thiện (mô tả cụ thể) rồi giao Codex theo docs/de-bai-codex-mau.md. */
@@ -323,6 +323,42 @@ ${cach[loai]}
 
 ## Ghi
 Lưu ảnh vào output/thu-vien-asset/codex/${bo(m.id)}.png. Không chép ảnh tham chiếu nguyên xi; vẽ tài sản MỚI tương tự.
+`);
+    ra.push(f);
+  }
+  return ra;
+}
+
+/** Món "Nhờ Blender vẽ" → bản nháp đề bài cho Claude: xem ảnh tham chiếu (mẫu đã chọn + ảnh cắt từ video) rồi dùng Blender MCP dựng thử. */
+export function soanDeBlender(file) {
+  const kq = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const dir = path.join(RA, 'blender'); fs.mkdirSync(dir, { recursive: true });
+  const ra = [];
+  for (const m of kq.nhoBlender || []) {
+    const f = path.join(dir, `de-bai-${bo(m.id)}.md`);
+    const anh = path.join(RA, 'cat', m.id + '.jpg');
+    const tc = (m.thamChieu || []).map((x) => {
+      const local = path.join(DIST, 'thu-vien-asset-anh', String(x.id).replace(/[^\w.-]/g, '_') + '.jpg');
+      return `  - ${x.ten} (${x.nguon}${x.gia ? ', ' + x.gia + ' R$' : ''}${x.tamGiac ? ', ' + x.tamGiac + ' tam giác' : ''}) — ${x.link}` + (/^\d+$/.test(String(x.id)) && fs.existsSync(local) ? `\n    ảnh: ${local}` : '');
+    }).join('\n') ||'  - (chưa chọn mẫu tham chiếu — dùng ảnh cắt từ video)';
+    fs.writeFileSync(f, `# Đề bài Blender — ${m.ten}
+
+> BẢN NHÁP do tool dựng. Claude xem ảnh tham chiếu, viết thêm mô tả hình khối, rồi dựng thử bằng Blender MCP (Blender 5.1.2; Blender chỉ để dựng model, xuất GLB, không animation/ánh sáng/render cảnh). Nhập vào kho qua tools/nhap-model.mjs (assets/manifest.json). Ưu tiên low poly (docs/nhap-model.md).
+
+- Tên: ${m.ten} (${m.tenEn})
+- Loại: ${m.loai || m.muc}
+- Màu chủ đạo: ${(m.mau || []).join('; ')}
+- Vật liệu: ${(m.vatLieu || []).join('; ')}
+- Cỡ (stud): ${(m.coTu || []).join('; ') || 'không rõ'}
+- Ảnh cắt từ video: ${fs.existsSync(anh) ? anh : '(chưa có — chạy dung)'}
+- Mẫu tham chiếu đã chọn (chỉ để NHÌN hình dáng; mẫu trả phí KHÔNG tải, KHÔNG chép nguyên — dựng bản MỚI tương tự):
+${tc}
+
+## Mô tả cụ thể (Claude hoàn thiện)
+${m.moTa || '(thêm: hình dạng, tỉ lệ, chi tiết)'}
+
+## Yêu cầu
+Phong cách khối vuông Roblox (low poly, phẳng màu, đặt tên bộ phận rõ). Mặt trước nhìn +Z, 1 đơn vị = 1 stud. Xuất output/thu-vien-asset/blender/${bo(m.id)}.glb, chụp một ảnh xem thử đưa người dùng duyệt trước khi nhập kho.
 `);
     ra.push(f);
   }
@@ -458,7 +494,7 @@ button.chinh{background:var(--acc);color:#fff;border-color:var(--acc)}button.on{
 const D=/*__DATA__*/null;
 const KEY='thu-vien-asset:v1';
 const SO=10;
-let S={chon:{},trang:{},can:{},cdx:{},mp:true,tk:{},tim:{},src:{roblox:true,sketchfab:true,polypizza:true,polyfork:true,kenney:true},nt:{}};
+let S={chon:{},trang:{},can:{},cdx:{},bld:{},mp:true,tk:{},tim:{},src:{roblox:true,sketchfab:true,polypizza:true,polyfork:true,kenney:true},nt:{}};
 const ST={};   // trạng thái ô tìm từng món: '...' đang tìm / thông báo lỗi
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const luu=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
@@ -537,7 +573,8 @@ function hang(m){
     E('span',{class:'mut'},n?('Mẫu '+(off+1)+'–'+(Math.min(off+SO,n))+' / '+n+(S.mp?' miễn phí':'')):(S.mp&&m.mauStore.length?'Không có mẫu miễn phí — tắt "Chỉ miễn phí" để xem '+m.mauStore.length+' mẫu trả phí':'Chưa có mẫu')),
     E('span',{style:'flex:1'}),
     E('button',{class:S.can[m.id]?'on':'',onclick:()=>{S.can[m.id]=!S.can[m.id];luu();veLai(m.id)}},S.can[m.id]?'✓ Cần thêm mẫu':'Cần thêm mẫu'),
-    E('button',{class:S.cdx[m.id]?'on':'',title:'Không có / không tải được mẫu hợp ý: nhờ Claude giao Codex vẽ tài sản (texture…) tương tự',onclick:()=>{S.cdx[m.id]=!S.cdx[m.id];luu();veLai(m.id)}},S.cdx[m.id]?'✓ Nhờ Codex vẽ':'Nhờ Codex vẽ'));
+    E('button',{class:S.cdx[m.id]?'on':'',title:'Không có / không tải được mẫu hợp ý: nhờ Claude giao Codex vẽ tài sản (texture…) tương tự',onclick:()=>{S.cdx[m.id]=!S.cdx[m.id];luu();veLai(m.id)}},S.cdx[m.id]?'✓ Nhờ Codex vẽ':'Nhờ Codex vẽ'),
+    E('button',{class:S.bld[m.id]?'on':'',title:'Chọn mẫu tham chiếu (thường là mẫu trả phí) rồi bấm: Claude dùng Blender MCP dựng thử bản tương tự',onclick:()=>{S.bld[m.id]=!S.bld[m.id];luu();veLai(m.id)}},S.bld[m.id]?'✓ Nhờ Blender vẽ':'Nhờ Blender vẽ'));
   rb.append(E('div',{class:'pnt'},'Roblox Creator Store'),bar);
   const tk=S.tk[m.id]!==undefined?S.tk[m.id]:m.tk,dt=ST[m.id]||'';
   const o=E('input',{type:'search',class:'tkin',value:tk,placeholder:'từ khoá tìm (tiếng Anh)',maxlength:'80','aria-label':'Từ khoá tìm cho '+m.ten,oninput:e=>{S.tk[m.id]=e.target.value;luu()},onkeydown:e=>{if(e.key==='Enter'){e.preventDefault();timMon(m,e.target.value)}}});
@@ -571,8 +608,9 @@ function ketQua(){
   const chon={};for(const[id,o]of Object.entries(S.chon)){if(!MON[id]||!Object.keys(o).length)continue;chon[id]={ten:MON[id].ten,tenEn:MON[id].en,muc:MON[id].muc,con:MON[id].con,mau:Object.entries(o).map(([i,v])=>({id:i,ten:v.ten,tacGia:v.tacGia,tamGiac:v.tamGiac,gia:v.gia,nguon:v.nguon||(MON[id].av?'avatar-shop':'creator-store'),giayPhep:v.gp||'',loai:MON[id].lb||'',link:v.link||((MON[id].av?'https://www.roblox.com/catalog/':'https://create.roblox.com/store/asset/')+i)}))}}
   const can=Object.keys(S.can).filter(k=>S.can[k]&&MON[k]);
   const cdx=Object.keys(S.cdx).filter(k=>S.cdx[k]&&MON[k]);
-  const chua=D.mon.filter(m=>!chon[m.id]&&!can.includes(m.id)&&!cdx.includes(m.id)).map(m=>m.id);
-  return JSON.stringify({ung:'thu-vien-asset',video:D.video,luc:new Date().toISOString(),chon,canThem:can.map(k=>({id:k,ten:MON[k].ten,tuKhoa:MON[k].en})),nhoCodex:cdx.map(k=>({id:k,ten:MON[k].ten,tenEn:MON[k].en,muc:MON[k].muc,loai:MON[k].lb||'',mau:MON[k].mau,vatLieu:MON[k].vl,coTu:MON[k].kt,moTa:MON[k].ctNv})),chuaChon:chua},null,1)}
+  const bld=Object.keys(S.bld).filter(k=>S.bld[k]&&MON[k]);
+  const chua=D.mon.filter(m=>!chon[m.id]&&!can.includes(m.id)&&!cdx.includes(m.id)&&!bld.includes(m.id)).map(m=>m.id);
+  return JSON.stringify({ung:'thu-vien-asset',video:D.video,luc:new Date().toISOString(),chon,canThem:can.map(k=>({id:k,ten:MON[k].ten,tuKhoa:MON[k].en})),nhoCodex:cdx.map(k=>({id:k,ten:MON[k].ten,tenEn:MON[k].en,muc:MON[k].muc,loai:MON[k].lb||'',mau:MON[k].mau,vatLieu:MON[k].vl,coTu:MON[k].kt,moTa:MON[k].ctNv})),nhoBlender:bld.map(k=>({id:k,ten:MON[k].ten,tenEn:MON[k].en,muc:MON[k].muc,loai:MON[k].lb||'',mau:MON[k].mau,vatLieu:MON[k].vl,coTu:MON[k].kt,moTa:MON[k].ctNv,thamChieu:chon[k]?chon[k].mau:[]})),chuaChon:chua},null,1)}
 const tb=document.getElementById('tb'),ghi=document.getElementById('ghi'),bGui=document.getElementById('gui');
 const bao=(t,mau)=>{tb.style.display='block';tb.style.background=mau||'';tb.textContent=t};
 function luuFile(){const a=E('a',{href:URL.createObjectURL(new Blob([ketQua()],{type:'application/json'})),download:'thu-vien-asset_ket-qua.json'});document.body.append(a);a.click();a.remove()}
@@ -603,7 +641,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     else if (lenh === 'gop') { const m = gopMon(docDaoCu()); for (const x of m) console.log(`${x.muc}/${x.con}\t${x.ten}\t(x${x.soLuong})`); console.log(`${m.length} món`); }
     else if (lenh === 'nhan' && r[0]) console.log(JSON.stringify(nhan(path.resolve(r[0])), null, 1));
     else if (lenh === 'codex' && r[0]) console.log(soanDeCodex(path.resolve(r[0])).join('\n') || 'không có món nhờ Codex vẽ');
+    else if (lenh === 'blender' && r[0]) console.log(soanDeBlender(path.resolve(r[0])).join('\n') || 'không có món nhờ Blender vẽ');
     else if (lenh === 'mo') moMayChu({ cong: +gt('--cong', 8791), motLan: co('--mot-lan') });
-    else { console.error('Dùng: node tools/thu-vien-asset.mjs dung [--lam-lai] [--so 30] [--toi-thieu 10] | gop | nhan <file.json> | codex <file.json> | mo [--cong N] [--mot-lan]'); process.exit(2); }
+    else { console.error('Dùng: node tools/thu-vien-asset.mjs dung [--lam-lai] [--so 30] [--toi-thieu 10] | gop | nhan <file.json> | codex <file.json> | blender <file.json> | mo [--cong N] [--mot-lan]'); process.exit(2); }
   } catch (e) { console.error('Lỗi: ' + (e.message || e)); process.exit(1); }
 }
