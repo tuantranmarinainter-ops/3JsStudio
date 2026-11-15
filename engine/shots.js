@@ -361,7 +361,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     }
     held.clear();
     for (const obj of Object.values(props)) if (obj.parent && obj.parent.type !== 'Scene' && obj.parent.name && /Arm$/.test(obj.parent.name)) { obj.visible = false; }
-    const ctx = { focus: [0, 0, 0], light: shot.light, lightOverride: shot.lightOverride, skySun: shot.skySun, skyMoon: shot.skyMoon, skyScale: shot.skyScale, thoiTiet: shot.thoiTiet };
+    const ctx = { focus: [0, 0, 0], light: shot.light, lightOverride: shot.lightOverride, skySun: shot.skySun, skyMoon: shot.skyMoon, skyScale: shot.skyScale, thoiTiet: shot.thoiTiet, lightCues: shot.lightCues, tLocal: local, fps: episode.fps };
     // shot.envArg = { <khoá>: số | [từ, đến] } → tham số riêng của env (vd cuaKho, cuaThiTruong); [từ, đến] nội suy theo k của shot (hàm thuần). Shot không ghi → không đổi gì.
     if (shot.envArg) for (const [ek, ev] of Object.entries(shot.envArg)) ctx[ek] = Array.isArray(ev) ? ev[0] + (ev[1] - ev[0]) * k : ev;
     const W = prepareSea(shot, k, t);   // lõi biển: đồng hồ/thời tiết/sự kiện TRƯỚC khi đặt vật nổi

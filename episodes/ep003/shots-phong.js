@@ -55,8 +55,8 @@ export const SHOTS_PHONG = [
   { id: "s020", dur: 1.34, env: "e3-phong", at: "e3-phong_in", ...DEM, envArg: { cuaPhong: 1 }, cam: CAM0, props: PR(), cast: { hero: { at: [0.9, 0, -0.6], to: [1.5, 0, -1.3], ry: RY(-12, "s020"), anim: "walk", face: "quyet_tam", hold: "dong_ho" } }, line: 12 },
   // s021 · set:bedroom · ngày · 29.34–30.68 s · mặt: hero=quyet_tam
   { id: "s021", dur: 1.341, env: "e3-phong", at: "e3-phong_in", ...DEM, cam: CAM0, props: PR({ dong_ho: DH }), cast: { hero: { at: [D.ke_dong_ho[0] - 1.75, 0, -6.55], ry: 2.3, anim: "idle", face: "quyet_tam", pose: { torso: { x: 0.12 }, rightArm: { x: -1.1 }, leftArm: { x: -0.9 } } } }, line: 12 },
-  // s022 · set:bedroom · đêm · 30.68–32.08 s · mặt: hero=buon_ngu, bap=binh_thuong
-  { id: "s022", dur: 1.401, env: "e3-phong", at: "e3-phong_in", ...DEM, envArg: NAM, cam: CAM0, props: PR({ dong_ho: DH }), cast: { hero: { at: GA_NAM, lie: true, anim: "lie", face: "buon_ngu", pose: { head: { y: 0.6 } } }, bap: BAP_NAM }, line: 12 },
+  // s022 · set:bedroom · đêm · 30.68–32.08 s · mặt: hero=buon_ngu, bap=binh_thuong  — MẪU lightCues (engine/den-moc.js): 0–0,5 s phòng tối lạnh, 0,5 s bật đèn ấm có chớp
+  { id: "s022", dur: 1.401, env: "e3-phong", at: "e3-phong_in", ...DEM, lightCues: [{ at: 0, pool: 0, hemi: 0.45, env: 0.5, hemiColor: "lanh" }, { at: 0.5, pool: 1, hemi: 1, env: 1, hemiColor: "goc", poolColor: "am", flick: true }], envArg: NAM, cam: CAM0, props: PR({ dong_ho: DH }), cast: { hero: { at: GA_NAM, lie: true, anim: "lie", face: "buon_ngu", pose: { head: { y: 0.6 } } }, bap: BAP_NAM }, line: 12 },
   // s023 · set:bedroom · đêm · 32.08–33.66 s · mặt: hero=nghi_ngo
   { id: "s023", dur: 1.583, env: "e3-phong", at: "e3-phong_in", ...DEM, envArg: { ...NAM, guongSang: 2.2 }, cam: { p: [-4.7, 4.55, -7.45], l: phongPhanChieu(DH_TAM), fov: 40, fov2: 37 }, props: PR({ dong_ho: DH }), cast: { hero: { at: GA_NAM, lie: true, anim: "lie", face: "nghi_ngo" }, bap: BAP_NAM }, line: 13 },
   // s024 · set:bedroom · đêm · 33.66–35.30 s · mặt: —

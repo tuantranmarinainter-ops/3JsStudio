@@ -256,3 +256,18 @@ triplanarChunk({ prefix: 'bk', oriented: kind === 'wood' })  // GLSL: BkOut o = 
 
 ## Task 20d — `postprocessing` (pmndrs) thay bloom — KHÔNG đạt, đã gỡ (giữ `UnrealBloomPass`)
 Thử `postprocessing@6.39.6` (Zlib): `BloomEffect` (ADD, mipmapBlur, radius 0,45, ngưỡng 0,93) bọc thành `Pass` của EffectComposer three, chèn thay bloom cũ sau ô `ppBloom` mặc định tắt (nạp bằng `import()` động + importmap). Kết quả ep001, 8 khung (t = 4, 20, 40, 60, 80, 100, 125, 150): ô tắt 0 lệch so trước sửa; `--det` đạt ô bật. Nhưng KHÔNG đạt: (1) tốn thêm program: sau 8 khung 117–118 (bật) so với 106–114 (tắt), lõi cũ không bớt được gì vì ô tắt vẫn dùng chúng; (2) hình không thay được bloom cũ: PSNR bật so tắt 38,4 dB (s066), 32,5 dB (s081, vùng sáng rộng), 65 dB (s130); hệ số cường độ ×1…×12 chỉ nâng glow từ ≈ +1 lên ≈ +3 (cũ +11 mức xám ở dải sáng s081) nên muốn khớp phải dựng lại bộ hạ ngưỡng/bán kính riêng. Quyết định: không vendor, không tích hợp; làm lại chỉ khi cần SelectiveBloom/hiệu ứng pmndrs khác (SSAO, TiltShift…) và có lý do vượt chi phí program.
+
+## Đèn theo mốc `lightCues` + quy ước ấm/lạnh (2026-11-15, học bộ Blender 2.5D) — ô FX `lightCues`, mặc định TẮT
+Shot ghi `lightCues` → đổi cường độ/màu của đèn SẴN CÓ (hemi, sun, đèn điểm dùng chung `interior_point`, IBL) theo giây TRONG shot. Không tạo đèn mới ⇒ không dịch lại shader; hàm thuần của `t` (`engine/den-moc.js`, nối ở cuối `envs.use`). Ô tắt / shot không ghi ⇒ hình y hệt cũ. Tập bật bằng `fx: { lightCues: true }` trong `episode.js` (ep003 đã bật).
+```js
+lightCues: [
+  { at: 0,   pool: 0, hemi: 0.45, env: 0.5, hemiColor: 'lanh' },            // phòng tối, ambient lạnh
+  { at: 0.5, pool: 1, hemi: 1, env: 1, hemiColor: 'goc', poolColor: 'am', flick: true },  // 0,5 s bật đèn ấm, CHỚP 1→0,25→1 (2 khung/nấc)
+  { at: 2.0, sun: 0.2, fade: 0.4 },                                          // fade = chuyển mượt (smoothstep); bỏ = đổi bậc thang ngay
+]
+```
+- `pool | hemi | sun | env` = HỆ SỐ nhân cường độ gốc (1 = như cũ; `env` = IBL). Trường không ghi giữ giá trị mốc trước; trước mốc đầu = mặc định env.
+- `poolColor | hemiColor | sunColor` = tên bảng màu, `'#hex'`, `[r,g,b]` tuyến tính, hoặc `'goc'` (trả màu gốc của env). Màu đổi bậc thang cùng mốc.
+- `flick: true` chỉ áp cho các trường đổi ở mốc đó. Mẫu: ep003 `s022` (xem `output/anh-sang-25d/bat.jpg`).
+- **Bảng màu** (`BANG_MAU` trong `den-moc.js`): `am` (1.0,0.7,0.4) đèn thực dụng/cửa sổ/đèn đường ≈2500K · `amNhat` (1.0,0.78,0.6) · `lanh` (0.55,0.62,1.0) trăng/ambient ≈9000K · `lanhTrang` (0.85,0.9,1.0). Quy ước: nguồn gần tay ẤM, nguồn xa LẠNH, đừng trộn trung tính.
+- **Tỉ lệ cửa sổ sáng** (thị trấn đêm, `engine/town.js`): `EPISODE.town = { …, leSang: 0.35 }` (0..1). Không ghi = 0,6 như cũ (bộ Blender 2.5D dùng 0,35). Tất định theo `seed`.

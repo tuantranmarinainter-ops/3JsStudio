@@ -259,7 +259,7 @@ export function buildTown(THREE, A, opts = {}) {
   }
 
   g.traverse((o) => { if (o.isMesh) { o.castShadow = o.castShadow !== false; o.receiveShadow = true; } });
-  const dem = taoDen(THREE, g, { houses: [...houses.map((h) => h.house), ...vanhHouses], lamps: lamps.filter(Boolean), seed });
+  const dem = taoDen(THREE, g, { houses: [...houses.map((h) => h.house), ...vanhHouses], lamps: lamps.filter(Boolean), seed, leSang: opts.leSang });
   return { group: g, places, houses, size: W, seed, vanh: opts.vanh || 0, nha: nhaInfo, setNight: dem.setNight, den: dem, update: null };
 }
 
@@ -307,7 +307,7 @@ function quangTex(THREE) {
   x.fillStyle = gr; x.fillRect(0, 0, 128, 128); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t;
 }
 const MAU_DEN = ['#ffd27a', '#ffe2a8', '#ffc060', '#fff0cc'];
-function taoDen(THREE, g, { houses, lamps, seed }) {
+function taoDen(THREE, g, { houses, lamps, seed, leSang = LE_SANG }) {   // leSang = tỉ lệ cửa sổ sáng 0..1 (episode.town.leSang; không ghi = LE_SANG cũ 0,6; bộ Blender 2.5D dùng 0,35)
   g.updateMatrixWorld(true);
   const den = new THREE.Group(); den.name = 'town_night_lights'; den.visible = false; g.add(den);
   // 1) cửa sổ sáng: 1 InstancedMesh + 1 vật liệu MeshBasic (không đèn)
@@ -317,7 +317,7 @@ function taoDen(THREE, g, { houses, lamps, seed }) {
     const ws = cuaKinh(o.geometry); if (!ws.length) return;
     const mw = o.matrixWorld, s = Sc.setFromMatrixScale(mw).x;
     ws.forEach((w, k) => {
-      if (bam(seed * 977 + hi, k) >= LE_SANG) return;
+      if (bam(seed * 977 + hi, k) >= leSang) return;
       const nW = new THREE.Vector3(...w.n).transformDirection(mw), tW = new THREE.Vector3(nW.z, 0, -nW.x);
       V.set(...w.c).applyMatrix4(mw).addScaledVector(nW, 0.18);
       M.makeBasis(tW, UP, nW); q.setFromRotationMatrix(M); S.set(w.w * s * 0.86, w.h * s * 0.82, 1);

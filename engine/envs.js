@@ -43,6 +43,7 @@ import { CAR_ASSETS } from './townlife.js';
 import { taoHatThoiTiet } from './envs/gio-thoi-tiet.js';
 
 import { LIGHTS, applyLite, denNhanVat } from './lights.js';
+import { danhGia, trai as traiMoc, mauRGB } from './den-moc.js';   // đèn theo mốc (shot.lightCues; ô 'lightCues')
 export { LIGHTS };
 const SU_SONG = ['dan', 'xe', 'chim', 'song', 'co-gio'];   // tên nhóm sự sống hợp lệ của env.suSong
 export { ganTang };   // gắn tầng (front|mid|back) cho vật trong env — docs/boi-canh-tang.md
@@ -325,6 +326,13 @@ export function createEnvs(THREE, stage, K0, A = null) {
     { const key = ctx.light || e.light, on = (globalThis.__autoFx?.ibl ?? true);
       scene.environment = on ? ibl.get(key) : null; scene.environmentIntensity = ibl.intensity(key);
       if (on) stage.hemi.intensity *= IBL_HEMI_SCALE; }
+    // ĐÈN THEO MỐC (ô 'lightCues', mặc định TẮT): chỉ đổi cường độ/màu của đèn sẵn có SAU mọi bước trên → hàm thuần của (shot, t). Tắt ô / shot không ghi lightCues ⇒ không chạm gì.
+    if (ctx.lightCues?.length && (globalThis.__autoFx?.lightCues ?? false)) {
+      const T = (ctx.lightCuesT ||= traiMoc(ctx.lightCues)), V = danhGia(T, ctx.tLocal ?? t, ctx.fps || 30);
+      const col = (target, m) => { if (m == null) return; const a = mauRGB(m); if (a) target.setRGB(a[0], a[1], a[2]); else target.set(m); };
+      stage.hemi.intensity *= V.hemi; stage.sun.intensity *= V.sun; pool.intensity *= V.pool; scene.environmentIntensity *= V.env;
+      col(stage.hemi.color, V.hemiColor); col(stage.sun.color, V.sunColor); col(pool.color, V.poolColor);
+    }
     last = { env: name, light: ctx.light || e.light, flash: ctx.flash || 0 };   // cho engine/post.js (màu theo cảnh, chớp)
     if (e.group.userData.waters) {
       wl.sunDir.copy(stage.sun.position).sub(stage.sun.target.position).normalize();

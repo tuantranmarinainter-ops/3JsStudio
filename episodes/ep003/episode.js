@@ -20,7 +20,7 @@ export const EPISODE = {
   credits: false,
   // HIỆU ỨNG HÌNH chọn lọc cho tập 3 (14/11, so A/B 9 shot output/ep003/fx-ab: bộ này sạch hơn, có chiều sâu, ít răng cưa, không tối quá):
   // thêm AO (tối dịu góc tường, chân đồ) + SMAA; bỏ quần áo bụi, nhà cũ rêu mốc (tông Roblox sạch); tắt hẳn các hiệu ứng của biển/bão/đảo/tuyết/thị trấn Kenney (tập này không có cảnh nào dùng).
-  fx: { ao: true, smaa: true, worn: false, aged: false,
+  fx: { ao: true, smaa: true, lightCues: true, worn: false, aged: false,
     storm: false, stormSky: false, sea2: false, seaWx: false, seaDecor: false, mast: false, raft: false, wreckSplit: false,
     grass: false, flowers: false, sway: false, cloudShade: false, farwoods: false, backdrop: false, traffic: false, villagers: false, pvTrees: false,
     familyPhoto: false, houseStairs: false, stairsFold: false, foot: false, prints: false, wind: false, breath: false, paint: false, outline: false },
