@@ -11,8 +11,13 @@
   - B4: `engine/prewarm.js` (`createPrewarm`), dùng ở ep002, ep003, `_template`, ô `dichTruoc`.
   - B5: tay nắm chrome trong `K.fridge` (ô `fridgeChrome`); buồm vải `K.clothSails` (ô `buomVai`); cửa sổ thật thành helper `createRealWindow` trong `engine/realwindow.js`.
   - B7: doctor mục 12 (`tools/ke-thua.mjs` + miễn trừ `tools/ke-thua.json` + test `tools/tests/ke-thua.test.mjs`). Hiện báo 12 chỗ, toàn ở env tập 2/3: e3-* matKind none ×3, shop-in, cửa sổ tự dựng ×5, giường e3-phong, ghi đè ×2.
-- **Bước kế tiếp:** Bước 1b + Bước 6 cùng phiên ep003. Bước 1b: chăn `createBedSoft` cho `e3-phong.js:193-209`. Bước 6: thay `matKind='none'` của e3-* bằng vật liệu thật, A/B, gộp `dist/ep003_xem-thu.html` rồi gửi người dùng duyệt.
-- **Đang chờ:** người dùng tự xác nhận dòng quy tắc CLAUDE.md ở mục 5 (chưa ghi vào CLAUDE.md, vì yêu cầu chỉ đến qua phiên khác).
+  - B1b + B6: phiên ep003 làm xong, commit 711b2c5.
+    - Chăn `createBedSoft` có vân ca-rô (cloth.js thêm tuỳ chọn `map`).
+    - e3-pho, e3-tiem, e3-nha-may dùng vật liệu thật. e3-nha-may phần lớn là InstancedMesh nên gần như không đổi.
+    - Ảnh A/B ở `output/ep003/ke-thua/ab-truoc-sau.jpg`, bản xem thử `dist/ep003_xem-thu.html`.
+    - Program 217 → 223 (+6: chăn có map +3, nếp ga +2, vật liệu +1). Bỏ vân ca-rô thì về khoảng 220.
+- **Bước kế tiếp:** chờ người dùng duyệt A/B tập 3. Lỗi nhẹ còn lại: tay/chân Gà ló mép chăn, gò chăn s026 hơi cao, mảnh trắng mờ s025. shop-in.js (ep002) vẫn còn matKind none.
+- **Đang chờ:** (1) người dùng duyệt A/B tập 3 và chọn giữ hay bỏ vân ca-rô (+3 program); (2) người dùng tự xác nhận dòng quy tắc CLAUDE.md ở mục 5.
 - **File đang dở (chưa commit):** không.
 - **Đang chạy nền:** không.
 - **Đạt khi:** mỗi món "bị nhốt" có chỗ gốc dùng chung + cờ FX mặc định bật. Tắt cờ thì về như cũ. ep001 A/B y nguyên khung (PSNR ∞ / pose-ref OK). doctor cảnh báo được kiểu "env gỡ object chung".
