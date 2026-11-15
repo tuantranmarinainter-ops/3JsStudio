@@ -30,6 +30,8 @@ const CSS = `
 .c3d-bar > * { pointer-events: auto; }
 .c3d-bar button { background: rgba(29,36,48,.92); color: #e8ecf2; border: 1px solid #2a3342; border-radius: 6px; padding: 5px 9px; cursor: pointer; font: inherit; }
 .c3d-bar button:hover { border-color: #4da3ff; } .c3d-bar button.on { border-color: #4da3ff; color: #4da3ff; }
+.c3d-bar select { background: rgba(29,36,48,.92); color: #e8ecf2; border: 1px solid #2a3342; border-radius: 6px; padding: 4px 6px; font: inherit; max-width: 220px; }
+.c3d-bar select.on { border-color: #4da3ff; color: #4da3ff; }
 .c3d-bar label { background: rgba(29,36,48,.92); border: 1px solid #2a3342; border-radius: 6px; padding: 4px 8px; display: inline-flex; gap: 4px; align-items: center; cursor: pointer; }
 .c3d-help { position: absolute; left: 8px; bottom: 8px; right: 8px; font: 13px/1.45 system-ui, sans-serif; color: #8b96a8; background: rgba(14,17,22,.7); padding: 4px 8px; border-radius: 6px; pointer-events: none; }
 .c3d-help b { color: #f5d76e; }
@@ -65,7 +67,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
   let on = false, built = null, origDraw = null, curT = 0, wrap = null, home = null, canvasStyle = '', sizeObs = null;
   let shotCam = { pos: new THREE.Vector3(), quat: new THREE.Quaternion(), fov: 50, target: new THREE.Vector3(), id: null };
   const paths = new Map();   // id shot → mảng Vector3 vị trí camera (lấy mẫu)
-  let sampling = false, giuGoc = true, bam = false, show = { nv: true, dc: true, dd: true, cam: true, luoi: true };
+  let sampling = false, giuGoc = true, bam = false, envChon = '', show = { nv: true, dc: true, dd: true, cam: true, luoi: true };
   const listeners = new Set();
   // SONG SONG (Phim trái | 3D phải): renderer giữ nguyên cỡ phim W0×H0 (không dịch shader lại, không đổi cỡ bộ đệm mỗi khung).
   // Mỗi khung: vẽ Phim như thường (có hậu kỳ) → chép sang filmCv (canvas 2D đè đúng lên canvas WebGL, dưới phụ đề DOM);
@@ -96,6 +98,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     bar.innerHTML = `<button data-g="tren" title="Nhìn từ trên xuống (bản đồ)">⬇ Trên xuống</button><button data-g="truoc" title="Nhìn từ phía trước chỗ shot diễn">◉ Trước</button>`
       + `<button data-g="shot" title="Bám camera shot: camera 3D đi, quay, đổi fov theo đúng camera của shot mỗi khung (khung vàng = phần phim thấy). Kéo chuột / WASD để thoát bám.">🎥 Bám camera shot</button>`
       + `<label title="Bật: tua/phát qua shot khác camera bay vẫn đứng yên (chỉ chóp camera, nhân vật, bối cảnh đổi theo t). Tắt: camera bay tới chỗ shot mới diễn."><input type="checkbox" data-o="giuGoc" checked> 🔒 Giữ góc</label>`
+      + `<select data-o="env" title="Xem riêng một bối cảnh (env) để sửa / bổ sung — chỉ đổi khung 3D, phim không đổi. 'Theo shot' = bối cảnh của shot đang xem."><option value="">🏞 Bối cảnh: theo shot</option></select>`
       + `<label title="Lưới sàn y = 0 (bị nhà/đất che đúng chỗ)"><input type="checkbox" data-o="luoi" checked> Lưới</label><label><input type="checkbox" data-o="cam" checked> Camera</label><label><input type="checkbox" data-o="nv" checked> Nhân vật</label>`
       + `<label><input type="checkbox" data-o="dc" checked> Đạo cụ</label><label><input type="checkbox" data-o="dd" checked> Địa điểm</label>`;
     const help = document.createElement('div'); help.className = 'c3d-help';
@@ -105,6 +108,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     bar.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b?.dataset.g) { goc(b.dataset.g); b.blur(); } });
     bar.addEventListener('change', (e) => {
       const k = e.target.dataset.o; if (!k) return;
+      if (k === 'env') { setEnv(e.target.value); e.target.blur(); return; }
       if (k === 'giuGoc') giuGoc = e.target.checked; else show[k] = e.target.checked;
       e.target.blur();   // trả phím Space / ← → / [ ] cho trình phát
       redraw();
@@ -282,7 +286,8 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     const rt = renderer.getRenderTarget();
     try {
       if (ss) { renderer.setRenderTarget(null); renderer.setViewport(0, 0, vw, vh); renderer.setScissor(0, 0, vw, vh); renderer.setScissorTest(true); }
-      renderer.render(scene, B.free);
+      const ov = envOverride();
+      try { renderer.render(scene, B.free); } finally { ov(); }
       B.grid.visible = show.luoi;
       renderer.autoClear = false; renderer.render(B.helpers, B.free);   // KHÔNG xoá depth: lưới bị nhà/đất che đúng chỗ; chóp/đường đi depthTest:false nên vẫn nổi
       if (ss) ssCtx.drawImage(canvas, 0, H0 - vh, vw, vh, 0, 0, vw, vh);   // chép ngay trong cùng tác vụ (không cần preserveDrawingBuffer)
@@ -305,6 +310,46 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     built.ready = true;
     updateFrustum(); redraw();
     if (changed && !paths.has(shotCam.id)) setTimeout(() => samplePath(shotCam.id), 0);
+  }
+
+  // ---------- chọn bối cảnh: khung 3D vẽ env được chọn thay env của shot (chỉ lúc vẽ 3D, trả visible lại ngay → Phim không đổi) ----------
+  const envGroups = () => scene.children.filter((o) => o.name?.startsWith('env_') && o.isGroup);
+  function envOverride() {
+    if (!envChon) return () => {};
+    const gs = envGroups(), keep = gs.map((g) => g.visible);
+    for (const g of gs) g.visible = g.name === 'env_' + envChon;
+    return () => gs.forEach((g, i) => { g.visible = keep[i]; });
+  }
+  function envList() {
+    const used = new Map(), tl = getTl();
+    for (const it of tl?.list || []) { const n = (it.shot || it).env; if (n) used.set(n, (used.get(n) || 0) + 1); }
+    return envGroups().map((g) => g.name.slice(4)).map((n) => ({ name: n, shots: used.get(n) || 0 }))
+      .sort((a, b) => (b.shots > 0) - (a.shots > 0) || a.name.localeCompare(b.name));
+  }
+  function fillEnvSelect() {
+    const sel = built?.bar.querySelector('select[data-o=env]'); if (!sel) return;
+    const list = envList(), sig = list.map((e) => e.name + e.shots).join();
+    if (sel.dataset.sig === sig) return; sel.dataset.sig = sig;
+    sel.innerHTML = '<option value="">🏞 Bối cảnh: theo shot</option>' + list.map((e) =>
+      `<option value="${e.name}">${e.name}${e.shots ? ` · ${e.shots} shot` : ' · (tập này không dùng)'}</option>`).join('');
+    sel.value = envChon;
+  }
+  function setEnv(name) {
+    envChon = name && envGroups().some((g) => g.name === 'env_' + name) ? name : '';
+    const sel = built?.bar.querySelector('select[data-o=env]');
+    if (sel) { sel.value = envChon; sel.classList.toggle('on', !!envChon); }
+    if (!on) return;
+    if (envChon) {   // đặt camera nhìn toàn cảnh env được chọn (khung chứa ≤ 300 stud quanh tâm: bỏ mặt biển/trời rất rộng)
+      const g = scene.getObjectByName('env_' + envChon), box = new THREE.Box3().setFromObject(g);
+      if (!box.isEmpty()) {
+        const ctr = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3()), ext = Math.min(300, Math.max(20, size.x, size.z)) * 0.6;
+        bam = false; for (const b of built.bar.querySelectorAll('button[data-g]')) b.classList.remove('on');
+        if (built.free.fov !== 55) { built.free.fov = 55; built.free.updateProjectionMatrix(); }
+        ctr.y = Math.min(Math.max(ctr.y, 0), 20);
+        built.controls.target.copy(ctr); built.free.position.copy(ctr).add(_v.set(0, ext * 0.55, ext)); built.controls.update();
+      }
+    }
+    redraw();
   }
 
   // ---------- bám camera shot: mỗi khung camera tự do = camera shot (vị trí, hướng, fov) ----------
@@ -391,6 +436,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     const p = stage.renderAt(curT = lastT());   // đọc camera shot ở t hiện tại
     const first = () => { if (!B.started) { B.started = true; goc('truoc'); } else { if (bam) applyBam(); else if (!giuGoc) flyToShot(); updateFrustum(); redraw(); } };
     if (p && p.then) p.then(first); else first();
+    fillEnvSelect();
     for (const f of listeners) f(true, ss);
     return api;
   }
@@ -428,6 +474,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     get shotCam() { return { pos: shotCam.pos.toArray(), target: shotCam.target.toArray(), quat: shotCam.quat.toArray(), fov: shotCam.fov, id: shotCam.id }; },
     get camera() { return built?.free; },
     get giuGoc() { return giuGoc; },
+    get env() { return envChon; }, setEnv, envList,
     get bam() { return on && bam; },
     setBam: (v) => { if (v) goc('shot'); else stopBam(); },
     setGiuGoc: (v) => { giuGoc = !!v; const c = built?.bar.querySelector('input[data-o=giuGoc]'); if (c) c.checked = giuGoc; },

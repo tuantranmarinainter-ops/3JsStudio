@@ -106,6 +106,16 @@ const bam = await page.evaluate(async () => {
 });
 console.log(`Bám camera shot: lệch ${bam.max.toExponential(1)}, camera bay đi theo ${bam.di.toFixed(2)} stud · ${bam.on ? 'đang bám' : 'KHÔNG bám'}`);
 if (!bam.on || !(bam.max < 1e-5)) loi.push(`Bám camera shot: không theo camera shot (lệch ${bam.max})`);
+// 🏞 chọn bối cảnh: mỗi env một ảnh (tối đa 4), về 'theo shot' thì khung Phim vẫn như cũ (kiểm ở cuối)
+const envs = await page.evaluate(() => window.__che3d.envList());
+console.log(`Bối cảnh: ${envs.length} env (${envs.map((e) => e.name + (e.shots ? '·' + e.shots : '')).join(', ')})`);
+if (!envs.length) loi.push('ô chọn bối cảnh trống');
+for (const e of envs.slice(0, 4)) {
+  const r = await page.evaluate((n) => { const c = window.__che3d; c.setEnv(n); return { env: c.env, bam: c.bam }; }, e.name);
+  if (r.env !== e.name) loi.push(`chọn bối cảnh ${e.name} không được`);
+  await page.screenshot({ path: join(out, `3d_env-${e.name}.png`) });
+}
+await page.evaluate(() => window.__che3d.setEnv(''));
 // góc nhìn nhanh + WASD
 for (const g of ['tren', 'shot']) { await page.evaluate((g) => window.__che3d.goc(g), g); await page.screenshot({ path: join(out, `3d_goc-${g}.png`) }); }
 // ô Lưới: tắt → ảnh không lưới (so với 3d_goc-tren.png), rồi bật lại

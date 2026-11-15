@@ -2,10 +2,10 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-15 (🎥 Bám camera shot liên tục; gộp lại 4 tập + studio để có ◧ Song song)
+- **Cập nhật:** 2026-11-15 (🏞 ô chọn bối cảnh trong 3D; trước đó 🎥 Bám camera shot)
 - **Nhánh:** `ep1-v2`
 - **Đang làm:** xong: 3D giai đoạn 1 + 🔒 Giữ góc + 🎥 Bám camera shot (mỗi khung camera bay = camera shot: vị trí/hướng/fov;
-  kéo chuột/lăn/WASD → thoát bám; `__che3d.bam`, `setBam`) + có trên ep001–ep004 (dùng chung qua `engine/stage.js`). Giai đoạn 2 chờ người dùng.
+  kéo chuột/lăn/WASD → thoát bám; `__che3d.bam`, `setBam`) + 🏞 ô Bối cảnh (chỉ khung 3D vẽ env được chọn, trả visible ngay sau khi vẽ; `setEnv`, `envList`) + có trên ep001–ep004 (dùng chung qua `engine/stage.js`). Giai đoạn 2 chờ người dùng.
 - **Bước kế tiếp:** người dùng bấm thử dist/ep00{1..4}.html; nếu muốn nhãn đủ cho ep001 → sửa 1 dòng trong episodes/ep001/index.html (dưới).
 - **Đang chờ:** người dùng dùng thử + quyết giai đoạn 2; phiên ep001-sky-storm đang giữ episodes/ep001/*.
 - **File đang dở (chưa commit):** không
