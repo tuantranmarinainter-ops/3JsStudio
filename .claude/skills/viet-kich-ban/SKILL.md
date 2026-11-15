@@ -48,3 +48,6 @@ Chuẩn kênh: `CLAUDE.md` (mục "Format Ở thị trấn này", "Cấu trúc p
 2. `python tools/kb/lint.py episodes/<ep>/kich-ban.md` → sửa đúng dòng báo (Kxx) → chạy lại tới **0 lỗi**. Kẹt cùng một lỗi sau 3 lần → dừng, báo người dùng.
 3. `python tools/kb/kichban.py episodes/<ep>/kich-ban.md --tom-tat` (không đếm tay): in số câu/shot/giây, mục cần dựng, shot dài/ngắn nhất, vị trí twist, số câu mỗi phần.
 4. Trả lời: đường dẫn file + bảng tóm tắt từ đầu ra trên (số câu, số shot, tổng giây, số mục cần dựng, vị trí twist %, số câu mỗi phần). Hỏi duyệt rồi DỪNG; chưa chạy `storyboard.py`, chưa dựng.
+
+## Biến thể format (tham khảo ở bước 1)
+Trước khi viết 5 mẫu, xem `docs/format-kich-ban.md`: 4 biến thể (luật chuẩn, theo giờ, hai nhà đối chiếu, lời thú nhận) và mốc từng phần. Lint thêm cảnh báo W03–W09 cho `kich-ban.md` và `python tools/kb/lint.py --loi-ke narration.txt` cho lời kể; cảnh báo không chặn nhưng đọc từng dòng.

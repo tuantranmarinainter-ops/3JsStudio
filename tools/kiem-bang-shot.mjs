@@ -8,6 +8,10 @@ const RE_SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const LOAI = ['zoomIn', 'zoomOut', 'lia', 'theo', 'dung', 'doiHuong'];
 const GOC = ['ngang-mat', 'tren-xuong', 'duoi-len', 'qua-vai'];
 const CO = ['toan', 'trung', 'can', 'dac-ta'];
+const KY_TU_GIAY = 14;          // nhịp đọc tiếng Việt (skill viet-kich-ban)
+const DUR_TOI_THIEU = 0.8;      // ngắn hơn đọc như giật hình
+const DUNG_TOI_DA = 0.1;        // luật camera dồn dập: shot camera đứng yên ≤ 10%
+const TONG_TAP = [120, 180];    // chỉ kiểm khi đủ dài để là cả tập
 
 export function hongDau(s) {
   return typeof s === 'string' && (s.includes('�') || /\p{L}\?\p{L}/u.test(s));
@@ -80,6 +84,39 @@ export function kiemBangShot(data) {
     }
     quetChuoi(s, (str, d) => { if (hongDau(str)) L(id, `hỏng dấu tiếng Việt ở ${d.slice(1)}: "${str}"`); });
   });
+  // --- luật học từ lint của nocodehack, đổi cho "Ở thị trấn này" (chỉ CẢNH BÁO) ---
+  const dungDen = new Set();
+  let nDung = 0, tong = 0, truoc = null;
+  for (const s of data.shots) {
+    if (!s || typeof s !== 'object') continue;
+    const id = typeof s.id === 'string' ? s.id : '?';
+    if (typeof s.dur === 'number') {
+      tong += s.dur;
+      if (s.dur > 0 && s.dur < DUR_TOI_THIEU) W(id, `dur ${s.dur} s < ${DUR_TOI_THIEU} s: đọc như giật hình, gộp với shot kề`);
+      if (coChu(s.thoai) && s.dur > 0) {
+        const can = s.thoai.trim().length / KY_TU_GIAY;
+        if (can > s.dur * 1.25 + 0.3) W(id, `thoại cần ~${can.toFixed(1)} s để đọc nhưng shot chỉ dài ${s.dur} s: rút thoại hoặc tăng dur`);
+      }
+    }
+    if (typeof s.boiCanh === 'string') dungDen.add('b:' + s.boiCanh);
+    if (Array.isArray(s.nhanVat)) for (const n of s.nhanVat) dungDen.add('n:' + n);
+    const c = s.camera;
+    if (c && c.loai === 'dung') nDung++;
+    if (truoc && c && truoc.c && truoc.b === s.boiCanh && truoc.c.loai === c.loai && truoc.c.gocMay === c.gocMay)
+      W(id, `cùng bối cảnh, cùng camera (${c.loai}/${c.gocMay}) với shot ${truoc.id} liền trước: đơn điệu, đổi loại hoặc góc máy`);
+    truoc = { id, b: s.boiCanh, c };
+  }
+  for (const [ten, khoa, ma] of [['nhân vật', 'nhanVat', 'n:'], ['bối cảnh', 'boiCanh', 'b:']]) {
+    for (const o of (data[khoa] || [])) {
+      if (!o || typeof o.id !== 'string') continue;
+      if (!dungDen.has(ma + o.id)) W('-', `${ten} "${o.id}" khai báo nhưng không shot nào dùng`);
+      if (!coChu(o.moTa)) W('-', `${ten} "${o.id}" thiếu moTa: tờ mẫu vẽ không nhất quán giữa các shot`);
+    }
+  }
+  if (data.shots.length >= 10 && nDung / data.shots.length > DUNG_TOI_DA)
+    W('-', `${nDung}/${data.shots.length} shot camera "dung" (${Math.round(100 * nDung / data.shots.length)}%, quá ${DUNG_TOI_DA * 100}%): luật camera dồn dập`);
+  if (data.shots.length >= 60 && (tong < TONG_TAP[0] || tong > TONG_TAP[1]))
+    W('-', `tổng ${tong.toFixed(1)} s ngoài ${TONG_TAP[0]}–${TONG_TAP[1]} s của một tập`);
   if (data.shots.length && n3 / data.shots.length > 0.2)
     W('-', `shot hinh:3 chiếm ${Math.round(100 * n3 / data.shots.length)}% (quá 20%)`);
   return { loi, canhBao };

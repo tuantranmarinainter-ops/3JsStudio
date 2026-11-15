@@ -183,3 +183,90 @@ class TestLint(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class TestLuatMoi(unittest.TestCase):
+    """cảnh báo W03–W09 và kiểm narration.txt (học từ lint nocodehack, docs/format-kich-ban.md)."""
+    HEAD = '| id | giay | loi ke | loai | ở đâu | ghi chú |\n|---|---|---|---|---|---|\n'
+
+    def md(self, rows, meta='', kiem=True):
+        d = tempfile.mkdtemp()
+        p = Path(d) / 'kich-ban.md'
+        p.write_text(('' if kiem else 'kiem_tong: off\n') + meta + '\n\n' + self.HEAD + rows, encoding='utf-8')
+        return p
+
+    def ma(self, p): return {c for _, c, _ in lint.canh_bao_kich_ban(p)}
+
+    def rows(self, n=6, loi='Ở thị trấn này, tôi thấy luật.', cuoi_at='square', note=''):
+        r = f'| 1 | 2 | {loi} | establish | square | |\n'
+        for i in range(2, n):
+            r += f'| {i} | 2 | | crowd | street | |\n'
+        r += f'| {n} | 2 | | crowd | {cuoi_at} | {note} |\n'
+        return r
+
+    FULL = 'rule: Ở thị trấn này, ai cũng có thanh pin.\nweakness: pin tôi cạn nhanh\ntwist: mẹ giấu sạc\nsolution: pin cạn nên tôi thấy mẹ'
+
+    def test_sach_khi_du_header(self):
+        self.assertEqual(self.ma(self.md(self.rows(), self.FULL)), set())
+
+    def test_w03_thieu_header(self):
+        self.assertIn('W03', self.ma(self.md(self.rows(), 'rule: x')))
+
+    def test_w04_luat_dai_hoac_nhieu_cau(self):
+        meta = self.FULL.replace('rule: Ở thị trấn này, ai cũng có thanh pin.', 'rule: Ở thị trấn này ai cũng có pin. Hết pin thì ngủ. Ngủ thì mất.')
+        self.assertIn('W04', self.ma(self.md(self.rows(), meta)))
+
+    def test_w05_doc_khong_kip_khong_can_header(self):
+        r = self.rows(loi='Ở thị trấn này, tôi đã nhìn thấy một điều vô cùng kỳ lạ trong căn phòng.').replace('| 2 | Ở', '| 0.8 | Ở', 1)
+        p = self.md(r, kiem=False)
+        self.assertIn('W05', self.ma(p))
+        self.assertNotIn('W05', {c for _, c, _ in lint.lint(p)})
+
+    def test_w06_twist_qua_muon(self):
+        r = self.rows().replace('| 2 | | crowd | street | |', '| 2 | | crowd | street | |').replace('| 6 | 2 | | crowd | square |  |', '| 6 | 2 | | crowd | square | twist |')
+        self.assertIn('W06', self.ma(self.md(r, self.FULL)))
+
+    def test_w07_khong_ngoi_thu_nhat(self):
+        self.assertIn('W07', self.ma(self.md(self.rows(loi='Ở thị trấn này, ai cũng có luật.'), self.FULL)))
+        self.assertNotIn('W07', self.ma(self.md(self.rows(), self.FULL)))
+
+    def test_w08_canh_cuoi_khong_goi_lai_canh_dau(self):
+        r = ''.join(f'| {i} | 2 | {"Ở thị trấn này, tôi thấy." if i == 1 else ""} | crowd | {"shop" if i <= 3 else "park"} | |\n' for i in range(1, 7))
+        self.assertIn('W08', self.ma(self.md(r, self.FULL)))
+        self.assertNotIn('W08', self.ma(self.md(r[:-3] + ' loop |\n', self.FULL)))
+        self.assertNotIn('W08', self.ma(self.md(self.rows(), self.FULL)))
+
+    def test_w09_crowd_qua_dong(self):
+        self.assertIn('W09', self.ma(self.md(self.rows(), self.FULL + '\ncrowd: 40')))
+        self.assertNotIn('W09', self.ma(self.md(self.rows(), self.FULL + '\ncrowd: 12')))
+
+    def test_kiem_tong_off_tat_luat_toan_tap(self):
+        self.assertEqual(self.ma(self.md(self.rows(loi='Ở thị trấn này, ai cũng có luật.'), kiem=False)), set())
+
+    def loi_ke(self, text):
+        d = tempfile.mkdtemp()
+        p = Path(d) / 'narration.txt'
+        p.write_text(text, encoding='utf-8')
+        return lint.kiem_loi_ke(p)
+
+    def test_loi_ke_tot(self):
+        errs, ws = self.loi_ke('@at 0 Ở thị trấn này, tôi sống.\n@at 3 Tôi sợ.\n')
+        self.assertEqual(errs, [])
+        self.assertEqual([c for _, c, _ in ws], ['W11'])    # chỉ ~4 s, ngoài 120–180 s
+
+    def test_loi_ke_n01_n02(self):
+        errs, _ = self.loi_ke('@at 0 Hôm nay tôi đi học.\n@at abc Câu.\n@at 5 Câu.\n@at 4 Lùi mốc.\n')
+        self.assertEqual({c for _, c, _ in errs}, {'N01', 'N02'})
+        self.assertEqual(self.loi_ke('không có mốc')[0][0][1], 'N01')
+
+    def test_loi_ke_w10_w12(self):
+        _, ws = self.loi_ke('@at 0 Ở thị trấn này, ai cũng có một thanh pin trên đầu mãi mãi mãi.\n@at 1 Hết.\n')
+        self.assertEqual({'W10', 'W12'} & {c for _, c, _ in ws}, {'W10', 'W12'})
+
+    def test_loi_ke_cli(self):
+        d = tempfile.mkdtemp()
+        p = Path(d) / 'narration.txt'
+        p.write_text('@at 0 Hôm nay.\n', encoding='utf-8')
+        r = subprocess.run([sys.executable, str(KB / 'lint.py'), '--loi-ke', str(p)], capture_output=True)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn('N02', r.stdout.decode('utf-8'))

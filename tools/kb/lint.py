@@ -1,6 +1,7 @@
-"""Kiểm kich-ban.md (11 mã lỗi K00–K11 + cảnh báo W01–W02, không đổi mã thoát).
+"""Kiểm kich-ban.md (11 mã lỗi K00–K11 + cảnh báo W01–W09, không đổi mã thoát) và narration.txt (N01–N02 lỗi, W10–W12 cảnh báo).
 
   python tools/kb/lint.py <kich-ban.md> [--json]     in `kich-ban.md:<dòng>: <MÃ> <thông báo>`; thoát 0 = sạch, 1 = có lỗi.
+  python tools/kb/lint.py --loi-ke <narration.txt>   kiểm file lời kể `@at <giây> câu` (docs/format-kich-ban.md)
 
 Tên animation / mặt / loại shot đọc bằng regex từ engine/r15.js và engine/shottypes.js lúc chạy.
 """
@@ -19,6 +20,15 @@ TWIST_RANGE = (40, 85)
 MAX_SHOTS_PER_LINE = 3
 MAX_DEM = 0.5            # CẢNH BÁO W01: quá nửa số shot là đêm → phim tối, khó đọc mặt
 MAX_DIA_DIEM = 0.3       # CẢNH BÁO W02: một địa điểm chiếm quá 30% số shot → đơn điệu
+KY_TU_GIAY = 14.0        # nhịp đọc tiếng Việt ~14 ký tự/giây (skill viet-kich-ban)
+KY_TU_GIAY_GIONG = 19.0  # giọng CapCut thật (trung vị ep003: 18,9 ký tự/giây) — dùng cho narration.txt đã có mốc
+DOC_DU_SUC = 1.25        # W05/W10: cần > 125% thời lượng có sẵn → đọc không kịp
+LUAT_TOI_DA_KY_TU = 140  # W04: câu luật "nói được trong 1 câu"
+GIAI_QUYET_RANGE = (0.20, 0.50)   # W06: phần từ twist tới hết / tổng thời lượng
+MAX_CROWD = 24           # W09: quá đông -> nặng dựng, khó đọc
+TONG_LOI_KE = (120, 180)
+NGOI_THU_NHAT = ('toi', 'minh', 'em', 'con', 'tao')
+HEADER_CAN = ('rule', 'weakness', 'twist', 'solution')
 
 
 def min_dur(shot):
@@ -111,17 +121,105 @@ def canh_bao(path):
     return out
 
 
+def _co_ngoi_thu_nhat(text):
+    f = ' ' + re.sub(r'[^a-z0-9]+', ' ', fold(text)) + ' '
+    return any(f' {w} ' in f for w in NGOI_THU_NHAT)
+
+
+def cau_chi_tiet(d):
+    """mỗi câu lời kể: {"dong", "text", "dur" (tổng dur các shot của câu), "n" (số shot)} — gom như K10."""
+    out = []
+    for s in d['shots']:
+        nar = s.get('narration', '')
+        if nar in CONT:
+            if out: out[-1]['dur'] += s.get('dur', 0.0); out[-1]['n'] += 1
+        elif nar:
+            out.append({'dong': s['_dong'], 'text': nar, 'dur': s.get('dur', 0.0), 'n': 1})
+    return out
+
+
+def canh_bao_kich_ban(path):
+    """CẢNH BÁO học từ lint/format của nocodehack, đổi cho "Ở thị trấn này": W03–W09. Không đổi mã thoát."""
+    d = kichban.doc(path)
+    sh = d['shots']; out = []
+    # W05 (mọi file): lời kể dài hơn tổng thời lượng shot của câu -> giọng đọc tràn sang câu sau
+    for c in cau_chi_tiet(d):
+        can = len(c['text'].strip()) / KY_TU_GIAY
+        if c['dur'] > 0 and can > c['dur'] * DOC_DU_SUC + 0.3:
+            out.append((c['dong'], 'W05', f'câu "{c["text"][:30]}…" cần ~{can:.1f} s để đọc nhưng {c["n"]} shot chỉ dài {c["dur"]:.1f} s: rút câu hoặc thêm giây'))
+    if str(d['meta'].get('kiem_tong', '')).lower() == 'off' or len(sh) < 5:
+        return out
+    meta = d['meta']
+    thieu = [k for k in HEADER_CAN if not str(meta.get(k, '')).strip()]
+    if thieu:
+        out.append((1, 'W03', f'header thiếu {", ".join(thieu)} (luật, điểm yếu, twist, lời giải): không có chỗ đối chiếu cốt truyện'))
+    luat = str(meta.get('rule', '')).strip()
+    if luat and (len(luat) > LUAT_TOI_DA_KY_TU or len(re.findall(r'[.!?…](?:\s|$)', luat)) > 1):
+        out.append((1, 'W04', f'câu luật dài {len(luat)} ký tự hoặc nhiều câu: luật phải nói được trong 1 câu (≤ {LUAT_TOI_DA_KY_TU} ký tự)'))
+    tw = kichban.twist_info(d)
+    if tw:
+        sau = 1 - tw['rel']
+        if not GIAI_QUYET_RANGE[0] <= sau <= GIAI_QUYET_RANGE[1]:
+            out.append((tw['dong'], 'W06', f'từ twist tới hết phim chiếm {sau * 100:.0f}% (khung {int(GIAI_QUYET_RANGE[0] * 100)}–{int(GIAI_QUYET_RANGE[1] * 100)}%: twist ~25% + giải quyết ~25%)'))
+    cau = cau_chi_tiet(d)
+    if cau and not any(_co_ngoi_thu_nhat(c['text']) for c in cau):
+        out.append((cau[0]['dong'], 'W07', 'không câu lời kể nào có ngôi thứ nhất (tôi/mình/em/con…): format kể bởi một đứa trẻ'))
+    dau = {x.get('at_hd') or x.get('env_hd') for x in sh[:3]} - {None}
+    cuoi = {x.get('at_hd') or x.get('env_hd') for x in sh[-3:]} - {None}
+    if dau and cuoi and not (dau & cuoi) and 'loop' not in ' '.join(x.get('notes', '').lower() for x in sh[-3:]):
+        out.append((sh[-1]['_dong'], 'W08', f'cảnh cuối ({", ".join(sorted(cuoi))}) không gợi lại cảnh đầu ({", ".join(sorted(dau))}); cố ý thì ghi "loop" vào ghi chú shot cuối'))
+    n_crowd = (meta.get('actors') or {}).get('crowd', {}).get('count', 0)
+    if n_crowd > MAX_CROWD:
+        out.append((1, 'W09', f'header crowd: {n_crowd} > {MAX_CROWD} người: nặng dựng, 6–14 đã thành đám đông trong khung dọc'))
+    return out
+
+
+def kiem_loi_ke(path):
+    """narration.txt: dòng `@at <giây> câu`. Trả (lỗi, cảnh báo) dạng (dòng, mã, thông báo)."""
+    errs, ws, mocs = [], [], []
+    for i, raw in enumerate(Path(path).read_text(encoding='utf-8-sig').splitlines(), 1):
+        m = re.match(r'^@at\s+(\S+)\s*(.*)$', raw.strip())
+        if not m: continue
+        try: t = float(m.group(1).replace(',', '.'))
+        except ValueError: errs.append((i, 'N01', f'mốc @at "{m.group(1)}" không phải số giây')); continue
+        if mocs and t <= mocs[-1][1]: errs.append((i, 'N01', f'mốc @at {t:g} không lớn hơn mốc trước ({mocs[-1][1]:g})'))
+        if not m.group(2).strip(): errs.append((i, 'N01', 'dòng @at không có câu')); continue
+        mocs.append((i, t, m.group(2).strip()))
+    if not mocs: return [(1, 'N01', 'không có dòng @at nào')], ws
+    if not fold(mocs[0][2]).startswith('o thi tran nay'):
+        errs.append((mocs[0][0], 'N02', 'câu lời kể đầu phải bắt đầu bằng "Ở thị trấn này"'))
+    for k, (i, t, text) in enumerate(mocs[:-1]):
+        can, co = len(text) / KY_TU_GIAY_GIONG, mocs[k + 1][1] - t
+        if can > co * DOC_DU_SUC + 0.3:
+            ws.append((i, 'W10', f'câu cần ~{can:.1f} s nhưng tới mốc câu sau chỉ có {co:.1f} s: giọng tràn hoặc phải ép nhanh'))
+    cuoi = mocs[-1][1] + len(mocs[-1][2]) / KY_TU_GIAY_GIONG
+    if not TONG_LOI_KE[0] <= cuoi <= TONG_LOI_KE[1]:
+        ws.append((mocs[-1][0], 'W11', f'lời kể kết thúc ~{cuoi:.0f} s, ngoài {TONG_LOI_KE[0]}–{TONG_LOI_KE[1]} s'))
+    if not any(_co_ngoi_thu_nhat(t) for _, _, t in mocs):
+        ws.append((mocs[0][0], 'W12', 'không câu nào có ngôi thứ nhất (tôi/mình/em/con…)'))
+    return errs, ws
+
+
 def main(argv):
     if hasattr(sys.stdout, 'reconfigure'): sys.stdout.reconfigure(encoding='utf-8')
     if hasattr(sys.stderr, 'reconfigure'): sys.stderr.reconfigure(encoding='utf-8')
     args = [a for a in argv if not a.startswith('--')]
+    if '--loi-ke' in argv and args:
+        try: errs, ws = kiem_loi_ke(args[0])
+        except OSError:
+            print(f'{args[0]}: K00 không đọc được file', file=sys.stderr); return 2
+        n = Path(args[0]).name
+        for l, c, m in errs: print(f'{n}:{l}: {c} {m}')
+        for l, c, m in ws: print(f'{n}:{l}: {c} (cảnh báo) {m}')
+        print(f'kiem-loi-ke: {len(errs)} lỗi · {len(ws)} cảnh báo')
+        return 1 if errs else 0
     if not args:
         print(__doc__); return 2
     p = Path(args[0])
     try: errs = lint(p)
     except OSError:
         print(f'{args[0]}: K00 không đọc được file', file=sys.stderr); return 2
-    try: ws = canh_bao(p)
+    try: ws = sorted(canh_bao(p) + canh_bao_kich_ban(p))
     except Exception: ws = []
     if '--json' in argv:
         print(json.dumps([{'dong': n, 'ma': c, 'msg': m} for n, c, m in errs + ws], ensure_ascii=False, indent=2))
