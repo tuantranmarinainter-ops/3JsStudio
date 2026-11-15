@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Anim lab — thử động tác R6</title>
+<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
+<style>
+html,body{margin:0;background:#cfd6dc;font:12px system-ui,sans-serif;color:#1b2430}canvas{display:block}
+#ui{position:fixed;left:6px;top:6px;width:210px;max-height:96vh;overflow:auto;background:#ffffffe6;border-radius:8px;padding:6px 8px;box-shadow:0 2px 8px #0003}
+#ui h4{margin:6px 0 2px;font-size:12px}#ui label{display:block;white-space:nowrap}#ui input[type=range]{width:100%}
+#ui select{width:100%}#ui .row{display:flex;gap:6px;align-items:center}
+</style></head>
+<body><canvas id="c"></canvas><div id="ui"></div>
+<script type="module">
+// ANIM LAB — thử động tác R6 từ nhiều NGUỒN (A = anim-nch.js thủ tục; B = emote Roblox thật, đăng ký sau).
+// URL: ?a=walk,punch,knockback  (1–3 nhân vật, mỗi cái một động tác)   ?grid=1  (mọi động tác của mọi nguồn bật, mỗi cái một nhân vật)
+//      ?t=0.5   ?ui=0 (ẩn bảng điều khiển)   ?view=front|34   ?src=A,B  (nguồn bật)   ?opt={"hand":"L"} (JSON opt chung)
+// Trang này CHỈ phụ thuộc: window.renderAt(t) (tất định, hàm thuần của t) · window.__ready · window.__stage · window.THREE (cho tools/look.mjs).
+// CÁCH CẮM NGUỒN B: window.registerAnimSource('B', 'Emote Roblox', { names: [...], pose: (name, t, opt) => pose r15, meta: { [name]: { dur, loop } } })
+//   — gọi trước khi trang vẽ (module chạy sau) hoặc bất kỳ lúc nào (bảng chọn tự dựng lại). Định dạng pose = r15.js (xem đầu engine/anim-nch.js).
+import * as THREE from 'three';
+import { R15_ANIMATIONS } from './r15.js';
+import './anim-them.js';
+import { createR6Rig } from './r6-rig.js';
+import { R6_LOOKS } from './r6-looks.js';
+import { loadFacePack } from './face-pack.js';
+import { NCH, NCH_META, nchPose, registerNch } from './anim-nch.js';
+registerNch();
+
+window.THREE = THREE;
+const q = new URLSearchParams(location.search);
+const SOURCES = window.__animSources = window.__animSources || {};
+SOURCES.A = { label: 'A · thủ tục (nocodehack)', names: Object.keys(NCH), pose: nchPose, meta: NCH_META, on: true };
+window.registerAnimSource = (id, label, src) => { SOURCES[id] = { label, on: true, meta: {}, ...src }; if (window.__rebuild) window.__rebuild(); };
+
+const CW = 4.4, NMAX = 24;
+const cv = document.getElementById('c'), renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#cfd6dc');
+scene.add(new THREE.HemisphereLight('#ffffff', '#8a8f98', 1.5));
+const sun = new THREE.DirectionalLight('#fff4e0', 1.9); sun.position.set(4, 9, 8); scene.add(sun);
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshStandardMaterial({ color: '#aeb7bf', roughness: 1 })); floor.rotation.x = -Math.PI / 2; floor.position.y = -0.01; scene.add(floor);
+const cam = new THREE.PerspectiveCamera(30, 1, 0.1, 400);
+const faceSet = await loadFacePack(THREE, q.get('faces') || 'altiwyre').catch(() => ({}));
+const looks = Object.keys(R6_LOOKS).filter((k) => !['skin', 'torso', 'arm', 'hat'].includes(k));
+
+let chars = [], assign = [], T = +(q.get('t') || 0), optShared = {};
+try { optShared = JSON.parse(q.get('opt') || '{}'); } catch { optShared = {}; }
+const allNames = () => Object.entries(SOURCES).filter(([, s]) => s.on).flatMap(([id, s]) => s.names.map((n) => ({ src: id, name: n })));
+const full = (a) => (a.src === 'A' ? 'nch_' + a.name : a.name);
+function parseA() {
+  const want = (q.get('a') || 'walk,punch,knockback').split(',').slice(0, 3);
+  return want.map((w) => { const [s, n] = w.includes(':') ? w.split(':') : ['A', w]; return { src: s, name: n }; });
+}
+function build() {
+  for (const c of chars) { scene.remove(c.rig.root); c.rig.root.traverse((o) => { o.geometry?.dispose?.(); }); }
+  chars = [];
+  const list = q.get('grid') === '1' ? allNames().slice(0, NMAX) : assign;
+  const cols = q.get('grid') === '1' ? Math.min(+(q.get('cols') || 4), list.length) : list.length, rows = Math.ceil(list.length / cols);
+  list.forEach((a, i) => {
+    const look = looks[i % looks.length];
+    const rig = createR6Rig(THREE, { name: 'lab' + i, ...R6_LOOKS[look], faceSet });
+    const col = i % cols, row = Math.floor(i / cols);
+    rig.root.position.set((col - (cols - 1) / 2) * CW, 0, -row * 6.5); scene.add(rig.root);
+    chars.push({ rig, a, base: rig.root.position.clone() });
+  });
+  // máy ảnh: đủ rộng cho cả lưới (knockback bay lùi tới −8 stud)
+  const wide = Math.max(8, cols * CW + 3), deep = (rows - 1) * 6.5, view = q.get('view') || '34';
+  const R = Math.max(wide * 1.25, 18) + deep * 0.6, cy = 3.4 + deep * 0.15;
+  cam.fov = 30; cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix();
+  if (view === 'front') cam.position.set(0, cy + 1, R + 4); else cam.position.set(R * 0.45, cy + R * 0.2 + 1, R * 0.9);
+  cam.lookAt(0, 2.6, -deep * 0.5 - 1.2);
+  if (list.length <= 3) { const w = Math.max(wide, 12); cam.position.multiplyScalar(w / wide * 0.85); cam.lookAt(0, 2.4, -2.5); }
+}
+function sizeAll() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+function renderAt(t) {
+  T = +t;
+  for (const c of chars) {
+    c.rig.root.position.copy(c.base);
+    c.rig.animate(full(c.a), T, { ...optShared });
+  }
+  renderer.render(scene, cam);
+  const lab = document.getElementById('tt'); if (lab) lab.textContent = T.toFixed(2) + ' s';
+}
+window.renderAt = renderAt; window.__stage = { scene, camera: cam, renderer, chars };
+// vài tên công khai để dò xương (look.mjs --pose duyệt scene, nên không bắt buộc)
+
+// ---- bảng điều khiển ----
+function ui() {
+  const el = document.getElementById('ui');
+  if (q.get('ui') === '0') { el.style.display = 'none'; return; }
+  el.innerHTML = '';
+  const add = (h) => { const d = document.createElement('div'); d.innerHTML = h; el.appendChild(d); return d; };
+  add(`<h4>Thời gian t</h4><input id="ts" type="range" min="0" max="4" step="0.01" value="${T}"><div class="row"><b id="tt"></b><button id="play">▶</button></div>`);
+  add('<h4>Nguồn</h4>' + Object.entries(SOURCES).map(([id, s]) => `<label><input type="checkbox" data-src="${id}" ${s.on ? 'checked' : ''}> ${s.label} (${s.names.length})</label>`).join(''));
+  const opts = allNames();
+  const sel = (i) => `<select data-i="${i}">${opts.map((o) => `<option value="${o.src}:${o.name}" ${assign[i] && assign[i].src === o.src && assign[i].name === o.name ? 'selected' : ''}>${o.src} · ${o.name}</option>`).join('')}</select>`;
+  add('<h4>Nhân vật (1–3)</h4>' + [0, 1, 2].map((i) => `<label><input type="checkbox" data-on="${i}" ${assign[i] ? 'checked' : ''}> ${i + 1}</label>${sel(i)}`).join(''));
+  add(`<h4>Tuỳ chọn (JSON opt)</h4><input id="op" style="width:100%" value='${JSON.stringify(optShared)}'><label><input type="checkbox" id="gr" ${q.get('grid') === '1' ? 'checked' : ''}> lưới mọi động tác</label>`);
+  const $ = (s) => el.querySelectorAll(s);
+  el.querySelector('#ts').oninput = (e) => renderAt(+e.target.value);
+  let raf = 0, t0 = 0; el.querySelector('#play').onclick = (e) => { if (raf) { cancelAnimationFrame(raf); raf = 0; e.target.textContent = '▶'; return; } e.target.textContent = '❚❚'; t0 = performance.now() - T * 1000; const loop = () => { const tt = ((performance.now() - t0) / 1000) % 4; el.querySelector('#ts').value = tt; renderAt(tt); raf = requestAnimationFrame(loop); }; loop(); };   // chỉ để người xem; khung hình vẫn là renderAt(t) thuần
+  $('[data-src]').forEach((c) => c.onchange = () => { SOURCES[c.dataset.src].on = c.checked; ui(); build(); renderAt(T); });
+  const re = () => { assign = [...$('[data-on]')].map((c) => (c.checked ? (([s, n]) => ({ src: s, name: n }))(el.querySelector(`select[data-i="${c.dataset.on}"]`).value.split(':')) : null)).filter(Boolean); build(); renderAt(T); };
+  $('[data-on]').forEach((c) => c.onchange = re); $('select').forEach((s) => s.onchange = re);
+  el.querySelector('#op').onchange = (e) => { try { optShared = JSON.parse(e.target.value || '{}'); renderAt(T); } catch { e.target.style.background = '#fcc'; } };
+  el.querySelector('#gr').onchange = (e) => { const u = new URL(location.href); e.target.checked ? u.searchParams.set('grid', '1') : u.searchParams.delete('grid'); location.href = u; };
+}
+window.__rebuild = () => { ui(); build(); renderAt(T); };
+
+assign = parseA();
+sizeAll(); ui(); build(); renderAt(T);
+addEventListener('resize', () => { sizeAll(); build(); renderAt(T); });
+window.__ready = true;
+</script></body></html>
