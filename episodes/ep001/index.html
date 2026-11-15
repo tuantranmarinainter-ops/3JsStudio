@@ -210,6 +210,7 @@
       window.renderAt = (t) => stage.renderAt(t);
       window.__shots = tl;
       window.__stage = stage;
+      window.__actors = actors; window.__props = props;   // khung 🧊 3D (studio) đọc nhãn nhân vật + đạo cụ
       installMeasure({ THREE, stage, shots: tl });   // window.__measure(t) / window.__mask(t) cho tool kiểm luật
       window.getOptions = () => ({ ...OPTS, vid: { ...OPTS.vid }, voices: VOICES.map(({ id, lang, label, source }) => ({ id, lang, label, source })),
         fx: window.__post ? window.__post.options : null, fxLabels: FX_LABELS, credits: credits.on });
