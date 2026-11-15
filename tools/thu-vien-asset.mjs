@@ -339,6 +339,22 @@ export function moMayChu({ cong = 8791, motLan = false } = {}) {
     if (!/^(127\.0\.0\.1|localhost):\d+$/.test(req.headers.host || '') || (org !== undefined && !ok(org))) return tra(403, { loi: 'không cho phép' });
     if (req.method === 'OPTIONS') { if (req.headers['access-control-request-private-network']) cors['Access-Control-Allow-Private-Network'] = 'true'; res.writeHead(204, cors); return res.end(); }
     if (req.method === 'GET' && req.url === '/ping') return tra(200, { ung: 'thu-vien-asset' });
+    if (req.method === 'GET' && req.url.startsWith('/tim?')) {   // ô tìm từng món: từ khoá tự gõ → 30 mẫu + ảnh nhỏ
+      const q = new URL(req.url, 'http://x').searchParams;
+      const tu = (q.get('tu') || '').replace(/\s+/g, ' ').trim().slice(0, 80), muc = q.get('muc') || '', con = q.get('con') || '', av = q.get('av') === '1';
+      if (tu.length < 2) return tra(400, { loi: 'từ khoá quá ngắn' });
+      (async () => {
+        const { timMau, taiAnhXemTruoc } = await import('./roblox.mjs');
+        const r = await timTheoTuKhoa(tu, { so: 30, timMau, avatar: av ? (con === 'ao-quan' ? 'Clothing' : 'Accessories') : false, loai: muc === 'van' ? 'Decal' : 'Model' });
+        const anh = await taiAnhXemTruoc(r.mau.map((x) => x.id));
+        taoAnh([], Object.fromEntries(Object.entries(anh).map(([id, p]) => [id, path.join(ROOT, p)])));
+        const mau = r.mau.filter((x) => fs.existsSync(path.join(DIST, 'thu-vien-asset-anh', x.id + '.jpg'))).slice(0, 60)
+          .map((x) => [x.id, x.ten, x.tacGia, x.tamGiac ?? null, x.gia ?? (av ? null : 0)]);
+        console.log(`TIM "${tu}" -> ${mau.length} mau${r.tuCache ? ' (cache)' : ''}`);
+        tra(200, { ok: true, tu, mau });
+      })().catch((e) => tra(500, { loi: e.message }));
+      return;
+    }
     if (req.method === 'POST' && req.url === '/gui') {
       const b = []; let n = 0;
       req.on('data', (c) => { n += c.length; if (n < 4 * 2 ** 20) b.push(c); });
@@ -365,7 +381,7 @@ const jsonNhung = (o) => JSON.stringify(o).replace(/</g, '\u003c').split(' ').
 function trang(D) {
   const du = { muc: D.muc.map((m) => ({ id: m.id, ten: m.ten, con: m.con.map(([id, ten]) => ({ id, ten })) })), video: D.video, luc: D.luc,
     mon: D.mon.map((m) => ({ id: m.khoa, ten: m.ten, en: m.tenEn, muc: m.muc, con: m.con, mau: m.mau, vl: m.vatLieu, kt: m.kichThuoc, ct: m.anhCat, xh: m.xuatHien, sl: m.soLuong,
-      mauStore: m.mauStore.map((x) => [x.id, x.ten, x.tacGia, x.tamGiac, x.gia ?? (m.avatar ? null : 0)]), av: !!m.avatar, lb: m.lb || '', ctNv: m.chiTiet || '' })) };
+      mauStore: m.mauStore.map((x) => [x.id, x.ten, x.tacGia, x.tamGiac, x.gia ?? (m.avatar ? null : 0)]), av: !!m.avatar, lb: m.lb || '', ctNv: m.chiTiet || '', tk: (m.tuKhoaDung && m.tuKhoaDung[0]) || m.tenEn || m.ten })) };
   return TRANG.replace('/*__DATA__*/null', jsonNhung(du));
 }
 
@@ -407,6 +423,7 @@ button.chinh{background:var(--acc);color:#fff;border-color:var(--acc)}button.on{
 .lk{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.6);color:#fff;border-radius:99px;width:24px;height:24px;text-align:center;line-height:24px;text-decoration:none;font-size:14px}.lk.nho{position:static;display:inline-block;width:18px;height:18px;line-height:18px;font-size:11px;background:var(--acc)}
 .gia{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:99px;margin-top:3px;background:var(--line)}.gia.mp{background:var(--okbg);color:var(--ok)}.gia.tp{background:var(--warnbg);color:var(--warn)}
 .mpl{font-size:13px;display:flex;gap:4px;align-items:center;border:1px solid var(--line);border-radius:99px;padding:4px 10px;background:var(--card)}
+.tkrow{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}.tkin{flex:1;min-width:140px;font:inherit;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);min-height:36px}
 .trong{color:var(--mut);font-size:13px;padding:14px;border:1px dashed var(--line);border-radius:10px}
 .foot{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 16px;z-index:9}
 .foot .in{max-width:1100px;margin:0 auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -428,7 +445,8 @@ button.chinh{background:var(--acc);color:#fff;border-color:var(--acc)}button.on{
 const D=/*__DATA__*/null;
 const KEY='thu-vien-asset:v1';
 const SO=10;
-let S={chon:{},trang:{},can:{},cdx:{},mp:true};
+let S={chon:{},trang:{},can:{},cdx:{},mp:true,tk:{},tim:{}};
+const ST={};   // trạng thái ô tìm từng món: '...' đang tìm / thông báo lỗi
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const luu=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const E=(t,a,...k)=>{const e=document.createElement(t);for(const[x,v]of Object.entries(a||{})){if(v===undefined||v===null)continue;if(x==='class')e.className=v;else if(x.startsWith('on'))e[x]=v;else e.setAttribute(x,v)}for(const c of k.flat())if(c!=null)e.append(c.nodeType?c:document.createTextNode(c));return e};
@@ -440,13 +458,25 @@ function tick(id,x){ // x=[id,ten,tacGia,tamGiac]
   const o=S.chon[id]||(S.chon[id]={});
   if(o[x[0]])delete o[x[0]];else o[x[0]]={ten:x[1],tacGia:x[2],tamGiac:x[3],gia:x[4]};
   luu();veLai(id)}
+async function timMon(m,tu){
+  tu=(tu||'').trim();if(tu.length<2){ST[m.id]='Từ khoá quá ngắn';veLai(m.id);return}
+  S.tk[m.id]=tu;ST[m.id]='...';luu();veLai(m.id);
+  try{const g=await tim();
+    if(!g){ST[m.id]='Cần bật máy chủ: chạy node tools/thu-vien-asset.mjs mo rồi bấm Tìm lại';return}
+    const r=await fetch(g+'/tim?tu='+encodeURIComponent(tu)+'&muc='+encodeURIComponent(m.muc)+'&con='+encodeURIComponent(m.con)+'&av='+(m.av?1:0),{cache:'no-store'});
+    const j=await r.json();if(!r.ok)throw new Error(j.loi||('HTTP '+r.status));
+    if(!j.mau.length){ST[m.id]='Không có mẫu cho "'+tu+'" — thử từ khoá khác';return}
+    S.tim[m.id]={tu:j.tu,mau:j.mau};S.trang[m.id]=0;delete ST[m.id]}
+  catch(e){ST[m.id]='Tìm lỗi: '+e.message}
+  finally{if(ST[m.id]==='...')delete ST[m.id];luu();veLai(m.id)}}
 function veLai(id){const cu=document.getElementById('m-'+id);if(cu)cu.replaceWith(hang(MON[id]));cap()}
 function tg(n){return n==null?'?':n>=1000?(n/1000).toFixed(1).replace('.0','')+'k':String(n)}
 const URLX=(m,id)=>(m.av?'https://www.roblox.com/catalog/':'https://create.roblox.com/store/asset/')+id;
 function lk(m,id,nho){return E('a',{class:'lk'+(nho?' nho':''),href:URLX(m,id),target:'_blank',rel:'noopener noreferrer',title:'Mở trang món này trên Roblox',onclick:e=>e.stopPropagation()},'↗')}
 function gia(g){return g===0?E('span',{class:'gia mp'},'Miễn phí'):g==null?E('span',{class:'gia'},'giá ?'):E('span',{class:'gia tp'},g+' R$ · trả phí')}
 function hang(m){
-  const ch=S.chon[m.id]||{},nch=Object.keys(ch).length,pool=S.mp?m.mauStore.filter(x=>x[4]===0):m.mauStore,n=pool.length;
+  const goc=S.tim[m.id]?S.tim[m.id].mau:m.mauStore;
+  const ch=S.chon[m.id]||{},nch=Object.keys(ch).length,pool=S.mp?goc.filter(x=>x[4]===0):goc,n=pool.length;
   const off=n?((S.trang[m.id]||0)%n):0;
   const hien=[];for(let i=0;i<Math.min(SO,n);i++)hien.push(pool[(off+i)%n]);
   const tr=E('div',{class:'tr'},
@@ -463,6 +493,12 @@ function hang(m){
     E('button',{class:S.can[m.id]?'on':'',onclick:()=>{S.can[m.id]=!S.can[m.id];luu();veLai(m.id)}},S.can[m.id]?'✓ Cần thêm mẫu':'Cần thêm mẫu'),
     E('button',{class:S.cdx[m.id]?'on':'',title:'Không có / không tải được mẫu hợp ý: nhờ Claude giao Codex vẽ tài sản (texture…) tương tự',onclick:()=>{S.cdx[m.id]=!S.cdx[m.id];luu();veLai(m.id)}},S.cdx[m.id]?'✓ Nhờ Codex vẽ':'Nhờ Codex vẽ'));
   ph.append(bar);
+  const tk=S.tk[m.id]!==undefined?S.tk[m.id]:m.tk,dt=ST[m.id]||'';
+  const o=E('input',{type:'search',class:'tkin',value:tk,placeholder:'từ khoá tìm (tiếng Anh)',maxlength:'80','aria-label':'Từ khoá tìm cho '+m.ten,oninput:e=>{S.tk[m.id]=e.target.value;luu()},onkeydown:e=>{if(e.key==='Enter'){e.preventDefault();timMon(m,e.target.value)}}});
+  ph.append(E('div',{class:'tkrow'},o,
+    E('button',{class:'chinh',disabled:dt==='...'?'':undefined,onclick:()=>timMon(m,o.value)},dt==='...'?'Đang tìm…':'Tìm'),
+    S.tim[m.id]?E('button',{onclick:()=>{delete S.tim[m.id];delete S.tk[m.id];delete ST[m.id];S.trang[m.id]=0;luu();veLai(m.id)}},'Về mẫu gốc'):null,
+    dt&&dt!=='...'?E('span',{class:'mut',style:'color:var(--warn)'},dt):S.tim[m.id]?E('span',{class:'mut'},'đang xem kết quả của "'+S.tim[m.id].tu+'"'):null));
   if(!n)ph.append(E('div',{class:'trong'},S.mp&&m.mauStore.length?'Không có mẫu miễn phí cho món này.':'Creator Store không có mẫu miễn phí phù hợp — đánh dấu "Cần thêm mẫu" để Claude tìm bằng từ khoá khác.'));
   else ph.append(E('div',{class:'luoi'},...hien.map(x=>E('div',{class:'mau'+(ch[x[0]]?' chon':''),role:'button',tabindex:'0',onclick:()=>tick(m.id,x),onkeydown:e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tick(m.id,x)}},title:x[1]},
     E('img',{src:IMG(x[0]),alt:x[1],loading:'lazy'}),lk(m,x[0]),E('div',{class:'n'},x[1]||'(không tên)'),E('div',{class:'m'},(x[2]||'?')+' · '+x[0]+' · '+(m.av?'Avatar Shop':m.lb?m.lb:tg(x[3])+' tam giác')),gia(x[4])))));
