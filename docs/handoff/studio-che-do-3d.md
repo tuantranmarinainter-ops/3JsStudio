@@ -2,7 +2,7 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-15
+- **Cập nhật:** 2026-11-15 (thêm 🔒 Giữ góc)
 - **Nhánh:** `ep1-v2`
 - **Đang làm:** giai đoạn 1 (Xem) XONG và đã commit. Giai đoạn 2 (Kiểm) chờ người dùng quyết.
 - **Bước kế tiếp:** người dùng dùng thử `dist/ep003.html` → góp ý; giai đoạn 2 theo `docs/dinh-huong-studio.md`.
@@ -11,7 +11,7 @@
 - **Đang chạy nền:** không
 - **Đạt khi:** đã đạt: `node tools/kiem-che-do-3d.mjs` ĐẠT (bật/tắt 3D → khung Phim giống hệt 0 mức ở t=5,40,90,120;
   3D theo t, đường đi 17 điểm, WASD/QE + chuột phải chạy); `look.mjs --det` OK; `shaders.mjs` 139 program có/không module như nhau.
-- **Đã chốt:** khung 3D RỘNG (người dùng chọn); điều khiển bay kiểu Unreal; OrbitControls lấy nguyên bản three 0.187.0.
+- **Đã chốt:** khung 3D RỘNG (người dùng chọn); 🔒 Giữ góc mặc định bật (qua shot camera bay đứng yên, test lệch 0); điều khiển bay kiểu Unreal; OrbitControls lấy nguyên bản three 0.187.0.
 - **Câu hỏi còn mở:** không
 - **Biết trước:** chỉ thấy env của shot đang xem; nhìn trên xuống cảnh trong nhà khá tối (thấy mái/ngoài hộp phòng).
 <!-- /ĐIỂM DỪNG -->

@@ -38,7 +38,7 @@ export function installChe3D({ THREE, stage, tl, actors = {}, props = {}, places
   let on = false, built = null, origDraw = null, curT = 0, wrap = null, home = null, canvasStyle = '', sizeObs = null;
   let shotCam = { pos: new THREE.Vector3(), quat: new THREE.Quaternion(), fov: 50, target: new THREE.Vector3(), id: null };
   const paths = new Map();   // id shot → mảng Vector3 vị trí camera (lấy mẫu)
-  let sampling = false, follow = true, show = { nv: true, dc: true, dd: true, cam: true };
+  let sampling = false, giuGoc = true, show = { nv: true, dc: true, dd: true, cam: true };
   const listeners = new Set();
 
   // ---------- dựng lười: chỉ khi bật 3D lần đầu ----------
@@ -64,7 +64,7 @@ export function installChe3D({ THREE, stage, tl, actors = {}, props = {}, places
     const bar = document.createElement('div'); bar.className = 'c3d-bar';
     bar.innerHTML = `<button data-g="tren" title="Nhìn từ trên xuống (bản đồ)">⬇ Trên xuống</button><button data-g="truoc" title="Nhìn từ phía trước chỗ shot diễn">◉ Trước</button>`
       + `<button data-g="shot" title="Đứng đúng chỗ camera của shot">🎥 Theo camera shot</button>`
-      + `<label title="Đổi shot thì camera tự do bay tới chỗ shot diễn"><input type="checkbox" data-o="follow" checked> Bám shot</label>`
+      + `<label title="Bật: tua/phát qua shot khác camera bay vẫn đứng yên (chỉ chóp camera, nhân vật, bối cảnh đổi theo t). Tắt: camera bay tới chỗ shot mới diễn."><input type="checkbox" data-o="giuGoc" checked> 🔒 Giữ góc</label>`
       + `<label><input type="checkbox" data-o="cam" checked> Camera</label><label><input type="checkbox" data-o="nv" checked> Nhân vật</label>`
       + `<label><input type="checkbox" data-o="dc" checked> Đạo cụ</label><label><input type="checkbox" data-o="dd" checked> Địa điểm</label>`;
     const help = document.createElement('div'); help.className = 'c3d-help';
@@ -74,7 +74,7 @@ export function installChe3D({ THREE, stage, tl, actors = {}, props = {}, places
     bar.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b?.dataset.g) { goc(b.dataset.g); b.blur(); } });
     bar.addEventListener('change', (e) => {
       const k = e.target.dataset.o; if (!k) return;
-      if (k === 'follow') follow = e.target.checked; else show[k] = e.target.checked;
+      if (k === 'giuGoc') giuGoc = e.target.checked; else show[k] = e.target.checked;
       e.target.blur();   // trả phím Space / ← → / [ ] cho trình phát
       redraw();
     });
@@ -251,7 +251,7 @@ export function installChe3D({ THREE, stage, tl, actors = {}, props = {}, places
     if (sampling) { if (t !== sampleT) curT = t; return; }
     curT = t;
     const changed = captureShot(t);
-    if (changed && follow && built.ready) flyToShot();
+    if (changed && !giuGoc && built.ready) flyToShot();   // 🔒 Giữ góc (mặc định bật): camera bay chỉ đổi khi người dùng tự bấm/kéo
     built.ready = true;
     updateFrustum(); redraw();
     if (changed && !paths.has(shotCam.id)) setTimeout(() => samplePath(shotCam.id), 0);
@@ -306,7 +306,7 @@ export function installChe3D({ THREE, stage, tl, actors = {}, props = {}, places
     B.free.aspect = Math.max(0.2, r.width / Math.max(1, r.height)); B.free.updateProjectionMatrix();
     B.ready = false;
     const p = stage.renderAt(curT = lastT());   // đọc camera shot ở t hiện tại
-    const first = () => { if (!B.started) { B.started = true; goc('truoc'); } else { if (follow) flyToShot(); updateFrustum(); redraw(); } };
+    const first = () => { if (!B.started) { B.started = true; goc('truoc'); } else { if (!giuGoc) flyToShot(); updateFrustum(); redraw(); } };
     if (p && p.then) p.then(first); else first();
     for (const f of listeners) f(true);
     return api;
@@ -337,6 +337,8 @@ export function installChe3D({ THREE, stage, tl, actors = {}, props = {}, places
     onChange: (f) => { listeners.add(f); return () => listeners.delete(f); },
     get shotCam() { return { pos: shotCam.pos.toArray(), target: shotCam.target.toArray(), fov: shotCam.fov, id: shotCam.id }; },
     get camera() { return built?.free; },
+    get giuGoc() { return giuGoc; },
+    setGiuGoc: (v) => { giuGoc = !!v; const c = built?.bar.querySelector('input[data-o=giuGoc]'); if (c) c.checked = giuGoc; },
     paths,
   };
   window.__che3d = api;

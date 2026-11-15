@@ -71,6 +71,23 @@ for (const [i, t] of TS.entries()) {
   if (!info.nPath) loi.push(`t=${t}: chưa có đường đi camera`);
 }
 if (new Set(st.map((s) => s.sc.id)).size < Math.min(2, TS.length)) loi.push('rê t mà shot không đổi');
+// 🔒 Giữ góc (mặc định bật): qua ranh giới shot (tua + phát từng khung) camera bay đứng yên tuyệt đối
+const giu = await page.evaluate(async () => {
+  const c = window.__che3d, tl = window.__shots, sh = tl.list[Math.floor(tl.list.length / 2)];
+  const r = async (t) => { const p = window.renderAt(t); if (p && p.then) await p; };
+  await r(sh.t0 - 0.5); c.goc('truoc'); await new Promise((x) => setTimeout(x, 400));
+  const cam = c.camera, P = () => [...cam.position.toArray(), ...cam.quaternion.toArray(), cam.fov];
+  const a = P(), ids = [];
+  for (let t = sh.t0 - 0.2; t < sh.t0 + 0.2; t += 1 / 30) { await r(t); ids.push(c.shotCam.id); }   // "phát" qua ranh giới
+  await r(sh.t1 + 0.3); ids.push(c.shotCam.id);                                                   // tua sang shot sau nữa
+  await new Promise((x) => setTimeout(x, 400));                                                   // chờ lấy mẫu đường đi xong
+  const b = P();
+  c.setGiuGoc(false); await r(sh.t0 - 0.5); const q0 = P(); await r(sh.t1 + 0.3); const q1 = P(); c.setGiuGoc(true);
+  return { keep: c.giuGoc, nShot: new Set(ids).size, max: Math.max(...a.map((v, i) => Math.abs(v - b[i]))), moveOff: Math.max(...q0.map((v, i) => Math.abs(v - q1[i]))) };
+});
+console.log(`Giữ góc: qua ${giu.nShot} shot, camera bay lệch ${giu.max.toExponential(1)} (tắt Giữ góc thì đổi ${giu.moveOff.toFixed(2)}) · mặc định ${giu.keep ? 'bật' : 'TẮT'}`);
+if (!(giu.max < 1e-6) || giu.nShot < 2) loi.push(`Giữ góc: camera bay đổi khi qua shot (lệch ${giu.max})`);
+if (!(giu.moveOff > 1e-3)) loi.push('tắt Giữ góc mà camera không bay tới shot mới');
 // góc nhìn nhanh + WASD
 for (const g of ['tren', 'shot']) { await page.evaluate((g) => window.__che3d.goc(g), g); await page.screenshot({ path: join(out, `3d_goc-${g}.png`) }); }
 const p0 = await page.evaluate(() => window.__che3d.camera.position.toArray());
