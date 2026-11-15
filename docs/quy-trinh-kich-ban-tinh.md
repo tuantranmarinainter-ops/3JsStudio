@@ -2,7 +2,7 @@
 
 Ngày: 2026-11-15. Lý do có quy trình này: `docs/nghien-cuu-prompt-chuan.md`. Đặc tả file: `docs/quy-trinh-dau-vao.md`.
 Mọi file của một tập nằm ở `kich-ban/<ep>/` cho tới bước 11 (khi đó mới sinh `episodes/<ep>/`).
-Ký hiệu: **STOP** = dừng chờ bạn duyệt. ⚠ = mắt xích chưa nối, hiện làm tay.
+Ký hiệu: **STOP** = dừng chờ bạn duyệt. Cả 4 mắt xích đã nối ngày 15/11 (nhánh noi-codex-ve, noi-scene-env, noi-lam-phim-sach, noi-video-kb).
 
 ## Ba luật xuyên suốt
 1. **Số đo stud chỉ có 2 nguồn:** bảng chuẩn theo người (Gà = 5,48 stud, bước 4) và kích thước model thật (bước 6). Không bao giờ đo trên ảnh AI.
@@ -13,7 +13,7 @@ Ký hiệu: **STOP** = dừng chờ bạn duyệt. ⚠ = mắt xích chưa nối
 ```
 Lối 1: câu luật ─► [0a viet-kich-ban] ─┐
 Lối 2: kịch bản thô của bạn ──[0b]─────┤
-Lối 3: video tham khảo ─► [0c video-sang-kich-ban] ⚠ (chỉ lấy format, không chép truyện)
+Lối 3: video tham khảo ─► [0c video-sang-kich-ban --ra kich-ban-chu] (chỉ lấy format, không chép truyện)
                                        ▼
  [1–2 chấm + hỏi] ─► [3 chuyện tinh + bảng shot] ─► [4 bối cảnh tinh]   ← skill xu-ly-kich-ban
         ─► [5 tờ mẫu nhân vật] ─► [6 duyệt tài nguyên] ─► [7 khối xám]
@@ -27,7 +27,7 @@ Lối 3: video tham khảo ─► [0c video-sang-kich-ban] ⚠ (chỉ lấy form
 |---|---|---|---|---|
 | 0a | `viet-kich-ban` (nhánh Codex/kit) | Một câu luật "Ở thị trấn này…" | Viết 5 mẫu (mỗi mẫu một kiểu twist) → **STOP** bạn chọn số → viết kịch bản chữ: luật, điểm yếu, twist, lời giải, nhân vật, bối cảnh, lời kể theo 4 phần (chưa chia shot) | `kich-ban/<ep>/kich-ban.md` |
 | 0b | — | Kịch bản thô của bạn (chuyện, thoại, mô tả nhân vật) | Lưu nguyên văn, không sửa | `kich-ban/<ep>/kich-ban.md` |
-| 0c ⚠ | `video-sang-kich-ban` | File/link video | Cắt shot, nhận dạng lời, lấy khung → phân tích nhịp/camera | `kich-ban/<tên>/phan-tich.md` (hiện ra `storyboard.md` kiểu cũ; chưa có lựa chọn ra kịch bản chữ) |
+| 0c | `video-sang-kich-ban` | File/link video | Cắt shot, nhận dạng lời, lấy khung → phân tích nhịp/camera | `python tools/video2kb.py <video> --ra kich-ban-chu` → `phan-tich-format.md` (chỉ số liệu format) + khung `kich-ban.md` để viết truyện MỚI |
 
 ## Bước 1–2 — Chấm điểm và hỏi bổ sung · skill `xu-ly-kich-ban`
 - **Đầu vào:** `kich-ban/<ep>/kich-ban.md`.
@@ -86,7 +86,7 @@ Lối 3: video tham khảo ─► [0c video-sang-kich-ban] ⚠ (chỉ lấy form
 ## Bước 8 — Ảnh tham chiếu bối cảnh · Codex qua `tools/codex-ve.mjs`
 - **Đầu vào:** 2 ảnh khối xám + ảnh các model đã chốt + danh sách mốc.
 - **Xử lý:** đề bài bắt Codex vẽ CHỒNG lên ảnh khối xám (đính kèm `-i`): thêm ánh sáng, vật liệu, không khí; cấm đổi hình khối, cấm thêm/bớt mốc, không vẽ nhân vật.
-- ⚠ `codex-ve.mjs` hiện soạn đề bài từ một câu `moTa`: cần sửa để đọc `boi-canh/<id>.json` và đính kèm ảnh khối xám.
+- `codex-ve.mjs` tự đọc `boi-canh/<id>.json` (đủ mốc, màu, số lượng, điều cấm) và tự đính kèm `boi-canh/<id>_tren-cao.png`, `<id>_ngang-mat.png` nếu có.
 - **Đầu ra:** `tham-chieu/bc_<id>.png` (toàn cảnh 9:16, có thể thêm góc ngược).
 - **Kiểm:** agent phụ đối chiếu ảnh với danh sách mốc (có / thiếu / sai màu / sai số lượng). **STOP:** duyệt ảnh.
 
@@ -127,6 +127,6 @@ Lối 3: video tham khảo ─► [0c video-sang-kich-ban] ⚠ (chỉ lấy form
 | `viet-kich-ban` bước 2–3 ↔ `xu-ly-kich-ban` bước 3 | Hai định dạng bảng shot | Đã chia nhánh; bỏ bước 2–3 khi dây chuyền mới chạy ổn |
 | `nhap-kich-ban` ↔ bước 9–11 | Hai đường từ ảnh vào app | Giữ `nhap-kich-ban` cho storyboard có sẵn ảnh của bạn |
 | `lam-phim` ↔ bước 11–12 | Hai đầu vào (bảng 19 cột / kit) | Đã nối: `lam-phim` tự nhận kit |
-| `video-sang-kich-ban` ↔ Lối 3 | Ra định dạng cũ | ⚠ Thêm lựa chọn ra kịch bản chữ |
-| `scene-env` ↔ bước 7 | Không chồng | ⚠ Đọc `boi-canh/<id>.json` |
-| `codex-ve.mjs` ↔ bước 8 | Không chồng | ⚠ Đọc danh sách mốc + đính kèm ảnh khối xám |
+| `video-sang-kich-ban` ↔ Lối 3 | Hai đầu ra (cũ / kịch bản chữ) | Đã nối: `--ra kich-ban-chu` |
+| `scene-env` ↔ bước 7 | Không chồng | Đã nối: Pha 0 + `tools/khoi-xam.mjs` |
+| `codex-ve.mjs` ↔ bước 8 | Không chồng | Đã nối: đọc danh sách mốc + đính kèm ảnh khối xám |
