@@ -62,7 +62,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
   let on = false, built = null, origDraw = null, curT = 0, wrap = null, home = null, canvasStyle = '', sizeObs = null;
   let shotCam = { pos: new THREE.Vector3(), quat: new THREE.Quaternion(), fov: 50, target: new THREE.Vector3(), id: null };
   const paths = new Map();   // id shot → mảng Vector3 vị trí camera (lấy mẫu)
-  let sampling = false, giuGoc = true, show = { nv: true, dc: true, dd: true, cam: true };
+  let sampling = false, giuGoc = true, show = { nv: true, dc: true, dd: true, cam: true, luoi: true };
   const listeners = new Set();
 
   // ---------- dựng lười: chỉ khi bật 3D lần đầu ----------
@@ -89,7 +89,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     bar.innerHTML = `<button data-g="tren" title="Nhìn từ trên xuống (bản đồ)">⬇ Trên xuống</button><button data-g="truoc" title="Nhìn từ phía trước chỗ shot diễn">◉ Trước</button>`
       + `<button data-g="shot" title="Đứng đúng chỗ camera của shot">🎥 Theo camera shot</button>`
       + `<label title="Bật: tua/phát qua shot khác camera bay vẫn đứng yên (chỉ chóp camera, nhân vật, bối cảnh đổi theo t). Tắt: camera bay tới chỗ shot mới diễn."><input type="checkbox" data-o="giuGoc" checked> 🔒 Giữ góc</label>`
-      + `<label><input type="checkbox" data-o="cam" checked> Camera</label><label><input type="checkbox" data-o="nv" checked> Nhân vật</label>`
+      + `<label title="Lưới sàn y = 0 (bị nhà/đất che đúng chỗ)"><input type="checkbox" data-o="luoi" checked> Lưới</label><label><input type="checkbox" data-o="cam" checked> Camera</label><label><input type="checkbox" data-o="nv" checked> Nhân vật</label>`
       + `<label><input type="checkbox" data-o="dc" checked> Đạo cụ</label><label><input type="checkbox" data-o="dd" checked> Địa điểm</label>`;
     const help = document.createElement('div'); help.className = 'c3d-help';
     help.innerHTML = '<b>Giữ chuột phải</b> nhìn · <b>W A S D</b> đi · <b>Q/E</b> xuống/lên · <b>Shift</b> nhanh · lăn khi giữ chuột phải = tốc độ · chuột trái xoay · chuột giữa kéo';
@@ -138,7 +138,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     };
     const ku = (e) => { keys.delete(e.code); if (e.key === 'Shift') keys.delete('Shift'); };
     function step(now) {
-      const dt = Math.min(0.1, (now - last) / 1000); last = now;
+      const dt = Math.min(0.25, (now - last) / 1000); last = now;   // máy chậm / góc nhìn rộng: vẫn đi đúng tốc độ
       let moving = false;
       for (const k of keys) if (MOVE[k]) moving = true;
       if (!moving || !on) { raf = 0; return; }
@@ -183,6 +183,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     B.path.geometry.dispose(); B.path.geometry = new THREE.BufferGeometry().setFromPoints(pts);
     B.dots.geometry.dispose(); B.dots.geometry = new THREE.BufferGeometry().setFromPoints(pts.length ? [pts[0], pts[pts.length - 1]] : []);
     for (const o of [B.frus, B.look, B.path, B.dots]) o.visible = show.cam;
+    B.grid.visible = show.luoi;
   }
 
   // đường đi camera của shot: renderAt các mốc trong shot với draw TẮT (mọi thứ là hàm của t), rồi trả về t hiện tại
@@ -268,7 +269,8 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     scene.fog = null;   // sương của phim chỉnh theo khoảng cách camera shot → tắt TẠM khi nhìn xa (trả lại ngay sau khi vẽ)
     try {
       renderer.render(scene, B.free);
-      renderer.autoClear = false; renderer.clearDepth(); renderer.render(B.helpers, B.free);
+      B.grid.visible = show.luoi;
+      renderer.autoClear = false; renderer.render(B.helpers, B.free);   // KHÔNG xoá depth: lưới bị nhà/đất che đúng chỗ; chóp/đường đi depthTest:false nên vẫn nổi
     } finally { renderer.autoClear = ac; scene.fog = fog; }
     updateLabels();
   }

@@ -91,6 +91,13 @@ if (!(giu.max < 1e-6) || giu.nShot < 2) loi.push(`Giữ góc: camera bay đổi 
 if (!(giu.moveOff > 1e-3)) loi.push('tắt Giữ góc mà camera không bay tới shot mới');
 // góc nhìn nhanh + WASD
 for (const g of ['tren', 'shot']) { await page.evaluate((g) => window.__che3d.goc(g), g); await page.screenshot({ path: join(out, `3d_goc-${g}.png`) }); }
+// ô Lưới: tắt → ảnh không lưới (so với 3d_goc-tren.png), rồi bật lại
+await page.evaluate(() => window.__che3d.goc('tren'));
+await page.click('.c3d-bar input[data-o=luoi]'); await page.screenshot({ path: join(out, '3d_goc-tren_khong-luoi.png') });
+const luoiTat = await page.evaluate(() => !document.querySelector('.c3d-bar input[data-o=luoi]').checked);
+await page.click('.c3d-bar input[data-o=luoi]');
+await page.evaluate(() => window.__che3d.goc('shot'));   // thử WASD ở góc shot (góc trên xuống vẽ cả thị trấn → chậm)
+if (!luoiTat) loi.push('ô Lưới không tắt được');
 const p0 = await page.evaluate(() => window.__che3d.camera.position.toArray());
 await page.mouse.move(800, 450);
 await page.keyboard.down('KeyW'); await page.waitForTimeout(500); await page.keyboard.up('KeyW');

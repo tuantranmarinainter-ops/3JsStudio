@@ -2,7 +2,7 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-15 (3D cho cả 4 tập)
+- **Cập nhật:** 2026-11-15 (lưới bị vật che đúng + ô Lưới ẩn/hiện)
 - **Nhánh:** `ep1-v2`
 - **Đang làm:** xong: 3D giai đoạn 1 + 🔒 Giữ góc + có trên ep001–ep004 (dùng chung qua `engine/stage.js`). Giai đoạn 2 chờ người dùng.
 - **Bước kế tiếp:** người dùng bấm thử dist/ep00{1..4}.html; nếu muốn nhãn đủ cho ep001 → sửa 1 dòng trong episodes/ep001/index.html (dưới).
