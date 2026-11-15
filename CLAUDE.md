@@ -98,6 +98,9 @@ refs/          ảnh chuẩn so khung               .cache/  giọng, tiếng đ
   Mặt nhìn +Z; 1 đơn vị = 1 stud. Animation mới = thêm 1 hàm `(t) => pose`.
 - Chụp và render mặc định bằng GPU; chỉ đặt `GL=swiftshader` khi so khung tất định (`docs/core.md`).
 - Sau mỗi thay đổi: kiểm vài khung (đầu, giữa, cuối shot) trước khi gộp.
+- **Kế thừa:** sửa đẹp một món dùng chung (giường, cửa sổ, tủ lạnh, trời, nền xa, vật liệu…) thì sửa ở **builder chung**
+  (`engine/props.js`, `engine/envs.js`, `engine/cloth.js`…), có ô FX mặc định bật. KHÔNG gỡ/thay bộ phận của builder trong
+  `engine/envs/<env>.js` — `doctor.mjs` mục 12 sẽ cảnh báo (`docs/handoff/ke-thua-ep001.md`).
 
 ## Asset
 1. **Kenney** (CC0, scale 1.0) — bộ gốc. 2. **Polyfork / Poly Haven / Sketchfab / Poly Pizza** — khi Kenney thiếu, nhập bằng
