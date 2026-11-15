@@ -45,3 +45,30 @@ Desktop.ini
 
 # thư mục bàn giao cho người ở máy khác (tạo lại bằng tools/ban-giao.mjs)
 ban-giao/
+
+# ảnh chuẩn so khung (654 MB) — file đã track giữ nguyên, chỉ chặn file mới
+refs/
+
+# gói ảnh Codex sinh ra trong kich-ban/ (chỉ giữ kịch bản/kit đã track) + transcript tải về
+kich-ban/_vao/
+kich-ban/ep003-goi/
+kich-ban/ep003-goi2/
+kich-ban/ep003-sb/
+kich-ban/ep003-kit/lien-he-*.jpg
+kich-ban/ep003-kit/ket-qua-kiem.txt
+kich-ban/ep003-kit2/khoi/
+kich-ban/ep003-kit2/shots/
+kich-ban/ep003-kit2/xem/
+
+# tập 4, 5: phiên test độc lập — KHÔNG vào repo
+episodes/ep004/
+episodes/ep005/
+episodes/ep005map/
+engine/envs/e4-*.js
+engine/envs/e5-*.js
+kich-ban/ep004/
+kich-ban/ep005/
+duyet/ep004/
+assets/faces/ep004/
+assets/nhap/ep4-*
+docs/handoff/ep004*
