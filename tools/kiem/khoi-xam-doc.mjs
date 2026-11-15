@@ -32,7 +32,7 @@ export function docBoiCanh(bc) {
     if (!y && x && z && !x.diem && !z.diem) y = [-DAY, 0];
     if (!x || !y || !z) lyDo = 'thiếu trục ' + ['x', 'y', 'z'].filter((a) => !({ x, y, z })[a]).join(',');
     if (lyDo) { khongDoc.push({ id: m.id, ten: m.ten, vung: m.vung, lyDo }); continue; }
-    hop.push({ id: m.id, ten: m.ten, min: [x[0], y[0], z[0]], max: [x[1], y[1], z[1]] });
+    hop.push({ id: m.id, ten: m.ten, min: [x[0], y[0], z[0]], max: [x[1], y[1], z[1]], mong: !!(x.diem || y.diem || z.diem) });
   }
   const nom = [], khoi = [];
   for (const o of bc.vatDoCo || []) {

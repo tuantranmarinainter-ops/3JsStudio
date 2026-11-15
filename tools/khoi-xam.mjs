@@ -29,7 +29,8 @@ window.dung = (d, W, H) => {
   if (d.san) { const f = new THREE.Mesh(new THREE.BoxGeometry(d.san.rong, 0.1, d.san.sau), mau('#3a3f45')); f.position.y = -0.35; sc.add(f); bb.expandByObject(f); }
   d.hop.forEach((h, i) => {
     const s = [h.max[0] - h.min[0], h.max[1] - h.min[1], h.max[2] - h.min[2]];
-    const m = new THREE.Mesh(new THREE.BoxGeometry(s[0], s[1], s[2]), mau(i % 2 ? '#a9aeb3' : '#7c8288'));
+    const m = new THREE.Mesh(new THREE.BoxGeometry(s[0], s[1], s[2]), h.mong ? new THREE.MeshBasicMaterial({ color: '#e8c872', transparent: true, opacity: 0.8, depthTest: false }) : mau(i % 2 ? '#a9aeb3' : '#7c8288'));
+    if (h.mong) m.renderOrder = 5; // mặt phẳng mỏng (mốc chỉ có 1 số trên một trục, vd mặt kính) hay nằm lọt trong tường → luôn vẽ lên trên
     m.position.set(h.min[0] + s[0] / 2, h.min[1] + s[1] / 2, h.min[2] + s[2] / 2); m.name = h.id;
     vien(m); them(m);
   });
@@ -57,7 +58,7 @@ window.dung = (d, W, H) => {
   { // ngang tầm mắt: mắt ~4.75 (tâm mặt Gà), đứng ở rìa +Z, nhìn vào giữa vùng
     const fov = 55, cam = new THREE.PerspectiveCamera(fov, asp, 0.5, 600);
     const t = Math.tan(fov * Math.PI / 360);
-    const dist = (rongChinh * 0.9) / (2 * t * asp);
+    const dist = (rongChinh * 0.55) / (2 * t * asp);
     cam.position.set(c.x, 4.75, Math.max(c.z + dist, bb.max.z + 1)); cam.lookAt(c.x, Math.min(sz.y / 3, 7), c.z);
     out.ngangMat = chup(cam);
   }
