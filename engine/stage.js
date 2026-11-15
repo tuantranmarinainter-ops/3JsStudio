@@ -153,6 +153,10 @@ export function createStage(THREE, opts = {}) {
       if (p && e.detail?.waitUntil) e.detail.waitUntil(p);
     });
     renderAt(0);
+    // CHẾ ĐỘ 3D của trình phát (engine/che-do-3d.js) — dùng chung cho mọi tập; chưa bật thì không tạo gì, khung Phim không đổi.
+    // Nạp động (trang thiếu "three/addons/" trong importmap vẫn chạy bình thường, chỉ không có 3D). Tắt hẳn: ?che3d=0.
+    if (typeof window !== 'undefined' && new URLSearchParams(location.search).get('che3d') !== '0')
+      import('./che-do-3d.js').then((m) => { if (!window.__che3d) m.installChe3D({ THREE, stage: api }); }).catch((e) => console.warn('[che-do-3d]', e?.message || e));
     return api;
   }
 

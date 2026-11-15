@@ -2,18 +2,21 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-15 (thêm 🔒 Giữ góc)
+- **Cập nhật:** 2026-11-15 (3D cho cả 4 tập)
 - **Nhánh:** `ep1-v2`
-- **Đang làm:** giai đoạn 1 (Xem) XONG và đã commit. Giai đoạn 2 (Kiểm) chờ người dùng quyết.
-- **Bước kế tiếp:** người dùng dùng thử `dist/ep003.html` → góp ý; giai đoạn 2 theo `docs/dinh-huong-studio.md`.
-- **Đang chờ:** người dùng dùng thử + quyết giai đoạn 2.
+- **Đang làm:** xong: 3D giai đoạn 1 + 🔒 Giữ góc + có trên ep001–ep004 (dùng chung qua `engine/stage.js`). Giai đoạn 2 chờ người dùng.
+- **Bước kế tiếp:** người dùng bấm thử dist/ep00{1..4}.html; nếu muốn nhãn đủ cho ep001 → sửa 1 dòng trong episodes/ep001/index.html (dưới).
+- **Đang chờ:** người dùng dùng thử + quyết giai đoạn 2; phiên ep001-sky-storm đang giữ episodes/ep001/*.
 - **File đang dở (chưa commit):** không
 - **Đang chạy nền:** không
-- **Đạt khi:** đã đạt: `node tools/kiem-che-do-3d.mjs` ĐẠT (bật/tắt 3D → khung Phim giống hệt 0 mức ở t=5,40,90,120;
-  3D theo t, đường đi 17 điểm, WASD/QE + chuột phải chạy); `look.mjs --det` OK; `shaders.mjs` 139 program có/không module như nhau.
-- **Đã chốt:** khung 3D RỘNG (người dùng chọn); 🔒 Giữ góc mặc định bật (qua shot camera bay đứng yên, test lệch 0); điều khiển bay kiểu Unreal; OrbitControls lấy nguyên bản three 0.187.0.
+- **Cách gắn:** `stage.start()` nạp động `engine/che-do-3d.js` (tắt: `?che3d=0`); nguồn tự lấy `window.__shots/__places/__props/__actors`,
+  nhân vật chưa khai thì dò trong scene (nút cao nhất chứa đúng 1 "Head", bỏ walker/villager). ep003/_template vẫn gọi installChe3D rõ ràng.
+- **Đã kiểm:** `kiem-che-do-3d.mjs` ĐẠT cả 4 tập (Giữ góc lệch 0; bật/tắt 3D → Phim giống hệt, ≤ 2 mức nhiễu GPU);
+  `look.mjs --ab` mặc định vs `?che3d=0`: ep002/ep003 giống hệt, ep001/ep004 PSNR ≥ 88 dB; bản gộp 4 tập bấm 3D + D + về Phim OK.
+- **Biết trước:** ep001 gần như không có nhãn (trang không công khai actors/props/places). Cần thêm sau `window.__stage = stage;`
+  (episodes/ep001/index.html:213): `window.__actors = actors; window.__props = props;` — chưa sửa vì phiên ep001-sky-storm giữ file.
+  ep001 nặng: trong bản gộp lần bay đầu chậm (dt giới hạn 0.1 s/khung).
 - **Câu hỏi còn mở:** không
-- **Biết trước:** chỉ thấy env của shot đang xem; nhìn trên xuống cảnh trong nhà khá tối (thấy mái/ngoài hộp phòng).
 <!-- /ĐIỂM DỪNG -->
 
 ## Kế hoạch giai đoạn 1

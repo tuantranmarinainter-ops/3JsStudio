@@ -35,6 +35,7 @@ page.on('console', (m) => { if (m.type() === 'error') console.log('  console:', 
 const t0 = Date.now();
 await page.goto(url);
 await page.waitForFunction(() => window.__ready === true, null, { timeout: 300000 });
+await page.waitForFunction(() => !!window.__che3d, null, { timeout: 30000 });   // stage.js nạp che-do-3d động
 console.log(`mở trang ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 
 // đọc điểm ảnh canvas tại t; lần đầu lưu làm chuẩn (window.__px0[t]), lần sau so: lệch lớn nhất + số điểm lệch > 16

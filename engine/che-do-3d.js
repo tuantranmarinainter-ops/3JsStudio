@@ -2,7 +2,10 @@
 // Cùng scene tại cùng t, nhìn qua CAMERA TỰ DO trong khung rộng; vẽ chóp + đường đi camera của shot, nhãn nhân vật/đạo cụ/địa điểm.
 // Chỉ xem: không sửa cảnh, không ghi file. Khi CHƯA bật thì module không tạo gì (0 object, 0 shader) → chế độ Phim y nguyên.
 //
-//   installChe3D({ THREE, stage, tl, actors, props, places, q })  → window.__che3d = { bat(container?), tat(), on, goc(ten), … }
+//   installChe3D({ THREE, stage, tl?, actors?, props?, places?, q? })  → window.__che3d = { bat(container?), tat(), on, goc(ten), … }
+//   DÙNG CHUNG: engine/stage.js tự gọi khi stage.start() → tập nào cũng có (không cần sửa index.html của tập). Thiếu nguồn thì tự lấy
+//   window.__shots / __places / __props / __actors; nhân vật không khai thì dò trong scene (nhóm có tên chứa bộ phận "Head").
+//   Gọi lại với cùng stage = chỉ cập nhật nguồn (trang tập có thể đưa actors/props/places chính xác hơn).
 //   Trang dev: ?che3d=1 hiện nút "3D" nổi. Trình phát (tools/export-ui.js) tự gắn nút Phim | 3D vào khung hình.
 //
 // Điều khiển (giống Unreal, chế độ bay): GIỮ CHUỘT PHẢI = nhìn quanh; W A S D = tới/trái/lùi/phải, Q xuống, E lên,
@@ -31,7 +34,28 @@ const CSS = `
   background: #1f6fd1; color: #fff; border: 2px solid #4da3ff; cursor: pointer; }
 `;
 
-export function installChe3D({ THREE, stage, tl, actors = {}, props = {}, places = {}, q } = {}) {
+export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}) {
+  if (window.__che3d && window.__che3d._stage === stage) { window.__che3d._setSrc({ tl, actors, props, places }); return window.__che3d; }
+  if (!q) q = new URLSearchParams(location.search);
+  const S = { tl, actors, props, places };
+  let autoAct = null;
+  const autoActors = () => {   // nhân vật chưa khai: từ mỗi bộ phận Head/head đi ngược lên tới nút cao nhất chỉ chứa ĐÚNG 1 đầu (R15, R6, Gà…); bỏ đám đông
+    if (autoAct) return autoAct;
+    autoAct = {};
+    const nHead = new Map();
+    const count = (o) => { let n = /^head$/i.test(o.name) ? 1 : 0; for (const c of o.children) n += count(c); nHead.set(o, n); return n; };
+    count(stage.scene);
+    stage.scene.traverse((h) => {
+      if (!/^head$/i.test(h.name)) return;
+      let r = h; while (r.parent && r.parent !== stage.scene && nHead.get(r.parent) === 1) r = r.parent;
+      if (r.name && !/^(walker|villager|crowd)/i.test(r.name) && !autoAct[r.name]) autoAct[r.name] = { root: r };
+    });
+    return autoAct;
+  };
+  const getTl = () => S.tl || window.__shots;
+  const getActors = () => S.actors || window.__actors || autoActors();
+  const getProps = () => S.props || window.__props || {};
+  const getPlaces = () => S.places || window.__places || {};
   const { renderer, scene } = stage;
   const canvas = renderer.domElement;
   const W0 = stage.options.width, H0 = stage.options.height, ASPECT = W0 / H0;
@@ -140,7 +164,7 @@ export function installChe3D({ THREE, stage, tl, actors = {}, props = {}, places
     const cam = stage.camera;
     shotCam.pos.copy(cam.position); shotCam.quat.copy(cam.quaternion); shotCam.fov = cam.fov;
     shotCam.target.copy(stage.target);
-    const id = tl?.at(Math.min(t, tl.total - 1e-4)).shot.id;
+    const tl = getTl(), id = tl?.at(Math.min(t, tl.total - 1e-4)).shot.id;
     const changed = id !== shotCam.id; shotCam.id = id;
     return changed;
   }
@@ -166,6 +190,7 @@ export function installChe3D({ THREE, stage, tl, actors = {}, props = {}, places
   // trong lúc đó được ghi vào curT. Tắt 3D giữa chừng → dừng vòng, không lưu đường đi dở.
   let sampleT = null;
   async function samplePath(id) {
+    const tl = getTl();
     if (sampling || paths.has(id) || !tl || !on) return;
     const sh = tl.list.find((s) => s.id === id); if (!sh) return;
     sampling = true;
@@ -188,7 +213,7 @@ export function installChe3D({ THREE, stage, tl, actors = {}, props = {}, places
   const _v = new THREE.Vector3(), _box = new THREE.Box3();
   const visibleDeep = (o) => { for (let x = o; x; x = x.parent) if (!x.visible) return false; return true; };
   function labelItems() {
-    const out = [];
+    const out = [], actors = getActors(), props = getProps(), places = getPlaces();
     if (show.nv) for (const [n, a] of Object.entries(actors)) { if (a?.root) out.push(['nv:' + n, n, 'nv', a.root]); }
     if (show.dc) for (const [n, p] of Object.entries(props)) out.push(['dc:' + n, n, 'dc', p]);
     if (show.dd) for (const [n, p] of Object.entries(places)) if (p?.pos) out.push(['dd:' + n, '📍 ' + n, 'dd', p.pos]);
@@ -263,7 +288,7 @@ export function installChe3D({ THREE, stage, tl, actors = {}, props = {}, places
     B.controls.target.copy(shotCam.target); B.free.position.copy(shotCam.target).add(off); B.controls.update();
   }
   function bounds() {
-    const box = new THREE.Box3();
+    const box = new THREE.Box3(), actors = getActors(), places = getPlaces();
     for (const p of Object.values(places)) if (p?.pos) box.expandByPoint(_v.set(p.pos[0], p.pos[1] || 0, p.pos[2]));
     for (const a of Object.values(actors)) if (a?.root && visibleDeep(a.root)) box.expandByPoint(a.root.getWorldPosition(_v));
     box.expandByPoint(shotCam.target);
@@ -340,11 +365,14 @@ export function installChe3D({ THREE, stage, tl, actors = {}, props = {}, places
     get giuGoc() { return giuGoc; },
     setGiuGoc: (v) => { giuGoc = !!v; const c = built?.bar.querySelector('input[data-o=giuGoc]'); if (c) c.checked = giuGoc; },
     paths,
+    _stage: stage,
+    _setSrc: (o) => { for (const k of Object.keys(S)) if (o[k]) S[k] = o[k]; if (built) built.heights.clear(); },
   };
   window.__che3d = api;
+  window.dispatchEvent(new Event('che3d-san-sang'));   // trình phát (tools/export-ui.js) gắn nút Phim | 3D khi nhận
 
   // trang dev: ?che3d=1 → nút nổi "3D" (trình phát dùng nút riêng trong khung hình)
-  if (q && q.get('che3d') === '1' && !document.getElementById('xapp')) {
+  if (q.get('che3d') === '1' && !document.getElementById('xapp')) {
     const b = document.createElement('button'); b.className = 'c3d-btn'; b.textContent = '3D';
     const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
     b.onclick = () => { api.toggle(); b.textContent = on ? 'Phim' : '3D'; };

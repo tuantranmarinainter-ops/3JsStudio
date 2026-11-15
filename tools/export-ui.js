@@ -448,14 +448,19 @@ async function init() {
   $('xseek').oninput = () => { if (playing) pause(); show(+$('xseek').value); };
   try { initShots(); show(+$('xseek').value); } catch (e) { console.warn('shot ui', e); }
   // ---- CHẾ ĐỘ 3D (engine/che-do-3d.js): Phim | 3D. Chỉ xem; tự về Phim trước khi Xuất MP4 / vẽ marker ----
+  const ganC3d = () => {   // gắn khi engine/che-do-3d.js sẵn sàng (stage.js nạp động → có thể sau __ready)
   const c3d = window.__che3d;
-  if (c3d) {
+  if (!c3d || $('x3drow').dataset.ok) return;
+  $('x3drow').dataset.ok = '1';
+  {
     $('x3drow').style.display = 'flex';
     const mode = (on3) => { $('xmphim').classList.toggle('on', !on3); $('xm3d').classList.toggle('on', on3); $('xbadge').style.zIndex = on3 ? '5' : ''; };
     c3d.onChange(mode);
     $('xmphim').onclick = () => { c3d.tat(); $('xmphim').blur(); };
     $('xm3d').onclick = () => { if (busy) return; if (annotating) setAnnotate(false); c3d.bat($('xview')); $('xm3d').blur(); };
   }
+  };
+  ganC3d(); addEventListener('che3d-san-sang', ganC3d);
   addEventListener('keydown', (e) => { if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !annotating) { e.preventDefault(); playing ? pause() : play(); } });
   // phím M = Marker (ghi chú nhanh tại frame đang xem); Esc = huỷ bảng ghi chú
   addEventListener('keydown', (e) => {
