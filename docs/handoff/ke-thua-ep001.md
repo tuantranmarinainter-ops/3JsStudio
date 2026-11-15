@@ -16,8 +16,9 @@
     - e3-pho, e3-tiem, e3-nha-may dùng vật liệu thật. e3-nha-may phần lớn là InstancedMesh nên gần như không đổi.
     - Ảnh A/B ở `output/ep003/ke-thua/ab-truoc-sau.jpg`, bản xem thử `dist/ep003_xem-thu.html`.
     - Program 217 → 223 (+6: chăn có map +3, nếp ga +2, vật liệu +1). Bỏ vân ca-rô thì về khoảng 220.
-- **Bước kế tiếp:** chờ người dùng duyệt A/B tập 3. Lỗi nhẹ còn lại: tay/chân Gà ló mép chăn, gò chăn s026 hơi cao, mảnh trắng mờ s025. shop-in.js (ep002) vẫn còn matKind none.
-- **Đang chờ:** (1) người dùng duyệt A/B tập 3 và chọn giữ hay bỏ vân ca-rô (+3 program); (2) người dùng tự xác nhận dòng quy tắc CLAUDE.md ở mục 5.
+  - Người dùng DUYỆT A/B tập 3 ngày 15/11, giữ nguyên bản hiện tại (có vân ca-rô, 223 program).
+- **Bước kế tiếp:** không bắt buộc. Việc có thể làm thêm: sửa lỗi nhẹ giường Gà (tay/chân ló mép chăn, gò chăn s026, mảnh trắng s025); shop-in.js (ep002) còn matKind none; 5 cửa sổ tự dựng doctor còn báo; đo lợi ích dịch trước (`shaders.mjs --cho`).
+- **Đang chờ:** người dùng tự xác nhận dòng quy tắc CLAUDE.md ở mục 5.
 - **File đang dở (chưa commit):** không.
 - **Đang chạy nền:** không.
 - **Đạt khi:** mỗi món "bị nhốt" có chỗ gốc dùng chung + cờ FX mặc định bật. Tắt cờ thì về như cũ. ep001 A/B y nguyên khung (PSNR ∞ / pose-ref OK). doctor cảnh báo được kiểu "env gỡ object chung".
