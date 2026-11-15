@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><title>VFX lab — hiệu ứng đánh nhau (aura, beam, hitSpark, speedLines, shake)</title>
+<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
+<style>
+html,body{margin:0;background:#1b1e24;color:#dde;font:13px system-ui,sans-serif}
+#wrap{display:flex;gap:12px;align-items:flex-start;padding:8px}
+canvas{display:block;width:360px;height:640px;background:#000}
+#ui{display:flex;flex-direction:column;gap:6px;min-width:280px}
+label{display:flex;gap:6px;align-items:center;cursor:pointer}
+#t{width:280px}
+code{color:#8cf}
+</style></head>
+<body><div id="wrap"><canvas id="c"></canvas><div id="ui">
+<b>VFX đánh nhau (engine/fx-danh.js)</b>
+<div id="boxes"></div>
+<div>t = <code id="tv">0.00</code> s <input id="t" type="range" min="0" max="3.2" step="0.01" value="0"></div>
+<div style="opacity:.7">Mốc: aura 0.2–3.0 · đấm+hit 0.9 · shake 0.9–1.3 · beam 1.5–2.4 · speed 2.5–3.1<br>?fx=aura,beam,hit,speed,shake (chỉ bật các cái đó) · ?fx=none (tắt hết) · mặc định lab: bật hết<br>Trong tập thật các ô này mặc định TẮT (post.js FX_DEFAULTS).</div>
+</div></div>
+<script type="module">
+import * as THREE from 'three';
+import { createStage } from './stage.js';
+import { loadFacePacks } from './face-pack.js';
+import './anim-them.js';
+import { createR6Rig } from './r6-rig.js';
+import { R6_LOOKS } from './r6-looks.js';
+import { createVfxDanh, applyShake, VFX_DANH_FX } from './fx-danh.js';
+
+const q = new URLSearchParams(location.search), looks = Object.keys(R6_LOOKS);
+const stage = createStage(THREE, { width: 540, height: 960, ground: '#8fae7a', sky: '#aab9cc', fog: [60, 200], shadows: false });
+const cv = document.getElementById('c'); // createStage dùng canvas đầu tiên
+const faceSet = await loadFacePacks(THREE, 'emote37');
+const A = createR6Rig(THREE, { name: 'dacA', ...R6_LOOKS[looks[0]], faceSet }), B = createR6Rig(THREE, { name: 'dacB', ...R6_LOOKS[looks[1] || looks[0]], faceSet });
+A.root.position.set(-1.7, 0, 0); A.root.rotation.y = Math.PI / 2; B.root.position.set(1.7, 0, 0); B.root.rotation.y = -Math.PI / 2;
+stage.scene.add(A.root, B.root);
+
+const vfx = createVfxDanh(THREE); stage.scene.add(vfx.obj);
+const HAND = [-0.6, 3.3, 0.2], CHEST = [1.1, 3.1, 0.2];
+const EVENTS = [
+  { kind: 'aura', at: A.root, t0: 0.2, t1: 3.0, color: '#FFBF32', k: 1, seed: 7 },
+  { kind: 'hit', at: CHEST, t0: 0.9, color: '#FFF19A', k: 1 },
+  { kind: 'shake', t0: 0.9, t1: 1.3, amp: 0.3 },
+  { kind: 'beam', from: HAND, to: CHEST, t0: 1.5, t1: 2.4, color: '#49BFFF', k: 1 },
+  { kind: 'hit', at: CHEST, t0: 1.7, color: '#E6FBFF', k: 0.8, seed: 9 },
+  { kind: 'speed', t0: 2.5, t1: 3.1, color: '#D5F3FF', k: 1 },
+];
+// ô bật/tắt (mặc định lab: bật hết; ?fx=… chọn lại)
+const want = q.get('fx'), AF = (globalThis.__autoFx ||= {});
+const kinds = Object.keys(VFX_DANH_FX), onSet = want === null ? kinds : want === 'none' ? [] : want.split(',');
+const boxes = document.getElementById('boxes');
+for (const k of kinds) {
+  AF[VFX_DANH_FX[k]] = onSet.includes(k);
+  const l = document.createElement('label'), c = document.createElement('input'); c.type = 'checkbox'; c.checked = AF[VFX_DANH_FX[k]];
+  c.onchange = () => { AF[VFX_DANH_FX[k]] = c.checked; stage.renderAt(stage.time); };
+  l.append(c, `${k} (${VFX_DANH_FX[k]})`); boxes.append(l);
+}
+
+stage.onFrame((t) => {
+  A.animate(t > 0.75 && t < 1.05 ? 'point' : 'idle', t); B.animate('idle', t + 0.4);
+  stage.setCamera([0, 3.8, 19], [0, 2.7, 0], { fov: 40 });
+  applyShake(stage.camera, t, EVENTS);
+  vfx.update(t, EVENTS, stage.camera);
+});
+window.renderAt = (t) => stage.renderAt(t);
+window.__stage = stage; window.__vfx = vfx; window.__events = EVENTS; window.__scene = stage.scene; window.THREE = THREE;
+const tr = document.getElementById('t'), tv = document.getElementById('tv');
+tr.oninput = () => { tv.textContent = (+tr.value).toFixed(2); stage.renderAt(+tr.value); };
+stage.renderAt(+(q.get('t') || 0));
+window.__ready = true;
+</script></body></html>

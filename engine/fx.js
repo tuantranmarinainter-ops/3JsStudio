@@ -401,3 +401,6 @@ export function fxWind(THREE) {
   const obj = new THREE.Group(); obj.name = 'fx_wind'; obj.visible = false;
   return { obj, gustAt: (t) => 0.3 + 0.7 * (Math.sin(t * 0.9) * 0.5 + 0.5), update() { obj.visible = false; } };
 }
+
+// VFX đánh nhau (aura/beam/hitSpark/speedLines/shake) — ô FX vfxAura… mặc định tắt
+export { createVfxDanh, applyShake, VFX_DANH_FX } from "./fx-danh.js";

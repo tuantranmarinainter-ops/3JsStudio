@@ -35,7 +35,7 @@ import { CLOTH } from './cloth.js';
 import { MAST } from './mastbreak.js';
 import { MATS } from './materials.js';
 
-export const FX_DEFAULTS = { hatNhe: false, grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true, backdrop: true, matTex: true, flowers: true, traffic: true, villagers: true, pvTrees: true, familyPhoto: true, realWindow: true, houseStairs: true, stairsFold: true, daTron: true, raft: true, wreckSplit: true, faceLive: true, idleSong: false, chongLop: false, coCanh: true, gioThoiTiet: true, denNhanVat: true, tangXa: true, seaDecor: true, nhep: true, chuTungChu: true, matEmote: true, matAlti: true, matNguyen: true, troikaText: false };
+export const FX_DEFAULTS = { hatNhe: false, grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true, backdrop: true, matTex: true, flowers: true, traffic: true, villagers: true, pvTrees: true, familyPhoto: true, realWindow: true, houseStairs: true, stairsFold: true, daTron: true, raft: true, wreckSplit: true, faceLive: true, idleSong: false, chongLop: false, coCanh: true, gioThoiTiet: true, denNhanVat: true, tangXa: true, seaDecor: true, nhep: true, chuTungChu: true, matEmote: true, matAlti: true, matNguyen: true, troikaText: false, vfxAura: false, vfxBeam: false, vfxHitSpark: false, vfxSpeedLines: false, vfxShake: false };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
@@ -73,6 +73,11 @@ export const FX_LABELS = {
   chongLop: 'Động tác chồng lớp: diễn viên ghi do:[{a:"wave",t:[0.3,1]}] → vẫy/chỉ/gật… trộn lên dáng nền, mờ 0,12 s (mã blocky-shorts)',
   coCanh: 'Cỡ cảnh: shot ghi co (can, trung, toanThan…) tự tính khoảng máy (đổi cần tải lại)',
   gioThoiTiet: 'Giờ + thời tiết theo shot (time / weather)',
+  vfxAura: 'VFX đánh nhau: hào quang lửa quanh nhân vật (engine/fx-danh.js; mặc định tắt)',
+  vfxBeam: 'VFX đánh nhau: tia năng lượng + loé nòng + tia lửa chỗ trúng',
+  vfxHitSpark: 'VFX đánh nhau: tia lửa va chạm (loé sao + vòng + vệt bắn)',
+  vfxSpeedLines: 'VFX đánh nhau: vệt tốc độ bám camera',
+  vfxShake: 'VFX đánh nhau: rung camera theo mốc',
   denNhanVat: 'Đèn nhân vật bám camera (mặt luôn đọc được; chỉ tập dùng time/weather)',
   tangXa: 'Tầng bổ sung',
   seaDecor: 'Biển chung: phao, mõm đá, đảo xa (env sea)',
@@ -258,7 +263,7 @@ export function createPost(THREE, stage, { actors = [], paint: paintOpts = {}, a
     get paintDepth() { return paintDepth; }, set paintDepth(v) { paintDepth = ['own', 'ao', 'flat'].includes(v) ? v : 'own'; },
     get smaaReady() { return smaaReady; },
     get options() { return { ...fx }; },
-    set(o = {}) { for (const k of Object.keys(FX_DEFAULTS)) if (o[k] !== undefined) fx[k] = !!o[k]; CLOTH.on.value = fx.cloth ? 1 : 0; MAST.on.value = fx.mast ? 1 : 0; const AF = (globalThis.__autoFx ||= {}); for (const k of ['foot', 'prints', 'wind', 'breath', 'ibl', 'scans', 'sea2', 'skybox', 'stormSky', 'shotSky', 'skyCubic', 'skyScale', 'grass', 'sway', 'cloudShade', 'farwoods', 'backdrop', 'faceLive', 'gioThoiTiet', 'denNhanVat', 'tangXa', 'seaDecor', 'nhep', 'chuTungChu', 'matEmote', 'matAlti', 'matNguyen', 'idleSong', 'chongLop', 'coCanh']) AF[k] = fx[k]; return { ...fx }; },
+    set(o = {}) { for (const k of Object.keys(FX_DEFAULTS)) if (o[k] !== undefined) fx[k] = !!o[k]; CLOTH.on.value = fx.cloth ? 1 : 0; MAST.on.value = fx.mast ? 1 : 0; const AF = (globalThis.__autoFx ||= {}); for (const k of ['foot', 'prints', 'wind', 'breath', 'ibl', 'scans', 'sea2', 'skybox', 'stormSky', 'shotSky', 'skyCubic', 'skyScale', 'grass', 'sway', 'cloudShade', 'farwoods', 'backdrop', 'faceLive', 'gioThoiTiet', 'denNhanVat', 'tangXa', 'seaDecor', 'nhep', 'chuTungChu', 'matEmote', 'matAlti', 'matNguyen', 'idleSong', 'chongLop', 'coCanh', 'vfxAura', 'vfxBeam', 'vfxHitSpark', 'vfxSpeedLines', 'vfxShake']) AF[k] = fx[k]; return { ...fx }; },
     render, resize,
   };
 }
