@@ -73,6 +73,7 @@ Cột ep002/ep003: ✔ nhận · ✘ không · ◐ một phần · — không á
 ## 4. Kế hoạch (theo thứ tự)
 Nguyên tắc chung:
 - **Gọi theo nhu cầu, không nạp hết (người dùng chốt 2026-11-15).** Kế thừa nghĩa là món đẹp của ep001 nằm sẵn trong builder chung. Tập sau chỉ nhận món nào mà bối cảnh/shot của nó thật sự dùng: có giường thì `K.bed` tự có vải mềm, ngoài trời thì mới gọi `H.nenXa`, có tủ lạnh thì `K.fridge` mới có chrome. Không có lớp "áp hết mọi cải tiến lên mọi tập". Module nào không được gọi thì không import, không dựng, không dịch shader. Bước 4 (`prewarmEnvs`) chỉ làm nóng những env mà shots của tập dùng.
+- **Món dùng chung nằm trong Studio, không nằm trong tập (chốt 2026-11-15).** Builder, vật liệu, nền xa, cờ FX nằm ở `engine/`, được gộp vào `studio.html`. Gói tập (`episodes/<ep>/` → `<ep>.3js`) chỉ chứa DỮ LIỆU: dùng env nào, đạo cụ nào, shot nào, và ô nào muốn tắt. Ra bản Studio mới thì mọi tập tự đẹp lên. Chỉ món riêng của một câu chuyện (GLB twist, đạo cụ độc nhất) mới để trong tập. Sau mỗi bước phải dựng lại studio + gói + kho cùng lúc (xem `docs/handoff/tach-studio.md`).
 - Mỗi món có **cờ FX mới trong `FX_DEFAULTS` (`post.js:38`), mặc định `true`**, kèm nhãn trong trình phát. Tắt cờ thì builder dựng đúng như cũ.
 - File env cũ bỏ đoạn vá và gọi builder. Hình ep001 phải y nguyên.
 - Không sửa `engine/r15.js`, `episodes/ep001/*` (đang do phiên ep001-sky-storm giữ). Bỏ qua ep004/ep005.
