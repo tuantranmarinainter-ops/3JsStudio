@@ -21,8 +21,9 @@
 - **Song song Phim | 3D:** nút ◧ Song song (engine/che-do-3d.js `bat(el, { songSong })`, tools/export-ui.js). Một renderer: Phim → canvas 2D
   đè dưới phụ đề; 3D vẽ vào ô góc bộ đệm → canvas 2D bên phải. `node tools/kiem-song-song.mjs` 8/8 ĐẠT; kiem-che-do-3d ep003 vẫn ĐẠT.
   Chỉ có trong studio.html; các dist/<ep>.html cũ chưa gộp lại.
-- **Bước kế tiếp:** người dùng cho phép → `node tools/phat-hanh-studio.mjs --day` (lần đầu tạo nhánh studio-ban + Release). GĐ4: xuat.mjs/doctor hiểu gói.
-- **Đang chờ:** người dùng thử studio.html (chọn thư mục dist) + song song; cho phép đẩy bản đầu lên GitHub.
+- **Đã phát hành 15/11:** thẻ `studio-v2026.11.15-1252` + nhánh `studio-ban` (đã push, người dùng cho phép). Máy CHƯA có `gh` → chưa có
+  GitHub Release; studio tự lấy từ nhánh studio-ban khi không có Release (kiểm thật: tải được, sha khớp). Bước kế tiếp: GĐ4 xuat.mjs/doctor hiểu gói.
+- **Đang chờ:** người dùng thử studio.html (chọn thư mục dist) + song song; (tuỳ chọn) bấm Publish Release cho thẻ trên GitHub.
 - **File đang dở (chưa commit):** không · **Đang chạy nền:** không · tách file KHÔNG giảm số shader/thời gian dịch shader.
 - **Đạt khi (cả dự án):** như trên + bản đầu đã lên Release và studio tải được; công cụ (xuat.mjs, doctor) hiểu gói. **Câu hỏi còn mở:** không
 <!-- /ĐIỂM DỪNG -->

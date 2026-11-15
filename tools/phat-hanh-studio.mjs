@@ -45,5 +45,8 @@ const commit = execFileSync('git', ['commit-tree', tree, ...(parent ? ['-p', par
 git('update-ref', 'refs/heads/studio-ban', commit, ...(parent ? [parent] : []));
 git('tag', tag, commit);
 execFileSync('git', ['push', 'origin', 'refs/heads/studio-ban:refs/heads/studio-ban', `refs/tags/${tag}:refs/tags/${tag}`], { cwd: root, stdio: 'inherit' });
-execFileSync('gh', ['release', 'create', tag, '--title', `Studio ${meta.version}`, '--notes', notes || `Studio ${meta.version}`, '--latest', '--verify-tag'], { cwd: root, stdio: 'inherit' });
+const repo = (opt('repo', null) || git('remote', 'get-url', 'origin').replace(/^.*github.com[:/]/, '').replace(/.git$/, ''));
+try { execFileSync('gh', ['release', 'create', tag, '--title', `Studio ${meta.version}`, '--notes', notes || `Studio ${meta.version}`, '--latest', '--verify-tag'], { cwd: root, stdio: 'inherit' }); }
+catch (e) { console.log(`(chưa tạo được GitHub Release — máy chưa có gh hoặc chưa đăng nhập. Studio vẫn cập nhật được từ nhánh studio-ban.
+ Muốn có trang ghi chú: mở https://github.com/${repo}/releases/new?tag=${tag} và bấm Publish.)`); }
 console.log(`Xong: ${tag}. Studio bấm "Cập nhật mới nhất" sẽ thấy bản ${meta.version}.`);

@@ -211,9 +211,13 @@
   async function kiemBanMoi(imLang) {
     var info = $('supdinfo'); info.textContent = 'Đang kiểm bản mới…';
     try {
-      var rel = await (await fetch(API, { cache: 'no-store' })).json();
-      if (!rel.tag_name) throw new Error(rel.message || 'chưa có bản phát hành nào');
-      var j = await (await fetch(RAW + rel.tag_name + '/studio-core.json', { cache: 'no-store' })).json();
+      var rel = {};
+      try { rel = await (await fetch(API, { cache: 'no-store' })).json(); } catch (e) {}
+      // chưa có GitHub Release (vd chưa cài gh để tạo) → lấy bản mới nhất trên nhánh studio-ban
+      if (!rel.tag_name) rel = { tag_name: 'studio-ban', body: '' };
+      var r0 = await fetch(RAW + rel.tag_name + '/studio-core.json', { cache: 'no-store' });
+      if (!r0.ok) throw new Error('chưa có bản phát hành nào (HTTP ' + r0.status + ')');
+      var j = await r0.json();
       var hong = await get('meta', 'hong');
       if (!(j.version > ACTIVE.version)) { info.innerHTML = '<span class="ok">Đã là bản mới nhất (' + ACTIVE.version + ').</span>'; return; }
       info.innerHTML = 'Có bản mới <b>' + j.version + '</b> (' + mb(j.size) + ')' + (hong === j.version ? ' <span class="warnc">— bản này từng lỗi trên máy này</span>' : '') +
