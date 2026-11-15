@@ -16,6 +16,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { docRbx, doiClip } from './rbx-anim.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const API = 'https://apis.roblox.com';
@@ -484,6 +485,61 @@ export function ungVienDuyet(rows, anh = {}) {
     nguon: 'roblox', tacGia: r.tacGia, giayPhep: GIAY_PHEP, tamGiac: r.tamGiac ?? undefined, phu: r.thich === null || r.thich === undefined ? '' : `${r.thich}% thích` }));
 }
 
+// ---------- anim: KeyframeSequence → clip JSON R6 (engine/anim-rbx.js) ----------
+export const slugAnim = (s) => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const khoaTen = (s) => String(s).trim().toLowerCase();
+/** Thêm/thay một dòng trong assets/manifest.json (giữ kiểu xuống dòng + thụt lề của file). */
+export function ghiManifestAnim(entry, file = path.join(ROOT, 'assets', 'manifest.json')) {
+  const goc = fs.readFileSync(file, 'utf8'), eol = goc.includes('\r\n') ? '\r\n' : '\n', txt = goc.replace(/\r\n/g, '\n'), arr = JSON.parse(txt);
+  const i = arr.findIndex((e) => e.id === entry.id); if (i >= 0) arr[i] = entry; else arr.push(entry);
+  const o = JSON.stringify(arr, null, 1) + (txt.endsWith('\n') ? '\n' : ''); fs.writeFileSync(file, eol === '\n' ? o : o.replace(/\n/g, eol));
+}
+function ghiCreditsAnim(ten, id, tieuDe, tacGia, file = path.join(ROOT, 'assets', 'nhap', 'CREDITS.md')) {
+  const dau = `- [anim/${ten}]`, dong = `${dau} "${tieuDe}" (https://create.roblox.com/store/asset/${id}) by ${tacGia}, licensed under Roblox Creator Store (https://create.roblox.com/store). KeyframeSequence tải theo id, đổi sang khớp R6 (tools/rbx-anim.mjs); không chép lại nội dung ngoài clip JSON.`;
+  const ls = fs.existsSync(file) ? fs.readFileSync(file, 'utf8').split(/\r?\n/) : [], k = ls.findIndex((l) => l.startsWith(dau));
+  if (k >= 0) ls[k] = dong; else { while (ls.length && ls.at(-1) === '') ls.pop(); ls.push(dong, ''); }
+  fs.writeFileSync(file, ls.join('\n'));
+}
+/** Ghi một clip + manifest + credits. */
+function luuClip(clip, ten, id, nguonMo, tacGia, ra) {
+  fs.mkdirSync(ra, { recursive: true });
+  const f = path.join(ra, ten + '.json'); fs.writeFileSync(f, JSON.stringify(clip));
+  const names = fs.readdirSync(ra).filter((x) => x.endsWith('.json') && x !== 'index.json').map((x) => x.slice(0, -5)).sort();   // index cho trình duyệt (không liệt kê thư mục được)
+  fs.writeFileSync(path.join(ra, 'index.json'), JSON.stringify({ names }));
+  const tg = tacGia || (/Storflin6564/.test(nguonMo || '') ? 'Storflin6564' : /default R6 Animate/.test(nguonMo || '') ? 'Roblox' : 'Roblox Creator Store');
+  ghiManifestAnim({ id: `anim/${ten}`, src: `assets/nhap/anims/${ten}.json`, source: `create.roblox.com/store/asset/${id}`, license: 'Roblox Creator Store', credit: `“${clip.ten}” by ${tg} (https://create.roblox.com/store/asset/${id}), Roblox Creator Store`, title: clip.ten, author: tg, loai: 'animation', dur: clip.dur, loop: clip.loop, keys: clip.keys.length });
+  ghiCreditsAnim(ten, id, clip.ten, tg);
+  return f;
+}
+async function cmdAnim(a) {
+  tranRequest = Number(a['toi-da-request']) > 0 ? Number(a['toi-da-request']) : 40;
+  const ra = path.resolve(ROOT, String(a.ra && a.ra !== true ? a.ra : 'assets/nhap/anims'));
+  const cache = path.join(ROOT, '.cache', 'roblox', 'anim'); fs.mkdirSync(cache, { recursive: true });
+  const lay = async (id) => { const f = path.join(cache, id + '.bin'); if (fs.existsSync(f)) return fs.readFileSync(f); const b = await taiAsset(id); fs.writeFileSync(f, b); return b; };
+  if (a.bo && a.bo !== true) {                          // --bo <thư-mục manifest/anims của nocodehack>: mỗi nhóm có meta.json {id,name,source,loop}
+    const goc = path.resolve(ROOT, String(a.bo)), metas = fs.readdirSync(goc).filter((d) => fs.existsSync(path.join(goc, d, 'meta.json'))).map((d) => ({ nhom: d, ...JSON.parse(fs.readFileSync(path.join(goc, d, 'meta.json'), 'utf8')) }));
+    const loc = a.chon ? new Set(String(a.chon).split(',').map(khoaTen)) : null, kq = [];
+    for (const m of metas) {
+      if (loc && !loc.has(khoaTen(m.nhom)) && !loc.has(khoaTen(m.name))) continue;
+      try {
+        const seqs = docRbx(await lay(String(m.id))), s = seqs.length === 1 ? seqs[0] : seqs.find((x) => khoaTen(x.ten) === khoaTen(m.name));
+        if (!s) throw new Error(`không thấy "${m.name}" trong ${seqs.length} KeyframeSequence của ${m.id}`);
+        const clip = doiClip(s, { id: String(m.id), ten: m.name, loop: typeof m.loop === 'boolean' ? m.loop : s.loop });
+        const ten = slugAnim(m.nhom); const f = luuClip(clip, ten, m.id, m.source, '', ra);
+        kq.push(`OK  ${ten.padEnd(10)} id=${m.id} ${clip.keys.length} khung ${clip.dur}s ${clip.loop ? 'lặp' : 'một lần'}${clip.canhBao.length ? ' ⚠ ' + clip.canhBao.join(';') : ''}`); void f;
+      } catch (e) { kq.push(`LOI ${m.nhom}: ${che(e.message)}`); }
+    }
+    in_(kq.join('\n')); return;
+  }
+  const id = layId(a._[0]); if (!id) loi('cách dùng: anim <id|link> [--liet-ke] [--chon "Tên"] [--ten ten-file] | anim --bo <thư mục manifest/anims> [--chon a,b]');
+  const seqs = docRbx(await lay(id));
+  if (a['liet-ke'] || (seqs.length > 1 && !a.chon)) { in_(`asset ${id}: ${seqs.length} KeyframeSequence\n` + seqs.map((s) => `  ${s.ten}  (${s.keys.length} khung, ${s.keys.at(-1)?.t ?? 0}s, ${s.loop ? 'lặp' : 'một lần'})`).join('\n')); return; }
+  const s = seqs.length === 1 ? seqs[0] : seqs.find((x) => khoaTen(x.ten) === khoaTen(a.chon)); if (!s) loi(`không thấy "${a.chon}"`);
+  const ten = slugAnim(a.ten && a.ten !== true ? a.ten : s.ten), clip = doiClip(s, { id, ten: s.ten });
+  const f = luuClip(clip, ten, id, '', '', ra);
+  in_(`OK ${path.relative(ROOT, f)}  ${clip.keys.length} khung ${clip.dur}s ${clip.loop ? 'lặp' : 'một lần'} khớp: ${clip.khop.join(',')}${clip.canhBao.length ? '\n⚠ ' + clip.canhBao.join(';') : ''}`);
+}
+
 // ---------- CLI ----------
 export function phanTich(argv) {
   const a = { _: [] };
@@ -491,7 +547,7 @@ export function phanTich(argv) {
     const t = argv[i];
     if (t.startsWith('--')) {
       const k = t.slice(2), n = argv[i + 1];
-      if (n !== undefined && !n.startsWith('--') && !['co-script', 'json', 'tach'].includes(k)) { a[k] = n; i++; } else a[k] = true;
+      if (n !== undefined && !n.startsWith('--') && !['co-script', 'json', 'tach', 'liet-ke'].includes(k)) { a[k] = n; i++; } else a[k] = true;
     } else a._.push(t);
   }
   return a;
@@ -504,6 +560,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     else if (lenh === 'tai') await cmdTai(a);
     else if (lenh === 'xem') await cmdXem(a);
     else if (lenh === 'anh') await cmdAnh(a);
-    else console.log('Cách dùng:\n  node tools/roblox.mjs tim "<từ khoá>" [--so 20] [--tam-giac-max N] [--co-script] [--json] [--ung-vien file.json [--khe id]]\n  node tools/roblox.mjs xem <id|link>      (đếm part/mesh/ảnh vân/Union, chỉ tốn 1 request)\n  node tools/roblox.mjs tai <id|link> [--ra file.glb] [--ten "tên"] [--toi-da-request 40] [--anh-max 512] [--json] [--song-song 6] [--nhan-vat "<path>" | --tach]\n  node tools/roblox.mjs anh <id|link> [--ra file.png]   (tải ảnh giữ nguyên alpha; id Shirt/Pants/Decal bọc ngoài tự gỡ)');
+    else if (lenh === 'anim') await cmdAnim(a);
+    else console.log('Cách dùng:\n  node tools/roblox.mjs tim "<từ khoá>" [--so 20] [--tam-giac-max N] [--co-script] [--json] [--ung-vien file.json [--khe id]]\n  node tools/roblox.mjs xem <id|link>      (đếm part/mesh/ảnh vân/Union, chỉ tốn 1 request)\n  node tools/roblox.mjs tai <id|link> [--ra file.glb] [--ten "tên"] [--toi-da-request 40] [--anh-max 512] [--json] [--song-song 6] [--nhan-vat "<path>" | --tach]\n  node tools/roblox.mjs anim <id|link> [--liet-ke] [--chon "Tên"] [--ten ten-file]   (animation Roblox → assets/nhap/anims/<ten>.json)\n  node tools/roblox.mjs anim --bo <thư mục manifest/anims> [--chon agree,wave]\n  node tools/roblox.mjs anh <id|link> [--ra file.png]   (tải ảnh giữ nguyên alpha; id Shirt/Pants/Decal bọc ngoài tự gỡ)');
   } catch (e) { loi(e.message || e); }
 }
