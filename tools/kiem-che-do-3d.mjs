@@ -89,6 +89,23 @@ const giu = await page.evaluate(async () => {
 console.log(`Giữ góc: qua ${giu.nShot} shot, camera bay lệch ${giu.max.toExponential(1)} (tắt Giữ góc thì đổi ${giu.moveOff.toFixed(2)}) · mặc định ${giu.keep ? 'bật' : 'TẮT'}`);
 if (!(giu.max < 1e-6) || giu.nShot < 2) loi.push(`Giữ góc: camera bay đổi khi qua shot (lệch ${giu.max})`);
 if (!(giu.moveOff > 1e-3)) loi.push('tắt Giữ góc mà camera không bay tới shot mới');
+// 🎥 Bám camera shot: mỗi khung camera bay = camera shot (vị trí/hướng/fov), kể cả khi camera shot di chuyển và qua shot
+const bam = await page.evaluate(async () => {
+  const c = window.__che3d, tl = window.__shots, sh = tl.list[Math.floor(tl.list.length / 2)];
+  const r = async (t) => { const p = window.renderAt(t); if (p && p.then) await p; };
+  await r(sh.t0 + 0.05); c.goc('shot');
+  let max = 0, di = 0, prev = null;
+  for (let t = sh.t0 + 0.05; t < sh.t1 + 0.6; t += 0.1) {
+    await r(t);
+    const f = c.camera, s = c.shotCam;
+    const q = f.quaternion.toArray(), qd = Math.abs(q.reduce((a, v, i) => a + v * s.quat[i], 0));
+    max = Math.max(max, Math.hypot(...f.position.toArray().map((v, i) => v - s.pos[i])), Math.abs(f.fov - s.fov), 1 - qd);
+    if (prev) di += prev.distanceTo(f.position); prev = f.position.clone();
+  }
+  return { on: c.bam, max, di };
+});
+console.log(`Bám camera shot: lệch ${bam.max.toExponential(1)}, camera bay đi theo ${bam.di.toFixed(2)} stud · ${bam.on ? 'đang bám' : 'KHÔNG bám'}`);
+if (!bam.on || !(bam.max < 1e-5)) loi.push(`Bám camera shot: không theo camera shot (lệch ${bam.max})`);
 // góc nhìn nhanh + WASD
 for (const g of ['tren', 'shot']) { await page.evaluate((g) => window.__che3d.goc(g), g); await page.screenshot({ path: join(out, `3d_goc-${g}.png`) }); }
 // ô Lưới: tắt → ảnh không lưới (so với 3d_goc-tren.png), rồi bật lại
@@ -103,6 +120,7 @@ await page.mouse.move(800, 450);
 await page.keyboard.down('KeyW'); await page.waitForTimeout(500); await page.keyboard.up('KeyW');
 await page.keyboard.down('KeyE'); await page.waitForTimeout(300); await page.keyboard.up('KeyE');
 const p1 = await page.evaluate(() => window.__che3d.camera.position.toArray());
+if (await page.evaluate(() => window.__che3d.bam)) loi.push('bấm WASD mà vẫn bám camera shot');
 const moved = Math.hypot(p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]);
 console.log(`WASD/E: camera đi ${moved.toFixed(2)} stud (lên ${(p1[1] - p0[1]).toFixed(2)})`);
 if (moved < 1 || p1[1] - p0[1] < 0.5) loi.push('WASD/E không di chuyển camera');

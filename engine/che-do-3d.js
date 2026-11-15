@@ -65,7 +65,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
   let on = false, built = null, origDraw = null, curT = 0, wrap = null, home = null, canvasStyle = '', sizeObs = null;
   let shotCam = { pos: new THREE.Vector3(), quat: new THREE.Quaternion(), fov: 50, target: new THREE.Vector3(), id: null };
   const paths = new Map();   // id shot → mảng Vector3 vị trí camera (lấy mẫu)
-  let sampling = false, giuGoc = true, show = { nv: true, dc: true, dd: true, cam: true, luoi: true };
+  let sampling = false, giuGoc = true, bam = false, show = { nv: true, dc: true, dd: true, cam: true, luoi: true };
   const listeners = new Set();
   // SONG SONG (Phim trái | 3D phải): renderer giữ nguyên cỡ phim W0×H0 (không dịch shader lại, không đổi cỡ bộ đệm mỗi khung).
   // Mỗi khung: vẽ Phim như thường (có hậu kỳ) → chép sang filmCv (canvas 2D đè đúng lên canvas WebGL, dưới phụ đề DOM);
@@ -94,7 +94,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     const lab = document.createElement('div'); lab.className = 'c3d-lab';
     const bar = document.createElement('div'); bar.className = 'c3d-bar';
     bar.innerHTML = `<button data-g="tren" title="Nhìn từ trên xuống (bản đồ)">⬇ Trên xuống</button><button data-g="truoc" title="Nhìn từ phía trước chỗ shot diễn">◉ Trước</button>`
-      + `<button data-g="shot" title="Đứng đúng chỗ camera của shot">🎥 Theo camera shot</button>`
+      + `<button data-g="shot" title="Bám camera shot: camera 3D đi, quay, đổi fov theo đúng camera của shot mỗi khung (khung vàng = phần phim thấy). Kéo chuột / WASD để thoát bám.">🎥 Bám camera shot</button>`
       + `<label title="Bật: tua/phát qua shot khác camera bay vẫn đứng yên (chỉ chóp camera, nhân vật, bối cảnh đổi theo t). Tắt: camera bay tới chỗ shot mới diễn."><input type="checkbox" data-o="giuGoc" checked> 🔒 Giữ góc</label>`
       + `<label title="Lưới sàn y = 0 (bị nhà/đất che đúng chỗ)"><input type="checkbox" data-o="luoi" checked> Lưới</label><label><input type="checkbox" data-o="cam" checked> Camera</label><label><input type="checkbox" data-o="nv" checked> Nhân vật</label>`
       + `<label><input type="checkbox" data-o="dc" checked> Đạo cụ</label><label><input type="checkbox" data-o="dd" checked> Địa điểm</label>`;
@@ -115,6 +115,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.PAN, RIGHT: null };   // chuột phải = chế độ bay (bên dưới)
     controls.maxDistance = 3000;
     controls.addEventListener('change', () => redraw());
+    controls.addEventListener('start', () => stopBam());   // kéo chuột trái/giữa, lăn → thoát bám camera shot
 
     // ---- chế độ bay kiểu Unreal ----
     const keys = new Set(); let rmb = false, speed = 20, raf = 0, last = 0, lookDist = 15;
@@ -123,7 +124,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     el.addEventListener('contextmenu', (e) => e.preventDefault());
     el.addEventListener('pointerdown', (e) => {
       if (e.button !== 2) return;
-      rmb = true; lookDist = Math.max(2, free.position.distanceTo(controls.target)); controls.enabled = false;
+      stopBam(); rmb = true; lookDist = Math.max(2, free.position.distanceTo(controls.target)); controls.enabled = false;
       eul.setFromQuaternion(free.quaternion, 'YXZ'); el.setPointerCapture(e.pointerId); el.focus?.();
     });
     el.addEventListener('pointermove', (e) => {
@@ -140,7 +141,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
       if (!on || typing(e) || e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.key === 'Shift') { keys.add('Shift'); return; }
       if (!MOVE[e.code]) return;
-      e.preventDefault(); e.stopPropagation(); keys.add(e.code);
+      e.preventDefault(); e.stopPropagation(); keys.add(e.code); stopBam();
       if (!raf) { last = performance.now(); raf = requestAnimationFrame(step); }
     };
     const ku = (e) => { keys.delete(e.code); if (e.key === 'Shift') keys.delete('Shift'); };
@@ -299,10 +300,29 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     if (sampling) { if (t !== sampleT) curT = t; return; }
     curT = t;
     const changed = captureShot(t);
-    if (changed && !giuGoc && built.ready) flyToShot();   // 🔒 Giữ góc (mặc định bật): camera bay chỉ đổi khi người dùng tự bấm/kéo
+    if (bam) applyBam();
+    else if (changed && !giuGoc && built.ready) flyToShot();   // 🔒 Giữ góc (mặc định bật): camera bay chỉ đổi khi người dùng tự bấm/kéo
     built.ready = true;
     updateFrustum(); redraw();
     if (changed && !paths.has(shotCam.id)) setTimeout(() => samplePath(shotCam.id), 0);
+  }
+
+  // ---------- bám camera shot: mỗi khung camera tự do = camera shot (vị trí, hướng, fov) ----------
+  function applyBam() {
+    const B = built; if (!B) return;
+    B.free.position.copy(shotCam.pos); B.free.quaternion.copy(shotCam.quat);
+    if (B.free.fov !== shotCam.fov) { B.free.fov = shotCam.fov; B.free.updateProjectionMatrix(); }
+    B.controls.target.copy(shotCam.target);   // không gọi controls.update(): giữ đúng hướng (kể cả nghiêng) của camera shot
+  }
+  function setBam(v) {
+    bam = !!v;
+    if (built) for (const b of built.bar.querySelectorAll('button[data-g]')) b.classList.toggle('on', bam ? b.dataset.g === 'shot' : false);
+    for (const f of listeners) f(on, ss);
+  }
+  function stopBam() {
+    if (!bam) return;
+    setBam(false);
+    const B = built; B.controls.update();
   }
 
   // ---------- góc nhìn nhanh ----------
@@ -320,14 +340,15 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
   function goc(g) {
     if (!on) return;
     const B = built, c = B.controls;
+    if (g === 'shot') { setBam(true); applyBam(); updateFrustum(); redraw(); return; }
+    bam = false;
+    if (B.free.fov !== 55) { B.free.fov = 55; B.free.updateProjectionMatrix(); }
     if (g === 'tren') {
       const box = bounds(), ctr = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3());
       const ext = Math.max(30, size.x, size.z) * 0.75;
       c.target.copy(ctr); B.free.position.set(ctr.x, ctr.y + ext / Math.tan(THREE.MathUtils.degToRad(B.free.fov / 2)), ctr.z + 0.01);
     } else if (g === 'truoc') {
       c.target.copy(shotCam.target); B.free.position.copy(shotCam.target).add(_v.set(0, 8, 28));
-    } else if (g === 'shot') {
-      c.target.copy(shotCam.target); B.free.position.copy(shotCam.pos);
     }
     c.update(); redraw();
     for (const b of B.bar.querySelectorAll('button[data-g]')) b.classList.toggle('on', b.dataset.g === g);
@@ -368,7 +389,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     B.free.aspect = Math.max(0.2, r.width / Math.max(1, r.height)); B.free.updateProjectionMatrix();
     B.ready = false;
     const p = stage.renderAt(curT = lastT());   // đọc camera shot ở t hiện tại
-    const first = () => { if (!B.started) { B.started = true; goc('truoc'); } else { if (!giuGoc) flyToShot(); updateFrustum(); redraw(); } };
+    const first = () => { if (!B.started) { B.started = true; goc('truoc'); } else { if (bam) applyBam(); else if (!giuGoc) flyToShot(); updateFrustum(); redraw(); } };
     if (p && p.then) p.then(first); else first();
     for (const f of listeners) f(true, ss);
     return api;
@@ -404,9 +425,11 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     get songSong() { return on && ss; },
     toggle: (c) => (on ? tat() : bat(c)),
     onChange: (f) => { listeners.add(f); return () => listeners.delete(f); },
-    get shotCam() { return { pos: shotCam.pos.toArray(), target: shotCam.target.toArray(), fov: shotCam.fov, id: shotCam.id }; },
+    get shotCam() { return { pos: shotCam.pos.toArray(), target: shotCam.target.toArray(), quat: shotCam.quat.toArray(), fov: shotCam.fov, id: shotCam.id }; },
     get camera() { return built?.free; },
     get giuGoc() { return giuGoc; },
+    get bam() { return on && bam; },
+    setBam: (v) => { if (v) goc('shot'); else stopBam(); },
     setGiuGoc: (v) => { giuGoc = !!v; const c = built?.bar.querySelector('input[data-o=giuGoc]'); if (c) c.checked = giuGoc; },
     paths,
     _stage: stage,
