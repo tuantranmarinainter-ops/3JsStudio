@@ -6,6 +6,8 @@
       rồi chạy tools/video2kb.py --loi off --no-am-thanh → output/nghien-cuu-map/<slug>/. Video đã cắt thì bỏ qua.
   python tools/nghien_cuu_map.py kiem [<slug>]
       bảng trạng thái: số shot · đã gộp (dia-diem.json đủ shot?) · địa điểm đã/ chưa phân tích · số đạo cụ · lỗi JSON.
+  python tools/nghien_cuu_map.py luoi <slug>       ảnh shot đại diện kẻ lưới 10×10 có nhãn → luoi/ (agent đọc khung theo ô)
+  python tools/nghien_cuu_map.py bang-cat <slug>   bảng ảnh cắt đạo cụ có số → _kiem/<slug>/ (agent rẻ chấm đúng/sai)
 """
 import argparse, json, re, shutil, subprocess, sys, unicodedata
 from pathlib import Path
@@ -97,13 +99,75 @@ def kiem(a):
         print(f'— {len(dirs)} video · {tong} đạo cụ')
 
 
+def luoi(a):
+    """Kẻ lưới 10×10 có nhãn lên shot đại diện (+ shot đạo cụ đang dùng) → luoi/shot_NNN.jpg, để agent đọc khung theo ô."""
+    from PIL import Image, ImageDraw, ImageFont
+    d = GOC / a.slug
+    ids = set()
+    f = d / 'dia-diem.json'
+    if f.exists():
+        for x in json.loads(f.read_text(encoding='utf-8')):
+            ids.update(x.get('dai_dien') or [])
+    for p in d.glob('phan-tich-*.json'):
+        for x in json.loads(p.read_text(encoding='utf-8')):
+            ids.update(o['shot'] for o in x.get('dao_cu') or [] if o.get('shot'))
+    (d / 'luoi').mkdir(exist_ok=True)
+    try: font = ImageFont.truetype('C:/Windows/Fonts/arialbd.ttf', 15)
+    except OSError: font = ImageFont.load_default()
+    for sid in sorted(ids):
+        src = d / f'shot_{int(sid.lstrip("s")):03d}.jpg'
+        if not src.exists(): continue
+        im = Image.open(src).convert('RGB'); W, H = im.size
+        dr = ImageDraw.Draw(im)
+        for k in range(1, 10):
+            x, y = W * k / 10, H * k / 10
+            dr.line([(x, 0), (x, H)], fill=(255, 0, 255), width=1)
+            dr.line([(0, y), (W, y)], fill=(255, 0, 255), width=1)
+        for k in range(10):   # nhãn 0.0…0.9 ở mép trên (x) và mép trái (y)
+            for t, pos in ((f'{k / 10:.1f}', (W * k / 10 + 2, 2)), (f'{k / 10:.1f}', (2, H * k / 10 + 2))):
+                dr.text(pos, t, fill='yellow', font=font, stroke_width=2, stroke_fill='black')
+        im.save(d / 'luoi' / src.name, quality=88)
+    print(f'{len(ids)} ảnh lưới → {d / "luoi"}')
+
+
+def bang_cat(a):
+    """Ghép ảnh cắt mọi đạo cụ thành bảng có số + tên (48 ô/tờ) → _kiem/<slug>/crops_N.jpg + muc-luc.json (số → mục),
+    để 1 agent rẻ chấm DUNG/LECH/SAI."""
+    sys.path.insert(0, str(ROOT / 'tools'))
+    from thu_vien_map import shot_img, crop
+    from PIL import Image, ImageDraw, ImageFont
+    d = GOC / a.slug; out = GOC / '_kiem' / a.slug; out.mkdir(parents=True, exist_ok=True)
+    items = []
+    for f in sorted(d.glob('phan-tich-*.json')):
+        for loc in json.loads(f.read_text(encoding='utf-8')):
+            for i, x in enumerate(loc.get('dao_cu') or []):
+                items.append({'so': len(items) + 1, 'file': f.name, 'dia_diem': loc.get('dia_diem'), 'vi_tri': i,
+                              'ten': x.get('ten'), 'ten_en': x.get('ten_en'), 'shot': x.get('shot'), 'khung': x.get('khung')})
+    try: font = ImageFont.truetype('C:/Windows/Fonts/arial.ttf', 13)
+    except OSError: font = ImageFont.load_default()
+    W, H, C = 160, 150, 8
+    for p in range(0, len(items), 48):
+        ch = items[p:p + 48]; rows = (len(ch) + C - 1) // C
+        sh = Image.new('RGB', (C * W, rows * (H + 30)), 'white'); dr = ImageDraw.Draw(sh)
+        for i, it in enumerate(ch):
+            X, Y = (i % C) * W, (i // C) * (H + 30)
+            c = crop(shot_img(d, it['shot']), it['khung'])
+            if c: c.thumbnail((W - 4, H - 4)); sh.paste(c, (X + 2, Y + 2))
+            dr.text((X + 2, Y + H + 1), f"{it['so']}. {it['ten_en'] or ''}"[:24], fill='black', font=font)
+        sh.save(out / f'crops_{p // 48 + 1}.jpg', quality=85)
+    (out / 'muc-luc.json').write_text(json.dumps(items, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(f'{len(items)} ô → {out}')
+
+
 def main():
     ap = argparse.ArgumentParser()
     sp = ap.add_subparsers(dest='cmd', required=True)
     c = sp.add_parser('cat'); c.add_argument('thu_muc'); c.add_argument('--chi'); c.add_argument('--force', action='store_true')
     k = sp.add_parser('kiem'); k.add_argument('slug', nargs='?')
+    l = sp.add_parser('luoi'); l.add_argument('slug')
+    b = sp.add_parser('bang-cat'); b.add_argument('slug')
     a = ap.parse_args()
-    {'cat': cat, 'kiem': kiem}[a.cmd](a)
+    {'cat': cat, 'kiem': kiem, 'luoi': luoi, 'bang-cat': bang_cat}[a.cmd](a)
 
 
 if __name__ == '__main__':

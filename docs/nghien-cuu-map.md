@@ -7,13 +7,17 @@ từ khoá Creator Store) → thư viện `dist/thu-vien-map.html`. Ưu tiên: t
 ```
 python tools/nghien_cuu_map.py cat "<thư mục video>" [--chi "<từ trong tên>"]   # chép tên không dấu + cắt shot, bỏ qua video đã cắt
 python tools/nghien_cuu_map.py kiem [<slug>]                                     # trạng thái từng video: đã cắt / đã gộp / đã phân tích, lỗi JSON
+python tools/nghien_cuu_map.py luoi <slug>                                       # kẻ lưới 10×10 lên shot đại diện → luoi/ (sau khi gộp)
+python tools/nghien_cuu_map.py bang-cat <slug>                                   # bảng ảnh cắt đạo cụ có số → output/nghien-cuu-map/_kiem/<slug>/
 python tools/thu_vien_map.py                                                     # gộp mọi phan-tich-*.json → dist/thu-vien-map.html
 ```
 Dữ liệu mỗi video: `output/nghien-cuu-map/<slug>/` (shot_NNN.jpg, sheets/, frames/, dia-diem.json, phan-tich-*.json).
 
 ## Quy trình mỗi video (agent chính)
-1. `cat` → 2. 1 agent Sonnet làm **ĐỀ BÀI GỘP** → `kiem` → 3. chia địa điểm (trừ can-mat/do-hoa) thành ≤ 3 nhóm cân số shot đại diện,
-mỗi nhóm 1 agent Sonnet làm **ĐỀ BÀI PHÂN TÍCH** → `kiem` → 4. `thu_vien_map.py`.
+1. `cat` → 2. 1 agent Sonnet làm **ĐỀ BÀI GỘP** → `kiem` → `luoi` → 3. chia địa điểm (trừ can-mat/do-hoa) thành ≤ 3 nhóm cân số shot
+đại diện, mỗi nhóm 1 agent Sonnet làm **ĐỀ BÀI PHÂN TÍCH** → `kiem` → 4. `bang-cat` + 1 agent Haiku chấm DUNG/LECH/SAI từng ô
+(ghi `_kiem/<slug>/bao-cao.md`) → ô lệch/sai giao lại Sonnet sửa khung bằng ảnh lưới → 5. `thu_vien_map.py`.
+(Video thử may-ban-hang: khung đoán không lưới chỉ đúng 65%.)
 Đề bài giao agent chỉ cần: `Đọc S:\3JS Studio\docs\nghien-cuu-map.md, làm ĐỀ BÀI <GỘP|PHÂN TÍCH>. Video: <slug>. [Địa điểm: a, b, c. File ra: phan-tich-<nhom>.json]`
 
 ---
@@ -42,7 +46,9 @@ Mỗi địa điểm ghi:
   - `meo`: mẹo tiết kiệm (chỉ dựng phần trong khung, phòng 3 vách, cửa sổ decal, hậu cảnh mờ…)
 - `dao_cu`: mọi đồ vật thấy được, cùng loại lặp lại ghi 1 dòng + `so_luong`:
   `{"ten":"tiếng Việt","ten_en":"English","nhom":"nha-cua|noi-that|do-dung|cay-coi|canh-quan|duong-pho|xe-co|bien-hieu|khac","mau":["#hex tên màu"],"vat_lieu":"vật liệu Roblox (SmoothPlastic, Plastic, Wood, WoodPlanks, Brick, Concrete, Metal, Glass, Neon, Fabric, Grass, Marble, Slate…) + bề mặt","kich_thuoc_stud":"R×C×S","chi_tiet":"low-poly khối / mesh chi tiết / decal","tu_khoa_store":["2–4 cụm tiếng Anh, vd 'low poly vending machine'"],"shot":"s038","khung":[x,y,w,h]}`
-  — `khung` = hộp bao đồ vật trong shot đó, tỉ lệ 0–1 (để cắt ảnh minh hoạ).
+  — `khung` = hộp bao đồ vật trong shot đó, tỉ lệ 0–1 (để cắt ảnh minh hoạ). ĐỌC KHUNG TRÊN ẢNH LƯỚI `luoi/shot_NNN.jpg`
+  (vạch tím 10×10, nhãn vàng 0.0…0.9 ở mép trên = x, mép trái = y), ước tới 0.05 — không đoán bằng mắt trên ảnh trơn.
+  Ưu tiên chọn `shot` có ảnh lưới; đồ chỉ thấy ở shot không có lưới thì vẫn ghi, ước lượng cẩn thận.
 
 Ghi file được giao (`phan-tich-<nhom>.json`): `[{"dia_diem":"<id>","ten":"…","cach_dung":{…},"dao_cu":[…]}]`,
 kiểm bằng `python tools/nghien_cuu_map.py kiem <slug>`.
