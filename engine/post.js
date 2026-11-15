@@ -35,7 +35,7 @@ import { CLOTH } from './cloth.js';
 import { MAST } from './mastbreak.js';
 import { MATS } from './materials.js';
 
-export const FX_DEFAULTS = { grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true, backdrop: true, matTex: true, flowers: true, traffic: true, villagers: true, pvTrees: true, familyPhoto: true, realWindow: true, houseStairs: true, stairsFold: true, daTron: true, raft: true, wreckSplit: true, faceLive: true, idleSong: false, chongLop: false, coCanh: true, gioThoiTiet: true, denNhanVat: true, tangXa: true, seaDecor: true, nhep: true, chuTungChu: true, matEmote: true, matAlti: true, matNguyen: true, troikaText: false };
+export const FX_DEFAULTS = { hatNhe: false, grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true, backdrop: true, matTex: true, flowers: true, traffic: true, villagers: true, pvTrees: true, familyPhoto: true, realWindow: true, houseStairs: true, stairsFold: true, daTron: true, raft: true, wreckSplit: true, faceLive: true, idleSong: false, chongLop: false, coCanh: true, gioThoiTiet: true, denNhanVat: true, tangXa: true, seaDecor: true, nhep: true, chuTungChu: true, matEmote: true, matAlti: true, matNguyen: true, troikaText: false };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
@@ -63,6 +63,7 @@ export const FX_LABELS = {
   realWindow: 'Cửa sổ thật phòng ngủ (cảnh 3D ngoài)',
   houseStairs: 'Cầu thang nhà chạm đất',
   stairsFold: 'Cầu thang gấp bản lề (nâng nhà thì gấp, ngồi thì bung)',
+  hatNhe: 'Hạt phim nhẹ (da nhân vật phẳng, nét; chỉ giảm hạt, vẫn giữ tối viền)',
   daTron: 'Da nhân vật trơn (không phủ bụi kiểu nhà → hết viền 2 bên mặt)',
   raft: 'Bè gỗ thay thuyền (đảo)',
   wreckSplit: 'Xác tàu đứt đôi (rạn san hô)',
@@ -98,12 +99,12 @@ const NEUTRAL = { sat: 1, con: 1, temp: 0, gain: 1, lift: 0 };
 const GradeShader = {
   uniforms: {
     tDiffuse: { value: null }, uSat: { value: 1 }, uCon: { value: 1 }, uTemp: { value: 0 }, uGain: { value: 1 }, uLift: { value: 0 },
-    uVig: { value: 0 }, uGrain: { value: 0 }, uSeed: { value: 0 }, uRain: { value: 0 }, uTime: { value: 0 }, uFlash: { value: 0 },
+    uVig: { value: 0 }, uGrain: { value: 0 }, uGA: { value: 0.035 }, uSeed: { value: 0 }, uRain: { value: 0 }, uTime: { value: 0 }, uFlash: { value: 0 },
     uRes: { value: null },
   },
   vertexShader: /* glsl */`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
   fragmentShader: /* glsl */`
-    uniform sampler2D tDiffuse; uniform float uSat, uCon, uTemp, uGain, uLift, uVig, uGrain, uSeed, uRain, uTime, uFlash; uniform vec2 uRes;
+    uniform sampler2D tDiffuse; uniform float uGA, uSat, uCon, uTemp, uGain, uLift, uVig, uGrain, uSeed, uRain, uTime, uFlash; uniform vec2 uRes;
     varying vec2 vUv;
     float h11(float p) { p = fract(p * 0.1031); p *= p + 33.33; p *= p + p; return fract(p); }
     float h21(vec2 p) { vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
@@ -137,7 +138,7 @@ const GradeShader = {
       if (uVig > 0.0) {
         vec2 d = (vUv - 0.5) * vec2(uRes.x / uRes.y, 1.0) * 1.9;
         c *= mix(1.0, smoothstep(1.45, 0.55, length(d)), uVig * 0.3);   // nhẹ: mép khung dọc tối ~13%
-        c += (h21(floor(vUv * uRes) + uSeed) - 0.5) * 0.035 * uVig;   // hạt phim theo khung (tất định)
+        c += (h21(floor(vUv * uRes) + uSeed) - 0.5) * uGA * uVig;   // hạt phim theo khung (tất định)
       }
       gl_FragColor = vec4(clamp(c, 0.0, 1.0), 1.0);
     }`,
@@ -240,7 +241,7 @@ export function createPost(THREE, stage, { actors = [], paint: paintOpts = {}, a
     const G = fx.grade ? (GRADES[light] || NEUTRAL) : NEUTRAL;
     const u = grade.uniforms;
     u.uSat.value = G.sat; u.uCon.value = G.con; u.uTemp.value = G.temp; u.uGain.value = G.gain; u.uLift.value = G.lift;
-    u.uVig.value = fx.vignette ? 1 : 0; u.uSeed.value = Math.round(t * 30) % 997;
+    u.uVig.value = fx.vignette ? 1 : 0; u.uGA.value = fx.hatNhe ? 0.006 : 0.035; u.uSeed.value = Math.round(t * 30) % 997;
     u.uRain.value = storm ? 1 : 0; u.uTime.value = t; u.uFlash.value = flash;
     composer.render();
   }
