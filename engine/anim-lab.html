@@ -30,7 +30,7 @@ const SOURCES = window.__animSources = window.__animSources || {};
 SOURCES.A = { label: 'A · thủ tục (nocodehack)', names: Object.keys(NCH), pose: nchPose, meta: NCH_META, on: true };
 window.registerAnimSource = (id, label, src) => { SOURCES[id] = { label, on: true, meta: {}, ...src }; if (window.__rebuild) window.__rebuild(); };
 
-const CW = 4.4, NMAX = 24;
+const CW = 5, NMAX = 24;
 const cv = document.getElementById('c'), renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, preserveDrawingBuffer: true });
 renderer.setPixelRatio(1); renderer.outputColorSpace = THREE.SRGBColorSpace;
 const scene = new THREE.Scene(); scene.background = new THREE.Color('#cfd6dc');
@@ -58,16 +58,17 @@ function build() {
     const look = looks[i % looks.length];
     const rig = createR6Rig(THREE, { name: 'lab' + i, ...R6_LOOKS[look], faceSet });
     const col = i % cols, row = Math.floor(i / cols);
-    rig.root.position.set((col - (cols - 1) / 2) * CW, 0, -row * 6.5); scene.add(rig.root);
+    rig.root.position.set((col - (cols - 1) / 2) * CW, 0, -row * 10); scene.add(rig.root);
     chars.push({ rig, a, base: rig.root.position.clone() });
   });
-  // máy ảnh: đủ rộng cho cả lưới (knockback bay lùi tới −8 stud)
-  const wide = Math.max(8, cols * CW + 3), deep = (rows - 1) * 6.5, view = q.get('view') || '34';
-  const R = Math.max(wide * 1.25, 18) + deep * 0.6, cy = 3.4 + deep * 0.15;
+  // máy ảnh: khớp bố cục theo khẩu độ ngang+dọc (knockback bay lùi tới −8 stud nên chừa thêm phía sau)
+  const wide = Math.max(10, cols * CW + 2), deep = (rows - 1) * 10, view = q.get('view') || '34';
   cam.fov = 30; cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix();
-  if (view === 'front') cam.position.set(0, cy + 1, R + 4); else cam.position.set(R * 0.45, cy + R * 0.2 + 1, R * 0.9);
-  cam.lookAt(0, 2.6, -deep * 0.5 - 1.2);
-  if (list.length <= 3) { const w = Math.max(wide, 12); cam.position.multiplyScalar(w / wide * 0.85); cam.lookAt(0, 2.4, -2.5); }
+  const vt = Math.tan(cam.fov * Math.PI / 360), el = rows > 1 ? 0.75 : 0.22, az = view === 'front' ? 0 : 0.55;
+  const d = Math.max((wide / 2 + 1) / (vt * cam.aspect), (4 + deep / 2 + (rows > 1 ? 3 : 6)) / vt) * 1.12;
+  const cy = new THREE.Vector3(0, 3, -deep / 2 - (rows > 1 ? 0 : 3));
+  cam.position.set(cy.x + d * Math.sin(az) * Math.cos(el), cy.y + d * Math.sin(el), cy.z + d * Math.cos(az) * Math.cos(el));
+  cam.lookAt(cy);
 }
 function sizeAll() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
 function renderAt(t) {
