@@ -79,7 +79,7 @@ Lối 3: video tham khảo ─► [0c video-sang-kich-ban] ⚠ (chỉ lấy form
 ## Bước 7 — Khối xám trong engine · skill `scene-env` + `tools/look.mjs`
 - **Đầu vào:** `boi-canh/<id>.json` (số chốt) + model đã nhập.
 - **Xử lý:** dựng `engine/envs/<tên>.js` theo đúng số: hộp xám (hoặc model thật để thô), hình nộm xám ở chỗ nhân vật đứng, gắn tầng trước/giữa/sau. Chụp 2 góc cố định: trên cao nhìn xuống và ngang tầm mắt (`node tools/look.mjs … --out output/<ep>-khoi-xam`).
-- ⚠ `scene-env` chưa đọc thẳng file mốc: hiện phải chép số tay vào env.
+- **Pha 0 (đã nối):** `node tools/khoi-xam.mjs boi-canh/<id>.json --out output/<ep>-khoi-xam` dựng hộp xám + hình nộm thẳng từ file mốc, chụp `<id>_tren-cao.png` / `<id>_ngang-mat.png`, in mốc không đọc được số (skill `scene-env`, Pha 0). Dựng env chi tiết sau khi duyệt, lấy số từ file mốc.
 - **Đầu ra:** env mới + 2 ảnh khối xám.
 - **STOP:** duyệt bố cục (sai chỗ nào sửa số trong danh sách mốc rồi dựng lại).
 
