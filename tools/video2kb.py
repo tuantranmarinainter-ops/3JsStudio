@@ -2,7 +2,7 @@
 """video2kb.py — Quăng 1 video vào → bản nháp KỊCH BẢN + khung từng shot để phân tích, đúng định dạng
 docs/kich-ban-vao.md (đưa thẳng cho tools/storyboard.py dựng tập mới).
 
-  python tools/video2kb.py <video.mp4 | URL> [--out kich-ban/<tên>] [--cua-toi]
+  python tools/video2kb.py <video.mp4 | URL> [--out kich-ban/<tên>] [--cua-toi] [--ra storyboard|kich-ban-chu|ca-hai]
          [--loi auto|asr|vtt|off] [--lang vi|en|…] [--model large-v3|medium|small]
          [--am-thanh | --no-am-thanh] [--thr 0.25] [--min 0.15] [--force]
 
@@ -20,13 +20,18 @@ Ra (kich-ban/<tên>/):
   loi.json / loi.srt   lời nhận dạng (có mốc từng chữ khi dùng asr) · am-thanh.json · shots.json
   _nguon/              video tải về (không commit)
 
-Bước tiếp: Claude xem sheets + frames, điền storyboard.md (skill video-sang-kich-ban) → người dùng duyệt →
+Đầu ra mới `--ra kich-ban-chu` (tập mới → skill xu-ly-kich-ban): phan-tich-format.md (chỉ số liệu format) + kich-ban.md (khung
+kịch bản chữ để viết truyện MỚI). `--tu-shots kich-ban/<tên>/shots.json` dựng lại 2 file này không cần video. Mặc định
+`--ra storyboard` giữ nguyên đường cũ.
+
+Bước tiếp (đường cũ): Claude xem sheets + frames, điền storyboard.md (skill video-sang-kich-ban) → người dùng duyệt →
   python tools/storyboard.py kich-ban/<tên> epNNN --sheet
 """
 import argparse, json, math, re, shutil, subprocess, sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import video2kb_chu  # noqa: E402  (đường mới: kịch bản chữ cho xu-ly-kich-ban)
 import ref  # noqa: E402  (dò cắt cảnh, tải video, đọc vtt — dùng chung với tools/ref.py)
 
 for _s in (sys.stdout, sys.stderr):   # console Windows cp1252 không in được tiếng Việt
@@ -89,6 +94,7 @@ def grab(video, shots, fps, out):
     for i, s in enumerate(shots, 1):
         a, m, b = (Image.open(want[n]).convert('RGB') for n in s['_f'])
         m.save(out / f'shot_{i:03d}.jpg', quality=88)
+        s['dong'] = round(motion(a, b), 3)
         tw = 240; th = round(m.height * tw / m.width)
         strip = Image.new('RGB', (tw * 3 + 8, th + 26), 'white')
         d = ImageDraw.Draw(strip)
@@ -98,6 +104,13 @@ def grab(video, shots, fps, out):
         strip.save(out / 'frames' / f'shot_{i:03d}.jpg', quality=85)
         del s['_f']
     shutil.rmtree(tmp, ignore_errors=True)
+
+
+def motion(a, b):
+    """Độ chuyển động thô 0..1: trung bình |khung đầu − khung cuối| ở 48 px xám (máy tĩnh ≈ 0)."""
+    from PIL import ImageChops, ImageStat
+    x, y = (im.convert('L').resize((48, 85)) for im in (a, b))
+    return ImageStat.Stat(ImageChops.difference(x, y)).mean[0] / 255
 
 
 _FONTS = {}
@@ -363,9 +376,26 @@ def write_report(out, meta, shots, sh, loi, au, mine):
     (out / 'phan-tich.md').write_text('\n'.join(L) + '\n', encoding='utf8')
 
 
+def ghi_kich_ban_chu(out, meta, shots, loi, au, force):
+    try:
+        x, y = video2kb_chu.ra_kich_ban_chu(out, meta, shots, loi['lines'] if loi else None, au, force)
+    except FileExistsError as e:
+        sys.exit(str(e))
+    print(f'  xong → {x} · {y} (kịch bản chữ → skill xu-ly-kich-ban; chỉ học format, không chép truyện)')
+
+
+def tu_shots(a):
+    """Đường không cần video: đọc shots.json (+ loi.json, am-thanh.json cùng thư mục) rồi ra kịch bản chữ."""
+    p = Path(a.tu_shots)
+    j = json.loads(p.read_text(encoding='utf8'))
+    out = Path(a.out) if a.out else p.parent
+    rd = lambda n: json.loads((p.parent / n).read_text(encoding='utf8')) if (p.parent / n).exists() else None
+    ghi_kich_ban_chu(out, j['meta'], j['shots'], rd('loi.json'), rd('am-thanh.json'), a.force)
+
+
 def main():
     ap = argparse.ArgumentParser(description='Video → bản nháp kịch bản + khung từng shot (docs/kich-ban-vao.md)')
-    ap.add_argument('src', help='file video hoặc URL (YouTube…)')
+    ap.add_argument('src', nargs='?', help='file video hoặc URL (YouTube…); bỏ trống khi dùng --tu-shots')
     ap.add_argument('--out', help='thư mục ra (mặc định kich-ban/<tên>)')
     ap.add_argument('--cua-toi', action='store_true', help='video của chính người dùng (không cần đổi cốt truyện)')
     ap.add_argument('--loi', default='auto', choices=['auto', 'asr', 'vtt', 'off'], help='nguồn lời kể')
@@ -374,8 +404,16 @@ def main():
     ap.add_argument('--am-thanh', dest='audio', action=argparse.BooleanOptionalAction, default=True, help='dò tiếng động + nhịp')
     ap.add_argument('--thr', type=float, default=0.25, help='độ nhạy cắt cảnh (thấp = bắt nhiều cắt hơn)')
     ap.add_argument('--min', type=float, default=0.15, help='gộp shot ngắn hơn N giây')
+    ap.add_argument('--ra', default='storyboard', choices=['storyboard', 'kich-ban-chu', 'ca-hai'],
+                    help='đầu ra: storyboard = storyboard.md cho tools/storyboard.py (đường cũ, mặc định); '
+                         'kich-ban-chu = phan-tich-format.md + kich-ban.md cho skill xu-ly-kich-ban (tập mới); ca-hai')
+    ap.add_argument('--tu-shots', metavar='shots.json', help='bỏ qua video: dựng đầu ra từ shots.json đã có (cắt shot rồi)')
     ap.add_argument('--force', action='store_true', help='làm lại cả phần nhận dạng giọng')
     a = ap.parse_args()
+    if a.tu_shots:
+        return tu_shots(a)
+    if not a.src:
+        ap.error('cần <video|URL> hoặc --tu-shots')
     for t in ('ffmpeg', 'ffprobe'):
         ref.need(t)
     info = {}
@@ -417,9 +455,12 @@ def main():
         if au:
             (out / 'am-thanh.json').write_text(json.dumps(au, ensure_ascii=False, indent=1), encoding='utf8')
     (out / 'shots.json').write_text(json.dumps({'meta': meta, 'shots': shots}, ensure_ascii=False, indent=1), encoding='utf8')
-    write_storyboard(out, meta['title'], shots)
-    write_report(out, meta, shots, sh, loi, au, a.cua_toi)
-    print(f"  xong → {out / 'phan-tich.md'} · {out / 'storyboard.md'} · {len(sh)} bảng khung")
+    if a.ra in ('storyboard', 'ca-hai'):
+        write_storyboard(out, meta['title'], shots)
+        write_report(out, meta, shots, sh, loi, au, a.cua_toi)
+        print(f"  xong → {out / 'phan-tich.md'} · {out / 'storyboard.md'} · {len(sh)} bảng khung")
+    if a.ra in ('kich-ban-chu', 'ca-hai'):
+        ghi_kich_ban_chu(out, meta, shots, loi, au, a.force)
 
 
 if __name__ == '__main__':

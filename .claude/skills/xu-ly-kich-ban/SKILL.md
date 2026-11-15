@@ -5,9 +5,10 @@ description: Cửa duy nhất biến kịch bản THÔ thành kịch bản TINH 
 
 # Xử lý kịch bản thô → kịch bản tinh
 
-Hai lối vào, một cửa:
+Ba lối vào, một cửa:
 - Lối 1: một câu luật → `viet-kich-ban` (5 mẫu → chọn → kịch bản chữ) → skill này.
 - Lối 2: kịch bản thô người dùng đưa (chữ: chuyện, thoại, mô tả nhân vật) → skill này.
+- Lối 3: video tham khảo → `video-sang-kich-ban --ra kich-ban-chu` (chỉ lấy số liệu format, viết truyện MỚI vào khung `kich-ban.md`) → skill này.
 
 Kịch bản người dùng đưa là tài sản của họ: làm luôn, không hỏi nguồn. Mọi ý thêm vào phải TỰ NGHĨ, không chép kênh khác.
 Đây là phần đầu của thứ tự chuẩn 11 bước (`docs/nghien-cuu-prompt-chuan.md`): skill này lo bước 1–4, xong thì chuyển sang duyệt tài nguyên.
