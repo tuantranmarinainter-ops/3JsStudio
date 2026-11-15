@@ -14,7 +14,7 @@ import { createCamp } from '../castaway.js';
 import { smoothFlash } from '../flash.js';
 
 import { furnish } from '../furnish.js';
-import { createWindowOutside } from '../realwindow.js';
+import { createRealWindow } from '../realwindow.js';
 
 // BÀY ĐỒ bằng dữ liệu (engine/furnish.js). 'nightstand', 'books5', 'poster', 'bed' là vật dựng tay (refs) mà món mới thế chỗ / đặt lên.
 export const BEDROOM_FURNISH = [
@@ -42,26 +42,9 @@ export default function build(g, e, H) {
     if (x === 20) eastWall = w;
     if (z === -18) ganTang(w, 'back');
   }
-  // cửa sổ THẬT (góp ý #14): tường đông có lỗ khoét đúng cửa sổ + cảnh 3D ngoài (engine/realwindow.js) nằm sau tường. Tắt: __autoFx.realWindow=false → ảnh phẳng cũ
-  const holeWall = (() => { const sh = new THREE.Shape(); sh.moveTo(-25, -11); sh.lineTo(25, -11); sh.lineTo(25, 11); sh.lineTo(-25, 11); sh.closePath();
-    const hp = new THREE.Path(); const cx = -6, hw = 3.45, hh = 3.95; hp.moveTo(cx - hw, -hh); hp.lineTo(cx - hw, hh); hp.lineTo(cx + hw, hh); hp.lineTo(cx + hw, -hh); hp.closePath(); sh.holes.push(hp);
-    const geo = new THREE.ShapeGeometry(sh); const uv = geo.attributes.uv, pos = geo.attributes.position; for (let i = 0; i < uv.count; i++) uv.setXY(i, pos.getX(i) / 50 + 0.5, pos.getY(i) / 22 + 0.5);
-    const m = new THREE.Mesh(geo, wall); m.position.copy(eastWall.position); m.rotation.copy(eastWall.rotation); m.receiveShadow = true; m.name = 'wall_east_window'; R.add(m); return m; })();
-  const outside = createWindowOutside(THREE, { hash, nbHouse }); R.add(ganTang(outside.group, 'back'));
-  // BAN NGÀY (chỉ khi shot có `time` ban ngày → ctx.thoiTiet + ánh sáng không phải đêm; ep001 không ghi time nên không bao giờ vào đây): trời xanh + mây + nắng thay trời đêm, đồi/cỏ/đường sáng màu
-  const dayK = (() => { const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const c = cv.getContext('2d');
-    const gr = c.createLinearGradient(0, 0, 0, 512); gr.addColorStop(0, '#4f9be8'); gr.addColorStop(0.6, '#9fd0f5'); gr.addColorStop(1, '#e4f2fb'); c.fillStyle = gr; c.fillRect(0, 0, 1024, 512);
-    const sg = c.createRadialGradient(700, 130, 8, 700, 130, 150); sg.addColorStop(0, 'rgba(255,250,210,1)'); sg.addColorStop(0.2, 'rgba(255,244,190,0.7)'); sg.addColorStop(1, 'rgba(255,244,190,0)'); c.fillStyle = sg; c.fillRect(540, 0, 320, 300);
-    c.fillStyle = 'rgba(255,255,255,0.92)'; for (let i = 0; i < 9; i++) { const x = hash(i, 51) * 1024, y = 120 + hash(i, 52) * 230, r = 22 + hash(i, 53) * 22; for (let k = 0; k < 4; k++) { c.beginPath(); c.arc(x + k * r * 0.8, y + (k % 2) * -r * 0.3, r * (1 - Math.abs(k - 1.5) * 0.15), 0, 7); c.fill(); } }
-    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
-    const sky = new THREE.Mesh(new THREE.PlaneGeometry(900, 450), new THREE.MeshBasicMaterial({ map: t, fog: false })); sky.position.set(420, 140, 0); sky.rotation.y = -Math.PI / 2; sky.name = 'out_sky_day'; sky.userData.matKind = 'none'; sky.visible = false; outside.group.add(sky);
-    const dm = new Map(); outside.group.traverse((o) => { if (!o.isMesh) return; const nm = o.name; const to = nm === 'out_hills' ? '#7fae8a' : nm === 'out_lawn' ? '#6fb35a' : nm === 'out_road' ? '#8a8d99' : nm === 'out_sidewalk' ? '#c8c6bd' : null; if (to) dm.set(o, { o: o.material.color.clone(), d: new THREE.Color(to) }); });
-    return { sky, dm, nightSky: outside.group.getObjectByName('out_sky') }; })();
-  const setDay = (on) => { if (dayK.on === on) return; dayK.on = on; dayK.sky.visible = on; dayK.nightSky.visible = !on; for (const [o, v] of dayK.dm) o.material.color.copy(on ? v.d : v.o); outside.group.traverse((o) => { if (o.name === 'halo') o.visible = !on; }); };
-  const glassTex = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 128; const c = cv.getContext('2d'); c.clearRect(0, 0, 128, 128);
-    const g = c.createLinearGradient(0, 0, 128, 128); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(0.3, 'rgba(210,225,255,0.5)'); g.addColorStop(0.38, 'rgba(255,255,255,0)'); g.addColorStop(0.6, 'rgba(210,225,255,0.3)'); g.addColorStop(0.66, 'rgba(255,255,255,0)'); c.fillStyle = g; c.fillRect(0, 0, 128, 128);
-    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t; })();
-  const glass = new THREE.Mesh(new THREE.PlaneGeometry(6.6, 7.6), new THREE.MeshBasicMaterial({ map: glassTex, color: '#9fb4ff', transparent: true, opacity: 0.22, depthWrite: false })); glass.name = 'window_glass'; glass.userData.matKind = 'none'; glass.userData.grungeKind = 'none';
+  // cửa sổ THẬT (góp ý #14): tường đông có lỗ khoét đúng cửa sổ + cảnh 3D ngoài + bản ngày + kính — nay là helper dùng chung (engine/realwindow.js, ô 'realWindow'). Tắt → ảnh phẳng cũ
+  const rw = createRealWindow(THREE, { hash, nbHouse, parent: R, wall: eastWall, hole: { cx: -6, hw: 3.45, hh: 3.95 }, glass: { w: 6.6, h: 7.6 }, ganTang });
+  const glass = rw.glass;
   e.bed = ganTang(place(R, K.bed(), -10, 0, -8), 'mid');
   // gối phồng + nếp gấp ga vải mềm (góp ý 2026-11-12 #6 #13) nay nằm sẵn trong K.bed (engine/props.js, ô 'vaiGiuong') — không vá ở đây nữa
   e.window = K.window({ w: 7, h: 8, curtains: '#c8c0ff', view: viewTex('night') }); e.window.position.set(19.8, 11, -6);
@@ -72,5 +55,5 @@ export default function build(g, e, H) {
   const poster = K.box(4, 3, 0.2, '#8a5a36', 6, 13, -17.8, 'poster', R);
   e.furn = furnish(THREE, R, BEDROOM_FURNISH, { assets: A, walls: { north: -18, south: 20, west: -20, east: 20 }, refs: { bed: e.bed, nightstand: nstand, books5, poster } });
   e.pointSpec = { color: '#aab6ff', intensity: 0.8, distance: 60, decay: 1.2, pos: [14, 14, -6] };   // đèn điểm dùng chung (engine/envs.js 'interior_point'): không tạo PointLight riêng → số đèn mọi env như nhau, không dịch lại shader
-  return { suSong: [], update(t, ctx) { setDay(!!(ctx && ctx.thoiTiet && ctx.light && !LIGHTS[ctx.light]?.night)); const rw = globalThis.__autoFx?.realWindow !== false; eastWall.visible = !rw; holeWall.visible = rw; outside.group.visible = rw; glass.visible = rw; e.window.getObjectByName('window_view').visible = !rw; e.furn.update(globalThis.__autoFx?.scans ?? true); e.bed.userData.update?.(t); }, setView(kind) { e.window.getObjectByName('window_view').material.map = viewTex(kind); } };
+  return { suSong: [], update(t, ctx) { rw.update(ctx, { LIGHTS, window: e.window }); e.furn.update(globalThis.__autoFx?.scans ?? true); e.bed.userData.update?.(t); }, setView(kind) { e.window.getObjectByName('window_view').material.map = viewTex(kind); } };
 }

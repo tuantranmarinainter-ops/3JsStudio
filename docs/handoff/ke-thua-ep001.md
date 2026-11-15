@@ -2,17 +2,22 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-15 (Bước 0 + Bước 1 xong)
+- **Cập nhật:** 2026-11-15 (Bước 0–5 xong)
 - **Nhánh:** `ep1-v2`
-- **Đang làm:** đã xong Bước 0 (mốc `refs/ke-thua-ep00{1,2,3}/`, số shader ở mục Ghi chép) và Bước 1: `K.bed` tự có vải mềm, ô `vaiGiuong`; `bedroom.js` hết vá; có thêm `createBedSoft` trong `engine/cloth.js`.
-- **Bước kế tiếp:** Bước 1b (e3-phong `:193-209` dùng `createBedSoft`, giao phiên ep003) hoặc Bước 2 (`r6-rig.js:108` đặt `daNhanVat`).
-- **Đang chờ:** người dùng chọn bước kế + trả lời 2 câu hỏi mở bên dưới.
+- **Đang làm:** đã xong Bước 0–5. Cụ thể:
+  - B1: `K.bed` có vải mềm, ô `vaiGiuong`.
+  - B2: da R6 đặt `daNhanVat` (`r6-rig.js:108`).
+  - B3: helper nền xa `engine/nen-xa.js` (`createNenXa`), dùng ở `envs/town.js` và kenneyTown.
+  - B4: `engine/prewarm.js` (`createPrewarm`), dùng ở ep002, ep003, `_template`, ô `dichTruoc`.
+  - B5: tay nắm chrome trong `K.fridge` (ô `fridgeChrome`); buồm vải `K.clothSails` (ô `buomVai`); cửa sổ thật thành helper `createRealWindow` trong `engine/realwindow.js`.
+- **Bước kế tiếp:** Bước 1b + Bước 6 cùng phiên ep003 (chăn `createBedSoft` cho `e3-phong.js:193-209`; thay `matKind='none'` của e3-* bằng vật liệu thật, A/B rồi gửi người dùng duyệt). Sau đó Bước 7 (doctor mục 12 + dòng CLAUDE.md).
+- **Đang chờ:** không. Người dùng dặn làm tiếp theo thứ tự.
 - **File đang dở (chưa commit):** không.
 - **Đang chạy nền:** không.
 - **Đạt khi:** mỗi món "bị nhốt" có chỗ gốc dùng chung + cờ FX mặc định bật. Tắt cờ thì về như cũ. ep001 A/B y nguyên khung (PSNR ∞ / pose-ref OK). doctor cảnh báo được kiểu "env gỡ object chung".
-- **Câu hỏi còn mở:**
-  1. ep003 đã chủ ý tắt nhiều cờ ở `episodes/ep003/episode.js:23-26` sau khi so A/B ngày 14/11. Khi đưa món mới về chỗ chung, có tôn trọng danh sách tắt đó không? (đề xuất: có. Chỉ món MỚI chưa có trong danh sách mới tự bật.)
-  2. e3-* (Codex dựng tay) gắn `matKind='none'` cho cả env. Có cho phép thay bằng loại thật, tức là ep003 sẽ đổi hình và cần duyệt lại A/B không?
+- **Câu hỏi còn mở:** không. Người dùng đã chốt ngày 15/11 ("Duyệt, theo đề xuất"):
+  (1) Giữ danh sách ô tập 3 đã tắt ở `episodes/ep003/episode.js:23-26`. Chỉ món MỚI chưa có trong danh sách đó mới tự bật.
+  (2) Được thay `matKind='none'` của e3-* bằng vật liệu thật (Bước 6). Phải A/B và gửi người dùng duyệt lại. Bước 1b và Bước 6 làm cùng phiên ep003.
 <!-- /ĐIỂM DỪNG -->
 
 ## 1. Kết luận rà soát (vì sao tập sau "không kế thừa")
@@ -144,6 +149,15 @@ Chia việc: tối đa 3 phiên con cùng lúc (A, B, C), mỗi phiên sở hữ
 > Sửa đẹp một món dùng chung (giường, cửa sổ, tủ lạnh, trời, nền xa, vật liệu…) thì sửa ở **builder chung** (`engine/props.js`, `engine/envs.js`, `engine/cloth.js`…), có cờ FX mặc định bật. KHÔNG gỡ/thay bộ phận của builder trong `engine/envs/<env>.js`, vì doctor mục 12 sẽ cảnh báo.
 
 ## Ghi chép
+- **Bước 2–5 (15/11) kiểm.** Làm bằng 3 agent Sonnet song song; báo cáo ở `output/ke-thua-ep001/{nen-xa,dich-truoc,builder-chung}/bao-cao.md`.
+  - **So ảnh với mốc, lệch 0,000%:** ep001 town (22 shot), kitchen, bedroom, shipStorm; ep002 kenneyTown (11 shot), bedroom (29 shot), --shots all; ep003 8 shot sau Bước 2 + 4.
+  - **ep001 s140 lệch 0,063%:** ổn định qua nhiều lần chạy. Đưa 9 file về HEAD vẫn lệch đúng 0,063%, nên đó là lệch theo thứ tự tua có sẵn (chấm hải đăng trong ảnh bưu thiếp), không do Bước 2–5.
+  - **Tắt từng ô thì về bản cũ:** fridgeChrome s144 40 dB, buomVai s023 21 dB, realWindow s038 12 dB, farwoods+backdrop s001 50 dB.
+  - **`cloudShade` ở kenneyTown:** tắt gần như không đổi hình (≥ 89 dB), bản HEAD cũng vậy. Đây là tình trạng có sẵn, bóng mây thị trấn rất mờ; chưa sửa.
+  - **Bước 4 đổi hướng:** trước `__ready` vẫn compile một lần như cũ; sau `__ready` mới làm nóng nền mọi env của tập, cộng `ensure` khi tua tới env chưa nóng. Làm nóng env đầu trước `__ready` thì ready chậm gấp ~3 lần nên đã bỏ cách đó.
+  - **Lợi ích Bước 4 chưa đo được:** đo lúc máy tải nặng, và `shaders.mjs --film` tua ngay sau ready nên không tách được phần làm nóng nền. Lợi ích chỉ thấy khi người xem chờ vài giây rồi mới tua. Việc còn mở: thêm `--cho <giây>` cho shaders.mjs rồi đo lại lúc máy rảnh.
+  - **Tên mesh tay nắm chrome:** `chrome_handle_*_handle_top` hơi gượng, đặt vậy để luật đoán vật liệu cũ vẫn ra chrome và test không hỏng.
+  - **`npm test`:** 608/614 đạt. 5 test hỏng sẵn như trước. `mask khôi phục` hết giờ khi chạy cả bộ, chạy riêng thì pass.
 - **Bước 0 (15/11), số shader** (`PROFILE=1 node tools/shaders.mjs … --film --step 2`, file `output/ke-thua-ep001/shaders-*.json`):
   - ep001: `__ready` 5,4 s · 37 program lúc ready → 103 sau khi tua (dịch 1,1 s).
   - ep002: 7,0 s · 120 → 205 (**dịch 9,4 s trong lúc tua**, chính là chỗ Bước 4 cần sửa).

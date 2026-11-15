@@ -1,5 +1,5 @@
 // props.js — Đạo cụ dựng bằng code (phong cách khối). Mỗi hàm trả Group có tên rõ; mặt trước nhìn +Z; đơn vị stud.
-import { createBlanket, createPuffy, createFold } from './cloth.js';
+import { createBlanket, createPuffy, createFold, createSail } from './cloth.js';
 import { khaiBao, khaiBaoMat } from './materials.js';
 import { postcardTexture, makePostcard, postcardBack, seededKinds, POSTCARD_ASPECT, onPostcardArt } from './postcards.js';
 
@@ -76,6 +76,19 @@ export function propKit(THREE) {
       }
       // vỏ tủ + tay nắm = KIM LOẠI: bỏ lớp bụi sần (grunge.js) và vân chất liệu (materials.js) → mặt sơn bóng phản chiếu mịn
       for (const o of g.children) if (/^(fridge_body|fridge_split|handle_)/.test(o.name)) { o.userData.grungeKind = 'none'; o.userData.matKind = 'none'; }
+      // TAY NẮM CHROME (góp ý #29; kế thừa ep001, trước chỉ vá trong envs/kitchen.js): thanh tròn thép mạ (m 1, r 0,14, env 3,2) thế tay nắm khối.
+      // Ô FX 'fridgeChrome' (mặc định bật); tắt = tay nắm khối cũ. Dựng cả hai, chỉ đổi visible theo ô trong g.userData.update() (env gọi mỗi khung).
+      // Tên 'chrome_handle_top…' (không bắt đầu bằng 'handle_': DECL ở dưới gán 'none' cho handle_*; chứa 'handle_top' để luật đoán MAT_RULES cũng ra 'chrome').
+      const oldHandles = g.children.filter((o) => /^handle_/.test(o.name)), chromeHandles = [];
+      for (const o of oldHandles) {
+        const hh = o.geometry.parameters.height;
+        const c = mesh(new THREE.CylinderGeometry(0.17, 0.17, hh, 20), o.material.clone(), o.position.x, o.position.y, o.position.z, 'chrome_' + o.name + (o.name === 'handle_top' ? '' : '_handle_top'), g);
+        c.material.color.set('#f2f5f8'); c.material.metalness = 1; c.material.roughness = 0.14; c.material.envMapIntensity = 3.2; c.material.emissive.set('#3a4048');
+        c.userData.matKind = 'chrome'; c.userData.grungeKind = 'none'; c.userData.matNguon = 'khai-bao'; chromeHandles.push(c);
+      }
+      const setChrome = (on) => { for (const o of chromeHandles) o.visible = on; for (const o of oldHandles) o.visible = !on; };
+      setChrome(globalThis.__autoFx?.fridgeChrome !== false);
+      g.userData.update = () => setChrome(globalThis.__autoFx?.fridgeChrome !== false);
       return g;
     },
 
@@ -241,6 +254,24 @@ export function propKit(THREE) {
         const s2 = mesh(new THREE.ShapeGeometry(tri), sm, 9.2, 4.5, 0, 'sail2', g); s2.rotation.y = -Math.PI / 2;
       }
       return g;
+    },
+    // BUỒM VẢI MỀM cho tàu (engine/cloth.js, 2026-11-12; kế thừa ep001, trước chỉ vá trong envs/shipStorm.js): thay buồm khối cùng chỗ/cùng cỡ bằng lưới vải
+    //   (phồng–xẹp theo gió, gợn chạy ngang, mép dưới phần phật, xuyên sáng khi chớp). Ô FX 'buomVai' (mặc định bật); tắt = buồm khối cũ.
+    //   Dựng cả hai, chỉ đổi visible. K.ship của envs.js là mô hình Kenney (buồm tên 'sail-a'/'sail-b'), nên nhận tàu có sẵn: K.clothSails(ship)
+    //   → mảng buồm vải (tên '<tên>_cloth', sl.userData.old = buồm khối); mảng có .update(t) — env gọi mỗi khung (đổi theo ô + chạy vải).
+    clothSails(ship, spec = [['sail-a', 4.72, 1.5, 1], ['sail-b', 3.63, 1.2, 2]]) {
+      const sails = [];
+      for (const [nm, H, B, sd] of spec) {
+        const old = ship.getObjectByName(nm); if (!old) continue;
+        const sl = createSail(THREE, { w: 4.4, h: H, belly: B, wind: 1.7, seed: sd, color: '#ebe1ca', spars: true, name: nm + '_cloth' });
+        sl.position.copy(old.position); sl.quaternion.copy(old.quaternion); sl.scale.copy(old.scale);
+        sl.position.y += H * old.scale.y;
+        old.parent.add(sl); sl.userData.old = old; sails.push(sl);
+      }
+      const setOn = (on) => { for (const sl of sails) { sl.visible = on; sl.userData.old.visible = !on; } };
+      setOn(globalThis.__autoFx?.buomVai !== false);
+      sails.update = (t) => { setOn(globalThis.__autoFx?.buomVai !== false); for (const sl of sails) sl.userData.update(t); };
+      return sails;
     },
     penguin() {
       const g = group('penguin'); const body = group('penguin_body'); g.add(body);

@@ -45,14 +45,7 @@ export default function build(g, e, H) {
   for (let i = -2; i <= 2; i++) K.box(1.2, 1.2, 60, '#7a4a2c', i * 10, 21.4, 0, 'beam', R);
   e.fridge = K.fridge(); e.fridge.position.set(-8, 0, -17.6); R.add(ganTang(e.fridge, 'mid'));
   e.fridgeDense = K.fridge({ dense: true }); e.fridgeDense.position.set(-8, 0, -17.6); e.fridgeDense.visible = false; R.add(ganTang(e.fridgeDense, 'mid'));
-  // tay nắm tủ lạnh = thép mạ (góp ý #29): chrome (m 0.9, r 0.25, vân xước) + phản chiếu môi trường mạnh
-  for (const fr of [e.fridge, e.fridgeDense]) fr.traverse((o) => {
-    if (o.isMesh && /^handle_/.test(o.name)) {
-      o.userData.matKind = 'chrome'; o.userData.grungeKind = 'none';
-      const hh = o.geometry.parameters?.height; if (hh) { o.geometry = new THREE.CylinderGeometry(0.17, 0.17, hh, 20); o.geometry.userData = {}; }   // thanh tròn: có dải sáng/tối chạy dọc → đọc ra kim loại
-      o.material = o.material.clone(); o.material.color.set('#f2f5f8'); o.material.metalness = 1; o.material.roughness = 0.14; o.material.envMapIntensity = 3.2; o.material.emissive.set('#3a4048');
-    }
-  });
+  // tay nắm tủ lạnh chrome (góp ý #29) nay nằm sẵn trong K.fridge (engine/props.js, ô 'fridgeChrome') — không vá ở đây nữa
   e.table = ganTang(place(R, K.table(), 6, 0, 2), 'mid');
   const chairs = [place(R, K.chair(), 0, 0, 2, Math.PI / 2), place(R, K.chair(), 12, 0, 2, -Math.PI / 2), place(R, K.chair(), 6, 0, -3.5, 0)];
   ganTang(place(R, K.fruitBowl(), 6, 2.82, 2), 'front');
@@ -70,5 +63,5 @@ export default function build(g, e, H) {
   // bày đồ theo dữ liệu KITCHEN_FURNISH: bàn + ghế gỗ quét thế đồ dựng tay (vừa khít hộp bao cũ), cây, bình gốm, kệ gỗ, đồ Kenney
   e.furn = furnish(THREE, R, KITCHEN_FURNISH, { assets: A, walls: { north: -20, south: 24, west: -24, east: 24 }, refs: { table: e.table, chair1: chairs[0], chair2: chairs[1], chair3: chairs[2], counter_top: counterTop } });
   e.door = new THREE.Group(); e.door.name = 'kitchen_door'; e.door.position.set(-16, 0, 23.9); R.add(e.door);
-  return { suSong: [], update() { e.furn.update(globalThis.__autoFx?.scans ?? true); const fp = globalThis.__autoFx?.familyPhoto !== false; e.familyPhoto.visible = fp; for (const o of oldFrames.slice(2, 4)) o.visible = !fp; }, setView(kind) { const t = viewTex(kind); for (const w of [e.window, e.window2]) w.getObjectByName('window_view').material.map = t; }, };
+  return { suSong: [], update() { e.fridge.userData.update?.(); e.fridgeDense.userData.update?.(); e.furn.update(globalThis.__autoFx?.scans ?? true); const fp = globalThis.__autoFx?.familyPhoto !== false; e.familyPhoto.visible = fp; for (const o of oldFrames.slice(2, 4)) o.visible = !fp; }, setView(kind) { const t = viewTex(kind); for (const w of [e.window, e.window2]) w.getObjectByName('window_view').material.map = t; }, };
 }

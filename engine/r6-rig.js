@@ -105,7 +105,7 @@ export function createR6Rig(THREE, opts = {}) {
   const torso = piv('UpperTorso', 0, 0.4, 0, hips);
   const head = piv('Head', 0, 1.6, 0, torso); head.scale.setScalar(o.headScale);
   const TW = 2.0 * o.wide, sleeves = o.sleeves || o.shirt, hands = o.hands || o.skin, sole = o.sole || o.shoes;
-  const skinMat = std(o.skin, 0.6);
+  const skinMat = std(o.skin, 0.6); skinMat.userData.daNhanVat = true;   // grunge.js: da dùng GRUNGE.skin thay lớp bẩn kiểu nhà (ô daTron, kế thừa ep001 từ r15.js)
 
   // thân: một khối 2×2×1 (gắn vào hông, phần trên xoay theo UpperTorso không tách rời → vẽ ở hips để giữ liền khối khi vặn eo nhẹ)
   const torsoMats = partMats(THREE, TW, 2, o.torso, o.shirt);

@@ -12,9 +12,7 @@ import { createCliff, naturalRock, coralRock } from '../cliff.js';
 import { createCrabs, createBeachGrass } from '../crabs.js';
 import { createCamp } from '../castaway.js';
 import { smoothFlash } from '../flash.js';
-import { createWind } from '../wind.js';
-import { createFarwoods } from '../farwoods.js';
-import { createBackdrop } from '../backdrop.js';
+import { createNenXa } from '../nen-xa.js';
 
 export default function build(g, e, H) {
   const { ganTang, THREE, stage, scene, K, K0, A, fit, pick, pickFit, PINES, PALMS, LEAFY, ROCKS, BUSH, M2S, pf, kenneyHouse, C, plane, mat, place, makeSea, bumpy, nbHouse, nbWins, checker, views, viewTex, hash, LIGHTS, envs } = H;
@@ -165,19 +163,12 @@ export default function build(g, e, H) {
   ganTang(place(g, K.bush(2.5), -18, 0, 16), 'front'); ganTang(place(g, K.bush(2.2), 19, 0, 17), 'front');
   for (let i = 0; i < 24; i++) { const f = pickFit(['nature-kit/flower_redA', 'nature-kit/flower_yellowB', 'nature-kit/flower_purpleA'], i, 1.2); if (f) place(g, f, -24 + (i % 12) * 4.2 + hash(i, 2), 0, 18 + Math.floor(i / 12) * 2.5, hash(i, 3) * 6); }
   const moon = place(g, K.moon(34), -170, 170, -420); moon.name = 'moon_town';
-  // rừng xa = thẻ ảnh vẽ quay về camera (engine/farwoods.js, 1 program), chừa con đường; ngọn lay theo gió chung; ô bật/tắt 'farwoods'
-  const wind = createWind(THREE, { dir: [1, 0.2], speed: 3, gust: 0.6, seed: 8, gustSize: 40 });
-  const woods = createFarwoods(THREE, { wind, seed: 8, center: [0, 0], ring: [150, 400], count: 2600, size: [10, 22],
-    kinds: { leafy: 1, pine: 0.8 }, avoid: (x, z) => Math.abs(z - 36) < 16, clumps: true });
-  woods.mesh.onBeforeRender = () => { woods.lightFrom(scene.children.find((o) => o.isDirectionalLight && o.name === 'sun'), scene.children.find((o) => o.isHemisphereLight)); woods.fogFrom(scene.fog); };
-  ganTang(woods.group, 'back'); g.add(woods.group);   // tầng sau: rừng xa + núi xa
-  // núi xa vẽ 1 lần thành dải tranh quấn chân trời (engine/backdrop.js, 1 program); màu theo nắng/sương của shot; ô bật/tắt 'backdrop'
-  const hills = createBackdrop(THREE, { seed: 8, radius: 900, base: -30, height: 340, snow: 0.6 });
-  hills.mesh.onBeforeRender = () => { hills.lightFrom(scene.children.find((o) => o.isDirectionalLight && o.name === 'sun'), scene.children.find((o) => o.isHemisphereLight)); hills.fogFrom(scene.fog); };
-  ganTang(hills.group, 'back'); g.add(hills.group);
+  // tầng nền xa dùng chung (engine/nen-xa.js): rừng xa chừa con đường + núi xa; ô bật/tắt 'farwoods', 'backdrop'
+  const nenXa = createNenXa(THREE, { scene, stage, g, seed: 8, ring: [150, 400], count: 2600, size: [10, 22], kinds: { leafy: 1, pine: 0.8 },
+    avoid: (x, z) => Math.abs(z - 36) < 16, clumps: true });
   // ghế ngồi hiên (s030: bé ngồi chờ thư). Shot gọi env.seat.userData.want = true + đặt position/rotation (toạ độ thế giới) trong fn mỗi khung;
   // update() đọc cờ rồi xoá → mọi shot khác không thấy ghế (hàm thuần của shot, tua tới/lui như nhau)
   const seat = K.chair(); seat.name = 'porch_chair'; seat.scale.setScalar(1.8); seat.visible = false; g.add(seat);
   return { suSong: ['dan', 'xe', 'co-gio'], setNight(n) { nbWins.forEach((w) => { w.emissiveIntensity = n * 1.4; }); moon.visible = n > 0.5; }, dirt, hole, seat,
-    update(t, ctx) { woods.group.visible = globalThis.__autoFx?.farwoods !== false; if (woods.group.visible) woods.update(t, stage.camera); hills.group.visible = globalThis.__autoFx?.backdrop !== false; if (hills.group.visible) hills.update(t, stage.camera); const L = LIGHTS[ctx.light || 'night']; life.update(t, !L.night, stage.camera); seat.visible = !!seat.userData.want; seat.userData.want = false; } };
+    update(t, ctx) { nenXa.update(t, stage.camera); const L = LIGHTS[ctx.light || 'night']; life.update(t, !L.night, stage.camera); seat.visible = !!seat.userData.want; seat.userData.want = false; } };
 }

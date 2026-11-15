@@ -13,10 +13,7 @@
 // Đơn vị: 1 ô đường Kenney = `tile` stud (mặc định 16). Nhân vật R15 cao ~5.2 stud.
 import { rng } from './stage.js';
 import { ganMau, bam } from './town-styles.js';
-import { createWind } from './wind.js';
-import { createFarwoods } from './farwoods.js';
-import { createBackdrop } from './backdrop.js';
-import { createCloudShade } from './cloudshade.js';
+import { createNenXa } from './nen-xa.js';
 
 // ---- tô màu nhà Kenney theo bảng kiểu (engine/town-styles.js; docs/nha-thi-tran.md). Chỉ chạy khi khai kiểu: EPISODE.town.kieu hoặc ?nha=<kiểu> ----
 // GLB nhà: 1 mesh + 1 vật liệu 'colormap'; ảnh 512² chia ô 64×128 (nửa trái phẳng, nửa phải dốc sáng→tối). Ô (3,2)=tường, (0,1)=mái xanh, (1,2)=cửa,
@@ -372,26 +369,14 @@ export function registerTownEnv(envs, stage, town, { name = 'kenneyTown', light 
   return envs.define(name, light, (g, e, H) => {
     const { THREE, scene } = H;
     town.group.visible = true; g.add(town.group);
-    const sun = () => scene.children.find((o) => o.isDirectionalLight && o.name === 'sun'), hemi = () => scene.children.find((o) => o.isHemisphereLight);
     const ext = (town.size || 240) / 2 + 20 + (town.vanh || 0) * 80;   // nửa cạnh vùng có nhà; rừng xa nằm ngoài vùng này
-    const wind = createWind(THREE, { dir: [1, 0.2], speed: 3, gust: 0.6, seed: 8, gustSize: 40 });
-    const woods = createFarwoods(THREE, { wind, seed: 8, center: [0, 0], ring: [ext + 60, ext + 330], count: 1800, size: [10, 22], kinds: { leafy: 1, pine: 0.8 }, clumps: true,
-      avoid: (x, z) => Math.abs(x) < ext + 40 && Math.abs(z) < ext + 40 });
-    woods.mesh.onBeforeRender = () => { woods.lightFrom(sun(), hemi()); woods.fogFrom(scene.fog); };
-    const hills = createBackdrop(THREE, { seed: 8, radius: 900, base: -30, height: 340, snow: 0.6 });
-    hills.mesh.onBeforeRender = () => { hills.lightFrom(sun(), hemi()); hills.fogFrom(scene.fog); };
-    H.ganTang(woods.group, 'back'); H.ganTang(hills.group, 'back'); g.add(woods.group, hills.group);
-    const wind2 = createWind(THREE, { dir: [1, 0.2], speed: 3, gust: 0.6, seed: 8, gustSize: 40 }); wind2.set({ cloud: [0.5, 70, 2.4, 0.5] });
-    const cloud = createCloudShade(THREE, wind2, { far: 320 });
-    cloud.add(new THREE.PlaneGeometry(1400, 1400), { y: 0.012 }); cloud.group.name = 'town_cloudshade'; g.add(cloud.group);
-    cloud.onRender(() => cloud.lightFrom(sun()));
+    const nx = createNenXa(THREE, { scene, stage, g, seed: 8, ring: [ext + 60, ext + 330], count: 1800, size: [10, 22], kinds: { leafy: 1, pine: 0.8 }, clumps: true,
+      avoid: (x, z) => Math.abs(x) < ext + 40 && Math.abs(z) < ext + 40, cloud: { far: 320 } });
+    const { woods, hills, cloud } = nx;
     return {
       places: town.places, setNight: town.setNight, woods, hills, cloud,
       update(t, ctx) {
-        const AF = globalThis.__autoFx || {}, cam = stage.camera;
-        woods.group.visible = AF.farwoods !== false; if (woods.group.visible) woods.update(t, cam);
-        hills.group.visible = AF.backdrop !== false; if (hills.group.visible) hills.update(t, cam);
-        cloud.group.visible = AF.cloudShade !== false; if (cloud.group.visible) wind2.update(t);
+        nx.update(t, stage.camera);
         town.update?.(t, ctx);
       },
     };

@@ -63,3 +63,41 @@ export function createWindowOutside(THREE, { hash, nbHouse, groundY = -3 }) {
   tag(group); sky.userData.matKind = 'none';
   return { group };
 }
+
+// createRealWindow — cửa sổ THẬT trọn gói cho phòng (trước chỉ vá trong envs/bedroom.js; kế thừa ep001, ô FX 'realWindow', mặc định bật):
+//   tường có lỗ khoét đúng cửa sổ + cảnh 3D ngoài (createWindowOutside) + bản NGÀY (trời xanh/mây/nắng khi shot ban ngày) + kính mờ.
+//   Gọi 1 dòng ở env:  const rw = createRealWindow(THREE, { hash, nbHouse, parent: R, wall: eastWall, hole: { cx: -6, hw: 3.45, hh: 3.95 }, glass: { w: 6.6, h: 7.6 }, ganTang });
+//     … sau khi dựng K.window: glass đặt/ thêm tay: glass.position.set(…); R.add(rw.glass)
+//     update(t, ctx) của env:  rw.update(ctx, { LIGHTS, window: e.window })   // ẩn/hiện theo ô, đổi ngày/đêm
+//   wall = mesh tường phẳng (PlaneGeometry size[0]×size[1], vật liệu dùng lại cho tường có lỗ); hole = lỗ trong toạ độ cục bộ của tường.
+//   Tắt ô: tường phẳng + ảnh phẳng 'window_view' của K.window như cũ. Thứ tự tạo đối tượng giữ như bản vá cũ (tường lỗ → cảnh ngoài → bản ngày → kính).
+export function createRealWindow(THREE, { hash, nbHouse, parent, wall, hole, glass: gl = { w: 6.6, h: 7.6 }, size = [50, 22], ganTang = (o) => o }) {
+  const wallMat = wall.material;
+  const holeWall = (() => { const [W, Hh] = size, sh = new THREE.Shape(); sh.moveTo(-W / 2, -Hh / 2); sh.lineTo(W / 2, -Hh / 2); sh.lineTo(W / 2, Hh / 2); sh.lineTo(-W / 2, Hh / 2); sh.closePath();
+    const hp = new THREE.Path(); const { cx, hw, hh } = hole; hp.moveTo(cx - hw, -hh); hp.lineTo(cx - hw, hh); hp.lineTo(cx + hw, hh); hp.lineTo(cx + hw, -hh); hp.closePath(); sh.holes.push(hp);
+    const geo = new THREE.ShapeGeometry(sh); const uv = geo.attributes.uv, pos = geo.attributes.position; for (let i = 0; i < uv.count; i++) uv.setXY(i, pos.getX(i) / W + 0.5, pos.getY(i) / Hh + 0.5);
+    const m = new THREE.Mesh(geo, wallMat); m.position.copy(wall.position); m.rotation.copy(wall.rotation); m.receiveShadow = true; m.name = 'wall_east_window'; parent.add(m); return m; })();
+  const outside = createWindowOutside(THREE, { hash, nbHouse }); parent.add(ganTang(outside.group, 'back'));
+  // BAN NGÀY (chỉ khi shot có `time` ban ngày → ctx.thoiTiet + ánh sáng không phải đêm; ep001 không ghi time nên không bao giờ vào đây): trời xanh + mây + nắng thay trời đêm, đồi/cỏ/đường sáng màu
+  const dayK = (() => { const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const c = cv.getContext('2d');
+    const gr = c.createLinearGradient(0, 0, 0, 512); gr.addColorStop(0, '#4f9be8'); gr.addColorStop(0.6, '#9fd0f5'); gr.addColorStop(1, '#e4f2fb'); c.fillStyle = gr; c.fillRect(0, 0, 1024, 512);
+    const sg = c.createRadialGradient(700, 130, 8, 700, 130, 150); sg.addColorStop(0, 'rgba(255,250,210,1)'); sg.addColorStop(0.2, 'rgba(255,244,190,0.7)'); sg.addColorStop(1, 'rgba(255,244,190,0)'); c.fillStyle = sg; c.fillRect(540, 0, 320, 300);
+    c.fillStyle = 'rgba(255,255,255,0.92)'; for (let i = 0; i < 9; i++) { const x = hash(i, 51) * 1024, y = 120 + hash(i, 52) * 230, r = 22 + hash(i, 53) * 22; for (let k = 0; k < 4; k++) { c.beginPath(); c.arc(x + k * r * 0.8, y + (k % 2) * -r * 0.3, r * (1 - Math.abs(k - 1.5) * 0.15), 0, 7); c.fill(); } }
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+    const sky = new THREE.Mesh(new THREE.PlaneGeometry(900, 450), new THREE.MeshBasicMaterial({ map: t, fog: false })); sky.position.set(420, 140, 0); sky.rotation.y = -Math.PI / 2; sky.name = 'out_sky_day'; sky.userData.matKind = 'none'; sky.visible = false; outside.group.add(sky);
+    const dm = new Map(); outside.group.traverse((o) => { if (!o.isMesh) return; const nm = o.name; const to = nm === 'out_hills' ? '#7fae8a' : nm === 'out_lawn' ? '#6fb35a' : nm === 'out_road' ? '#8a8d99' : nm === 'out_sidewalk' ? '#c8c6bd' : null; if (to) dm.set(o, { o: o.material.color.clone(), d: new THREE.Color(to) }); });
+    return { sky, dm, nightSky: outside.group.getObjectByName('out_sky') }; })();
+  const setDay = (on) => { if (dayK.on === on) return; dayK.on = on; dayK.sky.visible = on; dayK.nightSky.visible = !on; for (const [o, v] of dayK.dm) o.material.color.copy(on ? v.d : v.o); outside.group.traverse((o) => { if (o.name === 'halo') o.visible = !on; }); };
+  const glassTex = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 128; const c = cv.getContext('2d'); c.clearRect(0, 0, 128, 128);
+    const g = c.createLinearGradient(0, 0, 128, 128); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(0.3, 'rgba(210,225,255,0.5)'); g.addColorStop(0.38, 'rgba(255,255,255,0)'); g.addColorStop(0.6, 'rgba(210,225,255,0.3)'); g.addColorStop(0.66, 'rgba(255,255,255,0)'); c.fillStyle = g; c.fillRect(0, 0, 128, 128);
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+  const glass = new THREE.Mesh(new THREE.PlaneGeometry(gl.w, gl.h), new THREE.MeshBasicMaterial({ map: glassTex, color: '#9fb4ff', transparent: true, opacity: 0.22, depthWrite: false })); glass.name = 'window_glass'; glass.userData.matKind = 'none'; glass.userData.grungeKind = 'none';
+  // gọi mỗi khung từ update() của env. ctx = ngữ cảnh shot; LIGHTS = bảng ánh sáng (đêm/ngày); window = nhóm K.window (ảnh phẳng 'window_view' hiện khi ô tắt)
+  const update = (ctx, { LIGHTS, window: win } = {}) => {
+    setDay(!!(ctx && ctx.thoiTiet && ctx.light && !LIGHTS?.[ctx.light]?.night));
+    const rw = globalThis.__autoFx?.realWindow !== false;
+    wall.visible = !rw; holeWall.visible = rw; outside.group.visible = rw; glass.visible = rw;
+    const v = win?.getObjectByName('window_view'); if (v) v.visible = !rw;
+  };
+  return { holeWall, outside, glass, setDay, update };
+}

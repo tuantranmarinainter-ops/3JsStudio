@@ -54,6 +54,7 @@
       import { buildTown, TOWN_ASSETS, registerTownEnv } from '/engine/town.js';
       import { buildCast, crowdNames } from '/engine/cast.js';
       import { createPost, FX_DEFAULTS, FX_LABELS } from '/engine/post.js';
+      import { createPrewarm } from '/engine/prewarm.js';   // biên dịch shader theo env (ô FX dichTruoc)
       import { EPISODE } from '/episodes/ep003/episode.js';
       import { SHOTS } from '/episodes/ep003/shots.js';
       import { createCredits } from '/engine/credits.js';
@@ -198,17 +199,18 @@
         title.style.transform = pop(local / 0.15);
       }
 
+      // dịch shader trước theo từng env mà shots của tập dùng (engine/prewarm.js); tắt ô dichTruoc = compile một lần như cũ
+      const warm = createPrewarm({ stage, director, post, envs, tl, q, afterRender: () => { if (!OPTS.propsKb) for (const p of Object.values(props)) p.visible = false; } });
       stage.onFrame((t) => {
         const T = Math.min(t, tl.total - 1e-4);
         const { shot, local, k, prev } = tl.at(T);
+        warm.ensure(shot.env, T);
         director.render(shot, local, k, T, prev);   // prev = shot trước (mặt sống chuyển biểu cảm mềm)
         if (!OPTS.propsKb) for (const p of Object.values(props)) p.visible = false;
         overlay(T, shot, local);
         credits.update(T);
       });
-      for (const e of Object.values(envs.envs)) e.group.visible = true;
-      stage.renderer.compile(stage.scene, stage.camera);
-      for (const e of Object.values(envs.envs)) e.group.visible = false;
+      await warm.start();
       stage.start();
       window.renderAt = (t) => stage.renderAt(t);
       window.__shots = tl;
@@ -231,6 +233,7 @@
       };
       window.setOptions({});
       window.__ready = true;
+      warm.background();   // dịch nền các env còn lại, từng env một
     </script>
   </body>
 </html>
