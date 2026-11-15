@@ -16,6 +16,7 @@ import path from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { kiemPose, docGlbFs } from './kiem/pose.mjs';
+import { don as donChrome } from './don-chrome.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -315,6 +316,8 @@ else {
       } else info('→ thêm --fix-procs để dừng chúng');
     }
   }
+  // Chrome ẩn mồ côi do playwright (cha đã chết) — chỉ loại này, không đụng Chrome thường (tools/don-chrome.mjs)
+  try { const ds = donChrome({ xoa: FIX_PROCS, log: info }); if (ds.length) warn(`${ds.length} Chrome ẩn mồ côi${FIX_PROCS ? ' (đã dọn)' : ''}`); } catch (e) { warn('không dọn được Chrome mồ côi: ' + e.message); }
 }
 
 // ---------------------------------------------------------------- 8. Git
@@ -405,6 +408,21 @@ section('11. Tiếng nền & nhạc phủ phim · độ to');
       (f.length ? warn : ok)(`${path.basename(args[mi + 1])}: ${j.lufs} LUFS, true peak ${j.tp} dBTP (mục tiêu -16..-14 LUFS, ≤ -1 dBTP)${f.length ? ' → ' + f.join(' ') : ''}`);
     } catch { warn('audio-check.py lỗi: ' + (r.stderr || r.stdout || '').split('\n').filter(Boolean).pop()); }
   } else info('độ to: thêm --mix <file.mp4> để kiểm LUFS/true peak của bản xuất (python tools/audio-check.py <file> --target)');
+}
+
+// ---------------------------------------------------------------- 12. Kế thừa (env không vá món của builder dùng chung)
+section('12. Kế thừa (env không vá builder dùng chung)');
+{
+  const { kiemKeThua } = await import('./ke-thua.mjs');
+  const dir = path.join(ROOT, 'engine/envs');
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith('.js') && !/^e[45]-/.test(f))   // tập 4, 5 = phiên test độc lập
+    .map((f) => ({ file: 'engine/envs/' + f, src: read(path.join(dir, f)) }));
+  const kj = path.join(ROOT, 'tools/ke-thua.json');
+  const allow = exists(kj) ? JSON.parse(read(kj)).mien || [] : [];
+  const r = kiemKeThua(files, allow);
+  r.forEach((x) => warn(`${x.file}:${x.line} [${x.kind}] ${x.msg}`));
+  if (!r.length) ok(`${files.length} file env không vá builder dùng chung`);
+  else info('món đẹp phải nằm trong builder (engine/props.js, cloth.js, realwindow.js, nen-xa.js…) kèm ô FX mặc định bật — docs/handoff/ke-thua-ep001.md; cố ý thì ghi miễn trừ ở tools/ke-thua.json');
 }
 
 console.log(`\nKết quả: ${nBad} ✘ · ${nWarn} ⚠`);
