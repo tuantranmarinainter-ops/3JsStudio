@@ -37,6 +37,7 @@ Cảnh 3D dựng bằng three.js + engine tự viết (`engine/`). Sản phẩm 
 | Lệnh | Việc |
 |---|---|
 | `node tools/look.mjs <trang> --shots … / --t … / --frames … [--ab trang2] [--det] [--pose]` | **công cụ chụp duy nhất**: bảng khung có nhãn, so A/B, kiểm tất định, so bằng số (skill `kiem-tra-khung`) |
+| `node tools/look.mjs <trang> --shots all --gates` / `doctor.mjs <ep> --gates` | **cổng kiểm** (chỉ cảnh báo): chân lơ lửng/lún, đầu bị cắt, mặt ngoài vùng an toàn, xuyên nhau + dòng LOOK luật camera; ngưỡng `tools/gates.json` |
 | `node tools/build.mjs <ep> <lớp>` / `npm run bundle:ep001` | dựng lại một lớp / gộp `dist/<ep>.html` |
 | `node tools/export-test.mjs dist/<ep>.html --range a:b --matrix "…"` | bấm Xuất MP4 tự động mọi tổ hợp + báo cáo |
 | `node tools/doctor.mjs <ep> [--fix-procs] [--shaders]` | khám cả repo: asset, phông, shot, giọng, bản gộp cũ, tiến trình treo, git |

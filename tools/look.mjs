@@ -27,6 +27,9 @@
 //                               in PSNR + % điểm ảnh lệch; chỉ khung vượt ngưỡng mới lưu *_diff.png (tô đỏ vùng lệch)
 //   --ref-tol 0.05              ngưỡng % điểm ảnh lệch thấy được (> 16/255). Mặc định 0,05%
 //   Lệch tư thế hoặc lệch ảnh vượt ngưỡng → thoát mã 1 (như --det).
+//   --gates                     CỔNG KIỂM (chỉ cảnh báo): mỗi shot đo đầu/giữa/cuối → PASS/FAIL chân lơ lửng·lún, đầu bị cắt,
+//                               mặt nhân vật chính ngoài vùng an toàn, xuyên nhau + dòng LOOK (camera yên, zoom sai luật, mặt bị che).
+//                               Ghi <out>/gates.json. Ngưỡng tools/gates.json (--gates-cfg f.json). Không đổi mã thoát.
 //   Ví dụ: lưu chuẩn   node tools/look.mjs episodes/ep001/index.html --t 12,30 --pose --out refs/ep001
 //          kiểm lại    node tools/look.mjs episodes/ep001/index.html --t 12,30 --pose-ref refs/ep001/pose.json --ref refs/ep001
 import { createServer } from 'http';
@@ -35,9 +38,10 @@ import { existsSync } from 'fs';
 import { extname, join, resolve, basename, relative, isAbsolute } from 'path';
 import { pathToFileURL } from 'url';
 import { launchBrowser } from './browser.mjs';
+import { probe as gateProbe, judge as gateJudge, loadCfg as gateCfg, formatShot as gateFormat } from './gates.mjs';
 
 const args = process.argv.slice(2);
-const FLAGS = new Set(['det', 'full', 'pose']);
+const FLAGS = new Set(['det', 'full', 'pose', 'gates']);
 const opt = {}; const pos = [];
 for (let i = 0; i < args.length; i++) {
   const a = args[i];
@@ -215,6 +219,7 @@ function poseDiff(cur, ref) {   // → danh sách xương lệch quá ngưỡng,
 }
 const poseRef = opt['pose-ref'] ? JSON.parse(await readFile(resolve(opt['pose-ref']), 'utf8')) : null;
 const REF_TOL = +(opt['ref-tol'] || 0.05);
+const GCFG = opt.gates ? gateCfg(opt['gates-cfg'] && resolve(opt['gates-cfg'])) : null;
 
 async function lumaOf(buf) {   // độ sáng trung bình + % điểm cháy (≥ 250) / tối đặc (≤ 5)
   return C.evaluate(async (x) => {
@@ -276,6 +281,11 @@ async function one(PA, idx) {
     row.diff = c.max; row.bad = c.bad;
     // lỗi tất định = có điểm ảnh lệch thấy được (> 16/255) quá 0,005% khung; 1–2 chấm hạt lấp lánh / nhiễu GPU thì bỏ qua
     if (c.bad > c.px * 0.00005) { detFail = true; await save(again, join(outDir, tag + '_det-lai.png')); }
+  }
+  if (opt.gates && shotsInfo && id) {
+    const s = shotsInfo.list.find((x) => x.id === id), P = {};
+    for (const [k, tt] of [['a', s.t0 + 0.1], ['m', (s.t0 + s.t1) / 2], ['b', s.t1 - 0.1]]) { await seek(PA, Math.max(s.t0, Math.min(tt, s.t1 - 0.02))); P[k] = await PA.evaluate(gateProbe, GCFG); }
+    row.gates = gateJudge(P, GCFG); row.gateProbe = P;
   }
   rows[idx] = row;
   process.stdout.write(`\r  đã chụp ${++done}/${times.length} (${JOBS} tab)   `);
@@ -364,6 +374,19 @@ if (opt.pose || poseRef) {
     }
     console.log(poseFail ? 'TƯ THẾ: LỆCH' : 'TƯ THẾ: OK');
   }
+}
+if (opt.gates) {
+  const G = rows.filter((r) => r.gates);
+  console.log(`
+CỔNG KIỂM (${G.length} shot; chỉ cảnh báo — ngưỡng tools/gates.json):`);
+  for (const r of G) if (r.gates.fails.length || r.gates.look.length) console.log(gateFormat(r.id, r.gates));
+  const nf = G.filter((r) => r.gates.fails.length).length, nl = G.filter((r) => r.gates.look.length).length;
+  const byGate = {}; for (const r of G) for (const f of r.gates.fails) byGate[f.gate] = (byGate[f.gate] || 0) + 1;
+  console.log(`GATES: ${G.length - nf} PASS / ${nf} FAIL (${Object.entries(byGate).map(([k, v]) => k + ' ' + v).join(', ') || 'không lỗi'}) · LOOK ${nl} shot`);
+  const gf = join(outDir, 'gates.json');
+  await writeFile(gf, JSON.stringify({ page: pageArg, cfg: GCFG, shots: G.map((r) => ({ id: r.id, t: r.t, ...r.gates, probe: r.gateProbe })) }, null, 1));
+  console.log('Chi tiết:', relative(root, gf));
+  if (!shotsInfo) console.log('⚠ --gates cần window.__shots (chọn thời điểm bằng --shots)');
 }
 console.log('Bảng ghép:', sheetPath, (opt.ref || poseRef) ? '(chỉ mở khi số ở trên báo lệch)' : '');
 await browser.close(); if (srv) srv.close();

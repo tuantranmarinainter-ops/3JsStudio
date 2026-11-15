@@ -6,6 +6,7 @@
 //     ep001        tên tập (mặc định ep001)
 //     --fix-procs  dừng các tiến trình render/TTS bị treo (mục 7)
 //     --mix f.mp4  mục 11: kiểm độ to (LUFS -16..-14, true peak ≤ -1 dBTP) của bản xuất
+//     --gates      mục 9b: cổng kiểm mọi shot (chân, đầu bị cắt, mặt, xuyên + LOOK camera; chậm vài phút, tools/gates.mjs — chỉ cảnh báo)
 //     --shaders    mục 9: mở trang tập, đếm program shader + thời gian tới __ready (chậm ~1 phút, tools/shaders.mjs)
 // In danh sách ✔ / ⚠ / ✘ theo từng mục; thoát mã 1 nếu có ít nhất một ✘.
 // Không cần npm; chỉ Node + child_process (git, ffprobe, powershell).
@@ -20,6 +21,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const FIX_PROCS = args.includes('--fix-procs');
 const DO_SHADERS = args.includes('--shaders');
+const DO_GATES = args.includes('--gates');
 const EP = args.find((a) => !a.startsWith('--')) || 'ep001';
 const FPS = 30;
 const EPDIR = path.join(ROOT, 'episodes', EP);
@@ -345,6 +347,20 @@ if (DO_SHADERS) {
       const w = out.find((l) => l.startsWith('⚠'));
       w ? warn(w.replace(/^⚠ /, '') + ' — chi tiết: node tools/shaders.mjs ' + rel(page)) : ok('số program và thời gian mở trang trong ngưỡng');
     }
+  }
+}
+
+// ---------------------------------------------------------------- 9b. Cổng kiểm shot (tuỳ chọn --gates)
+if (DO_GATES) {
+  section('9b. Cổng kiểm shot (chỉ cảnh báo)');
+  const page = path.join(EPDIR, 'index.html');
+  if (!exists(page)) warn('không thấy ' + rel(page));
+  else {
+    const out_ = path.join('output', 'gates', EP);
+    const r = spawnSync(process.execPath, [path.join(ROOT, 'tools/look.mjs'), rel(page), '--shots', 'all', '--gates', '--out', out_], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 26 });
+    const g = (r.stdout || '').split(/\r?\n/).find((l) => l.startsWith('GATES:'));
+    if (!g) warn('look.mjs --gates lỗi: ' + ((r.stderr || '').split(/\r?\n/).filter(Boolean).pop() || r.status));
+    else (/ 0 FAIL/.test(g) ? ok : warn)(g.replace(/^GATES: /, '') + ' — chi tiết ' + out_.split(path.sep).join('/') + '/gates.json');
   }
 }
 

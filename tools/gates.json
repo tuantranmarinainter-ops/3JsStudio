@@ -1,0 +1,10 @@
+{
+  "_ghi_chu": "Ngưỡng cổng kiểm tools/gates.mjs (ghi đè DEFAULT_CFG). Đơn vị stud; tỉ lệ 0–1 theo khung.",
+  "chanLo": 0.15,
+  "chanLun": 0.15,
+  "dauCat": 0.12,
+  "matAnToan": [0.06, 0.08, 0.06, 0.22],
+  "xuyen": 0.35,
+  "camYen": 0.02,
+  "zoomTi": 0.04
+}
