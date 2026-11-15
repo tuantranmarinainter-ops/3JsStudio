@@ -74,6 +74,7 @@ async function init() {
 
     #xstage { grid-area: st; display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; min-width: 0; background: var(--bg); }
     #xview { display: flex; align-items: center; justify-content: center; min-height: 0; min-width: 0; padding: 14px; position: relative; overflow: hidden; }
+    #xview.xss { justify-content: flex-start; } #xview.xss-col { flex-direction: column; }   /* song song Phim | 3D (engine/che-do-3d.js) */
     #xwrap { position: relative; flex: none; box-shadow: 0 10px 40px rgba(0,0,0,.5); border-radius: 8px; overflow: hidden; cursor: pointer; }
     #xwrap > #root { transform-origin: 0 0; position: absolute; left: 0; top: 0; }
     #xbadge { position: absolute; top: 14px; left: 14px; display: flex; gap: 6px; flex-wrap: wrap; z-index: 4; pointer-events: none; }
@@ -216,7 +217,7 @@ async function init() {
       </div>
       <div class="transport">
         <div class="grp"><button id="xplay">▶ Xem</button></div>
-        <div class="grp" id="x3drow" style="display:none" title="Phim = khung hình xuất ra · 3D = camera tự do xem cả cảnh (chỉ xem, không sửa)"><button id="xmphim" class="on">🎬 Phim</button><button id="xm3d">🧊 3D</button></div>
+        <div class="grp" id="x3drow" style="display:none" title="Phim = khung hình xuất ra · 3D = camera tự do xem cả cảnh (chỉ xem, không sửa)"><button id="xmphim" class="on">🎬 Phim</button><button id="xm3d">🧊 3D</button><button id="xmss" title="Phim bên trái, 3D bên phải (điện thoại: trên/dưới) — vẫn bay/xoay trong 3D, rê thời gian thì cả hai cùng chạy">◧ Song song</button></div>
         <div class="grp" id="xshotrow" style="display:none"><span class="lb">Shot</span><button class="xsh" data-d="-1" title="Shot trước (phím [)">◀</button><select id="xshsel" title="Nhảy tới shot"></select><button class="xsh" data-d="1" title="Shot sau (phím ])">▶</button><button class="xsh" data-d="0" title="Về đầu shot này">↺</button><span id="xshinfo" class="muted"></span></div>
         <div class="grp"><span class="lb">Frame</span>${stepBtn(-10)}${stepBtn(-1)}<input id="xframe" type="number" min="0" step="1" value="0">${stepBtn(1)}${stepBtn(10)}<span id="xftot" class="muted"></span><span id="xshot" class="muted"></span></div>
         <div class="grp"><button id="xannbtn" title="Đánh dấu lỗi tại đây (phím M)">⚑ Marker <kbd>M</kbd></button></div>
@@ -294,8 +295,12 @@ async function init() {
 
   // thu #root vừa chỗ trống của ô giữa (co theo kéo viền / đổi cỡ cửa sổ)
   function fit() {
-    const v = $('xview'), availH = v.clientHeight - 28, availW = v.clientWidth - 28;
+    const v = $('xview'); let availH = v.clientHeight - 28, availW = v.clientWidth - 28;
     if (availH < 20 || availW < 20) return;
+    // SONG SONG (Phim | 3D): khung phim tối đa nửa ô (màn ngang: nửa trái; màn dọc/điện thoại: nửa trên), phần còn lại cho 3D
+    const ss = v.classList.contains('xss'), col = ss && v.clientWidth < v.clientHeight * 1.1;
+    v.classList.toggle('xss-col', col);
+    if (ss) { if (col) availH = availH / 2 - 7; else availW = availW / 2 - 7; }
     const k = Math.max(0.05, Math.min(availH / H0, availW / W0));
     root.style.transform = `scale(${k})`;
     wrap.style.width = `${W0 * k}px`; wrap.style.height = `${H0 * k}px`;
@@ -454,10 +459,20 @@ async function init() {
   $('x3drow').dataset.ok = '1';
   {
     $('x3drow').style.display = 'flex';
-    const mode = (on3) => { $('xmphim').classList.toggle('on', !on3); $('xm3d').classList.toggle('on', on3); $('xbadge').style.zIndex = on3 ? '5' : ''; };
+    const mode = (on3, ss) => {
+      $('xmphim').classList.toggle('on', !on3); $('xm3d').classList.toggle('on', on3 && !ss); $('xmss').classList.toggle('on', !!ss);
+      $('xbadge').style.zIndex = on3 && !ss ? '5' : '';
+      $('xview').classList.toggle('xss', !!ss); fit();
+    };
     c3d.onChange(mode);
     $('xmphim').onclick = () => { c3d.tat(); $('xmphim').blur(); };
     $('xm3d').onclick = () => { if (busy) return; if (annotating) setAnnotate(false); c3d.bat($('xview')); $('xm3d').blur(); };
+    if (c3d.songSong === undefined) $('xmss').style.display = 'none';   // lõi 3D cũ chưa có chế độ song song
+    $('xmss').onclick = () => {
+      if (busy) return; if (annotating) setAnnotate(false);
+      const v = $('xview'); v.classList.add('xss'); fit();   // chia chỗ TRƯỚC để khung 3D đo đúng cỡ
+      c3d.bat(v, { songSong: true, cot: v.classList.contains('xss-col') }); $('xmss').blur();
+    };
   }
   };
   ganC3d(); addEventListener('che3d-san-sang', ganC3d);

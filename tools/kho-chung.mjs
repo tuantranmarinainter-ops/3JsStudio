@@ -17,6 +17,24 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const out = resolve(root, opt('out', 'dist/kho-chung.3js'));
 const eps = args.filter((a, i) => !a.startsWith('--') && !(i > 0 && args[i - 1].startsWith('--')));
 
+// --liet-ke: in nội dung kho hiện có theo nhóm thư mục (và tập nào dùng), không dựng lại
+if (args.includes('--liet-ke')) {
+  const h = readHeader(out);
+  const use = {};   // path -> [ep]
+  for (const f of readdirSync(join(root, 'dist')).filter((f) => f.endsWith('.3js') && !f.startsWith('kho-chung'))) {
+    try { const t = readHeader(join(root, 'dist', f)); for (const p of Object.keys(t.refs || {})) (use[p] = use[p] || []).push(t.ep); } catch {}
+  }
+  const g = {};
+  for (const [p, [, , len]] of Object.entries(h.files)) { const k = p.split('/').slice(1, 3).join('/'); (g[k] = g[k] || { n: 0, b: 0, eps: new Set(), ds: [] }); g[k].n++; g[k].b += len; (use[p] || []).forEach((e) => g[k].eps.add(e)); g[k].ds.push(p.split('/').slice(3).join('/')); }
+  const tot = Object.values(g).reduce((s, x) => s + x.b, 0);
+  console.log(`kho chung ${out.replace(root, '').replace(/\\/g, '/')} — dựng ${h.built}, ${Object.keys(h.files).length} file, ${(tot / 1048576).toFixed(1)} MB`);
+  for (const [k, x] of Object.entries(g).sort((a, b) => b[1].b - a[1].b)) {
+    console.log(`  ${k.padEnd(28)} ${String(x.n).padStart(4)} file ${(x.b / 1048576).toFixed(1).padStart(6)} MB  dùng bởi: ${[...x.eps].sort().join(', ') || '—'}`);
+    if (args.includes('--chi-tiet')) console.log('      ' + x.ds.sort().join('\n      '));
+  }
+  process.exit(0);
+}
+
 export function readHeader(file) {   // chỉ đọc phần header (không nạp cả gói vào RAM)
   const fd = openSync(file, 'r'); const h8 = Buffer.alloc(8); readSync(fd, h8, 0, 8, 0);
   if (h8.toString('latin1', 0, 4) !== '3JS1') { closeSync(fd); throw new Error(file + ': không phải gói .3js'); }

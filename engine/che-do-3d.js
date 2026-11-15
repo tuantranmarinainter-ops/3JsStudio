@@ -17,6 +17,9 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 const CSS = `
 .c3d-wrap { position: absolute; inset: 0; z-index: 3; background: #0b0d12; overflow: hidden; touch-action: none; }
 .c3d-wrap.c3d-fixed { position: fixed; z-index: 2147483000; }
+.c3d-wrap.c3d-ss { position: relative; inset: auto; flex: 1 1 0; align-self: stretch; min-width: 0; min-height: 0; border-radius: 8px; margin-left: 14px; }
+.c3d-wrap.c3d-ss.c3d-col { margin: 14px 0 0; }
+.c3d-wrap.c3d-ss .c3d-bar { top: 8px; }
 .c3d-wrap canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block; outline: none; }
 .c3d-lab { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .c3d-lab div { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; font: 600 12px/1.2 "Be Vietnam Pro", system-ui, sans-serif;
@@ -64,6 +67,10 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
   const paths = new Map();   // id shot → mảng Vector3 vị trí camera (lấy mẫu)
   let sampling = false, giuGoc = true, show = { nv: true, dc: true, dd: true, cam: true, luoi: true };
   const listeners = new Set();
+  // SONG SONG (Phim trái | 3D phải): renderer giữ nguyên cỡ phim W0×H0 (không dịch shader lại, không đổi cỡ bộ đệm mỗi khung).
+  // Mỗi khung: vẽ Phim như thường (có hậu kỳ) → chép sang filmCv (canvas 2D đè đúng lên canvas WebGL, dưới phụ đề DOM);
+  // rồi vẽ camera tự do vào một ô góc dưới-trái của bộ đệm (≤ W0×H0) → chép sang ssCv trong khung 3D. Kéo/bay chỉ vẽ lại phần 3D.
+  let ss = false, ssCv = null, ssCtx = null, filmCv = null, filmCtx = null, vw = 4, vh = 4;
 
   // ---------- dựng lười: chỉ khi bật 3D lần đầu ----------
   function build() {
@@ -259,7 +266,11 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     if (!on) return;
     const r = built.el.getBoundingClientRect(); if (r.width < 4 || r.height < 4) return;
     const k = Math.min(window.devicePixelRatio || 1, 1.5);
-    renderer.setSize(Math.round(r.width * k), Math.round(r.height * k), false);
+    if (ss) {   // ô 3D nằm trong bộ đệm cỡ phim → thu lại cho vừa W0×H0, giữ tỉ lệ khung 3D
+      let w = r.width * k, h = r.height * k; const s = Math.min(1, W0 / w, H0 / h);
+      vw = Math.max(4, Math.floor(w * s)); vh = Math.max(4, Math.floor(h * s));
+      if (ssCv.width !== vw || ssCv.height !== vh) { ssCv.width = vw; ssCv.height = vh; }
+    } else renderer.setSize(Math.round(r.width * k), Math.round(r.height * k), false);
     built.free.aspect = r.width / r.height; built.free.updateProjectionMatrix();
     redraw();
   }
@@ -267,12 +278,22 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     if (!on || sampling) return;
     const B = built, fog = scene.fog, ac = renderer.autoClear;
     scene.fog = null;   // sương của phim chỉnh theo khoảng cách camera shot → tắt TẠM khi nhìn xa (trả lại ngay sau khi vẽ)
+    const rt = renderer.getRenderTarget();
     try {
+      if (ss) { renderer.setRenderTarget(null); renderer.setViewport(0, 0, vw, vh); renderer.setScissor(0, 0, vw, vh); renderer.setScissorTest(true); }
       renderer.render(scene, B.free);
       B.grid.visible = show.luoi;
       renderer.autoClear = false; renderer.render(B.helpers, B.free);   // KHÔNG xoá depth: lưới bị nhà/đất che đúng chỗ; chóp/đường đi depthTest:false nên vẫn nổi
-    } finally { renderer.autoClear = ac; scene.fog = fog; }
+      if (ss) ssCtx.drawImage(canvas, 0, H0 - vh, vw, vh, 0, 0, vw, vh);   // chép ngay trong cùng tác vụ (không cần preserveDrawingBuffer)
+    } finally {
+      renderer.autoClear = ac; scene.fog = fog;
+      if (ss) { renderer.setScissorTest(false); renderer.setViewport(0, 0, W0, H0); renderer.setScissor(0, 0, W0, H0); renderer.setRenderTarget(rt); }
+    }
     updateLabels();
+  }
+  function drawSS(t) {   // song song: Phim (hậu kỳ như thường) → filmCv, rồi phần 3D
+    if (!sampling) { origDraw(t); filmCtx.drawImage(canvas, 0, 0); }
+    draw3d(t);
   }
   function draw3d(t) {
     if (sampling) { if (t !== sampleT) curT = t; return; }
@@ -313,29 +334,43 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
   }
 
   // ---------- bật / tắt ----------
-  function bat(container) {
-    if (on) return api;
+  // opt.songSong: Phim (khung gốc, cả phụ đề) giữ chỗ cũ bên trái, khung 3D thêm vào container bên phải (container nên là flex hàng)
+  function bat(container, opt = {}) {
+    if (on) { if (!!opt.songSong === ss) return api; tat(); }
     if (!built) built = build();
-    on = true;
+    on = true; ss = !!opt.songSong && !!container;
     const B = built;
-    home = { parent: canvas.parentNode, next: canvas.nextSibling };
-    canvasStyle = canvas.getAttribute('style');
     const host = container || document.body;
     B.el.classList.toggle('c3d-fixed', !container);
+    B.el.classList.toggle('c3d-ss', ss);
+    B.el.classList.toggle('c3d-col', ss && !!opt.cot);
     host.appendChild(B.el);
-    B.el.insertBefore(canvas, B.el.firstChild);   // khung rộng: cùng renderer (không dịch shader lại), chỉ đổi cỡ bộ đệm vẽ
     B.el.tabIndex = -1;
     origDraw = stage.draw;
-    stage.draw = (t) => draw3d(t);
+    if (ss) {
+      ssCv = document.createElement('canvas'); ssCv.className = 'c3d-ssview'; ssCtx = ssCv.getContext('2d');
+      B.el.insertBefore(ssCv, B.el.firstChild);
+      filmCv = document.createElement('canvas'); filmCv.width = W0; filmCv.height = H0; filmCv.className = 'c3d-film';
+      filmCv.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;';
+      filmCtx = filmCv.getContext('2d');
+      canvas.parentNode.insertBefore(filmCv, canvas.nextSibling);   // đè canvas WebGL, nằm DƯỚI phụ đề/chữ nổi (DOM phía sau)
+      stage.draw = (t) => drawSS(t);
+    } else {
+      home = { parent: canvas.parentNode, next: canvas.nextSibling };
+      canvasStyle = canvas.getAttribute('style');
+      B.el.insertBefore(canvas, B.el.firstChild);   // khung rộng: cùng renderer (không dịch shader lại), chỉ đổi cỡ bộ đệm vẽ
+      stage.draw = (t) => draw3d(t);
+    }
     try { sizeObs = new ResizeObserver(resize); sizeObs.observe(B.el); } catch (e) {}
     const r = B.el.getBoundingClientRect(), k = Math.min(window.devicePixelRatio || 1, 1.5);
-    renderer.setSize(Math.max(4, Math.round(r.width * k)), Math.max(4, Math.round(r.height * k)), false);
+    if (ss) { const s = Math.min(1, W0 / Math.max(4, r.width * k), H0 / Math.max(4, r.height * k)); vw = Math.max(4, Math.floor(r.width * k * s)); vh = Math.max(4, Math.floor(r.height * k * s)); ssCv.width = vw; ssCv.height = vh; }
+    else renderer.setSize(Math.max(4, Math.round(r.width * k)), Math.max(4, Math.round(r.height * k)), false);
     B.free.aspect = Math.max(0.2, r.width / Math.max(1, r.height)); B.free.updateProjectionMatrix();
     B.ready = false;
     const p = stage.renderAt(curT = lastT());   // đọc camera shot ở t hiện tại
     const first = () => { if (!B.started) { B.started = true; goc('truoc'); } else { if (!giuGoc) flyToShot(); updateFrustum(); redraw(); } };
     if (p && p.then) p.then(first); else first();
-    for (const f of listeners) f(true);
+    for (const f of listeners) f(true, ss);
     return api;
   }
   function tat() {
@@ -344,12 +379,18 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     on = false;
     try { sizeObs?.disconnect(); } catch (e) {}
     stage.draw = origDraw; origDraw = null;
-    home.parent.insertBefore(canvas, home.next && home.next.parentNode === home.parent ? home.next : null);
-    if (canvasStyle === null) canvas.removeAttribute('style'); else canvas.setAttribute('style', canvasStyle);
+    if (ss) {
+      ssCv.remove(); filmCv.remove(); ssCv = ssCtx = filmCv = filmCtx = null; ss = false;
+      B.el.classList.remove('c3d-ss', 'c3d-col');
+      renderer.setScissorTest(false); renderer.setViewport(0, 0, W0, H0);
+    } else {
+      home.parent.insertBefore(canvas, home.next && home.next.parentNode === home.parent ? home.next : null);
+      if (canvasStyle === null) canvas.removeAttribute('style'); else canvas.setAttribute('style', canvasStyle);
+    }
     B.el.remove();
     renderer.setSize(W0, H0, false);   // đúng cỡ gốc của stage (setPixelRatio(1) không đổi)
     const p = stage.renderAt(curT);    // khung Phim y như trước khi bật
-    for (const f of listeners) f(false);
+    for (const f of listeners) f(false, false);
     return p || api;
   }
   // t hiện tại: lấy từ lần renderAt gần nhất (stage giữ lastT bên trong) — đọc qua lần vẽ kế tiếp; mặc định 0
@@ -360,6 +401,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
   const api = {
     bat, tat, goc,
     get on() { return on; },
+    get songSong() { return on && ss; },
     toggle: (c) => (on ? tat() : bat(c)),
     onChange: (f) => { listeners.add(f); return () => listeners.delete(f); },
     get shotCam() { return { pos: shotCam.pos.toArray(), target: shotCam.target.toArray(), fov: shotCam.fov, id: shotCam.id }; },

@@ -2,25 +2,29 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-15 (GĐ2 xong)
+- **Cập nhật:** 2026-11-15 (GĐ3 xong, CHƯA phát hành lần đầu; + chế độ song song Phim | 3D)
 - **Nhánh:** `ep1-v2` · nguồn cập nhật chốt = **GitHub Release công khai** (duyệt 15/11).
 - **Đã có (GĐ1+2):** `node tools/bundle-studio.mjs` → `dist/studio.html` 2,1 MB · `node tools/goi-tap.mjs <ep> [--tu-chua]` → `dist/<ep>.3js`
   · `node tools/kho-chung.mjs [ep…]` → `dist/kho-chung.3js` 48,7 MB (asset dùng chung của mọi gói, trùng sha256 lưu 1 lần).
-- **Dung lượng gói (cũ → mới):** ep001 86 → 25,1 MB · ep002 61 → 5,7 · ep003 72 → 5,4 · ep004 55 → 0,9 (+ kho chung 1 lần).
-  Riêng tập = file trong episodes/<ep>/ + mã tập; mọi thứ khác (assets/…) là dùng chung.
+- **Dung lượng gói (cũ → mới):** ep001 86 → 25,1 MB · ep002 61 → 5,7 · ep003 72 → 5,4 · ep004 55 → 0,9 (+ kho chung 1 lần; riêng = episodes/<ep>/).
 - **Cách dùng:** mở studio.html → kéo gói tập (lần đầu kéo cả kho-chung.3js; thiếu kho thì studio nhắc và tự mở tập sau khi nạp).
   Kho lưu IndexedDB '3js-studio' (blob theo sha256, path→sha); nút Xoá kho. Tự động: `?goi=<ep>.3js[&kho=…]` (mặc định thử kho-chung.3js cạnh studio).
 - **Đã kiểm:** look --ab với dist/<ep>.html: ep002/ep003 giống hệt, ep004 ≥ 104 dB; ep001 so trang dev cùng lúc 87,6 dB (nhiễu GPU —
   dist/ep001.html cũ hơn mã vì phiên khác đang sửa engine/ep001). `node tools/kiem-studio.mjs <ep>` ĐẠT ep003/ep004 (thiếu kho → nhắc;
   nạp kho → tự mở; mở lại không cần file kho). Xuất MP4: ep003 20–25 s, ep002 10–14 s OK. Ảnh: `output/tach-studio/`.
-- **Khác kế hoạch:** định dạng riêng "3JS1" thay zip; tập chạy cùng trang (document.write) thay iframe; lõi = module tập import thẳng + envs.
-- **Lưu ý:** gói phải đóng lại khi mã tập/engine đổi (gói chứa mã tập; studio chứa engine) — dựng studio + gói + kho cùng lúc.
-- **Bước kế tiếp:** GĐ3 — nút Cập nhật mới nhất (studio-core.json trên Release, 2 bản + quay lại, `tools/phat-hanh-studio.mjs`).
-- **Đang chờ:** người dùng mở thử studio.html + kéo kho-chung.3js và một gói tập; duyệt GĐ3. Đẩy Release cần người dùng bảo.
-- **File đang dở (chưa commit):** không · **Đang chạy nền:** không
-- **Nói thật:** tách file giảm dung lượng tải/lưu, KHÔNG giảm số shader hay thời gian dịch shader.
-- **Đạt khi (cả dự án):** như trên + nút Cập nhật tải bản mới từ Release, lỗi thì tự quay về bản cũ; công cụ (xuat.mjs, doctor) hiểu gói.
-- **Câu hỏi còn mở:** không
+- **Khác kế hoạch:** định dạng "3JS1" thay zip; tập chạy cùng trang thay iframe. **Lưu ý:** mã tập/engine đổi → dựng lại studio + gói + kho cùng lúc.
+- **GĐ3:** trình khởi động `tools/studio-loader.js` (nhúng vào studio.html): nhớ thư mục studio (File System Access, chọn 1 lần) → tự quét *.3js,
+  nút Mở file mở đúng thư mục đó, báo khi kho-chung.3js trong thư mục mới hơn kho trong máy (nút Cập nhật kho), Xem kho theo nhóm.
+  Cập nhật: tệp đính kèm Release KHÔNG tải được từ trình duyệt (thiếu CORS, đã thử) → API releases/latest + raw.githubusercontent tại thẻ
+  `studio-v<ver>` trên nhánh mồ côi `studio-ban`. Lõi: bản gốc + 2 bản tải (sha256), bản mới chạy thử lần mở tập tới, lỗi/180 s → tự quay lại.
+  Kiểm: `node tools/kiem-cap-nhat.mjs` (giả lập GitHub) 5/5 ĐẠT. Phát hành: `node tools/phat-hanh-studio.mjs [--day]` (mặc định chạy thử).
+- **Song song Phim | 3D:** nút ◧ Song song (engine/che-do-3d.js `bat(el, { songSong })`, tools/export-ui.js). Một renderer: Phim → canvas 2D
+  đè dưới phụ đề; 3D vẽ vào ô góc bộ đệm → canvas 2D bên phải. `node tools/kiem-song-song.mjs` 8/8 ĐẠT; kiem-che-do-3d ep003 vẫn ĐẠT.
+  Chỉ có trong studio.html; các dist/<ep>.html cũ chưa gộp lại.
+- **Bước kế tiếp:** người dùng cho phép → `node tools/phat-hanh-studio.mjs --day` (lần đầu tạo nhánh studio-ban + Release). GĐ4: xuat.mjs/doctor hiểu gói.
+- **Đang chờ:** người dùng thử studio.html (chọn thư mục dist) + song song; cho phép đẩy bản đầu lên GitHub.
+- **File đang dở (chưa commit):** không · **Đang chạy nền:** không · tách file KHÔNG giảm số shader/thời gian dịch shader.
+- **Đạt khi (cả dự án):** như trên + bản đầu đã lên Release và studio tải được; công cụ (xuat.mjs, doctor) hiểu gói. **Câu hỏi còn mở:** không
 <!-- /ĐIỂM DỪNG -->
 
 ## Kiến trúc đề xuất (3 mảnh)
