@@ -1,0 +1,110 @@
+# Tách studio khỏi từng tập + nút "Cập nhật mới nhất" — handoff
+
+<!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
+## ĐIỂM DỪNG
+- **Cập nhật:** 2026-11-15
+- **Nhánh:** `ep1-v2`
+- **Đang làm:** GĐ1 XONG. Kế hoạch duyệt 15/11, nguồn cập nhật chốt = **GitHub Release công khai**.
+- **GĐ1 đã có:** `node tools/bundle-studio.mjs` → `dist/studio.html` 2,1 MB (lõi 55 module); `node tools/goi-tap.mjs ep003` →
+  `dist/ep003.3js` 50,2 MB (bản gộp cũ 72 MB; chỉ bỏ base64, chưa tách kho chung). Mở: nút Mở tập / kéo thả / `?goi=ep003.3js`.
+  Kiểm: `look.mjs "dist/studio.html?goi=ep003.3js" --ab dist/ep003.html` 4/5 khung giống hệt, 1 khung 86 dB (nhiễu GPU);
+  `export-test.mjs "dist/studio.html?goi=ep003.3js" --range 20:25` OK (H.264 + AAC); chế độ 3D có. Ảnh: `output/tach-studio/`.
+- **Khác kế hoạch:** gói dùng định dạng riêng "3JS1" (header JSON + nhị phân) thay zip — không cần thư viện; tập chạy cùng trang
+  (document.write) thay iframe; lõi chỉ gồm module tập import thẳng + envs (engine/stairs-lab.js là trang thử, không được nạp).
+- **Bước kế tiếp:** GĐ2 — tách kho asset chung (IndexedDB theo sha256) + gói ep002/ep004; ep001 sau khi phiên ep001-sky-storm xong.
+- **Đang chờ:** người dùng mở thử `dist/studio.html` → kéo `dist/ep003.3js` vào, rồi duyệt GĐ2.
+- **File đang dở (chưa commit):** không
+- **Đang chạy nền:** không
+- **Số đo thật (bản gộp hiện tại):** ep001 86 MB · ep002 61 · ep003 72 · ep004 55. Trong đó **JS engine + trình phát chỉ ~2 MB (3%)**;
+  phần nặng là asset nhúng base64 (+33% phình): **dùng chung ~30 MB lặp lại ở MỌI tập** (polyhaven 16.9, kenney 5.5, polyfork 4.5,
+  characters 3–8) + riêng từng tập 2–20 MB (ep001: 19.5 + giọng 11).
+  ⇒ Chỉ tách engine ra thì tập nhẹ đi ~2 MB — **vô ích**. Phải tách cả **kho asset dùng chung** (tải 1 lần, lưu máy) + bỏ base64.
+- **Nói thật:** tách file giảm dung lượng tải/lưu, KHÔNG giảm số shader hay thời gian dịch shader (dịch theo cảnh mỗi lần mở).
+- **Repo:** `github.com/tuantranmarinainter-ops/3JsStudio` hiện **công khai** (API trả 200 không cần đăng nhập) → dùng được Release công khai.
+- **Đạt khi (cả dự án):** `studio.html` ≤ 5 MB mở được gói tập ep003 ≤ 25 MB, khung Phim giống hệt bản gộp cũ (look.mjs --ab PSNR ≥ 88),
+  Xuất MP4 chạy trên máy; nút Cập nhật tải bản mới, lỗi thì tự quay về bản cũ.
+- **Câu hỏi còn mở:** không (repo tiếp tục công khai cho Release).
+<!-- /ĐIỂM DỪNG -->
+
+## Kiến trúc đề xuất (3 mảnh)
+
+### 1. `dist/studio.html` — một file, ~3–5 MB
+- Gồm: lõi khởi động (nhỏ, KHÔNG tự cập nhật), engine (`engine/` + `vendor/three` + troika + gsap) gộp esbuild, trình phát
+  `tools/export-ui.js` (khung studio, ghi chú lỗi, 🎬 Phim | 🧊 3D, ⬇ Xuất MP4 WebCodecs), phông.
+- Phần engine + trình phát đóng thành **`studio-core.js` có số phiên bản** (vd `2026.11.15-1`) — đây là phần "Cập nhật mới nhất" thay được.
+- Không có asset tập. Mở lên thấy màn hình "Mở tập…".
+
+### 2. Gói tập `dist/<ep>.3js` (zip không nén lại, đuôi riêng) — chỉ DỮ LIỆU
+```
+manifest.json   { ep, title, coreMin: "2026.11.15", fps, duration, assets: [{path, sha256, bytes, shared:true|false}] }
+episode.js  shots.js  captions.js  captions_en.json   (module dữ liệu, như hiện nay)
+boot.js         (chỉ tập có trang riêng — xem dưới)
+audio/          narration.mp3/ogg, sfx_*.ogg, music_nhac.ogg, voices/*, *.levels.json
+assets/         CHỈ asset riêng của tập (episodes/<ep>/*, assets/nhap/ep4-*…), file nhị phân gốc (không base64)
+ghi-cong.png
+```
+- Asset **dùng chung** (polyhaven, kenney, polyfork, characters, sky, fonts, materials) chỉ ghi tên + sha256 trong manifest.
+  Studio lấy từ **kho chung đã lưu trong máy** (IndexedDB/Cache Storage, khoá = sha256). Thiếu → lấy từ **gói kho chung**
+  `dist/kho-chung-<phiên bản>.3js` (~30 MB, tải/kéo vào 1 lần) hoặc từ Release (nếu người dùng bật tải mạng).
+- Tuỳ chọn `--tu-chua`: nhét luôn asset dùng chung vào gói (gửi cho máy khác chưa có kho) — vẫn nhẹ hơn bản cũ vì không base64.
+- Ước tính: ep003 ~ 12–18 MB, ep004 ~ 6–10 MB, ep001 ~ 30 MB (giọng + asset riêng nhiều).
+
+### 3. Trang khởi động chung trong engine (`engine/tap.js`)
+- Hiện mỗi `episodes/<ep>/index.html` có ~200 dòng khởi động gần giống nhau (ep002/ep004 lệch ep003 chỉ 34–43 dòng, ep001 riêng).
+- Gom phần chung của `episodes/_template/index.html` thành `bootEpisode({ EPISODE, SHOTS, CAPTIONS, files })` trong engine.
+  Tập theo mẫu → gói KHÔNG có code. Tập lệch mẫu (ep001, có thể ep004) → gói kèm `boot.js` riêng (vẫn chỉ vài chục KB).
+- `episodes/<ep>/index.html` dev vẫn giữ nguyên để `look.mjs`/dev chạy như cũ; bước sau mới đổi chúng sang gọi `bootEpisode`.
+
+## Studio mở tập thế nào
+- **Nút "Mở tập…"** (chọn file `.3js`), **kéo thả** file vào cửa sổ, hoặc **"Mở thư mục…"** (File System Access API trên Chrome/Edge:
+  chọn `dist/` → hiện danh sách ep001…ep004; nhớ quyền thư mục cho lần sau).
+- Tập đã mở được lưu vào IndexedDB (tuỳ chọn, bật/tắt "Nhớ tập đã mở") → danh sách "Gần đây".
+- Đọc zip bằng thư viện nhỏ (fflate, ~8 KB, vendor sẵn). Đường dẫn trong gói map vào lớp chặn fetch/`setURLModifier` sẵn có
+  (`EMBED_SHIM` của `tools/bundle.mjs`) — chỉ đổi nguồn từ base64 sang Blob trong gói/kho chung. Engine không phải sửa.
+- Đổi tập: tải lại trang con (iframe sạch) để không rò WebGL/shader giữa hai tập. Studio = khung ngoài, tập chạy trong iframe
+  `srcdoc` (cùng origin) → trình phát gọi `renderAt`, `getOptions/setOptions` như hiện nay.
+
+## Cơ chế "Cập nhật mới nhất"
+- **Nguồn (đề xuất):** GitHub **Release công khai** của repo, tệp `studio-core-<v>.js` + `studio-core.json`
+  `{ version, sha256, coreApi, notes, minBoot }`. Đọc qua `https://github.com/<repo>/releases/latest/download/studio-core.json`
+  (không cần token). Không lấy thẳng từ nhánh đang code (`ep1-v2`) — dễ dính bản dở.
+  Phương án khác: GitHub Pages (`<user>.github.io/3JsStudio/studio-core.json`) — cũng công khai, cần bật Pages.
+  Repo riêng tư → KHÔNG dùng được (cần token; Claude không nhập token hộ). Khi đó phải có kho công khai riêng chỉ chứa bản studio.
+- **Lưu ở đâu:** IndexedDB `studio-core` giữ **2 bản**: `hien-tai` và `truoc-do` (+ bản gốc nhúng trong studio.html = bản an toàn cuối).
+- **Quy trình bấm nút:** tải json → so phiên bản → hiện ghi chú thay đổi + dung lượng → người dùng bấm "Cài" → tải js → kiểm sha256
+  → chạy thử khởi động trong iframe ẩn (mở tập mẫu nhỏ có trong bản gốc, `__ready` trong 30 s, không lỗi) → đạt mới đổi `hien-tai`.
+- **Quay lại:** lần mở sau mà bản mới lỗi lúc khởi động (cờ "đang thử" chưa xoá) → tự dùng `truoc-do`, báo 1 dòng. Có nút
+  "Về bản trước" và "Về bản gốc" trong ⚙. Gói tập ghi `coreMin`; core cũ hơn → nhắc cập nhật, không mở bừa.
+- **An toàn:** chỉ tải từ đúng 1 địa chỉ ghi cứng trong lõi khởi động; kiểm sha256; lõi khởi động không bao giờ tự thay.
+  Mặc định KHÔNG tự kiểm mạng khi mở (bật/tắt "Tự kiểm bản mới"); không mạng thì studio vẫn chạy bằng bản đã có.
+- **Phát hành:** `node tools/phat-hanh-studio.mjs` dựng core + json; đẩy lên Release bằng `gh release create` — **chỉ khi người dùng bảo**.
+
+## Bật/tắt tính năng
+- Giữ nguyên: mọi công tắc nằm trong trình phát (`getOptions/setOptions`, `post.options`, ?query) — chạy trong iframe y như bây giờ.
+- Thêm vào ⚙: Tự kiểm bản mới · Nhớ tập đã mở · Tải asset thiếu từ mạng · Kênh cập nhật (ổn định / thử nghiệm) · Về bản trước/gốc.
+- Bản gộp 1 file cũ (`bundle.mjs`) VẪN giữ, thành lựa chọn "--mot-file" cho người cần gửi 1 file duy nhất.
+
+## Render trên máy người dùng
+- Không đổi: Xuất MP4 vẫn WebCodecs + GPU máy họ, trong studio. Cập nhật chỉ tải MÃ; không gửi gì lên mạng, không render cloud.
+
+## Ảnh hưởng tới công cụ
+- `look.mjs`, `shaders.mjs`, `kiem-che-do-3d.mjs`: chạy trên `episodes/<ep>/index.html` dev → **không đổi**. Thêm cờ
+  `--goi dist/<ep>.3js` để chụp đúng bản người dùng mở (studio + gói) khi cần so.
+- `export-test.mjs`, `xuat.mjs`: nhận thêm đầu vào `dist/studio.html?goi=<đường dẫn>` (studio đọc gói qua server tĩnh tạm khi có
+  `?goi`); giữ đường cũ `dist/<ep>.html` cho tới khi bỏ hẳn.
+- `bundle.mjs`: tách thành `bundle-studio.mjs` (core) + `goi-tap.mjs <ep>` (gói dữ liệu, dùng lại bước 1 ghi asset lúc init để biết
+  file nào cần, phân loại chung/riêng theo `assets/manifest.json` + đường dẫn). `doctor.mjs`: kiểm gói lệch `coreMin`, sha256.
+- Quy tắc CLAUDE.md "đưa link dist/<ep>.html" đổi thành "link studio.html + gói" — cập nhật khi người dùng chốt.
+
+## Việc còn lại (theo thứ tự, mỗi giai đoạn dừng duyệt)
+1. **GĐ1 — chứng minh** (1 phiên con Sonnet): `goi-tap.mjs ep003 --tu-chua` + `studio.html` bản thô mở được gói bằng chọn file;
+   so `look.mjs --ab` với `dist/ep003.html`. Đạt: PSNR ≥ 88, Xuất MP4 5 s chạy. Dừng: báo dung lượng thật.
+2. **GĐ2 — kho chung**: tách asset dùng chung, IndexedDB theo sha256, gói kho chung; ep002–ep004 theo mẫu; ep001 kèm `boot.js`.
+3. **GĐ3 — cập nhật**: `studio-core.json`, nút Cập nhật, thử trong iframe ẩn, 2 bản + quay lại, `phat-hanh-studio.mjs`.
+4. **GĐ4 — công cụ**: `--goi` cho look/xuat/export-test, doctor, sửa CLAUDE.md + skill `xuat-phim`.
+
+## Rủi ro
+- `file://` + iframe `srcdoc`: Chrome cho cùng origin "null" — cần thử sớm ở GĐ1 (dự phòng: chạy tập trong cùng trang, bỏ iframe).
+- IndexedDB có thể bị xoá khi dọn trình duyệt → studio vẫn chạy bằng bản gốc nhúng, chỉ phải kéo lại kho chung.
+- Code tải về chạy với quyền như trang: ai chiếm được repo/Release là đẩy được mã → giữ sha256 + chỉ 1 nguồn + người dùng bấm Cài.
+- ep001 do phiên ep001-sky-storm giữ: không đụng cho tới GĐ2.

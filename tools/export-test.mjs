@@ -23,7 +23,8 @@ const args = process.argv.slice(2);
 const input = args.find((a, i) => !a.startsWith('--') && !(i > 0 && args[i - 1].startsWith('--')));
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 if (!input) { console.error('Dùng: node tools/export-test.mjs dist/ep001.html [--range 76:92] [--res 2k|1080p|4k] [--matrix "lang=vi,en;subs=1,0;voice=1;fx=none,all;sfx=none,all"] [--vid id] [--frames t1,t2] [--out dir]'); process.exit(1); }
-const htmlPath = resolve(input);
+const [inputPath, inputQuery = ''] = input.split('?');   // dist/studio.html?goi=ep003.3js (gói tập, tools/goi-tap.mjs)
+const htmlPath = resolve(inputPath);
 if (!existsSync(htmlPath)) { console.error('Không thấy file: ' + input); process.exit(1); }
 const res = opt('res', '2k');
 const SIZES = { '2k': [1440, 2560], '1080p': [1080, 1920], '4k': [2160, 3840] };
@@ -63,7 +64,7 @@ const ctx = await browser.newContext({ acceptDownloads: true, viewport: { width:
 await ctx.addInitScript(() => { delete window.showSaveFilePicker; });
 const page = await ctx.newPage();
 page.on('pageerror', (e) => console.log('  pageerror:', e.message));
-await page.goto(pathToFileURL(htmlPath).href + '?ui=1');
+await page.goto(pathToFileURL(htmlPath).href + '?ui=1' + (inputQuery ? '&' + inputQuery : ''));
 await page.waitForFunction(() => window.__ready === true, null, { timeout: 300000 });
 await page.waitForFunction(() => document.querySelector('#xstat') && document.querySelector('#xstat').textContent.trim() === '', null, { timeout: 300000 });
 
