@@ -1,15 +1,18 @@
 // Đóng GÓI TẬP (chỉ dữ liệu, không engine) để mở bằng dist/studio.html — kế hoạch docs/handoff/tach-studio.md (GĐ1).
 //   node tools/goi-tap.mjs ep003                 → dist/ep003.3js
 //   node tools/goi-tap.mjs ep003 --out x.3js
+//   node tools/goi-tap.mjs ep003 --tu-chua       → nhét cả asset dùng chung vào gói (gửi cho máy chưa có kho chung)
 // Gói = "3JS1" + u32 độ dài header + header JSON + dữ liệu nhị phân nối liền (không base64, không nén lại).
-//   header = { v:1, ep, title, built, coreMin, mods:[khoá module engine cần], page:<HTML tập đã bỏ script>, js:'/__ep.js',
-//              files: { '/đường/dẫn': [kiểu, vị trí, độ dài] } }
+//   header = { v:2, kind:'tap', ep, title, built, coreMin, mods:[khoá module engine cần], page:<HTML tập đã bỏ script>,
+//              js:'/__ep.js', files: { '/đường/dẫn': [kiểu, vị trí, độ dài] },
+//              refs: { '/assets/…': [kiểu, sha256, độ dài] } }   ← asset DÙNG CHUNG: studio lấy từ kho chung (IndexedDB)
+// Riêng của tập = file trong episodes/<ep>/ + mã tập; còn lại (assets/, vendor/…) là dùng chung → tools/kho-chung.mjs.
 // Mã tập (episode.js, shots.js… + khối module của index.html) gộp bằng esbuild, nhưng MỌI import vào engine/ và vendor/
-// được thay bằng globalThis.__mods['<khoá>'] — studio cung cấp (tools/bundle-studio.mjs). GĐ1: gói tự chứa đủ asset
-// (cả asset dùng chung); GĐ2 mới tách kho chung.
+// được thay bằng globalThis.__mods['<khoá>'] — studio cung cấp (tools/bundle-studio.mjs).
 import { createServer } from 'http';
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import { existsSync, readFileSync } from 'fs';
+import { createHash } from 'crypto';
 import { extname, join, resolve, dirname, relative, isAbsolute } from 'path';
 import { pathToFileURL, fileURLToPath } from 'url';
 import { build } from 'esbuild';
@@ -106,11 +109,18 @@ html = html.replace(/(<audio\b[^>]*\ssrc=")([^"]+)(")/g, (m, a, src, c) => {    
 });
 
 // ---- ghi gói ----
-const entries = {}; const bufs = []; let off = 0;
-for (const [p, buf] of files) { entries[p] = [typeOf(p), off, buf.length]; bufs.push(buf); off += buf.length; }
+const tuChua = args.includes('--tu-chua');
+const entries = {}; const refs = {}; const bufs = []; let off = 0, refBytes = 0;
+for (const [p, buf] of files) {
+  if (!tuChua && p !== '/__ep.js' && !p.startsWith(`/episodes/${ep}/`)) {   // dùng chung → chỉ ghi tham chiếu
+    refs[p] = [typeOf(p), createHash('sha256').update(buf).digest('hex'), buf.length]; refBytes += buf.length; continue;
+  }
+  entries[p] = [typeOf(p), off, buf.length]; bufs.push(buf); off += buf.length;
+}
 const title = (srcHtml.match(/<title>([^<]*)<\/title>/) || [, ep])[1];
-const header = Buffer.from(JSON.stringify({ v: 1, ep, title, built: new Date().toISOString(), coreMin: CORE_MIN, mods: [...need].sort(),
-  page: html, js: '/__ep.js', files: entries }));
+const header = Buffer.from(JSON.stringify({ v: 2, kind: 'tap', ep, title, built: new Date().toISOString(), coreMin: CORE_MIN, mods: [...need].sort(),
+  page: html, js: '/__ep.js', files: entries, refs }));
+if (!tuChua) console.log(`      dùng chung (lấy từ kho chung): ${Object.keys(refs).length} file, ${(refBytes / 1048576).toFixed(1)} MB → node tools/kho-chung.mjs`);
 const len = Buffer.alloc(4); len.writeUInt32LE(header.length);
 await mkdir(dirname(out), { recursive: true });
 await writeFile(out, Buffer.concat([Buffer.from('3JS1'), len, header, ...bufs]));

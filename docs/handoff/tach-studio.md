@@ -2,28 +2,25 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-15
-- **Nhánh:** `ep1-v2`
-- **Đang làm:** GĐ1 XONG. Kế hoạch duyệt 15/11, nguồn cập nhật chốt = **GitHub Release công khai**.
-- **GĐ1 đã có:** `node tools/bundle-studio.mjs` → `dist/studio.html` 2,1 MB (lõi 55 module); `node tools/goi-tap.mjs ep003` →
-  `dist/ep003.3js` 50,2 MB (bản gộp cũ 72 MB; chỉ bỏ base64, chưa tách kho chung). Mở: nút Mở tập / kéo thả / `?goi=ep003.3js`.
-  Kiểm: `look.mjs "dist/studio.html?goi=ep003.3js" --ab dist/ep003.html` 4/5 khung giống hệt, 1 khung 86 dB (nhiễu GPU);
-  `export-test.mjs "dist/studio.html?goi=ep003.3js" --range 20:25` OK (H.264 + AAC); chế độ 3D có. Ảnh: `output/tach-studio/`.
-- **Khác kế hoạch:** gói dùng định dạng riêng "3JS1" (header JSON + nhị phân) thay zip — không cần thư viện; tập chạy cùng trang
-  (document.write) thay iframe; lõi chỉ gồm module tập import thẳng + envs (engine/stairs-lab.js là trang thử, không được nạp).
-- **Bước kế tiếp:** GĐ2 — tách kho asset chung (IndexedDB theo sha256) + gói ep002/ep004; ep001 sau khi phiên ep001-sky-storm xong.
-- **Đang chờ:** người dùng mở thử `dist/studio.html` → kéo `dist/ep003.3js` vào, rồi duyệt GĐ2.
-- **File đang dở (chưa commit):** không
-- **Đang chạy nền:** không
-- **Số đo thật (bản gộp hiện tại):** ep001 86 MB · ep002 61 · ep003 72 · ep004 55. Trong đó **JS engine + trình phát chỉ ~2 MB (3%)**;
-  phần nặng là asset nhúng base64 (+33% phình): **dùng chung ~30 MB lặp lại ở MỌI tập** (polyhaven 16.9, kenney 5.5, polyfork 4.5,
-  characters 3–8) + riêng từng tập 2–20 MB (ep001: 19.5 + giọng 11).
-  ⇒ Chỉ tách engine ra thì tập nhẹ đi ~2 MB — **vô ích**. Phải tách cả **kho asset dùng chung** (tải 1 lần, lưu máy) + bỏ base64.
-- **Nói thật:** tách file giảm dung lượng tải/lưu, KHÔNG giảm số shader hay thời gian dịch shader (dịch theo cảnh mỗi lần mở).
-- **Repo:** `github.com/tuantranmarinainter-ops/3JsStudio` hiện **công khai** (API trả 200 không cần đăng nhập) → dùng được Release công khai.
-- **Đạt khi (cả dự án):** `studio.html` ≤ 5 MB mở được gói tập ep003 ≤ 25 MB, khung Phim giống hệt bản gộp cũ (look.mjs --ab PSNR ≥ 88),
-  Xuất MP4 chạy trên máy; nút Cập nhật tải bản mới, lỗi thì tự quay về bản cũ.
-- **Câu hỏi còn mở:** không (repo tiếp tục công khai cho Release).
+- **Cập nhật:** 2026-11-15 (GĐ2 xong)
+- **Nhánh:** `ep1-v2` · nguồn cập nhật chốt = **GitHub Release công khai** (duyệt 15/11).
+- **Đã có (GĐ1+2):** `node tools/bundle-studio.mjs` → `dist/studio.html` 2,1 MB · `node tools/goi-tap.mjs <ep> [--tu-chua]` → `dist/<ep>.3js`
+  · `node tools/kho-chung.mjs [ep…]` → `dist/kho-chung.3js` 48,7 MB (asset dùng chung của mọi gói, trùng sha256 lưu 1 lần).
+- **Dung lượng gói (cũ → mới):** ep001 86 → 25,1 MB · ep002 61 → 5,7 · ep003 72 → 5,4 · ep004 55 → 0,9 (+ kho chung 1 lần).
+  Riêng tập = file trong episodes/<ep>/ + mã tập; mọi thứ khác (assets/…) là dùng chung.
+- **Cách dùng:** mở studio.html → kéo gói tập (lần đầu kéo cả kho-chung.3js; thiếu kho thì studio nhắc và tự mở tập sau khi nạp).
+  Kho lưu IndexedDB '3js-studio' (blob theo sha256, path→sha); nút Xoá kho. Tự động: `?goi=<ep>.3js[&kho=…]` (mặc định thử kho-chung.3js cạnh studio).
+- **Đã kiểm:** look --ab với dist/<ep>.html: ep002/ep003 giống hệt, ep004 ≥ 104 dB; ep001 so trang dev cùng lúc 87,6 dB (nhiễu GPU —
+  dist/ep001.html cũ hơn mã vì phiên khác đang sửa engine/ep001). `node tools/kiem-studio.mjs <ep>` ĐẠT ep003/ep004 (thiếu kho → nhắc;
+  nạp kho → tự mở; mở lại không cần file kho). Xuất MP4: ep003 20–25 s, ep002 10–14 s OK. Ảnh: `output/tach-studio/`.
+- **Khác kế hoạch:** định dạng riêng "3JS1" thay zip; tập chạy cùng trang (document.write) thay iframe; lõi = module tập import thẳng + envs.
+- **Lưu ý:** gói phải đóng lại khi mã tập/engine đổi (gói chứa mã tập; studio chứa engine) — dựng studio + gói + kho cùng lúc.
+- **Bước kế tiếp:** GĐ3 — nút Cập nhật mới nhất (studio-core.json trên Release, 2 bản + quay lại, `tools/phat-hanh-studio.mjs`).
+- **Đang chờ:** người dùng mở thử studio.html + kéo kho-chung.3js và một gói tập; duyệt GĐ3. Đẩy Release cần người dùng bảo.
+- **File đang dở (chưa commit):** không · **Đang chạy nền:** không
+- **Nói thật:** tách file giảm dung lượng tải/lưu, KHÔNG giảm số shader hay thời gian dịch shader.
+- **Đạt khi (cả dự án):** như trên + nút Cập nhật tải bản mới từ Release, lỗi thì tự quay về bản cũ; công cụ (xuat.mjs, doctor) hiểu gói.
+- **Câu hỏi còn mở:** không
 <!-- /ĐIỂM DỪNG -->
 
 ## Kiến trúc đề xuất (3 mảnh)
