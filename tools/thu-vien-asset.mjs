@@ -472,6 +472,7 @@ button.chinh{background:var(--acc);color:#fff;border-color:var(--acc)}button.on{
 .gia{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:99px;margin-top:3px;background:var(--line)}.gia.mp{background:var(--okbg);color:var(--ok)}.gia.tp{background:var(--warnbg);color:var(--warn)}
 .mpl{font-size:13px;display:flex;gap:4px;align-items:center;border:1px solid var(--line);border-radius:99px;padding:4px 10px;background:var(--card)}
 .pn{border:1px solid var(--line);border-radius:10px;padding:8px;margin-bottom:8px}.pnt{font-size:12px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.pb{border:1px dashed var(--warn);border-radius:10px;padding:8px;margin-top:8px}.pbta{width:100%;font:12px/1.45 ui-monospace,Consolas,monospace;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);resize:vertical;margin-bottom:6px}
 .tkrow{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}.tkin{flex:1;min-width:140px;font:inherit;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);min-height:36px}
 .trong{color:var(--mut);font-size:13px;padding:14px;border:1px dashed var(--line);border-radius:10px}
 .foot{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 16px;z-index:9}
@@ -556,6 +557,23 @@ function panel(m,g){
   else if(dt!=='...'&&!dt)p.append(E('div',{class:'trong'},'Chưa có kết quả — đang chờ tìm (hoặc bấm Tìm).'));
   if(!n&&!dt&&OB){p._tu=()=>timNg(m,g,S.tk[k]!==undefined?S.tk[k]:m.tk,false);OB.observe(p)}
   return p}
+function promptBlender(m){
+  const ch=S.chon[m.id]||{},ds=Object.entries(ch);
+  const tc=ds.length?ds.map(([id,v])=>'- '+(v.ten||id)+' ('+(NGT[v.nguon]||(m.av?'Avatar Shop':'Roblox Creator Store'))+(v.gia?', '+v.gia+' R$ trả phí':'')+(v.tamGiac?', '+v.tamGiac+' tam giác':'')+') — '+(v.link||URLX(m,id))+(/^\d+$/.test(id)?'\n  ảnh xem trước: S:/3JS Studio/dist/thu-vien-asset-anh/'+id+'.jpg':'')).join('\n'):'- (chưa chọn mẫu tham chiếu — dùng ảnh cắt từ video)';
+  return ['Hãy dùng Blender MCP (Blender 5.1.2) dựng thử cho tôi một model 3D low poly cho dự án S:/3JS Studio. Đọc docs/nhap-model.md trước (quy ước nhập model).','',
+    'MÓN: '+m.ten+(m.en?' ('+m.en+')':''),
+    m.ctNv?'Mô tả: '+m.ctNv:null,
+    'Màu chủ đạo: '+m.mau.join('; '),'Vật liệu: '+m.vl.join('; '),'Cỡ (stud): '+(m.kt.join('; ')||'không rõ'),
+    'Ảnh cắt từ video: S:/3JS Studio/output/thu-vien-asset/cat/'+m.id+'.jpg (nếu chưa có, chạy: node tools/thu-vien-asset.mjs dung)','',
+    'MẪU THAM CHIẾU tôi đã chọn (chỉ để NHÌN hình dáng, tỉ lệ, màu; mẫu trả phí thì KHÔNG tải, KHÔNG chép nguyên — dựng bản MỚI tương tự):',tc,'',
+    'YÊU CẦU: phong cách khối vuông Roblox, low poly, phẳng màu, đặt tên rõ từng bộ phận; mặt trước nhìn +Z, 1 đơn vị = 1 stud. Blender chỉ để dựng model (không animation, ánh sáng, render cảnh).',
+    'Xuất GLB vào output/thu-vien-asset/blender/'+m.id+'.glb và chụp một ảnh xem thử (lưu ra file, đừng dán vào chat) để tôi duyệt. CHƯA nhập kho.',
+    'Đạt khi: có file GLB và ảnh xem thử có hình khối + màu gần với mẫu tham chiếu. Dừng khi: đưa ảnh xem thử cho tôi duyệt.'].filter(x=>x!==null).join('\n')}
+function boxPrompt(m){
+  const ta=E('textarea',{class:'pbta',readonly:'',rows:'9','aria-label':'Prompt giao Claude dựng bằng Blender'});ta.value=promptBlender(m);
+  const gh=E('span',{class:'mut'});
+  const sao=E('button',{class:'chinh',onclick:async()=>{try{await navigator.clipboard.writeText(ta.value);gh.textContent='Đã sao chép — dán cho Claude'}catch(e){ta.select();document.execCommand('copy');gh.textContent='Đã chọn sẵn — bấm Ctrl+C rồi dán cho Claude'}}},'Sao chép prompt');
+  return E('div',{class:'pb'},E('div',{class:'pnt'},'Prompt giao Claude dựng bằng Blender (cập nhật theo mẫu bạn chọn)'),ta,E('div',{class:'tkrow'},sao,gh))}
 function hang(m){
   const goc=S.tim[m.id]?S.tim[m.id].mau:m.mauStore;
   const ch=S.chon[m.id]||{},nch=Object.keys(ch).length,pool=S.mp?goc.filter(x=>x[4]===0):goc,n=pool.length;
@@ -591,6 +609,7 @@ function hang(m){
   if(S.src.roblox)ph.append(rb);
   for(const g of NG)if(S.src[g.id])ph.append(panel(m,g));
   ph.append(da);
+  if(S.bld[m.id])ph.append(boxPrompt(m));
   return E('section',{class:'mon'+(nch?' co-chon':''),id:'m-'+m.id},tr,ph)}
 function ve(){
   const nav=document.getElementById('muc'),main=document.getElementById('main');
