@@ -19,7 +19,7 @@ Kịch bản người dùng đưa là tài sản của họ: làm luôn, không 
 | `xu-ly/cham-diem.md` | 1 | Bảng chấm + câu hỏi |
 | `kich-ban-tinh.md` | 3 | Chuyện tinh cho người đọc, khuôn `khuon-kich-ban-tinh.md` |
 | `bang-shot.json` | 3 | Phải qua `node tools/kiem-bang-shot.mjs kich-ban/<ep>` (mã thoát 0) |
-| `boi-canh/<id>.json` | 4 | Danh sách mốc, khuôn `khuon-boi-canh.md`. Mẫu thật: `kich-ban/ep004/tham-chieu-v2/moc-nha-may-ngoai.json` |
+| `boi-canh/<id>.json` | 4 | Danh sách mốc, khuôn `khuon-boi-canh.md`. Mẫu thật: `tools/tests/fixtures/boi-canh-mau/moc-nha-may-ngoai.json` |
 
 ## Bước 1 — Chấm điểm (chưa viết lại gì)
 Đọc `tieu-chi.md`. Chấm từng tiêu chí: **đạt / yếu / thiếu**, mỗi dòng ghi bằng chứng (câu nào trong bản thô). Ghi `xu-ly/cham-diem.md`.

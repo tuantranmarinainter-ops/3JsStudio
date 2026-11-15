@@ -57,7 +57,7 @@ Lối 3: video tham khảo ─► [0c video-sang-kich-ban] ⚠ (chỉ lấy form
   5. Đồ lấp đầy theo cụm (trái/phải/tiền cảnh/hậu cảnh) có số lượng; luôn có trời/hậu cảnh xa, mặt đất.
   6. Vùng chừa trống (đường đi nhân vật, đường camera) + điều cấm kiểm được (giữ đúng số ô kính, không thêm cửa…).
   Kèm ánh sáng và "shot nào nhìn từ hướng nào". Số ghi `nguonSo: "uoc"` (hoặc `"env"` nếu lấy từ env có sẵn).
-- **Đầu ra:** `kich-ban/<ep>/boi-canh/<id>.json` (mẫu: `kich-ban/ep004/tham-chieu-v2/moc-nha-may-ngoai.json`).
+- **Đầu ra:** `kich-ban/<ep>/boi-canh/<id>.json` (mẫu: `tools/tests/fixtures/boi-canh-mau/moc-nha-may-ngoai.json`).
 - **STOP:** duyệt danh sách mốc.
 
 ## Bước 5 — Tờ mẫu nhân vật · Codex qua `tools/codex-ve.mjs`

@@ -1,0 +1,51 @@
+{
+  "_ghiChu": "DANH SÁCH MỐC BẮT BUỘC — bối cảnh 'Sân ngoài nhà máy (đêm)' ep004. Nguồn số: engine/envs/e4-nha-may.js (đã chốt) + kich-ban.md + bảng cỡ DE-BAI mục 3. Đây là NGUỒN SỰ THẬT cho cả đề bài vẽ lẫn bước kiểm ảnh.",
+  "boiCanh": "nha-may-ngoai",
+  "donVi": "stud",
+  "heQuyChieu": "Gốc = tâm sàn sân, y = 0 là mặt sân. +X sang phải (nhìn từ sân vào tường), +Z từ tường ra sân (về phía camera chính). Mặt tường phía sân ở z = -11.25.",
+  "kichThuoc": { "san": [32, 24], "tuongRong": 48, "tuongCao": 18 },
+  "vatDoCo": [
+    { "ten": "hình nộm xám khối vuông cao 5.48 (= Gà, không tóc)", "dat": [-1.9, 0, -10.5], "ghiChu": "đứng sát tường dưới kính: đỉnh đầu 5.48 THẤP HƠN bậu 5.8" },
+    { "ten": "hình nộm xám thứ hai", "dat": [0.8, 1.4, -10.2], "ghiChu": "đứng trên nắp thùng: mắt ~6.15 CAO HƠN bậu" },
+    { "ten": "khối lập phương 1×1×1 sơn ca-rô đen trắng", "dat": [4, 0, -6] }
+  ],
+  "moc": [
+    { "id": "tuong", "ten": "Tường gạch nhà máy", "bat": true, "vung": "x -24..24, z -11.75..-11.25, y 0..18", "mau": ["#5f7480", "#3a4650"], "vatLieu": "gạch block lớn xanh xám, vữa tối, hơi rêu dưới chân tường" },
+    { "id": "kinh", "ten": "Cửa kính lớn 3 ô", "bat": true, "vung": "x -5.5..5.5, y 5.8..12, mặt kính z -11.5", "mau": ["#ffd9a0", "#1d2630"], "vatLieu": "khung thép tối dày 0.4, ĐÚNG 2 song đứng chia 3 ô đứng bằng nhau, KHÔNG có song ngang (không phải 3×3, không phải 2×2); kính hắt ánh vàng ấm từ trong" },
+    { "id": "bau", "ten": "Bậu cửa kính", "bat": true, "vung": "x -5.9..5.9, mặt trên y 5.8, nhô ra tới z -10.95", "mau": ["#3b4652"], "vatLieu": "gờ bê tông/thép" },
+    { "id": "thung", "ten": "Thùng gỗ để trèo", "bat": true, "vung": "x -0.5..2.1, y 0..1.4, z -11.25..-8.85 (SÁT tường, ngay dưới ô kính giữa)", "mau": ["#8a6a44", "#3a2614"], "vatLieu": "ván gỗ, viền tối, một thanh chéo trên mặt trước" },
+    { "id": "san", "ten": "Mặt sân", "bat": true, "vung": "x -16..16, z -12..12", "mau": ["#2a313a"], "vatLieu": "tấm bê tông lát ô vuông, mạch tối, vài vệt ẩm" },
+    { "id": "anh-hat", "ten": "Vệt sáng vàng hắt qua kính xuống sân", "bat": true, "vung": "hình thang trên sân trước kính, z -11..-5", "mau": ["#ffd9a0"] },
+    { "id": "ong", "ten": "Ống dẫn trên tường (xám + đỏ)", "bat": true, "vung": "trái: ống ngang y 3.2 x -10.5..-3.9; ống đứng x -4.3; ống đỏ y 1.5", "mau": ["#56606b", "#7a3a30"] },
+    { "id": "day-dien", "ten": "Dây điện võng", "bat": true, "vung": "trái: x -9..-3.7, y 4.3..5.6", "mau": ["#0d0f12"] },
+    { "id": "hop-cau-dao", "ten": "Hộp cầu dao + 3 đèn báo xanh/cam/đỏ", "bat": true, "vung": "trái: tâm [-6, 2.5], cao 2.3", "mau": ["#4a5560", "#3cff5c", "#ffb020", "#ff3030"] },
+    { "id": "binh-cuu-hoa", "ten": "Bình cứu hoả đỏ + biển", "bat": true, "vung": "trái, sát tường gần hộp cầu dao", "mau": ["#c0281e"] },
+    { "id": "thang", "ten": "Thang sắt dựa tường", "bat": true, "vung": "trái, cao 6.4", "mau": ["#8a949e"] },
+    { "id": "ke-gia", "ten": "Giá kệ kho 4 tầng", "bat": true, "vung": "trái xa: x -14..-10, z -10.4, cao 5", "mau": ["#1d2630"] },
+    { "id": "xich-treo", "ten": "Giá cẩu tay + xích + móc", "bat": true, "vung": "trái, tay cẩu nhô ra ở y 12.6 tại x -7.6", "mau": ["#1d2630"] },
+    { "id": "thung-chong", "ten": "Thùng hàng chồng", "bat": true, "vung": "phải: x 4..12 sát tường; thêm thùng lẻ [9.5, -10.2] 1.8 và [-11.5, -9.6] 2.2", "mau": ["#7a5e36", "#8a6c3e"] },
+    { "id": "pallet", "ten": "Pallet gỗ + kiện hàng", "bat": true, "vung": "phải", "mau": ["#8a6a3c", "#6a7c8a"] },
+    { "id": "phuy", "ten": "Thùng phuy xanh + đỏ", "bat": true, "vung": "phải", "mau": ["#3f5f86", "#8a3a2e"] },
+    { "id": "bao-tai", "ten": "Bao tải chất đống", "bat": true, "vung": "phải", "mau": ["#a58c64"] },
+    { "id": "xe-day", "ten": "Xe đẩy hàng tay", "bat": true, "vung": "phải", "mau": ["#8a949e"] },
+    { "id": "bien-canh-bao", "ten": "Biển cảnh báo tam giác vàng có dấu !", "bat": true, "vung": "phải, trên tường", "mau": ["#e8b81c", "#1c2026"] },
+    { "id": "den-do", "ten": "Đèn đỏ nhấp nháy trên đế", "bat": true, "vung": "phải", "mau": ["#ff3030"] },
+    { "id": "den-tuong", "ten": "4 đèn tường tròn", "bat": true, "vung": "[-8.6,10.4] [8.6,10.4] [-4,12] [4,12], nhô 0.9 khỏi tường", "mau": ["#cfe6ff"] },
+    { "id": "rao-non", "ten": "Hàng rào thấp + nón giao thông tiền cảnh", "bat": true, "vung": "chỉ hai mép trái/phải, z > 0", "mau": ["#e8742a", "#e8e8e8"] },
+    { "id": "hau-canh", "ten": "Hậu cảnh trên mái: MỘT ống khói gạch cao ở phía trái xa, bể nước trên chân ở phía phải, một cột đèn, vài khối nhà xa tối", "bat": true, "vung": "nhô lên sau đỉnh tường y > 18", "mau": ["#34404e", "#1a2230"] },
+    { "id": "troi", "ten": "Trời đêm xanh đậm, trăng tròn nhỏ phía trên bên trái, vài đám mây mềm", "bat": true, "mau": ["#0e1a2a", "#1a2a40"] },
+    { "id": "phong-trong", "ten": "Phòng trong thấy qua kính: sàn nâng 3.4, băng chuyền ngắn mặt ở y 5.5 z -15.75, đèn treo vàng", "bat": true, "vung": "z -11.75..-22.75, x ±8", "mau": ["#ffb347", "#8a7a60"] }
+  ],
+  "chuaTrong": [
+    "khoảng sân x -4..4, z -11..2 (đường đi của Gà và camera các shot)",
+    "toàn bộ ô kính: không vật nào che kính",
+    "mặt trước và nắp thùng gỗ"
+  ],
+  "cam": [
+    "không nhân vật, không người, không gấu",
+    "không chữ ngoài dấu ! trên biển cảnh báo và chữ 'ĐIỆN' trong phòng",
+    "không thêm cửa đi, cửa sổ thứ hai, mái hiên hay cây trên mảng tường này",
+    "không đổi số ô kính, không đổi vị trí thùng"
+  ],
+  "anhSang": "ngoài sân xanh lạnh ban đêm (luma ~95); bên trong vàng ấm hắt qua kính; 4 đèn tường trắng xanh yếu; đèn đỏ là điểm nhấn nhỏ"
+}

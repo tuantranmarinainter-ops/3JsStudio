@@ -63,7 +63,7 @@ Bảng shot (bước 6) có luật bố cục kiểm được: "người gần n
 ## 5. Áp vào việc tạo kit ep004 (đề xuất, chưa làm)
 
 - Bỏ việc nhờ Codex vẽ ảnh bối cảnh từ chữ để LẤY SỐ ĐO. Thay bằng:
-  `moc-<bối cảnh>.json` (danh sách mốc, đã viết thử: `kich-ban/ep004/tham-chieu-v2/moc-nha-may-ngoai.json`)
+  `moc-<bối cảnh>.json` (danh sách mốc, đã viết thử: `tools/tests/fixtures/boi-canh-mau/moc-nha-may-ngoai.json`)
   → engine dựng khối xám → `look.mjs` chụp 2 góc cố định (trên cao + ngang mắt) → người duyệt bố cục.
 - Ảnh AI chỉ còn dùng cho **không khí/vật liệu**: đính kèm ảnh khối xám làm khung (`-i`) và bắt vẽ chồng lên đúng hình khối đó.
   Như vậy số ô kính, vị trí thùng, độ cao bậu không thể bị vẽ khác đi.
