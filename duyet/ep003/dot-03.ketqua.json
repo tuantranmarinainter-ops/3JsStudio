@@ -1,0 +1,31 @@
+{
+ "tap": "ep003",
+ "dot": 3,
+ "luc": "2026-11-14T04:28:37.294Z",
+ "gau": null,
+ "duyet": [],
+ "sua": [],
+ "chuaChon": [],
+ "chon": {
+  "pho_nha_ga": "pho_nha_ga__2",
+  "pho_tiem_gau": "pho_tiem_gau__4",
+  "pho_tiem_banh": "pho_tiem_banh__10",
+  "pho_tiem_may": "pho_tiem_may__5",
+  "pho_nha_thi_truong": "pho_nha_thi_truong__2",
+  "pho_nha_nen_dong": [
+   "pho_nha_nen_dong__4",
+   "pho_nha_nen_dong__5",
+   "pho_nha_nen_dong__6",
+   "pho_nha_nen_dong__3",
+   "pho_nha_nen_dong__8",
+   "pho_nha_nen_dong__7",
+   "pho_nha_nen_dong__9"
+  ],
+  "pho_nga_ba": "pho_nga_ba__7",
+  "pho_nha_may_xa": "pho_nha_may_xa__5",
+  "pho_thap_chuong": "pho_thap_chuong__3"
+ },
+ "ghiChu": {},
+ "doiTuDot": {},
+ "giuTuDot": {}
+}
