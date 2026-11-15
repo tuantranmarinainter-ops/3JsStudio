@@ -2,8 +2,7 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-15 (GĐ3 xong, CHƯA phát hành lần đầu; + chế độ song song Phim | 3D)
-- **Nhánh:** `ep1-v2` · nguồn cập nhật chốt = **GitHub Release công khai** (duyệt 15/11).
+- **Cập nhật:** 2026-11-15 (GĐ3 xong + đã phát hành bản đầu; + song song Phim | 3D) · **Nhánh:** `ep1-v2` · nguồn = GitHub Release công khai.
 - **Đã có (GĐ1+2):** `node tools/bundle-studio.mjs` → `dist/studio.html` 2,1 MB · `node tools/goi-tap.mjs <ep> [--tu-chua]` → `dist/<ep>.3js`
   · `node tools/kho-chung.mjs [ep…]` → `dist/kho-chung.3js` 48,7 MB (asset dùng chung của mọi gói, trùng sha256 lưu 1 lần).
 - **Dung lượng gói (cũ → mới):** ep001 86 → 25,1 MB · ep002 61 → 5,7 · ep003 72 → 5,4 · ep004 55 → 0,9 (+ kho chung 1 lần; riêng = episodes/<ep>/).
