@@ -70,10 +70,15 @@ def grab(video, shots, fps, out):
     nums = sorted(want)
     tmp = out / '_tmp'
     shutil.rmtree(tmp, ignore_errors=True); tmp.mkdir()
-    expr = '+'.join(f'eq(n\\,{n})' for n in nums)
-    r = run(['ffmpeg', '-v', 'error', '-y', '-i', str(video), '-vf', f"select='{expr}',scale=540:-2",
-             '-fps_mode', 'passthrough', '-q:v', '3', str(tmp / '%05d.jpg')], text=True)
-    files = sorted(tmp.glob('*.jpg'))
+    # bộ lọc hàng trăm khung làm ffmpeg trên Windows báo "Cannot allocate memory" → chia nhóm 60 khung
+    files = []
+    for k in range(0, len(nums), 60):
+        part = nums[k:k + 60]
+        sub = tmp / f'{k:05d}'; sub.mkdir()
+        expr = '+'.join(f'eq(n\\,{n})' for n in part)
+        r = run(['ffmpeg', '-v', 'error', '-y', '-i', str(video), '-vf', f"select='{expr}',scale=540:-2",
+                 '-fps_mode', 'passthrough', '-q:v', '3', str(sub / '%05d.jpg')], text=True)
+        files += sorted(sub.glob('*.jpg'))
     if len(files) < len(nums):   # khung cuối video có thể thiếu → lấy khung gần nhất
         print(f'  (lấy được {len(files)}/{len(nums)} khung) {r.stderr[-200:]}')
     if not files:
