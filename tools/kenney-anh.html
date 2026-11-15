@@ -1,0 +1,27 @@
+<!doctype html>
+<!-- Vẽ ảnh nhỏ 256×256 cho một model GLB (dùng bởi tools/thu-vien-nguon.mjs, nguồn Kenney). window.ve('/assets/...glb') → dataURL jpeg. -->
+<html><head><meta charset="utf-8">
+<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
+<style>*{margin:0}</style></head>
+<body><canvas id="c" width="256" height="256"></canvas>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+const cv = document.getElementById('c');
+const rd = new THREE.WebGLRenderer({ canvas: cv, antialias: true, preserveDrawingBuffer: true });
+rd.setSize(256, 256, false);
+const L = new GLTFLoader();
+window.ve = async (src) => {
+  const sc = new THREE.Scene(); sc.background = new THREE.Color('#e6e9ee');
+  sc.add(new THREE.HemisphereLight('#ffffff', '#6b7078', 1.7));
+  const sun = new THREE.DirectionalLight('#ffffff', 2.2); sun.position.set(4, 9, 6); sc.add(sun);
+  const g = await L.loadAsync(src); sc.add(g.scene); g.scene.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(g.scene), c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3());
+  const R = Math.max(s.x, s.y, s.z) || 1;
+  const cam = new THREE.PerspectiveCamera(30, 1, 0.01, 1000);
+  cam.position.set(c.x + R * 1.7, c.y + R * 1.2, c.z + R * 2.1); cam.lookAt(c);
+  rd.render(sc, cam);
+  return cv.toDataURL('image/jpeg', 0.8);
+};
+window.__ready = true;
+</script></body></html>
