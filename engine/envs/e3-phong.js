@@ -52,7 +52,7 @@ export function phongPhanChieu(P, ry) {
   return [P[0] - 2 * d * n[0], P[1] - 2 * d * n[1], P[2] - 2 * d * n[2]];
 }
 
-import { createPuffy } from '../cloth.js';
+import { createPuffy, createBedSoft } from '../cloth.js';
 
 export default function build(g, e, H) {
   const { ganTang, THREE, hash, LIGHTS, scene } = H;
@@ -199,12 +199,18 @@ export default function build(g, e, H) {
     const cz0 = BED_Z0 + 2.5, cz1 = BED_Z1 - 0.32, cm = chanMat(); cm.map.repeat.set(2, 2.6);
     const ch = tag(new THREE.Mesh(new THREE.BoxGeometry(BED_W - 0.1, 0.26, cz1 - cz0), cm), 'fabric'); ch.name = 'phong_chan'; ch.position.set(BX, BED_TOP - 0.13, (cz0 + cz1) / 2); mid.add(ch);
     const cs = chanMat(); cs.map.repeat.set(2.6, 0.5);
-    for (const sx of [-1, 1]) { const m = tag(new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.0, cz1 - cz0), cs), 'fabric'); m.name = 'phong_chan_ru'; m.position.set(BX + sx * (BED_W / 2 - 0.02), BED_TOP - 0.6, (cz0 + cz1) / 2); mid.add(m); }
-    box(mid, 'phong_ga_gap', BED_W - 0.2, 0.3, 0.7, BX, BED_TOP - 0.2, cz0 - 0.3, '#ede3cf', 'fabric');
+    const hop = [ch];   // bản HỘP cũ của chăn (ô FX 'vaiGiuong' tắt thì hiện lại)
+    for (const sx of [-1, 1]) { const m = tag(new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.0, cz1 - cz0), cs), 'fabric'); m.name = 'phong_chan_ru'; hop.push(m); m.position.set(BX + sx * (BED_W / 2 - 0.02), BED_TOP - 0.6, (cz0 + cz1) / 2); mid.add(m); }
+    hop.push(box(mid, 'phong_ga_gap', BED_W - 0.2, 0.3, 0.7, BX, BED_TOP - 0.2, cz0 - 0.3, '#ede3cf', 'fabric'));
     const cp = chanMat(); cp.map.repeat.set(2, 2.4);   // chăn PHỦ NGƯỜI (ctx.chanPhu): gò chăn che thân Gà đang nằm
     const phu = tag(new THREE.Mesh(new THREE.BoxGeometry(BED_W - 0.5, 1.5, 3.5), cp), 'fabric'); phu.name = 'phong_chan_phu'; phu.position.set(BX, BED_TOP + 0.62, -2.5); phu.visible = false; mid.add(phu); e.chanPhu = phu;   // z −4,25…−0,75: phủ từ vai tới chân Gà, chừa góc chân giường cho Bắp
     const pil = createPuffy(THREE, { a: 1.35, b: 0.42, c: 0.85, ex: 0.6, dent: 0.2, pinch: 0.5, seed: 3, name: 'phong_goi', color: '#EDE3CF' }); pil.position.set(BX, BED_TOP + 0.12, BED_Z0 + 1.35); mid.add(pil);
     pil.traverse((o) => { if (o.isMesh && o.material) { o.material = o.material.clone(); o.material.color.set('#ede3cf'); tag(o, 'fabric'); } });
+    // CHĂN VẢI MỀM (kế thừa ep001: engine/cloth.js createBedSoft — chăn rủ mềm + nếp gấp ga, thở theo t). Ô FX 'vaiGiuong' (mặc định bật).
+    // Dựng CẢ HAI bản (hộp cũ + vải), update() chỉ đổi visible → tua tới/lui như nhau; tắt ô = hộp cũ y nguyên. Hai tấm vải: phẳng / gò theo người nằm (ctx.chanPhu).
+    const sm = plaidTex.clone(); sm.needsUpdate = true; sm.repeat.set(0.5, 0.5);   // uv lưới vải tính bằng stud → 1 ô ca-rô = 2 stud như chăn hộp
+    const vai = (name, lumps, w = BED_W - 0.3) => { const s = createBedSoft(THREE, { w, len, top: BED_TOP, edgeY: BED_TOP - 1.1, map: sm, foldColor: '#ede3cf', pillows: [], lumps, seed: 3 }); s.name = name; s.position.set(BX, 0, zc); s.visible = false; mid.add(s); return s; };
+    e.chanVai = { hop, phang: vai('phong_chan_vai', []), phu: vai('phong_chan_vai_phu', [{ x: 0, z: -2.75 - zc, rx: 2.2, rz: 2.25, h: 1.6, p: 4 }], BED_W) };   // gò hộp trùm thân Gà nằm (thân cao tới y 3,65; đo 15/11). Tay Gà dang rộng hơn đệm (x ±2,18, cao 3,95) nên vẫn ló ở hai mép như bản hộp cũ: gò rộng/cao hơn thì che mất đồng hồ trong gương ở s023
   }
   // ---- TỦ ĐÈN sau đầu giường (góc tây–bắc) + đèn bàn hổ phách ----
   const NX = -6.2, NZ = -HZ + 0.8, NH = 2.55;
@@ -311,7 +317,9 @@ export default function build(g, e, H) {
     winLeft.rotation.y = num(c.cuaSo, 0) * 1.9;                       // cánh trái mở ra ngoài
     ketDoor.rotation.y = num(c.ketMo, 0) * 1.9; ket.position.y = num(c.ketY, 0);
     glassM.material = c.guong === 0 ? fakeMat : refMat; mirror.rotation.y = num(c.guongRy, GUONG.ry); refMat.uniforms.tint.value.set('#d3d9e6').multiplyScalar(num(c.guongSang, 1));
-    e.chanPhu.visible = !!c.chanPhu;
+    { const soft = globalThis.__autoFx?.vaiGiuong !== false, phu = !!c.chanPhu, V = e.chanVai;   // chăn: vải mềm (mặc định) hoặc hộp cũ
+      for (const m of V.hop) m.visible = !soft; e.chanPhu.visible = phu && !soft; V.phang.visible = soft && !phu; V.phu.visible = soft && phu;
+      if (soft) (phu ? V.phu : V.phang).userData.update(t); }
     if (pool && e.pointSpec) { const s = e.pointSpec; pool.color.set(s.color); pool.intensity = s.intensity; pool.distance = s.distance; pool.decay = s.decay; pool.position.set(...s.pos); }   // áp ngay trong khung này (applyPool chạy trước update)
   } };
 }

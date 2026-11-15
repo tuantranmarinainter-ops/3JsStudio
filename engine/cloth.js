@@ -19,6 +19,7 @@ const h1 = (n) => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s
 export function clothMaterial(THREE, o = {}) {
   const m = new THREE.MeshStandardMaterial({ color: o.color || '#e9dfc8', roughness: o.roughness ?? 0.93, metalness: 0, side: THREE.DoubleSide });
   m.name = o.name || 'cloth';
+  if (o.map) m.map = o.map;                    // ảnh hoạ tiết (vd chăn ca-rô); uv của lưới vải tính bằng stud → đặt map.repeat = 1/cỡ ô. Có map = thêm 1 program
   if (!o.grunge) m.userData.noGrunge = true;   // grunge.js bỏ qua (trừ khi o.grunge: buồm cũ lấy thêm lớp bụi/vân sần chung)
   const U = {
     uClOn: CLOTH.on,
@@ -248,9 +249,13 @@ export function createBlanket(THREE, o = {}) {
     // gồ theo người nằm + thở (hàm thuần của t)
     const onTop = Math.max(0, 1 - Math.max(0, ax - half) * 1.5);
     for (let i = 0; i < lumps.length; i++) {
-      const [lx, lz, lr, lh] = lumps[i];
+      const L = lumps[i], breathe = live ? 1 + 0.06 * Math.sin(t * 1.55 + i * 1.9) : 1;
+      if (!Array.isArray(L)) {   // gò HỘP { x, z, rx, rz, h, p }: đỉnh phẳng, sườn dốc (người khối vuông nằm dưới chăn) — tích 2 chiều, không bo elip
+        const p = (L.p ?? 3) * 2;
+        y += L.h * breathe * Math.exp(-Math.pow(Math.abs(x - L.x) / L.rx, p)) * Math.exp(-Math.pow(Math.abs(z - L.z) / L.rz, p)) * onTop; continue;
+      }
+      const [lx, lz, lr, lh] = L;
       const d2 = ((x - lx) ** 2) / (lr * lr) + ((z - lz) ** 2) / ((lr * 2.6) ** 2);
-      const breathe = live ? 1 + 0.06 * Math.sin(t * 1.55 + i * 1.9) : 1;
       y += lh * breathe * Math.exp(-d2 * 1.6) * onTop;
     }
     // nếp nhăn mềm: dọc thân (giữa 2 người lõm nhẹ) + gợn chéo
@@ -265,7 +270,7 @@ export function createBlanket(THREE, o = {}) {
     return [x, y, z];
   };
   const geo = grid(THREE, NU, NV, (u, v) => shape(u, v, 0, false), [span, len]);
-  const mat = clothMaterial(THREE, { color: o.color || '#c0392b', trans: 0.25, sheen: 0.55, weave: 1.2, weaveScale: 9, seams: [span / 4, len / 5], name: 'cloth_blanket' });
+  const mat = clothMaterial(THREE, { color: o.color || (o.map ? '#ffffff' : '#c0392b'), map: o.map, trans: 0.25, sheen: 0.55, weave: 1.2, weaveScale: 9, seams: [span / 4, len / 5], name: 'cloth_blanket' });
   const g = new THREE.Group(); g.name = 'blanket';
   const mesh = tagMesh(new THREE.Mesh(geo, mat)); mesh.name = 'blanket_cloth'; g.add(mesh);
   // mép chăn gập ở cổ: cuộn vải sáng màu (ga trải giường lật ra)
@@ -288,13 +293,13 @@ export function createBlanket(THREE, o = {}) {
 // K.bed (engine/props.js) đã tự có bộ này; env có giường riêng thì gọi hàm này thay vì box() chăn/gối.
 // Gốc = tâm giường trên sàn; giường dọc trục z, đầu giường phía −z. Toạ độ cục bộ của nhóm cha.
 // o: { w: rộng đệm, len: dài đệm, top: cao mặt chăn, edgeY: mép chăn rủ tới, neck: z cổ chăn (tính từ đầu giường, mặc định 2,5),
-//      color, foldColor, pillowColor, pillows: [{ x, ry, seed }] (mặc định 1 gối giữa), lumps: [[x,z,r,h]] người nằm, fold: true }
+//      color, map (ảnh hoạ tiết chăn, uv = stud), foldColor, pillowColor, pillows: [{ x, ry, seed }] (mặc định 1 gối giữa), lumps: [[x,z,r,h]] hoặc gò hộp { x, z, rx, rz, h, p } người nằm, fold: true }
 // Trả Group 'bed_soft' có .userData.update(t) (chăn thở theo t) và .userData.blanket / .fold / .pillows.
 export function createBedSoft(THREE, o = {}) {
   const w = o.w ?? 6.8, len = o.len ?? 10.6, top = o.top ?? 4.7, edgeY = o.edgeY ?? Math.max(0, top - 2.8);
   const head = -len / 2, z0 = head + (o.neck ?? 2.5), mz1 = len / 2 - 0.1;
   const g = new THREE.Group(); g.name = 'bed_soft';
-  const bl = createBlanket(THREE, { w: w + 1.1, mw: w, mz1, z0, z1: mz1 + 0.1, top, edgeY, color: o.color, lumps: o.lumps || [], seed: o.seed ?? 3, cuff: false, fold: o.fold !== false });
+  const bl = createBlanket(THREE, { w: w + 1.1, mw: w, mz1, z0, z1: mz1 + 0.1, top, edgeY, color: o.color, map: o.map, lumps: o.lumps || [], seed: o.seed ?? 3, cuff: false, fold: o.fold !== false });
   g.add(bl);
   let fold = null;
   if (o.fold !== false) { fold = createFold(THREE, { w: w - 0.4, top, z0, color: o.foldColor }); g.add(fold); }

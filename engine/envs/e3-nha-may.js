@@ -68,7 +68,26 @@ export default function build(g, e, H) {
   const dn = [];   // [vật liệu, thuộc tính, giá trị đêm, giá trị ngày] — đổi theo ctx.light
   const reg = (m, prop, n, d) => { dn.push([m, prop, n, d]); return m; };
   const std = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.85, ...o });
-  const noPatch = (root) => root.traverse((o) => { if (o.isMesh) { o.userData.matKind = 'none'; o.userData.grungeKind = 'none'; } });
+  const khongVan = (o) => { o.userData.matKind = 'none'; o.userData.grungeKind = 'none'; };   // bỏ qua hệ vật liệu thật (GLB có vân riêng, mặt phát sáng, ảnh vẽ)
+  const noPatch = (root) => root.traverse((o) => { if (o.isMesh) khongVan(o); });
+  // BẢNG KHAI BÁO loại vật liệu theo tên mesh (khớp đầu tiên thắng). Chỉ đặt userData — KHÔNG nhân bản vật liệu (update() còn sửa màu/độ sáng lúc chạy).
+  const BANG_VL = [
+    [/^(fx_|window_glass|skylight_glass|lamp_shade|lamp_bulb|lamp_lantern|floor_hazard|map_town|map_pin|fence_mesh|ket_dau_o_banh|bear_plush_rb|bear_bow_rb)/, 'none'],
+    [/^dirt_far/, 'soil'], [/^(yard_concrete|sidewalk|floor_concrete|floor_storage|road_curb)/, 'concrete'], [/^road_wet/, 'asphalt'], [/^road_paint/, 'roadpaint'],
+    [/^(wall_brick|gable_brick|chimney_brick|chimney_band)/, 'brick'], [/^roof_/, 'metalpaint'],
+    [/^steel_rivet/, 'iron'], [/^(conveyor_roller|conveyor_stud)/, 'chrome'], [/^conveyor_belt/, 'rubber'],
+    [/^(steel_frame|fence_picket|fence_spear|gate_bars|lamp_post|lamp_cap|lamp_cord|lamp_arm|cua_kho_thep|shelf_steel|conveyor_frame|window_frame|skylight_frame|map_frame)/, 'metalpaint'],
+    [/^(crate_wood|table_wood|stool_)/, 'wood'], [/^(carton_)/, 'paper'], [/^spool_thread/, 'fabric'],
+    [/^bear_plush/, 'fur'], [/^bear_bow/, 'fabric'],
+  ];
+  const khaiBaoCay = (root) => {   // mesh đã có matKind (GLB, ảnh vẽ) thì giữ nguyên
+    root.traverse((o) => {
+      if (!o.isMesh || o.userData.matKind) return;
+      const hit = BANG_VL.find(([re]) => re.test(o.name));
+      const kind = hit ? hit[1] : 'matte';
+      o.userData.matKind = kind; o.userData.matNguon = 'khai-bao'; o.userData.grungeKind = 'none';
+    });
+  };
 
   // ---------- vật liệu ----------
   // tường gạch: UV theo stud (texture lặp 8×8 stud) → mọi hộp gạch dùng chung 1 texture
@@ -130,7 +149,8 @@ export default function build(g, e, H) {
   brickBox(shell, 24.5, 16, 1, 42.25, 8, -15, '+z'); brickBox(shell, 24.5, 16, 1, 42.25, 8, 15, '-z'); brickBox(shell, 1, 16, 31, 54, 8, 0, '-x');   // kho
   // mái kho phẳng + mái xưởng răng cưa: 3 gian, dốc cao ở tây (y 24) thấp ở đông (y 18), mặt kính đứng quay TÂY
   const roofDark = std('#4b505c', { roughness: 0.9 });
-  const roofMats = [roofDark, roofDark, roofDark, intW, roofDark, roofDark];
+  const roofInt = reg(std('#ffffff', { emissive: new THREE.Color('#3a2a1c'), emissiveIntensity: 0.8 }), 'emissiveIntensity', 0.8, 0.3);   // bản riêng của intW: mái tự khai loại, không kéo vật liệu chung
+  const roofMats = [roofDark, roofDark, roofDark, roofInt, roofDark, roofDark];
   { const m = new THREE.Mesh(new THREE.BoxGeometry(24.5, 0.6, 31.5), roofMats); m.position.set(42.25, 16.3, 0); m.name = 'roof_storage'; shell.add(m); }
   const tilt = Math.atan2(6, 20), slopeLen = Math.hypot(20, 6);
   [0, 1, 2].forEach((b) => {
@@ -290,7 +310,7 @@ export default function build(g, e, H) {
     inst(front, 'conveyor_stud', CYL, intW, kn); }
   // -- KÉT xám chì to dưới băng (GLB nhap/ket-sat-xam, mặt cửa quay +Z); thiếu model → hộp
   { const ket = fit('nhap/ket-sat-xam', 3.1);
-    if (ket) { ket.position.set(-9, 0, -8); ket.name = 'ket_tiem_banh'; ket.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } }); front.add(ket); e.ket = ket; }
+    if (ket) { ket.position.set(-9, 0, -8); ket.name = 'ket_tiem_banh'; ket.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } }); noPatch(ket); front.add(ket); e.ket = ket; }
     else K.box(4, 3.1, 3.2, '#7A7A82', -9, 1.55, -8, 'ket_tiem_banh', front);
     // DẤU Ổ BÁNH nổi trên cánh két (cánh mở lệch, pháp tuyến ≈ (−0.77,0,0.63) đo bằng raycast) — nhận ra két của tiệm bánh (ảnh S062)
     { const bread = cvTex(256, 112, (c, w, h) => { c.clearRect(0, 0, w, h);
@@ -313,7 +333,7 @@ export default function build(g, e, H) {
     tb.push({ p: [-26.5, 0.9, 8 + 1.55], s: [5.2, 0.35, 0.3], c: '#6a4326' });
     inst(mid, 'table_wood', BOX, intW, tb);
     const may = fit('nhap/may-khau', 2.2);
-    if (may) { may.position.set(-26.8, 3.25, 8); may.rotation.y = Math.PI / 2; may.name = 'sewing_machine'; const wm = std('#E8E4DC', { roughness: 0.5, emissive: new THREE.Color('#3a342c'), emissiveIntensity: 0.5 }); may.traverse((m) => { if (m.isMesh) m.material = wm; }); mid.add(may); } else K.box(1.8, 2.2, 1, '#E8E4DC', -26.8, 4.35, 8, 'sewing_machine', mid);
+    if (may) { may.position.set(-26.8, 3.25, 8); may.rotation.y = Math.PI / 2; may.name = 'sewing_machine'; const wm = std('#E8E4DC', { roughness: 0.5, emissive: new THREE.Color('#3a342c'), emissiveIntensity: 0.5 }); may.traverse((m) => { if (m.isMesh) m.material = wm; }); noPatch(may); mid.add(may); } else K.box(1.8, 2.2, 1, '#E8E4DC', -26.8, 4.35, 8, 'sewing_machine', mid);
     const sp = [{ p: [-24.6, 3.65, 7.2], s: [0.28, 0.8, 0.28], c: '#e8d8b0' }, { p: [-24.2, 3.65, 8.4], s: [0.28, 0.8, 0.28], c: '#b8403a' }];
     inst(mid, 'spool_thread', CYL, intW, sp);
     inst(mid, 'stool_round', CYL, intW, [{ p: [-22.6, 2.3, 10.4], s: [1.05, 0.5, 1.05], c: '#5A3A22' }, { p: [-22.6, 1.1, 10.4], s: [0.28, 2.2, 0.28], c: '#4a2e1a' }]);
@@ -438,7 +458,7 @@ export default function build(g, e, H) {
     inst(storeF, 'crate_wood_stack', BOX, woodInt, items, true); }
 
   // ---------- tổng hợp ----------
-  [shell, facade, lamps, yardF, mid, front, north, store, storeF].forEach((o) => noPatch(o));
+  [shell, facade, lamps, yardF, mid, front, north, store, storeF].forEach((o) => khaiBaoCay(o));
   e.pointSpec = { color: '#ffd9a0', intensity: 14, distance: 90, decay: 1.2, pos: [0, 12, -2] };   // đèn điểm dùng chung (engine/envs.js 'interior_point')
   return {
     suSong: [],

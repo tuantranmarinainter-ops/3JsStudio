@@ -32,11 +32,14 @@ export default function build(g, e, H) {
   const RB = !/[?&]rb=0(&|$)/.test(globalThis.location?.search || '');
   const _bx = new THREE.Box3(), _sz = new THREE.Vector3();
   // đặt GLB Roblox: kich = [rộng x, cao, sâu z] đích theo trục của model (trước khi xoay ry; co giãn không đều) | cao = chỉ cao (giữ tỉ lệ). Trả null khi tắt/thiếu → dùng bản khối.
+  // khai loại vật liệu cho mesh (không nhân bản vật liệu); GLB Roblox/mặt sáng/ảnh vẽ/kính → 'none'
+  const khaiVan = (m, kind) => { m.userData.matKind = kind; m.userData.matNguon = 'khai-bao'; m.userData.grungeKind = 'none'; };
+  const khongVan = (m) => khaiVan(m, 'none');
   const rb = (id, parent, name, { p, ry = 0, kich, cao }) => {
     if (!RB || !fit) return null; const o = fit('nhap/' + id, kich ? kich[1] : cao); if (!o) return null;
     if (kich) { _bx.setFromObject(o); _bx.getSize(_sz); o.scale.set(kich[0] / _sz.x, 1, kich[2] / _sz.z); }
     const g0 = new THREE.Group(); g0.name = name; g0.add(o); g0.position.set(...p); g0.rotation.y = ry;
-    o.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } }); parent.add(g0); return g0;
+    o.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; khongVan(m); } }); parent.add(g0); return g0;
   };
   e.skybox = null; e.skyboxNight = null;
   e.diem = TIEM_DIEM;
@@ -232,7 +235,22 @@ export default function build(g, e, H) {
     lamp(front, ox - 3, -3); lamp(front, ox + 5, -3);
   }
 
-  R.traverse((o) => { if (!o.isMesh) return; o.userData.matKind = 'none'; o.userData.grungeKind = 'none'; if (/^tiem_(tuong|tran|san|canh_ngoai|kinh|vet_sang)/.test(o.name)) o.castShadow = false; });
+  // bảng tên mesh → loại vật liệu thật (mesh đã khai từ trước, vd GLB Roblox, giữ nguyên). InstancedMesh bị lớp vật liệu bỏ qua nên chỉ khai cho đủ.
+  const BANG_VAN = [
+    [/^tiem_(canh_ngoai|kinh|vet_sang|bien_o_banh|cua_kinh|den_bong)/, 'none'],   // sáng / ảnh vẽ / kính
+    [/^tiem_tuong/, 'plaster'], [/^tiem_tran/, 'plaster'], [/^tiem_san/, 'wood'],
+    [/^tiem_(canh_cua|cua_o)/, 'wood'], [/^tiem_nam_cua/, 'metalpaint'],
+    [/^ma_no_(de|cot|co|nut)/, 'wood'], [/^ma_no_(than|vai)/, 'fabric'],
+    [/^tiem_(khung|banh_khoi_go|may_khoi_go)/, 'wood'], [/^tiem_(may_cuon|day_den|den_treo)/, 'matte'],
+    [/^tiem_banh_(o|sung_bo|dai)$/, 'matte'],
+    [/./, 'matte'],   // luật vét
+  ];
+  R.traverse((o) => {
+    if (!o.isMesh) return;
+    if (/^tiem_(tuong|tran|san|canh_ngoai|kinh|vet_sang)/.test(o.name)) o.castShadow = false;
+    if (o.userData.matKind) return;
+    khaiVan(o, BANG_VAN.find(([re]) => re.test(o.name))[1]);
+  });
 
   // ---- đêm / sáng + đèn điểm bám theo gian camera đang đứng ----
   const SPEC = { day: { color: '#ffe2b0', intensity: 1.3, distance: 60, decay: 1.2 }, night: { color: '#ffb25a', intensity: 3.2, distance: 55, decay: 1.2 } };

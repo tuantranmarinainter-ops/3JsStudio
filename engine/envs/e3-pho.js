@@ -57,12 +57,32 @@ export default function build(g, e, H) {
     [[0, 1, 0], [[-.5, .5, .5], [.5, .5, .5], [.5, .5, -.5], [-.5, .5, -.5]]], [[0, -1, 0], [[-.5, -.5, -.5], [.5, -.5, -.5], [.5, -.5, .5], [-.5, -.5, .5]]],
     [[0, 0, 1], [[-.5, -.5, .5], [.5, -.5, .5], [.5, .5, .5], [-.5, .5, .5]]], [[0, 0, -1], [[.5, -.5, -.5], [-.5, -.5, -.5], [-.5, .5, -.5], [.5, .5, -.5]]],
   ];
-  let jit = 0;
-  const batch = () => {
-    const P = [], N = [], C = [], I = [];
+  // Loại vật liệu THẬT theo màu đỉnh (engine/materials.js): mỗi batch tách thành 1 mesh / loại, mỗi loại 1 vật liệu riêng (nằm trong litMats nên đêm vẫn nâng sáng).
+  // b.k = 'loại' (đặt tạm quanh vài lời gọi box) thắng bảng màu; màu không có trong bảng → loại mặc định của batch (mid/back: tường vữa, front: mờ).
+  const KIND_MAU = {};
+  for (const [kind, cols] of Object.entries({
+    metalpaint: '#1e2024 #2a2a30 #2a2830 #3a3842 #1a3c3c #2a5050 #4a4a52 #c8a24a #1e2230 #161a26',   // đèn, cột, trụ chặn, hàng rào sắt, nắm cửa, mái xưởng
+    wood: '#8a5a33 #6a4325 #a05f35 #7a4f2c #7a5636',   // ghế dài, bàn trưng, hộp hoa, lan can gỗ, sàn hốc
+    woodpaint: '#e8d8c0 #e8dcc0 #d6c8a8 #ead9b5 #f0e4cf #e3d3b0 #f5f0e0 #6a7fa8 #1f4a4a #2b7e80 #1d5859 #1f5560 #2a3548 #2a4a50 #2f3a5a #7a3a2a #e6cf8a #6b4528 #6e4423 #3d4b56 #7b8f68 #b03a2a #6a4a82 #5f4376',   // viền cửa, cánh cửa, ván ngang, chao hiên
+    bark: '#5a3a22',
+    foliage: '#4e7a32 #5d9040 #3f6a2a #6aa04a #5c8a3a #7fa037 #6a9030 #8fb040 #8b6fc0 #7a60b0',
+    concrete: '#8a857f #9a958e #8f8a84 #635f62',   // chân tường, bậc đá, bó vỉa
+    shingle: '#3a3a44',
+    brick: '#7c5c46 #8a3a2c #7a3226 #6a2c20',
+    tile: '#8a4a32 #5e3626',   // sàn ban công gạch đất nung
+    matte: '#9a5a36 #7a4528',   // chậu đất nung
+  })) for (const c of cols.split(' ')) KIND_MAU[c] = kind;
+  const litMats = [];   // vật liệu nhận sáng: đêm được nâng sáng + ám xanh lam (preset 'night' của engine tối quá cho phố)
+  const kindStd = new Map();
+  const stdOf = (kind) => { if (!kindStd.has(kind)) { const m = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92, metalness: 0 }); kindStd.set(kind, m); litMats.push(m); } return kindStd.get(kind); };
+  const batch = (defKind = 'plaster') => {   // defKind 'none' = batch phát sáng / kính (giữ nguyên 1 mesh, không vân)
+    const bins = new Map(), st = { k: null }; let jit = 0;
+    const bin = (kd) => { let b = bins.get(kd); if (!b) bins.set(kd, b = { P: [], N: [], C: [], I: [] }); return b; };
+    const kindOf = (c) => defKind === 'none' ? 'none' : (st.k || KIND_MAU[String(c).toLowerCase()] || defKind);
     const col = (c, nj) => { _c.set(c); const k = nj ? 1 : 0.95 + hash(jit++, 7) * 0.1; return [_c.r * k, _c.g * k, _c.b * k]; };
     // hộp tâm (cx,cy,cz), kích thước (sx,sy,sz), xoay (rx,ry,rz) rad
     const box = (cx, cy, cz, sx, sy, sz, c, rx = 0, ry = 0, rz = 0, nj = false) => {
+      const { P, N, C, I } = bin(kindOf(c));
       _eu.set(rx, ry, rz); _q.setFromEuler(_eu); _p.set(cx, cy, cz); _s.set(sx, sy, sz); _m.compose(_p, _q, _s); _n3.getNormalMatrix(_m);
       const [r, gg, b] = col(c, nj); let base = P.length / 3;
       for (const [n, vs] of FACES) {
@@ -72,22 +92,28 @@ export default function build(g, e, H) {
       }
     };
     const tri = (a, b, c, color, nj = false) => {   // tam giác hai mặt (đầu hồi mái)
+      const { P, N, C, I } = bin(kindOf(color));
       const [r, gg, bb] = col(color, nj); const e1 = new THREE.Vector3(...b).sub(new THREE.Vector3(...a)), e2 = new THREE.Vector3(...c).sub(new THREE.Vector3(...a)); const n = e1.cross(e2).normalize();
       let base = P.length / 3;
       for (const [pts, sg] of [[[a, b, c], 1], [[a, c, b], -1]]) { for (const v of pts) { P.push(...v); N.push(n.x * sg, n.y * sg, n.z * sg); C.push(r, gg, bb); } I.push(base, base + 1, base + 2); base += 3; }
     };
-    const mesh = (material, name, shadow = true) => {
+    const one = ({ P, N, C, I }, material, name, shadow, kind) => {
       const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); geo.setAttribute('normal', new THREE.Float32BufferAttribute(N, 3)); geo.setAttribute('color', new THREE.Float32BufferAttribute(C, 3));
       geo.setIndex(new THREE.BufferAttribute(new Uint32Array(I), 1)); geo.computeBoundingSphere(); geo.computeBoundingBox();
-      const m = new THREE.Mesh(geo, material); m.name = name; m.castShadow = shadow; m.receiveShadow = true; m.userData.matKind = 'none'; m.userData.grungeKind = 'none'; return m;
+      const m = new THREE.Mesh(geo, material); m.name = name; m.castShadow = shadow; m.receiveShadow = true;
+      m.userData.matKind = kind; if (kind !== 'none') m.userData.matNguon = 'khai-bao'; m.userData.grungeKind = 'none'; return m;
     };
-    return { box, tri, mesh, get n() { return P.length / 3; } };
+    const mesh = (material, name, shadow = true) => {
+      if (defKind === 'none') return one(bin('none'), material, name, shadow, 'none');
+      const grp = new THREE.Group(); grp.name = name;
+      for (const [kd, b] of bins) grp.add(one(b, stdOf(kd), name + '_' + kd, shadow, kd));
+      return grp;
+    };
+    return { box, tri, mesh, get k() { return st.k; }, set k(v) { st.k = v; }, get n() { let s = 0; for (const b of bins.values()) s += b.P.length; return s / 3; } };
   };
-  const std = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92, metalness: 0 });
-  const litMats = [std];   // vật liệu nhận sáng: đêm được nâng sáng + ám xanh lam (preset 'night' của engine tối quá cho phố)
   const mkBasic = (c) => new THREE.MeshBasicMaterial({ vertexColors: true, color: c });
   const matLit = mkBasic('#b5d6ea'), matDark = mkBasic('#7fa3bf'), matBulb = mkBasic('#ffe9b8'), matInner = mkBasic('#6b5640');
-  const mid = batch(), glassL = batch(), glassD = batch(), bulbs = batch(), front = batch(), back = batch(), inner = batch();
+  const mid = batch('plaster'), glassL = batch('none'), glassD = batch('none'), bulbs = batch('none'), front = batch('matte'), back = batch('plaster'), inner = batch('none');
 
   // ============ canvas ============
   const canvasTex = (w, h, draw, srgb = true) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; };
@@ -104,7 +130,7 @@ export default function build(g, e, H) {
   for (const t of [cobbleTex, walkTex]) { t.wrapS = t.wrapT = THREE.RepeatWrapping; }
   const flat = (name, tex, x0, x1, z0, z1, y, tile, parent, o = {}) => {   // mặt phẳng nằm, UV theo stud/tile
     const w = x1 - x0, d = z1 - z0, geo = new THREE.PlaneGeometry(w, d); const uv = geo.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * w / tile, uv.getY(i) * d / tile);
-    const m = new THREE.Mesh(geo, o.mat || new THREE.MeshStandardMaterial({ map: tex, roughness: 0.95, color: o.color || '#ffffff' })); litMats.push(m.material); m.rotation.x = -Math.PI / 2; m.position.set((x0 + x1) / 2, y, (z0 + z1) / 2); m.name = name; m.receiveShadow = true; m.userData.matKind = 'none'; m.userData.grungeKind = 'none'; parent.add(m); return m;
+    const m = new THREE.Mesh(geo, o.mat || new THREE.MeshStandardMaterial({ map: tex, roughness: 0.95, color: o.color || '#ffffff' })); litMats.push(m.material); m.rotation.x = -Math.PI / 2; m.position.set((x0 + x1) / 2, y, (z0 + z1) / 2); m.name = name; m.receiveShadow = true; m.userData.matKind = o.kind || 'none'; if (o.kind) m.userData.matNguon = 'khai-bao'; m.userData.grungeKind = 'none'; parent.add(m); return m;
   };
   const bearHead = (c, cx, cy, r, fur, dark, light) => {
     c.fillStyle = fur; for (const s of [-1, 1]) { c.beginPath(); c.arc(cx + s * r * 0.72, cy - r * 0.78, r * 0.36, 0, 7); c.fill(); }
@@ -164,17 +190,21 @@ export default function build(g, e, H) {
   const win = (f, du, y0, w, h, frame, kind, o = {}) => {   // khung cửa sổ + kính + chấn song (+ hộp hoa)
     const [cols, rows] = [o.cols || 2, o.rows || 2], gb = kind === 'lit' ? glassL : glassD;
     if (kind !== 'none') f.b(du, 0.1, y0, w, 0.2, h, '#ffffff', gb);
+    mid.k = 'woodpaint';
     f.b(du, 0.28, y0 - 0.5, w + 1.4, 1.1, 0.5, frame); f.b(du, 0.3, y0 + h, w + 0.9, 0.5, 0.55, frame);
     f.b(du - w / 2 - 0.2, 0.3, y0, 0.55, 0.5, h, frame); f.b(du + w / 2 + 0.2, 0.3, y0, 0.55, 0.5, h, frame);
     for (let i = 1; i < cols; i++) f.b(du - w / 2 + i * w / cols, 0.35, y0, 0.26, 0.3, h, frame);
     for (let i = 1; i < rows; i++) f.b(du, 0.35, y0 + i * h / rows - 0.13, w, 0.3, 0.26, frame);
+    mid.k = null;
     if (o.flower) { f.b(du, 0.95, y0 - 1.3, w + 1.0, 1.1, 0.95, '#6A4325'); for (let i = 0; i < 4; i++) f.b(du - w / 2 + 0.5 + i * (w - 1) / 3, 0.95, y0 - 0.4, 1.1, 1.0, 0.8 + hash(i, 5) * 0.6, ['#4E7A32', '#5d9040', '#3f6a2a'][i % 3]); f.b(du + 0.4, 1.2, y0 + 0.3, 0.5, 0.5, 0.5, '#F5F0E0'); f.b(du - 1.2, 1.1, y0 + 0.2, 0.5, 0.5, 0.5, '#F5F0E0'); }
     if (kind === 'lit' && y0 < 6) { const [x, z] = f.W(du, 3.2); pools.push([x, z, 6.5, 0.55]); }
   };
   const door = (f, du, w, h, y0, leaf, frame, o = {}) => {   // cửa + khung + ô kính + nắm cửa
+    mid.k = 'woodpaint';
     f.b(du - w / 2 - 0.35, 0.35, y0, 0.7, 0.7, h + 0.6, frame); f.b(du + w / 2 + 0.35, 0.35, y0, 0.7, 0.7, h + 0.6, frame); f.b(du, 0.35, y0 + h, w + 1.7, 0.7, 0.7, frame);
     f.b(du, 0.1, y0, w, 0.5, h, leaf);
     if (o.glass !== false) { const gh = h * 0.42, gy = y0 + h * 0.5; f.b(du, 0.4, gy, w * 0.62, 0.2, gh, '#ffffff', glassL); f.b(du, 0.5, gy + gh / 2 - 0.1, w * 0.62, 0.25, 0.2, leaf); f.b(du, 0.5, gy - 0.05, 0.2, 0.25, gh, leaf); }
+    mid.k = null;
     f.b(du - w / 2 + 0.7, 0.55, y0 + h * 0.45, 0.45, 0.45, 0.45, '#C8A24A', mid, true);
     if (o.step) { f.b(du, 0.75, 0, w + 2, 1.5, y0, '#8A857F'); if (y0 > 1) f.b(du, 1.9, 0, w + 3, 1.0, y0 - 0.5, '#9a958e'); }
   };
@@ -187,6 +217,7 @@ export default function build(g, e, H) {
   // --- viết lại awn gọn (xoay theo hướng ra phố) ---
   const awning = (f, o) => {
     const { du0, du1, y, proj, drop, cols, stripe = 1.8, valance = 1.1, scallop = false, edge } = o, len = Math.hypot(proj, drop), ang = Math.atan2(drop, proj), nS = Math.max(1, Math.round((du1 - du0) / stripe)), sw = (du1 - du0) / nS;
+    mid.k = 'fabric';
     for (let k = 0; k < nS; k++) {
       const du = du0 + (k + 0.5) * sw, c = cols[k % cols.length], [x, z] = f.W(du, proj / 2), ya = y - drop / 2 - 0.15;
       if (f.swap) mid.box(x, ya, z, len, 0.32, sw, c, 0, 0, f.n[0] > 0 ? -ang : ang); else mid.box(x, ya, z, sw, 0.32, len, c, f.n[1] > 0 ? ang : -ang, 0, 0);
@@ -195,11 +226,13 @@ export default function build(g, e, H) {
       else mid.box(fx, y - drop - valance * 0.5, fz, f.swap ? 0.3 : sw, valance, f.swap ? sw : 0.3, c);
     }
     if (edge) { const [x, z] = f.W((du0 + du1) / 2, proj + 0.22); mid.box(x, y - drop - 0.12, z, f.swap ? 0.2 : du1 - du0, 0.28, f.swap ? du1 - du0 : 0.2, edge); }
+    mid.k = null;
     for (const du of [du0 + 0.5, du1 - 0.5]) { const [x, z] = f.W(du, proj - 0.5); mid.box(x, (SW + y - drop - valance) / 2, z, 0.35, y - drop - valance - SW, 0.35, '#1E2024'); }   // cột đỡ mảnh
   };
   const roof = (x0, x1, z0, z1, yb, rise, ridge, col, wallCol, o = {}) => {   // mái dốc 2 mái + gờ + vạch ngói + đầu hồi
     const over = o.over ?? 1.3, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, half = ridge === 'z' ? (x1 - x0) / 2 : (z1 - z0) / 2, along = ridge === 'z' ? z1 - z0 : x1 - x0;
     const th = Math.atan2(rise, half), L = Math.hypot(half, rise) + over, T = 0.9, Lr = along + 1.8;
+    mid.k = 'shingle';
     for (const s of [-1, 1]) {
       const u = L / 2, nrm = ridge === 'z' ? [s * Math.sin(th), Math.cos(th), 0] : [0, Math.cos(th), s * Math.sin(th)];
       const cen = (uu) => ridge === 'z' ? [cx + s * uu * Math.cos(th), yb + rise - uu * Math.sin(th), cz] : [cx, yb + rise - uu * Math.sin(th), cz + s * uu * Math.cos(th)];
@@ -209,8 +242,10 @@ export default function build(g, e, H) {
       if (o.lineCol) for (let uu = 1.6; uu < L - 0.4; uu += 1.7) { const [lx, ly, lz] = cen(uu); mid.box(lx + nrm[0] * 0.06, ly + nrm[1] * 0.06, lz + nrm[2] * 0.06, ridge === 'z' ? 0.22 : Lr, 0.14, ridge === 'z' ? Lr : 0.22, o.lineCol, rx, 0, rz); }
     }
     mid.box(cx, yb + rise + 0.25, cz, ridge === 'z' ? 1.3 : Lr, 0.7, ridge === 'z' ? Lr : 1.3, o.cap || col);
+    mid.k = 'plaster';
     if (ridge === 'x') for (const xe of [x0, x1]) mid.tri([xe, yb, z0], [xe, yb, z1], [xe, yb + rise, cz], wallCol);
     else for (const ze of [z0, z1]) mid.tri([x0, yb, ze], [x1, yb, ze], [cx, yb + rise, ze], wallCol);
+    mid.k = null;
   };
   const ext = (f, w, D) => { const a = f.W(-w / 2, 0), b = f.W(w / 2, -D); return [Math.min(a[0], b[0]), Math.max(a[0], b[0]), Math.min(a[1], b[1]), Math.max(a[1], b[1])]; };
   const worldRidge = (f, rel) => (f.nth ? (rel === 'par' ? 'x' : 'z') : (rel === 'par' ? 'z' : 'x'));
@@ -246,7 +281,8 @@ export default function build(g, e, H) {
   // màu ô cửa sổ ĐỤC của từng model (đã dò bằng tia trên mặt tiền; kính trong suốt thì tự nhận). KHÔNG gộp chung: #04afec là MÁI của nhà nền 4, #1b2a35 là chân tường nhà nền 4
   const RB_KINH = { 'pho-tiem-may': ['80bbdb'], 'pho-nha-nga-ba': ['1b2a35'], 'pho-nha-nen-1': ['ffff00'], 'pho-nha-nen-4': ['ffff00', 'ffb000'] };
   const rbMats = new Set();   // vật liệu của nhà GLB: đêm nâng sáng như litMats, kính/ô cửa phát sáng ấm (setNight)
-  const gomRb = (o, id) => o.traverse((q) => { if (q.isMesh) { q.castShadow = true; q.receiveShadow = true; for (const mt of [].concat(q.material)) { if (!rbMats.has(mt)) { const u = mt.userData; u.rb0 = u.rb0 && u.rb0.isColor ? u.rb0 : mt.color.clone(); u.rbE = u.rbE && u.rbE.isColor ? u.rbE : mt.emissive.clone(); u.rbK = mt.transparent || mt.opacity < 1 || (RB_KINH[id] || []).includes(u.rb0.getHexString()); } rbMats.add(mt); } } });
+  const khongVan = (q) => { q.userData.matKind = 'none'; q.userData.grungeKind = 'none'; };   // model Roblox có ảnh vân riêng
+  const gomRb = (o, id) => o.traverse((q) => { if (q.isMesh) { khongVan(q); q.castShadow = true; q.receiveShadow = true; for (const mt of [].concat(q.material)) { if (!rbMats.has(mt)) { const u = mt.userData; u.rb0 = u.rb0 && u.rb0.isColor ? u.rb0 : mt.color.clone(); u.rbE = u.rbE && u.rbE.isColor ? u.rbE : mt.emissive.clone(); u.rbK = mt.transparent || mt.opacity < 1 || (RB_KINH[id] || []).includes(u.rb0.getHexString()); } rbMats.add(mt); } } });
   const NHA = {
     'pho-nha-ga': { truoc: '-Z', n: [0.27, 0.95], s: [0.14, 0.94], y: [0.02, 1] },          // nhà chữ L: cánh fx < 0,27 lùi sau; ban công mặt −Z, sàn fy 0,33
     'pho-tiem-gau': { truoc: '+X', n: [0.01, 0.99], s: [0.8, 0], y: [0, 1] },               // mái hiên nhô fx 0,8..1; tường chắn mái fy 0,73..1
@@ -516,7 +552,7 @@ export default function build(g, e, H) {
     for (let z = -110; z <= -72; z += 2.4) { if (Math.abs(z + 91) < 4.6) continue; back.box(106, 4.5, z, 0.45, 9, 0.45, fenceC); back.box(106, 9.2, z, 0.8, 0.8, 0.8, fenceC); }
     back.box(106, 2.6, -91 + 0.0, 0.5, 0.5, 38, fenceC, 0, 0, 0); back.box(106, 8.0, (-110 - 72) / 2, 0.5, 0.5, 38, fenceC);
     for (const s of [-1, 1]) { back.box(106, 5.5, -91 + s * 4.6, 0.9, 11, 0.9, '#2a5050'); for (let k = 0; k < 7; k++) back.box(106, 4.5, -91 + s * (0.6 + k * 0.6), 0.3, 8.5, 0.3, fenceC); back.box(106, 4.5, -91 + s * 2.4, 0.3, 9.6, 0.3, fenceC, 0.0, 0, s * 0.0); back.box(106, 4.5, -91 + s * 2.4, 0.35, 0.35, 5.0, fenceC, 0.8 * s, 0, 0); }
-    flat('pho_san_nha_may', null, 106, 156, -114, -70, 0.06, 1, tBack, { mat: new THREE.MeshStandardMaterial({ color: '#7C7A80', roughness: 0.95 }) });
+    flat('pho_san_nha_may', null, 106, 156, -114, -70, 0.06, 1, tBack, { kind: 'concrete', mat: new THREE.MeshStandardMaterial({ color: '#7C7A80', roughness: 0.95 }) });
   }
   // tháp chuông xa
   { const th = RB && fit ? fit('nhap/pho-thap-chuong', 58) : null;   // GLB Roblox, cao 58
@@ -526,7 +562,7 @@ export default function build(g, e, H) {
     } }
 
   // ============ ĐƯỜNG + VỈA HÈ + MẶT ĐẤT ============
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.MeshStandardMaterial({ color: '#7f8f5d', roughness: 1 })); ground.rotation.x = -Math.PI / 2; ground.position.y = -0.12; ground.name = 'pho_dat'; litMats.push(ground.material); ground.receiveShadow = true; ground.userData.matKind = 'none'; tMid.add(ground);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.MeshStandardMaterial({ color: '#7f8f5d', roughness: 1 })); ground.rotation.x = -Math.PI / 2; ground.position.y = -0.12; ground.name = 'pho_dat'; litMats.push(ground.material); ground.receiveShadow = true; ground.userData.matKind = 'grassground'; ground.userData.matNguon = 'khai-bao'; ground.userData.grungeKind = 'none'; tMid.add(ground);
   flat('pho_duong_chinh', cobbleTex, -9, 9, -100, 130, 0.0, 12, tMid); flat('pho_duong_ngang', cobbleTex, -33, 108, -100, -82, 0.0, 12, tMid);
   const walk = (name, x0, x1, z0, z1) => flat(name, walkTex, x0, x1, z0, z1, SW, 5, tMid);
   walk('pho_vha_he_tay', -14, -9, -82, 130); walk('pho_vha_he_dong', 9, 14, -82, 130); walk('pho_vha_he_tay_bac', -14, -9, -105, -100); walk('pho_vha_he_bac', -14, 108, -105, -100); walk('pho_vha_he_nam', 14, 108, -82, -77);
@@ -560,17 +596,21 @@ export default function build(g, e, H) {
   if (sanThiTruong) { tree(-19, -58.8, 13, 16); tree(-19.3, -77.0, 12, 17); }   // cây trong sân trước biệt thự (che hông tiệm may khi máy nhìn dọc mặt tiền — s092)
   // nhà nền hàng 2 (xa phố): khối thấp có mái, rải theo seed
   for (let k = 0; k < 6; k++) { const [wc, rc] = palettes[k % 7]; const z = 100 - k * 26; for (const [x, s] of [[-52, -1], [58, 1]]) { const w = 18 + hash(k + s, 31) * 8, H = 12 + hash(k, 32 + s) * 6, D = 16; const cz = z + (hash(k, 33 + s) - 0.5) * 6; back.box(x, H / 2, cz, D, H, w, wc); const sd = k * 2 + (s > 0 ? 1 : 0); const rr0 = roofBack(x, cz, D, w, H, rc, sd); void rr0; for (const dz of [-w / 4, w / 4]) { (hash(k + dz, 8 + s) < 0.5 ? glassL : glassD).box(x - s * (D / 2 + 0.1), 6, cz + dz, 0.2, 3.4, 3.2, '#ffffff'); } } }
-  function roofBack(x, cz, D, w, H, rc, sd) { const ri = 5; if (hash(sd, 9) < 0.5) { for (const sg of [-1, 1]) back.box(x, H + ri / 2, cz + sg * w / 4, D + 1.6, 0.8, w / 2 / Math.cos(Math.atan2(ri, w / 2)), rc, sg * Math.atan2(ri, w / 2) * 1, 0, 0); back.tri([x - D / 2, H, cz - w / 2], [x - D / 2, H, cz + w / 2], [x - D / 2, H + ri, cz], rc); back.tri([x + D / 2, H, cz - w / 2], [x + D / 2, H, cz + w / 2], [x + D / 2, H + ri, cz], rc); } else back.box(x, H + 0.6, cz, D + 1.4, 1.2, w + 1.4, rc); }
+  function roofBack(x, cz, D, w, H, rc, sd) { const ri = 5; back.k = 'shingle'; try { if (hash(sd, 9) < 0.5) { for (const sg of [-1, 1]) back.box(x, H + ri / 2, cz + sg * w / 4, D + 1.6, 0.8, w / 2 / Math.cos(Math.atan2(ri, w / 2)), rc, sg * Math.atan2(ri, w / 2) * 1, 0, 0); back.tri([x - D / 2, H, cz - w / 2], [x - D / 2, H, cz + w / 2], [x - D / 2, H + ri, cz], rc); back.tri([x + D / 2, H, cz - w / 2], [x + D / 2, H, cz + w / 2], [x + D / 2, H + ri, cz], rc); } else back.box(x, H + 0.6, cz, D + 1.4, 1.2, w + 1.4, rc); } finally { back.k = null; } }
 
   // ============ gắn các mesh vào tầng ============
-  tMid.add(mid.mesh(std, 'pho_nha_va_cua')); tFront.add(front.mesh(std, 'pho_do_duong')); tBack.add(back.mesh(std, 'pho_nen_xa'));
+  tMid.add(mid.mesh(null, 'pho_nha_va_cua')); tFront.add(front.mesh(null, 'pho_do_duong')); tBack.add(back.mesh(null, 'pho_nen_xa'));
   const gl = glassL.mesh(matLit, 'pho_kinh_sang', false), gd = glassD.mesh(matDark, 'pho_kinh_toi', false), bu = bulbs.mesh(matBulb, 'pho_den', false), inn = inner.mesh(matInner, 'pho_trong_nha', false);
   tMid.add(gl, gd, bu, inn);
   // vệt sáng đêm (cộng sáng, 1 InstancedMesh)
   const poolMat = new THREE.MeshBasicMaterial({ map: softTex, color: '#ffb347', transparent: true, opacity: 0.42, blending: THREE.AdditiveBlending, depthWrite: false, fog: false });
   const poolMesh = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1), poolMat, pools.length); poolMesh.name = 'pho_vet_sang_dem';
   { const qq = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0)); pools.forEach(([x, z, r, k], i) => { poolMesh.setMatrixAt(i, _m.compose(_p.set(x, SW + 0.06, z), qq, _s.set(r * 2, r * 2, 1))); poolMesh.setColorAt(i, _c.set('#ffffff').multiplyScalar(k)); }); poolMesh.instanceMatrix.needsUpdate = true; poolMesh.instanceColor.needsUpdate = true; poolMesh.frustumCulled = false; poolMesh.visible = false; tFront.add(poolMesh); }
-  g.traverse((o) => { if (o.isMesh) { o.userData.matKind = 'none'; o.userData.grungeKind = 'none'; } });
+  // Khai báo loại vật liệu cho mesh còn lại (chưa có matKind): tên → loại; không khớp → 'matte'. Chỉ ghi userData, KHÔNG nhân bản vật liệu (litMats / signMats / dispMats sửa lúc chạy). Luôn grungeKind 'none' (tập chọn tông sạch).
+  const BANG_KIND = [[/^pho_(bien|ke_|gian_|vet_)/, 'none'], [/^pho_(cua_|canh_cua|o_cua)/, 'woodpaint'], [/^pho_nam_cua/, 'metalpaint']];
+  const vetMatte = [];
+  g.traverse((o) => { if (!o.isMesh) return; o.userData.grungeKind = 'none'; if (o.userData.matKind) return; const hit = BANG_KIND.find(([re]) => re.test(o.name)); const kind = hit ? hit[1] : 'matte'; if (!hit) vetMatte.push(o.name); o.userData.matKind = kind; if (kind !== 'none') o.userData.matNguon = 'khai-bao'; });
+  if (vetMatte.length) console.log('[pho-vet-matte]', vetMatte.join(','));
 
   // ============ ngày / đêm / cửa ============
   let nightNow = null;
