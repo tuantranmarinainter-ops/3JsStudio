@@ -14,15 +14,15 @@ import { fileURLToPath } from 'url';
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const out = resolve(root, opt('out', 'dist/kho-chung.3js'));
+const out = resolve(root, opt('out', 'dist/STUDIO RIENG/kho-chung.3js'));
 const eps = args.filter((a, i) => !a.startsWith('--') && !(i > 0 && args[i - 1].startsWith('--')));
 
 // --liet-ke: in nội dung kho hiện có theo nhóm thư mục (và tập nào dùng), không dựng lại
 if (args.includes('--liet-ke')) {
   const h = readHeader(out);
   const use = {};   // path -> [ep]
-  for (const f of readdirSync(join(root, 'dist')).filter((f) => f.endsWith('.3js') && !f.startsWith('kho-chung'))) {
-    try { const t = readHeader(join(root, 'dist', f)); for (const p of Object.keys(t.refs || {})) (use[p] = use[p] || []).push(t.ep); } catch {}
+  for (const f of readdirSync(join(root, 'dist', 'STUDIO RIENG')).filter((f) => f.endsWith('.3js') && !f.startsWith('kho-chung'))) {
+    try { const t = readHeader(join(root, 'dist', 'STUDIO RIENG', f)); for (const p of Object.keys(t.refs || {})) (use[p] = use[p] || []).push(t.ep); } catch {}
   }
   const g = {};
   for (const [p, [, , len]] of Object.entries(h.files)) { const k = p.split('/').slice(1, 3).join('/'); (g[k] = g[k] || { n: 0, b: 0, eps: new Set(), ds: [] }); g[k].n++; g[k].b += len; (use[p] || []).forEach((e) => g[k].eps.add(e)); g[k].ds.push(p.split('/').slice(3).join('/')); }
@@ -42,7 +42,7 @@ export function readHeader(file) {   // chỉ đọc phần header (không nạp
   return JSON.parse(hb.toString('utf8'));
 }
 
-const packs = (eps.length ? eps.map((e) => `dist/${e}.3js`) : readdirSync(join(root, 'dist')).filter((f) => f.endsWith('.3js') && !f.startsWith('kho-chung')).map((f) => `dist/${f}`))
+const packs = (eps.length ? eps.map((e) => `dist/STUDIO RIENG/${e}.3js`) : readdirSync(join(root, 'dist', 'STUDIO RIENG')).filter((f) => f.endsWith('.3js') && !f.startsWith('kho-chung')).map((f) => `dist/STUDIO RIENG/${f}`))
   .map((f) => join(root, f)).filter((f) => resolve(f) !== out);
 const want = new Map();   // path -> {type, sha, bytes, from}
 for (const f of packs) {

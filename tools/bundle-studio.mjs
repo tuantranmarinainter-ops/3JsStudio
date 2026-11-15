@@ -14,7 +14,7 @@ import { createHash } from 'crypto';
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const out = resolve(root, opt('out', 'dist/studio.html'));
+const out = resolve(root, opt('out', 'dist/STUDIO RIENG/studio.html'));
 const now = new Date(); const pad = (n) => String(n).padStart(2, '0');
 const version = opt('version', `${now.getFullYear()}.${pad(now.getMonth() + 1)}.${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}`);
 const tpl = readFileSync(join(root, 'episodes', '_template', 'index.html'), 'utf8');
@@ -75,7 +75,7 @@ const REPO = opt('repo', 'tuantranmarinainter-ops/3JsStudio');
 const meta = { version, mods: keys, api: `https://api.github.com/repos/${REPO}/releases/latest`, raw: `https://raw.githubusercontent.com/${REPO}/` };
 
 // Bản lõi để phát hành (tools/phat-hanh-studio.mjs đẩy lên nhánh studio-ban + Release)
-const banDir = join(dirname(out), 'studio-ban');
+const banDir = join(root, 'dist', 'studio-ban');   // ngoài thư mục người dùng
 await mkdir(banDir, { recursive: true });
 await writeFile(join(banDir, 'studio-core.js'), core);
 await writeFile(join(banDir, 'studio-core.json'), JSON.stringify({ version, sha256: createHash('sha256').update(core).digest('hex'),
@@ -116,7 +116,7 @@ const html = `<!doctype html>
   <div class="box" id="sban"></div>
   <div class="box">
     <h3>Thư mục studio</h3>
-    <div id="sdir" class="muted">Chưa chọn thư mục. Bấm “Chọn thư mục studio” và chọn thư mục chứa studio.html (vd S:\\3JS Studio\\dist) — chỉ cần 1 lần, lần sau studio tự đọc.</div>
+    <div id="sdir" class="muted">Chưa chọn thư mục. Bấm “Chọn thư mục studio” và chọn thư mục chứa studio.html (vd S:\\3JS Studio\\dist\\STUDIO RIENG) — chỉ cần 1 lần, lần sau studio tự đọc.</div>
     <div class="row"><button class="main" id="sdirbtn">Chọn thư mục studio…</button><button id="sscan" style="display:none">Quét lại</button></div>
     <div id="slist"></div>
   </div>

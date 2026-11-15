@@ -10,10 +10,12 @@ import { fileURLToPath } from 'url';
 
 const ep = process.argv[2] || 'ep004';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const base = pathToFileURL(resolve(root, 'dist/studio.html')).href;
+const dir = process.env.STUDIO_DIR || 'dist/STUDIO RIENG';
+const base = pathToFileURL(resolve(root, dir, 'studio.html')).href;
 const url = `${base}?goi=${ep}.3js&kho=__khong-co__.3js`;   // chặn đường tự lấy kho cạnh studio
 const b = await launchBrowser(); const ctx = await b.newContext(); const p = await ctx.newPage();
-const errs = []; p.on('pageerror', (e) => errs.push(e.message));
+const errs = []; p.on('pageerror', (e) => errs.push(e.message)); p.on('console', (m) => process.env.LOG && console.log('[con]', m.text().slice(0, 200)));
+let tick = setInterval(async () => { try { console.log('  msg:', (await p.evaluate(() => document.getElementById('smsg')?.textContent || '')).slice(0, 160)); } catch {} }, 10000);
 const kq = [];
 const ok = (ten, d) => { kq.push(`${d ? 'ĐẠT' : 'LỖI'}  ${ten}`); if (!d) process.exitCode = 1; };
 
@@ -29,5 +31,5 @@ const t1 = Date.now();
 ok('3. mở lại không cần file kho (IndexedDB)', await p.waitForFunction(() => window.__ready === true, null, { timeout: 180000 }).then(() => true, () => false));
 kq.push(`      (${((Date.now() - t1) / 1000).toFixed(1)} s)`);
 ok('không có lỗi trang', !errs.length);
-await b.close();
+clearInterval(tick); await b.close();
 console.log(kq.join('\n')); if (errs.length) console.log('lỗi trang:\n  ' + errs.slice(0, 5).join('\n  '));

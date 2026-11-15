@@ -30,7 +30,7 @@ const srv = createServer((req, res) => {
   res.writeHead(404); res.end();
 }).listen(0);
 const nguon = `http://localhost:${srv.address().port}/`;
-const base = pathToFileURL(resolve(root, 'dist/studio.html')).href;
+const base = pathToFileURL(resolve(root, 'dist/STUDIO RIENG/studio.html')).href;
 const b = await launchBrowser(); const ctx = await b.newContext(); const p = await ctx.newPage();
 const kq = []; const ok = (t, d) => { kq.push(`${d ? 'ĐẠT' : 'LỖI'}  ${t}`); if (!d) process.exitCode = 1; };
 const caiBan = async () => {

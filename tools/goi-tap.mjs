@@ -24,7 +24,7 @@ if (!ep) { console.error('Dùng: node tools/goi-tap.mjs <ep> [--out dist/<ep>.3j
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const epDir = join(root, 'episodes', ep);
-const out = resolve(root, opt('out', `dist/${ep}.3js`));
+const out = resolve(root, opt('out', `dist/STUDIO RIENG/${ep}.3js`));
 const srcHtml = await readFile(join(epDir, 'index.html'), 'utf8');
 export const CORE_MIN = '2026.11.15';
 
@@ -126,4 +126,4 @@ await mkdir(dirname(out), { recursive: true });
 await writeFile(out, Buffer.concat([Buffer.from('3JS1'), len, header, ...bufs]));
 const rel = (p) => relative(root, p).replace(/\\/g, '/');
 console.log(`[3/3] ghi ${rel(out)} — ${files.size} file, ${((off + header.length) / 1048576).toFixed(1)} MB`);
-console.log(`      mở: file:///${resolve(root, 'dist/studio.html').replace(/\\/g, '/').replace(/ /g, '%20')}?goi=${encodeURIComponent(rel(out).replace(/^dist\//, ''))}`);
+console.log(`      mở: file:///${resolve(root, 'dist/STUDIO RIENG/studio.html').replace(/\\/g, '/').replace(/ /g, '%20')}?goi=${encodeURIComponent(out.split(/[\\/]/).pop())}`);

@@ -22,7 +22,8 @@
   Chỉ có trong studio.html; các dist/<ep>.html cũ chưa gộp lại.
 - **Đã phát hành 15/11:** thẻ `studio-v2026.11.15-1252` + nhánh `studio-ban` (đã push, người dùng cho phép). Máy CHƯA có `gh` → chưa có
   GitHub Release; studio tự lấy từ nhánh studio-ban khi không có Release (kiểm thật: tải được, sha khớp). Bước kế tiếp: GĐ4 xuat.mjs/doctor hiểu gói.
-- **Đang chờ:** người dùng thử studio.html (chọn thư mục dist) + song song; (tuỳ chọn) bấm Publish Release cho thẻ trên GitHub.
+- **15/11 chiều:** mọi đầu ra studio/gói/kho ghi vào `dist/STUDIO RIENG/` (người dùng chọn). Sửa treo "Đang lấy asset…": tab studio GĐ2 cũ giữ
+  IndexedDB v1 chặn nâng lên v2 → nay báo "đóng tab khác" + nhường khi tab mới hơn mở (`node tools/kiem-studio-chan.mjs` ĐẠT). Chờ người dùng thử lại.
 - **File đang dở (chưa commit):** không · **Đang chạy nền:** không · tách file KHÔNG giảm số shader/thời gian dịch shader.
 - **Đạt khi (cả dự án):** như trên + bản đầu đã lên Release và studio tải được; công cụ (xuat.mjs, doctor) hiểu gói. **Câu hỏi còn mở:** không
 <!-- /ĐIỂM DỪNG -->

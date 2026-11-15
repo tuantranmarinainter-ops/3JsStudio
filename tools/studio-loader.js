@@ -44,7 +44,19 @@
     return DB || (DB = new Promise(function (res, rej) {
       var r = indexedDB.open('3js-studio', 2);
       r.onupgradeneeded = function () { ['blob', 'path', 'meta', 'core'].forEach(function (s) { if (!r.result.objectStoreNames.contains(s)) r.result.createObjectStore(s); }); };
-      r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); };
+      // tab studio khác (bản cũ) đang giữ kho ở phiên bản thấp hơn → nâng cấp bị chặn: báo rõ thay vì treo im lặng
+      r.onblocked = function () {
+        msg('Kho trong máy đang bị một tab studio khác giữ (bản cũ) — hãy ĐÓNG các tab studio / tập .html khác rồi đợi vài giây (tự chạy tiếp).', true);
+        banner('⚠ Đóng các tab studio khác đang mở để studio này dùng được kho trong máy.');
+      };
+      r.onsuccess = function () {
+        var d = r.result;
+        d.onversionchange = function () {   // studio mới hơn ở tab khác cần nâng kho → nhường, không chặn nó
+          d.close(); DB = null; banner('Một studio mới hơn vừa mở ở tab khác — tải lại trang này (F5) nếu cần dùng tiếp.');
+        };
+        res(d);
+      };
+      r.onerror = function () { DB = null; rej(r.error); };
     }));
   }
   function run(stores, mode, fn) {
@@ -256,7 +268,9 @@
     if (thieu.length) return msg('Studio thiếu ' + thieu.length + ' module (' + thieu.slice(0, 3).join(', ') + ') — bấm “Cập nhật mới nhất”.', true);
     if (Object.keys(h.refs).length) {
       msg('Đang lấy asset dùng chung từ kho…');
+      var lau = setTimeout(function () { msg('Lấy asset từ kho lâu bất thường — nếu còn tab studio / tập .html khác đang mở, hãy đóng chúng rồi tải lại trang (F5).', true); }, 10000);
       var miss = await resolveRefs(h).catch(function () { return Object.keys(h.refs); });
+      clearTimeout(lau);
       if (miss.length) {   // tự nạp kho: kho-chung.3js trong thư mục studio đã chọn, hoặc cạnh studio (http / công cụ tự động)
         try {
           if (DIR && DIR.kho) await importKho(parse(await DIR.kho.file.arrayBuffer()));

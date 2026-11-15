@@ -13,7 +13,7 @@ const T = +(args[args.indexOf('--t') + 1] || 10) || 10;
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const b = await launchBrowser(); const p = await b.newPage({ viewport: { width: 1600, height: 900 } });
 const errs = []; p.on('pageerror', (e) => errs.push(e.message));
-await p.goto(`${pathToFileURL(resolve(root, 'dist/studio.html')).href}?goi=${ep}.3js&ui=1`);
+await p.goto(`${pathToFileURL(resolve(root, 'dist/STUDIO RIENG/studio.html')).href}?goi=${ep}.3js&ui=1`);
 await p.waitForFunction(() => window.__ready === true && window.__che3d && document.getElementById('xmss'), null, { timeout: 240000 });
 const r = await p.evaluate(async (T) => {
   const st = window.__stage, cv = st.renderer.domElement, W = cv.width, H = cv.height;
