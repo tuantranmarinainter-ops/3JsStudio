@@ -105,7 +105,7 @@ Lối 3: video tham khảo ─► [0c video-sang-kich-ban] ⚠ (chỉ lấy form
 ## Bước 11 — Dựng vào app · `tools/kit-shots.mjs` + skill `kiem-tra-khung`
 - **Đầu vào:** `kit.json`, `bang-shot.json`, `goc.json`, env bước 7.
 - **Xử lý:** `node tools/kit-shots.mjs kich-ban/<ep> --goc kich-ban/<ep>/goc.json` sinh `episodes/<ep>/shots.js` có chuyển động; khai `episode.js` (diễn viên, env); chụp kiểm từng shot: `node tools/look.mjs episodes/<ep>/index.html --shots … --gates`, so với ảnh shot bước 9.
-- ⚠ Skill `lam-phim` chưa nhận kit (chỉ đọc bảng 19 cột của dây chuyền cũ): bước này hiện điều phối tay.
+- `lam-phim` nhận kit: `node tools/lam-phim.mjs <ep> tiep` (tự nhận `kich-ban/<ep>/kit.json`, hoặc `--kit <thư mục>`); mốc duyệt kit: `--duyet-kit`. Chi tiết ở skill `lam-phim`.
 - **Đầu ra:** `episodes/<ep>/` dựng được.
 - **STOP:** duyệt bảng khung.
 
@@ -126,7 +126,7 @@ Lối 3: video tham khảo ─► [0c video-sang-kich-ban] ⚠ (chỉ lấy form
 |---|---|---|
 | `viet-kich-ban` bước 2–3 ↔ `xu-ly-kich-ban` bước 3 | Hai định dạng bảng shot | Đã chia nhánh; bỏ bước 2–3 khi dây chuyền mới chạy ổn |
 | `nhap-kich-ban` ↔ bước 9–11 | Hai đường từ ảnh vào app | Giữ `nhap-kich-ban` cho storyboard có sẵn ảnh của bạn |
-| `lam-phim` ↔ bước 11–12 | Chỉ đọc bảng 19 cột | ⚠ Cho `lam-phim` nhận `kit.json` |
+| `lam-phim` ↔ bước 11–12 | Hai đầu vào (bảng 19 cột / kit) | Đã nối: `lam-phim` tự nhận kit |
 | `video-sang-kich-ban` ↔ Lối 3 | Ra định dạng cũ | ⚠ Thêm lựa chọn ra kịch bản chữ |
 | `scene-env` ↔ bước 7 | Không chồng | ⚠ Đọc `boi-canh/<id>.json` |
 | `codex-ve.mjs` ↔ bước 8 | Không chồng | ⚠ Đọc danh sách mốc + đính kèm ảnh khối xám |

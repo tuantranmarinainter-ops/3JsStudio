@@ -16,6 +16,10 @@
 //   --cho-phep-troi (ghi quy-trinh.json ghiCong.choPhepTroi=true: trời "người dùng chịu trách nhiệm" được qua ở bản cuối).
 //   Khoá tương đương trong episodes/<ep>/quy-trinh.json: goi.chapNhanNhap, ghiCong.choPhepTroi.
 // Biến LAM_PHIM_PY_CAPCUT = python có miniaudio/requests cho CapCut.
+// NHÁNH KIT (dây chuyền mới, trạm 10–12 của docs/quy-trinh-kich-ban-tinh.md): tự bật khi có kich-ban/<ep>/kit.json + bang-shot.json,
+//   hoặc `--kit <thư mục kit>` (thư mục bất kỳ, vd bản sao ở output/_tmp). `--cu` = ép đường cũ dù có kit. Không có kit -> chạy y như trước.
+//   kich-ban = kiem-kit.mjs · asset = env trong goc.json đã đăng ký engine/envs.js? · mau-duyet = MỐC duyệt kit (`--duyet-kit` ghi duyet-kit.json)
+//   · shot = kit-shots.mjs (--goc goc.json nếu có) -> episodes/<ep>/shots.js · giong/ra-loi/am-thanh/gop như đường cũ (lời kể suy từ bang-shot.thoai).
 // LAM_PHIM_GIA=1: mọi lệnh con thay bằng lệnh giả (ghi output/<ep>/kiem/gia.log, tạo vài file kết quả tối thiểu) — dùng cho test.
 // Mã thoát: 0 chạy được (kể cả đang chờ agent / giọng nền), 1 cần người dùng, 2 lỗi môi trường / tham số.
 import fs from 'node:fs';
@@ -49,7 +53,22 @@ function kbFile(ep) {
   for (const f of [path.join(epDir(ep), 'kich-ban.md'), path.join(GOC, 'kich-ban', ep, 'kich-ban.md')]) if (fs.existsSync(f)) return f;
   return null;
 }
-const kbSha = (ep) => { const f = kbFile(ep); return f ? sha(fs.readFileSync(f)) : 'thieu'; };
+const kbSha = (ep) => {
+  const kd = kitDir(ep);
+  if (kd) return sha(['bang-shot.json', 'kit.json', 'goc.json'].map((n) => { try { return fs.readFileSync(path.join(kd, n), 'utf8'); } catch { return '-'; } }).join('\u0001'));
+  const f = kbFile(ep); return f ? sha(fs.readFileSync(f)) : 'thieu';
+};
+
+// ---------- nhánh KIT: nhận biết ----------
+let KIT_ARG = null, DUNG_CU = false;   // main đặt từ cờ --kit <thư mục> / --cu
+function kitDir(ep) {
+  if (KIT_ARG) return path.resolve(GOC, KIT_ARG);
+  if (DUNG_CU) return null;
+  const d = path.join(GOC, 'kich-ban', ep);
+  return fs.existsSync(path.join(d, 'kit.json')) && fs.existsSync(path.join(d, 'bang-shot.json')) ? d : null;
+}
+const kitDoc = (ep, n) => readJson(path.join(kitDir(ep), n), null);
+const gocArg = (d) => { const r = path.relative(GOC, d); return r.startsWith('..') || path.isAbsolute(r) ? d : r.split(path.sep).join('/'); };
 const urlFile = (f) => 'file:///' + f.replace(/\\/g, '/').replace(/ /g, '%20');
 
 // ---------- file riêng của lam-phim ----------
@@ -92,7 +111,7 @@ function bam(ep, b) {
     case 'asset':
     case 'mau-duyet': p.push(kbSha(ep), hashVao(['assets/manifest.json'])); break;
     case 'giong': p.push(hashNarration(ep)); break;
-    case 'shot': p.push(kbSha(ep), hashVao([`${E}/narration.json`])); break;
+    case 'shot': kitDir(ep) ? p.push(kbSha(ep)) : p.push(kbSha(ep), hashVao([`${E}/narration.json`])); break;   // kit: shots.js có chỗ sửa tay -> KHÔNG sinh lại khi giọng đổi
     case 'ra-loi': p.push(hashVao([`${E}/shots.js`])); break;
     case 'am-thanh': p.push(hashVao([`${E}/sfx`, `${E}/music`]), giongXong(ep) ? 'cuoi' : 'nhap'); break;   // bản cuối chạy lại ghi-cong (chặn trời chưa rõ)
     case 'gop': p.push(giongXong(ep) ? 'giong-xong' : 'giong-nhap'); break;
@@ -127,9 +146,10 @@ function giaTao(c, args) {
   if (co('tts.py') && args.includes('--dry') && !fs.existsSync(path.join(epDir(c.ep), 'narration.json'))) fs.writeFileSync(path.join(epDir(c.ep), 'narration.json'), JSON.stringify({ gia: 'dry' }));
   return ma;
 }
-function chay(c, buoc, cmd, args, { loiOk = false } = {}) {
+function chay(c, buoc, cmd, args, { loiOk = false, that = false } = {}) {
   const lenh = [cmd, ...args].join(' ');
-  if (c.gia) {
+  if (c.gia && that) { fs.mkdirSync(kiemDir(c.ep), { recursive: true }); fs.appendFileSync(path.join(kiemDir(c.ep), 'gia.log'), JSON.stringify({ buoc, lenh, that: true }) + '\n'); }   // công cụ kit thuần/tất định: chạy THẬT cả ở chế độ giả
+  if (c.gia && !that) {
     fs.mkdirSync(kiemDir(c.ep), { recursive: true });
     fs.appendFileSync(path.join(kiemDir(c.ep), 'gia.log'), JSON.stringify({ buoc, lenh }) + '\n');
     return { status: giaTao(c, args), out: '' };
@@ -326,6 +346,74 @@ H.gop = async (c) => {
   return {};
 };
 
+
+// ---------- handler nhánh KIT ----------
+const HK = {};
+const kitRel = (ep, n) => rel(gocArg(kitDir(ep)), n);
+
+HK['kich-ban'] = async (c) => {   // trạm 10: kit hợp lệ
+  const d = kitDir(c.ep);
+  const r = chay(c, 'kich-ban', process.execPath, ['tools/kiem-kit.mjs', gocArg(d), ...(fs.existsSync(path.join(d, 'hinh')) ? [] : ['--khong-hinh'])], { that: true });
+  if (r.status !== 0) return chan({ canAgent: [{ viec: `Sửa kit cho node tools/kiem-kit.mjs ${gocArg(d)} sạch lỗi. Lỗi cuối: ${duoi(r.out, 8).replace(/\n/g, ' | ')}`, file: kitRel(c.ep, 'kit.json'), model: 'sonnet' }] });
+  return {};
+};
+
+HK.asset = async (c) => {   // env của từng bối cảnh kit phải có trong engine/envs.js; đạo cụ/animation kit không liệt kê -> không kiểm tự động
+  const kit = kitDoc(c.ep, 'kit.json') || {}, goc = kitDoc(c.ep, 'goc.json') || {};
+  let envs = ''; try { envs = fs.readFileSync(path.join(GOC, 'engine', 'envs.js'), 'utf8'); } catch { /* không có = coi như thiếu hết */ }
+  const ag = [];
+  for (const b of kit.boiCanh || []) {
+    const g = (goc[b.id] && typeof goc[b.id] === 'object') ? goc[b.id] : goc;
+    const env = g.env || b.id;
+    if (!new RegExp(`def\\(\\s*['"]${env.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}['"]`).test(envs))
+      ag.push({ viec: `Dựng bối cảnh "${env}" cho kit (bối cảnh kit "${b.id}", ${b.rong}×${b.sau}×${b.cao} stud; mốc/số đo ở ${kitRel(c.ep, 'kit.json')}) theo skill scene-env. ĐỦ 3 CHỖ NỐI: (1) engine/envs/${env}.js, (2) đăng ký def('${env}', …) trong engine/envs.js, (3) góc mẫu trong engine/envs/goc-mau.js.`, file: `engine/envs/${env}.js`, model: 'sonnet' });
+  }
+  c.kq.canhBao.push('kit: asset chỉ kiểm env đã đăng ký; đạo cụ/animation kit không liệt kê — soi khi chụp kiểm (trạm 11).');
+  return ag.length ? chan({ canAgent: ag }) : {};
+};
+
+HK['mau-duyet'] = async (c) => {   // STOP "duyệt kit" (trạm 10); duyệt ghi kèm hash kit — kit đổi là phải duyệt lại
+  const f = path.join(kitDir(c.ep), 'duyet-kit.json'), d = readJson(f, null), k = kbSha(c.ep);
+  if (d && d.duyet === true && d.kit === k) return {};
+  const anh = ['KIT.html', 'kit-trang.html'].map((n) => path.join(kitDir(c.ep), n)).filter((p) => fs.existsSync(p)).map((p) => gocArg(p));
+  return chan({ canNguoiDung: { lyDo: `MỐC DUYỆT KIT (trạm 10): kit ${gocArg(kitDir(c.ep))} chưa duyệt${d && d.kit !== k ? ' (kit đã đổi sau lần duyệt trước)' : ''}. Xem kit rồi duyệt: node tools/lam-phim.mjs ${c.ep} --duyet-kit`, anh } });
+};
+
+HK.shot = async (c) => {   // trạm 11: kit -> episodes/<ep>/shots.js (kit-shots.mjs)
+  const d = kitDir(c.ep), E = epDir(c.ep), shotsF = path.join(E, 'shots.js'), lm = docLm(c.ep), k = kbSha(c.ep);
+  const sinhRoi = lm.shotSinh && lm.shotSinh.kb === k && fs.existsSync(shotsF) && !c.force;
+  if (!sinhRoi) {
+    if (fs.existsSync(shotsF) && !lm.shotSinh) return chan({ canNguoiDung: { lyDo: `episodes/${c.ep}/shots.js đã có nhưng lam-phim chưa từng sinh (tập làm tay?). Từ chối ghi đè. Muốn dựng lại từ kit: sao lưu rồi xoá shots.js, hoặc chạy tay node tools/kit-shots.mjs ${gocArg(d)}.`, anh: [] } });
+    if (lm.shotSinh && fs.existsSync(shotsF)) {   // kit đổi: sinh lại, giữ bản cũ (có thể có chỗ sửa tay)
+      const sl = saoLuu(c.ep, ['shots.js']);
+      c.kq.canhBao.push(`kit đổi: sinh lại shots.js; đã sao lưu bản cũ vào ${path.relative(GOC, sl).split(path.sep).join('/')} (chỗ sửa tay phải làm lại)`);
+    }
+    fs.mkdirSync(E, { recursive: true });
+    ghiLm(c.ep, { shotSinh: { kb: null } });   // đặt dấu TRƯỚC (kb null = sinh dở)
+    const gocF = path.join(d, 'goc.json');
+    const r = chay(c, 'shot', process.execPath, ['tools/kit-shots.mjs', gocArg(d), '--ra', rel('episodes', c.ep, 'shots.js'), ...(fs.existsSync(gocF) ? ['--goc', gocArg(gocF)] : [])], { that: true });
+    if (r.status === 2) return chan({ canAgent: [{ viec: `kit-shots từ chối vì kit còn lỗi: ${duoi(r.out, 8).replace(/\n/g, ' | ')}`, file: kitRel(c.ep, 'kit.json'), model: 'sonnet' }] });
+    if (r.status !== 0) throw new LoiMoiTruong('kit-shots lỗi: ' + duoi(r.out));
+    ghiLm(c.ep, { vongRaLoi: 0, shotSinh: { kb: k } });
+    const m = /Cần sửa tay: (\d+) shot/.exec(r.out), l = /Vi phạm luật camera: (\d+) shot/.exec(r.out);
+    if (m && +m[1] > 0) c.kq.canhBao.push(`kit-shots: ${m[1]} shot CẦN SỬA TAY (xem ghi chú trong episodes/${c.ep}/shots.js)`);
+    if (l && +l[1] > 0) c.kq.canhBao.push(`kit-shots: ${l[1]} shot vi phạm luật camera (ra-loi/kiem-luat sẽ xử lý)`);
+  }
+  const thieu = ['episode.js', 'index.html'].filter((n) => !fs.existsSync(path.join(E, n)));
+  if (thieu.length) return chan({ canAgent: [{ viec: `Khai ${thieu.map((n) => `episodes/${c.ep}/${n}`).join(' + ')} cho tập kit (diễn viên, env theo goc.json; index.html lấy từ episodes/_template hoặc episodes/_mau-kit). shots.js đã sinh từ kit — KHÔNG sinh lại.`, file: `episodes/${c.ep}/episode.js`, model: 'sonnet' }] });
+  return {};
+};
+
+const buocXuLy = (c, b) => (kitDir(c.ep) && HK[b]) || H[b];
+
+// lời kể suy từ bang-shot.thoai (mốc @at = tổng dur các shot trước)
+function suyNarrationKit(c) {
+  const bs = kitDoc(c.ep, 'bang-shot.json') || {};
+  let t = 0; const dong = [];
+  for (const s of bs.shots || []) { if (s.thoai && String(s.thoai).trim()) dong.push(`@at ${Math.round(t * 100) / 100} ${String(s.thoai).trim()}`); t += Number(s.dur) || 0; }
+  return `# ${bs.ten || c.ep} — lời kể suy từ bang-shot.json (kit); @at = giây bắt đầu câu\n@source capcut\n@narrator BV075_streaming\n\n${dong.join('\n')}\n`;
+}
+
 // ---------- giọng (nền) ----------
 // Một nguồn sự thật: để tools/storyboard.py (chính hàm shot-gen dùng) sinh narration.txt trong tập tạm rồi lấy file đó
 // (@source/@narrator/@voice y như shot-gen sẽ ghi sau này).
@@ -350,6 +438,13 @@ function suyNarration(c) {
 }
 function damBaoNarration(c) {
   const f = path.join(epDir(c.ep), 'narration.txt');
+  if (kitDir(c.ep)) {   // kit: chỉ tạo khi chưa có — không đè lời kể đã chỉnh tay
+    if (fs.existsSync(f)) return;
+    fs.mkdirSync(epDir(c.ep), { recursive: true });
+    fs.writeFileSync(f, suyNarrationKit(c));
+    log(`lam-phim: ghi ${rel('episodes', c.ep, 'narration.txt')} từ bang-shot.json (kit)`);
+    return;
+  }
   const lm = docLm(c.ep), k = kbSha(c.ep);
   if (fs.existsSync(f) && !(lm.narrationKb && lm.narrationKb !== k)) return;
   fs.mkdirSync(epDir(c.ep), { recursive: true });
@@ -444,7 +539,7 @@ async function chayBuoc(c, b) {
   batDau(c.ep, b);
   log(`== ${b}`);
   let r;
-  try { r = await H[b](c); } catch (e) { datBuoc(c.ep, b, { xong: false }); throw e; }   // I7: không để lại bat_dau
+  try { r = await buocXuLy(c, b)(c); } catch (e) { datBuoc(c.ep, b, { xong: false }); throw e; }   // I7: không để lại bat_dau
   if (r.chan) {
     datBuoc(c.ep, b, { xong: false });
     ghiNhatKy(c.ep, { buoc: b, hanh_dong: 'lam-phim', ket: 'chan', canAgent: r.chan.canAgent.length, canNguoiDung: !!r.chan.canNguoiDung });
@@ -458,6 +553,8 @@ async function chayBuoc(c, b) {
 async function tiepTrong(ep, { chi = null, force = false, gia = false, nhap = false } = {}) {
   const kq = { ep, buocTiep: null, canAgent: [], canNguoiDung: null, daChay: [], daBo: [], dangChayNen: [], giongNen: null, canhBao: [], lien: null, toiDaSongSong: TOI_DA_AGENT };
   const c = { ep, kq, force, gia, nhap };
+  const kd = kitDir(ep);
+  if (kd) kq.kit = gocArg(kd);   // báo đã đi nhánh kit
   const treo = quaHan(c);
   if (treo) {
     kq.buocTiep = treo.b;
@@ -503,14 +600,22 @@ function luuQuyTrinh(ep, patch) {
 }
 
 export async function main(argv) {
-  const pos = argv.filter((a) => !a.startsWith('--'));
+  const iKit = argv.indexOf('--kit');
+  KIT_ARG = iKit >= 0 ? (argv[iKit + 1] || null) : null; DUNG_CU = argv.includes('--cu');
+  const pos = argv.filter((a, i) => !a.startsWith('--') && !(iKit >= 0 && i === iKit + 1));
   const force = argv.includes('--force'), nhap = argv.includes('--nhap');
   const [ep, act = 'tiep'] = pos;
-  const dung = 'Dùng: node tools/lam-phim.mjs <ep> [tiep|trang-thai|' + BUOC.join('|') + '] [--force] [--nhap] [--cho-phep-troi]';
+  const dung = 'Dùng: node tools/lam-phim.mjs <ep> [tiep|trang-thai|' + BUOC.join('|') + '] [--force] [--nhap] [--cho-phep-troi] [--kit <thư mục kit>] [--cu] [--duyet-kit]';
   if (!ep || !/^[\w-]+$/.test(ep)) { console.error(dung); return 2; }
   if (act !== 'tiep' && act !== 'trang-thai' && !BUOC.includes(act)) { console.error(dung); return 2; }
   try {
     if (act === 'trang-thai') { console.log(JSON.stringify(trangThai(ep), null, 1)); return 0; }
+    if (iKit >= 0 && !KIT_ARG) { console.error('--kit cần thư mục kit'); return 2; }
+    if (KIT_ARG && !(fs.existsSync(path.join(kitDir(ep), 'kit.json')) && fs.existsSync(path.join(kitDir(ep), 'bang-shot.json')))) { console.error(`--kit ${KIT_ARG}: thiếu kit.json / bang-shot.json`); return 2; }
+    if (argv.includes('--duyet-kit')) {
+      if (!kitDir(ep)) { console.error('--duyet-kit: tập này không đi nhánh kit'); return 2; }
+      fs.writeFileSync(path.join(kitDir(ep), 'duyet-kit.json'), JSON.stringify({ ep, duyet: true, kit: kbSha(ep), luc: new Date().toISOString() }, null, 1) + '\n');
+    }
     if (argv.includes('--cho-phep-troi')) luuQuyTrinh(ep, { ghiCong: { choPhepTroi: true } });
     const kq = await tiep(ep, { chi: act === 'tiep' ? null : act, force, nhap, gia: process.env.LAM_PHIM_GIA === '1' });
     console.log(JSON.stringify(kq, null, 1));

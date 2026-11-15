@@ -9,11 +9,33 @@ description: Điều phối cả dây chuyền "một câu luật → phim HTML"
 Đầu ra: `dist/<ep>_xem-thu.html` (bản nháp khi giọng thật chưa xong) rồi `dist/<ep>.html` + `dist/<ep>_theo-doi.html`.
 Spec: `docs/superpowers/specs/2026-11-12-quy-trinh-mot-cau-luat-ra-phim-design.md` (mục 4, 6.2, 7.2, 8, 9).
 
+## Hai đầu vào (tool tự nhận)
+| Đầu vào | Khi nào | Dây chuyền |
+|---|---|---|
+| **1. Bảng 19 cột** `episodes/<ep>/kich-ban.md` | không có kit | đường CŨ (mọi mục bên dưới, ep001–ep003) |
+| **2. Kit** `kich-ban/<ep>/kit.json` + `bang-shot.json` (+ `goc.json`, `hinh/`) | có đủ 2 file đó, hoặc `--kit <thư mục>` | đường MỚI (trạm 10–12 của `docs/quy-trinh-kich-ban-tinh.md`); JSON trả về có `kit:"<thư mục>"` |
+
+`--cu` ép đường cũ dù có kit. Vẫn 8 bước, vẫn bước nào chỉ chạy lại khi đầu vào đổi; khác ở cách làm từng bước:
+
+| Bước | Trạm | Nhánh kit làm gì |
+|---|---|---|
+| `kich-ban` | 10 | `kiem-kit.mjs <kit>` (`--khong-hinh` nếu chưa có `hinh/`); lỗi → `canAgent` sửa `kit.json` |
+| `giong` | 12 | như cũ, nhưng lời kể suy từ `bang-shot.shots[].thoai` (`@at` = tổng `dur` các shot trước); chỉ tạo khi chưa có `narration.txt`, không đè bản đã chỉnh tay |
+| `asset` | 7 | mỗi bối cảnh kit: env trong `goc.json` (mặc định = id bối cảnh) phải có `def('<env>'` trong `engine/envs.js`; thiếu → `canAgent` scene-env. Đạo cụ/animation kit không liệt kê nên KHÔNG kiểm tự động |
+| `mau-duyet` | 10 **STOP** | **MỐC DUYỆT KIT**: chưa duyệt → `canNguoiDung` (mã 1). Người dùng xem `kich-ban/<ep>/KIT.html` rồi bạn chạy `node tools/lam-phim.mjs <ep> --duyet-kit` (ghi `duyet-kit.json` kèm hash kit; kit đổi là phải duyệt lại). KHÔNG sinh shot khi chưa duyệt |
+| `shot` | 11 | `kit-shots.mjs <kit> --ra episodes/<ep>/shots.js [--goc goc.json]`. Chỉ sinh khi kit đổi (sao lưu `shots.js` cũ vào `output/<ep>/kiem/sao-luu/`), KHÔNG sinh lại khi giọng xong → giữ chỗ "CẦN SỬA TAY". Thiếu `episode.js`/`index.html` → `canAgent` khai (lấy từ `_template`/`_mau-kit`) |
+| `ra-loi` | 11 **STOP** | như cũ (kiem-luat + ra-loi). Sau đó chụp kiểm bằng skill `kiem-tra-khung` (`look.mjs --shots … --gates`, so với ảnh shot bước 9) → **duyệt bảng khung** là mốc người dùng của trạm 11 |
+| `am-thanh`, `gop` | 12 **STOP** | như cũ; người dùng xem phim `dist/<ep>_xem-thu.html` / `dist/<ep>.html` |
+
+Đường kit: bỏ qua `lint.py`, `asset-plan`, `mau-duyet.mjs`, `shot-gen`, `storyboard.py`. `kiem-kit` và `kit-shots` là công cụ thuần nên chạy THẬT kể cả khi `LAM_PHIM_GIA=1`. Tập kit dựng thử người khác đang chạy (ví dụ ep004): chỉ ĐỌC kit gốc, thử trên bản sao (`--kit output/_tmp/...`) với tên tập giả.
+
 ## Công cụ duy nhất bạn gọi
 ```
 node tools/lam-phim.mjs <ep> tiep          # chạy các bước cần chạy cho tới khi gặp việc cần agent / người dùng
 node tools/lam-phim.mjs <ep> trang-thai    # chỉ đọc: 8 bước, bước kế tiếp
 node tools/lam-phim.mjs <ep> <buoc> [--force]   # đúng 1 bước (kich-ban asset giong mau-duyet shot ra-loi am-thanh gop)
+node tools/lam-phim.mjs <ep> tiep --kit <thư mục kit>   # ép nhánh kit từ thư mục bất kỳ (bình thường tự nhận khi có kich-ban/<ep>/kit.json); --cu = ép đường cũ
+node tools/lam-phim.mjs <ep> --duyet-kit   # ghi duyệt kit (MỐC trạm 10) rồi chạy tiếp
 node tools/lam-phim.mjs <ep> tiep --nhap   # ra-loi: CHẤP NHẬN lỗi còn lại cho bản nháp (ghi duyet/02_loi/chap-nhan-nhap.json + canhBao), đi tiếp am-thanh/gop ra dist/<ep>_xem-thu.html
 node tools/lam-phim.mjs <ep> tiep --cho-phep-troi   # ghi quy-trinh.json ghiCong.choPhepTroi=true (trời "người dùng chịu trách nhiệm" được qua ở bản CUỐI)
 ```
