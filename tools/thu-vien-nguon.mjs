@@ -22,11 +22,12 @@ async function lay(url, headers = {}) {
   throw new Error('hết lượt thử lại ' + new URL(url).host);
 }
 
-async function timSketchfab(q) {
+async function timSketchfab(q, so = 30) {
   if (!ENV.SKETCHFAB_API_TOKEN) throw new Error('thiếu SKETCHFAB_API_TOKEN');
   const h = { Authorization: `Token ${ENV.SKETCHFAB_API_TOKEN}` }, out = [];
-  for (const lic of ['cc0', 'by']) {
-    const j = await lay(`https://api.sketchfab.com/v3/search?type=models&q=${encodeURIComponent(q)}&downloadable=true&license=${lic}&count=24&sort_by=-likeCount`, h);
+  for (const lic of ['cc0', 'by']) for (let cur = '', trang = 0; trang < Math.ceil(so / 24) && (trang === 0 || cur); trang++) {
+    const j = await lay(`https://api.sketchfab.com/v3/search?type=models&q=${encodeURIComponent(q)}&downloadable=true&license=${lic}&count=24&sort_by=-likeCount${cur ? '&cursor=' + cur : ''}`, h);
+    cur = j.cursors?.next || '';
     for (const m of j.results || []) {
       const im = m.thumbnails?.images || [];
       const a = im.find((i) => i.width === 256) || im.find((i) => i.width >= 200) || im[0];
@@ -34,20 +35,21 @@ async function timSketchfab(q) {
       out.push({ id: 'sketchfab:' + m.uid, ten: m.name, tacGia: m.user?.displayName || m.user?.username || '?', tamGiac: m.faceCount ?? null, gp: lic === 'cc0' ? 'CC0' : 'CC BY', anh: a.url, link: `https://sketchfab.com/3d-models/${m.uid}` });
     }
   }
-  return out.slice(0, 30);
+  return out.slice(0, so * 2);
 }
 
 async function timPolyPizza(q) {
   if (!ENV.POLY_PIZZA_API_KEY) throw new Error('thiếu POLY_PIZZA_API_KEY');
-  const j = await lay(`https://api.poly.pizza/v1.1/search/${encodeURIComponent(q)}?Limit=30`, { 'x-auth-token': ENV.POLY_PIZZA_API_KEY });
+  const j = await lay(`https://api.poly.pizza/v1.1/search/${encodeURIComponent(q)}?Limit=32`, { 'x-auth-token': ENV.POLY_PIZZA_API_KEY });
   return (j.results || []).map((m) => ({ id: 'polypizza:' + m.ID, ten: m.Title, tacGia: m.Creator?.Username || '?', tamGiac: m['Tri Count'] ?? null,
     gp: /cc0|public/i.test(m.Licence || '') ? 'CC0' : 'CC BY', anh: m.Thumbnail, link: `https://poly.pizza/m/${m.ID}` })).filter((x) => x.anh).slice(0, 30);
 }
 
-async function timPolyfork(q) {   // API công khai, không cần khoá để duyệt; mẫu thấp poly đều miễn phí
+async function timPolyfork(q, so = 30) {   // API công khai, không cần khoá để duyệt; mẫu thấp poly đều miễn phí
   const h = ENV.POLYFORK_API_KEY ? { Authorization: `Bearer ${ENV.POLYFORK_API_KEY}` } : {};
-  const j = await lay(`https://polyfork.dev/api/assets?q=${encodeURIComponent(q)}&per_page=30`, h);
-  return (j.assets || []).filter((a) => a.thumbnail).map((a) => ({ id: 'polyfork:' + a.id, ten: a.title, tacGia: 'Polyfork', tamGiac: a.triangles ?? null, gp: 'CC BY', anh: a.thumbnail, link: a.page })).slice(0, 30);
+  const ds = [];
+  for (let page = 1; page <= Math.ceil(Math.min(so, 200) / 100); page++) { const j = await lay(`https://polyfork.dev/api/assets?q=${encodeURIComponent(q)}&per_page=${so <= 30 ? 30 : 100}&page=${page}`, h); ds.push(...(j.assets || [])); if ((j.assets || []).length < 30) break; }
+  return ds.filter((a) => a.thumbnail).map((a) => ({ id: 'polyfork:' + a.id, ten: a.title, tacGia: 'Polyfork', tamGiac: a.triangles ?? null, gp: 'CC BY', anh: a.thumbnail, link: a.page })).slice(0, so);
 }
 
 // ---------- Kenney: quét assets/kenney/**.glb, khớp theo từ trong tên file / tên bộ ----------
@@ -116,12 +118,12 @@ async function veAnhKenney1(mau, dirAnh) {
   return n;
 }
 
-const BO = { sketchfab: timSketchfab, polypizza: timPolyPizza, polyfork: timPolyfork, kenney: async (q) => timKenney(q) };
-export async function timNguon(nguon, q, { cacheDir, lamLai = false } = {}) {
+const BO = { sketchfab: timSketchfab, polypizza: (q) => timPolyPizza(q), polyfork: timPolyfork, kenney: async (q) => timKenney(q) };
+export async function timNguon(nguon, q, { cacheDir, lamLai = false, so = 30 } = {}) {
   if (!BO[nguon]) throw new Error('nguồn lạ: ' + nguon);
-  const f = cacheDir && path.join(cacheDir, nguon + '-' + q.toLowerCase().replace(/[^a-z0-9]+/g, '_').slice(0, 60) + '.json');
+  const f = cacheDir && path.join(cacheDir, nguon + '-' + q.toLowerCase().replace(/[^a-z0-9]+/g, '_').slice(0, 60) + '-' + so + '.json');
   if (f && nguon !== 'kenney' && !lamLai && fs.existsSync(f)) { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch {} }
-  const mau = await BO[nguon](q);
+  const mau = await BO[nguon](q, so);
   if (f && nguon !== 'kenney') { fs.mkdirSync(cacheDir, { recursive: true }); fs.writeFileSync(f, JSON.stringify(mau)); }
   return mau;
 }
