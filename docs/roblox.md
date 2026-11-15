@@ -25,6 +25,7 @@ Phiên Roblox nên chạy trên **Sonnet** (việc theo quy trình, không cần
 | Trang duyệt: nạp ứng viên | `node tools/duyet.mjs ep003 moi "<tiêu đề>"` → `... them-ung-vien <số đợt> <file.json> [--bo-trung]` → `... dung` → `dist/ep003_duyet.html` |
 | Nhận kết quả duyệt | `node tools/duyet.mjs ep003 mo --mot-lan` (nền, chờ dòng `DA-NHAN dot=N file=…`) hoặc `... nhan <file.json>`; `tong-hop` in quyết định hiện hành |
 | Tắt Roblox, về bản khối | thêm `?rb=0` vào URL tập/trang thử (cast.js; env nhà dùng helper `rb()` ở `engine/envs/e3-tiem.js`, `e3-pho.js`). Gấu kệ: `?gauKe=1` bật (mặc định tắt) |
+| Animation Roblox thật (nguồn B) | `node tools/roblox.mjs anim <id> [--liet-ke] [--chon "Tên"] [--ten file]` · hàng loạt: `anim --bo <thư mục manifest/anims của nocodehack> [--chon wave,agree]` → `assets/nhap/anims/<ten>.json` + `index.json` + manifest `anim/<ten>` + CREDITS. Phát: `engine/anim-rbx.js` (`rbxPose(t, clip)`), xem: `engine/anim-lab.html?src=B&grid=1`. Asset animation tải được bằng Open Cloud thường (không 403); gói 110796770261450 có 85 KeyframeSequence (chọn bằng `--chon`). Test: `node --test tools/tests/anim-rbx.test.mjs` |
 Cấu trúc NPC: `engine/r6-roblox.js` (`loadRbLooks`, `applyRbLook`), trang thử `engine/r6-roblox-lab.html?ten=…&anim=walk&rb=0|1`. Test: `node --test tools/tests/npc-roblox.test.mjs tools/tests/face-pack.test.mjs tools/tests/duyet.test.mjs`.
 
 ## 3. Pipeline (một đợt)
