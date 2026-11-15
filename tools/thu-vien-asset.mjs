@@ -159,8 +159,9 @@ const fCache = (tu) => path.join(CACHE, 'tim', bo(tu).slice(0, 80) + '.json');
 
 const HANG_CAT = { luc: 0 };
 /** Avatar Shop (catalog.roblox.com, công khai, KHÔNG gửi khoá): tóc/phụ kiện/áo quần, ưu tiên miễn phí–rẻ. */
-export async function timCatalog(tu, { so = 30, loai = 'Accessories', giaMax = 100 } = {}) {
-  const q = new URLSearchParams({ Keyword: tu, Category: loai, Limit: String(so <= 10 ? 10 : so <= 28 ? 28 : so <= 30 ? 30 : so <= 60 ? 60 : 100), MaxPrice: String(giaMax), SortType: '0' });
+export async function timCatalog(tu, { so = 30, loai = 'Accessories', giaMax = 100, mienPhi = false } = {}) {
+  const q = new URLSearchParams({ Keyword: tu, Category: loai, Limit: String(so <= 10 ? 10 : so <= 28 ? 28 : so <= 30 ? 30 : so <= 60 ? 60 : 100), MaxPrice: String(mienPhi ? 0 : giaMax), SortType: '0' });
+  if (mienPhi) q.set('salesTypeFilter', '1');
   let j = null;
   for (let lan = 0; lan < 6 && !j; lan++) {
     const cho = Math.max(0, HANG_CAT.luc + 1200 - Date.now()); HANG_CAT.luc = Date.now() + cho; if (cho) await new Promise((ok) => setTimeout(ok, cho));   // nối đuôi, cách nhau >= 1,2 s
@@ -177,14 +178,14 @@ export async function timTheoTuKhoa(tu, { so = 20, lamLai = false, timMau, avata
   const f = avatar ? fCache('catalog-' + tu) : loai !== 'Model' ? fCache(loai + '-' + tu) : fCache(tu);
   let cu = null;
   if (!lamLai && fs.existsSync(f)) { try { cu = JSON.parse(fs.readFileSync(f, 'utf8')); } catch {} }
-  if (cu && (cu.so || 20) >= so) return { mau: cu.mau, tuCache: true };
+  if (cu && (cu.so || 20) >= so && (!avatar || cu.mp)) return { mau: cu.mau, tuCache: true };
   let moi;   // nâng kho 20 → 30: tìm lại một lần, giữ thứ tự mẫu cũ, chỉ thêm mẫu còn thiếu
-  if (avatar) moi = await timCatalog(tu, { so, loai: avatar });
+  if (avatar) { moi = (cu && (cu.so || 20) >= so) ? [] : await timCatalog(tu, { so, loai: avatar }); moi = [...moi, ...await timCatalog(tu, { so, loai: avatar, mienPhi: true })]; }   // hai nguồn: ≤100 R$ và miễn phí
   else moi = (await timMau(tu, { so, loai })).map((x) => ({ id: x.id, ten: x.ten, tacGia: x.tacGia, tamGiac: x.tamGiac, thich: x.thich, link: x.link }));
-  const mau = [...(cu?.mau || [])]; for (const x of moi) if (!mau.some((y) => y.id === x.id)) mau.push(x);
+  const mau = [...(cu?.mau || [])]; for (const x of moi) { const d = mau.find((y) => y.id === x.id); if (!d) mau.push(x); else if (x.gia === 0) d.gia = 0; }
   fs.mkdirSync(path.dirname(f), { recursive: true });
-  fs.writeFileSync(f, JSON.stringify({ tuKhoa: tu, so, luc: new Date().toISOString(), mau }));
-  return { mau: mau.slice(0, Math.max(so, cu?.mau?.length || 0)), tuCache: false };
+  fs.writeFileSync(f, JSON.stringify({ tuKhoa: tu, so, mp: !!avatar, luc: new Date().toISOString(), mau }));
+  return { mau: avatar ? mau : mau.slice(0, Math.max(so, cu?.mau?.length || 0)), tuCache: false };
 }
 
 /** Mỗi món: thử từ khoá lần lượt, gộp bỏ trùng id, dừng khi đủ `so`; < toiThieu thì thử tiếp từ khoá kế (kể cả tên Anh). */
@@ -285,7 +286,7 @@ export function nhan(file) {
   const f = path.join(dir, `ket-qua_${new Date().toISOString().replace(/[:.]/g, '-')}.json`);
   fs.writeFileSync(f, JSON.stringify(kq, null, 1));
   const chon = Object.entries(kq.chon || {}).filter(([, v]) => v.mau?.length);
-  return { file: f, soMonCoChon: chon.length, soMau: chon.reduce((s, [, v]) => s + v.mau.length, 0), canThem: kq.canThem || [] };
+  return { file: f, soMonCoChon: chon.length, soMau: chon.reduce((s, [, v]) => s + v.mau.length, 0), canThem: kq.canThem || [], nhoCodex: kq.nhoCodex || [] };
 }
 
 export function moMayChu({ cong = 8791, motLan = false } = {}) {
@@ -324,7 +325,7 @@ const jsonNhung = (o) => JSON.stringify(o).replace(/</g, '\u003c').split(' ').
 function trang(D) {
   const du = { muc: D.muc.map((m) => ({ id: m.id, ten: m.ten, con: m.con.map(([id, ten]) => ({ id, ten })) })), video: D.video, luc: D.luc,
     mon: D.mon.map((m) => ({ id: m.khoa, ten: m.ten, en: m.tenEn, muc: m.muc, con: m.con, mau: m.mau, vl: m.vatLieu, kt: m.kichThuoc, ct: m.anhCat, xh: m.xuatHien, sl: m.soLuong,
-      mauStore: m.mauStore.map((x) => [x.id, x.ten, x.tacGia, x.tamGiac, x.gia ?? null]), av: !!m.avatar, lb: m.lb || '', ctNv: m.chiTiet || '' })) };
+      mauStore: m.mauStore.map((x) => [x.id, x.ten, x.tacGia, x.tamGiac, x.gia ?? (m.avatar ? null : 0)]), av: !!m.avatar, lb: m.lb || '', ctNv: m.chiTiet || '' })) };
   return TRANG.replace('/*__DATA__*/null', jsonNhung(du));
 }
 
@@ -363,6 +364,9 @@ button.chinh{background:var(--acc);color:#fff;border-color:var(--acc)}button.on{
 .mau.chon{border-color:var(--ok);background:var(--okbg)}.mau.chon::after{content:"✓";position:absolute;top:4px;right:6px;background:var(--ok);color:#fff;border-radius:99px;width:20px;height:20px;text-align:center;font-size:13px;line-height:20px}
 .da{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px}.da .chip{display:flex;gap:6px;align-items:center;border:1px solid var(--ok);background:var(--okbg);border-radius:8px;padding:3px 8px 3px 3px;cursor:pointer}
 .da .chip img{width:32px;height:32px;border-radius:5px;object-fit:cover}
+.lk{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.6);color:#fff;border-radius:99px;width:24px;height:24px;text-align:center;line-height:24px;text-decoration:none;font-size:14px}.lk.nho{position:static;display:inline-block;width:18px;height:18px;line-height:18px;font-size:11px;background:var(--acc)}
+.gia{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:99px;margin-top:3px;background:var(--line)}.gia.mp{background:var(--okbg);color:var(--ok)}.gia.tp{background:var(--warnbg);color:var(--warn)}
+.mpl{font-size:13px;display:flex;gap:4px;align-items:center;border:1px solid var(--line);border-radius:99px;padding:4px 10px;background:var(--card)}
 .trong{color:var(--mut);font-size:13px;padding:14px;border:1px dashed var(--line);border-radius:10px}
 .foot{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 16px;z-index:9}
 .foot .in{max-width:1100px;margin:0 auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -384,7 +388,7 @@ button.chinh{background:var(--acc);color:#fff;border-color:var(--acc)}button.on{
 const D=/*__DATA__*/null;
 const KEY='thu-vien-asset:v1';
 const SO=10;
-let S={chon:{},trang:{},can:{}};
+let S={chon:{},trang:{},can:{},cdx:{},mp:true};
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const luu=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const E=(t,a,...k)=>{const e=document.createElement(t);for(const[x,v]of Object.entries(a||{})){if(v===undefined||v===null)continue;if(x==='class')e.className=v;else if(x.startsWith('on'))e[x]=v;else e.setAttribute(x,v)}for(const c of k.flat())if(c!=null)e.append(c.nodeType?c:document.createTextNode(c));return e};
@@ -398,10 +402,13 @@ function tick(id,x){ // x=[id,ten,tacGia,tamGiac]
   luu();veLai(id)}
 function veLai(id){const cu=document.getElementById('m-'+id);if(cu)cu.replaceWith(hang(MON[id]));cap()}
 function tg(n){return n==null?'?':n>=1000?(n/1000).toFixed(1).replace('.0','')+'k':String(n)}
+const URLX=(m,id)=>(m.av?'https://www.roblox.com/catalog/':'https://create.roblox.com/store/asset/')+id;
+function lk(m,id,nho){return E('a',{class:'lk'+(nho?' nho':''),href:URLX(m,id),target:'_blank',rel:'noopener noreferrer',title:'Mở trang món này trên Roblox',onclick:e=>e.stopPropagation()},'↗')}
+function gia(g){return g===0?E('span',{class:'gia mp'},'Miễn phí'):g==null?E('span',{class:'gia'},'giá ?'):E('span',{class:'gia tp'},g+' R$ · trả phí')}
 function hang(m){
-  const ch=S.chon[m.id]||{},nch=Object.keys(ch).length,n=m.mauStore.length;
+  const ch=S.chon[m.id]||{},nch=Object.keys(ch).length,pool=S.mp?m.mauStore.filter(x=>x[4]===0):m.mauStore,n=pool.length;
   const off=n?((S.trang[m.id]||0)%n):0;
-  const hien=[];for(let i=0;i<Math.min(SO,n);i++)hien.push(m.mauStore[(off+i)%n]);
+  const hien=[];for(let i=0;i<Math.min(SO,n);i++)hien.push(pool[(off+i)%n]);
   const tr=E('div',{class:'tr'},
     E('img',{class:'ct',src:m.ct||'',alt:m.ten,loading:'lazy'}),
     E('div',null,E('h4',null,m.ten),E('div',{class:'en'},m.en),m.ctNv?E('div',{class:'kv'},m.ctNv):null,
@@ -411,16 +418,17 @@ function hang(m){
   const ph=E('div',{class:'ph'});
   const bar=E('div',{class:'bar'},
     E('button',{onclick:()=>{S.trang[m.id]=(off+SO)%Math.max(n,1);luu();veLai(m.id)},disabled:n<=SO?'':undefined},'Làm mới ↻'),
-    E('span',{class:'mut'},n?('Mẫu '+(off+1)+'–'+(Math.min(off+SO,n))+' / '+n):'Chưa có mẫu'),
+    E('span',{class:'mut'},n?('Mẫu '+(off+1)+'–'+(Math.min(off+SO,n))+' / '+n+(S.mp?' miễn phí':'')):(S.mp&&m.mauStore.length?'Không có mẫu miễn phí — tắt "Chỉ miễn phí" để xem '+m.mauStore.length+' mẫu trả phí':'Chưa có mẫu')),
     E('span',{style:'flex:1'}),
-    E('button',{class:S.can[m.id]?'on':'',onclick:()=>{S.can[m.id]=!S.can[m.id];luu();veLai(m.id)}},S.can[m.id]?'✓ Cần thêm mẫu':'Cần thêm mẫu'));
+    E('button',{class:S.can[m.id]?'on':'',onclick:()=>{S.can[m.id]=!S.can[m.id];luu();veLai(m.id)}},S.can[m.id]?'✓ Cần thêm mẫu':'Cần thêm mẫu'),
+    E('button',{class:S.cdx[m.id]?'on':'',title:'Không có / không tải được mẫu hợp ý: nhờ Claude giao Codex vẽ tài sản (texture…) tương tự',onclick:()=>{S.cdx[m.id]=!S.cdx[m.id];luu();veLai(m.id)}},S.cdx[m.id]?'✓ Nhờ Codex vẽ':'Nhờ Codex vẽ'));
   ph.append(bar);
-  if(!n)ph.append(E('div',{class:'trong'},'Creator Store không có mẫu miễn phí phù hợp — đánh dấu "Cần thêm mẫu" để Claude tìm bằng từ khoá khác.'));
-  else ph.append(E('div',{class:'luoi'},...hien.map(x=>E('button',{class:'mau'+(ch[x[0]]?' chon':''),onclick:()=>tick(m.id,x),title:x[1]},
-    E('img',{src:IMG(x[0]),alt:x[1],loading:'lazy'}),E('div',{class:'n'},x[1]||'(không tên)'),E('div',{class:'m'},(x[2]||'?')+' · '+x[0]+' · '+(m.av?('Avatar Shop · '+(x[4]===0?'Miễn phí':x[4]==null?'giá ?':x[4]+' R$')):(m.lb?m.lb:tg(x[3])+' tam giác')))))));
+  if(!n)ph.append(E('div',{class:'trong'},S.mp&&m.mauStore.length?'Không có mẫu miễn phí cho món này.':'Creator Store không có mẫu miễn phí phù hợp — đánh dấu "Cần thêm mẫu" để Claude tìm bằng từ khoá khác.'));
+  else ph.append(E('div',{class:'luoi'},...hien.map(x=>E('div',{class:'mau'+(ch[x[0]]?' chon':''),role:'button',tabindex:'0',onclick:()=>tick(m.id,x),onkeydown:e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tick(m.id,x)}},title:x[1]},
+    E('img',{src:IMG(x[0]),alt:x[1],loading:'lazy'}),lk(m,x[0]),E('div',{class:'n'},x[1]||'(không tên)'),E('div',{class:'m'},(x[2]||'?')+' · '+x[0]+' · '+(m.av?'Avatar Shop':m.lb?m.lb:tg(x[3])+' tam giác')),gia(x[4])))));
   const da=E('div',{class:'da'},E('b',null,'Đã chọn ('+nch+'):'));
   if(!nch)da.append(E('span',{class:'mut'},'chưa chọn mẫu nào'));
-  for(const[id,v]of Object.entries(ch))da.append(E('span',{class:'chip',title:'Bấm để bỏ chọn',onclick:()=>tick(m.id,[id,v.ten,v.tacGia,v.tamGiac,v.gia])},E('img',{src:IMG(id),alt:''}),(v.ten||id).slice(0,26)));
+  for(const[id,v]of Object.entries(ch))da.append(E('span',{class:'chip',title:'Bấm để bỏ chọn',onclick:()=>tick(m.id,[id,v.ten,v.tacGia,v.tamGiac,v.gia])},E('img',{src:IMG(id),alt:''}),(v.ten||id).slice(0,26),lk(m,id,true)));
   ph.append(da);
   return E('section',{class:'mon'+(nch?' co-chon':''),id:'m-'+m.id},tr,ph)}
 function ve(){
@@ -432,14 +440,15 @@ function ve(){
     for(const c of mc.con){const dc=ds.filter(m=>m.con===c.id);if(!dc.length)continue;
       if(mc.con.length>1)main.append(E('h3',null,c.ten+' · '+dc.length));
       for(const m of dc)main.append(hang(m))}}
-  nav.append(E('span',{class:'gap'}),E('a',{href:'#',onclick:e=>{e.preventDefault();const r=document.documentElement;const d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark'}},'◐ Sáng/tối'));
+  nav.append(E('span',{class:'gap'}),E('label',{class:'mpl'},E('input',{type:'checkbox',id:'mp',checked:S.mp?'':undefined,onchange:e=>{S.mp=e.target.checked;luu();for(const m of D.mon)veLai(m.id)}}),' Chỉ miễn phí'),E('a',{href:'#',onclick:e=>{e.preventDefault();const r=document.documentElement;const d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark'}},'◐ Sáng/tối'));
   document.getElementById('gt').textContent=D.mon.length+' món từ '+D.video.join(', ')+' · 30 mẫu/món, hiện 10 mẫu mỗi lần (Làm mới quay vòng 3 trang) · chọn được nhiều mẫu';
   cap()}
 function ketQua(){
   const chon={};for(const[id,o]of Object.entries(S.chon)){if(!MON[id]||!Object.keys(o).length)continue;chon[id]={ten:MON[id].ten,tenEn:MON[id].en,muc:MON[id].muc,con:MON[id].con,mau:Object.entries(o).map(([i,v])=>({id:i,ten:v.ten,tacGia:v.tacGia,tamGiac:v.tamGiac,gia:v.gia,nguon:MON[id].av?'avatar-shop':'creator-store',loai:MON[id].lb||'',link:(MON[id].av?'https://www.roblox.com/catalog/':'https://create.roblox.com/store/asset/')+i}))}}
   const can=Object.keys(S.can).filter(k=>S.can[k]&&MON[k]);
-  const chua=D.mon.filter(m=>!chon[m.id]&&!can.includes(m.id)).map(m=>m.id);
-  return JSON.stringify({ung:'thu-vien-asset',video:D.video,luc:new Date().toISOString(),chon,canThem:can.map(k=>({id:k,ten:MON[k].ten,tuKhoa:MON[k].en})),chuaChon:chua},null,1)}
+  const cdx=Object.keys(S.cdx).filter(k=>S.cdx[k]&&MON[k]);
+  const chua=D.mon.filter(m=>!chon[m.id]&&!can.includes(m.id)&&!cdx.includes(m.id)).map(m=>m.id);
+  return JSON.stringify({ung:'thu-vien-asset',video:D.video,luc:new Date().toISOString(),chon,canThem:can.map(k=>({id:k,ten:MON[k].ten,tuKhoa:MON[k].en})),nhoCodex:cdx.map(k=>({id:k,ten:MON[k].ten,tenEn:MON[k].en,muc:MON[k].muc,loai:MON[k].lb||'',mau:MON[k].mau,vatLieu:MON[k].vl,coTu:MON[k].kt,moTa:MON[k].ctNv})),chuaChon:chua},null,1)}
 const tb=document.getElementById('tb'),ghi=document.getElementById('ghi'),bGui=document.getElementById('gui');
 const bao=(t,mau)=>{tb.style.display='block';tb.style.background=mau||'';tb.textContent=t};
 function luuFile(){const a=E('a',{href:URL.createObjectURL(new Blob([ketQua()],{type:'application/json'})),download:'thu-vien-asset_ket-qua.json'});document.body.append(a);a.click();a.remove()}
