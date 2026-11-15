@@ -27,6 +27,8 @@ export const MUC = [
   { id: 'nha', ten: 'Nhà và công trình', con: [['mat-tien', 'Nhà / mặt tiền'], ['tuong-san', 'Tường, sàn, trần'], ['cua', 'Cửa và cửa sổ']] },
   { id: 'noi-that', ten: 'Nội thất', con: [['phong-ngu', 'Phòng ngủ'], ['bep', 'Bếp'], ['phong-khach', 'Phòng khách']] },
   { id: 'do-dung', ten: 'Đồ dùng nhỏ', con: [['chung', 'Đồ dùng nhỏ']] },
+  { id: 'troi', ten: 'Bầu trời (Skybox)', con: [['sky', 'Skybox']] },
+  { id: 'van', ten: 'Vân vật liệu', con: [['decal', 'Vân (Decal / Texture)']] },
   { id: 'khac', ten: 'Khác', con: [['chung', 'Khác']] },
 ];
 
@@ -125,14 +127,15 @@ export function gopMon(daoCu) {
   const map = new Map();
   for (const o of daoCu) {
     const chuoi = `${o.ten_en || ''} ${(o.tu_khoa_store || []).join(' ')}`.toLowerCase();
-    const nv = o.nhom === 'nhan-vat';
+    const nv = o.nhom === 'nhan-vat', tv = o.nhom === 'troi-van';
     const l = nv ? null : LUAT.find((r) => r[4].test(chuoi));
-    let khoa, ten, muc, con;
+    let khoa, ten, muc, con, lb = '';
     if (nv) { muc = 'nhan-vat'; con = CON_NV[o.nhom_con] || 'tay'; khoa = 'nv-' + con + '-' + bo((o.tu_khoa_store || [])[0] || o.ten_en || o.ten); ten = o.ten || o.ten_en; }
+    else if (tv) { const t = o.nhom_con === 'troi'; muc = t ? 'troi' : 'van'; con = t ? 'sky' : 'decal'; khoa = (t ? 'troi-' : 'van-') + bo((o.tu_khoa_store || [])[0] || o.ten_en || o.ten); ten = o.ten || o.ten_en; lb = t ? 'Sky (Model)' : 'Decal'; }
     else if (l) [khoa, ten, muc, con] = l;
     else { khoa = bo((o.tu_khoa_store || [])[0] || o.ten_en || o.ten); ten = o.ten || o.ten_en; [muc, con] = NHOM_MUC[o.nhom] || NHOM_MUC.khac; }
     let m = map.get(khoa);
-    if (!m) { m = { khoa, ten, muc, con, avatar: nv, tenEn: o.ten_en || '', chiTiet: nv ? (o.chi_tiet || '') : '', mau: [], vatLieu: [], kichThuoc: [], tuKhoa: [], xuatHien: [], anh: null, _ds: -1, soLuong: 0 }; map.set(khoa, m); }
+    if (!m) { m = { khoa, ten, muc, con, avatar: nv, lb, tenEn: o.ten_en || '', chiTiet: nv || tv ? (o.chi_tiet || '') : '', mau: [], vatLieu: [], kichThuoc: [], tuKhoa: [], xuatHien: [], anh: null, _ds: -1, soLuong: 0 }; map.set(khoa, m); }
     for (const c of o.mau || []) if (!m.mau.includes(c)) m.mau.push(c);
     if (o.vat_lieu && !m.vatLieu.includes(o.vat_lieu)) m.vatLieu.push(o.vat_lieu);
     if (o.kich_thuoc_stud && !m.kichThuoc.includes(o.kich_thuoc_stud)) m.kichThuoc.push(o.kich_thuoc_stud);
@@ -170,14 +173,14 @@ export async function timCatalog(tu, { so = 30, loai = 'Accessories', giaMax = 1
   return (j.data || []).filter((x) => x.itemType === 'Asset' || x.itemType === undefined).map((x) => ({ id: String(x.id), ten: x.name || '', tacGia: x.creatorName || '', tamGiac: null, gia: x.priceStatus === 'Free' ? 0 : (x.price ?? x.lowestPrice ?? null), link: `https://www.roblox.com/catalog/${x.id}` })).slice(0, so);
 }
 
-export async function timTheoTuKhoa(tu, { so = 20, lamLai = false, timMau, avatar = false } = {}) {
-  const f = avatar ? fCache('catalog-' + tu) : fCache(tu);
+export async function timTheoTuKhoa(tu, { so = 20, lamLai = false, timMau, avatar = false, loai = 'Model' } = {}) {
+  const f = avatar ? fCache('catalog-' + tu) : loai !== 'Model' ? fCache(loai + '-' + tu) : fCache(tu);
   let cu = null;
   if (!lamLai && fs.existsSync(f)) { try { cu = JSON.parse(fs.readFileSync(f, 'utf8')); } catch {} }
   if (cu && (cu.so || 20) >= so) return { mau: cu.mau, tuCache: true };
   let moi;   // nâng kho 20 → 30: tìm lại một lần, giữ thứ tự mẫu cũ, chỉ thêm mẫu còn thiếu
   if (avatar) moi = await timCatalog(tu, { so, loai: avatar });
-  else moi = (await timMau(tu, { so })).map((x) => ({ id: x.id, ten: x.ten, tacGia: x.tacGia, tamGiac: x.tamGiac, thich: x.thich, link: x.link }));
+  else moi = (await timMau(tu, { so, loai })).map((x) => ({ id: x.id, ten: x.ten, tacGia: x.tacGia, tamGiac: x.tamGiac, thich: x.thich, link: x.link }));
   const mau = [...(cu?.mau || [])]; for (const x of moi) if (!mau.some((y) => y.id === x.id)) mau.push(x);
   fs.mkdirSync(path.dirname(f), { recursive: true });
   fs.writeFileSync(f, JSON.stringify({ tuKhoa: tu, so, luc: new Date().toISOString(), mau }));
@@ -192,7 +195,7 @@ export async function timChoMon(m, opt) {
   for (const tu of ds.slice(0, 6)) {
     if (mau.length >= so) break;
     // từ khoá đầu luôn tìm; từ khoá kế chỉ thử khi chưa đủ `so` mà đã có thể thiếu (< toiThieu) hoặc còn cách xa so
-    const r = await timTheoTuKhoa(tu, { ...opt, avatar: m.avatar ? (m.con === 'ao-quan' ? 'Clothing' : 'Accessories') : false });
+    const r = await timTheoTuKhoa(tu, { ...opt, avatar: m.avatar ? (m.con === 'ao-quan' ? 'Clothing' : 'Accessories') : false, loai: m.muc === 'van' ? 'Decal' : 'Model' });
     dung.push(tu);
     for (const x of r.mau) if (!mau.some((y) => y.id === x.id)) mau.push(x);
     if (mau.length >= so) break;
@@ -321,7 +324,7 @@ const jsonNhung = (o) => JSON.stringify(o).replace(/</g, '\u003c').split(' ').
 function trang(D) {
   const du = { muc: D.muc.map((m) => ({ id: m.id, ten: m.ten, con: m.con.map(([id, ten]) => ({ id, ten })) })), video: D.video, luc: D.luc,
     mon: D.mon.map((m) => ({ id: m.khoa, ten: m.ten, en: m.tenEn, muc: m.muc, con: m.con, mau: m.mau, vl: m.vatLieu, kt: m.kichThuoc, ct: m.anhCat, xh: m.xuatHien, sl: m.soLuong,
-      mauStore: m.mauStore.map((x) => [x.id, x.ten, x.tacGia, x.tamGiac, x.gia ?? null]), av: !!m.avatar, ctNv: m.chiTiet || '' })) };
+      mauStore: m.mauStore.map((x) => [x.id, x.ten, x.tacGia, x.tamGiac, x.gia ?? null]), av: !!m.avatar, lb: m.lb || '', ctNv: m.chiTiet || '' })) };
   return TRANG.replace('/*__DATA__*/null', jsonNhung(du));
 }
 
@@ -414,7 +417,7 @@ function hang(m){
   ph.append(bar);
   if(!n)ph.append(E('div',{class:'trong'},'Creator Store không có mẫu miễn phí phù hợp — đánh dấu "Cần thêm mẫu" để Claude tìm bằng từ khoá khác.'));
   else ph.append(E('div',{class:'luoi'},...hien.map(x=>E('button',{class:'mau'+(ch[x[0]]?' chon':''),onclick:()=>tick(m.id,x),title:x[1]},
-    E('img',{src:IMG(x[0]),alt:x[1],loading:'lazy'}),E('div',{class:'n'},x[1]||'(không tên)'),E('div',{class:'m'},(x[2]||'?')+' · '+x[0]+' · '+(m.av?('Avatar Shop · '+(x[4]===0?'Miễn phí':x[4]==null?'giá ?':x[4]+' R$')):tg(x[3])+' tam giác'))))));
+    E('img',{src:IMG(x[0]),alt:x[1],loading:'lazy'}),E('div',{class:'n'},x[1]||'(không tên)'),E('div',{class:'m'},(x[2]||'?')+' · '+x[0]+' · '+(m.av?('Avatar Shop · '+(x[4]===0?'Miễn phí':x[4]==null?'giá ?':x[4]+' R$')):(m.lb?m.lb:tg(x[3])+' tam giác')))))));
   const da=E('div',{class:'da'},E('b',null,'Đã chọn ('+nch+'):'));
   if(!nch)da.append(E('span',{class:'mut'},'chưa chọn mẫu nào'));
   for(const[id,v]of Object.entries(ch))da.append(E('span',{class:'chip',title:'Bấm để bỏ chọn',onclick:()=>tick(m.id,[id,v.ten,v.tacGia,v.tamGiac,v.gia])},E('img',{src:IMG(id),alt:''}),(v.ten||id).slice(0,26)));
@@ -433,7 +436,7 @@ function ve(){
   document.getElementById('gt').textContent=D.mon.length+' món từ '+D.video.join(', ')+' · 30 mẫu/món, hiện 10 mẫu mỗi lần (Làm mới quay vòng 3 trang) · chọn được nhiều mẫu';
   cap()}
 function ketQua(){
-  const chon={};for(const[id,o]of Object.entries(S.chon)){if(!MON[id]||!Object.keys(o).length)continue;chon[id]={ten:MON[id].ten,tenEn:MON[id].en,muc:MON[id].muc,con:MON[id].con,mau:Object.entries(o).map(([i,v])=>({id:i,ten:v.ten,tacGia:v.tacGia,tamGiac:v.tamGiac,gia:v.gia,nguon:MON[id].av?'avatar-shop':'creator-store',link:(MON[id].av?'https://www.roblox.com/catalog/':'https://create.roblox.com/store/asset/')+i}))}}
+  const chon={};for(const[id,o]of Object.entries(S.chon)){if(!MON[id]||!Object.keys(o).length)continue;chon[id]={ten:MON[id].ten,tenEn:MON[id].en,muc:MON[id].muc,con:MON[id].con,mau:Object.entries(o).map(([i,v])=>({id:i,ten:v.ten,tacGia:v.tacGia,tamGiac:v.tamGiac,gia:v.gia,nguon:MON[id].av?'avatar-shop':'creator-store',loai:MON[id].lb||'',link:(MON[id].av?'https://www.roblox.com/catalog/':'https://create.roblox.com/store/asset/')+i}))}}
   const can=Object.keys(S.can).filter(k=>S.can[k]&&MON[k]);
   const chua=D.mon.filter(m=>!chon[m.id]&&!can.includes(m.id)).map(m=>m.id);
   return JSON.stringify({ung:'thu-vien-asset',video:D.video,luc:new Date().toISOString(),chon,canThem:can.map(k=>({id:k,ten:MON[k].ten,tuKhoa:MON[k].en})),chuaChon:chua},null,1)}

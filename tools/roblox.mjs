@@ -463,10 +463,10 @@ export async function taiAnhXemTruoc(ids, { co = '420x420' } = {}) {
   return ra;
 }
 /** Tìm mẫu miễn phí (dùng chung cho CLI và tools/nhap-model.mjs). */
-export async function timMau(tu, { so = 20, tamGiacMax = Infinity, coScript = false } = {}) {
+export async function timMau(tu, { so = 20, tamGiacMax = Infinity, coScript = false, loai = 'Model' } = {}) {
   const rows = []; let token = '', nReq = 0;
   while (rows.length < so && nReq < 4) {
-    const q = new URLSearchParams({ searchCategoryType: 'Model', query: tu, maxPageSize: String(Math.min(100, Math.max(so * 2, 30))) });
+    const q = new URLSearchParams({ searchCategoryType: loai, query: tu, maxPageSize: String(Math.min(100, Math.max(so * 2, 30))) });
     if (token) q.set('pageToken', token);
     const r = await hoiApi(`${API}/toolbox-service/v2/assets:search?${q}`); nReq++;
     if (!r.ok) throw new Error(`tìm kiếm lỗi HTTP ${r.status}`);
