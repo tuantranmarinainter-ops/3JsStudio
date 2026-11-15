@@ -7,6 +7,12 @@ description: Từ MỘT câu luật của người dùng viết ra 5 kịch bả
 
 Chuẩn kênh: `CLAUDE.md` (mục "Format Ở thị trấn này", "Cấu trúc phim", "Luật camera dồn dập"). Định dạng file + header: `docs/kich-ban-vao.md`. Ví dụ 10 hàng: `vi-du-kich-ban.md` (học kiểu điền, không chép nội dung). Khuôn bước 1: `mau-5-kich-ban.md`.
 
+## Hai dây chuyền sau Bước 1 (hỏi người dùng nếu chưa rõ)
+- **Dây chuyền Codex/kit (mặc định cho tập mới, từ 2026-11-15):** sau khi người dùng chọn mẫu N, chỉ viết **kịch bản chữ**
+  `kich-ban/<ep>/kich-ban.md` (luật, điểm yếu, twist, lời giải, nhân vật, bối cảnh, lời kể theo 4 phần — chưa chia shot), rồi
+  chuyển sang skill **`xu-ly-kich-ban`** (chấm điểm, hỏi bổ sung, chuyện tinh, `bang-shot.json`, bối cảnh tinh). KHÔNG làm Bước 2–3 dưới đây.
+- **Dây chuyền engine cũ (`storyboard.py` / `lam-phim`):** giữ nguyên Bước 2–3 (bảng 19 cột ở `episodes/<ep>/kich-ban.md`).
+
 ## Cấm (mọi bước)
 - Không chép cốt truyện/lời của kênh khác; mọi ý tự nghĩ.
 - KHÔNG mở file `.srt` nào (kể cả trong `kich-ban/_vao/`). Số liệu nhịp chỉ đọc từ `docs/nhip-kich-ban.json`.
