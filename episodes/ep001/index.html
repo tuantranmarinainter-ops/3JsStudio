@@ -101,6 +101,7 @@
       const A = createAssetLib(THREE);
       await A.load(ENV_ASSETS);
       const envs = createEnvs(THREE, stage, K, A);
+      await (await import('/engine/r15.js')).loadEmoteFaces(THREE);   // 37 mặt emote cho mọi nhân vật R15 (ô FX matEmote)
       const actors = await buildCast(THREE), houses = buildHouses(THREE), props = buildProps(THREE, K), fx = buildFx(THREE);
       for (const a of Object.values(actors)) stage.scene.add(a.root);
       for (const h of Object.values(houses)) stage.scene.add(h.root);

@@ -13520,6 +13520,15 @@
   "tris_goc": 1036
  },
  {
+  "id": "faces/emote37",
+  "src": "assets/faces/emote37/",
+  "source": "người dùng: 37_Emote_Roblox_Net_Mem.zip (tài sản người dùng)",
+  "license": "user-owned",
+  "scale": 1,
+  "nodes": [],
+  "note": "37 PNG 362×362 nền trong suốt, tên giống GA_FACES; mặt cho mọi nhân vật R15 (ô FX matEmote)"
+ },
+ {
   "id": "nhap/pho-nha-ga",
   "src": "assets/nhap/pho-nha-ga.glb",
   "source": "create.roblox.com/store/asset/88741601",

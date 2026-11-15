@@ -98,6 +98,7 @@ export const R15_DEFAULTS = {
   drawstrings: null,    // màu dây rút hoodie (mặc định = giá trị hoodie)
   stripeColors: null,   // với shirtPattern 'hstripes': [sáng, tối, vạch] (sọc ngang liền mạch thân + tay)
   faceSet: null,        // { tên: Texture } từ loadGaFaces() → mặt decal ảnh thay mặt vẽ thủ tục
+  emoteSet: undefined,  // bộ mặt ảnh dùng chung mọi nhân vật (loadEmoteFaces → globalThis.__emoteFaces); null = không dựng; ô FX 'matEmote' bật/tắt lúc chạy
 };
 
 // ---------- Bộ mặt decal của Gà (assets/characters/ga/faces/NN_tên.png, 362², nét đen nền trong suốt) ----------
@@ -117,6 +118,11 @@ export async function loadGaFaces(THREE, { base = '/assets/characters/ga/faces',
     try { loader.load(u, (t) => { t.colorSpace = THREE.SRGBColorSpace; out[k] = t; res(); }, undefined, () => res()); } catch { res(); }
   })));
   return out;
+}
+
+// Bộ 37 emote của người dùng (assets/faces/emote37/, cùng tên ảnh với GA_FACES) — áp cho MỌI nhân vật R15 (ô FX 'matEmote'; tắt = mặt vẽ thủ tục cũ)
+export async function loadEmoteFaces(THREE, { base = '/assets/faces/emote37' } = {}) {
+  return (globalThis.__emoteFaces = await loadGaFaces(THREE, { base }));
 }
 
 export const R15_FACES = ['smile', 'happy', 'laugh', 'neutral', 'sad', 'worried', 'scared', 'panic', 'surprised', 'angry',
@@ -1052,6 +1058,15 @@ export function createR15(THREE, opts = {}) {
   const gaSet = o.faceSet || null;
   const facePatch = addMesh(head, facePatchGeometry(THREE, gaSet ? GA_PATCH : null), faceMat, 'face', { cast: false });
   facePatch.renderOrder = 2;
+  // mặt emote ảnh (ô FX 'matEmote'): mảng mặt + canvas riêng, bật thì ẩn mặt vẽ thủ tục (chọn theo cờ mỗi lần vẽ, đổi lúc chạy không cần dựng lại)
+  const emSet = gaSet ? null : (o.emoteSet === undefined ? globalThis.__emoteFaces || null : o.emoteSet);
+  let em = null;
+  if (emSet && Object.keys(emSet).length) {
+    const cv = canvas(FACE_PX, FACE_PX), tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+    const mat = faceMat.clone(); mat.map = tex;
+    const mesh = addMesh(head, facePatchGeometry(THREE, GA_PATCH), mat, 'face_emote', { cast: false }); mesh.renderOrder = 2; mesh.visible = false;
+    em = { set: emSet, g: cv.getContext('2d'), tex, mat, mesh, key: '' };
+  }
 
   const hat = piv('hat', 0, 0, 0, head);
   const parts = {
@@ -1119,26 +1134,34 @@ export function createR15(THREE, opts = {}) {
     return st;
   }
   // mặt decal ảnh của Gà: 1 material/1 canvas dùng chung, đổi biểu cảm = vẽ lại ảnh khác (không thêm program shader). Không chớp mắt (ảnh tĩnh).
-  const gaKey = (n) => { const k = GA_FACE_MAP[n] || n; return gaSet[k] ? k : 'binh_thuong'; };
-  const gaDraw = (k) => {
-    const img = gaSet[k]?.image; if (!img) return;
+  // nhép miệng gửi 'tên~o' / 'tên~open': mặt ảnh không tách miệng → to tiếng ('~open') đổi sang ảnh miệng O, nhỏ thì giữ ảnh gốc
+  const gaKey = (n, set = gaSet) => { const [b, m] = String(n).split('~'); const k = m === 'open' && set.o_tho ? 'o_tho' : GA_FACE_MAP[b] || b; return set[k] ? k : 'binh_thuong'; };
+  const gaDraw = (k, set = gaSet, g = fg) => {
+    const img = set[k]?.image; if (!img) return;
     const w = 1.05 * FACE_PX / 1.2, h = 1.05 * FACE_PX / (GA_PATCH.y[1] - GA_PATCH.y[0]), cy = FACE_PX * (1 - (0.42 - GA_PATCH.y[0]) / (GA_PATCH.y[1] - GA_PATCH.y[0]));
     fg.drawImage(img, FACE_PX / 2 - w / 2, cy - h / 2, w, h);
   };
-  function faceAtGa(t, name, { from, mix = 1 } = {}) {
-    const key = gaKey(name), fk = from && mix < 1 ? gaKey(from) : null;
+  function faceAtGa(t, name, { from, mix = 1 } = {}, E = null) {
+    const set = E ? E.set : gaSet, g = E ? E.g : fg;
+    const key = gaKey(name, set), fk = from && mix < 1 ? gaKey(from, set) : null;
     const wq = fk && fk !== key ? Math.round(clamp01(mix) * 8) / 8 : 1;
     const fkey = `G|${key}|${wq < 1 ? fk : ''}|${wq}`;
-    if (fkey !== faceKey) {
-      faceKey = fkey; fg.setTransform(1, 0, 0, 1, 0, 0); fg.clearRect(0, 0, FACE_PX, FACE_PX);
-      if (wq < 1) { fg.globalAlpha = 1 - wq; gaDraw(fk); fg.globalAlpha = wq; gaDraw(key); fg.globalAlpha = 1; } else gaDraw(key);
-      faceTex.needsUpdate = true;
+    if (fkey !== (E ? E.key : faceKey)) {
+      if (E) E.key = fkey; else faceKey = fkey;
+      g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, FACE_PX, FACE_PX);
+      if (wq < 1) { g.globalAlpha = 1 - wq; gaDraw(fk, set, g); g.globalAlpha = wq; gaDraw(key, set, g); g.globalAlpha = 1; } else gaDraw(key, set, g);
+      (E ? E.tex : faceTex).needsUpdate = true;
     }
     const st = { brows: 'neutral', eyes: 'open', mouth: 'smile', extras: [], eyesQ: { gaze: [0, 0] }, ms: 1, browDy: 0, mp: mouthParams('smile'), mixK: wq, ga: key };
     char.lastFace = st; return st;
   }
   function faceAt(t, name = o.face, opt = {}) {
     if (gaSet) return faceAtGa(t, name, opt);
+    if (em) {
+      const on = globalThis.__autoFx?.matEmote !== false;
+      em.mesh.visible = on; facePatch.visible = !on;
+      if (on) return faceAtGa(t, name, opt, em);
+    }
     if (opt.live) return faceAtLive(t, name, opt);
     const { blink = o.blink, gaze } = opt;
     const pr = FACE_PRESETS[name] || FACE_PRESETS[{ sleepy: 'sleepy', panic: 'panic' }[name]] || FACE_PRESETS.smile;
