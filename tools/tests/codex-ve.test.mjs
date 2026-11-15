@@ -150,3 +150,79 @@ test('rate limit lần đầu: chạy lại cụm bị giới hạn một lần 
   assert.equal(kq.cum.filter((c) => c.gioiHan).length, 1);
   assert.equal(kq.cum.filter((c) => c.chayLai).length, 1);
 });
+
+// ---------- bối cảnh theo danh sách mốc (boi-canh/<id>.json) ----------
+const MOC_MAU = path.join(aqui, 'fixtures', 'boi-canh-mau', 'moc-nha-may-ngoai.json');
+
+function tapCoMoc({ khoiXam = [], sua = (m) => m } = {}) {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'codex-ve-moc-'));
+  const thuMuc = path.join(root, 'tap mau');
+  fs.mkdirSync(path.join(thuMuc, 'boi-canh'), { recursive: true });
+  const bs = { ep: 'epX', nhanVat: [{ id: 'ga', ten: 'Gà', moTa: 'gà con vàng' }],
+    boiCanh: [{ id: 'nha-may-ngoai', ten: 'Sân ngoài nhà máy', moTa: 'MÔ TẢ CŨ MỘT CÂU' }, { id: 'pho', ten: 'Phố', moTa: 'phố nhỏ, đèn vàng' }],
+    shots: [] };
+  fs.writeFileSync(path.join(thuMuc, 'bang-shot.json'), JSON.stringify(bs));
+  const moc = sua(JSON.parse(fs.readFileSync(MOC_MAU, 'utf8')));
+  fs.writeFileSync(path.join(thuMuc, 'boi-canh', 'nha-may-ngoai.json'), JSON.stringify(moc));
+  for (const g of khoiXam) fs.writeFileSync(path.join(thuMuc, 'boi-canh', `nha-may-ngoai_${g}.png`), 'x');
+  return { root, thuMuc, state: path.join(root, 'state') };
+}
+const docDeBai = (thuMuc) => fs.readFileSync(path.join(thuMuc, 'codex', 'de-bai-tham-chieu-tc1.md'), 'utf8');
+
+test('bc_* có file mốc: đề bài đủ phong cách, mốc, lấp đầy, chừa trống, cấm, ánh sáng, câu bắt buộc', () => {
+  const b = tapCoMoc({ khoiXam: ['tren-cao', 'ngang-mat'], sua: (m) => ({
+    ...m, phongCach: 'khối vuông Roblox; gạch xanh xám', bangMau: ['#5f7480', '#ffd9a0'],
+    lapDay: [{ cum: 'phai', mon: [{ ten: 'thùng phuy xanh', soLuong: 2 }] }],
+    moc: m.moc.map((x) => (x.id === 'thung' ? { ...x, vaiTro: 'Gà trèo lên để nhìn qua kính' } : x)) }) });
+  const r = cli(['tham-chieu', b.thuMuc, '--thu'], {}, b.state);
+  assert.equal(r.status, 0, r.stderr);
+  const de = docDeBai(b.thuMuc);
+  assert.match(de, /Vẽ chồng lên ảnh khối xám đính kèm, không đổi hình khối, không thêm\/bớt mốc, không vẽ nhân vật\./);
+  assert.match(de, /khối vuông Roblox; gạch xanh xám/);
+  assert.match(de, /#5f7480, #ffd9a0/);
+  assert.match(de, /Thùng gỗ để trèo \[thung\] — vai trò: Gà trèo lên để nhìn qua kính · vùng: x -0\.5\.\.2\.1.* · màu: #8a6a44, #3a2614 · vật liệu: ván gỗ/);
+  assert.match(de, /Tường gạch nhà máy \[tuong\]/);
+  assert.match(de, /2 × thùng phuy xanh/);
+  assert.match(de, /Vùng phải để trống[\s\S]*khoảng sân x -4\.\.4/);
+  assert.match(de, /Điều cấm[\s\S]*không đổi số ô kính/);
+  assert.match(de, /Ánh sáng[\s\S]*xanh lạnh ban đêm/);
+  assert.match(de, /Gà[^\n]*đỉnh đầu 5\.48|hình nộm xám khối vuông cao 5\.48/);
+  assert.doesNotMatch(de, /MÔ TẢ CŨ MỘT CÂU/);
+  // ảnh khối xám có trong -i của lệnh
+  assert.match(r.stdout, /-i [^<]*nha-may-ngoai_tren-cao\.png[^<]*nha-may-ngoai_ngang-mat\.png/);
+  // bối cảnh không có file mốc vẫn dùng moTa cũ
+  assert.match(de, /phố nhỏ, đèn vàng/);
+});
+
+test('chạy thật: ảnh khối xám có thì vào -i; thiếu thì không; không có file mốc thì như cũ', () => {
+  const b = tapCoMoc({ khoiXam: ['tren-cao'] });
+  const r = cli(['tham-chieu', b.thuMuc], {}, b.state);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const calls = fs.readFileSync(path.join(b.state, 'calls.jsonl'), 'utf8').trim().split('\n').map((l) => JSON.parse(l));
+  const anh = calls.flatMap((c) => c.images).map((p) => path.basename(p));
+  assert.deepEqual(anh, ['nha-may-ngoai_tren-cao.png']);
+  // không file mốc, không ảnh khối xám: đường cũ, không -i
+  const c = banSao();
+  const r2 = cli(['tham-chieu', c.thuMuc], {}, c.state);
+  assert.equal(r2.status, 0, r2.stdout + r2.stderr);
+  const calls2 = fs.readFileSync(path.join(c.state, 'calls.jsonl'), 'utf8').trim().split('\n').map((l) => JSON.parse(l));
+  assert.ok(calls2.every((x) => x.images.length === 0));
+  assert.match(docDeBai(c.thuMuc), /Toàn cảnh bối cảnh "[^"]+": /);
+});
+
+test('chưa có ảnh khối xám: đề bài nói rõ, không chèn câu "đính kèm"', () => {
+  const b = tapCoMoc();
+  const r = cli(['tham-chieu', b.thuMuc, '--thu'], {}, b.state);
+  assert.equal(r.status, 0, r.stderr);
+  const de = docDeBai(b.thuMuc);
+  assert.match(de, /Chưa có ảnh khối xám/);
+  assert.doesNotMatch(de, /Vẽ chồng lên ảnh khối xám đính kèm/);
+});
+
+test('file mốc hỏng: thoát 2', () => {
+  const b = tapCoMoc();
+  fs.writeFileSync(path.join(b.thuMuc, 'boi-canh', 'nha-may-ngoai.json'), '{hỏng');
+  const r = cli(['tham-chieu', b.thuMuc, '--thu'], {}, b.state);
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /nha-may-ngoai\.json hỏng/);
+});

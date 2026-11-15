@@ -10,11 +10,15 @@ kich-ban/<ep>/
   bang-shot.json         Claude viết (bước 1a)
   tham-chieu/nv_<id>.png Codex vẽ (bước 1b) — tờ mẫu nhân vật
   tham-chieu/bc_<id>.png Codex vẽ (bước 1b) — toàn cảnh bối cảnh
+  boi-canh/<id>.json     danh sách mốc bối cảnh (khuôn: .claude/skills/xu-ly-kich-ban/khuon-boi-canh.md)
+  boi-canh/<id>_tren-cao.png | <id>_ngang-mat.png   ảnh khối xám (tools/look.mjs); có thì codex-ve tự đính kèm -i
   duyet-1.json           người dùng chốt ở cổng duyệt 1 (trang duyệt ghi)
   hinh/shot_<id>_dau.png | _giua.png | _cuoi.png   Codex vẽ (bước 2)
   kit.json               Codex điền theo docs/kit.mau.json (bước 2)
   codex/                 đề bài từng cụm, log, tien-do-<cụm>.txt
 ```
+
+**Quy ước bối cảnh (codex-ve `tham-chieu`):** nếu có `boi-canh/<id>.json` thì đề bài `bc_<id>` đọc file đó (phong cách, bảng màu, từng mốc, đồ lấp đầy, chừa trống, điều cấm, ánh sáng) và bắt buộc "vẽ chồng lên ảnh khối xám đính kèm, không đổi hình khối, không thêm/bớt mốc, không vẽ nhân vật". Ảnh khối xám đúng tên `boi-canh/<id>_tren-cao.png`, `boi-canh/<id>_ngang-mat.png`; file nào tồn tại thì vào `-i`. Không có file mốc → dùng `moTa` như cũ. File mốc hỏng → thoát 2.
 
 ## bang-shot.json
 

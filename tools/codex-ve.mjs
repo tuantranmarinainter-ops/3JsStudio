@@ -31,6 +31,12 @@ const QUY_TAC_THAM_CHIEU = [
 
 const nhan = (map, k) => map[k] || k || '';
 
+// Ảnh khối xám của bối cảnh (quy ước đường dẫn trong thư mục tập): docs/quy-trinh-dau-vao.md
+export const GOC_KHOI_XAM = ['tren-cao', 'ngang-mat'];
+export const duongKhoiXam = (id) => GOC_KHOI_XAM.map((g) => `boi-canh/${id}_${g}.png`);
+export const duongMoc = (id) => `boi-canh/${id}.json`;
+export const CAU_BAT_BUOC_KHOI_XAM = 'Vẽ chồng lên ảnh khối xám đính kèm, không đổi hình khối, không thêm/bớt mốc, không vẽ nhân vật.';
+
 function camMoTa(cam) {
   if (!cam) return '';
   const co = Array.isArray(cam.coKhung) ? cam.coKhung.map((k) => nhan(NHAN_CO, k)).join(' → ') : '';
@@ -65,9 +71,10 @@ function chiaDoi(arr) {
 
 /**
  * Lập kế hoạch các cụm. Chỉ đưa hình CHƯA có file (coFile(relPath) → boolean).
- * @returns {{cum:string, cheDo:string, hinh:{file:string, moTa:string}[], anhKem:string[], nhanVat:string[], boiCanh?:string}[]}
+ * docMoc(id) → nội dung boi-canh/<id>.json hoặc null (không có thì giữ hành vi cũ: dùng moTa).
+ * @returns {{cum:string, cheDo:string, hinh:{file:string, moTa:string, moc?:object, khoiXam?:string[]}[], anhKem:string[], nhanVat:string[], boiCanh?:string}[]}
  */
-export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null } = {}) {
+export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null, docMoc = () => null } = {}) {
   const loc = (id) => !chi || chi.includes(id);
   const cumList = [];
 
@@ -79,7 +86,15 @@ export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null } = {})
     }
     for (const b of bs.boiCanh || []) {
       if (!loc(b.id)) continue;
-      muc.push({ file: `tham-chieu/bc_${b.id}.png`, moTa: `Toàn cảnh bối cảnh "${b.ten || b.id}": ${b.moTa || ''}. Khổ dọc 9:16, không có nhân vật; phong cách khối vuông.` });
+      const moc = docMoc(b.id);
+      if (moc) {
+        const khoiXam = duongKhoiXam(b.id).filter((f) => coFile(f));
+        const cau = khoiXam.length ? CAU_BAT_BUOC_KHOI_XAM : 'Vẽ đúng theo danh sách mốc, không thêm/bớt mốc, không vẽ nhân vật (chưa có ảnh khối xám).';
+        muc.push({ file: `tham-chieu/bc_${b.id}.png`, moc, khoiXam,
+          moTa: `Toàn cảnh bối cảnh "${b.ten || b.id}", khổ dọc 9:16. ${cau} Chi tiết ở mục "Danh sách mốc bối cảnh ${b.id}".` });
+      } else {
+        muc.push({ file: `tham-chieu/bc_${b.id}.png`, moTa: `Toàn cảnh bối cảnh "${b.ten || b.id}": ${b.moTa || ''}. Khổ dọc 9:16, không có nhân vật; phong cách khối vuông.` });
+      }
     }
     const can = muc.filter((m) => !coFile(m.file));
     if (!can.length) return [];
@@ -87,7 +102,8 @@ export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null } = {})
     const moi = Math.ceil(can.length / n);
     for (let i = 0; i < n; i++) {
       const hinh = can.slice(i * moi, (i + 1) * moi);
-      if (hinh.length) cumList.push({ cum: `tc${i + 1}`, cheDo, hinh, anhKem: [], nhanVat: [] });
+      const anhKem = hinh.flatMap((h) => h.khoiXam || []);
+      if (hinh.length) cumList.push({ cum: `tc${i + 1}`, cheDo, hinh, anhKem, nhanVat: [] });
     }
     return cumList;
   }
@@ -119,6 +135,41 @@ export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null } = {})
   return cumList;
 }
 
+const dsMau = (m) => (Array.isArray(m) ? m.join(', ') : m || '');
+
+/** Mục Markdown mô tả một bối cảnh từ file danh sách mốc (boi-canh/<id>.json). */
+function moMocBoiCanh(h) {
+  const m = h.moc;
+  const id = m.boiCanh || path.basename(h.file, '.png').replace(/^bc_/, '');
+  const L = [`## Danh sách mốc bối cảnh ${id} (cho ${h.file})`];
+  if (h.khoiXam?.length) L.push(`- ${CAU_BAT_BUOC_KHOI_XAM} Ảnh khối xám của bối cảnh này: ${h.khoiXam.join(', ')}.`);
+  else L.push('- Chưa có ảnh khối xám: vẽ đúng theo danh sách mốc dưới đây, không thêm/bớt mốc, không vẽ nhân vật.');
+  L.push('- Số đo (stud) chỉ lấy từ danh sách này, không đoán từ ảnh.');
+  if (m.phongCach || m.bangMau) L.push(`- Phong cách: ${m.phongCach || 'khối vuông'}${m.bangMau ? ` · bảng màu: ${dsMau(m.bangMau)}` : ''}`);
+  if (m.heQuyChieu) L.push(`- Hệ quy chiếu: ${m.heQuyChieu}`);
+  if (m.kichThuoc) L.push(`- Kích thước: ${JSON.stringify(m.kichThuoc)} ${m.donVi || 'stud'}`);
+  if (m.vatDoCo?.length) {
+    L.push('', '### Vật đo cỡ');
+    for (const v of m.vatDoCo) L.push(`- ${v.ten}${v.dat ? ` tại [${v.dat.join(', ')}]` : ''}${v.ghiChu ? ` — ${v.ghiChu}` : ''}`);
+  }
+  const moc = (m.moc || []).filter((x) => x.bat !== false);
+  L.push('', `### Các mốc (${moc.length}) — phải có đủ, đúng chỗ`);
+  for (const x of moc) {
+    const f = [x.vaiTro && `vai trò: ${x.vaiTro}`, x.vung && `vùng: ${x.vung}`, x.kichThuoc && `kích thước: ${x.kichThuoc}`,
+      x.mau && `màu: ${dsMau(x.mau)}`, x.vatLieu && `vật liệu: ${x.vatLieu}`].filter(Boolean);
+    L.push(`- ${x.ten || x.id} [${x.id}]${f.length ? ` — ${f.join(' · ')}` : ''}`);
+  }
+  if (m.lapDay?.length) {
+    L.push('', '### Đồ lấp đầy (đúng số lượng, đúng cụm)');
+    for (const c of m.lapDay) L.push(`- ${c.cum}: ${(c.mon || []).map((o) => `${o.soLuong ?? 1} × ${o.ten}`).join('; ')}`);
+  }
+  if (m.chuaTrong?.length) { L.push('', '### Vùng phải để trống'); for (const c of m.chuaTrong) L.push(`- ${c}`); }
+  if (m.cam?.length) { L.push('', '### Điều cấm'); for (const c of m.cam) L.push(`- ${c}`); }
+  if (m.anhSang) L.push('', '### Ánh sáng', `- ${m.anhSang}`);
+  L.push('');
+  return L;
+}
+
 /** Soạn nội dung đề bài (Markdown) cho một cụm. */
 export function soanDeBai(cum, bs = {}) {
   const L = [];
@@ -129,7 +180,7 @@ export function soanDeBai(cum, bs = {}) {
   if (cum.cheDo === 'tham-chieu') for (const q of QUY_TAC_THAM_CHIEU) L.push(`- ${q}`);
   L.push('');
   if (cum.anhKem?.length) {
-    L.push('## Ảnh tham chiếu đính kèm (đã duyệt)');
+    L.push(cum.cheDo === 'tham-chieu' ? '## Ảnh khối xám đính kèm (nền để vẽ chồng lên)' : '## Ảnh tham chiếu đính kèm (đã duyệt)');
     for (const a of cum.anhKem) L.push(`- ${a}`);
     L.push('');
   }
@@ -139,6 +190,7 @@ export function soanDeBai(cum, bs = {}) {
     const nvs = (cum.nhanVat || []).map((id) => (bs.nhanVat || []).find((n) => n.id === id)).filter(Boolean);
     if (nvs.length) { L.push('## Nhân vật trong cụm'); for (const n of nvs) L.push(`- ${n.ten || n.id}: ${n.moTa || ''}`); L.push(''); }
   }
+  for (const h of cum.hinh) if (h.moc) L.push(...moMocBoiCanh(h));
   L.push(`## File phải tạo (${cum.hinh.length} hình)`);
   for (const h of cum.hinh) L.push(`- FILE: ${h.file} — ${h.moTa}`);
   L.push('');
@@ -218,7 +270,14 @@ export async function chay(argv, env = process.env) {
   }
 
   const coFile = (rel) => { try { return fs.statSync(path.join(thuMuc, rel)).size > 0; } catch { return false; } };
-  const ke = lapKeHoach(bs, cheDo, { coFile, chi: t.chi });
+  let loiMoc = null;
+  const docMoc = (id) => {
+    const f = path.join(thuMuc, duongMoc(id));
+    if (!fs.existsSync(f)) return null;
+    try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { loiMoc = `${duongMoc(id)} hỏng: ${e.message}`; return null; }
+  };
+  const ke = lapKeHoach(bs, cheDo, { coFile, chi: t.chi, docMoc });
+  if (loiMoc) { console.error(loiMoc); return 2; }
   if (!ke.length) { console.log(`Đủ hình (${cheDo}): không còn hình nào cần vẽ.`); return 0; }
 
   const dirCodex = path.join(thuMuc, 'codex');
@@ -246,7 +305,7 @@ export async function chay(argv, env = process.env) {
 
   const chayCum = async (cum, lanLai) => {
     // tính lại hình còn thiếu để không vẽ lại hình đã có
-    const moi = lapKeHoach(bs, cheDo, { coFile, chi: t.chi }).find((c) => c.cum === cum.cum);
+    const moi = lapKeHoach(bs, cheDo, { coFile, chi: t.chi, docMoc }).find((c) => c.cum === cum.cum);
     const r = kq.get(cum.cum);
     if (!moi) return;
     ghiDeBai(moi);
