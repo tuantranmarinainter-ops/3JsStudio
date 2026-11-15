@@ -35,7 +35,7 @@ import { CLOTH } from './cloth.js';
 import { MAST } from './mastbreak.js';
 import { MATS } from './materials.js';
 
-export const FX_DEFAULTS = { hatNhe: false, grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true, backdrop: true, matTex: true, flowers: true, traffic: true, villagers: true, pvTrees: true, familyPhoto: true, realWindow: true, houseStairs: true, stairsFold: true, daTron: true, raft: true, wreckSplit: true, faceLive: true, idleSong: false, chongLop: false, coCanh: true, gioThoiTiet: true, denNhanVat: true, lightCues: false, tangXa: true, seaDecor: true, nhep: true, chuTungChu: true, matEmote: true, matAlti: true, matNguyen: true, troikaText: false, vfxAura: false, vfxBeam: false, vfxHitSpark: false, vfxSpeedLines: false, vfxShake: false };
+export const FX_DEFAULTS = { hatNhe: false, grade: true, bloom: true, dof: true, vignette: true, outline: false, storm: true, worn: true, grime: true, foot: true, prints: true, wind: true, breath: true, folds: true, hair2: true, aged: true, mats: true, ibl: true, scans: true, sea2: true, paint: false, ao: false, smaa: false, lite: false, seaWx: true, cloth: true, mast: true, skybox: true, stormSky: true, shotSky: true, skyCubic: true, skyScale: true, grass: true, sway: true, cloudShade: true, farwoods: true, backdrop: true, matTex: true, flowers: true, traffic: true, villagers: true, pvTrees: true, familyPhoto: true, realWindow: true, vaiGiuong: true, houseStairs: true, stairsFold: true, daTron: true, raft: true, wreckSplit: true, faceLive: true, idleSong: false, chongLop: false, coCanh: true, gioThoiTiet: true, denNhanVat: true, lightCues: false, tangXa: true, seaDecor: true, nhep: true, chuTungChu: true, matEmote: true, matAlti: true, matNguyen: true, troikaText: false, vfxAura: false, vfxBeam: false, vfxHitSpark: false, vfxSpeedLines: false, vfxShake: false };
 export const FX_LABELS = {
   grade: 'Chỉnh màu theo cảnh', bloom: 'Toả sáng (bloom)', dof: 'Mờ hậu cảnh (cảnh cận)',
   vignette: 'Tối viền + hạt phim', outline: 'Viền đen nhân vật', storm: 'Mưa bão mạnh',
@@ -61,6 +61,7 @@ export const FX_LABELS = {
   pvTrees: 'Cây kiểu Painted Valley (brazil)',
   familyPhoto: 'Ảnh gia đình trong bếp',
   realWindow: 'Cửa sổ thật phòng ngủ (cảnh 3D ngoài)',
+  vaiGiuong: 'Giường vải mềm (gối phồng + nếp gấp ga thay hộp)',
   houseStairs: 'Cầu thang nhà chạm đất',
   stairsFold: 'Cầu thang gấp bản lề (nâng nhà thì gấp, ngồi thì bung)',
   hatNhe: 'Hạt phim nhẹ (da nhân vật phẳng, nét; chỉ giảm hạt, vẫn giữ tối viền)',
@@ -214,7 +215,7 @@ export function createPost(THREE, stage, { actors = [], paint: paintOpts = {}, a
   const _f = new THREE.Vector3();
 
   function render({ t = 0, light = 'day', env = '', focus = null, flash = 0 } = {}) {
-    const AF = (globalThis.__autoFx ||= {}); AF.foot = fx.foot; AF.prints = fx.prints; AF.wind = fx.wind; AF.breath = fx.breath; AF.ibl = fx.ibl; AF.scans = fx.scans; AF.lite = fx.lite; AF.skybox = fx.skybox; AF.stormSky = fx.stormSky; AF.shotSky = fx.shotSky; AF.skyCubic = fx.skyCubic; AF.skyScale = fx.skyScale; AF.grass = fx.grass; AF.sway = fx.sway; AF.cloudShade = fx.cloudShade; AF.farwoods = fx.farwoods; AF.backdrop = fx.backdrop; AF.flowers = fx.flowers; AF.traffic = fx.traffic; AF.villagers = fx.villagers; AF.pvTrees = fx.pvTrees; AF.familyPhoto = fx.familyPhoto; AF.realWindow = fx.realWindow; AF.houseStairs = fx.houseStairs; AF.stairsFold = fx.stairsFold; AF.raft = fx.raft; AF.wreckSplit = fx.wreckSplit;   // engine/shots.js hiệu ứng tự động
+    const AF = (globalThis.__autoFx ||= {}); AF.foot = fx.foot; AF.prints = fx.prints; AF.wind = fx.wind; AF.breath = fx.breath; AF.ibl = fx.ibl; AF.scans = fx.scans; AF.lite = fx.lite; AF.skybox = fx.skybox; AF.stormSky = fx.stormSky; AF.shotSky = fx.shotSky; AF.skyCubic = fx.skyCubic; AF.skyScale = fx.skyScale; AF.grass = fx.grass; AF.sway = fx.sway; AF.cloudShade = fx.cloudShade; AF.farwoods = fx.farwoods; AF.backdrop = fx.backdrop; AF.flowers = fx.flowers; AF.traffic = fx.traffic; AF.villagers = fx.villagers; AF.pvTrees = fx.pvTrees; AF.familyPhoto = fx.familyPhoto; AF.realWindow = fx.realWindow; AF.vaiGiuong = fx.vaiGiuong; AF.houseStairs = fx.houseStairs; AF.stairsFold = fx.stairsFold; AF.raft = fx.raft; AF.wreckSplit = fx.wreckSplit;   // engine/shots.js hiệu ứng tự động
     GRUNGE.char.value = fx.worn ? 1 : 0; GRUNGE.build.value = fx.grime ? 1 : 0; GRUNGE.skin.value = fx.grime && fx.daTron === false ? 1 : 0;   // engine/grunge.js (vân bụi trên vật liệu)
     GRUNGE.aged.value = fx.aged ? 1 : 0;
     CLOTH.on.value = fx.cloth ? 1 : 0;   // engine/cloth.js

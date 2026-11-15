@@ -10,6 +10,7 @@
 //   clothMaterial(THREE, { color, trans, weave, sheen, seams: [khoảng cách tấm theo u, theo v], seamDir })
 //   createSail(THREE, { w, h, belly, color, seed, wind })  → Mesh (gốc = giữa mép trên, buồm rủ xuống −y, bụng về +z); .userData.update(t)
 //   createBlanket(THREE, { w, d, top, edgeY, color, cuff, lumps:[[x,z,r,h]], seed }) → Group (gốc = tâm mặt giường); .userData.update(t)
+//   createPuffy / createFold → gối phồng / nếp gấp ga · createBedSoft(THREE, { w, len, top, … }) → cả bộ vải cho giường tự dựng
 export const CLOTH = { on: { value: 1 } };
 const on = () => CLOTH.on.value > 0.5;
 
@@ -279,5 +280,28 @@ export function createBlanket(THREE, o = {}) {
     if (key === last) return; last = key;
     deform(geo, NU, NV, (u, v) => shape(u, v, t, live));
   };
+  return g;
+}
+
+// ---------------------------------------------------------------- BỘ VẢI GIƯỜNG dùng chung (kế thừa ep001, docs/handoff/ke-thua-ep001.md)
+// Cho giường KÍCH THƯỚC TUỲ Ý của env tự dựng (vd e3-phong): chăn mềm + nếp gấp ga ở cổ + gối phồng, không còn hộp cứng.
+// K.bed (engine/props.js) đã tự có bộ này; env có giường riêng thì gọi hàm này thay vì box() chăn/gối.
+// Gốc = tâm giường trên sàn; giường dọc trục z, đầu giường phía −z. Toạ độ cục bộ của nhóm cha.
+// o: { w: rộng đệm, len: dài đệm, top: cao mặt chăn, edgeY: mép chăn rủ tới, neck: z cổ chăn (tính từ đầu giường, mặc định 2,5),
+//      color, foldColor, pillowColor, pillows: [{ x, ry, seed }] (mặc định 1 gối giữa), lumps: [[x,z,r,h]] người nằm, fold: true }
+// Trả Group 'bed_soft' có .userData.update(t) (chăn thở theo t) và .userData.blanket / .fold / .pillows.
+export function createBedSoft(THREE, o = {}) {
+  const w = o.w ?? 6.8, len = o.len ?? 10.6, top = o.top ?? 4.7, edgeY = o.edgeY ?? Math.max(0, top - 2.8);
+  const head = -len / 2, z0 = head + (o.neck ?? 2.5), mz1 = len / 2 - 0.1;
+  const g = new THREE.Group(); g.name = 'bed_soft';
+  const bl = createBlanket(THREE, { w: w + 1.1, mw: w, mz1, z0, z1: mz1 + 0.1, top, edgeY, color: o.color, lumps: o.lumps || [], seed: o.seed ?? 3, cuff: false, fold: o.fold !== false });
+  g.add(bl);
+  let fold = null;
+  if (o.fold !== false) { fold = createFold(THREE, { w: w - 0.4, top, z0, color: o.foldColor }); g.add(fold); }
+  const pls = (o.pillows || [{ x: 0, ry: 0, seed: 1 }]).map((p, i) => {
+    const pl = createPuffy(THREE, { a: p.a ?? Math.min(1.4, w * 0.2), b: p.b ?? 0.55, c: p.c ?? 1.1, ex: 0.6, dent: 0.2, pinch: 0.5, seed: p.seed ?? i + 1, color: o.pillowColor, name: 'pillow_soft' });
+    pl.position.set(p.x ?? 0, top - 1.6 + (p.b ?? 0.55), head + 1.4); pl.rotation.y = p.ry ?? 0; g.add(pl); return pl;
+  });
+  g.userData = { update: bl.userData.update, blanket: bl, fold, pillows: pls };
   return g;
 }

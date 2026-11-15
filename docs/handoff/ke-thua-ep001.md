@@ -2,11 +2,11 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-15 19:05
+- **Cập nhật:** 2026-11-15 (Bước 0 + Bước 1 xong)
 - **Nhánh:** `ep1-v2`
-- **Đang làm:** đã rà xong và viết xong kế hoạch. Chưa sửa dòng code nào.
-- **Bước kế tiếp:** Bước 0 (đo mốc ep001/ep002/ep003), rồi Bước 1 (giường vải mềm vào `K.bed` ở `engine/props.js:123-133`).
-- **Đang chờ:** người dùng duyệt kế hoạch + trả lời 2 câu hỏi mở bên dưới.
+- **Đang làm:** đã xong Bước 0 (mốc `refs/ke-thua-ep00{1,2,3}/`, số shader ở mục Ghi chép) và Bước 1: `K.bed` tự có vải mềm, ô `vaiGiuong`; `bedroom.js` hết vá; có thêm `createBedSoft` trong `engine/cloth.js`.
+- **Bước kế tiếp:** Bước 1b (e3-phong `:193-209` dùng `createBedSoft`, giao phiên ep003) hoặc Bước 2 (`r6-rig.js:108` đặt `daNhanVat`).
+- **Đang chờ:** người dùng chọn bước kế + trả lời 2 câu hỏi mở bên dưới.
 - **File đang dở (chưa commit):** không.
 - **Đang chạy nền:** không.
 - **Đạt khi:** mỗi món "bị nhốt" có chỗ gốc dùng chung + cờ FX mặc định bật. Tắt cờ thì về như cũ. ep001 A/B y nguyên khung (PSNR ∞ / pose-ref OK). doctor cảnh báo được kiểu "env gỡ object chung".
@@ -144,6 +144,17 @@ Chia việc: tối đa 3 phiên con cùng lúc (A, B, C), mỗi phiên sở hữ
 > Sửa đẹp một món dùng chung (giường, cửa sổ, tủ lạnh, trời, nền xa, vật liệu…) thì sửa ở **builder chung** (`engine/props.js`, `engine/envs.js`, `engine/cloth.js`…), có cờ FX mặc định bật. KHÔNG gỡ/thay bộ phận của builder trong `engine/envs/<env>.js`, vì doctor mục 12 sẽ cảnh báo.
 
 ## Ghi chép
+- **Bước 0 (15/11), số shader** (`PROFILE=1 node tools/shaders.mjs … --film --step 2`, file `output/ke-thua-ep001/shaders-*.json`):
+  - ep001: `__ready` 5,4 s · 37 program lúc ready → 103 sau khi tua (dịch 1,1 s).
+  - ep002: 7,0 s · 120 → 205 (**dịch 9,4 s trong lúc tua**, chính là chỗ Bước 4 cần sửa).
+  - ep003: 6,5 s · 139 → 215 (0,7 s).
+  - Cả 3 tập vượt ngưỡng ⚠ 80 program. Mốc ảnh và tư thế ở `refs/ke-thua-ep00{1,2,3}/` (--shots all --pose).
+- **Bước 1 (15/11) kiểm:**
+  - ep001 s010/s037/s038 so `--ref`: giống hệt hoặc 110 dB, lệch 0,000%.
+  - ep002, 29 shot phòng ngủ: tất cả giống hệt hoặc ≥ 101 dB, lệch 0,000%.
+  - Tư thế: mọi xương trong cảnh đang hiện khớp. Lệch chỉ ở env ẩn (`env_antarctica/ocean/island` ep001, gấu đang ẩn ep002), do thứ tự tua, ảnh không đổi.
+  - Bật đủ các ô khác, chỉ tắt `vaiGiuong`: ra gối hộp + cuộn trụ cũ, ngoài giường không khác (agent Haiku xem `output/ke-thua-ep001/b1-tat/sheet.jpg`).
+  - `npm test`: 609/614 đạt. 5 test hỏng không liên quan: 3 test asset-plan đọc `r15.js` đang bị phiên khác sửa dở, `sfx-shot-list` vì số shot ep001 đổi, HOUSE bbox shot-lab.
 - Nguồn: 3 agent phụ Sonnet chỉ đọc (A sky/nền/map → `output/ke-thua-ep001/A-sky-nen-map.md`; B vật liệu/shader/hậu kỳ; C đạo cụ/nội thất). Agent chính đã kiểm lại các dòng chính: `bedroom.js:66-70`, `props.js:123-133`, `e3-phong.js:192-209`, `post.js:38`, `ep003/episode.js:21-26`, `town.js:380-387`, `envs/town.js:165-183`, `kitchen.js:45-56`, `shipStorm.js:34-41`, `r6-rig.js:108`, `r15.js:1000`.
 - Ví dụ kế thừa ĐÚNG đã có: commit 886f744 làm phòng ngủ theo giờ cho ep002 ngay trong env dùng chung, ep001 lệch 0.
 - Chưa kiểm: kenneyTown có dùng `house.js`/`stairs.js` không; số shader thật của ep002/ep003 (để Bước 0 đo); vệt mặt R6 mới chỉ suy ra từ code, chưa chụp.

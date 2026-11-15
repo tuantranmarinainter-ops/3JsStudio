@@ -14,7 +14,6 @@ import { createCamp } from '../castaway.js';
 import { smoothFlash } from '../flash.js';
 
 import { furnish } from '../furnish.js';
-import { createPuffy, createFold } from '../cloth.js';
 import { createWindowOutside } from '../realwindow.js';
 
 // BÀY ĐỒ bằng dữ liệu (engine/furnish.js). 'nightstand', 'books5', 'poster', 'bed' là vật dựng tay (refs) mà món mới thế chỗ / đặt lên.
@@ -64,10 +63,7 @@ export default function build(g, e, H) {
     const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t; })();
   const glass = new THREE.Mesh(new THREE.PlaneGeometry(6.6, 7.6), new THREE.MeshBasicMaterial({ map: glassTex, color: '#9fb4ff', transparent: true, opacity: 0.22, depthWrite: false })); glass.name = 'window_glass'; glass.userData.matKind = 'none'; glass.userData.grungeKind = 'none';
   e.bed = ganTang(place(R, K.bed(), -10, 0, -8), 'mid');
-  // gối + nếp gấp ga bằng vải liền mềm (engine/cloth.js) thay hộp 'pillow' và cuộn trụ 'blanket_cuff' (góp ý 2026-11-12 #6 #13)
-  for (const nm of ['pillow', 'blanket_cuff']) { const o = e.bed.getObjectByName(nm); if (o) o.parent.remove(o); }
-  for (const [px, ry, sd] of [[-1.55, 0.05, 1], [1.5, -0.04, 2]]) { const pl = createPuffy(THREE, { a: 1.4, b: 0.62, c: 1.15, ex: 0.6, dent: 0.2, pinch: 0.5, seed: sd, name: 'pillow_soft' }); pl.position.set(px, 3.05, -4.0); pl.rotation.y = ry; e.bed.add(pl); }
-  e.bed.add(createFold(THREE, { w: 6.4, top: 4.7, z0: -2.1 }));
+  // gối phồng + nếp gấp ga vải mềm (góp ý 2026-11-12 #6 #13) nay nằm sẵn trong K.bed (engine/props.js, ô 'vaiGiuong') — không vá ở đây nữa
   e.window = K.window({ w: 7, h: 8, curtains: '#c8c0ff', view: viewTex('night') }); e.window.position.set(19.8, 11, -6);
   e.window.rotation.y = -Math.PI / 2;
   R.add(ganTang(e.window, 'back'));

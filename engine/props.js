@@ -1,5 +1,5 @@
 // props.js — Đạo cụ dựng bằng code (phong cách khối). Mỗi hàm trả Group có tên rõ; mặt trước nhìn +Z; đơn vị stud.
-import { createBlanket } from './cloth.js';
+import { createBlanket, createPuffy, createFold } from './cloth.js';
 import { khaiBao, khaiBaoMat } from './materials.js';
 import { postcardTexture, makePostcard, postcardBack, seededKinds, POSTCARD_ASPECT, onPostcardArt } from './postcards.js';
 
@@ -127,9 +127,18 @@ export function propKit(THREE) {
       // chăn dày trùm kín người nằm (tay/thân không lòi ra — góp ý 2026-11-11 #2): mặt chăn y≈4,7, tới sát cổ (z −2,1), đầu vẫn lộ
       // vải mềm (engine/cloth.js, 2026-11-12): rủ qua mép đệm, nếp nhăn, gồ theo 2 người nằm (x = ±1,05) và thở nhẹ
       const bl = createBlanket(THREE, { color: '#c0392b', top: 4.7, edgeY: 1.9, z0: -2.1, z1: 5.4, lumps: [[-1.05, 1.3, 0.95, 0.38], [1.05, 1.5, 0.85, 0.34]] });
-      g.add(bl); g.userData.update = bl.userData.update;
-      box(5, 0.9, 2.4, '#ffffff', 0, 3.0, -4, 'pillow', g);
+      g.add(bl);
+      const oldPillow = box(5, 0.9, 2.4, '#ffffff', 0, 3.0, -4, 'pillow', g);
       box(7.2, 4, 0.6, '#8a5a36', 0, 2.8, -5.6, 'headboard', g);
+      // VẢI GIƯỜNG MỀM (kế thừa ep001, trước chỉ vá trong envs/bedroom.js): 2 gối phồng + nếp gấp ga liền thay hộp 'pillow' và cuộn trụ
+      // 'blanket_cuff'. Ô FX 'vaiGiuong' (mặc định bật); tắt = hộp cũ. Dựng cả hai, chỉ đổi visible theo ô → tua tới/lui như nhau.
+      const cuff = bl.getObjectByName('blanket_cuff');
+      const soft = [];
+      for (const [px, ry, sd] of [[-1.55, 0.05, 1], [1.5, -0.04, 2]]) { const pl = createPuffy(THREE, { a: 1.4, b: 0.62, c: 1.15, ex: 0.6, dent: 0.2, pinch: 0.5, seed: sd, name: 'pillow_soft' }); pl.position.set(px, 3.05, -4.0); pl.rotation.y = ry; g.add(pl); soft.push(pl); }
+      soft.push(g.add(createFold(THREE, { w: 6.4, top: 4.7, z0: -2.1 })).children.at(-1));
+      const setSoft = (on) => { for (const o of soft) o.visible = on; oldPillow.visible = !on; if (cuff) cuff.visible = !on; };
+      setSoft(true);
+      g.userData.update = (t) => { setSoft(globalThis.__autoFx?.vaiGiuong !== false); bl.userData.update(t); };
       return g;
     },
     books(n = 4) {
