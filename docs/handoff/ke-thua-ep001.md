@@ -16,7 +16,7 @@
     - e3-pho, e3-tiem, e3-nha-may dùng vật liệu thật. e3-nha-may phần lớn là InstancedMesh nên gần như không đổi.
     - Ảnh A/B ở `output/ep003/ke-thua/ab-truoc-sau.jpg`, bản xem thử `dist/ep003_xem-thu.html`.
     - Program 217 → 223 (+6: chăn có map +3, nếp ga +2, vật liệu +1). Bỏ vân ca-rô thì về khoảng 220.
-  - Người dùng DUYỆT A/B tập 3 ngày 15/11, giữ nguyên bản hiện tại (có vân ca-rô, 223 program).
+  - Người dùng DUYỆT A/B tập 3 ngày 15/11, giữ nguyên bản hiện tại (có vân ca-rô, 223 program). Số shader 223 chấp nhận: mốc 215 chỉ là số đo trước khi sửa (đo lại 15/11 đã là 217), không phải trần; +6 program là nhỏ, Bước 4 (dịch trước) đã gánh phần tua. Muốn giảm thì bỏ vân ca-rô (~220).
 - **Bước kế tiếp:** không bắt buộc. Việc có thể làm thêm: sửa lỗi nhẹ giường Gà (tay/chân ló mép chăn, gò chăn s026, mảnh trắng s025); shop-in.js (ep002) còn matKind none; 5 cửa sổ tự dựng doctor còn báo; đo lợi ích dịch trước (`shaders.mjs --cho`).
 - **Đang chờ:** không. Dòng quy tắc kế thừa đã vào CLAUDE.md (người dùng xác nhận 15/11).
 - **File đang dở (chưa commit):** không.
