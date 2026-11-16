@@ -9,7 +9,7 @@ Gốc: `skills/fwjelaa/maps/CLAUDE.md`, `styles/simulator.md` (phong cách khố
 `styles/nature.md`, `.claude/skills/make-map/qa.md` (trong gói). Không có Roblox Studio → dựng bằng three.js. Method by fwjelaa (FWJ STUDIOS).
 
 0. **Pha 0 — khối xám từ danh sách mốc** (khi bối cảnh đã có `boi-canh/<id>.json` theo `.claude/skills/xu-ly-kich-ban/khuon-boi-canh.md`; bỏ qua nếu chưa có file mốc):
-   - Chạy `node tools/khoi-xam.mjs boi-canh/<id>.json --out output/<ep>-khoi-xam` → ra `<id>_tren-cao.png` + `<id>_ngang-mat.png` (9:16) và in danh sách mốc **không đọc được số** (thiếu trục x/y/z). Mốc nào bị liệt kê thì sửa `vung` trong file mốc cho đủ số (không đoán), rồi chạy lại.
+   - Chạy `node tools/khoi-xam.mjs boi-canh/<id>.json --out output/<ep>-khoi-xam` → ra 8 ảnh `<id>_<hướng>.png` (9:16; truoc, sau, trai, phai, tren-xuong, duoi-len, thang-mat, ngang-hong) và in danh sách mốc **không đọc được số** (thiếu trục x/y/z). Mốc nào bị liệt kê thì sửa `vung` trong file mốc cho đủ số (không đoán), rồi chạy lại.
    - Người dùng duyệt 2 ảnh (bố cục, tỉ lệ so với hình nộm 5,48). Xem ảnh bằng agent phụ khi chỉ cần kết luận. CHƯA được duyệt thì không dựng chi tiết.
    - Sau khi duyệt mới dựng `engine/envs/<tên>.js`. **Mọi số đo (vị trí, kích thước, số ô kính, chỗ chừa trống) lấy từ file mốc — không bịa, không "ước" lại.** Số nào file không có thì quay lại sửa file mốc rồi mới dựng. Ảnh khối xám này cũng là ảnh Codex vẽ chồng lên (trạm 8): cấm đổi hình khối sau khi duyệt.
 1. **Kế hoạch 5 dòng**: chủ đề + giờ trong ngày; bố cục (vùng chính, lối đi, điểm nhìn); bảng màu hex; ánh sáng/bầu trời/sương;

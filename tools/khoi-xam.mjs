@@ -1,6 +1,7 @@
-// Trạm 7: dựng KHỐI XÁM thẳng từ danh sách mốc bối cảnh, chụp 2 góc cố định để người dùng duyệt bố cục.
-//   node tools/khoi-xam.mjs <boi-canh.json> --out <thư mục> [--w 540] [--h 960]
-//   Ghi <out>/<id>_tren-cao.png và <out>/<id>_ngang-mat.png (9:16), in số hộp + danh sách mốc KHÔNG đọc được số.
+// Trạm 7: dựng KHỐI XÁM thẳng từ danh sách mốc bối cảnh, chụp 8 hướng cố định để người dùng duyệt bố cục.
+//   node tools/khoi-xam.mjs <boi-canh.json> --out <thư mục> [--w 540] [--h 960] [--huong truoc,sau]
+//   Ghi <out>/<id>_<hướng>.png (9:16) cho 8 hướng: truoc, sau, trai, phai, tren-xuong, duoi-len, thang-mat, ngang-hong
+//   (tools/huong-boi-canh.mjs), in số hộp + danh sách mốc KHÔNG đọc được số.
 //   Chỉ dùng số trong file (xem tools/kiem/khoi-xam-doc.mjs); mốc thiếu số không bị đoán, chỉ được liệt kê.
 //   Hạ tầng: launchBrowser (tools/browser.mjs) + three trong vendor/. Không có engine mới.
 import { createServer } from 'http';
@@ -8,6 +9,7 @@ import { readFile, writeFile, mkdir } from 'fs/promises';
 import { extname, join, resolve, relative, basename } from 'path';
 import { launchBrowser } from './browser.mjs';
 import { docBoiCanh } from './kiem/khoi-xam-doc.mjs';
+import { locHuong } from './huong-boi-canh.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json' };
@@ -18,7 +20,7 @@ const TRANG = `<!doctype html><meta charset="utf-8"><body style="margin:0;backgr
 import * as THREE from 'three';
 const mau = (c) => new THREE.MeshLambertMaterial({ color: c });
 const vien = (m) => m.add(new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry), new THREE.LineBasicMaterial({ color: '#15181c' })));
-window.dung = (d, W, H) => {
+window.dung = (d, W, H, ids) => {
   const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
   r.setPixelRatio(1); r.setSize(W, H); document.body.appendChild(r.domElement);
   const sc = new THREE.Scene(); sc.background = new THREE.Color('#1c2026');
@@ -48,27 +50,55 @@ window.dung = (d, W, H) => {
   const rongChinh = d.san ? d.san.rong : sz.x, sauChinh = d.san ? d.san.sau : sz.z;
   const chup = (cam) => { r.render(sc, cam); return r.domElement.toDataURL('image/png'); };
   const out = {};
-  { // trên cao: nhìn thẳng xuống, +X phải, +Z (về camera chính) xuống đáy ảnh
-    const fov = 40, cam = new THREE.PerspectiveCamera(fov, asp, 0.5, 600);
-    const t = Math.tan(fov * Math.PI / 360);
-    const dist = Math.max((rongChinh * 1.1) / (2 * t * asp), (sauChinh * 1.1) / (2 * t));
-    cam.position.set(c.x, dist, c.z); cam.up.set(0, 0, -1); cam.lookAt(c.x, 0, c.z);
-    out.trenCao = chup(cam);
-  }
-  { // ngang tầm mắt: mắt ~4.75 (tâm mặt Gà), đứng ở rìa +Z, nhìn vào giữa vùng
-    const fov = 55, cam = new THREE.PerspectiveCamera(fov, asp, 0.5, 600);
-    const t = Math.tan(fov * Math.PI / 360);
-    const dist = (rongChinh * 0.55) / (2 * t * asp);
-    cam.position.set(c.x, 4.75, Math.max(c.z + dist, bb.max.z + 1)); cam.lookAt(c.x, Math.min(sz.y / 3, 7), c.z);
-    out.ngangMat = chup(cam);
-  }
+  const lam = {
+    'tren-xuong': () => { // nhìn thẳng xuống, +X phải, +Z (về camera chính) xuống đáy ảnh
+      const fov = 40, cam = new THREE.PerspectiveCamera(fov, asp, 0.5, 600);
+      const t = Math.tan(fov * Math.PI / 360);
+      const dist = Math.max((rongChinh * 1.1) / (2 * t * asp), (sauChinh * 1.1) / (2 * t));
+      cam.position.set(c.x, dist, c.z); cam.up.set(0, 0, -1); cam.lookAt(c.x, 0, c.z);
+      return cam;
+    },
+    'thang-mat': () => { // ngang tầm mắt: mắt ~4.75 (tâm mặt Gà), đứng ở rìa +Z, nhìn vào giữa vùng
+      const fov = 55, cam = new THREE.PerspectiveCamera(fov, asp, 0.5, 600);
+      const t = Math.tan(fov * Math.PI / 360);
+      const dist = (rongChinh * 0.55) / (2 * t * asp);
+      cam.position.set(c.x, 4.75, Math.max(c.z + dist, bb.max.z + 1)); cam.lookAt(c.x, Math.min(sz.y / 3, 7), c.z);
+      return cam;
+    },
+  };
+  // 6 hướng còn lại: máy đặt trên vòng quanh tâm c, nhìn vào c. Khoảng cách đủ thấy trọn bề ngang mặt đối diện.
+  const vong = (dx, dz, rongMat, yMay, yNhin, fov) => () => {
+    const cam = new THREE.PerspectiveCamera(fov, asp, 0.5, 600), t = Math.tan(fov * Math.PI / 360);
+    const dist = Math.max((rongMat * 1.15) / (2 * t * asp), sz.y * 1.2 / (2 * t)) + (dx ? sauChinh : rongChinh) / 2;
+    cam.position.set(c.x + dx * dist, typeof yMay === 'function' ? yMay(dist) : yMay, c.z + dz * dist); cam.lookAt(c.x, yNhin, c.z);
+    return cam;
+  };
+  const nghieng = (dist) => 4.75 + dist * Math.tan(25 * Math.PI / 180) * 0.6; // chếch xuống ~25° so với tâm
+  lam.truoc = vong(0, 1, rongChinh, nghieng, Math.min(sz.y / 3, 4), 50);
+  lam.sau = vong(0, -1, rongChinh, nghieng, Math.min(sz.y / 3, 4), 50);
+  lam.trai = vong(-1, 0, sauChinh, nghieng, Math.min(sz.y / 3, 4), 50);
+  lam.phai = vong(1, 0, sauChinh, nghieng, Math.min(sz.y / 3, 4), 50);
+  lam['duoi-len'] = () => { // sát đất ~1 stud ở phía trước, ngước nhìn lên
+    const fov = 60, cam = new THREE.PerspectiveCamera(fov, asp, 0.5, 600), t = Math.tan(fov * Math.PI / 360);
+    const dist = (rongChinh * 0.6) / (2 * t * asp) + sauChinh / 2;
+    cam.position.set(c.x, 1, c.z + dist); cam.lookAt(c.x, Math.max(sz.y * 0.55, 6), c.z);
+    return cam;
+  };
+  lam['ngang-hong'] = () => { // ngang tầm mắt 4.75 từ +X, nhìn thẳng ngang
+    const fov = 55, cam = new THREE.PerspectiveCamera(fov, asp, 0.5, 600), t = Math.tan(fov * Math.PI / 360);
+    const dist = (sauChinh * 0.55) / (2 * t * asp);
+    cam.position.set(Math.max(c.x + dist, bb.max.x + 1), 4.75, c.z); cam.lookAt(c.x, 4.75, c.z);
+    return cam;
+  };
+  for (const id of ids) out[id] = chup(lam[id]());
   r.dispose();
   return out;
 };
 window.__ready = true;
 </script>`;
 
-export async function khoiXam(file, outDir, { w = 540, h = 960 } = {}) {
+export async function khoiXam(file, outDir, { w = 540, h = 960, huong = null } = {}) {
+  const ds = locHuong(huong);
   const bc = JSON.parse(await readFile(file, 'utf8'));
   const id = bc.boiCanh || basename(file, '.json');
   const d = docBoiCanh(bc);
@@ -90,18 +120,18 @@ export async function khoiXam(file, outDir, { w = 540, h = 960 } = {}) {
     const loi = []; page.on('pageerror', (e) => loi.push(e.message));
     await page.goto(`http://localhost:${srv.address().port}/__khoi-xam.html`);
     await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 });
-    const o = await page.evaluate(([dd, W, H]) => window.dung(dd, W, H), [d, w, h]);
+    const o = await page.evaluate(([dd, W, H, ids]) => window.dung(dd, W, H, ids), [d, w, h, ds.map((x) => x.id)]);
     if (loi.length) throw new Error('trang lỗi: ' + loi[0]);
     const luu = async (ten, url) => { const f = join(outDir, `${id}_${ten}.png`); await writeFile(f, Buffer.from(url.split(',')[1], 'base64')); return f; };
-    return { id, ...d, anh: [await luu('tren-cao', o.trenCao), await luu('ngang-mat', o.ngangMat)] };
+    return { id, ...d, anh: await Promise.all(ds.map((x) => luu(x.id, o[x.id]))) };
   } finally { await browser.close(); srv.close(); }
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename)) {
   const a = process.argv.slice(2), opt = {}, pos = [];
   for (let i = 0; i < a.length; i++) { if (a[i].startsWith('--')) opt[a[i].slice(2)] = a[++i]; else pos.push(a[i]); }
-  if (!pos[0] || !opt.out) { console.error('Dùng: node tools/khoi-xam.mjs <boi-canh.json> --out <thư mục> [--w 540 --h 960]'); process.exit(1); }
-  const r = await khoiXam(pos[0], opt.out, { w: +opt.w || 540, h: +opt.h || 960 });
+  if (!pos[0] || !opt.out) { console.error('Dùng: node tools/khoi-xam.mjs <boi-canh.json> --out <thư mục> [--w 540 --h 960] [--huong truoc,sau]'); process.exit(1); }
+  const r = await khoiXam(pos[0], opt.out, { w: +opt.w || 540, h: +opt.h || 960, huong: opt.huong });
   console.log(`khối xám "${r.id}": ${r.hop.length} hộp, ${r.nom.length} hình nộm, ${r.khoi.length} khối 1×1×1, sàn ${r.san ? r.san.rong + '×' + r.san.sau : '(không có)'}`);
   for (const f of r.anh) console.log('  ảnh:', f);
   if (r.khongDoc.length) {

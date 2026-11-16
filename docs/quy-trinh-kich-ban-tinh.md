@@ -79,14 +79,14 @@ Lối 3: video tham khảo ─► [0c video-sang-kich-ban --ra kich-ban-chu] (ch
 ## Bước 7 — Khối xám trong engine · skill `scene-env` + `tools/look.mjs`
 - **Đầu vào:** `boi-canh/<id>.json` (số chốt) + model đã nhập.
 - **Xử lý:** dựng `engine/envs/<tên>.js` theo đúng số: hộp xám (hoặc model thật để thô), hình nộm xám ở chỗ nhân vật đứng, gắn tầng trước/giữa/sau. Chụp 2 góc cố định: trên cao nhìn xuống và ngang tầm mắt (`node tools/look.mjs … --out output/<ep>-khoi-xam`).
-- **Pha 0 (đã nối):** `node tools/khoi-xam.mjs boi-canh/<id>.json --out output/<ep>-khoi-xam` dựng hộp xám + hình nộm thẳng từ file mốc, chụp `<id>_tren-cao.png` / `<id>_ngang-mat.png`, in mốc không đọc được số (skill `scene-env`, Pha 0). Dựng env chi tiết sau khi duyệt, lấy số từ file mốc.
+- **Pha 0 (đã nối):** `node tools/khoi-xam.mjs boi-canh/<id>.json --out output/<ep>-khoi-xam` dựng hộp xám + hình nộm thẳng từ file mốc, chụp 8 hướng `<id>_<hướng>.png` (truoc, sau, trai, phai, tren-xuong, duoi-len, thang-mat, ngang-hong; cờ `--huong` để lọc), in mốc không đọc được số (skill `scene-env`, Pha 0). Dựng env chi tiết sau khi duyệt, lấy số từ file mốc.
 - **Đầu ra:** env mới + 2 ảnh khối xám.
 - **STOP:** duyệt bố cục (sai chỗ nào sửa số trong danh sách mốc rồi dựng lại).
 
 ## Bước 8 — Ảnh tham chiếu bối cảnh · Codex qua `tools/codex-ve.mjs`
 - **Đầu vào:** 2 ảnh khối xám + ảnh các model đã chốt + danh sách mốc.
 - **Xử lý:** đề bài bắt Codex vẽ CHỒNG lên ảnh khối xám (đính kèm `-i`): thêm ánh sáng, vật liệu, không khí; cấm đổi hình khối, cấm thêm/bớt mốc, không vẽ nhân vật.
-- `codex-ve.mjs` tự đọc `boi-canh/<id>.json` (đủ mốc, màu, số lượng, điều cấm) và tự đính kèm `boi-canh/<id>_tren-cao.png`, `<id>_ngang-mat.png` nếu có.
+- `codex-ve.mjs` tự đọc `boi-canh/<id>.json` (đủ mốc, màu, số lượng, điều cấm) và tự đính kèm ảnh khối xám cùng hướng `boi-canh/<id>_<hướng>.png` (8 hướng, mỗi hình vẽ một hướng) nếu có.
 - **Đầu ra:** `tham-chieu/bc_<id>.png` (toàn cảnh 9:16, có thể thêm góc ngược).
 - **Kiểm:** agent phụ đối chiếu ảnh với danh sách mốc (có / thiếu / sai màu / sai số lượng). **STOP:** duyệt ảnh.
 

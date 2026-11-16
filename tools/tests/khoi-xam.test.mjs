@@ -2,10 +2,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync, statSync, mkdtempSync, rmSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { join, resolve, basename } from 'node:path';
 import { tmpdir } from 'node:os';
 import { docVung, docBoiCanh } from '../kiem/khoi-xam-doc.mjs';
 import { khoiXam } from '../khoi-xam.mjs';
+import { HUONG_BOI_CANH, locHuong } from '../huong-boi-canh.mjs';
 
 const FILE = resolve(import.meta.dirname, 'fixtures', 'boi-canh-mau', 'moc-nha-may-ngoai.json');
 const bc = JSON.parse(readFileSync(FILE, 'utf8'));
@@ -37,16 +38,26 @@ test('số hộp + số mốc không đọc được = số mốc có vùng; m�
   assert.deepEqual(d.san, { rong: 32, sau: 24 });
 });
 
-test('khoiXam: ghi 2 ảnh 9:16 (trình duyệt)', async () => {
+test('khoiXam: ghi đủ 8 hướng 9:16 (trình duyệt), thứ tự HUONG_BOI_CANH', async () => {
   const out = mkdtempSync(join(tmpdir(), 'khoi-xam-'));
   try {
     const r = await khoiXam(FILE, out, { w: 270, h: 480 });
-    assert.equal(r.anh.length, 2);
+    assert.equal(r.anh.length, 8);
+    HUONG_BOI_CANH.forEach((h, i) => assert.ok(r.anh[i].endsWith(`nha-may-ngoai_${h.id}.png`), r.anh[i]));
     for (const f of r.anh) {
       assert.ok(existsSync(f) && statSync(f).size > 2000, f);
       const b = readFileSync(f); assert.equal(b.readUInt32BE(16), 270); assert.equal(b.readUInt32BE(20), 480);
     }
-    assert.ok(r.anh[0].endsWith('nha-may-ngoai_tren-cao.png') && r.anh[1].endsWith('nha-may-ngoai_ngang-mat.png'));
-    assert.notDeepEqual(readFileSync(r.anh[0]), readFileSync(r.anh[1]));
+    const nd = r.anh.map((f) => readFileSync(f).toString('base64'));
+    assert.equal(new Set(nd).size, 8, 'mỗi hướng một hình khác nhau');
+    // cờ huong: chỉ chụp hướng được chọn
+    const r2 = await khoiXam(FILE, out, { w: 270, h: 480, huong: 'truoc,sau' });
+    assert.deepEqual(r2.anh.map((f) => basename(f)), ['nha-may-ngoai_truoc.png', 'nha-may-ngoai_sau.png']);
   } finally { rmSync(out, { recursive: true, force: true }); }
+});
+
+test('HUONG_BOI_CANH: đúng 8 id theo thứ tự, có tên + mô tả', () => {
+  assert.deepEqual(HUONG_BOI_CANH.map((h) => h.id), ['truoc', 'sau', 'trai', 'phai', 'tren-xuong', 'duoi-len', 'thang-mat', 'ngang-hong']);
+  assert.ok(HUONG_BOI_CANH.every((h) => h.ten && h.moTa.length > 20));
+  assert.throws(() => locHuong('truoc,xyz'), /xyz/);
 });

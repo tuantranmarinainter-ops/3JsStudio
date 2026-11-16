@@ -6,6 +6,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { lapKeHoach, soanDeBai } from '../codex-ve.mjs';
+import { HUONG_BOI_CANH } from '../huong-boi-canh.mjs';
 
 const aqui = path.dirname(fileURLToPath(import.meta.url));
 const CLI = path.join(aqui, '..', 'codex-ve.mjs');
@@ -167,10 +168,12 @@ function tapCoMoc({ khoiXam = [], sua = (m) => m } = {}) {
   for (const g of khoiXam) fs.writeFileSync(path.join(thuMuc, 'boi-canh', `nha-may-ngoai_${g}.png`), 'x');
   return { root, thuMuc, state: path.join(root, 'state') };
 }
-const docDeBai = (thuMuc) => fs.readFileSync(path.join(thuMuc, 'codex', 'de-bai-tham-chieu-tc1.md'), 'utf8');
+const docDeBai = (thuMuc) => fs.readdirSync(path.join(thuMuc, 'codex')).filter((f) => /^de-bai-tham-chieu-.*\.md$/.test(f)).sort()
+  .map((f) => fs.readFileSync(path.join(thuMuc, 'codex', f), 'utf8')).join('\n');
+const HUONG8 = ['truoc', 'sau', 'trai', 'phai', 'tren-xuong', 'duoi-len', 'thang-mat', 'ngang-hong'];
 
 test('bc_* có file mốc: đề bài đủ phong cách, mốc, lấp đầy, chừa trống, cấm, ánh sáng, câu bắt buộc', () => {
-  const b = tapCoMoc({ khoiXam: ['tren-cao', 'ngang-mat'], sua: (m) => ({
+  const b = tapCoMoc({ khoiXam: ['truoc', 'tren-xuong'], sua: (m) => ({
     ...m, phongCach: 'khối vuông Roblox; gạch xanh xám', bangMau: ['#5f7480', '#ffd9a0'],
     lapDay: [{ cum: 'phai', mon: [{ ten: 'thùng phuy xanh', soLuong: 2 }] }],
     moc: m.moc.map((x) => (x.id === 'thung' ? { ...x, vaiTro: 'Gà trèo lên để nhìn qua kính' } : x)) }) });
@@ -189,18 +192,19 @@ test('bc_* có file mốc: đề bài đủ phong cách, mốc, lấp đầy, ch
   assert.match(de, /Gà[^\n]*đỉnh đầu 5\.48|hình nộm xám khối vuông cao 5\.48/);
   assert.doesNotMatch(de, /MÔ TẢ CŨ MỘT CÂU/);
   // ảnh khối xám có trong -i của lệnh
-  assert.match(r.stdout, /-i [^<]*nha-may-ngoai_tren-cao\.png[^<]*nha-may-ngoai_ngang-mat\.png/);
+  assert.match(r.stdout, /-i [^<]*nha-may-ngoai_truoc\.png/);
+  assert.match(r.stdout, /-i [^<]*nha-may-ngoai_tren-xuong\.png/);
   // bối cảnh không có file mốc vẫn dùng moTa cũ
   assert.match(de, /phố nhỏ, đèn vàng/);
 });
 
 test('chạy thật: ảnh khối xám có thì vào -i; thiếu thì không; không có file mốc thì như cũ', () => {
-  const b = tapCoMoc({ khoiXam: ['tren-cao'] });
+  const b = tapCoMoc({ khoiXam: ['tren-xuong'] });
   const r = cli(['tham-chieu', b.thuMuc], {}, b.state);
   assert.equal(r.status, 0, r.stdout + r.stderr);
   const calls = fs.readFileSync(path.join(b.state, 'calls.jsonl'), 'utf8').trim().split('\n').map((l) => JSON.parse(l));
   const anh = calls.flatMap((c) => c.images).map((p) => path.basename(p));
-  assert.deepEqual(anh, ['nha-may-ngoai_tren-cao.png']);
+  assert.deepEqual(anh, ['nha-may-ngoai_tren-xuong.png']);
   // không file mốc, không ảnh khối xám: đường cũ, không -i
   const c = banSao();
   const r2 = cli(['tham-chieu', c.thuMuc], {}, c.state);
@@ -234,4 +238,33 @@ test('anhSang theo giờ (object) in từng giờ, không ra [object Object] —
   assert.ok(!de.includes('[object Object]'), 'còn [object Object]');
   assert.match(de, /- ngay: nắng nhẹ/);
   assert.match(de, /- dem: .*trăng xanh/);
+});
+
+test('tham-chieu có file mốc: đúng 8 hình bc_<id>_<huong>, mỗi hình chỉ kèm khối xám cùng hướng; không mốc vẫn 1 hình', () => {
+  const bs = { ep: 'epX', nhanVat: [], boiCanh: [{ id: 'a', ten: 'A', moTa: 'x' }, { id: 'b', ten: 'B', moTa: 'phố' }], shots: [] };
+  const moc = { boiCanh: 'a', moc: [{ id: 'm1', ten: 'Mốc 1' }] };
+  const coFile = (f) => /^boi-canh\/a_(truoc|sau|phai)\.png$/.test(f);
+  const ke = lapKeHoach(bs, 'tham-chieu', { coFile, docMoc: (id) => (id === 'a' ? moc : null) });
+  const hinh = ke.flatMap((c) => c.hinh);
+  const ha = hinh.filter((h) => h.file.startsWith('tham-chieu/bc_a_'));
+  assert.deepEqual(ha.map((h) => h.file), HUONG8.map((g) => `tham-chieu/bc_a_${g}.png`));
+  for (const h of ha) {
+    const g = h.file.match(/bc_a_(.+)\.png/)[1];
+    assert.deepEqual(h.khoiXam, coFile(`boi-canh/a_${g}.png`) ? [`boi-canh/a_${g}.png`] : []);
+    assert.ok(h.moTa.includes(HUONG_BOI_CANH.find((x) => x.id === g).moTa));
+  }
+  assert.deepEqual(hinh.filter((h) => h.file.includes('bc_b')).map((h) => h.file), ['tham-chieu/bc_b.png']);
+  assert.ok(ke.every((c) => c.hinh.length <= 6));
+  // đề bài: mục mốc chỉ in một lần mỗi bối cảnh trong một cụm + luật 8 hướng
+  const de = ke.map((c) => soanDeBai(c, bs)).join('\n');
+  assert.match(de, /vẽ đủ 8 hướng/);
+  // --huong lọc
+  const ke2 = lapKeHoach(bs, 'tham-chieu', { coFile, docMoc: (id) => (id === 'a' ? moc : null), huong: 'sau,tren-xuong' });
+  assert.deepEqual(ke2.flatMap((c) => c.hinh).filter((h) => h.file.includes('bc_a')).map((h) => h.file), ['tham-chieu/bc_a_sau.png', 'tham-chieu/bc_a_tren-xuong.png']);
+});
+
+test('shot: bối cảnh có mốc kèm bc_<id>_truoc + _tren-xuong; không mốc kèm bc_<id>.png', () => {
+  const ke = lapKeHoach(bangMau, 'shot', { docMoc: (id) => (id === 'pho' ? { moc: [] } : null) });
+  assert.deepEqual(ke.find((c) => c.cum === 'pho').anhKem.slice(0, 2), ['tham-chieu/bc_pho_truoc.png', 'tham-chieu/bc_pho_tren-xuong.png']);
+  assert.equal(ke.find((c) => c.cum === 'tiem-banh').anhKem[0], 'tham-chieu/bc_tiem-banh.png');
 });
