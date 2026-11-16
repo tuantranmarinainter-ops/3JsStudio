@@ -22,6 +22,12 @@ Người dùng **chỉ đưa kịch bản chữ**: mô tả bối cảnh, mô t�
   - Đề bài phải dặn cách lưu: dùng đúng đường dẫn công cụ trả về / thư mục con của chính phiên; KHÔNG "file mới nhất" (16/11: 4 lưới song song → 3 cặp chép nhầm nhau). Sau khi nhận, Claude kiểm md5 trùng giữa các lưới.
   - Claude cắt lưới theo khe trắng (gần vị trí chia đều) rồi đặt tên từng ô; mẫu đề bài: `docs/mau-de-bai/luoi-8-huong.md`.
   - Chạy 4 lưới cùng lúc là an toàn; 7 tiến trình cùng lúc từng gặp 502 liên tục (16/11).
+  - **Lệnh (đã tự động, `tools/codex-ve.mjs`): lưới là MẶC ĐỊNH** — `node tools/codex-ve.mjs <tham-chieu|shot> <thư mục tập> [--thu] [--tran 4] [--huong …] [--chi …]`.
+    Gom nhóm: 8 hướng một bối cảnh = 1 lưới 2×4 (đúng thứ tự `HUONG_BOI_CANH`, cụm `<id>_huong`); tờ nhân vật ≤ 8 / lưới (`nv_<id đầu>`);
+    shot: hình của các shot cùng bối cảnh ≤ 10 ô / lưới. Mỗi lưới = 1 tiến trình `codex exec`, ghi `slide/<cụm>.png`; đề bài ghi `- LUOI:` + thứ tự ô
+    + câu lưu file ở trên. Sau khi chạy công cụ tự: kiểm md5 trùng giữa các lưới (trùng → xoá cả hai, tính thiếu), cắt ô theo khe trắng
+    (±40 px quanh điểm chia đều) ra `tham-chieu/bc_<id>_<huong>.png` / `hinh/shot_<id>_<n>.png`, giữ lưới gốc ở `slide/`.
+    Trần song song mặc định **4**. `--le` = vẽ từng ảnh (cách cũ); `--chong` ép `--le`. Chạy lại chỉ vẽ lại lưới còn ô thiếu (lưới thiếu = vẽ lại cả lưới).
   - Lùi về vẽ từng ảnh chỉ khi một hình cần độ nét cao (người dùng yêu cầu) hoặc lưới vẽ sai thứ tự ô 2 lần.
 
 - **Model: `gpt-6-luna`, mức suy luận `low`.** Claude đã viết sẵn mô tả từng hình nên Codex chỉ cần gọi công cụ tạo hình.

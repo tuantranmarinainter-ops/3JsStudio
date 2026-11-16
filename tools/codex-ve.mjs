@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // codex-ve.mjs — soạn đề bài theo cụm và chạy nhiều tiến trình Codex CLI song song để vẽ hình storyboard.
-// Dùng: node tools/codex-ve.mjs <tham-chieu|shot> <thư mục tập> [--thu] [--tran N] [--model M] [--muc low] [--chi s001,s002] [--huong truoc,sau] [--moi-cum N] [--chong]
+// Dùng: node tools/codex-ve.mjs <tham-chieu|shot> <thư mục tập> [--thu] [--tran N] [--model M] [--muc low] [--chi s001,s002] [--huong truoc,sau] [--moi-cum N] [--le] [--chong]
+// Mặc định chạy LUỚI (luật 16/11): mỗi tiến trình Codex vẽ MỘT ảnh lưới nhiều ô rồi công cụ cắt ra; --le = vẽ từng ảnh (cách cũ).
 // Mã thoát: 0 đủ hình · 1 còn thiếu · 2 lỗi đầu vào. Đặc tả: docs/quy-trinh-dau-vao.md, docs/de-bai-codex-mau.md.
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -11,6 +12,10 @@ import { HUONG_BOI_CANH, locHuong } from './huong-boi-canh.mjs';
 
 const TOI_DA_HINH_THAM_CHIEU = 6;
 const TOI_DA_SHOT_MOT_CUM = 25;
+export const TOI_DA_O_LUOI = 10;      // ô tối đa một lưới (shot)
+export const TOI_DA_O_LUOI_TO = 8;    // tờ nhân vật / lưới tham chiếu
+export const VIEN_LUOI = 8;           // px viền trắng giữa ô
+export const TRAN_MAC_DINH = 4;       // 7 tiến trình từng bị 502 (16/11)
 
 const NHAN_LOAI = { zoomIn: 'zoom vào', zoomOut: 'zoom ra', lia: 'lia ngang', theo: 'máy bám theo', dung: 'máy đứng yên', doiHuong: 'máy đổi hướng' };
 const NHAN_GOC = { 'ngang-mat': 'ngang tầm mắt', 'tren-xuong': 'từ trên xuống', 'duoi-len': 'từ dưới lên', 'qua-vai': 'qua vai' };
@@ -79,6 +84,35 @@ function moTaHinhShot(bs, s, vi) {
   return phan.join(' · ');
 }
 
+/** Chia mảng thành các nhóm ≤ toiDa, kích thước đều nhau. */
+function chiaDeu(arr, toiDa) {
+  if (!arr.length) return [];
+  const n = Math.ceil(arr.length / toiDa), moi = Math.ceil(arr.length / n), ra = [];
+  for (let i = 0; i < arr.length; i += moi) ra.push(arr.slice(i, i + moi));
+  return ra;
+}
+
+/** Bố cục lưới cho n ô: 2 cột (1 cột nếu chỉ 1 ô), đủ hàng; ô cuối có thể trống. */
+export function boCucLuoi(n) { const cot = n >= 2 ? 2 : 1; return { cot, hang: Math.ceil(n / cot) }; }
+
+function taoCumLuoi(cum, cheDo, hinh, anhKem, nhanVat, boiCanh) {
+  const c = { cum, cheDo, hinh, anhKem, nhanVat, luoi: { file: `slide/${cum}.png`, ...boCucLuoi(hinh.length) } };
+  if (boiCanh) c.boiCanh = boiCanh;
+  return c;
+}
+
+/** Chế độ tham-chieu + lưới: 8 hướng một bối cảnh = 1 lưới; tờ nhân vật ≤ 8 / lưới; bối cảnh không mốc ≤ 8 / lưới. */
+function gomLuoiThamChieu(can, cheDo) {
+  const ra = [];
+  const theoNhom = new Map();
+  for (const m of can) theoNhom.set(m.nhom, [...(theoNhom.get(m.nhom) || []), m]);
+  for (const [nhom, ds] of theoNhom) {
+    if (nhom.startsWith('bc:')) ra.push(taoCumLuoi(`${nhom.slice(3)}_huong`, cheDo, ds, [], []));
+    else for (const g of chiaDeu(ds, TOI_DA_O_LUOI_TO)) ra.push(taoCumLuoi(`${nhom === 'nv' ? 'nv' : 'bc-le'}_${g[0].id}`, cheDo, g, [], []));
+  }
+  return ra;
+}
+
 function chiaDoi(arr) {
   if (arr.length <= TOI_DA_SHOT_MOT_CUM) return [arr];
   const m = Math.ceil(arr.length / 2);
@@ -90,7 +124,7 @@ function chiaDoi(arr) {
  * docMoc(id) → nội dung boi-canh/<id>.json hoặc null (không có thì giữ hành vi cũ: dùng moTa).
  * @returns {{cum:string, cheDo:string, hinh:{file:string, moTa:string, moc?:object, khoiXam?:string[]}[], anhKem:string[], nhanVat:string[], boiCanh?:string}[]}
  */
-export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null, docMoc = () => null, huong = null, chong = false, moiCum = TOI_DA_HINH_THAM_CHIEU } = {}) {
+export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null, docMoc = () => null, huong = null, chong = false, moiCum = TOI_DA_HINH_THAM_CHIEU, luoi = false } = {}) {
   const loc = (id) => !chi || chi.includes(id);
   const cumList = [];
 
@@ -98,7 +132,7 @@ export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null, docMoc
     const muc = [];
     for (const n of bs.nhanVat || []) {
       if (!loc(n.id)) continue;
-      muc.push({ file: `tham-chieu/nv_${n.id}.png`, moTa: `Tờ mẫu nhân vật "${n.ten || n.id}": ${n.moTa || ''}. Bố cục: góc trước, góc nghiêng, góc sau, và 4 biểu cảm khác nhau; nền trơn một màu; phong cách khối vuông.` });
+      muc.push({ nhom: 'nv', id: n.id, file: `tham-chieu/nv_${n.id}.png`, moTa: `Tờ mẫu nhân vật "${n.ten || n.id}": ${n.moTa || ''}. Bố cục: góc trước, góc nghiêng, góc sau, và 4 biểu cảm khác nhau; nền trơn một màu; phong cách khối vuông.` });
     }
     for (const b of bs.boiCanh || []) {
       if (!loc(b.id)) continue;
@@ -107,15 +141,16 @@ export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null, docMoc
         for (const hg of locHuong(huong)) {
           const khoiXam = chong ? [`boi-canh/${b.id}_${hg.id}.png`].filter((f) => coFile(f)) : [];
           const cau = khoiXam.length ? CAU_BAT_BUOC_KHOI_XAM : chong ? 'Vẽ đúng theo danh sách mốc, không thêm/bớt mốc, không vẽ nhân vật (chưa có ảnh khối xám hướng này).' : `${CAU_TU_DO} Trục: ${TRUC_ANH[hg.id]}.`;
-          muc.push({ file: `tham-chieu/bc_${b.id}_${hg.id}.png`, moc, khoiXam, huong: hg.id,
-            moTa: `Toàn cảnh bối cảnh "${b.ten || b.id}", khổ dọc 9:16, HƯỚNG ${hg.ten.toUpperCase()}: ${hg.moTa}. ${cau} Chi tiết ở mục "Danh sách mốc bối cảnh ${b.id}". Phải khớp các hướng còn lại (cùng mốc, màu, số lượng đồ).` });
+          muc.push({ nhom: `bc:${b.id}`, id: b.id, file: `tham-chieu/bc_${b.id}_${hg.id}.png`, moc, khoiXam, huong: hg.id,
+            moTa: luoi ? `HƯỚNG ${hg.ten.toUpperCase()}: ${hg.moTa}. Trục: ${TRUC_ANH[hg.id]}.` : `Toàn cảnh bối cảnh "${b.ten || b.id}", khổ dọc 9:16, HƯỚNG ${hg.ten.toUpperCase()}: ${hg.moTa}. ${cau} Chi tiết ở mục "Danh sách mốc bối cảnh ${b.id}". Phải khớp các hướng còn lại (cùng mốc, màu, số lượng đồ).` });
         }
       } else {
-        muc.push({ file: `tham-chieu/bc_${b.id}.png`, moTa: `Toàn cảnh bối cảnh "${b.ten || b.id}": ${b.moTa || ''}. Khổ dọc 9:16, không có nhân vật; phong cách khối vuông.` });
+        muc.push({ nhom: 'le', id: b.id, file: `tham-chieu/bc_${b.id}.png`, moTa: `Toàn cảnh bối cảnh "${b.ten || b.id}": ${b.moTa || ''}. Khổ dọc 9:16, không có nhân vật; phong cách khối vuông.` });
       }
     }
     const can = muc.filter((m) => !coFile(m.file));
     if (!can.length) return [];
+    if (luoi) return gomLuoiThamChieu(can, cheDo);
     const n = Math.ceil(can.length / Math.max(1, Math.min(moiCum, TOI_DA_HINH_THAM_CHIEU)));
     const moi = Math.ceil(can.length / n);
     for (let i = 0; i < n; i++) {
@@ -132,6 +167,23 @@ export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null, docMoc
   for (const bcId of thuTu) {
     const shots = (bs.shots || []).filter((s) => s.boiCanh === bcId && loc(s.id));
     if (!shots.length) continue;
+    if (luoi) {
+      const hinh = [];
+      const nvSet = [];
+      for (const s of shots) for (const vi of hinhCuaShot(s)) {
+        const file = `hinh/shot_${s.id}_${vi}.png`;
+        if (coFile(file)) continue;
+        hinh.push({ file, moTa: moTaHinhShot(bs, s, vi), nv: s.nhanVat || [] });
+        for (const id of s.nhanVat || []) if (!nvSet.includes(id)) nvSet.push(id);
+      }
+      const anhBc = docMoc(bcId) ? [`tham-chieu/bc_${bcId}_truoc.png`, `tham-chieu/bc_${bcId}_tren-xuong.png`] : [`tham-chieu/bc_${bcId}.png`];
+      for (const nhom of chiaDeu(hinh, TOI_DA_O_LUOI)) {
+        const nv = nvSet.filter((id) => nhom.some((h) => h.nv.includes(id)));
+        cumList.push(taoCumLuoi(`${bcId}_${path.basename(nhom[0].file, '.png').replace(/^shot_/, '')}`, cheDo,
+          nhom.map(({ file, moTa }) => ({ file, moTa })), [...anhBc, ...nv.map((id) => `tham-chieu/nv_${id}.png`)], nv, bcId));
+      }
+      continue;
+    }
     const manh = chiaDoi(shots);
     manh.forEach((nhom, i) => {
       const hinh = [];
@@ -192,8 +244,48 @@ function moMocBoiCanh(h, id) {
   return L;
 }
 
+export const QUY_TAC_LUOI = [
+  `Vẽ ĐÚNG MỘT ảnh lưới, khổ dọc 2:3. Các ô BẰNG NHAU, ngăn cách bằng viền trắng mảnh ${VIEN_LUOI} px (cả giữa các hàng lẫn các cột); KHÔNG chữ, KHÔNG nhãn, KHÔNG số, KHÔNG khung trang trí trong ảnh.`,
+  'Mỗi ô là một hình đầy đủ, vẽ kín ô, không tràn sang ô khác; đúng THỨ TỰ ô ghi bên dưới (trái→phải, trên→dưới). Ô thừa (nếu có) để trắng.',
+  'Mọi ô cùng một thế giới: cùng phong cách khối vuông low poly kiểu Roblox (mọi vật dựng từ hộp chữ nhật, màu phẳng, cạnh sắc, không bo tròn, không vân tả thực), cùng bảng màu, cùng đồ vật/nhân vật/trang phục giữa các ô; chỉ đổi thứ được ghi riêng cho từng ô.',
+  'Vẽ ảnh MỚI hoàn toàn bằng công cụ tạo hình theo chữ; KHÔNG chép, cắt, ghép, lọc màu hay chỉnh ảnh có sẵn bằng script.',
+  'Không sửa mô tả. Thấy mô tả mâu thuẫn thì ghi vào file tiến độ, không tự đoán.',
+];
+export const CAU_LUU_FILE = '**Lưu file:** dùng ĐÚNG đường dẫn ảnh mà công cụ tạo hình trả về cho lần gọi của bạn. Nếu không có đường dẫn: chỉ tìm trong thư mục con của CHÍNH phiên này trong `%USERPROFILE%\\.codex\\generated_images\\` (thư mục có tên trùng mã phiên của bạn), KHÔNG lấy file mới nhất của cả thư mục — nhiều phiên chạy song song, lấy nhầm ảnh phiên khác. Chép nguyên file sang đường dẫn đích; ghi đường dẫn nguồn vào file tiến độ.';
+
+/** Đề bài lưới: MỘT ảnh `slide/<cụm>.png`, liệt kê thứ tự ô. */
+function soanDeBaiLuoi(cum, bs) {
+  const { cot, hang, file } = cum.luoi;
+  const L = [`# Đề bài vẽ LƯỚI — tập ${bs.ep || '?'} — cụm ${cum.cum} (${cum.cheDo})`, ''];
+  L.push('Bạn là người vẽ. Dùng công cụ tạo hình để tạo ĐÚNG MỘT ảnh PNG, ghi vào đường dẫn dưới đây (tính từ thư mục làm việc hiện tại; tạo thư mục `slide/` nếu chưa có):', '', `- LUOI: ${file} — ${cot} cột × ${hang} hàng = ${cum.hinh.length} ô`, '');
+  L.push(CAU_LUU_FILE, '', '## Quy tắc');
+  for (const q of QUY_TAC_LUOI) L.push(`- ${q}`);
+  L.push('');
+  if (cum.anhKem?.length) { L.push('## Ảnh tham chiếu đính kèm (đã duyệt)'); for (const a of cum.anhKem) L.push(`- ${a}`); L.push(''); }
+  if (cum.cheDo === 'shot' && cum.boiCanh) {
+    const bc = (bs.boiCanh || []).find((b) => b.id === cum.boiCanh);
+    if (bc) L.push('## Bối cảnh của lưới', `- ${bc.ten || bc.id}: ${bc.moTa || ''}`, '');
+    const nvs = (cum.nhanVat || []).map((id) => (bs.nhanVat || []).find((n) => n.id === id)).filter(Boolean);
+    if (nvs.length) { L.push('## Nhân vật trong lưới'); for (const n of nvs) L.push(`- ${n.ten || n.id}: ${n.moTa || ''}`); L.push(''); }
+  }
+  const daMoc = new Set();
+  for (const h of cum.hinh) {
+    if (!h.moc) continue;
+    const id = h.moc.boiCanh || path.basename(h.file, '.png').replace(/^bc_/, '').replace(/_[a-z-]+$/, '');
+    if (daMoc.has(id)) continue;
+    daMoc.add(id);
+    L.push(...moMocBoiCanh({ ...h, khoiXam: [] }, id));
+  }
+  L.push(`## Thứ tự ô (${cum.hinh.length} ô, đọc trái→phải, trên→dưới)`);
+  cum.hinh.forEach((h, i) => L.push(`- Ô ${i + 1} (hàng ${Math.floor(i / cot) + 1}, cột ${(i % cot) + 1}): ${h.file} — ${h.moTa}`));
+  L.push('', '## Tiến độ', `- TIEN-DO: codex/tien-do-${cum.cum}.txt`);
+  L.push(`Ghi file trên khi xong: một dòng "xong ${file}" hoặc "không vẽ được ${file}: <lý do>"; ghi thêm mâu thuẫn trong mô tả nếu có.`, '');
+  return L.join('\n');
+}
+
 /** Soạn nội dung đề bài (Markdown) cho một cụm. */
 export function soanDeBai(cum, bs = {}) {
+  if (cum.luoi) return soanDeBaiLuoi(cum, bs);
   const L = [];
   L.push(`# Đề bài vẽ hình — tập ${bs.ep || '?'} — cụm ${cum.cum} (${cum.cheDo})`, '');
   L.push('Bạn là người vẽ. Dùng công cụ tạo hình để tạo ĐÚNG các file bên dưới; mỗi file là một ảnh PNG.', '');
@@ -261,6 +353,70 @@ export async function timChepAnhKem(ke, thuMuc = '.', { nguong = 5 } = {}) {
   return ra;
 }
 
+// ---------- cắt lưới ----------
+/** Khe trắng quanh vị trí chia đều: trong ±40 px tìm cột/hàng có tỉ lệ pixel trắng (>235) cao nhất, mở rộng ra cả dải trắng.
+ *  Không thấy khe (tỉ lệ < 0.5) → dùng đúng viền VIEN_LUOI quanh điểm chia. Trả [a, b) (b không gồm). */
+function timKhe(tiLe, viTri) {
+  const lo = Math.max(1, Math.round(viTri - 40)), hi = Math.min(tiLe.length - 2, Math.round(viTri + 40));
+  let t = -1;
+  for (let i = lo; i <= hi; i++) if (t < 0 || tiLe[i] > tiLe[t] + 1e-9 || (Math.abs(tiLe[i] - tiLe[t]) < 1e-9 && Math.abs(i - viTri) < Math.abs(t - viTri))) t = i;
+  if (t < 0 || tiLe[t] < 0.5) { const c = Math.round(viTri); return [c - VIEN_LUOI, c + VIEN_LUOI]; }
+  let a = t, b = t;
+  while (a > lo - 24 && a > 0 && tiLe[a - 1] >= 0.8) a--;
+  while (b < hi + 24 && b < tiLe.length - 1 && tiLe[b + 1] >= 0.8) b++;
+  return [a, b + 1];
+}
+/** Mép ngoài: bỏ viền trắng (≥ 90 % trắng) tối đa 24 px mỗi phía. */
+function mepNgoai(tiLe) {
+  let a = 0, b = tiLe.length;
+  while (a < 24 && tiLe[a] >= 0.9) a++;
+  while (tiLe.length - b < 24 && tiLe[b - 1] >= 0.9) b--;
+  return [a, b];
+}
+
+/** Cắt ảnh lưới thành đúng `n` ô (cot × hang, đọc trái→phải, trên→dưới) bằng khe trắng. Trả [{left,top,width,height}]. */
+export async function tinhOCat(fileLuoi, n, cot, hang) {
+  const sharp = (await import('sharp')).default;
+  const { data, info } = await sharp(fileLuoi).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const W = info.width, H = info.height, K = info.channels;
+  const trang = (x, y) => { const i = (y * W + x) * K; return data[i] > 235 && data[i + 1] > 235 && data[i + 2] > 235; };
+  const tCot = new Float64Array(W), tHang = new Float64Array(H);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (trang(x, y)) { tCot[x]++; tHang[y]++; }
+  for (let x = 0; x < W; x++) tCot[x] /= H;
+  for (let y = 0; y < H; y++) tHang[y] /= W;
+  const doan = (tiLe, tong, soO) => {
+    const [d, c] = mepNgoai(tiLe);
+    const khe = []; for (let k = 1; k < soO; k++) khe.push(timKhe(tiLe, d + ((c - d) * k) / soO));
+    return Array.from({ length: soO }, (_, i) => { const a = i === 0 ? d : khe[i - 1][1], b = i === soO - 1 ? c : khe[i][0]; return [a, b]; });
+  };
+  const dc = doan(tCot, W, cot), dh = doan(tHang, H, hang);
+  const ra = [];
+  for (let i = 0; i < n; i++) {
+    const [x0, x1] = dc[i % cot], [y0, y1] = dh[Math.floor(i / cot)];
+    ra.push({ left: x0, top: y0, width: x1 - x0, height: y1 - y0 });
+  }
+  return ra;
+}
+
+/** Cắt lưới của một cụm ra từng file hình. Trả {ok:[file], loi:[file]}; ô quá nhỏ (< 16 px) hoặc ảnh hỏng → loi. */
+export async function catLuoiCum(cum, thuMuc) {
+  const sharp = (await import('sharp')).default;
+  const f = path.join(thuMuc, cum.luoi.file);
+  const ra = { ok: [], loi: cum.hinh.map((h) => h.file) };
+  let o;
+  try { o = await tinhOCat(f, cum.hinh.length, cum.luoi.cot, cum.luoi.hang); } catch { return ra; }
+  ra.loi = [];
+  for (let i = 0; i < cum.hinh.length; i++) {
+    const h = cum.hinh[i], v = o[i];
+    if (v.width < 16 || v.height < 16) { ra.loi.push(h.file); continue; }
+    const dich = path.join(thuMuc, h.file);
+    fs.mkdirSync(path.dirname(dich), { recursive: true });
+    await sharp(f).extract(v).png().toFile(dich);
+    ra.ok.push(h.file);
+  }
+  return ra;
+}
+
 export function lenhCho(cum, { thuMuc, model, muc, codexBin, anh }) {
   const parts = [codexBin, 'exec', '-C', q(thuMuc), '-s', 'workspace-write', '--skip-git-repo-check', '-m', model,
     '-c', q(`model_reasoning_effort="${muc}"`)];
@@ -295,7 +451,7 @@ async function hangDoi(viec, tran, fn) {
 const GIOI_HAN = /\b429\b|rate[\s_-]?limit/i;
 
 function docThamSo(argv) {
-  const r = { vitri: [], thu: false, tran: 6, model: 'gpt-6-luna', muc: 'low', chi: null, huong: null, chong: false, moiCum: TOI_DA_HINH_THAM_CHIEU };
+  const r = { vitri: [], thu: false, tran: TRAN_MAC_DINH, model: 'gpt-6-luna', muc: 'low', chi: null, huong: null, chong: false, moiCum: TOI_DA_HINH_THAM_CHIEU, luoi: true };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--thu') r.thu = true;
@@ -305,7 +461,9 @@ function docThamSo(argv) {
     else if (a === '--chi') r.chi = String(argv[++i] || '').split(',').map((s) => s.trim()).filter(Boolean);
     else if (a === '--huong') r.huong = argv[++i];
     else if (a === '--moi-cum') r.moiCum = parseInt(argv[++i], 10);   // số hình mỗi cụm (≤ 6): nhỏ + --tran cao = nhanh hơn
-    else if (a === '--chong') r.chong = true;   // vẽ chồng lên khối xám (cách cũ; Codex hiện không làm được — #23)
+    else if (a === '--luoi') r.luoi = true;   // mặc định đã bật; giữ cờ cho rõ
+    else if (a === '--le') r.luoi = false;   // vẽ từng ảnh một (cách cũ)
+    else if (a === '--chong') { r.chong = true; r.luoi = false; }   // vẽ chồng lên khối xám (cách cũ; Codex hiện không làm được — #23)
     else if (a.startsWith('--')) r.loi = `Cờ không biết: ${a}`;
     else r.vitri.push(a);
   }
@@ -314,7 +472,7 @@ function docThamSo(argv) {
 
 export async function chay(argv, env = process.env) {
   const t = docThamSo(argv);
-  const dung = 'Dùng: node tools/codex-ve.mjs <tham-chieu|shot> <thư mục tập> [--thu] [--tran N] [--model M] [--muc low] [--chi s001,s002] [--huong truoc,sau] [--moi-cum N] [--chong]';
+  const dung = 'Dùng: node tools/codex-ve.mjs <tham-chieu|shot> <thư mục tập> [--thu] [--tran N] [--model M] [--muc low] [--chi s001,s002] [--huong truoc,sau] [--moi-cum N] [--luoi|--le] [--chong]';
   if (t.loi || t.vitri.length !== 2 || !['tham-chieu', 'shot'].includes(t.vitri[0]) || !(t.tran >= 1) || !t.model || !t.muc) {
     console.error(`${t.loi || 'Tham số không hợp lệ.'}\n${dung}`);
     return 2;
@@ -338,7 +496,7 @@ export async function chay(argv, env = process.env) {
     if (!fs.existsSync(f)) return null;
     try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { loiMoc = `${duongMoc(id)} hỏng: ${e.message}`; return null; }
   };
-  const ke = lapKeHoach(bs, cheDo, { coFile, chi: t.chi, docMoc, huong: t.huong, chong: t.chong, moiCum: t.moiCum });
+  const ke = lapKeHoach(bs, cheDo, { coFile, chi: t.chi, docMoc, huong: t.huong, chong: t.chong, moiCum: t.moiCum, luoi: t.luoi });
   if (loiMoc) { console.error(loiMoc); return 2; }
   if (!ke.length) { console.log(`Đủ hình (${cheDo}): không còn hình nào cần vẽ.`); return 0; }
 
@@ -354,11 +512,11 @@ export async function chay(argv, env = process.env) {
   const lenhMoi = (cum) => lenhCho(cum, { thuMuc, model: t.model, muc: t.muc, codexBin, anh: anhCoSan(cum) });
 
   const tongHinh = ke.reduce((n, c) => n + c.hinh.length, 0);
-  console.log(`Kế hoạch ${cheDo}: ${ke.length} cụm, ${tongHinh} hình, trần song song ${t.tran}, model ${t.model} (${t.muc}).`);
+  console.log(`Kế hoạch ${cheDo}${t.luoi ? ' (LƯỚI)' : ''}: ${ke.length} cụm, ${tongHinh} hình, trần song song ${t.tran}, model ${t.model} (${t.muc}).`);
   for (const c of ke) {
     ghiDeBai(c);
     const thieuAnh = c.anhKem.filter((a) => !fs.existsSync(path.join(thuMuc, a)));
-    console.log(`- cụm ${c.cum}: ${c.hinh.length} hình, ${anhCoSan(c).length} ảnh kèm${thieuAnh.length ? ` (chưa có: ${thieuAnh.join(', ')})` : ''}`);
+    console.log(`- cụm ${c.cum}: ${c.hinh.length} hình${c.luoi ? ` → lưới ${c.luoi.cot}×${c.luoi.hang} ${c.luoi.file}` : ''}, ${anhCoSan(c).length} ảnh kèm${thieuAnh.length ? ` (chưa có: ${thieuAnh.join(', ')})` : ''}`);
     if (t.thu) console.log(`    ${lenhMoi(c)} < codex/de-bai-${cheDo}-${c.cum}.md`);
   }
   if (t.thu) { console.log('Chế độ --thu: đã ghi đề bài vào codex/, không chạy Codex.'); return 0; }
@@ -367,10 +525,11 @@ export async function chay(argv, env = process.env) {
 
   const chayCum = async (cum, lanLai) => {
     // tính lại hình còn thiếu để không vẽ lại hình đã có
-    const moi = lapKeHoach(bs, cheDo, { coFile, chi: t.chi, docMoc, huong: t.huong, chong: t.chong, moiCum: t.moiCum }).find((c) => c.cum === cum.cum);
+    const moi = lapKeHoach(bs, cheDo, { coFile, chi: t.chi, docMoc, huong: t.huong, chong: t.chong, moiCum: t.moiCum, luoi: t.luoi }).find((c) => c.cum === cum.cum);
     const r = kq.get(cum.cum);
     if (!moi) return;
     ghiDeBai(moi);
+    if (moi.luoi) fs.rmSync(path.join(thuMuc, moi.luoi.file), { force: true });   // lưới cũ (đã cắt ô thiếu) không được lẫn vào lần này
     console.log(`Chạy cụm ${cum.cum}${lanLai ? ' (chạy lại, trần giảm)' : ''}: ${moi.hinh.length} hình...`);
     const res = await chayMotCum(lenhMoi(moi), soanDeBai(moi, bs), thuMuc);
     r.giay += res.giay;
@@ -382,7 +541,26 @@ export async function chay(argv, env = process.env) {
     if (lanLai) r.chayLai = true;
   };
 
+  const loiLuoi = [];   // thông báo về lưới hỏng / trùng
+  const daCat = new Set();
+  // lưới → md5 trùng giữa các lưới thì xoá + tính thiếu; còn lại cắt ô theo khe trắng
+  const xuLyLuoi = async () => {
+    const co = ke.filter((c) => c.luoi && !daCat.has(c.cum) && coFile(c.luoi.file));
+    if (!co.length) return;
+    const trungL = timTrung(co.map((c) => c.luoi.file), thuMuc);
+    for (const g of trungL) {
+      for (const f of g) { fs.rmSync(path.join(thuMuc, f), { force: true }); }
+      loiLuoi.push(`Lưới TRÙNG nội dung (Codex chép nhầm ảnh phiên khác), đã xoá: ${g.join('  ≡  ')}`);
+    }
+    for (const c of co) {
+      if (!coFile(c.luoi.file)) continue;
+      const r = await catLuoiCum(c, thuMuc);
+      daCat.add(c.cum);
+      if (r.loi.length) loiLuoi.push(`Lưới ${c.luoi.file}: cắt không ra ${r.loi.join(', ')}`);
+    }
+  };
   await hangDoi(ke, t.tran, (c) => chayCum(c, false));
+  await xuLyLuoi();
 
   const conThieu = (cum) => cum.hinh.filter((h) => !coFile(h.file));
   const bi = ke.filter((c) => kq.get(c.cum).gioiHan && conThieu(c).length);
@@ -390,7 +568,9 @@ export async function chay(argv, env = process.env) {
     const tran2 = Math.max(1, Math.floor(t.tran / 2));
     console.log(`Bị giới hạn (429/rate limit) ở ${bi.length} cụm: chạy lại một lần với trần ${tran2}.`);
     await hangDoi(bi, tran2, (c) => chayCum(c, true));
+    await xuLyLuoi();
   }
+  for (const m of loiLuoi) console.log(`\n${m}`);
 
   // kiểm lại
   const bang = [];

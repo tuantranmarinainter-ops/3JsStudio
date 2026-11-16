@@ -5,6 +5,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import crypto from 'node:crypto';
+import sharp from 'sharp';
 import { lapKeHoach, soanDeBai } from '../codex-ve.mjs';
 import { HUONG_BOI_CANH } from '../huong-boi-canh.mjs';
 
@@ -26,7 +28,9 @@ function ref(thuMuc) {
   fs.mkdirSync(path.join(thuMuc, 'tham-chieu'), { recursive: true });
   for (const f of ['bc_pho', 'bc_tiem-banh', 'nv_ga', 'nv_ba-ban-banh']) fs.writeFileSync(path.join(thuMuc, 'tham-chieu', `${f}.png`), 'x');
 }
-function cli(args, extraEnv = {}, state) {
+// Test cũ chạy chế độ vẽ từng ảnh (--le); test lưới dùng cliLuoi.
+function cli(args, extraEnv = {}, state) { return cliLuoi([...args, '--le'], extraEnv, state); }
+function cliLuoi(args, extraEnv = {}, state) {
   return spawnSync(process.execPath, [CLI, ...args], {
     encoding: 'utf8',
     env: { ...process.env, CODEX_BIN: `node "${GIA}"`, CODEX_GIA_DIR: state, ...extraEnv },
@@ -289,4 +293,113 @@ test('timChepAnhKem: hình chép khối xám (cả khi mã hoá lại) bị bắ
   const ke = [{ cum: 'tc1', anhKem: [], hinh: [{ file: 'a.png', khoiXam: ['xam.png'] }, { file: 'b.png', khoiXam: ['xam.png'] }, { file: 'thieu.png', khoiXam: ['xam.png'] }] }];
   const r = await timChepAnhKem(ke, d);
   assert.deepEqual(r.map((x) => [x.file, x.chep, x.cungCo]), [['a.png', true, true], ['b.png', false, false]]);
+});
+
+// ---------- chế độ LƯỚI (luật 16/11) ----------
+const mauO = (file) => { const h = crypto.createHash('md5').update(file).digest(); return [40 + (h[0] % 160), 40 + (h[1] % 160), 40 + (h[2] % 160)]; };
+async function diemGiua(f) { const { data, info } = await sharp(f).removeAlpha().raw().toBuffer({ resolveWithObject: true }); const i = ((info.height >> 1) * info.width + (info.width >> 1)) * 3; return [data[i], data[i + 1], data[i + 2]]; }
+
+test('lưới tham-chieu: 8 hướng một bối cảnh = 1 lưới 2×4 đúng thứ tự; tờ nhân vật và bối cảnh không mốc ra lưới riêng', () => {
+  const bs = { ep: 'epX', nhanVat: [{ id: 'ga', ten: 'Gà' }], boiCanh: [{ id: 'a', ten: 'A' }, { id: 'b', ten: 'B', moTa: 'phố' }], shots: [] };
+  const ke = lapKeHoach(bs, 'tham-chieu', { luoi: true, docMoc: (id) => (id === 'a' ? { boiCanh: 'a', moc: [{ id: 'm1', ten: 'Mốc 1' }] } : null) });
+  assert.deepEqual(ke.map((c) => c.cum), ['nv_ga', 'a_huong', 'bc-le_b']);
+  const a = ke.find((c) => c.cum === 'a_huong');
+  assert.deepEqual(a.hinh.map((h) => h.file), HUONG8.map((g) => `tham-chieu/bc_a_${g}.png`));
+  assert.deepEqual([a.luoi.cot, a.luoi.hang, a.luoi.file], [2, 4, 'slide/a_huong.png']);
+  // thiếu vài hướng thì lưới chỉ gồm hướng thiếu, giữ thứ tự
+  const k2 = lapKeHoach(bs, 'tham-chieu', { luoi: true, chi: ['a'], coFile: (f) => /bc_a_(truoc|sau|trai|phai|tren-xuong)\.png/.test(f), docMoc: () => ({ moc: [] }) });
+  assert.deepEqual(k2[0].hinh.map((h) => h.file), ['duoi-len', 'thang-mat', 'ngang-hong'].map((g) => `tham-chieu/bc_a_${g}.png`));
+  // ≤ 8 tờ nhân vật mỗi lưới
+  const nv = Array.from({ length: 11 }, (_, i) => ({ id: `n${i}`, ten: `N${i}` }));
+  const k3 = lapKeHoach({ nhanVat: nv, boiCanh: [] }, 'tham-chieu', { luoi: true });
+  assert.deepEqual(k3.map((c) => c.hinh.length), [6, 5]);
+});
+
+test('lưới shot: hình của các shot cùng bối cảnh gộp, ≤ 10 ô / lưới', () => {
+  const ke = lapKeHoach(bangMau, 'shot', { luoi: true });
+  assert.deepEqual(ke.map((c) => c.boiCanh), ['tiem-banh', 'pho']);
+  assert.deepEqual(ke.map((c) => c.hinh.length), [6, 6]);
+  assert.deepEqual(ke[0].luoi, { file: `slide/${ke[0].cum}.png`, cot: 2, hang: 3 });
+  const shots = Array.from({ length: 12 }, (_, i) => ({ id: `s${String(i + 1).padStart(3, '0')}`, boiCanh: 'pho', nhanVat: [], hinh: 1, dau: 'x' }));
+  const k2 = lapKeHoach({ ...bangMau, shots }, 'shot', { luoi: true });
+  assert.deepEqual(k2.map((c) => c.hinh.length), [6, 6]);
+  assert.equal(new Set(k2.map((c) => c.cum)).size, 2);
+});
+
+test('đề bài lưới: thứ tự ô, viền 8 px, câu lưu file, không FILE:, kèm mốc', () => {
+  const b = tapCoMoc();
+  const r = cliLuoi(['tham-chieu', b.thuMuc, '--thu'], {}, b.state);
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /3 cụm, 10 hình/);
+  assert.match(r.stdout, /lưới 2×4 slide\/nha-may-ngoai_huong\.png/);
+  const de = fs.readFileSync(path.join(b.thuMuc, 'codex', 'de-bai-tham-chieu-nha-may-ngoai_huong.md'), 'utf8');
+  assert.match(de, /^- LUOI: slide\/nha-may-ngoai_huong\.png — 2 cột × 4 hàng = 8 ô$/m);
+  assert.match(de, /viền trắng mảnh 8 px/);
+  assert.match(de, /KHÔNG chữ, KHÔNG nhãn/);
+  assert.match(de, /ĐÚNG đường dẫn ảnh mà công cụ tạo hình trả về/);
+  assert.match(de, /KHÔNG lấy file mới nhất/);
+  assert.doesNotMatch(de, /^- FILE:/m);
+  HUONG8.forEach((g, i) => assert.match(de, new RegExp(`^- Ô ${i + 1} \\(hàng ${Math.floor(i / 2) + 1}, cột ${(i % 2) + 1}\\): tham-chieu/bc_nha-may-ngoai_${g}\\.png`, 'm')));
+  assert.match(de, /Danh sách mốc bối cảnh nha-may-ngoai/);
+  assert.match(de, /TIEN-DO: codex\/tien-do-nha-may-ngoai_huong\.txt/);
+  assert.ok(!fs.existsSync(path.join(b.thuMuc, 'tham-chieu')));
+});
+
+test('mặc định là lưới (không cờ); --le về cách cũ', () => {
+  const b = tapCoMoc();
+  assert.match(cliLuoi(['tham-chieu', b.thuMuc, '--thu'], {}, b.state).stdout, /\(LƯỚI\)/);
+  assert.doesNotMatch(cliLuoi(['tham-chieu', b.thuMuc, '--thu', '--le'], {}, b.state).stdout, /LƯỚI/);
+});
+
+test('lưới chạy thật (Codex giả): cắt đủ ô đúng tên, đúng thứ tự, giữ lưới gốc; chạy lại thì đủ', async () => {
+  const b = tapCoMoc();
+  const r = cliLuoi(['tham-chieu', b.thuMuc], {}, b.state);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const calls = fs.readFileSync(path.join(b.state, 'calls.jsonl'), 'utf8').trim().split('\n');
+  assert.equal(calls.length, 3, 'mỗi lưới một tiến trình');
+  assert.ok(fs.existsSync(path.join(b.thuMuc, 'slide', 'nha-may-ngoai_huong.png')));
+  for (const g of HUONG8) {
+    const f = `tham-chieu/bc_nha-may-ngoai_${g}.png`;
+    const p = path.join(b.thuMuc, f);
+    assert.ok(fs.existsSync(p), f);
+    const m = await sharp(p).metadata();
+    assert.ok(Math.abs(m.width - 100) <= 6 && Math.abs(m.height - 160) <= 6, `${f} ${m.width}×${m.height}`);
+    const [R, G, B] = await diemGiua(p), e = mauO(f);
+    assert.ok(Math.abs(R - e[0]) + Math.abs(G - e[1]) + Math.abs(B - e[2]) < 6, `${f} sai màu ô`);
+  }
+  assert.ok(fs.existsSync(path.join(b.thuMuc, 'tham-chieu', 'bc_pho.png')));
+  assert.ok(fs.existsSync(path.join(b.thuMuc, 'tham-chieu', 'nv_ga.png')));
+  const r2 = cliLuoi(['tham-chieu', b.thuMuc], {}, b.state);
+  assert.equal(r2.status, 0);
+  assert.match(r2.stdout, /Đủ/);
+});
+
+test('lưới shot chạy thật: 12 hình từ 2 lưới', () => {
+  const b = banSao(); duyet(b.thuMuc); ref(b.thuMuc);
+  const r = cliLuoi(['shot', b.thuMuc], {}, b.state);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.equal(dem(path.join(b.thuMuc, 'hinh')), 12);
+  assert.equal(dem(path.join(b.thuMuc, 'slide')), 2);
+});
+
+test('lưới trùng md5 giữa các lưới bị bắt: xoá lưới, tính thiếu, lưới trùng không bị cắt ô', () => {
+  const b = tapCoMoc();
+  const r = cliLuoi(['tham-chieu', b.thuMuc], { CODEX_GIA_TRUNG_LUOI: '1' }, b.state);
+  assert.equal(r.status, 1, r.stdout + r.stderr);
+  assert.match(r.stdout, /Lưới TRÙNG nội dung/);
+  assert.ok(!fs.existsSync(path.join(b.thuMuc, 'tham-chieu', 'nv_ga.png')) && !fs.existsSync(path.join(b.thuMuc, 'slide', 'nv_ga.png')));   // 2 lưới 1 ô giống hệt: xoá cả hai
+  const kq = JSON.parse(fs.readFileSync(path.join(b.thuMuc, 'codex', 'ket-qua-tham-chieu.json'), 'utf8'));
+  assert.deepEqual(kq.thieu.sort(), ['tham-chieu/bc_pho.png', 'tham-chieu/nv_ga.png']);
+});
+
+test('lưới không ra: thoát 1 và nêu đủ ô thiếu', () => {
+  const b = tapCoMoc();
+  const r = cliLuoi(['tham-chieu', b.thuMuc], { CODEX_GIA_SOT: 'nha-may-ngoai_huong' }, b.state);
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /bc_nha-may-ngoai_ngang-hong\.png/);
+});
+
+test('trần song song mặc định 4', () => {
+  const b = banSao(); duyet(b.thuMuc); ref(b.thuMuc);
+  assert.match(cliLuoi(['shot', b.thuMuc, '--thu'], {}, b.state).stdout, /trần song song 4/);
 });

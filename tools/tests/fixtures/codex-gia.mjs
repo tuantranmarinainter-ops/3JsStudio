@@ -45,7 +45,36 @@ if (process.env.CODEX_GIA_429 === '1' && dir) {
 }
 
 const sot = (process.env.CODEX_GIA_SOT || '').split(',').filter(Boolean);
-const files = [...stdin.matchAll(/^- FILE: (\S+\.png)/gm)].map((m) => m[1]);
+
+// Chế độ LƯỚI: đề bài có "- LUOI: slide/x.png — C cột × R hàng = N ô" và các dòng "- Ô k (hàng, cột): <file> — …".
+// Sinh ảnh lưới thật (sharp): mỗi ô một màu phẳng suy từ tên file ô (giúp test kiểm ô cắt đúng thứ tự), viền trắng 8 px giữa ô,
+// không viền ngoài. CODEX_GIA_TRUNG_LUOI=1: màu theo số thứ tự ô → mọi lưới giống hệt nhau (giả "chép nhầm").
+const luoi = stdin.match(/^- LUOI: (\S+\.png) — (\d+) cột × (\d+) hàng = (\d+) ô/m);
+if (luoi) {
+  const [, rel, cot, hang, so] = luoi.map((v, i) => (i >= 2 ? Number(v) : v));
+  const cacO = [...stdin.matchAll(/^- Ô (\d+) \([^)]*\): (\S+\.png)/gm)].map((m) => m[2]);
+  if (!sot.some((s) => rel.includes(s))) {
+    const { default: sharp } = await import('sharp');
+    const crypto = await import('node:crypto');
+    const CW = 100, CH = 160, V = 8;
+    const W = cot * CW + (cot - 1) * V, H = hang * CH + (hang - 1) * V;
+    const mau = (k) => { const h = crypto.createHash('md5').update(process.env.CODEX_GIA_TRUNG_LUOI === '1' ? `o${k}` : cacO[k]).digest(); return { r: 40 + (h[0] % 160), g: 40 + (h[1] % 160), b: 40 + (h[2] % 160) }; };
+    const lop = [];
+    for (let k = 0; k < Math.min(so, cacO.length); k++) {
+      const input = await sharp({ create: { width: CW, height: CH, channels: 3, background: mau(k) } }).png().toBuffer();
+      lop.push({ input, left: (k % cot) * (CW + V), top: Math.floor(k / cot) * (CH + V) });
+    }
+    const p = path.join(cwd, rel);
+    fs.mkdirSync(path.dirname(p), { recursive: true });
+    await sharp({ create: { width: W, height: H, channels: 3, background: '#ffffff' } }).composite(lop).png().toFile(p);
+  }
+  const tdL = stdin.match(/^- TIEN-DO: (\S+)/m);
+  if (tdL) { const pp = path.join(cwd, tdL[1]); fs.mkdirSync(path.dirname(pp), { recursive: true }); fs.writeFileSync(pp, `xong ${rel}`); }
+  if (outLog) { fs.mkdirSync(path.dirname(outLog), { recursive: true }); fs.writeFileSync(outLog, 'xong'); }
+  console.log('codex giả: xong lưới');
+  xong(0);
+}
+const files =[...stdin.matchAll(/^- FILE: (\S+\.png)/gm)].map((m) => m[1]);
 for (const f of files) {
   if (sot.some((s) => f.includes(s))) continue;
   const p = path.join(cwd, f);
