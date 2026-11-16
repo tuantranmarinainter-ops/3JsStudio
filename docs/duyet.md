@@ -42,6 +42,12 @@ chi phí token từng đợt và bảng "Lịch sử các đợt" (ngày, số m
 2. Người dùng duyệt, bấm "Lưu kết quả" (file `ep002_duyet_dotNN.json`, có trường `dot`) → `nhan` → `dung` lại.
 3. localStorage tách theo đợt: `<ep>_duyet_dotNN`. Nút Lưu/Sao chép chỉ xuất đợt đang mở.
 
+## Luật dự án: trang duyệt bối cảnh có bậc chi tiết (14/11)
+- Duyệt bối cảnh có 2 trục: (1) model từng món (10 ứng viên mỗi món), (2) **độ chi tiết** của bối cảnh.
+- Bậc: **Đơn giản** (ít đồ, chỉ đạo cụ chính) → **Vừa** (thêm đồ hợp bối cảnh) → **Nhiều** (đầy đồ phụ hợp bối cảnh) → **Rất nhiều**.
+- Mỗi bối cảnh dựng đủ các bậc; mỗi bậc chụp **đủ góc của các shot** dùng bối cảnh đó, xếp thành một nhóm chọn 1 trên trang duyệt.
+- Kết quả duyệt ghi bậc đã chọn cho từng bối cảnh; dựng phim theo bậc đó.
+
 ## Gửi thẳng tới Claude
 - Người dùng bấm đúp `tools/duyet-mo.bat [ep]` (mặc định ep002) → trang mở ở `http://127.0.0.1:<cổng>/` → duyệt xong bấm **Gửi tới Claude**
   (hỏi xác nhận nếu còn mục chưa chọn). Mở bằng bấm đúp `dist/<ep>_duyet.html` (`file://`) vẫn gửi được: trang dò `GET /ping` ở 127.0.0.1:8791…8801 (nút xanh + "Claude đang chờ nhận" khi thấy máy chủ đúng tập, dò lại mỗi 15 giây). Không có máy chủ thì bấm gửi sẽ hiện thông báo vàng và tự tải file kết quả.
@@ -51,3 +57,9 @@ chi phí token từng đợt và bảng "Lịch sử các đợt" (ngày, số m
   Mã thoát 3 = hết giờ (`--het-gio`, mặc định 240 phút) không ai gửi.
 
 Test: `node --test tools/tests/duyet.test.mjs`
+
+## Quy tắc: mọi trang duyệt luôn có TÌM KIẾM (người dùng 16/11)
+Trang duyệt nào (kể cả agent phụ tự viết) cũng phải có: thanh tìm kiếm lọc thẻ (tên/id/nguồn/tác giả/ghi chú) + lọc theo nguồn/kiểu,
+ô **Tìm thêm** mở trang tìm của Roblox (mẫu, ảnh), Sketchfab, Poly Pizza, Poly Haven, OpenGameArt, ảnh PNG nền trong với từ khoá đang gõ,
+ô dán **link/ID tự tìm** (đi kèm kết quả `themLink`), ghi chú, Chép / Gửi tới Claude. Trang ứng viên rời (không theo đợt tập):
+`node tools/trang-duyet-tim.mjs <ung-vien.json> --out dist/<tên>.html --loai <mã> --tieu-de "…" [--chon kq.json] [--tu "từ khoá"]`.
