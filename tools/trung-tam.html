@@ -160,6 +160,7 @@ a.open:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
       <li><span class="dot" style="color:var(--muted)"></span><span class="txt"><b>Lưu trữ:</b> việc đã cất đi. Chỉ hiện khi bạn bấm ô “Lưu trữ”.</span></li>
       <li><span class="txt">Bấm vào ô màu ở trên để chỉ xem một loại. Bấm lần nữa để xem lại tất cả.</span></li>
       <li><span class="txt">Dưới mỗi thẻ có ô <b>Ghi chú</b> và các nút <b>Tạm dừng</b>, <b>Làm tiếp</b>, <b>Lưu trữ</b>. Bấm nút là gửi yêu cầu. Claude sẽ làm khi bạn nhắn <code>cập nhật trung tâm</code>. Với “Làm tiếp”, ghi chú của bạn sẽ được gửi cho phiên đó.</span></li>
+      <li><span class="txt"><b>Xem phiên</b> mở phiên đó trong ứng dụng Claude Code trên máy tính. Nếu bấm không thấy gì: bấm <b>Chép link</b>, nhấn phím <b>Windows + R</b>, dán link vào rồi nhấn <b>Enter</b>.</span></li>
       <li><span class="txt">Trang này không tự làm mới. Muốn có tin mới nhất, nhắn Claude ở phiên Trung tâm điều hành: <code>cập nhật trung tâm</code>.</span></li>
     </ul>
   </div>
@@ -209,7 +210,7 @@ function card(r){
     ${r.tiepTheo?`<div class="row"><span class="k">Việc tiếp theo</span><span class="v">${esc(r.tiepTheo)}</span></div>`:""}
     <div class="foot">
       <div class="tags">${r.nhom?`<span class="tag">${esc(r.nhom)}</span>`:""}<span class="when">${r.lanCuoi?"Hoạt động "+ago(r.lanCuoi):""}</span></div>
-      ${r.link?`<a class="open" href="${esc(r.link)}" title="Mở trong ứng dụng Claude trên máy tính">Mở phiên</a>`:""}
+      ${r.link?`<span class="btns"><a class="open" href="${esc(r.link)}" target="_top" title="Mở phiên này trong ứng dụng Claude Code trên máy tính">Xem phiên</a><button class="btn" data-copy="${esc(r.link)}" title="Chép link phiên. Dán vào Win+R rồi Enter để mở trong Claude Code">Chép link</button></span>`:""}
     </div>
     ${acts(r)}
   </article>`;
@@ -291,6 +292,8 @@ $("#chips").addEventListener("click",e=>{
 $("#q").addEventListener("input",e=>{q=e.target.value;render()});
 $("#board").addEventListener("input",e=>{ const t=e.target; if(t.tagName==="TEXTAREA"&&t.dataset.id) drafts[t.dataset.id]=t.value });
 $("#board").addEventListener("click",async e=>{
+  const c=e.target.closest("button[data-copy]");
+  if(c){ const t=c.dataset.copy; try{ await navigator.clipboard.writeText(t); c.textContent="Đã chép ✓" }catch(_){ c.textContent=t } setTimeout(()=>{c.textContent="Chép link"},2500); return }
   const b=e.target.closest("button[data-a]"); if(!b) return;
   const id=b.dataset.id, a=b.dataset.a;
   const note=(document.getElementById("note-"+id)?.value??"").trim();
