@@ -3,13 +3,10 @@
 <!-- ĐIỂM DỪNG -->
 - **Cập nhật:** 2026-11-16
 - **Nhánh:** `ep1-v2`
-- **Đang làm:** Đã xong code + đăng `https://3js-tuanchau.pages.dev` (dự án Pages tên `3js-studio`; Pages + Function + KV HANG_DOI). Test KV thật OK (gửi khi máy tắt → bật kéo đủ). CHƯA có Access → trang đang mở công khai (URL khó đoán).
-- **Bước kế tiếp:** người dùng bật Access (dash.cloudflare.com → Zero Trust → Access → Applications → Self-hosted, domain `3js-tuanchau.pages.dev` và sau là `3js.tuanchau.io.vn`, policy Allow email; thêm app thứ 2 path `/api/may/*` policy Bypass). Rồi gắn domain (Pages → Custom domains) khi zone Active; cài `cloudflared` cho đẩy tức thì (đặt MAY_URL + chạy `node tools/web-nhan.mjs`).
-- **Đang chờ:** email Access (người dùng chưa gõ email; gợi ý tuantran.marinainter@gmail.com chưa xác nhận), zone Active, cài cloudflared.
-- **File đang dở (chưa commit):** không (docs/handoff/web-3js.md vừa sửa)
-- **Đang chạy nền:** không
-- **Đạt khi:** mở được trên điện thoại sau Access; bấm duyệt ep003 → máy nhận; tắt máy nhận, bấm, bật lại vẫn đủ; có test hàng đợi.
-- **Câu hỏi còn mở:** email Access là gì? Tên miền đã Active chưa (kiểm ở dash.cloudflare.com)?
+- **Đã xong:** web 4 tab thật; domain `https://3js.tuanchau.io.vn` (Pages `3js-studio`) có Access (app `3js`: chỉ email tuantran.marinainter@gmail.com; app `3js-may-nhan` path `api/may/*` Bypass, bảo vệ bằng x-khoa). `*.pages.dev` bị chặn 404 bởi `web/functions/_middleware.js` (trừ /api/may/*). Studio ep001–003 ở R2 `3js-studio-phim` (binding PHIM), mở qua `/phim/<ep>` (`WEB_STUDIO=1` trong .env.local). `WEB_URL` đã đổi sang domain mới.
+- **Chưa kiểm:** mở thật sau đăng nhập Access trên điện thoại (trình phát 3D, tua, Xuất MP4 từ R2); gửi duyệt ep003 qua domain mới tới máy.
+- **Bước kế tiếp:** người dùng đăng nhập thử; cài `cloudflared` + MAY_URL cho đẩy tức thì (không bắt buộc, máy đang kéo mỗi 10 s: `node tools/web-nhan.mjs`).
+- **Đạt khi:** mở được sau Access, duyệt ep003 → máy nhận, tắt/bật vẫn đủ.
 <!-- /ĐIỂM DỪNG -->
 
 ## Kiểm điều kiện (2026-11-16)

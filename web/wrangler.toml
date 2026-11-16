@@ -9,3 +9,7 @@ TAP_OK = "ep003"
 [[kv_namespaces]]
 binding = "HANG_DOI"
 id = "da76c7b048a34a7fab5ac7a5c89683dd"
+
+[[r2_buckets]]
+binding = "PHIM"
+bucket_name = "3js-studio-phim"
