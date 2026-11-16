@@ -5,7 +5,6 @@ export async function onRequestGet({ request, env, params }) {
   if (!OK.has(ep) || !env.PHIM) return new Response('Not found', { status: 404 });
   const o = await env.PHIM.get(`${ep}.html`);
   if (!o) return new Response('Not found', { status: 404 });
-  const h = { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'private, max-age=3600', 'x-robots-tag': 'noindex' };
-  if (/\bgzip\b/.test(request.headers.get('accept-encoding') || '')) { h['content-encoding'] = 'gzip'; return new Response(o.body, { headers: h }); }
-  return new Response(o.body.pipeThrough(new DecompressionStream('gzip')), { headers: h });
+  // Lưu R2 dạng thô (không gzip, không Content-Encoding): để Cloudflare tự nén khi gửi. Tự đặt Content-Encoding từng làm trình duyệt nhận nhị phân.
+  return new Response(o.body, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'private, max-age=3600', 'x-robots-tag': 'noindex' } });
 }

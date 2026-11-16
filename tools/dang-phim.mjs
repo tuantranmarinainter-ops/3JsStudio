@@ -1,7 +1,7 @@
 // node tools/dang-phim.mjs [ep001 ep002 ep003] [--thu] [--ep-ep ép]  — đẩy bản studio/tập mới nhất lên R2 (3js-studio-phim) cho web.
-// gzip dist/<ep>.html → wrangler r2 object put --remote; bỏ qua tập không đổi (so sha256 với .cache/dang-phim.json).
+// dist/<ep>.html (thô) → wrangler r2 object put --remote; bỏ qua tập không đổi (so sha256 với .cache/dang-phim.json).
 // Chỉ ep001–003; ep004/ep005 bị chặn. --thu = chỉ in việc sẽ làm. --ep-ep: không dùng. Khoá Cloudflare: wrangler login (không in khoá).
-import fs from 'node:fs'; import path from 'node:path'; import zlib from 'node:zlib'; import crypto from 'node:crypto'; import { spawnSync } from 'node:child_process'; import { fileURLToPath } from 'node:url';
+import fs from 'node:fs'; import path from 'node:path'; import crypto from 'node:crypto'; import { spawnSync } from 'node:child_process'; import { fileURLToPath } from 'node:url';
 import { docEnv } from './web-nhan.mjs';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OK = ['ep001', 'ep002', 'ep003'], BUCKET = '3js-studio-phim';
@@ -20,10 +20,10 @@ export function dangPhim({ taps, thu = false, log = console.log, goc = ROOT } = 
     const raw = fs.readFileSync(src), h = sha(raw);
     if (st[ep]?.sha === h) { log(`${ep}: không đổi, bỏ qua  ${host}/phim/${ep}`); kq.push({ ep, trangThai: 'khong-doi' }); continue; }
     if (thu) { log(`${ep}: sẽ đẩy ${(raw.length / 2 ** 20).toFixed(1)} MB (thử, chưa làm)`); kq.push({ ep, trangThai: 'se-day' }); continue; }
-    const gz = path.join(goc, 'output/_tmp', `${ep}.html.gz`); fs.mkdirSync(path.dirname(gz), { recursive: true });
-    fs.writeFileSync(gz, zlib.gzipSync(raw, { level: 9 }));
+    const gz = path.join(goc, 'output/_tmp', `${ep}.html.up`); fs.mkdirSync(path.dirname(gz), { recursive: true });
+    fs.writeFileSync(gz, raw);   // thô: Cloudflare tự nén khi gửi
     const wr = path.join(goc, 'node_modules/wrangler/bin/wrangler.js');
-    const r = spawnSync(process.execPath, [wr, 'r2', 'object', 'put', `${BUCKET}/${ep}.html`, '--file', gz, '--content-type', 'text/html; charset=utf-8', '--content-encoding', 'gzip', '--remote'], { cwd: goc, encoding: 'utf8', env: { ...process.env, ...(env.CLOUDFLARE_API_TOKEN ? { CLOUDFLARE_API_TOKEN: env.CLOUDFLARE_API_TOKEN } : {}) } });
+    const r = spawnSync(process.execPath, [wr, 'r2', 'object', 'put', `${BUCKET}/${ep}.html`, '--file', gz, '--content-type', 'text/html; charset=utf-8', '--remote'], { cwd: goc, encoding: 'utf8', env: { ...process.env, ...(env.CLOUDFLARE_API_TOKEN ? { CLOUDFLARE_API_TOKEN: env.CLOUDFLARE_API_TOKEN } : {}) } });
     fs.rmSync(gz, { force: true });
     if (r.status !== 0) { log(`${ep}: LỖI wrangler (${(r.stderr || '').slice(-200).trim()})`); kq.push({ ep, trangThai: 'loi' }); continue; }
     st[ep] = { sha: h, luc: new Date().toISOString(), mb: +(raw.length / 2 ** 20).toFixed(1) };
