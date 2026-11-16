@@ -64,7 +64,7 @@ export function createStage(THREE, opts = {}) {
     if (!M.__dbgBoc) {
       M.__dbgBoc = true; let dang = 0, tong = 0, t0 = 0, mk = null;
       const s0 = M.itemStart.bind(M), e0 = M.itemEnd.bind(M), x0 = M.itemError.bind(M);
-      const xong = () => { if (--dang > 0) return; const info = `${tong} file trong ${((performance.now() - t0) / 1000).toFixed(2)} s (bắt đầu ${(t0 / 1000).toFixed(2)} s)`; if (mk) { mk.info = info; mk.at = performance.now(); } else { D.mark('tải model/ảnh (LoadingManager) xong', info); mk = D.marks[D.marks.length - 1]; } };
+      const xong = () => { if (--dang > 0 || window.__ready) return; const info = `${tong} file trong ${((performance.now() - t0) / 1000).toFixed(2)} s (bắt đầu ${(t0 / 1000).toFixed(2)} s)`; if (mk) { mk.info = info; mk.at = performance.now(); } else { D.mark('tải model/ảnh (LoadingManager) trước __ready xong', info); mk = D.marks[D.marks.length - 1]; } };
       M.itemStart = (u) => { if (!dang && !mk) t0 = performance.now(); dang++; tong++; return s0(u); };
       M.itemEnd = (u) => { xong(); return e0(u); };
       M.itemError = (u) => { xong(); return x0(u); };

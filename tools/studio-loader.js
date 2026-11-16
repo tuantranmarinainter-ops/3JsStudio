@@ -88,7 +88,11 @@
       } else el.innerHTML += ' <span class="ok">Khớp kho-chung.3js trong thư mục.</span>';
     }
   }
-  async function importKho(h) {
+  async function importKho(h, buoc) {   // buoc: ghi lại dù trùng bản (tập đang thiếu file)
+    var cu = await get('meta', 'kho').catch(function () { return null; });
+    if (!buoc && cu && cu.built === h.built && cu.n === Object.keys(h.files).length) {   // cùng bản kho đã lưu → bỏ qua (khỏi ghi lại ~50 MB)
+      window.__dbg && window.__dbg.mark('kho chung trùng bản trong máy → bỏ qua, không ghi lại'); msg('Kho chung trong máy đã đúng bản này — bỏ qua.'); return;
+    }
     msg('Đang lưu kho chung vào máy…');
     try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {}
     var ds = {}, n = 0, bytes = 0;
@@ -258,7 +262,15 @@
 
   // ================= MỞ GÓI =================
   function fetchBuf(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); }); }
-  async function importFile(f) { msg('Đang đọc ' + f.name + '…'); try { await handle(await f.arrayBuffer(), f.name); } catch (e) { msg(f.name + ': ' + e.message, true); } }
+  async function importFile(f) {
+    if (!pending) {   // kho chung cùng bản đã lưu trong máy → khỏi đọc ~50 MB (chỉ đọc header)
+      var hh = await headerOf(f).catch(function () { return null; });
+      if (hh && hh.kind === 'kho') {
+        var cu = await get('meta', 'kho').catch(function () { return null; });
+        if (cu && cu.built === hh.built && cu.n === Object.keys(hh.files).length) { window.__dbg.mark('kho chung trùng bản trong máy → bỏ qua (chỉ đọc header)'); msg('Kho chung trong máy đã đúng bản này — bỏ qua.'); return; }
+      }
+    }
+    msg('Đang đọc ' + f.name + '…'); try { await handle(await f.arrayBuffer(), f.name); } catch (e) { msg(f.name + ': ' + e.message, true); } }
   async function readFiles(list) {   // nhiều file một lần: kho trước, tập sau
     var fs = Array.prototype.slice.call(list).sort(function (a, b) { return (b.name.indexOf('kho') === 0) - (a.name.indexOf('kho') === 0); });
     for (var i = 0; i < fs.length; i++) await importFile(fs[i]);
@@ -278,8 +290,8 @@
       window.__dbg.mark('lấy asset dùng chung từ kho (IndexedDB)', Object.keys(h.refs).length + ' file, thiếu ' + miss.length);
       if (miss.length) {   // tự nạp kho: kho-chung.3js trong thư mục studio đã chọn, hoặc cạnh studio (http / công cụ tự động)
         try {
-          if (DIR && DIR.kho) await importKho(parse(await DIR.kho.file.arrayBuffer()));
-          else await importKho(parse(await fetchBuf(Q.get('kho') || 'kho-chung.3js')));
+          if (DIR && DIR.kho) await importKho(parse(await DIR.kho.file.arrayBuffer()), true);
+          else await importKho(parse(await fetchBuf(Q.get('kho') || 'kho-chung.3js')), true);
           miss = await resolveRefs(h);
         } catch (e) {}
       }

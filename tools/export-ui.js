@@ -875,7 +875,7 @@ async function init() {
   D.mark('trình phát sẵn sàng' + (window.__ready ? ' (sau __ready)' : ''));
   D.frames = D.frames || {}; D.exports = D.exports || []; D.loads = D.loads || [];
   const dbgMode = () => (window.__che3d?.on ? (window.__che3d.songSong ? 'Song song' : '3D') : 'Phim');
-  const dbgFrame = (mode, ms) => { const f = D.frames[mode] || (D.frames[mode] = { n: 0, sum: 0, max: 0, last: [] }); f.n++; f.sum += ms; if (ms > f.max) f.max = ms; f.last.push(ms); if (f.last.length > 120) f.last.shift(); };
+  const dbgFrame = (mode, ms) => { const f = D.frames[mode] || (D.frames[mode] = { n: 0, sum: 0, max: 0, last: [] }); f.n++; f.sum += ms; if (ms > f.max) f.max = ms; if (ms > 1000) f.cham = (f.cham || 0) + 1; f.last.push(ms); if (f.last.length > 120) f.last.shift(); };
   let dbgOn = false, dbgTimer = 0, dbgRA = null;
   function dbgGpu() { try { const gl = window.__stage?.renderer.getContext(), x = gl.getExtension('WEBGL_debug_renderer_info'); return x ? gl.getParameter(x.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER); } catch { return '?'; } }
   function dbgText() {
@@ -894,7 +894,7 @@ async function init() {
     const fk = Object.keys(D.frames);
     L.push('', 'KHUNG (ms mỗi lần vẽ, CPU tới khi trả về; chỉ đo khi bật Debug):');
     if (!fk.length) L.push('  (chưa có — phát/tua ở chế độ Phim, 3D, Song song)');
-    for (const k of fk) { const f = D.frames[k], l = [...f.last].sort((a, b) => a - b), p95 = l[Math.floor(l.length * 0.95)] || 0; L.push(`  ${k.padEnd(9)} tb ${(f.sum / f.n).toFixed(1)} · 95% ${p95.toFixed(1)} · max ${f.max.toFixed(1)} · ${f.n} khung${k === 'Song song' ? ` · ⚡ Nhẹ ${window.__che3d?.nhe ? 'bật' : 'tắt'}` : ''}`); }
+    for (const k of fk) { const f = D.frames[k], l = [...f.last].sort((a, b) => a - b), p95 = l[Math.floor(l.length * 0.95)] || 0; L.push(`  ${k.padEnd(9)} tb ${(f.sum / f.n).toFixed(1)} · 95% ${p95.toFixed(1)} · max ${f.max.toFixed(1)} · ${f.n} khung · ${f.cham || 0} khung > 1 s (thường là dịch shader lần đầu)${k === 'Song song' ? ` · ⚡ Nhẹ ${window.__che3d?.nhe ? 'bật' : 'tắt'}` : ''}`); }
     if (D.exports.length) { L.push('', 'XUẤT MP4:'); for (const e of D.exports) L.push(`  ${e}`); }
     return L.join('\n');
   }

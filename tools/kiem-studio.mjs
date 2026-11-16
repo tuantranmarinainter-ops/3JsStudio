@@ -2,6 +2,7 @@
 //   1. mở dist/studio.html?goi=<ep>.3js khi CHƯA có kho → phải hiện lời nhắc kéo kho-chung.3js, chưa mở tập
 //   2. nạp dist/kho-chung.3js (như kéo thả) → tập tự mở tới window.__ready
 //   3. tải lại trang (cùng hồ sơ trình duyệt, vẫn không có file kho) → tập mở được nhờ kho đã lưu trong IndexedDB
+//   4. kéo lại kho-chung.3js cùng bản → bỏ qua (không ghi lại ~50 MB)
 //   node tools/kiem-studio.mjs ep004
 import { launchBrowser } from './browser.mjs';
 import { pathToFileURL } from 'url';
@@ -30,6 +31,9 @@ await p.goto(url);
 const t1 = Date.now();
 ok('3. mở lại không cần file kho (IndexedDB)', await p.waitForFunction(() => window.__ready === true, null, { timeout: 180000 }).then(() => true, () => false));
 kq.push(`      (${((Date.now() - t1) / 1000).toFixed(1)} s)`);
+const t2 = Date.now();
+const boQua = await p.evaluate(async () => { const r = await fetch('kho-chung.3js'); await window.__studioOpen(await r.arrayBuffer(), 'kho-chung.3js'); return (window.__dbg?.marks || []).some((m) => /trùng bản/.test(m.name)); });
+ok(`4. kéo lại kho-chung.3js cùng bản → bỏ qua, không ghi lại (${((Date.now() - t2) / 1000).toFixed(1)} s)`, boQua);
 ok('không có lỗi trang', !errs.length);
 clearInterval(tick); await b.close();
 console.log(kq.join('\n')); if (errs.length) console.log('lỗi trang:\n  ' + errs.slice(0, 5).join('\n  '));

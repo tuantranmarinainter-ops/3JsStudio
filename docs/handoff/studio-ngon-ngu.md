@@ -51,6 +51,12 @@
   (shader còn thiếu + đẩy 200 texture lên GPU) · tải 686 file qua LoadingManager xong ở 25 s · __ready 25,2 s. Gói ep003 (15/11) chưa gọi prewarm.
 - npm test: 6 test lỗi (kịch bản/ep001 shot/__maskAnh/HOUSE/vat-lieu) — không dính phần này (mốc chỉ chạy khi có `__dbg`, trang dev không có); chưa xét.
 
+## Số Debug trên máy người dùng (16/11 09:47, RTX 3060, 2560x1440, ep003, Song song)
+- 15,6 s → 23,2 s: nạp lại kho-chung 48,8 MB dù trùng bản (~7,5 s) → ĐÃ SỬA: cùng bản thì bỏ qua (chỉ đọc header), `kiem-studio` bước 4.
+- renderer.compile 3,8 s (+117 program) · vẽ khung đầu 11,1 s · __ready 44,2 s (23 s trước khi tập chạy).
+- Song song: tb 214 ms · 95% 95 ms · max 10,4 s (dịch shader bối cảnh mới khi 3D nhìn thấy; program 186 → 304). Chưa có số Phim để so.
+- Debug đã sửa: mốc LoadingManager chốt trước __ready (bản cũ ghi 294 s sai); đếm khung > 1 s.
+
 ## Tra cứu cách làm (16/11)
 - `compileAsync` + KHR_parallel_shader_compile (three.js PR #19752): dịch song song, KHÔNG rút tổng thời gian, chỉ hết đứng hình → hiện màn chờ có tiến độ.
 - Giảm số biến thể shader là đòn chính: cùng loại vật liệu + cùng cờ (fog, map, shadow, onBeforeCompile cacheKey) thì dùng chung program; tránh `transmission` (≈ x2 thời gian dịch).
