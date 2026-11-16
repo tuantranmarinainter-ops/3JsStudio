@@ -41,7 +41,9 @@ if (g3 && (g3.ghim?.length || g3.vat?.length)) {
   }
   (g3.vat || []).forEach((v, i) => {
     const f = anh3(v.img, `3d_vat${i + 1}`);
-    console.log(`✥${i + 1}. ${v.path}${v.shotId ? ' · shot ' + v.shotId : ''}${v.frame != null ? ' · frame ' + v.frame : ''}`);
+    const LOAI = { xoa: '🗑 XOÁ', banSao: '⧉ THÊM BẢN SAO', sua: '✥ SỬA' };
+    console.log(`${i + 1}. [${LOAI[v.loai || 'sua']}] ${v.path}${v.nguon ? ' (sao từ ' + v.nguon + ')' : ''}${v.shotId ? ' · shot ' + v.shotId : ''}${v.frame != null ? ' · frame ' + v.frame : ''}`);
+    if (v.loai === 'xoa') { if (v.text) console.log(`    ${v.text}`); if (f) console.log(`    ảnh 3D: ${f}`); return; }
     console.log(`    vị trí ${v.truoc.pos.join(', ')} → ${v.sau.pos.join(', ')} (dời ${v.lech.pos.join(', ')}) · thế giới → ${v.theGioi.sau.join(', ')}`);
     console.log(`    xoay° ${v.truoc.rotDeg.join(', ')} → ${v.sau.rotDeg.join(', ')} · cỡ ${v.truoc.scale.join(', ')} → ${v.sau.scale.join(', ')} (×${v.lech.scaleNhan.join(', ')})`);
     if (v.text) console.log(`    ${v.text}`); if (f) console.log(`    ảnh 3D: ${f}`);

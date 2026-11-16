@@ -157,6 +157,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
       if (!on || typing(e) || e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.key === 'Shift') { keys.add('Shift'); return; }
       if (!MOVE[e.code]) return;
+      if (!rmb && built?.sua?.chanBay?.()) return;   // đang chọn vật (✥ Sửa vật): WASD/QE chỉ bay khi GIỮ chuột phải; S = đổi cỡ (Blender)
       e.preventDefault(); e.stopPropagation(); keys.add(e.code); stopBam();
       if (!raf) { last = performance.now(); raf = requestAnimationFrame(step); }
     };

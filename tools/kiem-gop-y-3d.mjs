@@ -91,6 +91,56 @@ const giu = await page.evaluate(async (T) => {
 ok(keo && Math.abs(giu[0] - keo.p1[0]) < 1e-6, 'tua t: vật vẫn ở chỗ đã dời');
 await page.fill('.c3s-col textarea', 'Dời sát tường bên phải'); await page.click('.c3s-col button[data-a=luu]');
 
+// (2b) phím kiểu Blender — focus khung 3D trước (bấm vào thanh trống của khung không đổi chọn)
+await page.evaluate(() => { document.activeElement?.blur?.(); });
+const P = () => page.evaluate(() => window.__vat.position.toArray());
+await page.keyboard.press('Control+z'); const z1 = await P();
+ok(Math.abs(z1[0] - keo.p0[0]) < 1e-6, 'Ctrl+Z: vật về chỗ trước khi kéo');
+await page.keyboard.press('Control+y'); const y1 = await P();
+ok(Math.abs(y1[0] - keo.p1[0]) < 1e-6, 'Ctrl+Y: làm lại cú kéo');
+await page.keyboard.press('Control+z'); await page.keyboard.press('Control+Shift+z'); const y2 = await P();
+ok(Math.abs(y2[0] - keo.p1[0]) < 1e-6, 'Ctrl+Shift+Z: làm lại');
+// S = đổi cỡ (không bay), G dời, R xoay
+const cam0 = await page.evaluate(() => window.__che3d.camera.position.toArray());
+await page.keyboard.press('s'); const ms = await page.evaluate(() => window.__che3d.sua.tc.mode);
+await page.keyboard.press('r'); const mr = await page.evaluate(() => window.__che3d.sua.tc.mode);
+await page.keyboard.press('g'); const mg = await page.evaluate(() => window.__che3d.sua.tc.mode);
+const cam1 = await page.evaluate(() => window.__che3d.camera.position.toArray());
+ok(ms === 'scale' && mr === 'rotate' && mg === 'translate' && cam0.every((v, i) => Math.abs(v - cam1[i]) < 1e-9), `S/R/G đổi tay kéo (${ms}/${mr}/${mg}), camera không bay`);
+// Ctrl+C / Ctrl+V → bản sao; Ctrl+Z bỏ bản sao
+const n0 = await page.evaluate(() => window.__vat.parent.children.length);
+await page.keyboard.press('Control+c'); await page.keyboard.press('Control+v');
+const bs = await page.evaluate(() => ({ n: window.__vat.parent.children.length, sel: window.__che3d.sua.sel?.name }));
+ok(bs.n === n0 + 1 && /_ban_sao\d+$/.test(bs.sel || ''), `Ctrl+C / Ctrl+V: bản sao ${bs.sel}`);
+await page.keyboard.press('Control+z');
+ok(await page.evaluate((n0) => window.__vat.parent.children.length === n0, n0), 'Ctrl+Z: bỏ bản sao');
+await page.keyboard.press('Control+y');   // giữ bản sao để xuất
+// Shift+D nhân bản
+await page.evaluate(() => window.__che3d.sua.chon(window.__vat));
+await page.keyboard.press('Shift+D');
+const sd = await page.evaluate(() => window.__che3d.sua.sel?.name);
+ok(/_ban_sao\d+$/.test(sd || ''), `Shift+D: nhân bản ${sd}`);
+await page.keyboard.press('Control+z');
+// X xoá → Ctrl+Z hiện lại → X lần nữa (giữ để xuất)
+const xoaObj = await page.evaluate(() => { const S = window.__che3d.sua, A = S.assets(); const i = A.findIndex((a) => a.path !== S.selAsset && !/ban_sao/.test(a.ten) && a.ten !== window.__vat.name); const o = S.assetObj(i); window.__xoa = o; S.chon(o, o); return o.name; });
+await page.keyboard.press('x');
+const x1 = await page.evaluate(() => window.__xoa.visible);
+await page.keyboard.press('Control+z');
+const x2 = await page.evaluate(() => window.__xoa.visible);
+ok(x1 === false && x2 === true, `X xoá ${xoaObj} → Ctrl+Z hiện lại`);
+await page.evaluate(() => window.__che3d.sua.chon(window.__xoa)); await page.keyboard.press('Delete');
+// H ẩn tạm, Alt+H hiện lại
+await page.evaluate(() => window.__che3d.sua.chon(window.__vat)); await page.keyboard.press('h');
+const h1 = await page.evaluate(() => window.__vat.visible); await page.keyboard.press('Alt+h');
+const h2 = await page.evaluate(() => window.__vat.visible);
+ok(h1 === false && h2 === true, 'H ẩn tạm, Alt+H hiện lại');
+// Alt+G về vị trí cũ → Ctrl+Z
+await page.evaluate(() => window.__che3d.sua.chon(window.__vat)); await page.keyboard.press('Alt+g');
+const ag = await P(); await page.keyboard.press('Control+z'); const ag2 = await P();
+ok(Math.abs(ag[0] - keo.p0[0]) < 1e-6 && Math.abs(ag2[0] - keo.p1[0]) < 1e-6, 'Alt+G về vị trí cũ, Ctrl+Z hoàn tác');
+const loai = await page.evaluate(() => window.__che3d.ghiChu3d().vat.map((v) => v.loai).sort().join(','));
+ok(loai === 'banSao,sua,xoa', `góp ý có đủ loại sửa / xoá / bản sao (${loai})`);
+
 // (3) 📍 Ghim: bấm → ô mô tả → Lưu
 await page.click('.c3s-mode button[data-m=ghim]');
 await page.mouse.click(700, 600);
@@ -103,7 +153,7 @@ await page.screenshot({ path: join(out, '2_ghim.png') });
 // (4) dữ liệu góp ý
 const d = await page.evaluate(() => window.__che3d.ghiChu3d());
 await writeFile(join(out, 'ghiChu3d.json'), JSON.stringify({ ...d, ghim: d.ghim.map((g) => ({ ...g, img: g.img.slice(0, 40) + '…' })), vat: d.vat.map((v) => ({ ...v, img: v.img.slice(0, 40) + '…' })) }, null, 1));
-const g = d.ghim[0], v = d.vat[0];
+const g = d.ghim[0], v = d.vat.find((x) => x.loai === 'sua');
 ok(g && g.text === 'Thiếu cửa sổ ở đây' && g.pos.length === 3 && g.shotId && /^data:image\/jpeg/.test(g.img), `ghim: ${g ? `📍${g.so} shot ${g.shotId} (${g.pos.join(', ')}) ảnh ${Math.round(g.img.length / 1024)} KB` : 'không có'}`);
 ok(v && v.text === 'Dời sát tường bên phải' && Math.abs(v.lech.pos[0] - 3) < 1e-3 && Math.abs(v.lech.rotDeg[1] - 30) < 0.2 && /^data:image\/jpeg/.test(v.img), `vật: ${v ? `${v.path} dời ${v.lech.pos.join(', ')} xoay ${v.lech.rotDeg.join(', ')}` : 'không có'}`);
 const nhan = await page.evaluate(() => [...document.querySelectorAll('.c3d-lab div.gh')].filter((x) => x.style.display !== 'none').length);
@@ -123,7 +173,7 @@ ok(keo && Math.abs(lai[0] - keo.p1[0]) < 1e-6, 'bật lại 3D: vật lại ở 
 await page.evaluate(() => window.__che3d.tat());
 await page.reload(); await page.waitForFunction(() => window.__ready === true && !!window.__che3d, null, { timeout: 300000 });
 const conLai = await page.evaluate(async () => { window.__che3d.bat(); await new Promise((r) => setTimeout(r, 300)); const d = window.__che3d.ghiChu3d(); return [d.ghim.length, d.vat.length]; });
-ok(conLai[0] === 1 && conLai[1] === 1, `tải lại trang vẫn còn ${conLai[0]} ghim, ${conLai[1]} vật`);
+ok(conLai[0] === 1 && conLai[1] === 3, `tải lại trang vẫn còn ${conLai[0]} ghim, ${conLai[1]} vật`);
 await page.evaluate(() => { window.__che3d.sua.xoaHet(); window.__che3d.tat(); });
 ok(!errs.length, 'không lỗi trang' + (errs.length ? ': ' + errs.slice(0, 3).join(' | ') : ''));
 await browser.close(); srv.close();
