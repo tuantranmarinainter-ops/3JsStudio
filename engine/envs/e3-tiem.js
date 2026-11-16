@@ -167,7 +167,7 @@ export default function build(g, e, H) {
       } } };
     shell(P);
     // kệ 3 tầng bánh ở tường bắc (trái), baskets + ổ bánh + bánh sừng bò — GLB Roblox: 2 giá thép 4 tầng chất bánh, cạnh nhau
-    const keGlb = [-12.1, -6.7].map((x, i) => rb('tiem-banh-ke', mid, 'tiem_banh_ke_' + i, { p: [ox + x, 0, -11.55], cao: 8.6 }));
+    const keGlb = (/[?&]keBanhCu=1(&|$)/.test(globalThis.location?.search || '') ? [-12.1, -6.7] : [-2.16, 4.53]).map((x, i) =>   /* góp ý 3D 16/11: dời 2 giá bánh về giữa tường bắc (cũ −12,1 / −6,7: ?keBanhCu=1) */ rb('tiem-banh-ke', mid, 'tiem_banh_ke_' + i, { p: [ox + x, 0, -11.55], cao: 8.6 }));
     if (!keGlb[0]) { bb(boxes, 0.4, 7.6, 1.8, ox - 13.6, 0.4, -12.1, '#8a5a33'); bb(boxes, 0.4, 7.6, 1.8, ox - 9.5, 0.4, -12.1, '#8a5a33'); bb(boxes, 0.4, 7.6, 1.8, ox - 5.4, 0.4, -12.1, '#8a5a33');
     [3.4, 6.0, 8.6].forEach((y, lv) => { bb(boxes, 8.6, 0.35, 1.9, ox - 9.5, y - 0.35, -12.1, '#a8703c');
       [-12.4, -7.4].forEach((bx, k) => { basket(boxes, ox + bx, y, -12.1, 3.0, 1.5); for (let j = 0; j < 3; j++) breadAt(loaves, ox + bx - 0.9 + j * 0.9, y + 1.15, -12.1, lv * 9 + k * 3 + j, 0.9); });
@@ -224,6 +224,7 @@ export default function build(g, e, H) {
       [['#9A74B5', 3.4], ['#D9C9A8', 3.4], ['#d8a0b4', 3.4], ['#7fa0c4', 4.7], ['#e8d28a', 4.7]].forEach(([c, y], i) => cyl(spools, 0.55, 3.8, ox + 14.1, y - 0.6, -3.7 + i * 0.95 - (y > 4 ? 0.5 : 0), c, [Math.PI / 2, 0, 0])); }
     if (boxes.length) inst(mid, 'tiem_may_khoi_go', BOX, white, boxes); if (spools.length) inst(mid, 'tiem_may_cuon', CYL, white, spools);
     // ma-nơ-canh kem, chân gỗ (x 110, z −10.5) — GLB Roblox, cao 7,3
+    if (!/[?&]themManoCanh=0(&|$)/.test(globalThis.location?.search || '')) for (const [k, dx] of [[2, -3.784], [3, -6.325]]) rb('tiem-ma-no-canh', mid, 'tiem_ma_no_canh_' + k, { p: [ox + 10 + dx, 0, -10.5], cao: 7.3 });   // góp ý 3D 16/11: thêm 2 ma-nơ-canh xếp hàng về phía tây (tắt: ?themManoCanh=0)
     if (!rb('tiem-ma-no-canh', mid, 'tiem_ma_no_canh', { p: [ox + 10, 0, -10.5], cao: 7.3 })) { const mq = new THREE.Group(); mq.name = 'tiem_ma_no_canh'; mq.position.set(ox + 10, 0, -10.5); mid.add(mq); const kr = std('#D9C9A8', { roughness: 0.9 }), wd = std('#6e4423');
       const b1 = new THREE.Mesh(CYL, wd); b1.scale.set(1.4, 0.3, 1.4); b1.position.y = 0.15; b1.name = 'ma_no_de'; mq.add(b1);
       const pl = new THREE.Mesh(CYL, wd); pl.scale.set(0.16, 3.4, 0.16); pl.position.y = 1.9; pl.name = 'ma_no_cot'; mq.add(pl);

@@ -99,7 +99,9 @@ export function createVien(THREE) {
     const wall = new THREE.Mesh(paint(new THREE.CylinderGeometry(r + 26, r + 26, h * 0.34, 96, 1, true), kind === 'pine' ? '#1f4f2e' : '#3d7d33'), mat.clone());
     wall.material.side = THREE.DoubleSide; wall.position.set(cx, y0 + h * 0.17, cz);
     const g = new THREE.Group(); g.add(tag(im, 'vien_cay'), tag(wall, 'vien_ria'));
-    return { obj: g };
+    // cfg.suongDem === false: ĐÊM bỏ sương cho rừng (sương đêm ~ màu trời → rừng xa 400+ bị phủ kín, nhìn như khoảng trống dưới mây); mặc định giữ sương (tập cũ không đổi)
+    const update = cfg.suongDem === false ? (night) => { const f = !night; for (const m of [mat, wall.material]) if (m.fog !== f) { m.fog = f; m.needsUpdate = true; } } : undefined;
+    return { obj: g, update };
   }
 
   // ---- đồi / núi: dải vòng khép kín, độ cao là tổng sin tần số NGUYÊN theo góc (liền mạch 360°) ----

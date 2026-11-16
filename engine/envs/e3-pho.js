@@ -47,7 +47,7 @@ export default function build(g, e, H) {
   const { ganTang, THREE, hash, LIGHTS, fit } = H;
   e.diem = DIEM;
   e.skybox = new URLSearchParams(globalThis.location?.search || '').get('troiPho') === 'sky-7' ? 'sky-7' : 'anime-day';   // đợt 5: trời ngày = anime-day (người dùng chốt 16/11); đêm giữ sky-9. ?troiPho=sky-7 về trời cũ
-  e.vongBao = { preset: 'rung-thong', r: 420, h: 110 };   // vòng bao rừng thông (ô FX vongBao tắt được; ?vongBao=tat)
+  e.vongBao = { preset: 'rung-thong', r: 420, h: 110, suongDem: /[?&]suongRungDem=1(&|$)/.test(globalThis.location?.search || '') };   /* suongDem false = đêm rừng không bị sương phủ thành dải xanh phẳng (s045, s036); ?suongRungDem=1 về cũ */   // vòng bao rừng thông (ô FX vongBao tắt được; ?vongBao=tat)
   const SW = 0.4;   // mặt vỉa hè
   const tBack = new THREE.Group(), tMid = new THREE.Group(), tFront = new THREE.Group();
   tBack.name = 'pho_tang_sau'; tMid.name = 'pho_tang_giua'; tFront.name = 'pho_tang_truoc';
@@ -392,13 +392,22 @@ export default function build(g, e, H) {
         const du0 = G.du(0.69), yc = G.y(0.38), nen = new THREE.MeshBasicMaterial({ color: '#9a6a38' }), kep = new THREE.MeshBasicMaterial({ color: '#6a4222' });   // Basic: nội thất tiệm bị bóng model che, vật liệu lit đen thui; đêm dịu bớt
         if (nightNow) { nen.color.multiplyScalar(0.55); kep.color.multiplyScalar(0.55); }
         if (poster) poster.visible = false;
-        f.plane(du0, -1.5, yc, 10.2, 4.6, nen, 'pho_ke_gau_nen');
-        for (const [ti, yb] of [[0, yc - 2.2], [1, yc + 0.1]]) { { const sh = new THREE.Mesh(new THREE.BoxGeometry(10.2, 0.14, 1.5), kep); sh.name = 'pho_ke_gau_van'; const [sx, sz] = f.W(du0, -0.85); sh.position.set(sx, yb - 0.07, sz); sh.rotation.y = f.ry; tMid.add(sh); }
+        if (/[?&]gauKinhCu=1(&|$)/.test(globalThis.location?.search || '')) f.plane(du0, -1.5, yc, 10.2, 4.6, nen, 'pho_ke_gau_nen');
+        else f.plane(du0, -0.86, 6.65, 10.2, 5.9, nen, 'pho_ke_gau_nen');   // tấm kính ĐEN đục của model nằm ở dv −0,89 (x −16,49, đo bằng tia) che mất nền ở −1,5 → kéo nền ra ngay trước nó, cao trọn ô kính y 3,7..9,6
+        // góp ý 3D 16/11: 2 tầng kệ (dưới hạ 0,9 → mặt 3,73), mỗi tầng 3 gấu TO cao ~3,1, quay ra phố, hơi cúi; số = đúng chỗ người dùng kéo trong trình phát (toạ độ thế giới).
+        //   ?gauKinhCu=1 → bản 6 gấu nhỏ cao 1,5 trước góp ý. Gấu 00: x −16,65 → −16,45 (sau tấm nền là bị che).
+        const cu = /[?&]gauKinhCu=1(&|$)/.test(globalThis.location?.search || '');
+        for (const [ti, yb] of [[0, cu ? yc - 2.2 : 3.731], [1, yc + 0.1]]) { const sh = new THREE.Mesh(new THREE.BoxGeometry(10.2, 0.14, 1.5), kep); sh.name = 'pho_ke_gau_van'; const [sx, sz] = f.W(du0, -0.85); sh.position.set(sx, yb - 0.07, sz); sh.rotation.y = f.ry; tMid.add(sh); }
+        const D = Math.PI / 180, GAU = cu ? null : [   // [tên, biến thể, vị trí, xoay° XYZ, cỡ]
+          ['10', 1, [-16.45, 6.94, -3.025], [76.9, 75.5, -79.3], [1.22, 0.946, 0.478]], ['11', 2, [-16.45, 6.94, 0.529], [72.6, 76.9, -77.3], [1.174, 1.045, 0.514]], ['12', 0, [-15.959, 6.94, 3.784], [40.6, 89, -48.2], [1.194, 0.954, 0.453]],
+          ['00', 1, [-16.45, 3.785, -3.025], [76.9, 75.5, -79.3], [1.22, 0.946, 0.478]], ['01', 2, [-16.264, 3.557, 0.529], [72.6, 76.9, -77.3], [1.174, 1.045, 0.514]], ['02', 0, [-15.462, 3.811, 3.784], [40.6, 89, -48.2], [1.194, 0.954, 0.453]]];
+        if (GAU) for (const [ten, v, p, r, sc] of GAU) { const k = gauKeStatic(THREE, v), m = new THREE.Mesh(k.geometry, k.materials); m.name = 'pho_ke_gau_kinh_' + ten; m.position.set(...p); m.rotation.set(r[0] * D, r[1] * D, r[2] * D); m.scale.set(...sc); m.castShadow = false; tMid.add(m); }
+        else for (const [ti, yb] of [[0, yc - 2.2], [1, yc + 0.1]]) {
           for (let i = 0; i < 3; i++) { const v = (i + ti) % 3, k = gauKeStatic(THREE, v), du = du0 + (i - 1) * 3.3 + (ti ? 1.0 : -0.5) + (hash(i, 90 + ti) - 0.5) * 0.6, sc = (1.5 / k.size[1]) * (0.92 + hash(i, 91 + ti) * 0.16);
             const m = new THREE.Mesh(k.geometry, k.materials); m.name = 'pho_ke_gau_kinh_' + ti + i; m.scale.setScalar(sc); const [x, z] = f.W(du, -0.85); m.position.set(x, yb, z); m.rotation.y = f.ry + (hash(i, 92 + ti) - 0.5) * 0.5; m.castShadow = false; tMid.add(m); } }
       };
       f.plane(0, 0.3, G.y(1) + 2.9, 5.6, 5.6, signMat(texPlaque), 'pho_bien_dau_gau'); for (const s of [-1, 1]) f.b(s * 1.5, 0.1, G.y(1) - 0.3, 0.3, 0.3, 1.0, '#1E2024');
-      f.plane(G.du(0.275), -2.6, (G.y(0.085) + G.y(0.585)) / 2, 13, 10.4, dispMat(dispTex('gau', 640, 512)), 'pho_gian_trong_tiem_gau');   // mặt tiền model để hở (fz 0,10..0,45): nhìn vào thấy kệ gấu thay vì hộp trắng rỗng
+      f.plane(G.du(0.275) + (/[?&]gauKinhCu=1(&|$)/.test(globalThis.location?.search || '') ? 0 : 1.36), -2.6, (G.y(0.085) + G.y(0.585)) / 2, 13, 10.4, dispMat(dispTex('gau', 640, 512)), 'pho_gian_trong_tiem_gau');   // mặt tiền model để hở (fz 0,10..0,45): nhìn vào thấy kệ gấu thay vì hộp trắng rỗng
       { const du = 11.6, dy = -4.4; f.b(du, 1.8, 14.5 + dy, 0.35, 3.6, 0.35, '#1E2024'); f.b(du, 3.0, 11.3 + dy, 0.25, 0.25, 3.3, '#1E2024'); const [x, z] = f.W(du, 3.0); const m = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 3.0), signMat(texHang)); m.position.set(x, 11.8 + dy, z); m.rotation.y = 0; m.name = 'pho_bien_treo_gau'; tMid.add(m); }
       lantern(f, -11.6, 6.8);
     } else {

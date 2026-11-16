@@ -26,7 +26,8 @@ const WIN = { c: -1.875, hw: 1.975, y0: 3.38, y1: 8.11 };                       
 const DOOR = { c: -0.83, hw: 1.77, h: 6.5 };                                           // cửa phòng (tường nam), toạ độ thế giới
 const BAL = { c: -6.6, hw: 1.82, h: 6.66 };                                            // cửa kính ban công (tường đông), c = z
 const KET = { x: -5.12, z: 7.23, w: 2.44, d: 1.98, h: 2.65 };                          // két teal
-const GUONG = { x: 5.9, z: 6.3, ry: -2.7, w: 4.06, h: 6.6, nga: 0.1 };                 // gương đứng; ry −2,70 = nằm trên gối nhìn vào thấy đồng hồ trên kệ
+const GUONG = { x: 5.17, z: 6.72, ry: -2.49, w: 4.06, h: 6.6, nga: 0.1 };   // góp ý 3D 16/11 (h31): dời về tây 0,7 + xoay thêm 12° (cũ x 5,9 z 6,3 ry −2,70)
+//                 // gương đứng; ry −2,70 = nằm trên gối nhìn vào thấy đồng hồ trên kệ
 export const PHONG_DIEM = {
   phong_giua: [1.0, 0, 1.2], giuong_nam: [BX, BED_TOP + 0.9, -0.9], giuong_ngoi: [BX, BED_TOP, -3.6], giuong_chan: [BX, BED_TOP, -0.35],
   truoc_ke: [KX, 0, KZ + 2.3], ke_mat: [KX, KH, KZ], ke_dong_ho: [KX + 0.55, KH, KZ + 0.05], ke_sach: [KX + 1.75, KH, KZ - 0.05], ke_vet_day: [KX - 0.75, KH, KZ + 0.1],
@@ -210,7 +211,8 @@ export default function build(g, e, H) {
     // Dựng CẢ HAI bản (hộp cũ + vải), update() chỉ đổi visible → tua tới/lui như nhau; tắt ô = hộp cũ y nguyên. Hai tấm vải: phẳng / gò theo người nằm (ctx.chanPhu).
     const sm = plaidTex.clone(); sm.needsUpdate = true; sm.repeat.set(0.5, 0.5);   // uv lưới vải tính bằng stud → 1 ô ca-rô = 2 stud như chăn hộp
     const vai = (name, lumps, w = BED_W - 0.3) => { const s = createBedSoft(THREE, { w, len, top: BED_TOP, edgeY: BED_TOP - 1.1, map: sm, foldColor: '#ede3cf', pillows: [], lumps, seed: 3 }); s.name = name; s.position.set(BX, 0, zc); s.visible = false; mid.add(s); return s; };
-    e.chanVai = { hop, phang: vai('phong_chan_vai', []), phu: vai('phong_chan_vai_phu', [{ x: 0, z: -2.75 - zc, rx: 2.2, rz: 2.25, h: 1.6, p: 4 }], BED_W) };   // gò hộp trùm thân Gà nằm (thân cao tới y 3,65; đo 15/11). Tay Gà dang rộng hơn đệm (x ±2,18, cao 3,95) nên vẫn ló ở hai mép như bản hộp cũ: gò rộng/cao hơn thì che mất đồng hồ trong gương ở s023
+    e.chanVai = { hop, phang: vai('phong_chan_vai', []), phu: vai('phong_chan_vai_phu', [{ x: 0, z: -2.75 - zc, rx: 2.2, rz: 2.25, h: 1.6, p: 4 }], BED_W) };
+    if (!/[?&]chanPhuCu=1(&|$)/.test(globalThis.location?.search || '')) { const q = e.chanVai.phu; q.position.x -= 0.13; q.position.y += 0.57; q.scale.x *= 1.28; }   // góp ý 3D 16/11 (h29): chăn phủ nâng 0,57 + rộng ×1,28 (cũ: ?chanPhuCu=1)   // gò hộp trùm thân Gà nằm (thân cao tới y 3,65; đo 15/11). Tay Gà dang rộng hơn đệm (x ±2,18, cao 3,95) nên vẫn ló ở hai mép như bản hộp cũ: gò rộng/cao hơn thì che mất đồng hồ trong gương ở s023
   }
   // ---- TỦ ĐÈN sau đầu giường (góc tây–bắc) + đèn bàn hổ phách ----
   const NX = -6.2, NZ = -HZ + 0.8, NH = 2.55;
@@ -235,7 +237,7 @@ export default function build(g, e, H) {
       c.beginPath(); c.ellipse(w * 0.33, h * 0.66, 20, 27, 0.3, 0, 7); c.fill(); c.globalCompositeOperation = 'source-over';
     });
     const dm = none(new THREE.Mesh(new THREE.PlaneGeometry(2.3, 1.15), new THREE.MeshStandardMaterial({ map: dust, transparent: true, roughness: 1, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }))); dm.receiveShadow = true;
-    dm.rotation.x = -Math.PI / 2; dm.position.set(PHONG_DIEM.ke_vet_day[0], KH + 0.012, PHONG_DIEM.ke_vet_day[2]); dm.name = 'phong_ke_vet_day'; mid.add(dm); e.vetDay = dm;
+    dm.rotation.x = -Math.PI / 2; dm.position.set(PHONG_DIEM.ke_vet_day[0], KH + 0.012, PHONG_DIEM.ke_vet_day[2]); dm.name = 'phong_ke_vet_day'; mid.add(dm); e.vetDay = dm; dm.visible = globalThis.__vetDay !== false;   /* tập đặt globalThis.__vetDay = false để ẩn (ep003b: dây chuyền/đồng hồ nằm đúng chỗ này — góp ý 3D 16/11) */
   }
   // ---- KÉT TEAL (góc tây–nam, mặt số quay BẮC): thân rỗng + cửa bản lề phía TÂY + lòng két có đệm sẫm; nhấc/mở theo ctx ----
   const ket = new THREE.Group(); ket.name = 'phong_ket'; ket.position.set(KET.x, 0, KET.z); mid.add(ket);

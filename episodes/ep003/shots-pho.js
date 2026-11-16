@@ -22,7 +22,7 @@ const RAW_PHO = [
   // s014 · set:street · ngày · 18.99–20.11 s · mặt: hero=binh_thuong
   { id: "s014", dur: 1.124, env: "e3-pho", lightOverride: { exposure: 1.1 }, cam: { p: [-3, 4.3, 27], l: [-11.2, 3.9, 27], fov: 40, p2: [-4, 4.3, 27], l2: [-11.2, 3.9, 27], fov2: 40 }, cast: { hero: { at: [-11.2, 0.4, 27], ry: 1.5708, anim: "idle", face: "binh_thuong" } }, line: 7 },
   // s015 · set:street · ngày · 20.11–21.54 s · mặt: hero=binh_thuong
-  { id: "s015", dur: 1.429, env: "e3-pho", lightOverride: { exposure: 1.1 }, cam: { p: [0.8, 2.2, 56], l: [-14, 9.5, 24], fov: 46, p2: [-0.2, 2.3, 54.5], l2: [-14, 12, 24], fov2: 46 }, cast: { hero: { at: [-7.4, 0.4, 44], ry: 3.1416, anim: "idle", face: "binh_thuong" } }, line: 8 },
+  { id: "s015", dur: 1.429, env: "e3-pho", lightOverride: { exposure: 1.1 }, skyScale: 3.5, cam: { p: [0.8, 2.2, 56], l: [-14, 9.5, 24], fov: 46, p2: [-0.2, 2.3, 54.5], l2: [-14, 12, 24], fov2: 46 }, cast: { hero: { at: [-7.4, 0.4, 44], ry: 3.1416, anim: "idle", face: "binh_thuong" } }, line: 8 },
   // s036 · set:street · đêm · 51.81–53.00 s · mặt: —
   { id: "s036", dur: 1.193, env: "e3-pho", time: "dem", lightOverride: { exposure: 0.32 }, cam: { p: [-9, 13.8, 33], l: [12, 1, 30], fov: 40, p2: [-8.4, 13.4, 33.2], l2: [12, 0.4, 30], fov2: 40 }, cast: {}, line: 20 },
   // s039 · set:balcony · đêm · 55.69–58.19 s · mặt: hero=nghi_ngo

@@ -6,8 +6,9 @@
 - **Nhánh:** `ep1-v2`
 - **Đang làm:** không — đợt 5 nhóm A (PHỐ) đã chốt (`duyet/ep003/dot-04.ketqua.json`) và đã thay vào `engine/envs/e3-pho.js`.
 - **Đã thay:** cây Roblox 3287226226 (`nhap/pho-cay`) thay mọi cây khối; 6 trụ cứu hoả 8220444536 (`nhap/pho-tru-cuu-hoa`); 6 gấu kệ nhà máy trên 2 tầng kệ sau kính tiệm gấu (dựng lười ở update); trời ngày anime-day (`?troiPho=sky-7` về cũ), đêm sky-9; vòng bao rừng thông. `?rb=0` về bản khối.
-- **Lỗi còn (soi `output/ep003/kiem-p5/bao-cao.md`):** (1) ĐÊM s045/s036: vòng rừng thông như răng cưa lơ lửng giữa trời, hở dưới — thử bật nền cỏ (`e.nen='co'`) KHÔNG chữa được và lộ vệt cỏ lên vỉa hè s003 → đã gỡ; cần sửa ở builder chung `engine/vong-bao.js` (đêm) hoặc hạ `h`/đổi `r`. (2) Nền sau kệ gấu đen thui (s008–s011). (3) s015 trời xanh phẳng không mây.
-- **Bước kế tiếp:** sửa 3 lỗi trên (người dùng chọn); rồi nhóm B (tiệm s004–s006), C (phòng Gà: cửa sổ nhìn phố, ảnh treo), D (nhà máy: đống đồ ăn cắp).
+- **Góp ý 3D 16/11 19:32 (đã làm):** tủ gấu 2 tầng × 3 gấu to theo vị trí người dùng kéo (`?gauKinhCu=1` về cũ), nền kệ kéo ra trước tấm kính đen của model (hết đen); rừng thông đêm bỏ sương (`suongDem:false` trong `engine/vong-bao.js`, `?suongRungDem=1` về cũ) — hết dải xanh phẳng; s015 `skyScale 3.5` (mới thấy chút mây góc phải); tiệm: 2 giá bánh dời (`?keBanhCu=1`), +2 ma-nơ-canh (`?themManoCanh=0`); phòng Gà: gương dời/xoay (GUONG), chăn phủ nâng 0,57 (`?chanPhuCu=1`), vết dây ẩn khi tập đặt `globalThis.__vetDay=false` (ep003b); ep003b BAP_G y 2,86.
+- **Chưa kiểm được bằng ảnh:** ma-nơ-canh/giá bánh (h05, h08 không lọt khung), vị trí gương h31.
+- **Bước kế tiếp:** nhóm B (tiệm s004–s006: áo ma-nơ-canh, đồ bị mất), C (phòng Gà: cửa sổ nhìn phố, ảnh treo), D (nhà máy: đống đồ ăn cắp).
 - **Đang chờ:** đợt 2 (biển tiệm bánh) vẫn chờ duyệt.
 - **File đang dở (chưa commit):** không.
 - **Đang chạy nền:** không
