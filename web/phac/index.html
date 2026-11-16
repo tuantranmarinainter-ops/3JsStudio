@@ -43,11 +43,16 @@ nav button svg{width:24px;height:24px}nav button.on{color:var(--ac);font-weight:
 .top{display:flex;justify-content:space-between;align-items:center}
 .toast{position:fixed;left:16px;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));background:var(--tx);color:var(--bg);padding:14px 16px;border-radius:12px;display:none;z-index:40;max-width:520px;margin:0 auto}
 .bar{background:var(--ac2);color:var(--ac);border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:14px}
-@media(min-width:900px){
- body{padding:0 0 0 220px}
- nav{top:0;right:auto;bottom:0;width:220px;flex-direction:column;border-top:0;border-right:1px solid var(--ln);padding:20px 12px;gap:4px}
- nav button{flex:none;flex-direction:row;justify-content:flex-start;gap:12px;min-height:48px;padding:0 14px;border-radius:10px;font-size:16px}nav button.on{background:var(--ac2)}
- .grid{grid-template-columns:repeat(3,1fr)}.toast{left:240px}
+.brand,.bd{display:block}.brand{display:none}
+.box{background:var(--pn);border:1px solid var(--ln);border-radius:var(--r);margin-bottom:14px;overflow:hidden}.box h2{margin:0;padding:12px 16px;font-size:16px;border-bottom:1px solid var(--ln)}.box .bd{padding:12px 12px 2px}
+@media(min-width:783px){
+ main{max-width:1100px;padding:28px 32px}.wgs{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;align-items:start}.wgs .wide{grid-column:1/-1}
+ body{padding:0 0 0 200px}
+ nav{top:0;right:auto;bottom:0;width:200px;flex-direction:column;border:0;background:#1d2327;padding:0;gap:0}
+ .brand{display:block;color:#fff;font-weight:700;font-size:18px;padding:20px 18px;border-bottom:1px solid #ffffff1a;margin-bottom:8px}
+ nav button{flex:none;flex-direction:row;justify-content:flex-start;gap:12px;min-height:46px;padding:0 18px;border-radius:0;font-size:15px;color:#c3c4c7;border-left:4px solid transparent}
+ nav button:hover{color:#72aee6;background:#2c3338}nav button.on{background:var(--ac);color:#fff;border-left-color:#fff}
+ .grid{grid-template-columns:repeat(3,1fr)}.toast{left:220px}
 }
 </style>
 </head>
@@ -56,17 +61,20 @@ nav button svg{width:24px;height:24px}nav button.on{color:var(--ac);font-weight:
  <div class="top"><div><h1 id="tt">Hôm nay</h1><div class="mu" id="ph">Bản phác — dữ liệu mẫu, chưa nối gì</div></div><button class="ghost" id="sw" aria-label="Sáng/tối">🌓</button></div>
 
  <!-- 1. HÔM NAY -->
- <section class="tab on" id="t1">
-  <h2>Chờ bạn</h2>
+ <section class="tab on" id="t1"><div class="wgs">
+  <div class="box"><h2>Chờ bạn</h2><div class="bd">
   <div class="card cho"><div class="g"><b>Chọn nhà cho Tập 3</b><div class="mu">9 món, mỗi món 10 mẫu để chọn</div></div><div style="height:12px"></div><button class="btn" data-go="3">Mở để chọn</button></div>
   <div class="card"><b>Nghe thử giọng đọc Tập 2</b><div class="mu">3 giọng, mất khoảng 2 phút</div></div>
-  <h2>Đang chạy</h2>
+  </div></div>
+  <div class="box"><h2>Đang chạy</h2><div class="bd">
   <div class="card row"><span class="dot"></span><div class="g"><b>Dựng cảnh bãi biển</b><div class="mu">Tập 1 · 12 phút trước</div></div></div>
   <div class="card row"><span class="dot w"></span><div class="g"><b>Làm tiếng sóng</b><div class="mu">Tập 1 · đang chờ máy</div></div></div>
-  <h2>Mỗi tập đang ở đâu</h2>
+  </div></div>
+  <div class="box wide"><h2>Mỗi tập đang ở đâu</h2><div class="bd">
   <div class="card"><b>Tập 1</b> <span class="mu">· Dựng cảnh</span><div class="tram"><i class="d"></i><i class="d"></i><i class="n"></i><i></i><i></i></div><div class="tn"><span>Kịch bản</span><span>Duyệt</span><span>Dựng</span><span>Giọng</span><span>Xuất</span></div></div>
   <div class="card"><b>Tập 2</b> <span class="mu">· Tạm gác</span><div class="tram"><i class="d"></i><i class="d"></i><i class="d"></i><i class="n"></i><i></i></div><div class="tn"><span>Kịch bản</span><span>Duyệt</span><span>Dựng</span><span>Giọng</span><span>Xuất</span></div></div>
   <div class="card"><b>Tập 3</b> <span class="mu">· Chờ bạn duyệt</span><div class="tram"><i class="d"></i><i class="n"></i><i></i><i></i><i></i></div><div class="tn"><span>Kịch bản</span><span>Duyệt</span><span>Dựng</span><span>Giọng</span><span>Xuất</span></div></div>
+  </div></div></div>
  </section>
 
  <!-- 2. ĐẦU VIỆC -->
@@ -104,6 +112,7 @@ nav button svg{width:24px;height:24px}nav button.on{color:var(--ac);font-weight:
 <div class="toast" id="ts"></div>
 
 <nav>
+ <div class="brand">3JS Studio</div>
  <button data-t="1" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v9H4z"/></svg>Hôm nay</button>
  <button data-t="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="6" height="16" rx="1"/><rect x="14" y="4" width="6" height="10" rx="1"/></svg>Đầu việc</button>
  <button data-t="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12l4 4 10-10"/></svg>Duyệt</button>
