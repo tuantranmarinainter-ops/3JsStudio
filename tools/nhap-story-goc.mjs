@@ -55,11 +55,13 @@ ${sl(iFlags, iRun + 1)}
   const cm = s.cam(u, lt);
   let p = cm.p, l = cm.l;
 ${lines[iHand]}
-  if (s.whip) { const w0 = s.sub ? s.sub.filter(x => x <= lt).pop() : 0, wa = lt - w0; if (wa < .22) { const a = .9 * Math.pow(1 - wa / .22, 2), d = l.clone().sub(p), c = Math.cos(a), sn = Math.sin(a); l = p.clone().add(V(d.x * c + d.z * sn, d.y, -d.x * sn + d.z * c)); } }
-  camera.position.copy(p);
+  camera.position.copy(p); camera.up.set(0, 1, 0); camera.lookAt(l);
+  if (s.whip) { const w0 = s.sub ? s.sub.filter(x => x <= lt).pop() : 0, wa = lt - w0; if (wa < .22) camera.rotateY(.9 * Math.pow(1 - wa / .22, 2)); }
+  camera.rotateZ(THREE.MathUtils.degToRad(cm.roll || 0));   // giống hệt renderFrame gốc: quay quanh trục CỤC BỘ của camera
 ${sl(iLight, iSet + 1)}
   const q = camera.position;
-  return { p: [q.x, q.y, q.z], l: [l.x, l.y, l.z], fov: cm.fov, roll: cm.roll || 0, shot: s.n, lt, look: s.look };
+  const f = new THREE.Vector3(0, 0, -10).applyQuaternion(camera.quaternion).add(q), qq = camera.quaternion;
+  return { p: [q.x, q.y, q.z], l: [f.x, f.y, f.z], quat: [qq.x, qq.y, qq.z, qq.w], fov: cm.fov, roll: 0, shot: s.n, lt, look: s.look };
 }
 return { frame, SHOTS, END, CAST, SETS, KIT, preload: () => KIT.preloadFaces() };
 }

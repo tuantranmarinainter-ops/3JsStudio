@@ -27,7 +27,10 @@ sub('await MATS.ready;', `await MATS.ready;
       await goc.preload();
       window.__goc = goc;`);
 sub('nv.render(shot, T, local, local / shot.dur);',
-  `if (GOC && shot.goc) { const c = goc.frame(T); stage.setCamera(c.p, c.l, { fov: c.fov, roll: c.roll, focusShadow: false }); }`);
+  `if (GOC && shot.goc) { const c = goc.frame(T); stage.setCamera(c.p, c.l, { fov: c.fov, roll: c.roll, focusShadow: false }); stage.camera.quaternion.set(...c.quat); }`);
 fs.copyFileSync(path.join(ROOT, 'vendor/three/addons/geometries/RoundedBoxGeometry.js'), path.join(ROOT, 'episodes', ep, 'goc', 'RoundedBoxGeometry.js'));   // studio chỉ nhúng module 'three': addon chép cạnh tập
+// thời lượng thật = END của story gốc (data-duration mượn từ ep005 là 20 s → trình phát dừng ở shot 15)
+const endM = fs.readFileSync(path.join(ROOT, 'episodes', ep, 'goc', 'story.js'), 'utf8').match(/const END = ([0-9.]+);/);
+if (endM) h = h.replace(/data-duration="20\.000"/g, 'data-duration="' + (+endM[1]).toFixed(3) + '"');
 fs.writeFileSync(path.join(ROOT, 'episodes', ep, 'index.html'), h, 'utf8');
 console.log('ghi episodes/' + ep + '/index.html');
