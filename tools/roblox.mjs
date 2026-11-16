@@ -344,7 +344,7 @@ function ghepBlender(dir, tenJson, parts, tn, ra, a, id, canhBao) {
   const exe = ENV.BLENDER || process.env.BLENDER;
   if (!exe || !fs.existsSync(exe)) loi('không thấy Blender: đặt BLENDER trong .env.local');
   const manifest = path.join(dir, tenJson);
-  fs.writeFileSync(manifest, JSON.stringify({ parts, meshes: tn.meshes, images: tn.anh, csg: tn.csg, out: ra, ten: `roblox-${id}`, anhMax: Number(a['anh-max']) || 512 }));
+  fs.writeFileSync(manifest, JSON.stringify({ parts, meshes: tn.meshes, images: tn.anh, csg: tn.csg, out: ra, ten: `roblox-${id}`, anhMax: Number(a['anh-max']) || 512, boManhLon: !!a['bo-manh-lon'] }));
   const r = chay(exe, ['-b', '--factory-startup', '-P', path.join(ROOT, 'tools', 'blender', 'roblox_ghep.py'), '--', manifest]);
   const out = (r.stdout || '') + (r.stderr || '');
   const m = out.match(/^GHEP_JSON (.*)$/m);
@@ -414,7 +414,7 @@ async function taiTiep(a, id, ra, dir, dM, dA, parts, meshIds, imgIds, canhBao, 
   const nguon = { id, ten: a.ten || tt.ten || `Roblox ${id}`, tacGia: a['tac-gia'] || tt.tacGia || '', link: `https://create.roblox.com/store/asset/${id}`, giayPhep: GIAY_PHEP,
     ngayTai: new Date().toISOString().slice(0, 10), glb: path.relative(ROOT, ra).replace(/\\/g, '/'),
     tamGiac: kq.tamGiac, manh: kq.manh, hopBao: kq.hopBao.map((x) => +x.toFixed(3)), union: kq.union, decal: kq.decal, anh: kq.anh,
-    xapXi: kq.boQua.map((b) => `${b.ten}: ${b.lyDo}`), ...(tach ? { glb: null, tach } : {}) };
+    xapXi: kq.boQua.map((b) => `${b.ten}: ${b.lyDo}`), manhLon: kq.manhLon || [], ...(tach ? { glb: null, tach } : {}) };
   fs.writeFileSync(path.join(dir, 'nguon.json'), JSON.stringify(nguon, null, 1));
   // tóm tắt
   const bb = kq.hopBao;
@@ -427,6 +427,7 @@ async function taiTiep(a, id, ra, dir, dM, dA, parts, meshIds, imgIds, canhBao, 
     in_(`ảnh vân: ${kq.anh} (decal ${kq.decal}) · Union đọc được lưới thật: ${kq.union} · request Open Cloud: ${soRequest}`);
   }
   if (a.json) console.log(JSON.stringify(nguon));
+  for (const m of kq.manhLon || []) in_(`⚠ mảnh lớn bất thường: ${m.path ? m.path + '.' : ''}${m.ten} hộp bao ${m.hopBao.join('×')} > 2× phần còn lại ${m.phanConLai.join('×')} stud${a['bo-manh-lon'] ? ' — ĐÃ BỎ (--bo-manh-lon)' : ' — giữ nguyên; thêm --bo-manh-lon để bỏ'}`);
   const bo = [...kq.boQua, ...canhBao.map((c) => ({ ten: c, lyDo: 'cảnh báo tải' }))];
   if (bo.length) { in_(`bỏ qua / xấp xỉ ${bo.length}:`); for (const b of bo.slice(0, 20)) in_(`  - ${b.ten}: ${b.lyDo}`); if (bo.length > 20) in_(`  … và ${bo.length - 20} mục nữa`); }
   in_(`nguồn: .cache/roblox/${id}/nguon.json (chưa vào kho: node tools/nhap-model.mjs nhap roblox:${id} --ten <tên> --loai <loại>)`);
@@ -547,7 +548,7 @@ export function phanTich(argv) {
     const t = argv[i];
     if (t.startsWith('--')) {
       const k = t.slice(2), n = argv[i + 1];
-      if (n !== undefined && !n.startsWith('--') && !['co-script', 'json', 'tach', 'liet-ke'].includes(k)) { a[k] = n; i++; } else a[k] = true;
+      if (n !== undefined && !n.startsWith('--') && !['co-script', 'json', 'tach', 'liet-ke', 'bo-manh-lon'].includes(k)) { a[k] = n; i++; } else a[k] = true;
     } else a._.push(t);
   }
   return a;

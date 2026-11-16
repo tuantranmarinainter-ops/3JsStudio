@@ -107,8 +107,11 @@ def dau(seg=20, buoc=4, bo=0.25):
 
 # ---------- vật liệu ----------
 _mat = {}
+CUR_MAT = None   # Enum.Material của mảnh đang dựng (đặt trong vòng lặp bên dưới)
+MAT_NEON, MAT_GLASS = 288, 1568
 def vat_lieu(rgb, anh=None, alpha=1.0):
-    key = (tuple(round(c, 3) for c in rgb), anh, round(alpha, 2))
+    if CUR_MAT == MAT_GLASS: alpha = min(alpha, 0.4)      # Glass: trong suốt (Roblox vẽ kính qua ~60%)
+    key = (tuple(round(c, 3) for c in rgb), anh, round(alpha, 2), CUR_MAT if CUR_MAT in (MAT_NEON, MAT_GLASS) else None)
     if key in _mat: return _mat[key]
     m = bpy.data.materials.new('mau_%d' % len(_mat)); m.use_nodes = True
     bsdf = m.node_tree.nodes['Principled BSDF']
@@ -121,6 +124,16 @@ def vat_lieu(rgb, anh=None, alpha=1.0):
     if alpha < 1:
         bsdf.inputs['Alpha'].default_value = alpha
         try: m.blend_method = 'BLEND'
+        except Exception: pass
+        try: m.surface_render_method = 'BLENDED'
+        except Exception: pass
+    if CUR_MAT == MAT_NEON:     # Neon: tự phát sáng theo màu mảnh (bloom của engine bắt được)
+        try:
+            bsdf.inputs['Emission Color'].default_value = (*rgb, 1.0); bsdf.inputs['Emission Strength'].default_value = 1.0
+        except Exception: pass
+    if CUR_MAT == MAT_GLASS:    # Glass: bóng, phản chiếu nhẹ
+        bsdf.inputs['Roughness'].default_value = 0.05
+        try: bsdf.inputs['Specular IOR Level'].default_value = 0.8
         except Exception: pass
     _mat[key] = m; return m
 
@@ -293,8 +306,35 @@ def mat_decal(size, face, lap=None):
 def lop_decal(p):
     return [(IMGS[d['texture']], 1.0 - d.get('transparency', 0)) for d in p.get('decals') or [] if d.get('texture') in IMGS]
 
+# Ball: Roblox vẽ hình cầu đường kính = cạnh NHỎ NHẤT của Size; Size lệch trục (vd 0.29×146.8×134.8 ở nhà 127340966876926)
+# từng bị dựng thành elip khổng lồ. Chuẩn hoá về cầu — ghi vào boQua, không lặng lẽ.
+for p in D['parts']:
+    if p['class'] == 'Part' and p['shape'] == 'Ball' and max(p['size']) > min(p['size']) * 1.01:
+        m_ = min(p['size'])
+        bo_qua.append({'ten': p['name'], 'lyDo': 'Ball Size lệch trục %s → cầu đường kính %.3f' % ('×'.join('%.2f' % x for x in p['size']), m_)})
+        p['size'] = [m_, m_, m_]
+
+# Chốt chặn: mảnh có hộp bao > 2 lần hộp bao của phần còn lại của model → cảnh báo (giữ nguyên), --bo-manh-lon thì bỏ (có ghi).
+def aabb_part(p):
+    R = np.array(p['cframe']['rot']); t = np.array(p['cframe']['pos']); e = np.abs(R) @ (np.array(p['size']) / 2)
+    return t - e, t + e
+_vis = [p for p in D['parts'] if p['transparency'] < 0.99]
+_bb = [aabb_part(p) for p in _vis]
+MANH_LON, LON_IDS = [], set()
+if len(_vis) > 1:
+    for i, p in enumerate(_vis):
+        lo_o = np.min([b[0] for j, b in enumerate(_bb) if j != i], axis=0); hi_o = np.max([b[1] for j, b in enumerate(_bb) if j != i], axis=0)
+        w_o = hi_o - lo_o; w_p = _bb[i][1] - _bb[i][0]
+        if sum(1 for k in range(3) if w_p[k] > 2.0 * max(w_o[k], 1e-6) and w_p[k] > 1.0) >= 2:   # ≥ 2 trục: cột đèn/thân cây dài 1 trục là bình thường
+            LON_IDS.add(id(p))
+            MANH_LON.append({'ten': p['name'], 'path': p.get('path', ''), 'hopBao': [round(float(x), 2) for x in w_p], 'phanConLai': [round(float(x), 2) for x in w_o]})
+BO_LON = bool(D.get('boManhLon'))
+
 for p in D['parts']:
     ten = p['name']
+    CUR_MAT = p.get('material')
+    if id(p) in LON_IDS and BO_LON:
+        bo_qua.append({'ten': ten, 'lyDo': 'mảnh lớn bị bỏ (--bo-manh-lon): hộp bao %s' % '×'.join('%.1f' % x for x in (aabb_part(p)[1] - aabb_part(p)[0]))}); continue
     if p['transparency'] >= 0.99:
         bo_qua.append({'ten': ten, 'lyDo': 'trong suốt (transparency %.2f)' % p['transparency']}); continue
     if p['class'] in ('UnionOperation', 'IntersectOperation', 'NegateOperation'):
@@ -395,4 +435,4 @@ bpy.ops.export_scene.gltf(filepath=out, export_format='GLB', export_yup=True, ex
                           export_image_format='AUTO', export_cameras=False, export_lights=False)
 print('GHEP_JSON ' + json.dumps({'manh': len(objs), 'tamGiac': tong_tam_giac,
       'hopBao': [hi[k] - lo[k] for k in range(3)], 'dich': list(dich), 'boQua': bo_qua,
-      'union': so_union, 'decal': so_decal, 'anh': len(_anh)}, ensure_ascii=False))
+      'union': so_union, 'decal': so_decal, 'anh': len(_anh), 'manhLon': MANH_LON}, ensure_ascii=False))

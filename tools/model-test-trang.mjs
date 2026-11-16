@@ -67,6 +67,8 @@ const cards = sb.models.map((m, i) => {
 <ul class="bad">${auto.map((a) => `<li>${e(a)}</li>`).join('')}${(x.sai_khac || []).map((a) => `<li class="ag">${e(a)}</li>`).join('')}</ul></section>`;
 }).join('\n');
 
+const tr = existsSync(join(D, 'truoc', '3js-info.json')) ? JSON.parse(readFileSync(join(D, 'truoc', '3js-info.json'), 'utf8')) : null;
+const truocSau = tr ? `<div class="box"><b>Trước / sau khi sửa khâu nhập</b> (Ball lệch trục → cầu; Neon → emissive; Glass → trong suốt)<div class="tw"><table><tr><th>Món</th><th>Hộp bao trước</th><th>Hộp bao sau</th><th>Studio</th><th>Emissive trước → sau</th><th>Trong suốt sau</th></tr>${info.info.map((f, i) => { const t = tr.info[i]; return `<tr><td>${i + 1}. ${e(ds[i].ten)}</td><td>${sz(t.size)}</td><td>${sz(f.size)}</td><td>${sz(sb.models[i].size)}</td><td>${t.emissive || 0} → ${f.emissive || 0}</td><td>${f.transparent || 0}</td></tr>`; }).join('')}</table></div></div>` : '';
 const L = sb.lighting;
 const rowx = nx.find((n) => n.shot === 'row') || {};
 const html = `<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>So sánh Studio và 3JS</title>
@@ -87,6 +89,7 @@ h1{font-size:22px}h2{font-size:17px;margin:0 0 8px}h2 small{display:block;font-w
 <li>Studio không cho đọc số tam giác/draw call qua MCP. 3JS đo bằng renderer.info + duyệt GLB. Số shader program toàn trang: <b>${info.programs}</b> (<code>node tools/shaders.mjs</code>: trong ngưỡng).</li></ul></div>
 <div class="box"><b>Toàn hàng</b><div class="pair"><figure><img src="data:image/jpeg;base64,${img['row|a']}" alt="Studio"><figcaption>Studio</figcaption></figure><figure><img src="data:image/jpeg;base64,${img['row|b']}" alt="3JS"><figcaption>3JS</figcaption></figure></div><p class="sc">${e(rowx.dong || '')}</p></div>
 <div class="box"><b>3 sai khác lớn nhất</b><ol>${rec.top3.map((t) => `<li>${e(t)}</li>`).join('')}</ol></div>
+${truocSau}
 ${cards}
 <div class="box"><b>Đề xuất cải tiến khâu nhập (xếp theo lợi/công)</b><div class="tw"><table><tr><th>#</th><th>Việc</th><th>Lợi</th><th>Công</th><th>Vì sao</th></tr>${rec.de_xuat.map((r, i) => `<tr><td>${i + 1}</td><td>${e(r.viec)}</td><td>${e(r.loi)}</td><td>${e(r.cong)}</td><td>${e(r.vi_sao)}</td></tr>`).join('')}</table></div><p class="sc">Chỉ đề xuất. Chưa sửa engine hay <code>roblox.mjs</code>; chờ người dùng chọn.</p></div>
 </body></html>`;
