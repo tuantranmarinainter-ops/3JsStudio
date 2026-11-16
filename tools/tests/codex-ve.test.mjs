@@ -268,3 +268,10 @@ test('shot: bối cảnh có mốc kèm bc_<id>_truoc + _tren-xuong; không mố
   assert.deepEqual(ke.find((c) => c.cum === 'pho').anhKem.slice(0, 2), ['tham-chieu/bc_pho_truoc.png', 'tham-chieu/bc_pho_tren-xuong.png']);
   assert.equal(ke.find((c) => c.cum === 'tiem-banh').anhKem[0], 'tham-chieu/bc_tiem-banh.png');
 });
+
+test('timTrung: nhóm file trùng md5 (ảnh Codex chép nhầm giữa cụm)', async () => {
+  const { timTrung } = await import('../codex-ve.mjs');
+  const d = fs.mkdtempSync(path.join(os.tmpdir(), 'trung-'));
+  fs.writeFileSync(path.join(d, 'a.png'), 'X'); fs.writeFileSync(path.join(d, 'b.png'), 'X'); fs.writeFileSync(path.join(d, 'c.png'), 'Y');
+  assert.deepEqual(timTrung(['a.png', 'b.png', 'c.png', 'thieu.png'], d), [['a.png', 'b.png']]);
+});

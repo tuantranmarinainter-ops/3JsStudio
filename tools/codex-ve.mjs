@@ -3,6 +3,7 @@
 // Dùng: node tools/codex-ve.mjs <tham-chieu|shot> <thư mục tập> [--thu] [--tran N] [--model M] [--muc low] [--chi s001,s002] [--huong truoc,sau]
 // Mã thoát: 0 đủ hình · 1 còn thiếu · 2 lỗi đầu vào. Đặc tả: docs/quy-trinh-dau-vao.md, docs/de-bai-codex-mau.md.
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -219,6 +220,13 @@ export function soanDeBai(cum, bs = {}) {
 // ---------- chạy Codex ----------
 const q = (s) => `"${String(s).replace(/"/g, '\\"')}"`;
 
+/** Nhóm các file có cùng md5 (≥ 2 file mỗi nhóm). */
+export function timTrung(files, thuMuc = '.') {
+  const m = new Map();
+  for (const f of files) { const p = path.join(thuMuc, f); if (!fs.existsSync(p)) continue; const h = crypto.createHash('md5').update(fs.readFileSync(p)).digest('hex'); m.set(h, [...(m.get(h) || []), f]); }
+  return [...m.values()].filter((g) => g.length > 1);
+}
+
 export function lenhCho(cum, { thuMuc, model, muc, codexBin, anh }) {
   const parts = [codexBin, 'exec', '-C', q(thuMuc), '-s', 'workspace-write', '--skip-git-repo-check', '-m', model,
     '-c', q(`model_reasoning_effort="${muc}"`)];
@@ -363,6 +371,11 @@ export async function chay(argv, env = process.env) {
   for (const r of bang) {
     console.log(r.cum.padEnd(19) + String(r.can).padStart(5) + String(r.co).padStart(5) + String(r.thieu.length).padStart(7) + `${r.giay.toFixed(1)}s`.padStart(12) + (r.gioiHan ? '  [bị giới hạn]' : ''));
   }
+  // file trùng nội dung (md5): Codex chạy song song có lúc chép nhầm ảnh của cụm khác (ep005t trạm 5) → coi là thiếu
+  const trung = timTrung(ke.flatMap((c) => c.hinh.map((h) => h.file)).filter((f) => coFile(f)), thuMuc);
+  for (const g of trung) for (const f of g) if (!thieuTat.includes(f)) thieuTat.push(f);
+  if (trung.length) { console.log(`
+Ảnh TRÙNG nội dung (${trung.length} nhóm) — xem rồi xoá file sai và chạy lại:`); for (const g of trung) console.log('  = ' + g.join('  ≡  ')); }
   fs.writeFileSync(path.join(dirCodex, `ket-qua-${cheDo}.json`), JSON.stringify({ cheDo, thuMuc, model: t.model, muc: t.muc, tran: t.tran, cum: bang, thieu: thieuTat }, null, 2), 'utf8');
   if (thieuTat.length) {
     console.log(`\nCòn thiếu ${thieuTat.length} hình:`);

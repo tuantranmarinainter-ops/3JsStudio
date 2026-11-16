@@ -50,7 +50,7 @@ for (const f of files) {
   if (sot.some((s) => f.includes(s))) continue;
   const p = path.join(cwd, f);
   fs.mkdirSync(path.dirname(p), { recursive: true });
-  fs.writeFileSync(p, 'x');
+  fs.writeFileSync(p, 'x:' + p);   // nội dung riêng từng file (codex-ve kiểm ảnh trùng md5)
 }
 const td = stdin.match(/^- TIEN-DO: (\S+)/m);
 if (td) {
