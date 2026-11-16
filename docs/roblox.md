@@ -50,6 +50,9 @@ Cấu trúc NPC: `engine/r6-roblox.js` (`loadRbLooks`, `applyRbLook`), trang th�
 - **Giới hạn ghép**: Union không có CSG → hộp bao (ghi `xapXi`); GLB nhân vật không có áo quần; Decal trên cầu/trụ/nêm bị bỏ. Chi tiết: `docs/nhap-model.md`.
 - Trước khi thêm vào `assets/manifest.json` kiểm `git status`: file hay có thay đổi chưa commit của phiên khác; commit theo đường dẫn sẽ kéo theo dòng đó.
 
+## 4b. Nhận diện vân từ ảnh (luật vân, CLAUDE.md)
+`python tools/nhan-van.py <ảnh> [--vung x,y,w,h] [--tu-khoa "brick"] [--ung-vien output/van/ung-vien.json]`: đo hướng gradient + phổ + tương phản của vùng ảnh, so với 14 vân trong `assets/polyhaven/vat-lieu/`. Điểm ≤ 0,22 = KHỚP (dùng vân đó). Quá ngưỡng = CHƯA CÓ → lập file ứng viên Poly Haven CC0 (ảnh nhỏ ở `.cache/nhan-van/`) rồi `node tools/duyet.mjs <ep> them-ung-vien <đợt> <file>` cho người dùng chốt. Chỉ là bộ lọc gợi ý bằng số: bắt buộc nhìn lại ứng viên đầu bảng; ngưỡng chỉnh bằng `--nguong`.
+
 ## 5. Quyết định đã chốt
 - Giấy phép: người dùng cho phép dùng tài sản Roblox/Creator Store để dựng phim, vẫn ghi nguồn + tác giả (CLAUDE.md mục Asset; `docs/nhap-model.md`).
 - Cách A cho NPC: giữ thân R6 của engine, chỉ lấy màu thân, ảnh áo/quần, tóc/mũ (`docs/handoff/npc-roblox.md`; commit 6437cfa). 12 nhân vật phụ ep003 dùng `rb` (commit 21f775b). Bảng id đã chốt: `docs/handoff/npc-roblox.md` mục CHỐT.
