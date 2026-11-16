@@ -276,10 +276,15 @@ test('timTrung: nhóm file trùng md5 (ảnh Codex chép nhầm giữa cụm)', 
   assert.deepEqual(timTrung(['a.png', 'b.png', 'c.png', 'thieu.png'], d), [['a.png', 'b.png']]);
 });
 
-test('timChepAnhKem: hình giống hệt ảnh kèm (khối xám) bị bắt', async () => {
+test('timChepAnhKem: hình chép khối xám (cả khi mã hoá lại) bị bắt, ảnh khác cỡ thì không', async () => {
   const { timChepAnhKem } = await import('../codex-ve.mjs');
+  const sharp = (await import('sharp')).default;
   const d = fs.mkdtempSync(path.join(os.tmpdir(), 'chep-'));
-  fs.writeFileSync(path.join(d, 'xam.png'), 'XAM'); fs.writeFileSync(path.join(d, 'a.png'), 'XAM'); fs.writeFileSync(path.join(d, 'b.png'), 'MAU');
-  const ke = [{ cum: 'tc1', anhKem: [], hinh: [{ file: 'a.png', khoiXam: ['xam.png'] }, { file: 'b.png', khoiXam: ['xam.png'] }, { file: 'thieu.png' }] }];
-  assert.deepEqual(timChepAnhKem(ke, d), [{ file: 'a.png', anh: 'xam.png' }]);
+  const anh = (w, h, c) => sharp({ create: { width: w, height: h, channels: 3, background: c } }).png();
+  await anh(54, 96, '#808080').toFile(path.join(d, 'xam.png'));
+  await anh(54, 96, '#818181').png({ compressionLevel: 1 }).toFile(path.join(d, 'a.png'));   // chép, byte khác
+  await anh(94, 167, '#c08040').toFile(path.join(d, 'b.png'));                              // vẽ thật, khác cỡ
+  const ke = [{ cum: 'tc1', anhKem: [], hinh: [{ file: 'a.png', khoiXam: ['xam.png'] }, { file: 'b.png', khoiXam: ['xam.png'] }, { file: 'thieu.png', khoiXam: ['xam.png'] }] }];
+  const r = await timChepAnhKem(ke, d);
+  assert.deepEqual(r.map((x) => [x.file, x.chep, x.cungCo]), [['a.png', true, true], ['b.png', false, false]]);
 });
