@@ -62,6 +62,8 @@ export function dungWeb({ goc = ROOT, out = path.join(ROOT, 'dist/web'), taps, l
   const d = JSON.parse(fs.readFileSync(path.join(goc, 'docs/tien-do.json'), 'utf8'));
   fs.writeFileSync(path.join(out, 'index.html'), trangDashboard(d, ok));
   for (const t of ok) { const r = dung(t, { goc, log: () => {} }); fs.copyFileSync(r.out, path.join(out, 'duyet', `${t}.html`)); log(`trang duyệt ${t}: ${(r.bytes / 2 ** 20).toFixed(1)} MB, ${r.anhNhung} ảnh`); }
+  const phac = path.join(ROOT, 'web/phac');   // bản phác giao diện (dữ liệu mẫu, không có dữ liệu thật)
+  if (fs.existsSync(phac)) fs.cpSync(phac, path.join(out, 'phac'), { recursive: true });
   fs.writeFileSync(path.join(out, '_headers'), '/*\n  X-Robots-Tag: noindex\n  Cache-Control: no-cache\n');
   return { out, taps: ok };
 }

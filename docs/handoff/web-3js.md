@@ -27,3 +27,14 @@
 ## Ghi chép
 - Quyết định đã chốt (người dùng): điện thoại → Cloudflare → máy; Pages + Worker + KV + Tunnel + Access.
 - Gợi ý đơn giản hoá (không bắt buộc): chỉ cần "máy kéo" (bước 3 kéo mỗi ~10 s) thì bỏ được Tunnel; giữ Tunnel nếu muốn nhận tức thì.
+
+## Thiết kế lại web (2026-11-16, phiên điều phối giao)
+- Đã chốt: tối giản trắng xám, 1 màu nhấn; điện thoại 4 nút đáy → cột trái trên máy tính; Be Vietnam Pro; sáng/tối; 4 tab: Hôm nay · Đầu việc · Duyệt · Tập phim (Studio).
+- **Bản phác (bước 1):** `web/phac/index.html` → `https://3js-tuanchau.pages.dev/phac/` (dữ liệu mẫu, chưa nối gì; `dang-web.mjs` tự chép `web/phac/` vào bản đăng). Chờ người dùng xem trên điện thoại, sửa 1–2 vòng.
+
+### Đề xuất đưa studio lên (CHƯA làm — tạo R2 phải hỏi người dùng)
+- Bản gộp hiện tại: ep001 82,5 MB · ep002 58,4 MB · ep003 68,7 MB (tổng ~210 MB). Pages giới hạn 25 MiB/file → không đăng thẳng được.
+- **Phương án A (khuyến nghị): R2.** Tạo bucket `3js-studio-phim`, tải 3 file lên (`wrangler r2 object put`), thêm Pages Function `/phim/<ep>.html` đọc từ R2 (binding `PHIM`), có `Range` + `Cache-Control`; chạy sau Access cùng tên miền. Chi phí: gói Free của R2 có 10 GB lưu trữ, 1 triệu thao tác ghi/tháng, 10 triệu đọc/tháng, **không tính phí băng thông ra** → ~210 MB ≈ 0 đồng (kiểm bảng giá hiện hành trước khi mua). Việc thêm: 0,5 buổi, không sửa bản gộp.
+- Phương án B: tách asset (GLB, vân, giọng) thành file < 25 MiB trong Pages. Nhẹ hơn khi tải lại nhờ cache nhưng phải sửa `tools/bundle` + loader của trình phát: 1–2 buổi, dễ vỡ.
+- Ràng buộc: chỉ ep001–003, không bao giờ ep004/ep005 (allow-list trong `dang-web.mjs` + Function). Nút Xuất MP4 vẫn dùng GPU máy người xem.
+- **Điều kiện trước khi đưa studio lên:** Access phải bật (cần zone `tuanchau.io.vn` Active; bản pages.dev không che được). Email Access cần người dùng xác nhận.
