@@ -32,6 +32,8 @@ Cảnh 3D dựng bằng three.js + engine tự viết (`engine/`). Sản phẩm 
 - Tài sản Roblox (Creator Store, Marketplace) **được dùng để dựng phim**; tải bằng `tools/sky-extract/`, vẫn ghi nguồn vào manifest.
 - **Việc Roblox: đọc `docs/roblox.md` trước** (khoá, lệnh, quy trình, lỗi đã gặp, quyết định đã chốt) thay vì dò lại code. Phiên con Roblox chạy Sonnet; mỗi lần duyệt **một nhóm** (vd NHÀ 9 món), không giao "tất cả". Đề bài: "Đọc docs/roblox.md rồi làm X. Đạt khi … Dừng khi …".
 - **Luật vân (texture):** khi nhận diện vật từ HÌNH ẢNH (ảnh storyboard, khung tham khảo, ảnh Roblox) mà vật đó đang **thiếu vân** (màu phẳng), phải nhận ra loại vân (gạch, gỗ, bê tông, ngói, vữa, kim loại, cỏ…) và gắn vân đó cho vật. Vân phải có trong thư viện (`assets/polyhaven/vat-lieu/`, bảng `VAN_PH` ở `tools/blender/roblox_ghep.py`, ghi nguồn + giấy phép ở manifest/CREDITS). **Chưa có vân trong thư viện thì KHÔNG tự chọn**: tìm vài ứng viên (Poly Haven CC0 tileable), đưa lên trang duyệt (`tools/duyet.mjs`) cho người dùng chốt rồi mới nhập. Mọi vân phải tắt được (`--khong-van`).
+- **Giao Codex vẽ = LUẬT LƯỚI** (16/11): gộp 8–10 hình vào MỘT ảnh lưới rồi cắt ra (nhanh ~6 lần, không cần nét cao); 4 lưới cùng lúc.
+  Chi tiết + mẫu đề bài: `docs/de-bai-codex-mau.md` mục 0.
 - Đã chốt: hải đăng màu xanh; bỏ Three.js Water Pro; phông Be Vietnam Pro (phụ đề) + Patrick Hand (bưu thiếp).
 
 ## Công cụ (dùng thay vì viết script tạm)

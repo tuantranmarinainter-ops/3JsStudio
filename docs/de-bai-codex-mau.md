@@ -13,6 +13,17 @@ Người dùng **chỉ đưa kịch bản chữ**: mô tả bối cảnh, mô t�
 
 ## 0. Quy định chạy (người dùng chốt 2026-11-14)
 
+- **LUẬT LƯỚI (người dùng chốt 2026-11-16): MỖI LẦN giao Codex vẽ, gộp nhiều hình vào MỘT ảnh lưới rồi cắt ra.**
+  Công cụ tạo hình của Codex chỉ ra 1 ảnh mỗi lần gọi (~60–100 s) và không sinh nhiều ảnh/lần, nên gộp vào lưới là cách nhanh nhất.
+  Đo ở ep005t: lưới 2×4 = 8 hướng một bối cảnh trong 105 s (1024×1536, mỗi ô ~490×360) thay vì 8 × ~60 s; các ô cùng bối cảnh khớp nhau hơn.
+  Chất lượng ô nhỏ là CHẤP NHẬN (người dùng: "không cần ảnh quá chất lượng cao").
+  - Bố cục: lưới tối đa 8–10 ô bằng nhau, viền trắng 8 px giữa ô, KHÔNG chữ/nhãn/số trong ảnh; đề bài liệt kê thứ tự ô (trái→phải, trên→dưới).
+  - Gộp theo nhóm cần khớp nhau: 8 hướng của một bối cảnh; các hình (1/2/3) của các shot cùng bối cảnh; tờ mẫu nhân vật.
+  - Đề bài phải dặn cách lưu: chép file PNG MỚI NHẤT trong `%USERPROFILE%\.codex\generated_images\` (tạo sau lúc gọi) sang đường dẫn đích.
+  - Claude cắt lưới theo khe trắng (gần vị trí chia đều) rồi đặt tên từng ô; mẫu đề bài: `docs/mau-de-bai/luoi-8-huong.md`.
+  - Chạy 4 lưới cùng lúc là an toàn; 7 tiến trình cùng lúc từng gặp 502 liên tục (16/11).
+  - Lùi về vẽ từng ảnh chỉ khi một hình cần độ nét cao (người dùng yêu cầu) hoặc lưới vẽ sai thứ tự ô 2 lần.
+
 - **Model: `gpt-6-luna`, mức suy luận `low`.** Claude đã viết sẵn mô tả từng hình nên Codex chỉ cần gọi công cụ tạo hình.
   Chỉ lùi lên `gpt-6.1-sol` mức `low` nếu luna bỏ sót shot hoặc không gọi được công cụ tạo hình.
 - **Chạy song song tối đa:** chia đề bài theo cụm bối cảnh, mỗi cụm một tiến trình `codex exec` riêng, chạy tất cả cùng lúc
