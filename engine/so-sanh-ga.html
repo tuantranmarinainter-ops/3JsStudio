@@ -1,0 +1,62 @@
+<!doctype html><html><head><meta charset="utf-8"><title>So sánh mẫu Gà (dựng)</title>
+<!-- Trang dựng cho tools/so-sanh-ga.mjs: 4 mẫu Gà tập 2–5 đứng cạnh nhau trên thước stud, camera trực giao.
+     ?goc=front|side|back|tq   Bề mặt kiểm: window.__ready, window.__cao (chiều cao đo bằng Box3, stud). -->
+<script type="importmap">{ "imports": { "three": "../vendor/three/three.module.js", "three/addons/": "../vendor/three/addons/" } }</script>
+<style>html,body{margin:0;background:#e6e8ec}canvas{display:block}</style></head><body><canvas id="cv"></canvas>
+<script type="module">
+import * as THREE from 'three';
+import { loadGaFaces, loadEmoteFaces } from './r15.js';
+import { createGa, loadGaAtlas, loadGaHood } from './ga-rig.js';
+import { createR6Rig } from './r6-rig.js';
+import { R6_LOOKS } from './r6-looks.js';
+import { makeGa, loadNvFaces } from './nv-js.js';
+
+const q = new URLSearchParams(location.search);
+const GOC = { front: 0, side: Math.PI / 2, back: Math.PI, tq: 0.6 }[q.get('goc') || 'front'] ?? 0;
+const CW = 4.6, N = 4, W = 2200, H = 900, TOP = 7, BOT = -0.6;
+const cv = document.getElementById('cv');
+const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H); renderer.setPixelRatio(1); renderer.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#e6e8ec');
+scene.add(new THREE.HemisphereLight('#ffffff', '#9aa0aa', 1.4));
+const sun = new THREE.DirectionalLight('#fff4e0', 1.9); sun.position.set(4, 9, 8); scene.add(sun);
+const fill = new THREE.DirectionalLight('#dfe6ff', 0.6); fill.position.set(-6, 4, -7); scene.add(fill);
+const halfW = (TOP - BOT) * W / H / 2;
+const cam = new THREE.OrthographicCamera(-halfW, halfW, TOP, BOT, 0.1, 100); cam.position.set(0, 0, 40);
+
+// thước stud: vạch ngang mỗi 1 stud (đậm ở 0 và 5), vạch 5,48 = chuẩn Gà cũ của khuôn bối cảnh
+const lm = (c) => new THREE.LineBasicMaterial({ color: c });
+for (let y = 0; y <= 7; y++) {
+  const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-halfW, y, -5), new THREE.Vector3(halfW, y, -5)]);
+  scene.add(new THREE.Line(g, lm(y === 0 || y === 5 ? '#7d8592' : '#c3c8d0')));
+}
+{ const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-halfW, 5.48, -4), new THREE.Vector3(halfW, 5.48, -4)]); scene.add(new THREE.Line(g, lm('#d0442c'))); }
+
+const [gaFaces, emote, nvFaces, atlas, hood] = await Promise.all([
+  loadGaFaces(THREE, { base: '../assets/characters/ga/faces' }),
+  loadEmoteFaces(THREE, { base: '../assets/faces/emote37' }),
+  loadNvFaces(THREE),
+  loadGaAtlas(THREE, { url: '../assets/characters/ga/atlas.webp' }),
+  loadGaHood(THREE, { url: '../assets/characters/ga/hood.glb' }),
+]);
+
+const mau = [
+  ['A', () => createGa(THREE, { name: 'gaA', atlas, faceSet: gaFaces, hood, hoodGlb: true, face: 'smile' })],
+  ['B', () => createR6Rig(THREE, { name: 'gaB', ...R6_LOOKS.ga, faceSet: emote })],
+  ['C', () => { const c = makeGa(THREE, { ao: 'xanh' }); c.setFace(nvFaces.binh_thuong); return c; }],
+  ['D', () => { const c = makeGa(THREE, { ao: 'vang', cao: 5.3 }); c.setFace(nvFaces.binh_thuong); return c; }],
+];
+window.__cao = {};
+mau.forEach(([k, make], i) => {  // k dùng trong animate
+  const c = make();
+  if (c.animate) { try { k === 'C' || k === 'D' ? c.animate(0) : c.animate('idle', 0); } catch {} }   // nv-js: animate(t, spec); R6/ga-rig: animate(anim, t)
+  c.root.position.set((i - (N - 1) / 2) * CW, 0, 0); c.root.rotation.y = GOC; scene.add(c.root);
+  c.root.updateMatrixWorld(true);
+  const b = new THREE.Box3(); let nMesh = 0, nBad = 0;   // bỏ qua lưới có hộp NaN/rỗng (lớp dán mặt ẩn…)
+  c.root.traverse((o) => { if (!o.isMesh || !o.geometry) return; nMesh++; o.geometry.computeBoundingBox(); const bb = o.geometry.boundingBox.clone().applyMatrix4(o.matrixWorld);
+    if ([bb.min.x, bb.min.y, bb.max.x, bb.max.y].every(Number.isFinite) && !bb.isEmpty()) b.union(bb); else nBad++; });
+  window.__cao[k] = { cao: +b.max.y.toFixed(2), day: +b.min.y.toFixed(2), rong: +(b.max.x - b.min.x).toFixed(2), sau: +(b.max.z - b.min.z).toFixed(2), nMesh, nBad };
+});
+window.THREE = THREE; window.__scene = scene;
+renderer.render(scene, cam); window.__ready = true;
+</script></body></html>
