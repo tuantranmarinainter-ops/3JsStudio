@@ -3,6 +3,7 @@
 // giọng đọc AAC/Opus, đóng gói MP4 (mp4-muxer) → lưu file. Không cần server, không cần cloud.
 // Cần Chrome/Edge bản mới (WebCodecs). Không bật khi trang bị điều khiển tự động (render-local, HyperFrames).
 import { Muxer, ArrayBufferTarget, FileSystemWritableFileStreamTarget } from 'mp4-muxer';
+import { installDT } from './export-ui-dt.js';   // bố cục điện thoại (màn hẹp + cảm ứng; ?giaodien=dt|mt)
 
 const PRESETS = {
   '2k':    { w: 1440, h: 2560, label: '2K — 1440×2560', bitrate: 16e6 },
@@ -299,7 +300,7 @@ async function init() {
 
   // thu #root vừa chỗ trống của ô giữa (co theo kéo viền / đổi cỡ cửa sổ)
   function fit() {
-    const v = $('xview'); let availH = v.clientHeight - 28, availW = v.clientWidth - 28;
+    const v = $('xview'), pad = app.classList.contains('dt') ? 0 : 28; let availH = v.clientHeight - pad, availW = v.clientWidth - pad;
     if (availH < 20 || availW < 20) return;
     // SONG SONG (Phim | 3D): khung phim tối đa nửa ô (màn ngang: nửa trái; màn dọc/điện thoại: nửa trên), phần còn lại cho 3D
     const ss = v.classList.contains('xss'), col = ss && v.clientWidth < v.clientHeight * 1.1;
@@ -964,6 +965,7 @@ async function init() {
   if (U.dbg) dbgSet(true);
 
   applyRows(); themeBtns(); syncNotesUi(); syncUi(+$('xseek').value); fit();
+  try { installDT({ app, $, fit, wrap }); } catch (e) { console.warn('giao diện điện thoại', e); }
   pingClaude();
   setTimeout(() => { refreshVoiceRow(); refreshSfxRow(); }, 400);
 

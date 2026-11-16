@@ -137,6 +137,8 @@ html = html.replace(/<script src="([^"]+)"><\/script>/g, (m, src) => {
   return `<script>${require_text(p).replace(/<\/script/gi, '<\\/script')}</script>`;
 });
 html = html.replace(/<script type="importmap">[\s\S]*?<\/script>\s*/, '');
+// Điện thoại: meta viewport của tập (width=1080) làm trang hiện nhỏ xíu → khi có trình phát thì dùng chiều rộng thiết bị (máy tính không đổi)
+if (uiJs) html = html.replace(/<meta name="viewport"[^>]*>/i, '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />');
 // phông trong CSS (@font-face url(...)) → data URI (CSS không đi qua lớp chặn fetch)
 html = html.replace(/url\((['"]?)([^'")]+\.(?:ttf|otf|woff2?))\1\)/gi, (m, q, src) => {
   const p = src.startsWith('/') ? join(root, src) : join(epDir, src);
