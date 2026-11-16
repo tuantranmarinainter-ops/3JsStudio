@@ -395,8 +395,10 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
   function envList() {
     const used = new Map(), tl = getTl();
     for (const it of tl?.list || []) { const n = (it.shot || it).env; if (n) used.set(n, (used.get(n) || 0) + 1); }
-    return envGroups().map((g) => g.name.slice(4)).map((n) => ({ name: n, shots: used.get(n) || 0 }))
-      .sort((a, b) => (b.shots > 0) - (a.shots > 0) || a.name.localeCompare(b.name));
+    const all = envGroups().map((g) => g.name.slice(4)).map((n) => ({ name: n, shots: used.get(n) || 0 }));
+    // chỉ bối cảnh tập ĐANG MỞ dùng (người dùng 16/11: không hiện env của tập khác); chưa có dòng thời gian thì hiện hết
+    const mine = all.filter((e) => e.shots > 0);
+    return (mine.length ? mine : all).sort((a, b) => b.shots - a.shots || a.name.localeCompare(b.name));
   }
   function fillEnvSelect() {
     const sel = built?.bar.querySelector('select[data-o=env]'); if (!sel) return;

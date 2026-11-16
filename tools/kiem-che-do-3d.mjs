@@ -109,7 +109,7 @@ if (!bam.on || !(bam.max < 1e-5)) loi.push(`Bám camera shot: không theo camera
 // 🏞 chọn bối cảnh: mỗi env một ảnh (tối đa 4), về 'theo shot' thì khung Phim vẫn như cũ (kiểm ở cuối)
 const envs = await page.evaluate(() => window.__che3d.envList());
 console.log(`Bối cảnh: ${envs.length} env (${envs.map((e) => e.name + (e.shots ? '·' + e.shots : '')).join(', ')})`);
-if (!envs.length) loi.push('ô chọn bối cảnh trống');
+if (!envs.length) loi.push('ô chọn bối cảnh trống'); if (envs.some((e) => !e.shots)) loi.push('ô bối cảnh còn env tập khác: ' + envs.filter((e) => !e.shots).map((e) => e.name).join(', '));
 for (const e of envs.slice(0, 4)) {
   const r = await page.evaluate((n) => { const c = window.__che3d; c.setEnv(n); return { env: c.env, bam: c.bam }; }, e.name);
   if (r.env !== e.name) loi.push(`chọn bối cảnh ${e.name} không được`);
