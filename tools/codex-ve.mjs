@@ -161,7 +161,7 @@ function moMocBoiCanh(h, id) {
   const m = h.moc;
   const L = [`## Danh sách mốc bối cảnh ${id}`];
   if (h.khoiXam?.length) L.push(`- ${CAU_BAT_BUOC_KHOI_XAM} Ảnh khối xám của bối cảnh này: ${h.khoiXam.join(', ')}.`);
-  else L.push(`- ${CAU_TU_DO}`, '- Phong cách khối vuông low poly kiểu Roblox: mặt phẳng, cạnh vuông, ít chi tiết nhỏ; giữ đúng mã màu từng mốc.');
+  else L.push(`- ${CAU_TU_DO}`, '- Phong cách KHỐI VUÔNG low poly kiểu Roblox: mọi vật dựng từ hộp chữ nhật, mặt phẳng tô màu phẳng, cạnh sắc, KHÔNG bo tròn, không vân tả thực, bóng đổ gọn; ít chi tiết nhỏ; giữ đúng mã màu từng mốc.');
   L.push('- Số đo (stud) chỉ lấy từ danh sách này, không đoán từ ảnh.');
   if (m.phongCach || m.bangMau) L.push(`- Phong cách: ${m.phongCach || 'khối vuông'}${m.bangMau ? ` · bảng màu: ${dsMau(m.bangMau)}` : ''}`);
   if (m.heQuyChieu) L.push(`- Hệ quy chiếu: ${m.heQuyChieu}`);
