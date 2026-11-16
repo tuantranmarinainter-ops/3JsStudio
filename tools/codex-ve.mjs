@@ -227,6 +227,18 @@ export function timTrung(files, thuMuc = '.') {
   return [...m.values()].filter((g) => g.length > 1);
 }
 
+/** Hình ra giống hệt (md5) một ảnh kèm của cụm — Codex chép nguyên khối xám thay vì vẽ (ep005t trạm 8). Trả [{file, anh}]. */
+export function timChepAnhKem(ke, thuMuc = '.') {
+  const md5 = (p) => crypto.createHash('md5').update(fs.readFileSync(p)).digest('hex');
+  const ra = [];
+  for (const c of ke) {
+    const kem = new Map();
+    for (const a of [...(c.anhKem || []), ...c.hinh.flatMap((h) => h.khoiXam || [])]) { const p = path.join(thuMuc, a); if (fs.existsSync(p)) kem.set(md5(p), a); }
+    for (const h of c.hinh) { const p = path.join(thuMuc, h.file); if (fs.existsSync(p) && kem.has(md5(p))) ra.push({ file: h.file, anh: kem.get(md5(p)) }); }
+  }
+  return ra;
+}
+
 export function lenhCho(cum, { thuMuc, model, muc, codexBin, anh }) {
   const parts = [codexBin, 'exec', '-C', q(thuMuc), '-s', 'workspace-write', '--skip-git-repo-check', '-m', model,
     '-c', q(`model_reasoning_effort="${muc}"`)];
@@ -376,6 +388,12 @@ export async function chay(argv, env = process.env) {
   for (const g of trung) for (const f of g) if (!thieuTat.includes(f)) thieuTat.push(f);
   if (trung.length) { console.log(`
 Ảnh TRÙNG nội dung (${trung.length} nhóm) — xem rồi xoá file sai và chạy lại:`); for (const g of trung) console.log('  = ' + g.join('  ≡  ')); }
+  // hình là bản chép nguyên ảnh kèm (khối xám) → xoá để lần sau vẽ lại, tính là thiếu
+  const chep = timChepAnhKem(ke, thuMuc);
+  if (chep.length) {
+    console.log(`\nẢnh CHÉP NGUYÊN ảnh kèm (${chep.length}) — Codex không vẽ, đã xoá để chạy lại:`);
+    for (const x of chep) { console.log(`  x ${x.file}  ≡  ${x.anh}`); fs.rmSync(path.join(thuMuc, x.file), { force: true }); if (!thieuTat.includes(x.file)) thieuTat.push(x.file); }
+  }
   fs.writeFileSync(path.join(dirCodex, `ket-qua-${cheDo}.json`), JSON.stringify({ cheDo, thuMuc, model: t.model, muc: t.muc, tran: t.tran, cum: bang, thieu: thieuTat }, null, 2), 'utf8');
   if (thieuTat.length) {
     console.log(`\nCòn thiếu ${thieuTat.length} hình:`);

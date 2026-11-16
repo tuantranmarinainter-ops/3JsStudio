@@ -275,3 +275,11 @@ test('timTrung: nhóm file trùng md5 (ảnh Codex chép nhầm giữa cụm)', 
   fs.writeFileSync(path.join(d, 'a.png'), 'X'); fs.writeFileSync(path.join(d, 'b.png'), 'X'); fs.writeFileSync(path.join(d, 'c.png'), 'Y');
   assert.deepEqual(timTrung(['a.png', 'b.png', 'c.png', 'thieu.png'], d), [['a.png', 'b.png']]);
 });
+
+test('timChepAnhKem: hình giống hệt ảnh kèm (khối xám) bị bắt', async () => {
+  const { timChepAnhKem } = await import('../codex-ve.mjs');
+  const d = fs.mkdtempSync(path.join(os.tmpdir(), 'chep-'));
+  fs.writeFileSync(path.join(d, 'xam.png'), 'XAM'); fs.writeFileSync(path.join(d, 'a.png'), 'XAM'); fs.writeFileSync(path.join(d, 'b.png'), 'MAU');
+  const ke = [{ cum: 'tc1', anhKem: [], hinh: [{ file: 'a.png', khoiXam: ['xam.png'] }, { file: 'b.png', khoiXam: ['xam.png'] }, { file: 'thieu.png' }] }];
+  assert.deepEqual(timChepAnhKem(ke, d), [{ file: 'a.png', anh: 'xam.png' }]);
+});
