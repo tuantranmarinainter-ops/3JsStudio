@@ -1,0 +1,7 @@
+// Bối cảnh 'ep5t-ham' (tập test ep005t) — SINH TỰ ĐỘNG bởi tools/ep5t-boi-canh.mjs từ kich-ban/ep005t/boi-canh/ham.json; đừng sửa tay (sửa bảng NHA trong tool).
+// Dựng khối theo danh sách mốc + model nhóm NHÀ đã chốt (?rb=0 → bản khối). Logic: engine/envs/ep5t-chung.js.
+import build, { LIGHT as L } from './ep5t-chung.js';
+export const LIGHT = L;
+export const ASSETS = [];
+export const DATA = {"id":"ham","kichThuoc":{"rong":14,"sau":12,"cao":9},"trongCum":{"cum":"pho-ep005t","goc":[3,-9,-59],"xoay":0},"moc":[{"id":"tuong","ten":"Tường đá ẩm (bắc)","vung":"x -7..7, y 0..9, z -6.2..-6","mau":["#5d6066"]},{"id":"san","ten":"Sàn đất đá","vung":"x -7..7, y -0.2..0, z -6..6","mau":["#3a3d42"]},{"id":"khe-trong","ten":"Khe song sắt (lỗ trên trần)","vung":"x -2..0.6, y 8.8..9, z -2.1..-1.9","mau":["#2d3036","#8fb4ff"]},{"id":"ong","ten":"Ống sắt từ tháp xuống","vung":"x 1..1.6, y 0..9, z -4..-3.4","mau":["#2d3036"]},{"id":"cho-ngoi","ten":"Góc ba người mất tích","vung":"x -3..1.5, y 0..0.4, z -5.5..-1","mau":["#5a4a3a"]},{"id":"ban","ten":"Bàn đá + ly dính máu","vung":"x 3..6, y 0..3.1, z -1..1","mau":["#5d6066","#c3262e"]},{"id":"den-dau","ten":"Đèn dầu đỏ","vung":"x 6.4..6.9, y 4..5, z -5.8..-5.4","mau":["#ff4a2a"]},{"id":"thang","ten":"Thang gỗ + miệng hầm","vung":"x -7..-4, y 0..9, z -1..2","mau":["#8a6a44"]}],"MODELS":{}};
+export default function (g, e, H) { return build(g, e, H, DATA); }

@@ -1,0 +1,7 @@
+// Bối cảnh 'ep5t-hang-rao' (tập test ep005t) — SINH TỰ ĐỘNG bởi tools/ep5t-boi-canh.mjs từ kich-ban/ep005t/boi-canh/hang-rao.json; đừng sửa tay (sửa bảng NHA trong tool).
+// Dựng khối theo danh sách mốc + model nhóm NHÀ đã chốt (?rb=0 → bản khối). Logic: engine/envs/ep5t-chung.js.
+import build, { LIGHT as L } from './ep5t-chung.js';
+export const LIGHT = L;
+export const ASSETS = ["nhap/ep5t-nha-lung-ga"];
+export const DATA = {"id":"hang-rao","kichThuoc":{"rong":30,"sau":20,"cao":14},"trongCum":{"cum":"pho-ep005t","goc":[-9,0,-31],"xoay":0},"moc":[{"id":"rao","ten":"Hàng rào gỗ thấp","vung":"x -7..7, y 0..3.2, z -0.2..0.2","mau":["#8a6a44"]},{"id":"cong","ten":"Cổng gỗ có then","vung":"x -10..-7, y 0..3.6, z -0.2..0.2","mau":["#4a3524"]},{"id":"then","ten":"Then cổng","vung":"x -8.6..-7.2, y 1.8..2.2, z 0.2..0.5","mau":["#4a3524"]},{"id":"san-sau","ten":"Sân sau cỏ","vung":"x -15..15, y -0.2..0, z 0..5.6","mau":["#5c8a3c"]},{"id":"tuong-sau-nha","ten":"Lưng nhà Gà","vung":"x -7..7, y 0..13, z 5.6..6","mau":["#f2dfa7","#8c3b2a"]},{"id":"loi-mon","ten":"Lối mòn ra bìa rừng","vung":"x -15..-7, y -0.2..0, z -3..0","mau":["#9b8b74"]},{"id":"tuong-qt","ten":"Lưng dãy nhà bờ nam quảng trường","vung":"x -9..7, y 0..10, z -3..-2.8","mau":["#9cb6c9","#2b2b33"]},{"id":"bia-rung","ten":"Bìa rừng thông (phía tây)","vung":"x -15..-11, y 0..14, z -10..6","mau":["#2f4a2a"]}],"MODELS":{"tuong-sau-nha":{"id":"nhap/ep5t-nha-lung-ga","ry":3.141592653589793}}};
+export default function (g, e, H) { return build(g, e, H, DATA); }

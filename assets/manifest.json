@@ -15658,5 +15658,226 @@
   "w": 256,
   "h": 256,
   "trongSuot": 0.67
+ },
+ {
+  "id": "nhap/ep5t-nha-lung-ga",
+  "src": "assets/nhap/ep5t-nha-lung-ga.glb",
+  "source": "create.roblox.com/store/asset/14913154056",
+  "license": "Roblox Creator Store",
+  "credit": "“CLASSIC HOUSE ” by BuildintoGames12395 (https://create.roblox.com/store/asset/14913154056), Roblox Creator Store",
+  "title": "CLASSIC HOUSE ",
+  "author": "BuildintoGames12395",
+  "scale": 1,
+  "bbox": [
+   64,
+   61.6,
+   68
+  ],
+  "nodes": [
+   "ep5t-nha-lung-ga"
+  ],
+  "loai": "lon",
+  "tris": 10306,
+  "tris_goc": 10306,
+  "duyetNang": "người dùng đã duyệt trang thư viện 16/11 (ep005t)"
+ },
+ {
+  "id": "polyfork/water-tower-7eb7ec",
+  "src": "assets/polyfork/water-tower-7eb7ec.glb",
+  "source": "polyfork.dev/asset/water-tower-7eb7ec",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Water Tower by Polyfork (https://polyfork.dev/asset/water-tower-7eb7ec), CC BY 4.0",
+  "title": "Water Tower",
+  "size_m": {
+   "x": 8,
+   "y": 20,
+   "z": 8
+  },
+  "scale": 1
+ },
+ {
+  "id": "polyfork/two-story-house-40f6dc",
+  "src": "assets/polyfork/two-story-house-40f6dc.glb",
+  "source": "polyfork.dev/asset/two-story-house-40f6dc",
+  "license": "CC BY 4.0 (mesh)",
+  "credit": "Two-Story House by Polyfork (https://polyfork.dev/asset/two-story-house-40f6dc), CC BY 4.0",
+  "title": "Two-Story House",
+  "size_m": {
+   "x": 5.7,
+   "y": 8.37,
+   "z": 7.66
+  },
+  "scale": 1
+ },
+ {
+  "id": "nhap/ep5t-nha-day-pho",
+  "src": "assets/nhap/ep5t-nha-day-pho.glb",
+  "source": "create.roblox.com/store/asset/455202696",
+  "license": "Roblox Creator Store",
+  "credit": "“Town houses” by Mandenln (https://create.roblox.com/store/asset/455202696), Roblox Creator Store",
+  "title": "Town houses",
+  "author": "Mandenln",
+  "scale": 1,
+  "bbox": [
+   32.8,
+   63,
+   476.2
+  ],
+  "nodes": [
+   "ep5t-nha-day-pho"
+  ],
+  "loai": "lon",
+  "tris": 46076,
+  "tris_goc": 46076,
+  "duyetNang": "người dùng đã duyệt trang thư viện 16/11 (ep005t)"
+ },
+ {
+  "id": "nhap/ep5t-tiem-banh-mat-tien",
+  "src": "assets/nhap/ep5t-tiem-banh-mat-tien.glb",
+  "source": "create.roblox.com/store/asset/16438349425",
+  "license": "Roblox Creator Store",
+  "credit": "“Bakery” by Myzicx (https://create.roblox.com/store/asset/16438349425), Roblox Creator Store",
+  "title": "Bakery",
+  "author": "Myzicx",
+  "scale": 1,
+  "bbox": [
+   37.353,
+   45.993,
+   32.09
+  ],
+  "nodes": [
+   "ep5t-tiem-banh-mat-tien"
+  ],
+  "loai": "lon",
+  "tris": 5778,
+  "tris_goc": 5778
+ },
+ {
+  "id": "nhap/ep5t-mai-hien",
+  "src": "assets/nhap/ep5t-mai-hien.glb",
+  "source": "create.roblox.com/store/asset/11410822924",
+  "license": "Roblox Creator Store",
+  "credit": "“Red And White Awning” by NoobBusterz (https://create.roblox.com/store/asset/11410822924), Roblox Creator Store",
+  "title": "Red And White Awning",
+  "author": "NoobBusterz",
+  "scale": 1,
+  "bbox": [
+   13.989,
+   4.347,
+   7.417
+  ],
+  "nodes": [
+   "ep5t-mai-hien"
+  ],
+  "loai": "lon",
+  "tris": 7496,
+  "tris_goc": 7496,
+  "duyetNang": "người dùng đã duyệt trang thư viện 16/11 (ep005t)"
+ },
+ {
+  "id": "nhap/ep5t-nha-go-vach",
+  "src": "assets/nhap/ep5t-nha-go-vach.glb",
+  "source": "create.roblox.com/store/asset/4644534347",
+  "license": "Roblox Creator Store",
+  "credit": "“Wooden Cabin” by Vasilakious (https://create.roblox.com/store/asset/4644534347), Roblox Creator Store",
+  "title": "Wooden Cabin",
+  "author": "Vasilakious",
+  "scale": 1,
+  "bbox": [
+   41.49,
+   26.958,
+   38.858
+  ],
+  "nodes": [
+   "ep5t-nha-go-vach"
+  ],
+  "loai": "lon",
+  "tris": 17662,
+  "tris_goc": 17662,
+  "duyetNang": "người dùng đã duyệt trang thư viện 16/11 (ep005t)"
+ },
+ {
+  "id": "nhap/ep5t-cua-go-doi",
+  "src": "assets/nhap/ep5t-cua-go-doi.glb",
+  "source": "create.roblox.com/store/asset/12779627168",
+  "license": "Roblox Creator Store",
+  "credit": "“wooden double door” by mebanaanyes (https://create.roblox.com/store/asset/12779627168), Roblox Creator Store",
+  "title": "wooden double door",
+  "author": "mebanaanyes",
+  "scale": 1,
+  "bbox": [
+   10.4,
+   8,
+   0.925
+  ],
+  "nodes": [
+   "ep5t-cua-go-doi"
+  ],
+  "loai": "vua",
+  "tris": 736,
+  "tris_goc": 736
+ },
+ {
+  "id": "nhap/ep5t-cua-so-go",
+  "src": "assets/nhap/ep5t-cua-so-go.glb",
+  "source": "create.roblox.com/store/asset/118443747",
+  "license": "Roblox Creator Store",
+  "credit": "“Wooden Windows” by icedIatte (https://create.roblox.com/store/asset/118443747), Roblox Creator Store",
+  "title": "Wooden Windows",
+  "author": "icedIatte",
+  "scale": 1,
+  "bbox": [
+   1,
+   9.4,
+   6
+  ],
+  "nodes": [
+   "ep5t-cua-so-go"
+  ],
+  "loai": "vua",
+  "tris": 234,
+  "tris_goc": 234
+ },
+ {
+  "id": "nhap/ep5t-nha-tim-than",
+  "src": "assets/nhap/ep5t-nha-tim-than.glb",
+  "source": "poly.pizza/m/BH2XHWUNmF",
+  "license": "CC0",
+  "credit": "“Fantasy House” by Quaternius (https://poly.pizza/m/BH2XHWUNmF), CC0",
+  "title": "Fantasy House",
+  "author": "Quaternius",
+  "scale": 1,
+  "bbox": [
+   8.222,
+   13,
+   10.196
+  ],
+  "nodes": [
+   "ep5t-nha-tim-than"
+  ],
+  "loai": "lon",
+  "tris": 5758,
+  "tris_goc": 5758
+ },
+ {
+  "id": "nhap/ep5t-san-go",
+  "src": "assets/nhap/ep5t-san-go.glb",
+  "source": "poly.pizza/m/ianC28eMOF",
+  "license": "CC0",
+  "credit": "“Bed Single” by Quaternius (https://poly.pizza/m/ianC28eMOF), CC0",
+  "title": "Bed Single",
+  "author": "Quaternius",
+  "scale": 1,
+  "bbox": [
+   1.979,
+   1.355,
+   3.94
+  ],
+  "nodes": [
+   "ep5t-san-go"
+  ],
+  "loai": "vua",
+  "tris": 536,
+  "tris_goc": 536
  }
 ]

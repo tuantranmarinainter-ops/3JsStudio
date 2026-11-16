@@ -15,3 +15,5 @@
 - Rock Outcrop by Polyfork (https://polyfork.dev/asset/rock-outcrop-158ac3), CC BY 4.0
 - Dwarf Pine Mat by Polyfork (https://polyfork.dev/asset/dwarf-pine-mat-faee77), CC BY 4.0
 - Bare Mountain Rowan by Polyfork (https://polyfork.dev/asset/bare-mountain-rowan-10e72e), CC BY 4.0
+- Water Tower by Polyfork (https://polyfork.dev/asset/water-tower-7eb7ec), CC BY 4.0
+- Two-Story House by Polyfork (https://polyfork.dev/asset/two-story-house-40f6dc), CC BY 4.0
