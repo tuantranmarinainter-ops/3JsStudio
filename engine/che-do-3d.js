@@ -71,7 +71,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
   let on = false, built = null, origDraw = null, curT = 0, wrap = null, home = null, canvasStyle = '', sizeObs = null;
   let shotCam = { pos: new THREE.Vector3(), quat: new THREE.Quaternion(), fov: 50, target: new THREE.Vector3(), id: null };
   const paths = new Map();   // id shot → mảng Vector3 vị trí camera (lấy mẫu)
-  let sampling = false, giuGoc = true, bam = false, envChon = '', show = { nv: true, dc: true, dd: true, cam: true, luoi: true };
+  let sampling = false, giuGoc = true, bam = false, envChon = '', show = { nv: true, dc: true, dd: true, cam: true, luoi: false };   // lưới mặc định TẮT (người dùng 16/11)
   const listeners = new Set();
   // SONG SONG (Phim trái | 3D phải): renderer giữ nguyên cỡ phim W0×H0 (không dịch shader lại, không đổi cỡ bộ đệm mỗi khung).
   // Mỗi khung: vẽ Phim như thường (có hậu kỳ) → chép sang filmCv (canvas 2D đè đúng lên canvas WebGL, dưới phụ đề DOM);
@@ -109,7 +109,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
       + `<select data-o="vb" title="Vòng cây / đồi / núi bao kín chân trời (engine/vong-bao.js)"></select>`
       + `<select data-o="nen" title="Nền đất / cỏ / cát / đá lát vân lặp"></select>`
       + `<button data-k="ghi" title="Hiện dòng cần dán vào episode.js (và env) cho lựa chọn Trời / Vòng bao / Nền đang chọn">📋 Ghi vào tập</button>`
-      + `<label title="Lưới sàn y = 0 (bị nhà/đất che đúng chỗ)"><input type="checkbox" data-o="luoi" checked> Lưới</label><label><input type="checkbox" data-o="cam" checked> Camera</label><label><input type="checkbox" data-o="nv" checked> Nhân vật</label>`
+      + `<label title="Lưới sàn y = 0 (bị nhà/đất che đúng chỗ)"><input type="checkbox" data-o="luoi"> Lưới</label><label><input type="checkbox" data-o="cam" checked> Camera</label><label><input type="checkbox" data-o="nv" checked> Nhân vật</label>`
       + `<label><input type="checkbox" data-o="dc" checked> Đạo cụ</label><label><input type="checkbox" data-o="dd" checked> Địa điểm</label>`;
     const help = document.createElement('div'); help.className = 'c3d-help';
     help.innerHTML = '<b>Giữ chuột phải</b> nhìn · <b>W A S D</b> đi · <b>Q/E</b> xuống/lên · <b>Shift</b> nhanh · lăn khi giữ chuột phải = tốc độ · chuột trái xoay · chuột giữa kéo';

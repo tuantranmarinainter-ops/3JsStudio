@@ -1,7 +1,7 @@
 // Kiểm chế độ 🐞 Debug của trình phát (tools/export-ui.js + mốc trong tools/studio-loader.js, engine/prewarm.js), trong studio:
 //   node tools/kiem-debug.mjs [ep003] [--in]      (--in: in khối chữ mà nút 📋 Chép sẽ chép)
 // Đạt khi: có mốc mở tập (đọc gói, nạp engine, dựng sân khấu, vẽ khung đầu, module tập, trình phát) · bật Debug → có bảng + đo khung Phim và
-// Song song · khung Phim khi bật Debug GIỐNG khi tắt · tắt Debug → renderAt trả về hàm gốc, bảng ẩn · không lỗi trang.
+// Song song · khung Phim khi bật Debug GIỐNG khi tắt · tắt Debug → renderAt trả về hàm gốc, bảng ẩn · kéo thanh tiêu đề dời được bảng · không lỗi trang.
 import { launchBrowser } from './browser.mjs';
 import { pathToFileURL } from 'url';
 import { resolve, dirname } from 'path';
@@ -35,6 +35,12 @@ const r = await p.evaluate(async () => {
   out.traVeGoc = window.renderAt === goc; out.bangAn = getComputedStyle(document.getElementById('xdbg')).display === 'none';
   return out;
 });
+// kéo thanh tiêu đề → bảng dời theo chuột
+await p.evaluate(() => window.__debug.set(true)); await p.waitForTimeout(200);
+const r0 = await p.evaluate(() => { const x = document.querySelector('#xdbg [data-d=keo]').getBoundingClientRect(); return { x: x.left + 30, y: x.top + 8, top: document.getElementById('xdbg').getBoundingClientRect().top }; });
+await p.mouse.move(r0.x, r0.y); await p.mouse.down(); await p.mouse.move(r0.x - 300, r0.y - 200, { steps: 6 }); await p.mouse.up();
+r.keo = (await p.evaluate(() => document.getElementById('xdbg').getBoundingClientRect().top)) - r0.top;
+await p.evaluate(() => window.__debug.set(false));
 await b.close();
 if (args.includes('--in')) console.log(r.text + '\n');
 const kq = [];
@@ -46,5 +52,6 @@ ok('đo khung Phim + Song song có trong khối chép', /\n  Phim .* khung/.test
 ok('khối chép có SHADER/CẢNH + máy', /SHADER\/CẢNH: \d+ program/.test(r.text) && /máy: /.test(r.text));
 ok(`khung Phim khi bật Debug = khi tắt (lệch ${r.phimLech.toFixed(2)})`, r.phimLech < 0.01);
 ok('tắt Debug → renderAt về hàm gốc, bảng ẩn', r.traVeGoc && r.bangAn);
+ok(`kéo thanh tiêu đề dời được bảng (lên ${Math.round(-r.keo)} px)`, r.keo < -150);
 ok('không có lỗi trang', !errs.length);
 console.log(kq.join('\n')); if (errs.length) console.log('lỗi trang:\n  ' + errs.slice(0, 5).join('\n  '));

@@ -903,7 +903,17 @@ async function init() {
     if (!el) {
       el = document.createElement('div'); el.id = 'xdbg';
       el.style.cssText = 'position:fixed;right:10px;bottom:10px;z-index:2147483000;width:min(560px,calc(100vw - 20px));max-height:55vh;display:flex;flex-direction:column;background:rgba(10,12,18,.94);color:#cfd6e6;border:1px solid #3a4152;border-radius:8px;font:11px/1.45 ui-monospace,Consolas,monospace;box-shadow:0 6px 24px rgba(0,0,0,.5)';
-      el.innerHTML = '<div style="display:flex;gap:6px;align-items:center;padding:6px 8px;border-bottom:1px solid #3a4152"><b style="flex:1">🐞 Debug</b><button data-d="chep">📋 Chép</button><button data-d="xoa" title="Xoá số đo khung (giữ mốc mở tập)">Xoá đo khung</button><button data-d="dong" title="Tắt Debug">✕</button></div><pre style="margin:0;padding:8px;overflow:auto;white-space:pre-wrap"></pre>';
+      el.innerHTML = '<div style="display:flex;gap:6px;align-items:center;padding:6px 8px;border-bottom:1px solid #3a4152"><b data-d="keo" style="flex:1;cursor:move;user-select:none" title="Kéo để di chuyển bảng">⠿ 🐞 Debug</b><button data-d="chep">📋 Chép</button><button data-d="xoa" title="Xoá số đo khung (giữ mốc mở tập)">Xoá đo khung</button><button data-d="dong" title="Tắt Debug">✕</button></div><pre style="margin:0;padding:8px;overflow:auto;white-space:pre-wrap"></pre>';
+      // kéo thanh tiêu đề để dời bảng (nhớ vị trí trong cài đặt U.dbgPos); giữ trong màn hình
+      const dat = (x, y) => { const r = el.getBoundingClientRect(); x = Math.max(0, Math.min(innerWidth - r.width, x)); y = Math.max(0, Math.min(innerHeight - 30, y)); el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto'; return [x, y]; };
+      el.querySelector('[data-d=keo]').addEventListener('pointerdown', (e) => {
+        e.preventDefault(); const r = el.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top, tg = e.currentTarget;
+        tg.setPointerCapture(e.pointerId);
+        const mv = (ev) => { U.dbgPos = dat(ev.clientX - dx, ev.clientY - dy); };
+        const up = () => { tg.removeEventListener('pointermove', mv); tg.removeEventListener('pointerup', up); uiSave(); };
+        tg.addEventListener('pointermove', mv); tg.addEventListener('pointerup', up);
+      });
+      if (Array.isArray(U.dbgPos)) requestAnimationFrame(() => dat(U.dbgPos[0], U.dbgPos[1]));
       el.addEventListener('click', async (e) => {
         const b = e.target.closest('button'); if (!b) return; b.blur();
         if (b.dataset.d === 'dong') return dbgSet(false);
