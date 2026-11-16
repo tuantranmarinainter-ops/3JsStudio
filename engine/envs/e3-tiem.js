@@ -35,11 +35,20 @@ export default function build(g, e, H) {
   // khai loại vật liệu cho mesh (không nhân bản vật liệu); GLB Roblox/mặt sáng/ảnh vẽ/kính → 'none'
   const khaiVan = (m, kind) => { m.userData.matKind = kind; m.userData.matNguon = 'khai-bao'; m.userData.grungeKind = 'none'; };
   const khongVan = (m) => khaiVan(m, 'none');
+  // góp ý 17/11 (nhóm B, s004): mảnh GLB còn màu phẳng → khai vân thư viện theo TÊN vật liệu [loại, màu mới, bỏ ảnh vân Roblox?]. Tắt: ?vanTiem=0
+  const VAN_TIEM_ON = !/[?&]vanTiem=0(&|$)/.test(globalThis.location?.search || '');
+  const VAN_TIEM = VAN_TIEM_ON && {
+    'tiem-banh-quay': { mau_1: ['wood', '#8a5a33'], mau_3: ['wood', '#8a5a33', true] },   // thân tủ quầy trắng #f8f8f8 + tấm ốp ảnh xám (mau_3, lộ ở vách hốc s005) → gỗ nâu (storyboard s004)
+    'tiem-banh-ke': { mau_1: ['wood', '#7a4e2c', true] },           // khung thép xanh xám (ảnh vân) → gỗ nâu; mau_0 = ảnh bánh, giữ
+  };
   const rb = (id, parent, name, { p, ry = 0, kich, cao }) => {
     if (!RB || !fit) return null; const o = fit('nhap/' + id, kich ? kich[1] : cao); if (!o) return null;
     if (kich) { _bx.setFromObject(o); _bx.getSize(_sz); o.scale.set(kich[0] / _sz.x, 1, kich[2] / _sz.z); }
     const g0 = new THREE.Group(); g0.name = name; g0.add(o); g0.position.set(...p); g0.rotation.y = ry;
-    o.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; khongVan(m); } }); parent.add(g0); return g0;
+    const vt = VAN_TIEM && VAN_TIEM[id];
+    o.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; khongVan(m);
+      if (vt) { for (const mt of [].concat(m.material)) { const k = vt[mt.name]; if (k && !mt.userData.matDecl) { mt.color.set(k[1]); if (k[2]) { mt.map = null; mt.needsUpdate = true; } mt.userData.matDecl = k[0]; mt.userData.matNguon = 'khai-bao'; } }
+        if ([].concat(m.material).some((mt) => mt.userData.matDecl)) { delete m.userData.matKind; m.userData.matNguon = 'khai-bao'; } } } }); parent.add(g0); return g0;
   };
   e.skybox = null; e.skyboxNight = null;
   e.diem = TIEM_DIEM;
@@ -155,7 +164,7 @@ export default function build(g, e, H) {
 
   // ================= TIỆM BÁNH (gốc x=0) =================
   { const ox = 0, boxes = [], loaves = [], arcs = [], longs = [];
-    const P = { name: 'banh', ox, wallMat: std('#ffffff', { map: bakeryWall, roughness: 0.9 }), floorTex: floorTex('#9a6c3e', [168, 122, 74]), ceil: '#f4e4c4', winC: WOOD, frameC: '#6e4423', doorC: '#8A5A33', doorGlass: true, doorGlb: 'tiem-banh-cua',
+    const P = { name: 'banh', ox, wallMat: std(VAN_TIEM_ON ? '#f7e4c6' : '#ffffff', { map: bakeryWall, roughness: 0.9 }) /* 17/11: vữa be ấm như storyboard s004 (?vanTiem=0 về cũ) */, floorTex: floorTex('#9a6c3e', [168, 122, 74]), ceil: '#f4e4c4', winC: WOOD, frameC: '#6e4423', doorC: '#8A5A33', doorGlass: true, doorGlb: 'tiem-banh-cua',
       holes: { east: [{ c: -6, hw: 3.6, y0: 3.4, y1: 9.4, cols: 2, rows: 4 }], south: [{ c: 8, hw: 2.2, y0: 0, y1: 7.6, door: true }, { c: -5, hw: 4.5, y0: 3.2, y1: 9, cols: 4, rows: 3 }] },
       patches: [[11.5, -6, 6, 8]],
       extra: { north: (gw) => {   // biển ổ bánh (x −1, y 8.8) + khung
@@ -173,12 +182,34 @@ export default function build(g, e, H) {
       [-12.4, -7.4].forEach((bx, k) => { basket(boxes, ox + bx, y, -12.1, 3.0, 1.5); for (let j = 0; j < 3; j++) breadAt(loaves, ox + bx - 0.9 + j * 0.9, y + 1.15, -12.1, lv * 9 + k * 3 + j, 0.9); });
       for (let j = 0; j < 3; j++) breadAt(loaves, ox - 10.4 + j * 1.0, y + 0.22, -12.0, lv * 11 + j + 40); }); }
     // quầy: mặt gỗ cao 3,15; HỐC dưới quầy x 3..6.6 xuyên suốt (hoc_ket_banh). Thân quầy = 4 tủ kính GLB Roblox (chừa hốc), mặt gỗ liền phía trên
-    bb(boxes, 18, 0.4, 3.6, ox + 0.75, 2.75, -5.5, '#9a6a3a');
+    if (VAN_TIEM_ON) { const mq = new THREE.Mesh(BOX, std('#9a6a3a', { roughness: 0.75 })); mq.scale.set(18, 0.4, 3.6); mq.position.set(ox + 0.75, 2.95, -5.5); mq.name = 'tiem_quay_mat_go'; mq.castShadow = mq.receiveShadow = true; mid.add(mq); }   // 17/11: mặt quầy = mesh thường để lớp vật liệu vẽ vân gỗ (InstancedMesh bị bỏ qua → cam phẳng)
+    else bb(boxes, 18, 0.4, 3.6, ox + 0.75, 2.75, -5.5, '#9a6a3a');
+    // vách sau hốc két (s005: nhìn thẳng vào thấy hốc gỗ kín, không nhìn xuyên ra sau quầy). Tắt: ?hocSau=0
+    if (!/[?&]hocSau=0(&|$)/.test(globalThis.location?.search || '')) { const hs = new THREE.Mesh(BOX, std('#7a4e2c', { roughness: 0.8 })); hs.scale.set(3.7, 2.75, 0.12); hs.position.set(ox + 4.8, 1.375, -6.9); hs.name = 'tiem_quay_hoc_sau'; hs.receiveShadow = true; mid.add(hs); }
     const quay = [[-6.25, 4], [-2.25, 4], [1.375, 3.25], [8.175, 3.15]].map(([x, w], i) => rb('tiem-banh-quay', mid, 'tiem_banh_quay_' + i, { p: [ox + x, 0, -5.5], kich: [w, 2.75, 2.9] }));
     if (!quay[0]) { bb(boxes, 11, 2.75, 2.9, ox - 2.5, 0, -5.5, WOOD); bb(boxes, 2.9, 2.75, 2.9, ox + 8.05, 0, -5.5, WOOD); }
     // lớp bột mỏng trong hốc + ô vuông SẠCH ở giữa (chỗ két vừa mất, s005): 4 dải bột quanh ô 1,6 × 1,6, thêm vệt bột tràn ra trước hốc
-    for (const [w, d, x, z] of [[1.0, 2.9, 3.5, -5.5], [1.0, 2.9, 6.1, -5.5], [1.6, 0.65, 4.8, -4.375], [1.6, 0.65, 4.8, -6.625], [2.6, 0.7, 4.8, -3.7]]) bb(boxes, w, 0.03, d, ox + x, 0.005, z, '#efe7d8');
-    bb(boxes, 1.6, 0.012, 1.6, ox + 4.8, 0.004, -5.5, '#5a3a22');
+    // 17/11 (s005 "thiếu thứ miêu tả bị mất"): bột = 1 tấm ảnh vẽ có hạt + vệt loang ra trước hốc; ô sạch KHOÉT TRỐNG (lộ ván sàn) có gờ bột dồn
+    // quanh mép + 2 vệt kéo ra phía trước (két bị lôi ra). Bản khối cũ (dải phẳng + ô nâu sẫm): ?botCu=1
+    if (/[?&]botCu=1(&|$)/.test(globalThis.location?.search || '')) {
+      for (const [w, d, x, z] of [[1.0, 2.9, 3.5, -5.5], [1.0, 2.9, 6.1, -5.5], [1.6, 0.65, 4.8, -4.375], [1.6, 0.65, 4.8, -6.625], [2.6, 0.7, 4.8, -3.7]]) bb(boxes, w, 0.03, d, ox + x, 0.005, z, '#efe7d8');
+      bb(boxes, 1.6, 0.012, 1.6, ox + 4.8, 0.004, -5.5, '#5a3a22');
+    } else {
+      const bt = canvasTex(512, 512, (c, w, h) => {   // vùng x 3,0..6,6 · z −6,85 (đỉnh ảnh) .. −3,3 (đáy ảnh); mặt trước quầy z −4,05 ≈ 79% chiều cao
+        let s = 7; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+        c.clearRect(0, 0, w, h); c.fillStyle = '#efe8da'; c.fillRect(0, 0, w, h * 0.79);
+        for (let i = 0; i < 70; i++) { c.beginPath(); c.ellipse(w * (0.12 + 0.76 * rnd()), h * (0.76 + 0.17 * rnd()), 10 + 34 * rnd(), 6 + 16 * rnd(), 0, 0, 7); c.fill(); }
+        c.globalCompositeOperation = 'source-atop';
+        for (let i = 0; i < 3000; i++) { c.fillStyle = rnd() < 0.5 ? 'rgba(170,150,120,0.35)' : 'rgba(255,255,250,0.7)'; const r = 1 + 3 * rnd(); c.fillRect(w * rnd(), h * rnd(), r, r); }
+        for (let i = 0; i < 14; i++) { c.fillStyle = 'rgba(200,185,160,0.18)'; c.beginPath(); c.ellipse(w * rnd(), h * 0.8 * rnd(), 20 + 50 * rnd(), 12 + 30 * rnd(), rnd() * 3, 0, 7); c.fill(); }
+        const x0 = 256 - 114, y0 = 194 - 115, sw = 228, sh = 231;
+        c.globalCompositeOperation = 'destination-out'; c.fillStyle = '#000'; c.fillRect(x0, y0, sw, sh);
+        c.strokeStyle = 'rgba(0,0,0,0.55)'; c.lineCap = 'round'; c.lineWidth = 20; for (const dx of [40, sw - 40]) { c.beginPath(); c.moveTo(x0 + dx, y0 + sh); c.lineTo(x0 + dx + (dx < 100 ? -8 : 8), y0 + sh + 115); c.stroke(); }
+        c.globalCompositeOperation = 'source-over'; c.strokeStyle = 'rgba(255,253,246,0.95)'; c.lineWidth = 7; c.strokeRect(x0 - 3, y0 - 3, sw + 6, sh + 6);
+      });
+      const bm = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 3.55), new THREE.MeshStandardMaterial({ map: bt, emissiveMap: bt, emissive: '#5a554a', transparent: true, depthWrite: false, roughness: 1 }));
+      bm.rotation.x = -Math.PI / 2; bm.position.set(ox + 4.8, 0.03, -5.075); bm.name = 'tiem_hoc_bot'; bm.receiveShadow = true; mid.add(bm);
+    }
     if (!quay[0]) { bb(boxes, 11.2, 0.2, 0.15, ox - 2.5, 1.55, -4.0, '#6e4423'); bb(boxes, 11.2, 0.2, 0.15, ox - 2.5, 0.5, -4.0, '#6e4423'); bb(boxes, 2.9, 0.2, 0.15, ox + 8.05, 1.55, -4.0, '#6e4423'); }
     // trên quầy: giỏ + ổ bánh + sừng bò (GLB Roblox: giỏ đan đựng bánh)
     const gio = [[0.0, -4.6, 0.2], [2.9, -4.7, -0.5]].map(([x, z, ry], i) => rb('tiem-gio-banh', mid, 'tiem_gio_banh_' + i, { p: [ox + x, 3.15, z], ry, cao: 1.4 }));
@@ -233,16 +264,35 @@ export default function build(g, e, H) {
       const nk = new THREE.Mesh(CYL, wd); nk.scale.set(0.3, 0.6, 0.3); nk.position.y = 6.7; nk.name = 'ma_no_co'; mq.add(nk);
       const kn = new THREE.Mesh(SPH, wd); kn.scale.set(0.34, 0.34, 0.34); kn.position.y = 7.15; kn.name = 'ma_no_nut'; mq.add(kn);
       mq.traverse((o) => { if (o.isMesh) o.castShadow = true; }); }
+    // góp ý 17/11 (nhóm B, s006 "chi tiết áo ma-nơ-canh"): ma-nơ-canh vải lanh như storyboard — thân bọc vải kem, đường may chỉ nâu chạy dọc
+    // (giữa trước, 2 đường chiết, 2 sườn, giữa sau) + vòng eo, cổ gỗ có núm, chân 3 càng gỗ. Đứng sau-TRÁI cô thợ may (bên phải bị tóc và vai cô che) để lọt khung s006. Tắt: ?manoS006=0
+    if (!/[?&]manoS006=0(&|$)/.test(globalThis.location?.search || '')) {
+      const mq = new THREE.Group(); mq.name = 'tiem_ma_no_canh_vai'; mq.position.set(ox + 1.4, 0, -11.85); mq.rotation.y = 0.2; mid.add(mq);
+      const vai = std('#e9dcc2', { roughness: 0.95 }), go = std('#6e4423', { roughness: 0.7 }), chi = std('#6b4528', { roughness: 0.9 });
+      const PR = [[0, 3.5], [0.9, 3.55], [1.12, 3.85], [1.08, 4.3], [0.86, 4.85], [0.84, 5.0], [0.98, 5.45], [1.1, 5.8], [1.04, 6.1], [0.78, 6.35], [0.34, 6.52], [0.001, 6.56]];
+      const SX = 1.12, SZ = 0.74;
+      const than = new THREE.Mesh(new THREE.LatheGeometry(PR.map(([r, y]) => new THREE.Vector2(r, y)), 28), vai); than.scale.set(SX, 1, SZ); than.name = 'ma_no_than'; mq.add(than);
+      const rAt = (y) => { for (let i = 1; i < PR.length; i++) if (y <= PR[i][1]) { const [r0, y0] = PR[i - 1], [r1, y1] = PR[i]; return r0 + (r1 - r0) * (y - y0) / (y1 - y0); } return 0; };
+      for (const a of [0, 0.55, -0.55, Math.PI / 2, -Math.PI / 2, Math.PI]) {
+        const pts = []; for (let y = 3.6; y <= 6.31; y += 0.15) { const r = rAt(y) * 1.015; pts.push(new THREE.Vector3(Math.sin(a) * r * SX, y, Math.cos(a) * r * SZ)); }
+        const m = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 24, 0.03, 4), chi); m.name = 'ma_no_duong_may'; mq.add(m); }
+      const re = rAt(4.95) * 1.015, eo = new THREE.Mesh(new THREE.TorusGeometry(1, 0.03, 4, 40), chi); eo.rotation.x = Math.PI / 2; eo.scale.set(re * SX, re * SZ, 1); eo.position.y = 4.95; eo.name = 'ma_no_duong_may_eo'; mq.add(eo);
+      const part = (geo, mat, name, s, p, ry = 0) => { const m = new THREE.Mesh(geo, mat); m.scale.set(...s); m.position.set(...p); m.rotation.y = ry; m.name = name; mq.add(m); return m; };
+      part(CYL, go, 'ma_no_co', [0.3, 0.5, 0.3], [0, 6.7, 0]); part(SPH, go, 'ma_no_nut', [0.32, 0.3, 0.32], [0, 7.05, 0]);
+      part(CYL, go, 'ma_no_cot', [0.12, 3.1, 0.12], [0, 1.95, 0]); part(CYL, go, 'ma_no_de', [0.22, 0.5, 0.22], [0, 0.3, 0]);
+      for (let i = 0; i < 3; i++) { const a = i * 2.094 + 0.5; part(BOX, go, 'ma_no_de_cang', [0.18, 0.14, 1.0], [Math.sin(a) * 0.5, 0.07, Math.cos(a) * 0.5], a); }
+      mq.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+    }
     lamp(front, ox - 3, -3); lamp(front, ox + 5, -3);
   }
 
   // bảng tên mesh → loại vật liệu thật (mesh đã khai từ trước, vd GLB Roblox, giữ nguyên). InstancedMesh bị lớp vật liệu bỏ qua nên chỉ khai cho đủ.
   const BANG_VAN = [
-    [/^tiem_(canh_ngoai|kinh|vet_sang|bien_o_banh|cua_kinh|den_bong)/, 'none'],   // sáng / ảnh vẽ / kính
+    [/^tiem_(canh_ngoai|kinh|vet_sang|bien_o_banh|cua_kinh|den_bong|hoc_bot)/, 'none'],   // sáng / ảnh vẽ / kính
     [/^tiem_tuong/, 'plaster'], [/^tiem_tran/, 'plaster'], [/^tiem_san/, 'wood'],
     [/^tiem_(canh_cua|cua_o)/, 'wood'], [/^tiem_nam_cua/, 'metalpaint'],
     [/^ma_no_(de|cot|co|nut)/, 'wood'], [/^ma_no_(than|vai)/, 'fabric'],
-    [/^tiem_(khung|banh_khoi_go|may_khoi_go)/, 'wood'], [/^tiem_(may_cuon|day_den|den_treo)/, 'matte'],
+    [/^tiem_(khung|banh_khoi_go|may_khoi_go|quay_mat_go|quay_hoc_sau)/, 'wood'], [/^tiem_(may_cuon|day_den|den_treo)/, 'matte'],
     [/^tiem_banh_(o|sung_bo|dai)$/, 'matte'],
     [/./, 'matte'],   // luật vét
   ];

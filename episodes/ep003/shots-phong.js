@@ -38,7 +38,7 @@ export const SHOTS_PHONG = [
   // s004 · set:bakery · ngày · 4.22–5.26 s · mặt: banh=boi_roi
   { id: "s004", dur: 1.04, env: "e3-tiem", at: "e3-tiem_in", cam: C([3.2, 5.6, 0.0], [1.5, 4.5, -7.8], 34, [3.0, 5.4, -1.2]), props: PR(), cast: { banh: { at: [1.4, 0, -7.9], ry: 0, anim: "idle", face: "boi_roi", pose: { torso: { x: 0.12 }, head: { x: 0.3 }, leftArm: { x: -1.25 } } } }, line: 2 },
   // s005 · set:bakery · ngày · 5.26–6.30 s · mặt: banh=boi_roi
-  { id: "s005", dur: 1.039, env: "e3-tiem", at: "e3-tiem_in", cam: C([4.8, 1.0, 3.0], [4.6, 1.7, -5.5], 46, [4.8, 1.0, 2.0]), props: PR(), cast: { banh: { at: [1.4, 0, -7.9], ry: 0, anim: "idle", face: "boi_roi", pose: { torso: { x: 0.12 }, head: { x: 0.3 }, leftArm: { x: -1.25 } } } }, line: 2 },
+  { id: "s005", dur: 1.039, env: "e3-tiem", at: "e3-tiem_in", cam: C([4.8, 1.0, 3.0], [4.6, 1.7, -5.5], 46, [4.8, 1.0, 2.0]), props: PR(), cast: { banh: { at: [1.4, 0, -7.9], ry: 0, anim: "idle", face: "boi_roi", pose: { torso: { x: 0.12 }, head: { x: 0.3 } } } }, line: 2 },   // 17/11: bỏ leftArm −1,25 (máy hạ ngang hốc → tay giơ xuyên quầy, lộ như vật lơ lửng góc trên trái)
   // s006 · set:tailor · ngày · 6.30–7.29 s · mặt: may=boi_roi
   { id: "s006", dur: 0.988, env: "e3-tiem", at: "e3-tiem_in", cam: C([106.5, 4.6, -1.5], [102.8, 3.9, -8.5], 36, [105.6, 4.6, -2.0]), props: PR({ hop_nhan: { at: [104.5, 2.8, -7], ry: 0 } }), cast: { may: { at: [102.8, 0, -9.4], ry: 0, anim: "idle", face: "boi_roi", pose: { torso: { x: 0.15 }, leftArm: { x: -1.4, z: -0.3 } } } }, line: 3 },
   // s007 · set:tailor · ngày · 7.29–8.28 s · mặt: —

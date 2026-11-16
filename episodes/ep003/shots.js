@@ -22,5 +22,9 @@ const gopKit2 = (s) => {
   const T = k.them || {};   // trường engine thô của shot: envArg, props, lightOverride… (gộp nông; envArg / props gộp theo khoá)
   return { ...s, ...T, cam: k.cam, cast, props: { ...props, ...(T.props || {}) }, envArg: { ...(s.envArg || {}), ...(T.envArg || {}) } };
 };
+// ?camCu=1 → máy quay CŨ của các shot đã sửa máy theo góp ý (để so trước/sau). s005 17/11: hạ máy ngang hốc két (kit-pho.json S005).
+const CAM_CU_ON = typeof location !== 'undefined' && /[?&]camCu=1(&|$)/.test(location.search);
+const CAM_CU = { s005: { p: [4.8, 2.6, -1], l: [4.8, 0.1, -5.5], fov: 54, p2: [4.8, 1.85, -2.9], fov2: 48 } };
 export const SHOTS = [...SHOTS_PHONG, ...SHOTS_NHA_MAY, ...SHOTS_PHO].sort((a, b) => (a.id < b.id ? -1 : 1))
-  .map((s) => (KHUNG_ON && KHUNG[s.id] ? { ...s, cam: { ...(s.cam || {}), khung: KHUNG[s.id] } } : s)).map(gopKit2);
+  .map((s) => (KHUNG_ON && KHUNG[s.id] ? { ...s, cam: { ...(s.cam || {}), khung: KHUNG[s.id] } } : s)).map(gopKit2)
+  .map((s) => (CAM_CU_ON && CAM_CU[s.id] ? { ...s, cam: CAM_CU[s.id] } : s));

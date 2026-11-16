@@ -110,28 +110,28 @@
       "cam": {
         "p": [
           4.8,
-          2.6,
-          -1
+          1.9,
+          -0.6
         ],
         "l": [
           4.8,
-          0.1,
-          -5.5
+          0.4,
+          -5.6
         ],
-        "fov": 54
+        "fov": 62
       },
       "cam2": {
         "p": [
           4.8,
-          1.85,
-          -2.9
+          1.7,
+          -1.8
         ],
         "l": [
           4.8,
-          0.1,
-          -5.5
+          0.4,
+          -5.6
         ],
-        "fov": 48
+        "fov": 56
       },
       "dien_vien": [
         {
@@ -147,7 +147,7 @@
         }
       ],
       "trang_thai": "hong",
-      "ghi_chu": "Thieu lung hoc, vet bot va tay tren mep quay. | MVP20 14/11: sua theo ra loi"
+      "ghi_chu": "Thieu lung hoc, vet bot va tay tren mep quay. | MVP20 14/11: sua theo ra loi | 17/11 gop y: ha may ngang hoc ket (cu p[4.8,2.6,-1] l[4.8,0.1,-5.5] fov54 -> p2[4.8,1.85,-2.9] fov48)"
     },
     {
       "id": "S006",
