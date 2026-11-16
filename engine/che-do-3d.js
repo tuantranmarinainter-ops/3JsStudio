@@ -14,6 +14,7 @@
 // Vòng rAF CHỈ chạy khi đang giữ phím di chuyển — chỉ vẽ lại camera tự do, không chạy lại onFrame, không đụng thời gian phim.
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { ganSua } from './che-do-3d-sua.js';
+import { ganCam } from './che-do-3d-cam.js';
 import { SKIES } from './skies.js';
 import { VONG_BAO, NEN, vienState } from './vong-bao.js';
 
@@ -186,9 +187,16 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     try {
       B0.sua = ganSua({ THREE, stage, B: B0, redraw: () => redraw(), isOn: () => on,
         withView: (f) => { const ov = envOverride(); try { return f(); } finally { ov(); } },
-        shot: () => ({ id: shotCam.id, t: +curT.toFixed(3) }), viewCanvas: () => (ss ? ssCv : canvas), getProps });
+        shot: () => ({ id: shotCam.id, t: +curT.toFixed(3) }), viewCanvas: () => (ss ? ssCv : canvas), getProps,
+        camMode: (v) => B0.cam?.setBat(v), camKey: (e) => !!B0.cam?.phim(e) });
       B0.sua.onChange(() => { for (const f of listeners) f(on, ss); });
     } catch (e) { console.warn('[che-do-3d] sửa/ghim', e); }
+    // 🎥 sửa camera của shot (thử): điểm đầu / cuối, zoom, trượt, đoạn chạy — engine/che-do-3d-cam.js
+    try {
+      B0.cam = ganCam({ THREE, stage, B: B0, isOn: () => on, getTl, curT: () => curT, mauCam, stopBam: () => stopBam(),
+        rerender: () => { const p = stage.renderAt(curT); return p; }, chup: () => B0.sua?.chup?.() || '' });
+      B0.cam.onChange(() => { for (const f of listeners) f(on, ss); });
+    } catch (e) { console.warn('[che-do-3d] sửa camera', e); }
     return B0;
   }
 
@@ -241,6 +249,17 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     if (pts.length === 17) paths.set(id, pts);
     const p = stage.renderAt(curT); if (p && p.then) await p;   // trả cảnh về đúng t (3D: vẽ lại kèm đường đi; đã tắt: khung Phim)
     if (on && !paths.has(shotCam.id)) setTimeout(() => samplePath(shotCam.id), 0);   // shot đã đổi trong lúc lấy mẫu
+  }
+
+  // camera shot GỐC tại các mốc t (draw bỏ qua khi đang lấy mẫu → không dính camera đã sửa); xong trả cảnh về curT
+  async function mauCam(ts) {
+    while (sampling) await new Promise((r) => setTimeout(r, 30));
+    sampling = true; const out = [];
+    try {
+      for (const t of ts) { sampleT = t; const p = stage.renderAt(t); if (p && p.then) await p; out.push({ pos: stage.camera.position.toArray(), look: stage.target.toArray(), fov: stage.camera.fov }); }
+    } finally { sampling = false; sampleT = null; }
+    const p = stage.renderAt(curT); if (p && p.then) await p;
+    return out;
   }
 
   // ---------- nhãn DOM chiếu lên khung ----------
@@ -373,7 +392,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     console.log('[che3d] ghi vào tập:\n' + text);
   }
   function drawSS(t) {   // song song: Phim (hậu kỳ như thường) → filmCv, rồi phần 3D
-    if (!sampling) { built.sua?.apDung(); origDraw(t); filmCtx.drawImage(canvas, 0, 0); }
+    if (!sampling) { built.sua?.apDung(); built.cam?.apDung(t); origDraw(t); filmCtx.drawImage(canvas, 0, 0); }
     // nhẹ: lúc ĐANG PHÁT (t tiến đều, bước nhỏ) khung 3D chỉ vẽ cách 1 khung; tua/dừng/nhảy thì vẽ ngay.
     // Bỏ khung nào thì hẹn vẽ bù sau 120 ms nếu không có khung mới (dừng phát → 3D đúng t cuối).
     clearTimeout(boKhungHen);
@@ -386,7 +405,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
   function draw3d(t) {
     if (sampling) { if (t !== sampleT) curT = t; return; }
     curT = t;
-    built.sua?.apDung();
+    built.sua?.apDung(); built.cam?.apDung(t);   // 🎥 camera đã sửa (thử) đè camera shot trước khi đọc
     const changed = captureShot(t);
     if (bam) applyBam();
     else if (changed && !giuGoc && built.ready) flyToShot();   // 🔒 Giữ góc (mặc định bật): camera bay chỉ đổi khi người dùng tự bấm/kéo
@@ -521,7 +540,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     const p = stage.renderAt(curT = lastT());   // đọc camera shot ở t hiện tại
     const first = () => { if (!B.started) { B.started = true; goc('truoc'); } else { if (bam) applyBam(); else if (!giuGoc) flyToShot(); updateFrustum(); redraw(); } };
     if (p && p.then) p.then(first); else first();
-    fillEnvSelect(); syncVien(true); B.sua?.batLai();
+    fillEnvSelect(); syncVien(true); B.sua?.batLai(); B.cam?.batLai();
     for (const f of listeners) f(true, ss);
     return api;
   }
@@ -531,7 +550,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     on = false;
     try { sizeObs?.disconnect(); } catch (e) {}
     stage.draw = origDraw; origDraw = null;
-    B.sua?.traLai();
+    B.sua?.traLai(); B.cam?.traLai();
     if (ss) {
       ssCv.remove(); filmCv.remove(); ssCv = ssCtx = filmCv = filmCtx = null; ss = false;
       B.el.classList.remove('c3d-ss', 'c3d-col');
@@ -561,7 +580,8 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     get camera() { return built?.free; },
     get giuGoc() { return giuGoc; },
     get sua() { return built?.sua || null; },
-    ghiChu3d: () => built?.sua?.xuat() || null,
+    get cam() { return built?.cam || null; },
+    ghiChu3d: () => { const g = built?.sua?.xuat() || null, c = built?.cam?.xuat() || []; return g || c.length ? { ghim: [], vat: [], ...(g || {}), cam: c } : null; },
     get env() { return envChon; }, setEnv, envList,
     get bam() { return on && bam; },
     setBam: (v) => { if (v) goc('shot'); else stopBam(); },

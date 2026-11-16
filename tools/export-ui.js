@@ -637,6 +637,7 @@ async function init() {
       const cv = document.createElement('canvas'); cv.width = CW; cv.height = CH;
       const g = cv.getContext('2d'); g.drawImage(stage.renderer.domElement, 0, 0, CW, CH);
       try { drawCaption(g, document.getElementById('cap'), CW / W0); } catch {}
+      if (window.__lopPhu?.canvas) g.drawImage(window.__lopPhu.canvas, 0, 0, CW, CH);   // lớp phủ kiểu blocky (engine/blocky/lop-phu.js), tập không có thì bỏ qua
       if (strokes.length) g.drawImage(annCv, 0, 0, CW, CH);
       img = cv.toDataURL('image/png');
     } catch (e) { console.warn('không chụp được khung', e); }
@@ -671,11 +672,11 @@ async function init() {
   // ghiChu3d: ghim + vật đã sửa trong khung 3D (engine/che-do-3d-sua.js), thêm frame theo FPS của trình phát
   // (khai báo hàm — renderNotes() ở trên gọi n3d() trước dòng này)
   function ghi3d() {
-    const g = window.__che3d?.ghiChu3d?.(); if (!g || (!g.ghim.length && !g.vat.length)) return null;
+    const g = window.__che3d?.ghiChu3d?.(); if (!g || (!g.ghim.length && !g.vat.length && !g.cam?.length)) return null;
     const fr = (x) => (x.t == null ? x : { ...x, frame: Math.min(NF - 1, Math.floor(x.t * FPS + 1e-6)) });
-    return { ghim: g.ghim.map(fr), vat: g.vat.map(fr) };
+    return { ghim: g.ghim.map(fr), vat: g.vat.map(fr), cam: (g.cam || []).map(fr) };
   }
-  function n3d() { const g = ghi3d(); return g ? g.ghim.length + g.vat.length : 0; }
+  function n3d() { const g = ghi3d(); return g ? g.ghim.length + g.vat.length + g.cam.length : 0; }
   const feedbackData = () => ({ app: 'gop-y', version: 2, episode: epId, title, fps: FPS, duration: DUR, created: new Date().toISOString(), notes, ghiChu3d: ghi3d() });
   const stFile = (s) => { $('xsendst').textContent = s; };
   // Xuất file: lưu .json (hộp lưu của Chrome/Edge, hoặc tải xuống) để bỏ vào feedback\ cho tools/feedback.mjs
@@ -1062,6 +1063,7 @@ async function init() {
           const p = window.renderAt(t); if (p && p.then) await p;
           g.drawImage(gl, 0, 0, P.w, P.h);
           drawCaption(g, cap, P.w / W0);
+          if (window.__lopPhu?.canvas) g.drawImage(window.__lopPhu.canvas, 0, 0, P.w, P.h);   // lớp phủ kiểu blocky
           drawCredits(g, P.w, P.h, t);
           const vf = new VideoFrame(comp, { timestamp: Math.round(i * 1e6 / FPS), duration: Math.round(1e6 / FPS) });
           venc.encode(vf, { keyFrame: i % (FPS * 2) === 0 }); vf.close();

@@ -45,7 +45,8 @@ import { gioThoiTiet } from './envs/gio-thoi-tiet.js';
 import { FACE_PRESETS } from './r15.js';
 import { createDatMay } from './dat-may.js';
 import { chongLop } from './blocky/chong.js';   // động tác chồng lớp `do:` (ô FX chongLop)
-import { themSong } from './blocky/song.js';   // idle sống (ô FX idleSong), mã chép từ blocky-shorts
+import { themSong } from './blocky/song.js';
+import { mayBlocky } from './blocky/may.js';   // máy quay kiểu blocky `cam.bk` (ô FX mayBlocky = chuyển động, punchRung = punch + rung)   // idle sống (ô FX idleSong), mã chép từ blocky-shorts
 import { moc, qua1, qua3, mayTuyetDoi, viTri, huongThan } from './diem-giua.js';
 const lerp3 = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
 // tiến độ cục bộ trong một đoạn con của shot: win = [k0,k1]
@@ -180,8 +181,23 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     if (o.foam !== false) hullFoam({ x: p[0], z: p[2], hx, hz, yaw, k: kf, vy: F.vy }, hx * hz);
   }
 
-  function placeCamera(c, k, t) {
-    const ke = ease(c.ease || 'smooth', k);
+  // neo chủ thể cho máy blocky: diễn viên (gốc chân + hướng thân) | 'obj:<đạo cụ>' | tên đạo cụ
+  const _np = new THREE.Vector3();
+  function neoBk(ref) {
+    const nm = typeof ref === 'string' && ref.startsWith('obj:') ? ref.slice(4) : ref;
+    const a = actors[nm];
+    if (a && a.root.visible) { a.root.getWorldPosition(_np); return { feet: [_np.x, _np.y, _np.z], yaw: a.root.rotation.y }; }
+    const o = props[nm]; if (o) { o.getWorldPosition(_np); return { feet: [_np.x, _np.y - 2.9, _np.z], yaw: o.rotation.y }; }
+    return null;
+  }
+  function placeCamera(c, k, t, shot = null, local = 0) {
+    if (c.bk) {   // máy kiểu blocky (engine/blocky/may.js): cỡ cảnh + góc + chuyển động + whip/crash + punch/rung theo shot.bfx
+      const B = mayBlocky(c.bk, { neo: neoBk, local, dur: shot?.dur ?? 1, fx: shot?.bfx, move: AUTO.mayBlocky !== false, punch: AUTO.punchRung !== false });
+      stage.setCamera(B.pos, B.look, { fov: B.fov, roll: B.roll, focusShadow: true });
+      globalThis.__mayBk = B;
+      return;
+    }
+    const ke = ease(c.ease || 'smooth', c.win ? sub(k, c.win) : k);   // win = [a, b]: camera chỉ chạy trong đoạn a..b của shot (studio 🎥 Sửa camera)
     let pos, look, fov, KH = null;
     // cam.khung = đặc tả khung hình (engine/dat-may.js): nhắm ai/bộ phận nào, chiếm bao nhiêu % khung, ở đâu trên khung, góc ngang/cao, tiêu cự → máy tự tính.
     //   Diễn viên + đạo cụ đã đặt xong trước khi gọi placeCamera nên máy bám đúng tư thế của khung này. Không tìm thấy chủ thể → rơi về cách ghi cũ.
@@ -246,6 +262,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
   // NHÉP MIỆNG (ô FX 'nhep'): shot ghi `talk: 'hero'` (hoặc ['hero','mom']) → miệng đổi theo đường bao âm lượng giọng đang chọn (globalThis.__nhep.level(t) = 0..9, tools/levels.py).
   //   0 = giữ mặt của shot, 1–4 = miệng 'o', ≥5 = miệng 'open'. Dựng bằng biểu cảm phụ `<mặt>~o|open` (copy preset gốc, chỉ đổi miệng) → không sửa r15.js. Hàm thuần của t.
   const talkFace = (base, t) => { const L = globalThis.__nhep?.level?.(t) ?? 0; if (!L || !FACE_PRESETS[base]) return base; const m = L >= 5 ? 'open' : 'o', nm = base + '~' + m; return (FACE_PRESETS[nm] ||= { ...FACE_PRESETS[base], mouth: m }), nm; };
+  const matTai = (list, local) => { let m = null; for (const [tt, f] of list) if (local + 1e-4 >= tt) m = f; return m; };
   function placeCast(cast = {}, k, t, talk, local = 0, dur = Infinity) {
     for (const [name, a] of Object.entries(actors)) {
       const s = cast[name];
@@ -269,7 +286,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
       const opt = { speed: s.speed, amp: s.amp, from: s.from, mix: s.from ? ease('smooth', clamp01(sub(k, s.mixWin || [0, 0.3]))) : undefined };
       if (FACE_LIVE()) { opt.live = true; opt.noFace = true; }   // mặt sống: mặt vẽ ở liveFacePass (sau khi có máy quay) — tắt thì không thêm khoá nào, hình y hệt cũ
       const pose = a.animate(anim, at, opt);
-      let want = s.face || pose.face || a._defaultFace;
+      let want = (s.mat && matTai(s.mat, local)) || s.face || pose.face || a._defaultFace;   // mat: [[giây, mặt], …] = đổi mặt giữa shot (kiểu blocky)
       if (talk && AUTO.nhep !== false && [].concat(talk).includes(name) && want) want = talkFace(want.split('~')[0], t);
       if (want && a.options.face !== want) { a.setFace(want); a.animate(anim, at, opt); }   // đổi mặt xong dựng lại pose → hướng mắt không phụ thuộc shot trước (tất định)
       if (AUTO.idleSong) themSong(a, name, anim, at);   // idle sống (engine/blocky/song.js): thở + lắc đầu lệch pha theo tên; tắt = không đụng gì
@@ -397,7 +414,7 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     if (shot.fx?.dust && fx.dust) { fx.dust.obj.visible = true; fx.dust.update(t, shot.fx.dust.map((b) => ({ ...b, t0: shot.t0 + b.t0 }))); }
     globalThis.__breathK = 1; globalThis.__snowStorm = null;   // biến theo shot (s045 bão tuyết, s046 hơi thở dày) — đặt lại mỗi khung để không sót sang shot khác khi tua
     shot.fn?.(fxCtx);
-    placeCamera(shot.cam || { at: 'house', dist: 90, h: 10 }, k, t);
+    placeCamera(shot.cam || { at: 'house', dist: 90, h: 10 }, k, t, shot, local);
     ctx.focus = [camera.position.x, Math.max(0, camera.position.y - 20), camera.position.z];
     envs.use(shot.env, t, ctx);
     applyAutoFx(shot, envObj, k, t, night);

@@ -31,9 +31,9 @@ notes.forEach((n, i) => {
 });
 // góp ý trong khung 3D (engine/che-do-3d-sua.js): ghim mô tả + vật đã thử dời/xoay/cỡ (số trước → sau, chưa ghi vào tập)
 const g3 = data.ghiChu3d, anh3 = (img, ten) => { const m = /^data:image\/(jpeg|png);base64,(.+)$/.exec(img || ''); if (!m) return ''; const f = path.join(out, `${ten}.${m[1] === 'png' ? 'png' : 'jpg'}`); fs.writeFileSync(f, Buffer.from(m[2], 'base64')); return f; };
-if (g3 && (g3.ghim?.length || g3.vat?.length)) {
+if (g3 && (g3.ghim?.length || g3.vat?.length || g3.cam?.length)) {
   console.log(`
-— 3D: ${g3.ghim?.length || 0} ghim · ${g3.vat?.length || 0} vật đã sửa thử —`);
+— 3D: ${g3.ghim?.length || 0} ghim · ${g3.vat?.length || 0} vật đã sửa thử · ${g3.cam?.length || 0} camera đã sửa thử —`);
   for (const g of g3.ghim || []) {
     const f = anh3(g.img, `3d_ghim${g.so}`);
     console.log(`📍${g.so}. shot ${g.shotId || '?'} · ${g.t != null ? Number(g.t).toFixed(2) + 's' : ''}${g.frame != null ? ' · frame ' + g.frame : ''} · điểm (${g.pos.join(', ')})${g.vat ? ' trên ' + g.vat : ''}`);
@@ -49,6 +49,14 @@ if (g3 && (g3.ghim?.length || g3.vat?.length)) {
     if (v.text) console.log(`    ${v.text}`); if (f) console.log(`    ảnh 3D: ${f}`);
   });
   console.log('    (số là toạ độ cục bộ của vật trong nhóm cha; tìm vật theo đường dẫn tên — sửa ở builder/env tương ứng)');
+  (g3.cam || []).forEach((c, i) => {
+    const f = anh3(c.img, `3d_cam${i + 1}`);
+    console.log(`🎥${i + 1}. [CAMERA] shot ${c.shotId}${c.frame != null ? ' · frame ' + c.frame : ''}${c.durDeNghi != null ? ` · ĐỘ DÀI SHOT ${c.durGoc}s → ${c.durDeNghi}s (đề nghị)` : ''}`);
+    console.log(`    gốc  p ${c.goc.p.join(', ')} → ${c.goc.p2.join(', ')} · fov ${c.goc.fov} → ${c.goc.fov2}`);
+    console.log(`    dán vào shots.js (thay cam của shot): ${c.dong}`);
+    if (c.text) console.log(`    ${c.text}`); if (f) console.log(`    ảnh 3D: ${f}`);
+  });
+  if (g3.cam?.length) console.log('    (máy tuyệt đối p/l: không còn bám theo diễn viên — shot cần bám thì chỉnh yaw/dist/h theo số trên)');
 }
 // chỉ chụp lại phân cảnh liên quan (shot chứa từng frame: frame đó + đầu/giữa/cuối shot), không chụp cả phim
 if (notes.length) console.log(`\nChụp lại đúng các phân cảnh bị góp ý:\n  node tools/look.mjs episodes/${data.episode || 'ep001'}/index.html --frames ${notes.map((n) => n.frame).join(',')} --out feedback/${path.basename(out)}/chup`);

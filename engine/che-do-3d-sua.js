@@ -47,7 +47,8 @@ const deg = (e) => [e.x, e.y, e.z].map((r) => +(r * 180 / Math.PI).toFixed(1));
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const TANG_TEN = { back: 'Lớp sau (tường, sàn, cửa…)', mid: 'Lớp giữa (đồ gỗ…)', front: 'Lớp trước' };
 
-export function ganSua({ THREE, stage, B, redraw, withView, shot, viewCanvas, isOn, getProps }) {
+export function ganSua(ctx) {
+  const { THREE, stage, B, redraw, withView, shot, viewCanvas, isOn, getProps } = ctx;
   const { scene } = stage;
   const style = document.createElement('style'); style.textContent = CSS; document.head.appendChild(style);
   const LS = 'c3d-gop-y:' + location.pathname + ':' + (document.title || '');
@@ -60,7 +61,7 @@ export function ganSua({ THREE, stage, B, redraw, withView, shot, viewCanvas, is
 
   // ---- thanh công cụ: chế độ ----
   const grp = document.createElement('span'); grp.className = 'c3s-mode';
-  grp.innerHTML = '<button data-m="xem" class="on" title="Chỉ xem / bay">🖐 Xem</button><button data-m="sua" title="Bấm vào vật để chọn rồi dời / xoay / đổi cỡ (chỉ thử, không ghi vào tập). Mở thẻ 📦 Asset">✥ Sửa vật</button><button data-m="ghim" title="Bấm vào một điểm trong cảnh để ghim + mô tả">📍 Ghim</button>';
+  grp.innerHTML = '<button data-m="xem" class="on" title="Chỉ xem / bay">🖐 Xem</button><button data-m="sua" title="Bấm vào vật để chọn rồi dời / xoay / đổi cỡ (chỉ thử, không ghi vào tập). Mở thẻ 📦 Asset">✥ Sửa vật</button><button data-m="ghim" title="Bấm vào một điểm trong cảnh để ghim + mô tả">📍 Ghim</button><button data-m="cam" title="Sửa camera của shot: điểm đầu / cuối, zoom, trượt, kéo dài / thu ngắn (chỉ thử)">🎥 Camera</button>';
   const dem = document.createElement('span'); dem.className = 'c3s-dem'; dem.title = 'Ghim + vật đã sửa — đi kèm file góp ý (Gửi tới Claude / Xuất file)';
   B.bar.append(grp, dem);
   grp.addEventListener('click', (e) => { const b = e.target.closest('button[data-m]'); if (b) { setMode(b.dataset.m); b.blur(); } });
@@ -132,7 +133,8 @@ export function ganSua({ THREE, stage, B, redraw, withView, shot, viewCanvas, is
     for (const b of grp.querySelectorAll('button')) b.classList.toggle('on', b.dataset.m === m);
     if (m !== 'sua') chon(null);
     hienCot(m === 'sua' && isOn());
-    B.el.style.cursor = m === 'xem' ? '' : 'crosshair';
+    ctx.camMode?.(m === 'cam');
+    B.el.style.cursor = m === 'xem' || m === 'cam' ? '' : 'crosshair';
     veAsset(); bao();
   }
 
@@ -385,6 +387,7 @@ export function ganSua({ THREE, stage, B, redraw, withView, shot, viewCanvas, is
     if (!isOn() || (e.repeat && !/^Key[ZY]$/.test(e.code))) return;
     if (/INPUT|TEXTAREA|SELECT/.test((e.target || {}).tagName || '') && e.target.type !== 'checkbox') return;   // đang gõ: Ctrl+Z… của ô chữ
     const ctrl = e.ctrlKey || e.metaKey, stop = () => { e.preventDefault(); e.stopImmediatePropagation(); };
+    if (mode === 'cam') { if (ctx.camKey?.(e)) stop(); return; }   // 🎥 Camera: Ctrl+Z / Ctrl+Y của camera (engine/che-do-3d-cam.js)
     if (ctrl && e.code === 'KeyZ') { stop(); return e.shiftKey ? lamLai() : hoanTac(); }   // hoàn tác / làm lại: mọi chế độ (cả ghim)
     if (ctrl && e.code === 'KeyY') { stop(); return lamLai(); }
     if (mode !== 'sua') return;
@@ -478,7 +481,7 @@ export function ganSua({ THREE, stage, B, redraw, withView, shot, viewCanvas, is
     themGhim(pos, text) { const s = shot(); const g = { id: Date.now().toString(36) + ghim.length, so: ghim.reduce((m, x) => Math.max(m, x.so), 0) + 1, pos: new THREE.Vector3(...pos), vat: null, text, shotId: s.id, t: s.t, cam: camNow() }; ghim.push(g); pinGeoUpdate(); g.img = chup(); changed(); return g; },
     xoaHet() { this.traLai(); anTam.clear(); lich.length = 0; lai.length = 0; nutLich(); for (const [o, ed] of edits) if (ed.banSao) o.removeFromParent(); assetCache.list = []; edits.clear(); choApDung = []; ghim = []; for (const [k, d] of B.labels) if (k.startsWith('gh:')) { d.remove(); B.labels.delete(k); } pinGeoUpdate(); chon(null); changed(); if (isOn()) redraw(); },
     onChange(f) { listeners.add(f); return () => listeners.delete(f); },
-    tc, hoanTac, lamLai, nhanBan, xoaVat, anVat, hienHet, veCu,
+    tc, hoanTac, lamLai, chup, nhanBan, xoaVat, anVat, hienHet, veCu,
     chanBay: () => isOn() && mode === 'sua' && !!sel,
     get lich() { return lich.length; }, get lai() { return lai.length; },
   };

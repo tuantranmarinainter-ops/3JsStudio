@@ -2,7 +2,7 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-16 (phím Blender trong ✥ Sửa vật: Ctrl+Z/Y, Ctrl+C/V, Shift+D, X, H/Alt+H, Alt+G/R/S, F, G/R/S)
+- **Cập nhật:** 2026-11-16 (🎥 Sửa camera: `engine/che-do-3d-cam.js`; trước đó phím Blender trong ✥ Sửa vật)
 - **Nhánh:** `ep1-v2`
 - **Đang làm:** xong: 3D giai đoạn 1 + 🔒 Giữ góc + 🎥 Bám camera shot (mỗi khung camera bay = camera shot: vị trí/hướng/fov;
   kéo chuột/lăn/WASD → thoát bám; `__che3d.bam`, `setBam`) + 🏞 ô Bối cảnh (chỉ khung 3D vẽ env được chọn, trả visible ngay sau khi vẽ; `setEnv`, `envList`) + có trên ep001–ep004 (dùng chung qua `engine/stage.js`). Giai đoạn 2 chờ người dùng.
@@ -20,6 +20,9 @@
 - **Góp ý 3D:** `engine/che-do-3d-sua.js` (TransformControls chép từ three 0.187.0). Chỉ THỬ: tắt 3D trả vật về chỗ cũ; lưu tạm localStorage.
   `tools/export-ui.js` feedbackData v2 thêm `ghiChu3d {ghim, vat}`; `tools/feedback.mjs` in phần 3D + ảnh. Kiểm: `node tools/kiem-gop-y-3d.mjs` 29/29, `node tools/kiem-the-asset.mjs <ep>` (bản gộp).
   Asset = con của nhóm chứa (env, userData.tang, nhóm chứa tầng, nhóm duy nhất của env); bấm lại = bộ phận. Song song: thanh nút hẹp xếp nhiều hàng.
+- **🎥 Sửa camera:** `engine/che-do-3d-cam.js` (nút 🎥 Camera trong nhóm chế độ). Mỗi shot 1 chuyển động p,l,fov → p2,l2,fov2 + ease + `win` (đoạn chạy).
+  Gốc lấy mẫu đầu/cuối shot (`mauCam` trong che-do-3d.js, cờ sampling). Đè camera bằng `stage.setCamera` trong drawSS/draw3d (chỉ khi bật 3D).
+  `engine/shots.js` placeCamera hiểu `cam.win` (không có win = như cũ). Góp ý `ghiChu3d.cam[]` có `dong` dán thẳng shots.js. Kiểm: `node tools/kiem-cam-3d.mjs` 15/15.
 - **Câu hỏi còn mở:** không
 <!-- /ĐIỂM DỪNG -->
 
