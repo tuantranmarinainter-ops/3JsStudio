@@ -1,0 +1,251 @@
+<title>Trung tâm điều hành 3JS Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+<style>
+/* Bố cục: một cột đọc dễ — câu tóm tắt to → 4 ô lọc theo màu → thẻ từng phiên (lưới tự xuống dòng) */
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --ink:#18202b; --muted:#566273; --line:#dde3ea;
+  --accent:#2557c7;
+  --run:#127a4a;  --run-bg:#e2f4ea;
+  --wait:#9a5b00; --wait-bg:#fff1d6; --wait-box:#fff7e6;
+  --pause:#5b6675; --pause-bg:#eceff3;
+  --done:#2557c7; --done-bg:#e4ecfb;
+  --font:"Be Vietnam Pro", system-ui, "Segoe UI", Roboto, sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11161d; --surface:#1a212b; --ink:#eef2f7; --muted:#a5b0bf; --line:#2b3542;
+  --accent:#7ea3ff;
+  --run:#5fd39a; --run-bg:#173327;
+  --wait:#ffc35c; --wait-bg:#3a2c10; --wait-box:#2c2414;
+  --pause:#b4bdc9; --pause-bg:#262e39;
+  --done:#8fb0ff; --done-bg:#1d2a45; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11161d; --surface:#1a212b; --ink:#eef2f7; --muted:#a5b0bf; --line:#2b3542;
+  --accent:#7ea3ff;
+  --run:#5fd39a; --run-bg:#173327;
+  --wait:#ffc35c; --wait-bg:#3a2c10; --wait-box:#2c2414;
+  --pause:#b4bdc9; --pause-bg:#262e39;
+  --done:#8fb0ff; --done-bg:#1d2a45; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:18px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:28px}
+header{display:grid;gap:8px}
+.eyebrow{font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:clamp(28px,4.4vw,40px);line-height:1.2;margin:0;font-weight:800;text-wrap:balance}
+.lead{font-size:clamp(19px,2.4vw,22px);margin:0;max-width:60ch}
+.lead b{font-weight:700}
+.meta{font-size:15px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px}
+
+/* Ô lọc */
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:820px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile{all:unset;cursor:pointer;display:grid;gap:4px;padding:16px 18px;border-radius:var(--r);
+  background:var(--surface);border:2px solid var(--line);transition:border-color .15s}
+.tile:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.tile[aria-pressed="true"]{border-color:currentColor}
+.tile .n{font-size:40px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.tile .t{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--ink)}
+.tile .d{font-size:15px;color:var(--muted)}
+.tile.run{color:var(--run)} .tile.wait{color:var(--wait)} .tile.pause{color:var(--pause)} .tile.done{color:var(--done)}
+
+.dot{width:14px;height:14px;border-radius:50%;background:currentColor;flex:none}
+.tile.run .dot,.pill.run .dot{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.dot{animation:none!important}}
+
+/* Thanh công cụ */
+.tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.search{flex:1 1 260px;min-width:0;display:flex}
+.search input{width:100%;font:inherit;font-size:18px;padding:12px 16px;border-radius:12px;border:2px solid var(--line);
+  background:var(--surface);color:var(--ink)}
+.search input:focus{outline:none;border-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{all:unset;cursor:pointer;font-size:16px;font-weight:600;padding:8px 14px;border-radius:999px;
+  background:var(--surface);border:2px solid var(--line);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* Nhóm & thẻ */
+section.group{display:grid;gap:14px}
+section.group h2{margin:0;font-size:24px;font-weight:800;display:flex;align-items:center;gap:10px}
+section.group h2 .c{font-size:18px;font-weight:600;color:var(--muted)}
+section.group > p{margin:-8px 0 0;color:var(--muted);font-size:16px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;display:grid;gap:12px;align-content:start;min-width:0}
+.card h3{margin:0;font-size:20px;line-height:1.35;font-weight:700;text-wrap:balance}
+.row{display:grid;gap:2px}
+.row .k{font-size:14px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.row .v{font-size:17px}
+.ask{background:var(--wait-box);border:2px solid var(--wait);border-radius:12px;padding:12px 14px;display:grid;gap:2px}
+.ask .k{font-size:14px;font-weight:700;color:var(--wait)}
+.ask .v{font-size:17px;font-weight:600}
+.foot{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px}
+.foot .when{font-size:15px;color:var(--muted)}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:14px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--pause-bg);color:var(--ink)}
+.pill{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:700;padding:4px 12px;border-radius:999px;justify-self:start}
+.pill .dot{width:10px;height:10px}
+.pill.run{background:var(--run-bg);color:var(--run)} .pill.wait{background:var(--wait-bg);color:var(--wait)}
+.pill.pause{background:var(--pause-bg);color:var(--pause)} .pill.done{background:var(--done-bg);color:var(--done)}
+a.open{font-size:16px;font-weight:700;color:var(--accent);text-decoration:none;padding:6px 12px;border-radius:10px;border:2px solid var(--accent)}
+a.open:hover{background:var(--accent);color:var(--surface)}
+a.open:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.help{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;display:grid;gap:10px}
+.help h2{margin:0;font-size:20px}
+.help ul{margin:0;padding-left:0;list-style:none;display:grid;gap:8px}
+.help li{display:flex;gap:10px;align-items:flex-start}
+.help li .dot{margin-top:7px}
+.help .run{color:var(--run)} .help .wait{color:var(--wait)} .help .pause{color:var(--pause)} .help .done{color:var(--done)}
+.help li span.txt{color:var(--ink)}
+.help code{font-family:inherit;font-weight:700;background:var(--pause-bg);padding:1px 8px;border-radius:6px}
+
+.empty{background:var(--surface);border:2px dashed var(--line);border-radius:var(--r);padding:28px;text-align:center;color:var(--muted);font-size:18px}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">3JS Studio · Phim "Ở thị trấn này"</div>
+    <h1>Trung tâm điều hành</h1>
+    <p class="lead" id="lead">Đang mở danh sách công việc…</p>
+    <div class="meta"><span id="updated">Chưa có dữ liệu</span><span id="total"></span></div>
+  </header>
+
+  <div class="tiles" role="group" aria-label="Lọc theo tình trạng">
+    <button class="tile run" data-f="dang-lam" aria-pressed="false" id="t-run"><span class="n">–</span><span class="t"><span class="dot"></span>Đang làm</span><span class="d">Claude đang làm ngay lúc này</span></button>
+    <button class="tile wait" data-f="cho-ban" aria-pressed="false" id="t-wait"><span class="n">–</span><span class="t"><span class="dot"></span>Chờ bạn</span><span class="d">Cần bạn xem hoặc chọn</span></button>
+    <button class="tile pause" data-f="tam-nghi" aria-pressed="false" id="t-pause"><span class="n">–</span><span class="t"><span class="dot"></span>Tạm nghỉ</span><span class="d">Làm dở, đang đợi việc khác</span></button>
+    <button class="tile done" data-f="xong" aria-pressed="false" id="t-done"><span class="n">–</span><span class="t"><span class="dot"></span>Đã xong</span><span class="d">Làm xong, không cần làm gì</span></button>
+  </div>
+
+  <div class="tools">
+    <label class="search" for="q"><input id="q" type="search" placeholder="Tìm việc… ví dụ: tập 4, giọng, bầu trời" aria-label="Tìm việc"></label>
+    <div class="chips" id="chips" role="group" aria-label="Lọc theo nhóm"></div>
+  </div>
+
+  <div id="board"><div class="empty">Đang tải danh sách công việc. Nếu trang trống quá lâu, hãy nhắn Claude: <b>“cập nhật trung tâm”</b>.</div></div>
+
+  <div class="help">
+    <h2>Cách đọc trang này</h2>
+    <ul>
+      <li><span class="dot run"></span><span class="txt"><b>Xanh lá – Đang làm:</b> Claude đang làm việc này. Bạn không cần làm gì.</span></li>
+      <li><span class="dot wait"></span><span class="txt"><b>Vàng – Chờ bạn:</b> việc đang dừng để đợi bạn. Đọc ô vàng “Bạn cần làm” trên thẻ.</span></li>
+      <li><span class="dot pause"></span><span class="txt"><b>Xám – Tạm nghỉ:</b> làm dở, đang đợi một việc khác xong trước.</span></li>
+      <li><span class="dot done"></span><span class="txt"><b>Xanh dương – Đã xong:</b> việc đã hoàn thành.</span></li>
+      <li><span class="txt">Bấm vào ô màu ở trên để chỉ xem một loại. Bấm lần nữa để xem lại tất cả.</span></li>
+      <li><span class="txt">Trang này không tự làm mới. Muốn có tin mới nhất, nhắn Claude ở phiên Trung tâm điều hành: <code>cập nhật trung tâm</code>.</span></li>
+    </ul>
+  </div>
+</div>
+
+<script>
+const ORDER=["dang-lam","cho-ban","tam-nghi","xong"];
+const INFO={
+  "dang-lam":{cls:"run",ten:"Đang làm",tieuDe:"Claude đang làm",goiY:"Những việc này đang chạy. Bạn cứ để yên."},
+  "cho-ban":{cls:"wait",ten:"Chờ bạn",tieuDe:"Đang chờ bạn",goiY:"Mỗi thẻ có ô vàng nói rõ bạn cần làm gì."},
+  "tam-nghi":{cls:"pause",ten:"Tạm nghỉ",tieuDe:"Tạm nghỉ",goiY:"Làm dở, sẽ làm tiếp khi việc trước xong."},
+  "xong":{cls:"done",ten:"Đã xong",tieuDe:"Đã xong",goiY:"Không cần làm gì thêm."}
+};
+let rows=[], meta=null, filt=null, nhom=null, q="";
+try{ filt=localStorage.getItem("tt-filt")||null; nhom=localStorage.getItem("tt-nhom")||null }catch(e){}
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function ago(iso){
+  if(!iso) return "";
+  const d=new Date(iso), m=Math.round((Date.now()-d)/60000);
+  if(isNaN(m)) return "";
+  if(m<2) return "vừa xong";
+  if(m<60) return m+" phút trước";
+  const h=Math.round(m/60);
+  if(h<24) return h+" giờ trước";
+  const days=Math.round(h/24);
+  if(days===1) return "hôm qua";
+  return days+" ngày trước";
+}
+function clock(iso){
+  const d=new Date(iso); if(isNaN(d)) return "";
+  return d.toLocaleString("vi-VN",{hour:"2-digit",minute:"2-digit",day:"2-digit",month:"2-digit"});
+}
+
+function card(r){
+  const i=INFO[r.trangThai]||INFO["tam-nghi"];
+  return `<article class="card">
+    <span class="pill ${i.cls}"><span class="dot"></span>${i.ten}</span>
+    <h3>${esc(r.ten)}</h3>
+    ${r.dangLam?`<div class="row"><span class="k">${r.trangThai==="xong"?"Đã làm":"Đang làm gì"}</span><span class="v">${esc(r.dangLam)}</span></div>`:""}
+    ${r.banCan?`<div class="ask"><span class="k">Bạn cần làm</span><span class="v">${esc(r.banCan)}</span></div>`:""}
+    ${r.tiepTheo?`<div class="row"><span class="k">Việc tiếp theo</span><span class="v">${esc(r.tiepTheo)}</span></div>`:""}
+    <div class="foot">
+      <div class="tags">${r.nhom?`<span class="tag">${esc(r.nhom)}</span>`:""}<span class="when">${r.lanCuoi?"Hoạt động "+ago(r.lanCuoi):""}</span></div>
+      ${r.link?`<a class="open" href="${esc(r.link)}" title="Mở trong ứng dụng Claude trên máy tính">Mở phiên</a>`:""}
+    </div>
+  </article>`;
+}
+
+function render(){
+  const cnt={}; ORDER.forEach(k=>cnt[k]=rows.filter(r=>r.trangThai===k).length);
+  [["dang-lam","#t-run"],["cho-ban","#t-wait"],["tam-nghi","#t-pause"],["xong","#t-done"]].forEach(([k,id])=>{
+    const el=$(id); el.querySelector(".n").textContent=rows.length?cnt[k]:"–"; el.setAttribute("aria-pressed",String(filt===k));
+  });
+  // câu tóm tắt
+  if(rows.length){
+    const p=[];
+    p.push(`Hôm nay có <b>${cnt["dang-lam"]} việc Claude đang làm</b>`);
+    p.push(cnt["cho-ban"]?`và <b>${cnt["cho-ban"]} việc đang chờ bạn</b>.`:`và không có việc nào chờ bạn.`);
+    $("#lead").innerHTML=p.join(" ");
+    $("#total").textContent=`Tổng ${rows.length} phiên làm việc`;
+  }else{ $("#lead").textContent="Chưa có công việc nào được ghi." }
+  if(meta&&meta.capNhat) $("#updated").textContent=`Cập nhật lúc ${clock(meta.capNhat)} (${ago(meta.capNhat)})`;
+
+  // chip nhóm
+  const groups=[...new Set(rows.map(r=>r.nhom).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"vi"));
+  if(nhom&&!groups.includes(nhom)) nhom=null;
+  $("#chips").innerHTML=[`<button class="chip" data-g="" aria-pressed="${!nhom}">Tất cả</button>`]
+    .concat(groups.map(g=>`<button class="chip" data-g="${esc(g)}" aria-pressed="${nhom===g}">${esc(g)}</button>`)).join("");
+
+  const ql=q.trim().toLowerCase();
+  const shown=rows.filter(r=>(!filt||r.trangThai===filt)&&(!nhom||r.nhom===nhom)&&
+    (!ql||[r.ten,r.dangLam,r.tiepTheo,r.banCan,r.nhom].join(" ").toLowerCase().includes(ql)));
+  if(!rows.length){ $("#board").innerHTML=`<div class="empty">Chưa có công việc nào. Nhắn Claude: <b>“cập nhật trung tâm”</b> để điền danh sách.</div>`; return }
+  if(!shown.length){ $("#board").innerHTML=`<div class="empty">Không có việc nào khớp. Bấm “Tất cả” hoặc xoá chữ trong ô tìm.</div>`; return }
+  const out=[];
+  ORDER.forEach(k=>{
+    const list=shown.filter(r=>r.trangThai===k).sort((a,b)=>String(b.lanCuoi||"").localeCompare(String(a.lanCuoi||"")));
+    if(!list.length) return;
+    const i=INFO[k];
+    out.push(`<section class="group"><h2><span class="pill ${i.cls}" style="font-size:16px"><span class="dot"></span>${i.ten}</span>${i.tieuDe} <span class="c">· ${list.length} việc</span></h2><p>${i.goiY}</p><div class="cards">${list.map(card).join("")}</div></section>`);
+  });
+  $("#board").innerHTML=`<div style="display:grid;gap:32px">${out.join("")}</div>`;
+}
+
+document.querySelector(".tiles").addEventListener("click",e=>{
+  const b=e.target.closest(".tile"); if(!b) return;
+  filt=filt===b.dataset.f?null:b.dataset.f;
+  try{filt?localStorage.setItem("tt-filt",filt):localStorage.removeItem("tt-filt")}catch(_){}
+  render();
+});
+$("#chips").addEventListener("click",e=>{
+  const b=e.target.closest(".chip"); if(!b) return;
+  nhom=b.dataset.g||null;
+  try{nhom?localStorage.setItem("tt-nhom",nhom):localStorage.removeItem("tt-nhom")}catch(_){}
+  render();
+});
+$("#q").addEventListener("input",e=>{q=e.target.value;render()});
+
+(async()=>{
+  const timer=setTimeout(()=>{ if(!rows.length) $("#board").innerHTML=`<div class="empty">Chưa đọc được danh sách. Hãy đăng nhập claude.ai rồi mở lại trang, hoặc nhắn Claude: <b>“cập nhật trung tâm”</b>.</div>` },10000);
+  const db=await (window.claude?.use?.("db") ?? null);
+  if(!db){ clearTimeout(timer); $("#board").innerHTML=`<div class="empty">Trang cần đăng nhập claude.ai để đọc danh sách công việc.</div>`; return }
+  // một bản ghi duy nhất do tools/trung-tam.mjs dong-goi tạo: {capNhat, dem, rows:[...]}
+  db.doc("bang/hientai").onSnapshot(s=>{ clearTimeout(timer); const d=s.exists?s.data():null;
+      rows=Array.isArray(d?.rows)?d.rows:[]; meta=d?{capNhat:d.capNhat}:null; render() },
+    ()=>{ clearTimeout(timer); $("#board").innerHTML=`<div class="empty">Không đọc được danh sách. Mở lại trang sau ít phút.</div>` });
+})();
+setInterval(()=>{ if(rows.length) render() },60000); // chỉ làm mới chữ "x phút trước"
+</script>

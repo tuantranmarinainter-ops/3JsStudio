@@ -1,0 +1,285 @@
+{
+  "capNhat": "2026-11-16T02:14:00Z",
+  "phien": {
+    "anh-sang": {
+      "banCan": "",
+      "dangLam": "Làm đèn đổi theo từng cảnh và quy ước màu ấm, màu lạnh.",
+      "lanCuoi": "2026-11-15T11:38:38Z",
+      "link": "claude://claude.ai/epitaxy/local_e8825a83-426a-4d1a-963f-a70965110a08",
+      "nhom": "Hình ảnh",
+      "ten": "Ánh sáng: đèn theo từng cảnh, ấm và lạnh",
+      "tiepTheo": "",
+      "trangThai": "tam-nghi"
+    },
+    "anh-tham-chieu-kit": {
+      "banCan": "",
+      "dangLam": "Chuẩn bị lời nhờ vẽ ảnh mẫu nhân vật, bối cảnh. Việc tiếp đã giao cho phiên Tập 5 thử.",
+      "lanCuoi": "2026-11-16T01:28:23Z",
+      "link": "claude://claude.ai/epitaxy/local_4ecb0c09-9c32-46e6-aba5-e5ee424e802a",
+      "nhom": "Tập 5",
+      "ten": "Viết lời nhờ vẽ ảnh mẫu cho bộ dựng cảnh",
+      "tiepTheo": "",
+      "trangThai": "tam-nghi"
+    },
+    "anim-a": {
+      "banCan": "",
+      "dangLam": "Chép các động tác có sẵn sang nhân vật khối vuông. Làm trên bản riêng, chưa gộp vào bản chính.",
+      "lanCuoi": "2026-11-15T03:49:14Z",
+      "link": "claude://claude.ai/epitaxy/local_da1f2fc8-00f7-4a21-bb7e-23ced06fac17",
+      "nhom": "Động tác",
+      "ten": "Động tác nhân vật (nguồn A)",
+      "tiepTheo": "",
+      "trangThai": "tam-nghi"
+    },
+    "anim-b": {
+      "banCan": "",
+      "dangLam": "Lấy điệu nhảy, cử chỉ thật của Roblox cho nhân vật. Làm trên bản riêng, chưa gộp.",
+      "lanCuoi": "2026-11-15T04:03:53Z",
+      "link": "claude://claude.ai/epitaxy/local_c5f03010-989a-4de5-b496-7242c3e29d37",
+      "nhom": "Động tác",
+      "ten": "Động tác nhân vật (nguồn B: điệu Roblox)",
+      "tiepTheo": "",
+      "trangThai": "tam-nghi"
+    },
+    "dieu-phoi-cu": {
+      "banCan": "",
+      "dangLam": "Phiên chính cũ, nơi mở ra nhiều phiên con. Giữ lại, không xoá.",
+      "lanCuoi": "2026-11-16T01:46:54Z",
+      "link": "claude://claude.ai/epitaxy/local_2b39d5b3-e6c3-42ff-81f9-2e54d5ae372a",
+      "nhom": "Điều phối",
+      "ten": "3JS Studio kết nối (phiên điều phối cũ)",
+      "tiepTheo": "",
+      "trangThai": "tam-nghi"
+    },
+    "don-repo": {
+      "banCan": "Trả lời 3 câu: giữ hay bỏ các file nhân vật nv-*, file giọng tập 1, và thư mục _vao.",
+      "dangLam": "Đã dọn và lưu lại 3 lần, chưa gửi lên mạng.",
+      "lanCuoi": "2026-11-15T11:51:56Z",
+      "link": "claude://claude.ai/epitaxy/local_c3ed7a81-7fda-4b28-90e7-08d333b01d4a",
+      "nhom": "Bảo trì",
+      "ten": "Dọn dẹp kho mã",
+      "tiepTheo": "",
+      "trangThai": "cho-ban"
+    },
+    "ep001-sky-storm": {
+      "banCan": "",
+      "dangLam": "Làm bầu trời xanh và cơn bão cho cảnh cột bị gãy.",
+      "lanCuoi": "2026-11-15T05:15:59Z",
+      "link": "claude://claude.ai/epitaxy/local_dfead426-2f38-46c7-90f0-f0c0830b91a9",
+      "nhom": "Tập 1",
+      "ten": "Tập 1: trời xanh và cơn bão lúc gãy cột",
+      "tiepTheo": "",
+      "trangThai": "tam-nghi"
+    },
+    "ep003-nha": {
+      "banCan": "Chọn mẫu nhà cho tập 3.",
+      "dangLam": "Đưa ra các mẫu nhà để bạn chọn.",
+      "lanCuoi": "2026-11-14T08:39:31Z",
+      "link": "claude://claude.ai/epitaxy/local_a4fdb9aa-7ac1-482b-9e45-81cf10c663f1",
+      "nhom": "Tập 3",
+      "ten": "Tập 3: chọn mẫu nhà (đợt 4)",
+      "tiepTheo": "",
+      "trangThai": "cho-ban"
+    },
+    "ep003": {
+      "banCan": "Xem bản xem thử tập 3, duyệt biển tiệm bánh và nhận xét các ngôi nhà mới.",
+      "dangLam": "Đã có bản xem thử tập 3 với nhà mới lấy từ Roblox.",
+      "lanCuoi": "2026-11-15T14:14:02Z",
+      "link": "claude://claude.ai/epitaxy/local_93ff3306-32b9-458f-b9e6-6fd02ddd21b1",
+      "nhom": "Tập 3",
+      "ten": "Tập 3: từ kịch bản tới bản xem thử",
+      "tiepTheo": "Đợt 5: đồ vật ngoài phố (đèn, cây, ghế, chậu hoa, mái hiên).",
+      "trangThai": "cho-ban"
+    },
+    "ep004-hinh": {
+      "banCan": "",
+      "dangLam": "Đợi nhân vật được duyệt rồi mới ghép vào cảnh.",
+      "lanCuoi": "2026-11-16T01:11:29Z",
+      "link": "claude://claude.ai/epitaxy/local_efc2d175-d55d-4a1c-84b5-f5373aff7af6",
+      "nhom": "Tập 4",
+      "ten": "Tập 4: phần hình (11 cảnh)",
+      "tiepTheo": "Ghép nhân vật vào 11 cảnh.",
+      "trangThai": "tam-nghi"
+    },
+    "ep004-tai-nguyen": {
+      "banCan": "Mở trang duyệt nhân vật (artifact EzYwa757…) và bấm Duyệt hoặc Cần sửa.",
+      "dangLam": "Đã lấy 6 mẫu nhà máy, 2 nhân vật Bắp và Bách, và làm trang mẫu nhân vật để duyệt.",
+      "lanCuoi": "2026-11-16T01:11:52Z",
+      "link": "claude://claude.ai/epitaxy/local_652587c8-beac-43c5-b61f-772ef31c8af3",
+      "nhom": "Tập 4",
+      "ten": "Tập 4: tìm đồ vật và nhân vật còn thiếu",
+      "tiepTheo": "Nếu được duyệt: thêm tóc xám, áo, tạp dề cho Bách; sửa bụng Bắp khi bước đi.",
+      "trangThai": "cho-ban"
+    },
+    "ep004-tieng": {
+      "banCan": "",
+      "dangLam": "Phần tiếng đang dừng. Phiên này đang được nhờ dựng 3 nhân vật bằng code.",
+      "lanCuoi": "2026-11-16T01:09:57Z",
+      "link": "claude://claude.ai/epitaxy/local_03093ae3-bfcd-4bde-972d-b49dbc3bca88",
+      "nhom": "Tập 4",
+      "ten": "Tập 4: giọng đọc, phụ đề, tiếng động",
+      "tiepTheo": "",
+      "trangThai": "tam-nghi"
+    },
+    "ep005-kit": {
+      "banCan": "",
+      "dangLam": "Dựng bối cảnh và nhân vật cho bản ngắn 20 giây.",
+      "lanCuoi": "2026-11-15T22:42:59Z",
+      "link": "claude://claude.ai/epitaxy/local_eb15a980-dba3-477d-b515-9bb66acad4db",
+      "nhom": "Tập 5",
+      "ten": "Tập 5: bối cảnh và nhân vật bản 20 giây",
+      "tiepTheo": "",
+      "trangThai": "tam-nghi"
+    },
+    "ep4-dieu-phoi": {
+      "banCan": "",
+      "dangLam": "Chia tập 4 thành 3 làn: hình, tiếng, đồ vật. Đổi sang dựng nhân vật bằng code.",
+      "lanCuoi": "2026-11-16T01:11:22Z",
+      "link": "claude://claude.ai/epitaxy/local_082d8bdc-2ba2-4242-9f69-54af7e0d66a2",
+      "nhom": "Tập 4",
+      "ten": "Tập 4: thử 11 cảnh (điều phối)",
+      "tiepTheo": "Ghép nhân vật vào cảnh, làm bản xem thử chỉ có hình.",
+      "trangThai": "tam-nghi"
+    },
+    "ep5t": {
+      "banCan": "",
+      "dangLam": "Đã vẽ 12 tờ nhân vật và 64 ảnh khối xám cho bối cảnh.",
+      "lanCuoi": "2026-11-16T01:35:39Z",
+      "link": "claude://claude.ai/epitaxy/local_f94b0d17-6046-4782-8981-cb45363f9790",
+      "nhom": "Tập 5",
+      "ten": "Tập 5 thử: Ma Cà Rồng",
+      "tiepTheo": "Sửa góc máy ảnh khối xám cho dễ nhận 8 hướng (thử lần 3 rồi dừng), rồi vẽ lại 64 ảnh.",
+      "trangThai": "tam-nghi"
+    },
+    "game-studios": {
+      "banCan": "",
+      "dangLam": "Đọc và rút ra cách làm hay để áp dụng.",
+      "lanCuoi": "2026-11-14T04:33:25Z",
+      "link": "claude://claude.ai/epitaxy/local_2ec57dc2-6c38-44a7-b944-b038a6492ead",
+      "nhom": "Nghiên cứu",
+      "ten": "Tìm hiểu cách các studio game dùng Claude",
+      "tiepTheo": "",
+      "trangThai": "xong"
+    },
+    "giam-tai-cpu": {
+      "banCan": "",
+      "dangLam": "Giới hạn tối đa 3 trình duyệt ẩn cùng lúc, chạy kiểm tra ít luồng hơn, dọn trình duyệt bị bỏ quên.",
+      "lanCuoi": "2026-11-16T01:47:33Z",
+      "link": "claude://claude.ai/epitaxy/local_ca009255-2525-4090-8754-abb7aed8122a",
+      "nhom": "Bảo trì",
+      "ten": "Giảm tải máy (CPU) khi chạy nhiều việc",
+      "tiepTheo": "",
+      "trangThai": "xong"
+    },
+    "ke-thua-ep001": {
+      "banCan": "",
+      "dangLam": "Các món đẹp của tập 1 (trời, giường, cửa sổ…) giờ tập nào cũng dùng được. Xong bước 0 đến 5.",
+      "lanCuoi": "2026-11-15T14:33:36Z",
+      "link": "claude://claude.ai/epitaxy/local_8b35bc81-6bc1-4ea8-b5f7-019f421c8496",
+      "nhom": "Tập 1",
+      "ten": "Đưa đồ đẹp của tập 1 vào bộ dùng chung",
+      "tiepTheo": "",
+      "trangThai": "xong"
+    },
+    "lint-format": {
+      "banCan": "",
+      "dangLam": "Công cụ tự soát lỗi chính tả, định dạng kịch bản. Làm trên bản riêng, chưa gộp.",
+      "lanCuoi": "2026-11-15T03:56:08Z",
+      "link": "claude://claude.ai/epitaxy/local_6948380b-9d52-4572-9073-1321d7421f50",
+      "nhom": "Kịch bản",
+      "ten": "Tự kiểm lỗi và sắp gọn kịch bản",
+      "tiepTheo": "",
+      "trangThai": "tam-nghi"
+    },
+    "nghien-cuu-map": {
+      "banCan": "Mở trang thư viện đồ vật (thu-vien-asset.html) và chọn mẫu bạn thích cho từng món.",
+      "dangLam": "Đã xem thử 1 video, tìm được 141 đồ vật. Đã làm trang để chọn mẫu đồ vật.",
+      "lanCuoi": "2026-11-16T01:55:47Z",
+      "link": "claude://claude.ai/epitaxy/local_3f947e03-d4a9-4669-8b80-7a40cac0178a",
+      "nhom": "Thư viện đồ vật",
+      "ten": "Nghiên cứu cảnh từ 37 video mẫu",
+      "tiepTheo": "Xem 36 video còn lại.",
+      "trangThai": "cho-ban"
+    },
+    "so-sanh-roblox": {
+      "banCan": "",
+      "dangLam": "So sánh hai cách làm phim và mở các việc học hỏi (động tác, hiệu ứng, kiểm kịch bản).",
+      "lanCuoi": "2026-11-15T05:26:46Z",
+      "link": "claude://claude.ai/epitaxy/local_82b6f2c0-d31b-4ba2-ab20-2bb6275a5ec6",
+      "nhom": "Nghiên cứu",
+      "ten": "So sánh 3JS Studio với Roblox",
+      "tiepTheo": "",
+      "trangThai": "xong"
+    },
+    "studio-che-do-3d": {
+      "banCan": "Mở thử tập 1 đến tập 4, bấm thử nút xem 3D, rồi nói có làm tiếp phần 2 không.",
+      "dangLam": "Đã làm xong phần 1: xoay xem cảnh 3D, giữ góc nhìn, bám theo máy quay của từng cảnh, chọn bối cảnh. Có trên tập 1 đến tập 4.",
+      "lanCuoi": "2026-11-16T01:35:16Z",
+      "link": "claude://claude.ai/epitaxy/local_e0994d56-2d42-4a6b-b42e-0930ef67f57d",
+      "nhom": "Studio",
+      "ten": "Studio: chế độ xem 3D",
+      "tiepTheo": "Phần 2 (khi bạn đồng ý).",
+      "trangThai": "cho-ban"
+    },
+    "studio-ngon-ngu": {
+      "banCan": "",
+      "dangLam": "Bàn xem nên viết Studio bằng ngôn ngữ, nền tảng nào cho chạy nhanh.",
+      "lanCuoi": "2026-11-16T02:03:25Z",
+      "link": "claude://claude.ai/epitaxy/local_8b919ee5-dffe-4b9c-bd22-e0fbc61f0ad2",
+      "nhom": "Studio",
+      "ten": "Chọn ngôn ngữ để viết phần mềm Studio",
+      "tiepTheo": "Đo xem mở Studio và tập 1, tập 3 mất bao lâu, chậm ở bước nào.",
+      "trangThai": "dang-lam"
+    },
+    "tach-studio": {
+      "banCan": "",
+      "dangLam": "Studio thành phần mềm riêng, có nút tải bản mới nhất. Đã phát hành bản đầu.",
+      "lanCuoi": "2026-11-16T01:33:47Z",
+      "link": "claude://claude.ai/epitaxy/local_803a146a-cc3d-4473-823f-160c3766e6a5",
+      "nhom": "Studio",
+      "ten": "Tách Studio khỏi từng tập + nút Cập nhật",
+      "tiepTheo": "",
+      "trangThai": "xong"
+    },
+    "thu-vien-asset": {
+      "banCan": "",
+      "dangLam": "Trang có 130 món, mỗi món 10 mẫu, chọn được nhiều mẫu, có nút Làm mới.",
+      "lanCuoi": "2026-11-15T10:49:00Z",
+      "link": "claude://claude.ai/epitaxy/local_a090a322-f814-4e63-bdd3-5a2c3544073d",
+      "nhom": "Thư viện đồ vật",
+      "ten": "Trang chọn mẫu đồ vật từ Roblox",
+      "tiepTheo": "",
+      "trangThai": "xong"
+    },
+    "troi-vong-nen": {
+      "banCan": "",
+      "dangLam": "Thêm nút để chọn bầu trời, hàng cây bao quanh cảnh và mặt đất (đất hay cỏ) khi xem 3D.",
+      "lanCuoi": "2026-11-16T02:03:14Z",
+      "link": "claude://claude.ai/epitaxy/local_6f456d1f-13a7-4e72-bf14-c1ed5ad114b0",
+      "nhom": "Studio",
+      "ten": "Xem 3D: chọn bầu trời, hàng cây bao quanh, nền đất cỏ",
+      "tiepTheo": "",
+      "trangThai": "dang-lam"
+    },
+    "trung-tam": {
+      "banCan": "",
+      "dangLam": "Làm trang này để bạn xem mọi việc ở một chỗ.",
+      "lanCuoi": "2026-11-16T02:10:00Z",
+      "link": "",
+      "nhom": "Điều phối",
+      "ten": "Trung tâm điều hành",
+      "tiepTheo": "Cập nhật trang mỗi khi bạn nhắn “cập nhật trung tâm”.",
+      "trangThai": "dang-lam"
+    },
+    "vfx-danh-nhau": {
+      "banCan": "",
+      "dangLam": "Làm hiệu ứng cho cảnh đánh nhau. Làm trên bản riêng, chưa gộp.",
+      "lanCuoi": "2026-11-15T03:51:34Z",
+      "link": "claude://claude.ai/epitaxy/local_f5c5bdd9-6eab-4a88-bb3b-678f4fca6e9e",
+      "nhom": "Hình ảnh",
+      "ten": "Hiệu ứng đánh nhau: hào quang, tia sáng, tia lửa",
+      "tiepTheo": "",
+      "trangThai": "tam-nghi"
+    }
+  }
+}
