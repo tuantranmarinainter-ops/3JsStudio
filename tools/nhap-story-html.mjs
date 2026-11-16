@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { xuatGoc } from './nhap-story-goc.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -130,6 +131,19 @@ if (!args.includes('--khong-chay')) {
   if (r.status !== 0) { console.error('storyboard.py lỗi'); process.exit(3); }
   const epDir = path.join(outEp, ten);
   // 3b. diễn viên R6: storyboard.py chép nguyên tuỳ chọn → kiểm lại episode.js còn khoá r6/bear
+  // 3a. NHÂN VẬT + BỐI CẢNH + CAMERA GỐC (riêng của tập): goc/ + shots.js thô (mỗi shot gọi cảnh gốc theo số shot) + index.html. Bản storyboard giữ ở shots-storyboard.js.
+  if (!args.includes('--khong-goc')) {
+    const g = xuatGoc(file, epDir, ten);
+    fs.copyFileSync(path.join(epDir, 'shots.js'), path.join(epDir, 'shots-storyboard.js'));
+    const cur = { s: '' };
+    const raw2 = rows.map((r) => `  { id: "s${String(r.n).padStart(3, '0')}", dur: ${r.dur}, env: "goc-trong", light: "${/NIGHT|FACTORY/.test(r.look) ? 'night' : 'day'}", goc: ${r.n}, cam: { p: [0, 6, 14], l: [0, 2, 0], fov: 50 } },`);
+    const cm = `// ${ten} — ${rows.length} shot THÔ: mỗi shot = số shot gốc (goc) → camera/động tác/nhân vật lấy từ goc/story.js (cảnh gốc story.html). cam ở đây chỉ là chỗ giữ.
+// Bản dựng theo loại shot của studio (storyboard.py): shots-storyboard.js.
+`;
+    fs.writeFileSync(path.join(epDir, 'shots.js'), [cm + 'export const SHOTS = [', ...raw2, '];', ''].join(String.fromCharCode(10)), 'utf8');
+    spawnSync('node', [path.join(ROOT, 'tools', 'nhap-story-index.mjs'), ten], { cwd: ROOT, stdio: 'inherit' });
+    console.log(`goc/: ${g.mat} mặt, story.js ${g.dong} dòng`);
+  }
   const epJs = fs.readFileSync(path.join(epDir, 'episode.js'), 'utf8');
   const shotsJs = fs.readFileSync(path.join(epDir, 'shots.js'), 'utf8');
   const narr = fs.existsSync(path.join(epDir, 'narration.txt')) ? fs.readFileSync(path.join(epDir, 'narration.txt'), 'utf8') : '';
@@ -145,7 +159,7 @@ const moi = full.join(' ');
 const khop = goc.replace(/\s+/g, ' ') === moi.replace(/\s+/g, ' ');
 const tong = rows.reduce((a, r) => a + r.dur, 0);
 const bc = `# Báo cáo nhập ${path.basename(file)} → ${ten}\n\n| | file gốc | ${ten} |\n|---|---|---|\n| số shot | ${raw.length} | ${rows.length} |\n| thời lượng | ${END} s | ${tong.toFixed(2)} s |\n| lời kể (chữ) | ${goc.length} ký tự | ${moi.length} ký tự — ${khop ? 'KHỚP' : 'LỆCH'} |\n| số câu | — | ${soLoi} |\n\n## Không ánh xạ được\n` +
-  `- Camera tự viết (\`C.move\`, vị trí từng shot, roll, fov): thay bằng loại shot + từ khoá máy quay của studio — cần rà tay \`cam\` nếu muốn giống gốc.\n- Bối cảnh tự dựng (\`buildStorySets\`: tiệm bánh, phòng Gà, nhà máy, nhà thị trưởng…): dùng env có sẵn (town, bedroom, factory); không chép model/vân từ file gốc.\n- Nhân vật dựng bằng code (\`characters.js\`, mặt base64 140 mặt): thay bằng R6 của studio (look ga/bach/mayor…); bộ mặt gốc không nhập.\n- Hoạt hoạ \`run(lt)\`, hiệu ứng \`fx\` (puff biến mất, rung tay nắm…), \`vanishK/appearK\`, ánh sáng \`setLook\`: không nhập; chỉ giữ nhãn sáng/tối.\n- Đạo cụ (két, nhẫn, đồng hồ, dây chuyền, băng chuyền, bản đồ): không khai \`obj:\` → shot macro/insert nhắm giữa nơi diễn ra.\n- Tiếng, nhạc, giọng: file gốc không có → giọng/nhạc làm bằng skill giong-doc, tieng-dong.\n- Dân/bé (kid2, folk1–3) → 6 người đám đông chung; thêm nhân vật chính >2 trong một shot bị cắt còn 2.\n\n## Chi tiết từng shot\n` +
+  `- GIỮ NGUYÊN từ file gốc (episodes/${ten}/goc/): nhân vật characters.js + 140 mặt, bối cảnh sets.js, camera + động tác + đạo cụ từng shot (story.js, hàm thuần của t). Shot thô trong shots.js chỉ gọi số shot gốc; bản theo loại shot của studio để ở shots-storyboard.js.${NL}- KHÔNG nhập (vẽ 2D lên khung của file gốc): bụi bông/tóe sao, nhoè whip, sepia, kính, màn đen, phụ đề gốc (studio có phụ đề riêng). Ánh sáng/hậu kỳ do studio vẽ nên hơi khác (sáng/tối).${NL}- Giọng, tiếng động, nhạc: file gốc không có.${NL}- Khác biệt đã thấy khi so A/B 6 khung: bố cục, nhân vật, bối cảnh khớp; mặt/bóng hơi khác do hậu kỳ studio.${NL}${NL}## Chi tiết từng shot (bản theo loại shot, chỉ để tham khảo)${NL}` +
   [...baoCao.khong, ...baoCao.canh].map((x) => `- ${x}`).join('\n') + '\n';
 fs.writeFileSync(path.join(rep, 'bao-cao.md'), bc, 'utf8');
 console.log(`shot ${raw.length}/${rows.length} · ${END}s/${tong.toFixed(1)}s · ${soLoi} câu · lời kể ${khop ? 'KHỚP' : 'LỆCH'} → ${path.relative(ROOT, rep)}/bao-cao.md`);
