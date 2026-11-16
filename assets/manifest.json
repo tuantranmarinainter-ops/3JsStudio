@@ -15879,5 +15879,47 @@
   "loai": "vua",
   "tris": 536,
   "tris_goc": 536
+ },
+ {
+  "id": "nhap/pho-cay",
+  "src": "assets/nhap/pho-cay.glb",
+  "source": "create.roblox.com/store/asset/3287226226",
+  "license": "Roblox Creator Store",
+  "credit": "“Low-Poly Tree.” by akbarbinta (https://create.roblox.com/store/asset/3287226226), Roblox Creator Store",
+  "title": "Low-Poly Tree.",
+  "author": "akbarbinta",
+  "scale": 1,
+  "bbox": [
+   14.462,
+   20.513,
+   19.785
+  ],
+  "nodes": [
+   "pho-cay"
+  ],
+  "loai": "vua",
+  "tris": 306,
+  "tris_goc": 306
+ },
+ {
+  "id": "nhap/pho-tru-cuu-hoa",
+  "src": "assets/nhap/pho-tru-cuu-hoa.glb",
+  "source": "create.roblox.com/store/asset/8220444536",
+  "license": "Roblox Creator Store",
+  "credit": "“fire hydrant” by LoganPlayz907 (https://create.roblox.com/store/asset/8220444536), Roblox Creator Store",
+  "title": "fire hydrant",
+  "author": "LoganPlayz907",
+  "scale": 1,
+  "bbox": [
+   2.4,
+   4.1,
+   2.4
+  ],
+  "nodes": [
+   "pho-tru-cuu-hoa"
+  ],
+  "loai": "vua",
+  "tris": 1308,
+  "tris_goc": 1308
  }
 ]

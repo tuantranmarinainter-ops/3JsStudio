@@ -2,15 +2,16 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-16
+- **Cập nhật:** 2026-11-16 tối
 - **Nhánh:** `ep1-v2`
-- **Đang làm:** không — đợt 5 nhóm A (PHỐ, góp ý 16/11) đã lên trang duyệt `dist/ep003_duyet.html`.
-- **Bước kế tiếp:** người dùng chốt → nhập cây/trụ/gấu đã chọn (`nhap-model.mjs nhap roblox:<id>`; gấu ~7000 tg → `nen-model.mjs` trước), đặt vào `engine/envs/e3-pho.js` (có cờ tắt), đổi trời/vòng bao theo lựa chọn. Rồi nhóm B (tiệm s004–s006), C (phòng Gà), D (nhà máy: đống đồ ăn cắp).
-- **Đang chờ:** người dùng duyệt đợt 5 nhóm A; đợt 2 (biển tiệm bánh) vẫn chờ.
+- **Đang làm:** không — đợt 5 nhóm A (PHỐ) đã chốt (`duyet/ep003/dot-04.ketqua.json`) và đã thay vào `engine/envs/e3-pho.js`.
+- **Đã thay:** cây Roblox 3287226226 (`nhap/pho-cay`) thay mọi cây khối; 6 trụ cứu hoả 8220444536 (`nhap/pho-tru-cuu-hoa`); 6 gấu kệ nhà máy trên 2 tầng kệ sau kính tiệm gấu (dựng lười ở update); trời ngày anime-day (`?troiPho=sky-7` về cũ), đêm sky-9; vòng bao rừng thông. `?rb=0` về bản khối.
+- **Lỗi còn (soi `output/ep003/kiem-p5/bao-cao.md`):** (1) ĐÊM s045/s036: vòng rừng thông như răng cưa lơ lửng giữa trời, hở dưới — thử bật nền cỏ (`e.nen='co'`) KHÔNG chữa được và lộ vệt cỏ lên vỉa hè s003 → đã gỡ; cần sửa ở builder chung `engine/vong-bao.js` (đêm) hoặc hạ `h`/đổi `r`. (2) Nền sau kệ gấu đen thui (s008–s011). (3) s015 trời xanh phẳng không mây.
+- **Bước kế tiếp:** sửa 3 lỗi trên (người dùng chọn); rồi nhóm B (tiệm s004–s006), C (phòng Gà: cửa sổ nhìn phố, ảnh treo), D (nhà máy: đống đồ ăn cắp).
+- **Đang chờ:** đợt 2 (biển tiệm bánh) vẫn chờ duyệt.
 - **File đang dở (chưa commit):** không.
 - **Đang chạy nền:** không
 - **Đạt khi:** mọi đợt 1–8 đã chốt + thay vào bối cảnh, `?rb=0` vẫn về bản khối.
-- **Câu hỏi còn mở:** (1) nhà thị trưởng lùi sau sân — người dùng có chịu? (2) phố đêm ít ô sáng hơn bản khối — có cần dán thêm ô sáng?
 <!-- /ĐIỂM DỪNG -->
 
 Yêu cầu người dùng: duyệt lại TOÀN BỘ asset ep003 theo vibe Roblox, chỉ lấy từ Roblox Creator Store, mỗi món **10 ứng viên**;
@@ -24,7 +25,7 @@ Chốt đợt nào → nhập + thay vào bối cảnh đó → `look.mjs` + `sh
 | 2 | biển tiệm bánh, 10 ứng viên mới | CHỜ DUYỆT |
 | 3 | SKY 6 mặt cho từng thời điểm (ngày, hoàng hôn, đêm) — `tools/sky-extract/`, `tools/sky-import.mjs`, `engine/sky-lab.html?sky=` | chưa |
 | 4 | NHÀ ngoại thất: nhà Gà, tiệm gấu, tiệm bánh, tiệm may, nhà thị trưởng, nhà ngã ba, nhà máy xa, tháp chuông, nhà nền (chọn nhiều) — 9 món × 10 mẫu | ĐÃ CHỐT 14/11 (`duyet/ep003/dot-03.ketqua.json`: 8 món 1 mẫu, nhà nền 7 mẫu) → đã nhập 15 model `nhap/pho-*` và thay vào `engine/envs/e3-pho.js` (`?rb=0` = bản khối) |
-| 5 | PHỐ: đèn đường, trụ chặn, cây (chọn nhiều), ghế, hộp hoa, chậu cây (chọn nhiều), biển treo, bàn trưng, cổng rào, mái hiên xanh lam, đường/vỉa hè/biển báo | nhóm A (góp ý 16/11: cây, trụ cứu hoả, gấu sau kính, trời ngày/đêm, vòng bao, vân nhà) CHỜ DUYỆT; vân nhà đã gắn (`?vanNha=0` tắt) |
+| 5 | PHỐ: đèn đường, trụ chặn, cây (chọn nhiều), ghế, hộp hoa, chậu cây (chọn nhiều), biển treo, bàn trưng, cổng rào, mái hiên xanh lam, đường/vỉa hè/biển báo | nhóm A (cây, trụ cứu hoả, gấu sau kính, trời, vòng bao, vân nhà) ĐÃ CHỐT + ÁP 16/11 (`dot-04.ketqua.json`); vân nhà đã gắn (`?vanNha=0` tắt) |
 | 6 | nhà máy nội thất (15 món) | chưa |
 | 7 | phòng Gà (11 món) | chưa |
 | 8 | đạo cụ nhỏ (10 món) | chưa |

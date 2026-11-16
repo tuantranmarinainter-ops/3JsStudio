@@ -29,7 +29,8 @@
 //   hien_doi_dien = mặt trên mái hiên xanh lam [11.8,9.9,34,−π/2]. Đạo cụ nhỏ (gấu, giấy, đồng hồ, nhẫn, ví) do hệ đạo cụ đặt — env không dựng.
 // ĐÊM / NGÀY: env tự đọc ctx.light (shot time:'dem' → 'night'; còn lại → 'day'); shot cũng có thể gọi e.setNight(0..1). Cửa thị trưởng: ctx.cuaThiTruong 0..1 (mặc định 0 = đóng) hoặc e.setDoor(k).
 export const LIGHT = 'day';
-export const ASSETS = ['pho-nha-ga', 'pho-tiem-gau', 'pho-tiem-banh', 'pho-tiem-may', 'pho-nha-thi-truong', 'pho-nha-nga-ba', 'pho-nha-may', 'pho-thap-chuong', 'pho-nha-nen-1', 'pho-nha-nen-2', 'pho-nha-nen-3', 'pho-nha-nen-4', 'pho-nha-nen-5', 'pho-nha-nen-6', 'pho-nha-nen-7'].map((n) => 'nhap/' + n);   // nhà Roblox Creator Store (đợt nhà 14/11); thiếu model hoặc ?rb=0 → bản khối
+import { gauKeOn, gauKeStatic } from '../gau-ke.js';   // gấu kệ nhà máy (Roblox 104566604295071) đứng sau kính tiệm gấu; ?gauKe=0 / ?rb=0 → về ảnh phẳng
+export const ASSETS = ['pho-nha-ga', 'pho-tiem-gau', 'pho-tiem-banh', 'pho-tiem-may', 'pho-nha-thi-truong', 'pho-nha-nga-ba', 'pho-nha-may', 'pho-thap-chuong', 'pho-nha-nen-1', 'pho-nha-nen-2', 'pho-nha-nen-3', 'pho-nha-nen-4', 'pho-nha-nen-5', 'pho-nha-nen-6', 'pho-nha-nen-7', 'pho-cay', 'pho-tru-cuu-hoa'].map((n) => 'nhap/' + n);   // nhà Roblox Creator Store (đợt nhà 14/11); thiếu model hoặc ?rb=0 → bản khối
 export const DIEM = {
   pho_nam: [0, 0.4, 50], pho_giua: [0, 0.4, -8], pho_bac: [0, 0.4, -62],
   truoc_nha_ga: [-11.2, 0.4, 27], truoc_tiem_gau: [-14.4, 0.4, 1.4], khach_tiem_gau: [-10, 0.4, 1.4],
@@ -45,6 +46,8 @@ export const PROP_SLOTS = {
 export default function build(g, e, H) {
   const { ganTang, THREE, hash, LIGHTS, fit } = H;
   e.diem = DIEM;
+  e.skybox = new URLSearchParams(globalThis.location?.search || '').get('troiPho') === 'sky-7' ? 'sky-7' : 'anime-day';   // đợt 5: trời ngày = anime-day (người dùng chốt 16/11); đêm giữ sky-9. ?troiPho=sky-7 về trời cũ
+  e.vongBao = { preset: 'rung-thong', r: 420, h: 110 };   // vòng bao rừng thông (ô FX vongBao tắt được; ?vongBao=tat)
   const SW = 0.4;   // mặt vỉa hè
   const tBack = new THREE.Group(), tMid = new THREE.Group(), tFront = new THREE.Group();
   tBack.name = 'pho_tang_sau'; tMid.name = 'pho_tang_giua'; tFront.name = 'pho_tang_truoc';
@@ -72,6 +75,7 @@ export default function build(g, e, H) {
     tile: '#8a4a32 #5e3626',   // sàn ban công gạch đất nung
     matte: '#9a5a36 #7a4528',   // chậu đất nung
   })) for (const c of cols.split(' ')) KIND_MAU[c] = kind;
+  let daoGau = null;   // dựng gấu sau kính tiệm gấu khi model gấu kệ đã nạp
   const litMats = [];   // vật liệu nhận sáng: đêm được nâng sáng + ám xanh lam (preset 'night' của engine tối quá cho phố)
   const kindStd = new Map();
   const stdOf = (kind) => { if (!kindStd.has(kind)) { const m = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92, metalness: 0 }); kindStd.set(kind, m); litMats.push(m); } return kindStd.get(kind); };
@@ -381,7 +385,18 @@ export default function build(g, e, H) {
   { const f = face(-1, WEST.gau, 1.6), w = 26, D = 20, H = 17, wall = '#C46A44', cream = '#EAD9B5', teal = '#2B7E80';
     const G = nhaGlb(f, 'pho-tiem-gau', 'pho_tiem_gau', { w: 26, H: 18, D: 20, lat: true });
     if (G) {   // GLB Roblox (lật gương để ô kính lớn nằm sau bàn trưng): kệ kính gấu đặt vào ô kính của model, biển đầu gấu trên tường chắn mái, biển treo hạ xuống dưới mái hiên
-      f.plane(G.du(0.69), 0.14, G.y(0.38), 10.2, 4.6, dispMat(dispTex('gau', 512, 256)), 'pho_ke_kinh_tiem_gau');
+      // đợt 5 (16/11): 6 gấu kệ nhà máy (cao 1,5) trên 2 tầng kệ sau ô kính, thay tấm ảnh gấu phẳng; ?gauKe=0 / ?rb=0 → ảnh phẳng.
+      // Model gấu nạp xong SAU khi env dựng (cast.js) → dựng gấu lười ở update() lần đầu gauKeOn() đúng, rồi ẩn ảnh phẳng.
+      const poster = f.plane(G.du(0.69), 0.14, G.y(0.38), 10.2, 4.6, dispMat(dispTex('gau', 512, 256)), 'pho_ke_kinh_tiem_gau');
+      daoGau = () => {
+        const du0 = G.du(0.69), yc = G.y(0.38), nen = new THREE.MeshBasicMaterial({ color: '#9a6a38' }), kep = new THREE.MeshBasicMaterial({ color: '#6a4222' });   // Basic: nội thất tiệm bị bóng model che, vật liệu lit đen thui; đêm dịu bớt
+        if (nightNow) { nen.color.multiplyScalar(0.55); kep.color.multiplyScalar(0.55); }
+        if (poster) poster.visible = false;
+        f.plane(du0, -1.5, yc, 10.2, 4.6, nen, 'pho_ke_gau_nen');
+        for (const [ti, yb] of [[0, yc - 2.2], [1, yc + 0.1]]) { { const sh = new THREE.Mesh(new THREE.BoxGeometry(10.2, 0.14, 1.5), kep); sh.name = 'pho_ke_gau_van'; const [sx, sz] = f.W(du0, -0.85); sh.position.set(sx, yb - 0.07, sz); sh.rotation.y = f.ry; tMid.add(sh); }
+          for (let i = 0; i < 3; i++) { const v = (i + ti) % 3, k = gauKeStatic(THREE, v), du = du0 + (i - 1) * 3.3 + (ti ? 1.0 : -0.5) + (hash(i, 90 + ti) - 0.5) * 0.6, sc = (1.5 / k.size[1]) * (0.92 + hash(i, 91 + ti) * 0.16);
+            const m = new THREE.Mesh(k.geometry, k.materials); m.name = 'pho_ke_gau_kinh_' + ti + i; m.scale.setScalar(sc); const [x, z] = f.W(du, -0.85); m.position.set(x, yb, z); m.rotation.y = f.ry + (hash(i, 92 + ti) - 0.5) * 0.5; m.castShadow = false; tMid.add(m); } }
+      };
       f.plane(0, 0.3, G.y(1) + 2.9, 5.6, 5.6, signMat(texPlaque), 'pho_bien_dau_gau'); for (const s of [-1, 1]) f.b(s * 1.5, 0.1, G.y(1) - 0.3, 0.3, 0.3, 1.0, '#1E2024');
       f.plane(G.du(0.275), -2.6, (G.y(0.085) + G.y(0.585)) / 2, 13, 10.4, dispMat(dispTex('gau', 640, 512)), 'pho_gian_trong_tiem_gau');   // mặt tiền model để hở (fz 0,10..0,45): nhìn vào thấy kệ gấu thay vì hộp trắng rỗng
       { const du = 11.6, dy = -4.4; f.b(du, 1.8, 14.5 + dy, 0.35, 3.6, 0.35, '#1E2024'); f.b(du, 3.0, 11.3 + dy, 0.25, 0.25, 3.3, '#1E2024'); const [x, z] = f.W(du, 3.0); const m = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 3.0), signMat(texHang)); m.position.set(x, 11.8 + dy, z); m.rotation.y = 0; m.name = 'pho_bien_treo_gau'; tMid.add(m); }
@@ -605,12 +620,17 @@ export default function build(g, e, H) {
   for (let z = 120; z > -80; z -= 8) { bol(-9.5, z + 1.5); bol(9.5, z + 1.5); }
   for (let x = -26; x < 106; x += 8) { bol(x, -100.5); if (x > 18) bol(x, -81.5); }
   const tree = (x, z, h, seed) => {   // cây khối: thân + 4-6 khối tán xanh #4E7A32
+    { const o = RB && fit ? fit('nhap/pho-cay', h * 0.92) : null;   // đợt 5: cây Roblox 'Low-Poly Tree.' (3287226226) thay cây khối; ?rb=0 → cây khối
+      if (o) { gomRb(o, 'pho-cay'); o.name = 'pho_cay_rb_' + seed; o.position.set(x, SW, z); o.rotation.y = hash(seed, 5) * 6.283; tFront.add(o); return; } }
     const tw = Math.max(1.0, h * 0.07), th = h * 0.45; front.box(x, th / 2 + SW, z, tw, th, tw, '#5A3A22');
     const cs = ['#4E7A32', '#5d9040', '#3f6a2a', '#6aa04a'], R = h * 0.28;
     front.box(x, th + SW + R * 0.9, z, R * 2.0, R * 1.8, R * 2.0, cs[seed % 4]);
     for (let i = 0; i < 5; i++) { const a = hash(i, seed) * 6.283, d = R * 0.9, s = R * (0.9 + hash(i, seed + 1) * 0.5); front.box(x + Math.cos(a) * d, th + SW + R * (0.55 + hash(i, seed + 2) * 1.0), z + Math.sin(a) * d, s, s * 0.9, s, cs[(seed + i + 1) % 4]); }
     front.box(x, th + SW + R * 2.1, z, R * 1.2, R * 0.9, R * 1.2, cs[(seed + 2) % 4]);
   };
+  // trụ cứu hoả Roblox (8220444536), 6 trụ dọc hai dãy vỉa hè, cao 2,8; ?rb=0 → không có (bản khối chưa có trụ)
+  if (RB && fit) for (const [x, z, ry] of [[-10.0, 69, 0.3], [-10.0, 21, 3.4], [-10.0, -43, 0], [10.0, 93, 1.2], [10.0, 45, 4.4], [10.0, -3, 2.1]]) {
+    const o = fit('nhap/pho-tru-cuu-hoa', 2.8); if (!o) break; gomRb(o, 'pho-tru-cuu-hoa'); o.name = 'pho_tru_cuu_hoa_' + z; o.position.set(x, SW, z); o.rotation.y = ry; tFront.add(o); }
   tree(11.8, 118, 26, 1); tree(-11.8, 122, 24, 2); tree(11.8, 78, 15, 3); tree(-11.8, 70, 14, 4);
   tree(-40, 30, 22, 6); tree(42, 60, 22, 7); tree(75, 10, 24, 8); tree(-70, -30, 20, 9); tree(-48, -75, 22, 10); tree(40, -30, 20, 11); tree(-26, -112, 22, 12);
   tree(12.4, -78.8, 12, 13); tree(-12.5, -80.5, 11, 14); tree(30, -100.8 + 3, 10, 15);
@@ -648,6 +668,7 @@ export default function build(g, e, H) {
   const setDoor = (k) => { doorK = Math.min(1, Math.max(0, k)); if (doorPivot) doorPivot.rotation.y = doorK * 1.75; };
   e.setNight = setNight; e.setDoor = setDoor;
   return { suSong: [], setNight, setDoor, update(t, ctx) {
+    if (daoGau && gauKeOn()) { const d = daoGau; daoGau = null; d(); }
     const L = LIGHTS[(ctx && ctx.light) || e.light]; setNight(L && L.night ? 1 : 0);
     setDoor(ctx && ctx.cuaThiTruong != null ? ctx.cuaThiTruong : doorK);
   } };

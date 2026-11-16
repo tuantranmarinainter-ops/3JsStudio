@@ -1,0 +1,27 @@
+{
+ "tap": "ep003",
+ "dot": 4,
+ "luc": "2026-11-16T11:36:48.082Z",
+ "gau": null,
+ "duyet": [],
+ "sua": [],
+ "chuaChon": [
+  "pho_gau_ke_kinh"
+ ],
+ "chon": {
+  "pho_cay": [
+   "pho_cay__2"
+  ],
+  "pho_tru_cuu_hoa": "pho_tru_cuu_hoa__1",
+  "pho_troi_ngay": "pho_troi_ngay__2",
+  "pho_troi_dem": "pho_troi_dem__1",
+  "pho_vong_bao": "pho_vong_bao__3",
+  "pho_van_nha": "pho_van_nha__1"
+ },
+ "ghiChu": {
+  "pho_gau_ke_kinh": "dùng gấu trưng bày trong kệ ở bối cảnh nahf máy"
+ },
+ "doiTuDot": {},
+ "giuTuDot": {},
+ "linkTuTim": []
+}
