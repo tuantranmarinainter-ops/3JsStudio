@@ -48,7 +48,16 @@ window.dung = (d, W, H, ids) => {
   const asp = W / H;
   // vùng chính: sàn nếu có (tường rộng 48 sẽ làm khung dọc quá xa), không thì cả bbox
   const rongChinh = d.san ? d.san.rong : sz.x, sauChinh = d.san ? d.san.sau : sz.z;
-  const chup = (cam) => { r.render(sc, cam); return r.domElement.toDataURL('image/png'); };
+  { // DẤU NHẬN HƯỚNG (giống nhau ở mọi ảnh): dải đỏ nằm dọc mép TRƯỚC (+Z), cột xanh dương ở góc trước-phải (+X,+Z)
+    const x0 = c.x - rongChinh / 2, x1 = c.x + rongChinh / 2, zT = c.z + sauChinh / 2;
+    const dai = new THREE.Mesh(new THREE.BoxGeometry(rongChinh, 0.06, 0.5), new THREE.MeshBasicMaterial({ color: '#d0342c' })); dai.position.set(c.x, -0.27, zT - 0.25); sc.add(dai);
+    const cot = new THREE.Mesh(new THREE.BoxGeometry(0.5, 3, 0.5), new THREE.MeshBasicMaterial({ color: '#2b6fd6' })); cot.position.set(x1 - 0.25, 1.2, zT - 0.25); sc.add(cot);
+  }
+  const NHAN = { truoc: 'TRƯỚC · nhìn từ +Z', sau: 'SAU · nhìn từ −Z', trai: 'TRÁI · nhìn từ −X', phai: 'PHẢI · nhìn từ +X', 'tren-xuong': 'TỪ TRÊN XUỐNG', 'duoi-len': 'TỪ DƯỚI LÊN', 'thang-mat': 'THẲNG MẶT · ngang mắt từ +Z', 'ngang-hong': 'NGANG HÔNG · ngang mắt từ +X' };
+  const chup = (cam, id) => { r.render(sc, cam);   // in nhãn hướng ở góc trên-trái ảnh
+    const cv2 = document.createElement('canvas'); cv2.width = W; cv2.height = H; const g = cv2.getContext('2d'); g.drawImage(r.domElement, 0, 0);
+    if (id && NHAN[id]) { g.font = 'bold 22px sans-serif'; const tw = g.measureText(NHAN[id]).width; g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(8, 8, tw + 16, 32); g.fillStyle = '#fff'; g.fillText(NHAN[id], 16, 32); }
+    return cv2.toDataURL('image/png'); };
   const out = {};
   const lam = {
     'tren-xuong': () => { // nhìn thẳng xuống, +X phải, +Z (về camera chính) xuống đáy ảnh
@@ -69,19 +78,19 @@ window.dung = (d, W, H, ids) => {
   // 6 hướng còn lại: máy đặt trên vòng quanh tâm c, nhìn vào c. Khoảng cách đủ thấy trọn bề ngang mặt đối diện.
   const vong = (dx, dz, rongMat, yMay, yNhin, fov) => () => {
     const cam = new THREE.PerspectiveCamera(fov, asp, 0.5, 600), t = Math.tan(fov * Math.PI / 360);
-    const dist = Math.max((rongMat * 1.15) / (2 * t * asp), sz.y * 1.2 / (2 * t)) + (dx ? sauChinh : rongChinh) / 2;
+    const dist = Math.max((rongMat * 0.8) / (2 * t * asp), sz.y * 1.35 / (2 * t)) + (dx ? rongChinh : sauChinh) * 0.25;
     cam.position.set(c.x + dx * dist, typeof yMay === 'function' ? yMay(dist) : yMay, c.z + dz * dist); cam.lookAt(c.x, yNhin, c.z);
     return cam;
   };
-  const nghieng = (dist) => 4.75 + dist * Math.tan(25 * Math.PI / 180) * 0.6; // chếch xuống ~25° so với tâm
-  lam.truoc = vong(0, 1, rongChinh, nghieng, Math.min(sz.y / 3, 4), 50);
-  lam.sau = vong(0, -1, rongChinh, nghieng, Math.min(sz.y / 3, 4), 50);
-  lam.trai = vong(-1, 0, sauChinh, nghieng, Math.min(sz.y / 3, 4), 50);
-  lam.phai = vong(1, 0, sauChinh, nghieng, Math.min(sz.y / 3, 4), 50);
+  const nghieng = (dist) => 4.75 + dist * Math.tan(30 * Math.PI / 180); // chếch xuống ~30° so với tâm
+  lam.truoc = vong(0, 1, rongChinh, nghieng, Math.min(sz.y / 2, 8), 50);
+  lam.sau = vong(0, -1, rongChinh, nghieng, Math.min(sz.y / 2, 8), 50);
+  lam.trai = vong(-1, 0, sauChinh, nghieng, Math.min(sz.y / 2, 8), 50);
+  lam.phai = vong(1, 0, sauChinh, nghieng, Math.min(sz.y / 2, 8), 50);
   lam['duoi-len'] = () => { // sát đất ~1 stud ở phía trước, ngước nhìn lên
     const fov = 60, cam = new THREE.PerspectiveCamera(fov, asp, 0.5, 600), t = Math.tan(fov * Math.PI / 360);
-    const dist = (rongChinh * 0.6) / (2 * t * asp) + sauChinh / 2;
-    cam.position.set(c.x, 1, c.z + dist); cam.lookAt(c.x, Math.max(sz.y * 0.55, 6), c.z);
+    const dist = (rongChinh * 0.45) / (2 * t * asp) + sauChinh * 0.15;
+    cam.position.set(c.x, 0.8, c.z + dist); cam.lookAt(c.x, Math.max(sz.y * 0.8, 9), c.z);   // ngước ~35° trở lên
     return cam;
   };
   lam['ngang-hong'] = () => { // ngang tầm mắt 4.75 từ +X, nhìn thẳng ngang
@@ -90,7 +99,7 @@ window.dung = (d, W, H, ids) => {
     cam.position.set(Math.max(c.x + dist, bb.max.x + 1), 4.75, c.z); cam.lookAt(c.x, 4.75, c.z);
     return cam;
   };
-  for (const id of ids) out[id] = chup(lam[id]());
+  for (const id of ids) out[id] = chup(lam[id](), id);
   r.dispose();
   return out;
 };
