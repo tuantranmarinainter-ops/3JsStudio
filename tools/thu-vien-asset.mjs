@@ -607,7 +607,7 @@ function hang(m){
   const hien=n?pool.slice(off,off+SO):[];
   const tr=E('div',{class:'tr'},
     E('img',{class:'ct',src:m.ct||'',alt:m.ten,loading:'lazy'}),
-    E('div',null,E('h4',null,m.ten),E('div',{class:'en'},m.en),m.ctNv?E('div',{class:'kv'},m.ctNv):null,
+    E('div',null,E('h4',null,m.ten,...[...new Set(m.xh.map(x=>x.video))].map(v=>E('span',{class:'chip',style:'margin-left:6px;font-size:11px;font-weight:600'},v))),E('div',{class:'en'},m.en),m.ctNv?E('div',{class:'kv'},m.ctNv):null,
       E('div',{class:'kv'},E('div',null,...m.mau.slice(0,4).map(c=>E('span',null,E('span',{class:'sw',style:'background:'+(c.match(/#[0-9a-fA-F]{3,8}/)||['#ccc'])[0]}),c.replace(/#[0-9a-fA-F]{3,8}\s*/,'')+' '))),
         E('div',null,'Vật liệu: '+m.vl.slice(0,2).join(' · ')),E('div',null,'Cỡ: '+m.kt.slice(0,3).join(' · ')+' stud')),
       E('details',null,E('summary',null,'Xuất hiện '+m.xh.length+' lần'),...m.xh.map(x=>E('div',null,x.video+' · '+x.diaDiemTen+' · '+x.shot)))));
@@ -639,8 +639,12 @@ function hang(m){
   return E('section',{class:'mon'+(nch?' co-chon':''),id:'m-'+m.id},tr,ph)}
 function ve(){
   const nav=document.getElementById('muc'),main=document.getElementById('main');
+  const TAP=new URLSearchParams(location.search).get('tap')||'';   // lọc theo tập/video: ?tap=ep005t
+  const coTap=m=>!TAP||m.xh.some(x=>x.video===TAP);
+  nav.append(E('label',{class:'mpl',style:'font-weight:600'},'Tập: ',E('select',{'aria-label':'Lọc theo tập',onchange:e=>{const u=new URL(location.href);e.target.value?u.searchParams.set('tap',e.target.value):u.searchParams.delete('tap');location.href=u.href}},
+    E('option',{value:''},'Tất cả ('+D.mon.length+')'),...D.video.map(v=>E('option',{value:v,selected:v===TAP?'':undefined},v+' ('+D.mon.filter(m=>m.xh.some(x=>x.video===v)).length+')')))));
   for(const mc of D.muc){
-    const ds=D.mon.filter(m=>m.muc===mc.id);if(!ds.length)continue;
+    const ds=D.mon.filter(m=>m.muc===mc.id&&coTap(m));if(!ds.length)continue;
     nav.append(E('a',{href:'#'+mc.id},mc.ten+' '+ds.length));
     main.append(E('h2',{id:mc.id},mc.ten+' ('+ds.length+')'));
     for(const c of mc.con){const dc=ds.filter(m=>m.con===c.id);if(!dc.length)continue;
