@@ -226,3 +226,12 @@ test('file mốc hỏng: thoát 2', () => {
   assert.equal(r.status, 2);
   assert.match(r.stderr, /nha-may-ngoai\.json hỏng/);
 });
+
+test('anhSang theo giờ (object) in từng giờ, không ra [object Object] — vướng #18 ep005t', () => {
+  const cum = { cum: 'tc1', cheDo: 'tham-chieu', anhKem: [], nhanVat: [],
+    hinh: [{ file: 'tham-chieu/bc_x.png', moTa: 'Toàn cảnh x', moc: { id: 'x', anhSang: { ngay: 'nắng nhẹ', dem: { chinh: 'trăng xanh', phu: 'đèn dầu' } } } }] };
+  const de = soanDeBai(cum, {});
+  assert.ok(!de.includes('[object Object]'), 'còn [object Object]');
+  assert.match(de, /- ngay: nắng nhẹ/);
+  assert.match(de, /- dem: .*trăng xanh/);
+});

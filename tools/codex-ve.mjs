@@ -165,7 +165,11 @@ function moMocBoiCanh(h) {
   }
   if (m.chuaTrong?.length) { L.push('', '### Vùng phải để trống'); for (const c of m.chuaTrong) L.push(`- ${c}`); }
   if (m.cam?.length) { L.push('', '### Điều cấm'); for (const c of m.cam) L.push(`- ${c}`); }
-  if (m.anhSang) L.push('', '### Ánh sáng', `- ${m.anhSang}`);
+  if (m.anhSang) {   // chuỗi, hoặc object theo giờ {ngay, chapToi, dem…} khi bối cảnh có nhiều biến thể giờ
+    L.push('', '### Ánh sáng');
+    if (typeof m.anhSang === 'object') for (const [gio, v] of Object.entries(m.anhSang)) L.push(`- ${gio}: ${typeof v === 'object' ? JSON.stringify(v) : v}`);
+    else L.push(`- ${m.anhSang}`);
+  }
   L.push('');
   return L;
 }
