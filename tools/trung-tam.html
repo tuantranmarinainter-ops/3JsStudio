@@ -309,7 +309,7 @@ const busy=()=>document.activeElement?.tagName==="TEXTAREA";
   const db=await (window.claude?.use?.("db") ?? null);
   if(!db){ clearTimeout(timer); $("#board").innerHTML=`<div class="empty">Trang cần đăng nhập claude.ai để đọc danh sách công việc.</div>`; return }
   dbRef=db;
-  try{ const user=await (window.claude?.use?.("user") ?? null); canWrite=!!(user&&(user.isOwner()||user.canEdit())) }catch(_){ canWrite=false }
+  try{ const user=await (window.claude?.use?.("user") ?? null); canWrite=!!(user&&((await user.isOwner())||(await user.canEdit()))) }catch(_){ canWrite=false }
   db.collection("yeucau").onSnapshot(s=>{ yc={}; s.docs.forEach(d=>{ if(d.exists) yc[d.id]=d.data() }); if(!busy()) render() },()=>{});
   // một bản ghi duy nhất do tools/trung-tam.mjs dong-goi tạo: {capNhat, dem, rows:[...]}
   db.doc("bang/hientai").onSnapshot(s=>{ clearTimeout(timer); const d=s.exists?s.data():null;
