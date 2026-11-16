@@ -125,6 +125,8 @@ refs/          ảnh chuẩn so khung               .cache/  giọng, tiếng đ
   `--pose-ref refs/<tên>/pose.json --ref refs/<tên>`. Số báo OK thì KHÔNG mở ảnh; lệch thì chỉ mở `*_diff.png` được nêu.
 - **Kiểm cả phim 1 lần ở cuối** (agent chính): `node tools/look.mjs episodes/<ep>/index.html --shots all --det`.
 - Agent chính giữ `episode.js`, dàn ý và tính liên tục; gộp kết quả, chạy kiểm tra và commit.
+- **Máy dùng chung, tránh kẹt CPU**: agent phụ CHỈ chạy file test phần mình sửa (`node --test tools/tests/<file>.test.mjs`), không chạy `npm test` / `npm run test:chrome`, không chụp `--shots all`, giữ `--jobs` mặc định. `npm test` đầy đủ chỉ agent chính chạy **1 lần ở cuối**, khi không còn agent nào chạy.
+- Chrome ẩn bị khoá **tối đa 3 bản cả máy** (`CHROME_TOI_DA`, `tools/chrome-sem.mjs`); thấy dòng "đang chờ ô Chrome" là bình thường, cứ đợi, đừng chạy thêm song song hay tự giết tiến trình phiên khác. Chi tiết: `docs/handoff/giam-tai-cpu.md`.
 
 ## Đọc thêm khi cần (không nạp sẵn)
 - `docs/core.md` — lõi engine: biển, thời tiết, vật liệu, hậu kỳ, look.mjs. `docs/shaders.md`, `docs/vat-lieu.md`, `docs/nhap-model.md`, `docs/kich-ban-vao.md`.
