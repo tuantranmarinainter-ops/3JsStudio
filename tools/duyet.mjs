@@ -685,11 +685,13 @@ const MAU = { ok: '#1e8e4e', loi: '#c0392b', vang: '#9a6700' };
 const thongBao = (loai, chu) => { tb.style.display = 'block'; tb.style.background = MAU[loai] || MAU.loi; tb.textContent = chu; };
 // Máy chủ nhận (tools/duyet.mjs mo): trang http cục bộ → cùng gốc; mở bằng file:// hoặc data: → thử 127.0.0.1:8791…8801
 const TAI_CHO = location.protocol === 'http:' && ['127.0.0.1', 'localhost'].includes(location.hostname);
-const UNG_VIEN = TAI_CHO ? [''] : Array.from({ length: 11 }, (_, i) => 'http://127.0.0.1:' + (8791 + i));
+// Bản đăng lên web (3js.tuanchau.io.vn, https): gửi cùng gốc tới /api/gui → hàng đợi Cloudflare KV → máy nhận (tools/web-nhan.mjs)
+const TREN_WEB = location.protocol === 'https:';
+const UNG_VIEN = TREN_WEB ? ['/api'] : TAI_CHO ? [''] : Array.from({ length: 11 }, (_, i) => 'http://127.0.0.1:' + (8791 + i));
 let MAY_CHU = null, DANG_GUI = false;
 async function hoi(goc) {
   const ac = new AbortController(), t = setTimeout(() => ac.abort(), 800);
-  try { const r = await fetch(goc + '/ping', { signal: ac.signal, cache: 'no-store' }); if (!r.ok) return false; const j = await r.json(); return !!j && j.ung === 'duyet' && j.ep === EP; }
+  try { const r = await fetch(goc + '/ping?ep=' + encodeURIComponent(EP), { signal: ac.signal, cache: 'no-store' }); if (!r.ok) return false; const j = await r.json(); return !!j && j.ung === 'duyet' && j.ep === EP; }
   catch (e) { return false; } finally { clearTimeout(t); }
 }
 async function timMayChu() { // lần lượt từng cổng, dừng ở máy chủ đúng tập

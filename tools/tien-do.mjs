@@ -165,3 +165,5 @@ fs.mkdirSync(path.join(OUT, 'dist'), { recursive: true }); fs.mkdirSync(path.joi
 fs.writeFileSync(path.join(OUT, 'dist/tien-do.html'), `<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>Tiến độ 3JS Studio</title><meta name="viewport" content="width=device-width,initial-scale=1">${font}<style>${css}</style></head><body>${than(false)}<script>${js(false)}</script></body></html>`);
 fs.writeFileSync(path.join(OUT, 'output/artifact/tien-do.html'), `<title>Tiến độ 3JS Studio</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n${font}\n<style>${css}</style>${than(true)}<script>${js(true)}</script>\n`);
 console.log(`tien-do: ${all.length} việc, tổng ${tongPt}% — ` + Object.entries(TT).map(([k, [t]]) => `${t} ${dem(k)}`).join(', ') + ` · token ${fTok(tongTok)}`);
+// --dang: dựng + đăng web 3js.tuanchau.io.vn (tools/dang-web.mjs). Tắt bằng cách không truyền cờ.
+if (process.argv.includes('--dang')) { const { dang } = await import('./dang-web.mjs'); try { dang(); } catch (x) { console.error('dang-web: ' + x.message); process.exitCode = 1; } }

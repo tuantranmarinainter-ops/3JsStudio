@@ -1,0 +1,11 @@
+name = "3js-tuanchau"
+compatibility_date = "2026-11-01"
+pages_build_output_dir = "../dist/web"
+
+[vars]
+TAP_OK = "ep003"
+
+# Điền id sau khi tạo KV: npx wrangler kv namespace create HANG_DOI
+[[kv_namespaces]]
+binding = "HANG_DOI"
+id = "THAY_BANG_ID_KV"
