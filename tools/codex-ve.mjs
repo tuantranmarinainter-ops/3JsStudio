@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // codex-ve.mjs — soạn đề bài theo cụm và chạy nhiều tiến trình Codex CLI song song để vẽ hình storyboard.
-// Dùng: node tools/codex-ve.mjs <tham-chieu|shot> <thư mục tập> [--thu] [--tran N] [--model M] [--muc low] [--chi s001,s002] [--huong truoc,sau] [--chong]
+// Dùng: node tools/codex-ve.mjs <tham-chieu|shot> <thư mục tập> [--thu] [--tran N] [--model M] [--muc low] [--chi s001,s002] [--huong truoc,sau] [--moi-cum N] [--chong]
 // Mã thoát: 0 đủ hình · 1 còn thiếu · 2 lỗi đầu vào. Đặc tả: docs/quy-trinh-dau-vao.md, docs/de-bai-codex-mau.md.
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -90,7 +90,7 @@ function chiaDoi(arr) {
  * docMoc(id) → nội dung boi-canh/<id>.json hoặc null (không có thì giữ hành vi cũ: dùng moTa).
  * @returns {{cum:string, cheDo:string, hinh:{file:string, moTa:string, moc?:object, khoiXam?:string[]}[], anhKem:string[], nhanVat:string[], boiCanh?:string}[]}
  */
-export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null, docMoc = () => null, huong = null, chong = false } = {}) {
+export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null, docMoc = () => null, huong = null, chong = false, moiCum = TOI_DA_HINH_THAM_CHIEU } = {}) {
   const loc = (id) => !chi || chi.includes(id);
   const cumList = [];
 
@@ -116,7 +116,7 @@ export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null, docMoc
     }
     const can = muc.filter((m) => !coFile(m.file));
     if (!can.length) return [];
-    const n = Math.ceil(can.length / TOI_DA_HINH_THAM_CHIEU);
+    const n = Math.ceil(can.length / Math.max(1, Math.min(moiCum, TOI_DA_HINH_THAM_CHIEU)));
     const moi = Math.ceil(can.length / n);
     for (let i = 0; i < n; i++) {
       const hinh = can.slice(i * moi, (i + 1) * moi);
@@ -295,7 +295,7 @@ async function hangDoi(viec, tran, fn) {
 const GIOI_HAN = /\b429\b|rate[\s_-]?limit/i;
 
 function docThamSo(argv) {
-  const r = { vitri: [], thu: false, tran: 6, model: 'gpt-6-luna', muc: 'low', chi: null, huong: null, chong: false };
+  const r = { vitri: [], thu: false, tran: 6, model: 'gpt-6-luna', muc: 'low', chi: null, huong: null, chong: false, moiCum: TOI_DA_HINH_THAM_CHIEU };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--thu') r.thu = true;
@@ -304,6 +304,7 @@ function docThamSo(argv) {
     else if (a === '--muc') r.muc = argv[++i];
     else if (a === '--chi') r.chi = String(argv[++i] || '').split(',').map((s) => s.trim()).filter(Boolean);
     else if (a === '--huong') r.huong = argv[++i];
+    else if (a === '--moi-cum') r.moiCum = parseInt(argv[++i], 10);   // số hình mỗi cụm (≤ 6): nhỏ + --tran cao = nhanh hơn
     else if (a === '--chong') r.chong = true;   // vẽ chồng lên khối xám (cách cũ; Codex hiện không làm được — #23)
     else if (a.startsWith('--')) r.loi = `Cờ không biết: ${a}`;
     else r.vitri.push(a);
@@ -313,7 +314,7 @@ function docThamSo(argv) {
 
 export async function chay(argv, env = process.env) {
   const t = docThamSo(argv);
-  const dung = 'Dùng: node tools/codex-ve.mjs <tham-chieu|shot> <thư mục tập> [--thu] [--tran N] [--model M] [--muc low] [--chi s001,s002] [--huong truoc,sau] [--chong]';
+  const dung = 'Dùng: node tools/codex-ve.mjs <tham-chieu|shot> <thư mục tập> [--thu] [--tran N] [--model M] [--muc low] [--chi s001,s002] [--huong truoc,sau] [--moi-cum N] [--chong]';
   if (t.loi || t.vitri.length !== 2 || !['tham-chieu', 'shot'].includes(t.vitri[0]) || !(t.tran >= 1) || !t.model || !t.muc) {
     console.error(`${t.loi || 'Tham số không hợp lệ.'}\n${dung}`);
     return 2;
@@ -337,7 +338,7 @@ export async function chay(argv, env = process.env) {
     if (!fs.existsSync(f)) return null;
     try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { loiMoc = `${duongMoc(id)} hỏng: ${e.message}`; return null; }
   };
-  const ke = lapKeHoach(bs, cheDo, { coFile, chi: t.chi, docMoc, huong: t.huong, chong: t.chong });
+  const ke = lapKeHoach(bs, cheDo, { coFile, chi: t.chi, docMoc, huong: t.huong, chong: t.chong, moiCum: t.moiCum });
   if (loiMoc) { console.error(loiMoc); return 2; }
   if (!ke.length) { console.log(`Đủ hình (${cheDo}): không còn hình nào cần vẽ.`); return 0; }
 
@@ -366,7 +367,7 @@ export async function chay(argv, env = process.env) {
 
   const chayCum = async (cum, lanLai) => {
     // tính lại hình còn thiếu để không vẽ lại hình đã có
-    const moi = lapKeHoach(bs, cheDo, { coFile, chi: t.chi, docMoc, huong: t.huong, chong: t.chong }).find((c) => c.cum === cum.cum);
+    const moi = lapKeHoach(bs, cheDo, { coFile, chi: t.chi, docMoc, huong: t.huong, chong: t.chong, moiCum: t.moiCum }).find((c) => c.cum === cum.cum);
     const r = kq.get(cum.cum);
     if (!moi) return;
     ghiDeBai(moi);
