@@ -1,0 +1,611 @@
+{
+ "so": 4,
+ "ngay": "2026-11-16",
+ "tieuDe": "Đợt 5 nhóm A — Phố: cây, trụ cứu hoả, gấu sau kính, trời, nền xa, vân nhà (góp ý 16/11)",
+ "tomTat": "",
+ "token": {
+  "tong": 0,
+  "chiTiet": [],
+  "ghiChu": ""
+ },
+ "nhom": [
+  {
+   "id": "p5-roblox",
+   "ten": "Phố: cây, trụ cứu hoả, gấu sau kính",
+   "mota": "Đợt 5 nhóm A — góp ý 16/11",
+   "kieu": "ung-vien",
+   "anh": [],
+   "muc": [
+    {
+     "id": "pho_cay",
+     "ten": "Cây trên vỉa hè / quảng trường — CHỌN NHIỀU",
+     "chonNhieu": true,
+     "phu": "thay ~14 cây khối hiện tại (cao 11–26 stud) · chọn vài mẫu hợp nhau để trộn · góp ý 16/11 \"thiếu cây\" · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải (2 góc)",
+     "ungVien": [
+      {
+       "id": "pho_cay__1",
+       "ten": "Low Poly Tree",
+       "anh": "output/ep003/roblox/duyet/4893246329.jpg",
+       "link": "https://create.roblox.com/store/asset/4893246329",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "4893246329",
+       "tacGia": "Abishpc",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 668,
+       "phu": "cây tán cụm khối xanh đậm, thân cong nâu · ✅ GLB khớp ảnh · GLB 15.2×24.2×14.9 stud · 668 tg · 93% thích"
+      },
+      {
+       "id": "pho_cay__2",
+       "ten": "Low-Poly Tree.",
+       "anh": "output/ep003/roblox/duyet/3287226226.jpg",
+       "link": "https://create.roblox.com/store/asset/3287226226",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "3287226226",
+       "tacGia": "akbarbinta",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 306,
+       "phu": "cây tán tròn dày xanh đậm, thân to · ✅ GLB khớp ảnh · GLB 14.5×20.5×19.8 stud · 306 tg · 95% thích"
+      },
+      {
+       "id": "pho_cay__3",
+       "ten": "[UPDATED] Enhanced Low Poly Tree - Cartoon Model",
+       "anh": "output/ep003/roblox/duyet/133910795385895.jpg",
+       "link": "https://create.roblox.com/store/asset/133910795385895",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "133910795385895",
+       "tacGia": "cidushdueirusg",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3240,
+       "phu": "cây nhiều bóng xanh sáng, cành cam nâu · ✅ GLB khớp ảnh · GLB 23.5×24.3×22.1 stud · 3240 tg"
+      },
+      {
+       "id": "pho_cay__4",
+       "ten": "Small Low Poly Tree",
+       "anh": "output/ep003/roblox/duyet/5981037621.jpg",
+       "link": "https://create.roblox.com/store/asset/5981037621",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "5981037621",
+       "tacGia": "palace_one",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 52,
+       "phu": "cây cao gầy tán thoi xanh, thân nâu · ✅ GLB khớp ảnh · GLB 5.8×12.6×5.5 stud · 52 tg"
+      },
+      {
+       "id": "pho_cay__5",
+       "ten": "dark pink low poly tree",
+       "anh": "output/ep003/roblox/duyet/5950446599.jpg",
+       "link": "https://create.roblox.com/store/asset/5950446599",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "5950446599",
+       "tacGia": "anyxria",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1147,
+       "phu": "cây anh đào tán khối hồng, thân nâu nhạt · ✅ GLB khớp ảnh · GLB 21.4×27.8×20.6 stud · 1147 tg · 96% thích"
+      },
+      {
+       "id": "pho_cay__6",
+       "ten": "Cartoon Tree",
+       "anh": "output/ep003/roblox/duyet/6936087885.jpg",
+       "link": "https://create.roblox.com/store/asset/6936087885",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "6936087885",
+       "tacGia": "Dev00Xx",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1404,
+       "phu": "cây 3 bóng tròn xanh, thân trụ cam nâu · ✅ GLB khớp ảnh · GLB 23.5×43×25.5 stud · 1404 tg"
+      },
+      {
+       "id": "pho_cay__7",
+       "ten": "Cartoon Tree",
+       "anh": "output/ep003/roblox/duyet/1172394228.jpg",
+       "link": "https://create.roblox.com/store/asset/1172394228",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "1172394228",
+       "tacGia": "anjomatta",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 132,
+       "phu": "cây tán khối phẳng xanh, thân vuông nâu · ✅ GLB khớp ảnh · GLB 9.9×19.8×11.3 stud · 132 tg"
+      },
+      {
+       "id": "pho_cay__8",
+       "ten": "cartoon tree",
+       "anh": "output/ep003/roblox/duyet/11973021055.jpg",
+       "link": "https://create.roblox.com/store/asset/11973021055",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "11973021055",
+       "tacGia": "piloothenkie",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 732,
+       "phu": "cây cao gầy bóng tròn xanh đậm, thân mảnh · ✅ GLB khớp ảnh · GLB 10.8×20.6×9.5 stud · 732 tg"
+      },
+      {
+       "id": "pho_cay__9",
+       "ten": "cartoon tree",
+       "anh": "output/ep003/roblox/duyet/16275089523.jpg",
+       "link": "https://create.roblox.com/store/asset/16275089523",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "16275089523",
+       "tacGia": "Helokiller9",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1996,
+       "phu": "cây tán khối bo tròn xanh sáng, thân mảnh · ✅ GLB khớp ảnh · GLB 9.7×14.9×7.4 stud · 1996 tg"
+      },
+      {
+       "id": "pho_cay__10",
+       "ten": "Cartoon tree",
+       "anh": "output/ep003/roblox/duyet/5451823603.jpg",
+       "link": "https://create.roblox.com/store/asset/5451823603",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "5451823603",
+       "tacGia": "JuliensurRoblox",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1224,
+       "phu": "cây tán khối vuông xanh, thân phân nhánh · ⚠ GLB lỗi hình (thừa 2-3 khối tán (có khối xanh nhạt lạ) so với ảnh chỉ 2 khối) · GLB 15.9×20×13.4 stud · 1224 tg"
+      }
+     ]
+    },
+    {
+     "id": "pho_tru_cuu_hoa",
+     "ten": "Trụ cứu hoả trên vỉa hè",
+     "phu": "mới (bản khối chưa có) · cao ~2,5–3 stud · đặt 4–6 trụ dọc hai dãy phố · góp ý 16/11 \"thiếu trụ nước\" · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải (2 góc)",
+     "ungVien": [
+      {
+       "id": "pho_tru_cuu_hoa__1",
+       "ten": "fire hydrant",
+       "anh": "output/ep003/roblox/duyet/8220444536.jpg",
+       "link": "https://create.roblox.com/store/asset/8220444536",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "8220444536",
+       "tacGia": "LoganPlayz907",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1364,
+       "phu": "trụ đỏ tròn nắp bán cầu, vòi hai bên · ✅ GLB khớp ảnh · GLB 2.4×4.1×2.4 stud · 1364 tg"
+      },
+      {
+       "id": "pho_tru_cuu_hoa__2",
+       "ten": "Fire Hydrant.",
+       "anh": "output/ep003/roblox/duyet/113397436.jpg",
+       "link": "https://create.roblox.com/store/asset/113397436",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "113397436",
+       "tacGia": "TheRiddleGuy",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 908,
+       "phu": "trụ đỏ có đinh tán bạc, nắp cầu · ✅ GLB khớp ảnh · GLB 2×3.5×2 stud · 908 tg"
+      },
+      {
+       "id": "pho_tru_cuu_hoa__3",
+       "ten": "fire hydrant",
+       "anh": "output/ep003/roblox/duyet/6911527171.jpg",
+       "link": "https://create.roblox.com/store/asset/6911527171",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "6911527171",
+       "tacGia": "Dantel83",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2052,
+       "phu": "trụ đỏ low-poly góc cạnh, nắp nhọn · ✅ GLB khớp ảnh · GLB 0.9×1.6×1.2 stud · 2052 tg"
+      },
+      {
+       "id": "pho_tru_cuu_hoa__4",
+       "ten": " BS© Fire Hydrant",
+       "anh": "output/ep003/roblox/duyet/187894202.jpg",
+       "link": "https://create.roblox.com/store/asset/187894202",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "187894202",
+       "tacGia": "BlackSapphire86",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 884,
+       "phu": "trụ đỏ mập hoạt hình, hai vòi to · ✅ GLB khớp ảnh · GLB 2.6×4×2.9 stud · 884 tg"
+      },
+      {
+       "id": "pho_tru_cuu_hoa__5",
+       "ten": "firehydrant",
+       "anh": "output/ep003/roblox/duyet/14903722621.jpg",
+       "link": "https://create.roblox.com/store/asset/14903722621",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "14903722621",
+       "tacGia": "TreeBen77",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 552,
+       "phu": "trụ đỏ nâu khối thấp, nắp nhọn · ✅ GLB khớp ảnh · GLB 1.7×3.4×1.8 stud · 552 tg"
+      },
+      {
+       "id": "pho_tru_cuu_hoa__6",
+       "ten": "Fire Hydrant",
+       "anh": "output/ep003/roblox/duyet/9609745243.jpg",
+       "link": "https://create.roblox.com/store/asset/9609745243",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "9609745243",
+       "tacGia": "FrenqPasa",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 780,
+       "phu": "trụ đỏ thấp, 1248 tg · GLB 3.1×3.8×2.6 stud · 780 tg"
+      },
+      {
+       "id": "pho_tru_cuu_hoa__7",
+       "ten": "Fire Hydrant",
+       "anh": "output/ep003/roblox/duyet/5196152317.jpg",
+       "link": "https://create.roblox.com/store/asset/5196152317",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "5196152317",
+       "tacGia": "wickedyboo",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 928,
+       "phu": "trụ đỏ sẫm nắp tròn, hai vòi · ⚠ GLB lỗi hình (phần nắp trên méo, có mảnh dẹt/cung lạ lệch; màu tối) · GLB 3×4.2×3 stud · 928 tg"
+      },
+      {
+       "id": "pho_tru_cuu_hoa__8",
+       "ten": "Fire Hydrant",
+       "anh": "output/ep003/roblox/duyet/637150793.jpg",
+       "link": "https://create.roblox.com/store/asset/637150793",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "637150793",
+       "tacGia": "KittenPartys205",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 372,
+       "phu": "trụ vàng đồng nắp tròn, đế tròn · ⚠ GLB lỗi hình (thân thành hộp vuông, nắp phẳng, vòi dẹt; phủ vân kim loại vàng sai) · GLB 3.5×3.7×2.4 stud · 372 tg"
+      },
+      {
+       "id": "pho_tru_cuu_hoa__9",
+       "ten": "Fire Hydrant",
+       "anh": "output/ep003/roblox/duyet/359424466.jpg",
+       "link": "https://create.roblox.com/store/asset/359424466",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "359424466",
+       "tacGia": "cxcharlie",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 440,
+       "phu": "trụ vàng nắp tròn, đế xám · ⚠ GLB lỗi hình (thân bị bọc tấm phẳng to màu kem, mất vòi bên, méo) · GLB 2.9×3.8×2.9 stud · 440 tg"
+      },
+      {
+       "id": "pho_tru_cuu_hoa__10",
+       "ten": "Fire Hydrant",
+       "anh": "output/ep003/roblox/duyet/4587743278.jpg",
+       "link": "https://create.roblox.com/store/asset/4587743278",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "4587743278",
+       "tacGia": "Dewanterent606849",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 464,
+       "phu": "trụ đỏ sẫm nắp tròn trơn, vòi hai bên · ⚠ GLB lỗi hình (mất vòi bên, thân méo/vặn; phủ vân kim loại caro đỏ không có trong ảnh) · GLB 2.2×4.3×2.8 stud · 464 tg"
+      }
+     ]
+    },
+    {
+     "id": "pho_gau_ke_kinh",
+     "ten": "Gấu bông bày sau ô kính tiệm gấu — CHỌN NHIỀU",
+     "chonNhieu": true,
+     "phu": "thay tấm ảnh gấu phẳng sau kính bằng 4–8 gấu 3D cao ~1,5 stud trên 2 tầng kệ · góp ý 16/11 \"treo model gấu sau kính cho thực\" · ảnh: trái = ảnh Roblox, phải = bản GLB đã tải (2 góc)",
+     "ungVien": [
+      {
+       "id": "pho_gau_ke_kinh__1",
+       "ten": "Teddy Bear",
+       "anh": "output/ep003/roblox/duyet/4919878545.jpg",
+       "link": "https://create.roblox.com/store/asset/4919878545",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "4919878545",
+       "tacGia": "The_Deceiver",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7016,
+       "phu": "gấu nâu lông xù, ngồi · ✅ GLB khớp ảnh · GLB 1.7×2.1×1.3 stud · 7016 tg"
+      },
+      {
+       "id": "pho_gau_ke_kinh__2",
+       "ten": "Valentine Teddy Bear Pink",
+       "anh": "output/ep003/roblox/duyet/12500374771.jpg",
+       "link": "https://create.roblox.com/store/asset/12500374771",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "12500374771",
+       "tacGia": "Astrra",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2326,
+       "phu": "gấu hồng ôm tim Love đỏ, ngồi · ✅ GLB khớp ảnh · GLB 0.8×1.2×0.9 stud · 2326 tg · 90% thích"
+      },
+      {
+       "id": "pho_gau_ke_kinh__3",
+       "ten": "Cute Pink Teddy Bear",
+       "anh": "output/ep003/roblox/duyet/12513036641.jpg",
+       "link": "https://create.roblox.com/store/asset/12513036641",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "12513036641",
+       "tacGia": "Th3Server",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7016,
+       "phu": "gấu hồng đậm mịn, ngồi · ✅ GLB khớp ảnh · GLB 2.5×3.4×2.7 stud · 7016 tg · 90% thích"
+      },
+      {
+       "id": "pho_gau_ke_kinh__4",
+       "ten": "Yellow Cute Teddy Bear",
+       "anh": "output/ep003/roblox/duyet/5640074127.jpg",
+       "link": "https://create.roblox.com/store/asset/5640074127",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "5640074127",
+       "tacGia": "Fizzyliar",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7016,
+       "phu": "gấu kem mịn, ngồi · ✅ GLB khớp ảnh · GLB 2.4×3.1×2.3 stud · 7016 tg"
+      },
+      {
+       "id": "pho_gau_ke_kinh__5",
+       "ten": "Teddy Bear",
+       "anh": "output/ep003/roblox/duyet/10634832962.jpg",
+       "link": "https://create.roblox.com/store/asset/10634832962",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "10634832962",
+       "tacGia": "HSADZY",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7016,
+       "phu": "gấu tím mịn, ngồi · ✅ GLB khớp ảnh · GLB 12.1×15×10.7 stud · 7016 tg"
+      },
+      {
+       "id": "pho_gau_ke_kinh__6",
+       "ten": "pastel green teddy bear",
+       "anh": "output/ep003/roblox/duyet/5687109344.jpg",
+       "link": "https://create.roblox.com/store/asset/5687109344",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "5687109344",
+       "tacGia": "eienorid",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7016,
+       "phu": "gấu xanh lá pastel lông loang, ngồi · ✅ GLB khớp ảnh · GLB 2.5×3.1×2 stud · 7016 tg · 94% thích"
+      },
+      {
+       "id": "pho_gau_ke_kinh__7",
+       "ten": "Teddy Bear Plushie ",
+       "anh": "output/ep003/roblox/duyet/16414490780.jpg",
+       "link": "https://create.roblox.com/store/asset/16414490780",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "16414490780",
+       "tacGia": "DonutZilla_GXK",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 2525,
+       "phu": "gấu xanh nhạt nhỏ, mặt nâu, ngồi · ✅ GLB khớp ảnh · GLB 0.7×0.8×0.4 stud · 2525 tg"
+      },
+      {
+       "id": "pho_gau_ke_kinh__8",
+       "ten": "Bear Plushie",
+       "anh": "output/ep003/roblox/duyet/12131247439.jpg",
+       "link": "https://create.roblox.com/store/asset/12131247439",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "12131247439",
+       "tacGia": "Pinterry",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 1276,
+       "phu": "gấu nâu nhạt nơ đỏ má hồng, ngồi · ✅ GLB khớp ảnh · GLB 2.4×2.9×2.4 stud · 1276 tg · 100% thích"
+      },
+      {
+       "id": "pho_gau_ke_kinh__9",
+       "ten": "CuteTeddyBear",
+       "anh": "output/ep003/roblox/duyet/8538146166.jpg",
+       "link": "https://create.roblox.com/store/asset/8538146166",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "8538146166",
+       "tacGia": "nowiyakknazar444333",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 7016,
+       "phu": "gấu nâu đậm mịn, ngồi · ✅ GLB khớp ảnh · GLB 1.4×1.9×1.6 stud · 7016 tg"
+      },
+      {
+       "id": "pho_gau_ke_kinh__10",
+       "ten": "Teddy",
+       "anh": "output/ep003/roblox/duyet/5424629859.jpg",
+       "link": "https://create.roblox.com/store/asset/5424629859",
+       "nguon": "Roblox Creator Store",
+       "robloxId": "5424629859",
+       "tacGia": "GlossyyyyySummer",
+       "giayPhep": "Roblox Creator Store (miễn phí)",
+       "tamGiac": 3584,
+       "phu": "gấu nâu bụng hồng, tai hồng · ⚠ GLB lỗi hình (lưới thô, tay thành mảnh phẳng to dẹt; dáng ngồi nhưng méo) · GLB 2.9×3.2×2.9 stud · 3584 tg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5-troi",
+   "ten": "Phố: trời, nền xa, vân nhà",
+   "mota": "Đợt 5 nhóm A — góp ý 16/11 \"thiếu bầu trời, background, texture\"",
+   "kieu": "ung-vien",
+   "anh": [],
+   "muc": [
+    {
+     "id": "pho_troi_ngay",
+     "ten": "Bầu trời BAN NGÀY của phố",
+     "phu": "ảnh: shot s003, s012 (trời ở góc trên phải) với từng bầu trời · 6 trời Roblox đã có trong thư viện (engine/skies.js), không tải thêm · sky-7 là trời đang dùng",
+     "ungVien": [
+      {
+       "id": "pho_troi_ngay__1",
+       "ten": "sky-7 (đang dùng)",
+       "anh": "output/ep003/roblox/troi/duyet/pho_troi_ngay__sky-7.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": "Anime ban ngày: trời xanh mây trắng, có mặt trời + mặt trăng (Roblox Sky 14556558767…, người dùng gửi 2026-11-12) — trời NGÀY mặc định"
+      },
+      {
+       "id": "pho_troi_ngay__2",
+       "ten": "anime-day",
+       "anh": "output/ep003/roblox/troi/duyet/pho_troi_ngay__anime-day.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": "Trời xanh mây trắng vẽ tay, chân trời biển (Roblox Sky, người dùng gửi 2026-11-12)"
+      },
+      {
+       "id": "pho_troi_ngay__3",
+       "ten": "clear-day",
+       "anh": "output/ep003/roblox/troi/duyet/pho_troi_ngay__clear-day.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": "Trời trong xanh, chân trời trắng, có mặt trời + mặt trăng (Roblox Sky, người dùng gửi 2026-11-12)"
+      },
+      {
+       "id": "pho_troi_ngay__4",
+       "ten": "obby-sky",
+       "anh": "output/ep003/roblox/troi/duyet/pho_troi_ngay__obby-sky.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": "Anime ngày có cầu vồng (Roblox Sky 16573631102…)"
+      },
+      {
+       "id": "pho_troi_ngay__5",
+       "ten": "sky-6",
+       "anh": "output/ep003/roblox/troi/duyet/pho_troi_ngay__sky-6.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": "Anime hoàng hôn mây cam (Roblox Sky 105645283097230…)"
+      },
+      {
+       "id": "pho_troi_ngay__6",
+       "ten": "sky-8",
+       "anh": "output/ep003/roblox/troi/duyet/pho_troi_ngay__sky-8.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": "Anime ngày mây trắng hồng (Roblox Sky 13107325341…)"
+      }
+     ]
+    },
+    {
+     "id": "pho_troi_dem",
+     "ten": "Bầu trời BAN ĐÊM của phố",
+     "phu": "ảnh: shot s045 (cuối phố), s036 (trên mái, có trăng) · 6 trời đêm đã có trong thư viện · sky-9 là trời đang dùng",
+     "ungVien": [
+      {
+       "id": "pho_troi_dem__1",
+       "ten": "sky-9 (đang dùng)",
+       "anh": "output/ep003/roblox/troi/duyet/pho_troi_dem__sky-9.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": "Đêm xanh có sao + mây mỏng (Roblox Sky 1233158420…) + trăng của sky-7 — trời ĐÊM mặc định"
+      },
+      {
+       "id": "pho_troi_dem__2",
+       "ten": "moon",
+       "anh": "output/ep003/roblox/troi/duyet/pho_troi_dem__moon.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": "Đêm mây đen dày (Roblox Sky 6285719338…)"
+      },
+      {
+       "id": "pho_troi_dem__3",
+       "ten": "sky-3",
+       "anh": "output/ep003/roblox/troi/duyet/pho_troi_dem__sky-3.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": "Đêm cực quang xanh lục (Roblox Sky 8974647550…)"
+      },
+      {
+       "id": "pho_troi_dem__4",
+       "ten": "sky-4",
+       "anh": "output/ep003/roblox/troi/duyet/pho_troi_dem__sky-4.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": "Đêm mây đen có trăng vẽ sẵn (Roblox Sky 48020371…)"
+      },
+      {
+       "id": "pho_troi_dem__5",
+       "ten": "sky-5",
+       "anh": "output/ep003/roblox/troi/duyet/pho_troi_dem__sky-5.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": "Đêm mây xám tối (Roblox Sky 15502511288…)"
+      },
+      {
+       "id": "pho_troi_dem__6",
+       "ten": "ep5t-troi-dem",
+       "anh": "output/ep003/roblox/troi/duyet/pho_troi_dem__ep5t-troi-dem.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": "Night Sky With Moon HD (MelinoucheGirl2)"
+      }
+     ]
+    },
+    {
+     "id": "pho_vong_bao",
+     "ten": "Nền xa: vòng bao chân trời + nền cỏ ngoài phố",
+     "phu": "ảnh: toàn cảnh ngày dọc phố, ngã ba, toàn cảnh đêm, shot s045 · builder dùng chung engine/vong-bao.js, bật/tắt bằng ô FX \"vongBao\"/\"nen\"",
+     "ungVien": [
+      {
+       "id": "pho_vong_bao__1",
+       "ten": "Tắt (như hiện tại)",
+       "anh": "output/ep003/roblox/troi/duyet/pho_vong_bao__tat.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": ""
+      },
+      {
+       "id": "pho_vong_bao__2",
+       "ten": "Cây thật PNG (ảnh Roblox đã duyệt)",
+       "anh": "output/ep003/roblox/troi/duyet/pho_vong_bao__cay-png.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": ""
+      },
+      {
+       "id": "pho_vong_bao__3",
+       "ten": "Rừng thông",
+       "anh": "output/ep003/roblox/troi/duyet/pho_vong_bao__rung-thong.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": ""
+      },
+      {
+       "id": "pho_vong_bao__4",
+       "ten": "Cây tròn hoạt hình",
+       "anh": "output/ep003/roblox/troi/duyet/pho_vong_bao__cay-tron.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": ""
+      },
+      {
+       "id": "pho_vong_bao__5",
+       "ten": "Đồi xa",
+       "anh": "output/ep003/roblox/troi/duyet/pho_vong_bao__doi-xa.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": ""
+      },
+      {
+       "id": "pho_vong_bao__6",
+       "ten": "Núi xa (đỉnh tuyết)",
+       "anh": "output/ep003/roblox/troi/duyet/pho_vong_bao__nui-xa.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": ""
+      },
+      {
+       "id": "pho_vong_bao__7",
+       "ten": "Dải ảnh 360°",
+       "anh": "output/ep003/roblox/troi/duyet/pho_vong_bao__dai-anh.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": ""
+      }
+     ]
+    },
+    {
+     "id": "pho_van_nha",
+     "ten": "Vân tường/mái cho 15 nhà Roblox (luật vân)",
+     "phu": "ảnh: s003, s010, s047, s067 · vân gạch/vữa/ngói/gỗ từ thư viện engine đã duyệt, gán theo màu từng nhà (output/ep003/roblox/van/van-nha.json) · tắt: ?vanNha=0",
+     "ungVien": [
+      {
+       "id": "pho_van_nha__1",
+       "ten": "CÓ vân (mới)",
+       "anh": "output/ep003/roblox/troi/duyet/pho_van_nha__co.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": "gạch, vữa, ngói, gỗ, đá theo màu"
+      },
+      {
+       "id": "pho_van_nha__2",
+       "ten": "Màu phẳng (như trước)",
+       "anh": "output/ep003/roblox/troi/duyet/pho_van_nha__phang.jpg",
+       "nguon": "có sẵn trong thư viện engine",
+       "giayPhep": "—",
+       "phu": ""
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "lienKet": []
+}

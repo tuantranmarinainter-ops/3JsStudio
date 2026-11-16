@@ -280,9 +280,30 @@ export default function build(g, e, H) {
   const RB = !/[?&]rb=0(&|$)/.test(globalThis.location?.search || '');
   // màu ô cửa sổ ĐỤC của từng model (đã dò bằng tia trên mặt tiền; kính trong suốt thì tự nhận). KHÔNG gộp chung: #04afec là MÁI của nhà nền 4, #1b2a35 là chân tường nhà nền 4
   const RB_KINH = { 'pho-tiem-may': ['80bbdb'], 'pho-nha-nga-ba': ['1b2a35'], 'pho-nha-nen-1': ['ffff00'], 'pho-nha-nen-4': ['ffff00', 'ffb000'] };
+  // LUẬT VÂN (16/11): model Roblox màu phẳng (Plastic/SmoothPlastic) → khai báo chất liệu theo MÀU GỐC từng vật liệu (agent soi bản vẽ GLB, output/ep003/roblox/van/)
+  // → engine/materials.js vẽ vân gạch/vữa/ngói/gỗ… (thư viện đã duyệt). Tắt riêng: ?vanNha=0 · tắt mọi vân: ô FX vật liệu.
+  const VAN_NHA = !/[?&]vanNha=0(&|$)/.test(globalThis.location?.search || '') && {
+    'pho-nha-ga': { 'a05f35': 'woodpaint', 'd7c59a': 'plaster', '6e99ca': 'glass', '635f62': 'concrete', 'c4281c': 'shingle' },
+    'pho-tiem-gau': { 'a05f35': 'brick', '6a3909': 'woodpaint', 'f8f8f8': 'plaster', '5b5d69': 'stone', '8f4c2a': 'wood', '111111': 'glass' },
+    'pho-tiem-banh': { '9fa1ac': 'concrete', 'f8f8f8': 'plaster', '635f62': 'glass', 'dfdfde': 'plaster', 'ff0000': 'fabric' },
+    'pho-tiem-may': { 'a4bd47': 'fabric', '7b007b': 'plaster', '2c1703': 'woodpaint', '5b5d69': 'metalpaint', 'f8f8f8': 'plaster', '80bbdb': 'glass' },
+    'pho-nha-thi-truong': { 'e5e4df': 'stone', '7c5c46': 'brick', '74869d': 'woodpaint', '635f62': 'shingle' },
+    'pho-nha-nga-ba': { 'cdcdcd': 'concrete', 'f8f8f8': 'woodpaint', '1b2a35': 'glass', 'af9483': 'stone', 'a3a2a5': 'concrete', 'be6862': 'brick', '965555': 'brick', '111111': 'metalpaint', '5b5d69': 'metalpaint', '9fa1ac': 'concrete', 'cacbd1': 'concrete', '883e3e': 'brick' },
+    'pho-nha-may': { 'a34b4b': 'brick', 'f8f8f8': 'plaster', '635f62': 'concrete', 'a3a2a5': 'concrete', '111111': 'glass' },
+    'pho-thap-chuong': { '694028': 'wood', 'd3be96': 'plaster' },
+    'pho-nha-nen-1': { '694028': 'woodpaint', '6a3909': 'wood', 'cc8e69': 'wood', 'a05f35': 'wood', 'aba89e': 'concrete', 'f8f8f8': 'plaster', '970000': 'shingle', '750000': 'shingle', 'ffff00': 'glass', '635f62': 'stone' },
+    'pho-nha-nen-2': { 'a3a2a5': 'stone', 'a0844f': 'wood', 'bbb3b2': 'stone', 'da867a': 'shingle', 'bc9b5d': 'wood', 'ffffcc': 'plaster' },
+    'pho-nha-nen-3': { 'd5733d': 'wood', 'aa5500': 'wood', 'da8541': 'wood', '564236': 'woodpaint', 'ccffcc': 'glass', 'ff5959': 'shingle', 'dfdfde': 'fabric', '5a4c42': 'woodpaint', '694028': 'woodpaint', 'c4281c': 'fabric', '562424': 'brick', '111111': 'glass', 'ff0000': 'fabric', 'a34b4b': 'brick' },
+    'pho-nha-nen-4': { 'aa5500': 'woodpaint', '04afec': 'shingle', '635f62': 'stone', 'd3be96': 'plaster', '694028': 'woodpaint', 'ffff00': 'glass' },
+    'pho-nha-nen-5': { '5b5d69': 'concrete', 'cacbd1': 'woodpaint', 'ff5959': 'brick', 'f8f8f8': 'plaster', '7c5c46': 'wood' },
+    'pho-nha-nen-6': { 'd7c59a': 'plaster', 'c4281c': 'shingle', 'a05f35': 'woodpaint', '6e99ca': 'glass', '635f62': 'concrete' },
+    'pho-nha-nen-7': { '6a3909': 'shingle', 'ffffcc': 'plaster' },
+  };
   const rbMats = new Set();   // vật liệu của nhà GLB: đêm nâng sáng như litMats, kính/ô cửa phát sáng ấm (setNight)
   const khongVan = (q) => { q.userData.matKind = 'none'; q.userData.grungeKind = 'none'; };   // model Roblox có ảnh vân riêng
-  const gomRb = (o, id) => o.traverse((q) => { if (q.isMesh) { khongVan(q); q.castShadow = true; q.receiveShadow = true; for (const mt of [].concat(q.material)) { if (!rbMats.has(mt)) { const u = mt.userData; u.rb0 = u.rb0 && u.rb0.isColor ? u.rb0 : mt.color.clone(); u.rbE = u.rbE && u.rbE.isColor ? u.rbE : mt.emissive.clone(); u.rbK = mt.transparent || mt.opacity < 1 || (RB_KINH[id] || []).includes(u.rb0.getHexString()); } rbMats.add(mt); } } });
+  const gomRb = (o, id) => o.traverse((q) => { if (q.isMesh) { khongVan(q); q.castShadow = true; q.receiveShadow = true; for (const mt of [].concat(q.material)) { if (!rbMats.has(mt)) { const u = mt.userData; u.rb0 = u.rb0 && u.rb0.isColor ? u.rb0 : mt.color.clone(); u.rbE = u.rbE && u.rbE.isColor ? u.rbE : mt.emissive.clone(); u.rbK = mt.transparent || mt.opacity < 1 || (RB_KINH[id] || []).includes(u.rb0.getHexString());
+      const vk = VAN_NHA && (VAN_NHA[id] || {})[u.rb0.getHexString()]; if (vk && !mt.transparent) { u.matDecl = vk; u.matNguon = 'khai-bao'; } } rbMats.add(mt); }
+      if ([].concat(q.material).some((mt) => mt.userData.matDecl)) { delete q.userData.matKind; q.userData.matNguon = 'khai-bao'; } } });   // mảnh đã khai vân theo màu (VAN_NHA) → bỏ cờ 'none' của khongVan để engine vẽ vân; grunge vẫn tắt
   const NHA = {
     'pho-nha-ga': { truoc: '-Z', n: [0.27, 0.95], s: [0.14, 0.94], y: [0.02, 1] },          // nhà chữ L: cánh fx < 0,27 lùi sau; ban công mặt −Z, sàn fy 0,33
     'pho-tiem-gau': { truoc: '+X', n: [0.01, 0.99], s: [0.8, 0], y: [0, 1] },               // mái hiên nhô fx 0,8..1; tường chắn mái fy 0,73..1
