@@ -177,7 +177,7 @@ test('bc_* có file mốc: đề bài đủ phong cách, mốc, lấp đầy, ch
     ...m, phongCach: 'khối vuông Roblox; gạch xanh xám', bangMau: ['#5f7480', '#ffd9a0'],
     lapDay: [{ cum: 'phai', mon: [{ ten: 'thùng phuy xanh', soLuong: 2 }] }],
     moc: m.moc.map((x) => (x.id === 'thung' ? { ...x, vaiTro: 'Gà trèo lên để nhìn qua kính' } : x)) }) });
-  const r = cli(['tham-chieu', b.thuMuc, '--thu'], {}, b.state);
+  const r = cli(['tham-chieu', b.thuMuc, '--thu', '--chong'], {}, b.state);
   assert.equal(r.status, 0, r.stderr);
   const de = docDeBai(b.thuMuc);
   assert.match(de, /Vẽ chồng lên ảnh khối xám đính kèm, không đổi hình khối, không thêm\/bớt mốc, không vẽ nhân vật\./);
@@ -200,7 +200,7 @@ test('bc_* có file mốc: đề bài đủ phong cách, mốc, lấp đầy, ch
 
 test('chạy thật: ảnh khối xám có thì vào -i; thiếu thì không; không có file mốc thì như cũ', () => {
   const b = tapCoMoc({ khoiXam: ['tren-xuong'] });
-  const r = cli(['tham-chieu', b.thuMuc], {}, b.state);
+  const r = cli(['tham-chieu', b.thuMuc, '--chong'], {}, b.state);
   assert.equal(r.status, 0, r.stdout + r.stderr);
   const calls = fs.readFileSync(path.join(b.state, 'calls.jsonl'), 'utf8').trim().split('\n').map((l) => JSON.parse(l));
   const anh = calls.flatMap((c) => c.images).map((p) => path.basename(p));
@@ -214,13 +214,15 @@ test('chạy thật: ảnh khối xám có thì vào -i; thiếu thì không; kh
   assert.match(docDeBai(c.thuMuc), /Toàn cảnh bối cảnh "[^"]+": /);
 });
 
-test('chưa có ảnh khối xám: đề bài nói rõ, không chèn câu "đính kèm"', () => {
-  const b = tapCoMoc();
+test('mặc định vẽ tự do (#23): có khối xám vẫn KHÔNG -i, đề bài cấm chép/lọc ảnh, có trục ảnh từng hướng', () => {
+  const b = tapCoMoc({ khoiXam: ['truoc', 'tren-xuong'] });
   const r = cli(['tham-chieu', b.thuMuc, '--thu'], {}, b.state);
   assert.equal(r.status, 0, r.stderr);
   const de = docDeBai(b.thuMuc);
-  assert.match(de, /Chưa có ảnh khối xám/);
+  assert.match(de, /Vẽ ảnh MỚI hoàn toàn bằng công cụ tạo hình/);
+  assert.match(de, /bc_nha-may-ngoai_sau\.png[^\n]*Trục: trong ảnh: \+X sang TRÁI/);
   assert.doesNotMatch(de, /Vẽ chồng lên ảnh khối xám đính kèm/);
+  assert.doesNotMatch(r.stdout, /-i [^<]*nha-may-ngoai_/);
 });
 
 test('file mốc hỏng: thoát 2', () => {
@@ -244,7 +246,7 @@ test('tham-chieu có file mốc: đúng 8 hình bc_<id>_<huong>, mỗi hình ch�
   const bs = { ep: 'epX', nhanVat: [], boiCanh: [{ id: 'a', ten: 'A', moTa: 'x' }, { id: 'b', ten: 'B', moTa: 'phố' }], shots: [] };
   const moc = { boiCanh: 'a', moc: [{ id: 'm1', ten: 'Mốc 1' }] };
   const coFile = (f) => /^boi-canh\/a_(truoc|sau|phai)\.png$/.test(f);
-  const ke = lapKeHoach(bs, 'tham-chieu', { coFile, docMoc: (id) => (id === 'a' ? moc : null) });
+  const ke = lapKeHoach(bs, 'tham-chieu', { coFile, docMoc: (id) => (id === 'a' ? moc : null), chong: true });
   const hinh = ke.flatMap((c) => c.hinh);
   const ha = hinh.filter((h) => h.file.startsWith('tham-chieu/bc_a_'));
   assert.deepEqual(ha.map((h) => h.file), HUONG8.map((g) => `tham-chieu/bc_a_${g}.png`));
@@ -259,7 +261,7 @@ test('tham-chieu có file mốc: đúng 8 hình bc_<id>_<huong>, mỗi hình ch�
   const de = ke.map((c) => soanDeBai(c, bs)).join('\n');
   assert.match(de, /vẽ đủ 8 hướng/);
   // --huong lọc
-  const ke2 = lapKeHoach(bs, 'tham-chieu', { coFile, docMoc: (id) => (id === 'a' ? moc : null), huong: 'sau,tren-xuong' });
+  const ke2 = lapKeHoach(bs, 'tham-chieu', { coFile, docMoc: (id) => (id === 'a' ? moc : null), huong: 'sau,tren-xuong', chong: true });
   assert.deepEqual(ke2.flatMap((c) => c.hinh).filter((h) => h.file.includes('bc_a')).map((h) => h.file), ['tham-chieu/bc_a_sau.png', 'tham-chieu/bc_a_tren-xuong.png']);
 });
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // codex-ve.mjs — soạn đề bài theo cụm và chạy nhiều tiến trình Codex CLI song song để vẽ hình storyboard.
-// Dùng: node tools/codex-ve.mjs <tham-chieu|shot> <thư mục tập> [--thu] [--tran N] [--model M] [--muc low] [--chi s001,s002] [--huong truoc,sau]
+// Dùng: node tools/codex-ve.mjs <tham-chieu|shot> <thư mục tập> [--thu] [--tran N] [--model M] [--muc low] [--chi s001,s002] [--huong truoc,sau] [--chong]
 // Mã thoát: 0 đủ hình · 1 còn thiếu · 2 lỗi đầu vào. Đặc tả: docs/quy-trinh-dau-vao.md, docs/de-bai-codex-mau.md.
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -38,6 +38,19 @@ const nhan = (map, k) => map[k] || k || '';
 export const GOC_KHOI_XAM = HUONG_BOI_CANH.map((h) => h.id);
 export const duongKhoiXam = (id) => GOC_KHOI_XAM.map((g) => `boi-canh/${id}_${g}.png`);
 export const duongMoc = (id) => `boi-canh/${id}.json`;
+// Vẽ TỰ DO (mặc định từ 16/11, ep005t #23): máy vẽ của Codex không nhận ảnh cục bộ → không vẽ chồng được; Codex chép/lọc màu khối xám.
+export const CAU_TU_DO = 'Vẽ ảnh MỚI hoàn toàn bằng công cụ tạo hình theo chữ (KHÔNG chép, cắt, lọc màu hay chỉnh ảnh có sẵn bằng script); bố cục theo danh sách mốc và trục ảnh ghi ở đây; không thêm/bớt mốc, không thêm đồ ngoài danh sách, không vẽ nhân vật, không vẽ chữ hay nhãn.';
+// Trục thế giới → trục ảnh cho từng hướng (để Codex đặt mốc theo "vùng: x…, z…")
+export const TRUC_ANH = {
+  truoc: 'trong ảnh: +X sang phải, −Z là phía xa (sâu vào ảnh), +Z gần máy',
+  sau: 'trong ảnh: +X sang TRÁI, +Z là phía xa, −Z gần máy',
+  trai: 'trong ảnh: +Z sang trái, −Z sang phải, +X là phía xa',
+  phai: 'trong ảnh: −Z sang trái, +Z sang phải, −X là phía xa',
+  'tren-xuong': 'trong ảnh: +X sang phải, −Z lên đỉnh ảnh, +Z xuống đáy ảnh',
+  'duoi-len': 'trong ảnh: +X sang phải, vật cao vươn lên đỉnh ảnh, phía xa là −Z',
+  'thang-mat': 'trong ảnh: +X sang phải, −Z là phía xa, đường chân trời ở giữa ảnh',
+  'ngang-hong': 'trong ảnh: −Z sang trái, +Z sang phải, −X là phía xa, đường chân trời ở giữa ảnh',
+};
 export const CAU_BAT_BUOC_KHOI_XAM = 'Vẽ chồng lên ảnh khối xám đính kèm, không đổi hình khối, không thêm/bớt mốc, không vẽ nhân vật.';
 
 function camMoTa(cam) {
@@ -77,7 +90,7 @@ function chiaDoi(arr) {
  * docMoc(id) → nội dung boi-canh/<id>.json hoặc null (không có thì giữ hành vi cũ: dùng moTa).
  * @returns {{cum:string, cheDo:string, hinh:{file:string, moTa:string, moc?:object, khoiXam?:string[]}[], anhKem:string[], nhanVat:string[], boiCanh?:string}[]}
  */
-export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null, docMoc = () => null, huong = null } = {}) {
+export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null, docMoc = () => null, huong = null, chong = false } = {}) {
   const loc = (id) => !chi || chi.includes(id);
   const cumList = [];
 
@@ -92,8 +105,8 @@ export function lapKeHoach(bs, cheDo, { coFile = () => false, chi = null, docMoc
       const moc = docMoc(b.id);
       if (moc) {
         for (const hg of locHuong(huong)) {
-          const khoiXam = [`boi-canh/${b.id}_${hg.id}.png`].filter((f) => coFile(f));
-          const cau = khoiXam.length ? CAU_BAT_BUOC_KHOI_XAM : 'Vẽ đúng theo danh sách mốc, không thêm/bớt mốc, không vẽ nhân vật (chưa có ảnh khối xám hướng này).';
+          const khoiXam = chong ? [`boi-canh/${b.id}_${hg.id}.png`].filter((f) => coFile(f)) : [];
+          const cau = khoiXam.length ? CAU_BAT_BUOC_KHOI_XAM : chong ? 'Vẽ đúng theo danh sách mốc, không thêm/bớt mốc, không vẽ nhân vật (chưa có ảnh khối xám hướng này).' : `${CAU_TU_DO} Trục: ${TRUC_ANH[hg.id]}.`;
           muc.push({ file: `tham-chieu/bc_${b.id}_${hg.id}.png`, moc, khoiXam, huong: hg.id,
             moTa: `Toàn cảnh bối cảnh "${b.ten || b.id}", khổ dọc 9:16, HƯỚNG ${hg.ten.toUpperCase()}: ${hg.moTa}. ${cau} Chi tiết ở mục "Danh sách mốc bối cảnh ${b.id}". Phải khớp các hướng còn lại (cùng mốc, màu, số lượng đồ).` });
         }
@@ -148,7 +161,7 @@ function moMocBoiCanh(h, id) {
   const m = h.moc;
   const L = [`## Danh sách mốc bối cảnh ${id}`];
   if (h.khoiXam?.length) L.push(`- ${CAU_BAT_BUOC_KHOI_XAM} Ảnh khối xám của bối cảnh này: ${h.khoiXam.join(', ')}.`);
-  else L.push('- Chưa có ảnh khối xám: vẽ đúng theo danh sách mốc dưới đây, không thêm/bớt mốc, không vẽ nhân vật.');
+  else L.push(`- ${CAU_TU_DO}`, '- Phong cách khối vuông low poly kiểu Roblox: mặt phẳng, cạnh vuông, ít chi tiết nhỏ; giữ đúng mã màu từng mốc.');
   L.push('- Số đo (stud) chỉ lấy từ danh sách này, không đoán từ ảnh.');
   if (m.phongCach || m.bangMau) L.push(`- Phong cách: ${m.phongCach || 'khối vuông'}${m.bangMau ? ` · bảng màu: ${dsMau(m.bangMau)}` : ''}`);
   if (m.heQuyChieu) L.push(`- Hệ quy chiếu: ${m.heQuyChieu}`);
@@ -282,7 +295,7 @@ async function hangDoi(viec, tran, fn) {
 const GIOI_HAN = /\b429\b|rate[\s_-]?limit/i;
 
 function docThamSo(argv) {
-  const r = { vitri: [], thu: false, tran: 6, model: 'gpt-6-luna', muc: 'low', chi: null, huong: null };
+  const r = { vitri: [], thu: false, tran: 6, model: 'gpt-6-luna', muc: 'low', chi: null, huong: null, chong: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--thu') r.thu = true;
@@ -291,6 +304,7 @@ function docThamSo(argv) {
     else if (a === '--muc') r.muc = argv[++i];
     else if (a === '--chi') r.chi = String(argv[++i] || '').split(',').map((s) => s.trim()).filter(Boolean);
     else if (a === '--huong') r.huong = argv[++i];
+    else if (a === '--chong') r.chong = true;   // vẽ chồng lên khối xám (cách cũ; Codex hiện không làm được — #23)
     else if (a.startsWith('--')) r.loi = `Cờ không biết: ${a}`;
     else r.vitri.push(a);
   }
@@ -299,7 +313,7 @@ function docThamSo(argv) {
 
 export async function chay(argv, env = process.env) {
   const t = docThamSo(argv);
-  const dung = 'Dùng: node tools/codex-ve.mjs <tham-chieu|shot> <thư mục tập> [--thu] [--tran N] [--model M] [--muc low] [--chi s001,s002] [--huong truoc,sau]';
+  const dung = 'Dùng: node tools/codex-ve.mjs <tham-chieu|shot> <thư mục tập> [--thu] [--tran N] [--model M] [--muc low] [--chi s001,s002] [--huong truoc,sau] [--chong]';
   if (t.loi || t.vitri.length !== 2 || !['tham-chieu', 'shot'].includes(t.vitri[0]) || !(t.tran >= 1) || !t.model || !t.muc) {
     console.error(`${t.loi || 'Tham số không hợp lệ.'}\n${dung}`);
     return 2;
@@ -323,7 +337,7 @@ export async function chay(argv, env = process.env) {
     if (!fs.existsSync(f)) return null;
     try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { loiMoc = `${duongMoc(id)} hỏng: ${e.message}`; return null; }
   };
-  const ke = lapKeHoach(bs, cheDo, { coFile, chi: t.chi, docMoc, huong: t.huong });
+  const ke = lapKeHoach(bs, cheDo, { coFile, chi: t.chi, docMoc, huong: t.huong, chong: t.chong });
   if (loiMoc) { console.error(loiMoc); return 2; }
   if (!ke.length) { console.log(`Đủ hình (${cheDo}): không còn hình nào cần vẽ.`); return 0; }
 
@@ -352,7 +366,7 @@ export async function chay(argv, env = process.env) {
 
   const chayCum = async (cum, lanLai) => {
     // tính lại hình còn thiếu để không vẽ lại hình đã có
-    const moi = lapKeHoach(bs, cheDo, { coFile, chi: t.chi, docMoc, huong: t.huong }).find((c) => c.cum === cum.cum);
+    const moi = lapKeHoach(bs, cheDo, { coFile, chi: t.chi, docMoc, huong: t.huong, chong: t.chong }).find((c) => c.cum === cum.cum);
     const r = kq.get(cum.cum);
     if (!moi) return;
     ghiDeBai(moi);
