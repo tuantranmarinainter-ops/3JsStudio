@@ -58,6 +58,8 @@ const vIndex = join(epDir, 'voices', 'index.json');   // giọng đọc nhiều 
 if (existsSync(vIndex)) for (const v of JSON.parse(readFileSync(vIndex, 'utf8')))
   for (const p of [v.audio, v.caps, v.audio && v.audio.replace(/\.(ogg|mp3)$/, '.levels.json')].filter(Boolean)) addFile(p);
 addFile(`/episodes/${ep}/ghi-cong.png`);
+// ảnh cây PNG của vòng bao 'cay-png' (engine/vong-bao.js): chỉ tải khi người xem chọn trong ô Vòng bao → luôn đưa vào (thành tham chiếu kho chung)
+for (const m of readFileSync(join(root, 'engine', 'vong-bao.js'), 'utf8').matchAll(/'(\/assets\/nhap\/vong-bao-png\/[\w-]+\.png)'/g)) addFile(m[1]);
 
 // ---- 2. Gộp mã tập, engine/vendor thành tham chiếu tới studio ----
 const mods = [...srcHtml.matchAll(/<script type="module">([\s\S]*?)<\/script>/g)];
