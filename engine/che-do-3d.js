@@ -13,6 +13,8 @@
 //   lăn = zoom theo con trỏ (OrbitControls của three.js). Điện thoại: 1 ngón xoay, 2 ngón chụm/kéo.
 // Vòng rAF CHỈ chạy khi đang giữ phím di chuyển — chỉ vẽ lại camera tự do, không chạy lại onFrame, không đụng thời gian phim.
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { SKIES } from './skies.js';
+import { VONG_BAO, NEN, vienState } from './vong-bao.js';
 
 const CSS = `
 .c3d-wrap { position: absolute; inset: 0; z-index: 3; background: #0b0d12; overflow: hidden; touch-action: none; }
@@ -31,6 +33,8 @@ const CSS = `
 .c3d-bar button { background: rgba(29,36,48,.92); color: #e8ecf2; border: 1px solid #2a3342; border-radius: 6px; padding: 5px 9px; cursor: pointer; font: inherit; }
 .c3d-bar button:hover { border-color: #4da3ff; } .c3d-bar button.on { border-color: #4da3ff; color: #4da3ff; }
 .c3d-bar select { background: rgba(29,36,48,.92); color: #e8ecf2; border: 1px solid #2a3342; border-radius: 6px; padding: 4px 6px; font: inherit; max-width: 220px; }
+.c3d-ghi { position: absolute; left: 8px; right: 8px; bottom: 40px; z-index: 5; background: rgba(14,17,22,.94); border: 1px solid #4da3ff; border-radius: 8px; padding: 8px; color: #e8ecf2; font: 12px/1.4 system-ui, sans-serif; }
+.c3d-ghi textarea { width: 100%; height: 86px; box-sizing: border-box; background: #0b0d12; color: #cfe3ff; border: 1px solid #2a3342; border-radius: 6px; font: 12px/1.4 ui-monospace, Consolas, monospace; }
 .c3d-bar select.on { border-color: #4da3ff; color: #4da3ff; }
 .c3d-bar label { background: rgba(29,36,48,.92); border: 1px solid #2a3342; border-radius: 6px; padding: 4px 8px; display: inline-flex; gap: 4px; align-items: center; cursor: pointer; }
 .c3d-help { position: absolute; left: 8px; bottom: 8px; right: 8px; font: 13px/1.45 system-ui, sans-serif; color: #8b96a8; background: rgba(14,17,22,.7); padding: 4px 8px; border-radius: 6px; pointer-events: none; }
@@ -101,16 +105,21 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
       + `<label title="Bật: tua/phát qua shot khác camera bay vẫn đứng yên (chỉ chóp camera, nhân vật, bối cảnh đổi theo t). Tắt: camera bay tới chỗ shot mới diễn."><input type="checkbox" data-o="giuGoc" checked> 🔒 Giữ góc</label>`
       + `<label title="Song song nhẹ: khung 3D dùng lại bóng đổ của khung Phim và lúc đang phát chỉ vẽ cách 1 khung (dừng/tua vẫn vẽ ngay). Tắt: vẽ đủ mọi khung."><input type="checkbox" data-o="nhe" checked> ⚡ Nhẹ</label>`
       + `<select data-o="env" title="Xem riêng một bối cảnh (env) để sửa / bổ sung — chỉ đổi khung 3D, phim không đổi. 'Theo shot' = bối cảnh của shot đang xem."><option value="">🏞 Bối cảnh: theo shot</option></select>`
+      + `<select data-o="troi" title="Bầu trời của khung 3D (và khung Phim khi chạy song song). Dòng đầu = trời đang dùng theo tập."></select>`
+      + `<select data-o="vb" title="Vòng cây / đồi / núi bao kín chân trời (engine/vong-bao.js)"></select>`
+      + `<select data-o="nen" title="Nền đất / cỏ / cát / đá lát vân lặp"></select>`
+      + `<button data-k="ghi" title="Hiện dòng cần dán vào episode.js (và env) cho lựa chọn Trời / Vòng bao / Nền đang chọn">📋 Ghi vào tập</button>`
       + `<label title="Lưới sàn y = 0 (bị nhà/đất che đúng chỗ)"><input type="checkbox" data-o="luoi" checked> Lưới</label><label><input type="checkbox" data-o="cam" checked> Camera</label><label><input type="checkbox" data-o="nv" checked> Nhân vật</label>`
       + `<label><input type="checkbox" data-o="dc" checked> Đạo cụ</label><label><input type="checkbox" data-o="dd" checked> Địa điểm</label>`;
     const help = document.createElement('div'); help.className = 'c3d-help';
     help.innerHTML = '<b>Giữ chuột phải</b> nhìn · <b>W A S D</b> đi · <b>Q/E</b> xuống/lên · <b>Shift</b> nhanh · lăn khi giữ chuột phải = tốc độ · chuột trái xoay · chuột giữa kéo';
     el.append(lab, bar, help);
     bar.addEventListener('pointerdown', (e) => e.stopPropagation());   // nút/ô tích không bị OrbitControls hay chế độ bay bắt chuột
-    bar.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b?.dataset.g) { goc(b.dataset.g); b.blur(); } });
+    bar.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b?.dataset.k === 'ghi') { ghiVaoTap(); b.blur(); return; } if (b?.dataset.g) { goc(b.dataset.g); b.blur(); } });
     bar.addEventListener('change', (e) => {
       const k = e.target.dataset.o; if (!k) return;
       if (k === 'env') { setEnv(e.target.value); e.target.blur(); return; }
+      if (k === 'troi' || k === 'vb' || k === 'nen') { setVien(k, e.target.value); e.target.blur(); return; }
       if (k === 'giuGoc') giuGoc = e.target.checked; else if (k === 'nhe') nhe = e.target.checked; else show[k] = e.target.checked;
       e.target.blur();   // trả phím Space / ← → / [ ] cho trình phát
       redraw();
@@ -290,8 +299,8 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     const rt = renderer.getRenderTarget();
     try {
       if (ss) { renderer.setRenderTarget(null); renderer.setViewport(0, 0, vw, vh); renderer.setScissor(0, 0, vw, vh); renderer.setScissorTest(true); }
-      const ov = envOverride();
-      try { renderer.render(scene, B.free); } finally { ov(); }
+      const ov = envOverride(), sk = skyTheoCamera(B.free);
+      try { renderer.render(scene, B.free); } finally { ov(); sk(); }
       B.grid.visible = show.luoi;
       renderer.autoClear = false; renderer.render(B.helpers, B.free);   // KHÔNG xoá depth: lưới bị nhà/đất che đúng chỗ; chóp/đường đi depthTest:false nên vẫn nổi
       if (ss) ssCtx.drawImage(canvas, 0, H0 - vh, vw, vh, 0, 0, vw, vh);   // chép ngay trong cùng tác vụ (không cần preserveDrawingBuffer)
@@ -300,6 +309,58 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
       if (ss) { renderer.setScissorTest(false); renderer.setViewport(0, 0, W0, H0); renderer.setScissor(0, 0, W0, H0); renderer.setRenderTarget(rt); }
     }
     updateLabels();
+  }
+  // TRỜI bám camera ĐANG VẼ: envs.js đặt hộp trời/vòm trời/trời bão theo camera PHIM (stage.camera); camera bay đi xa thì trời ở lại chỗ cũ → mất trời.
+  // Mỗi lần vẽ bằng camera tự do: dời trời tới camera đó (và hướng thu nhỏ trời theo hướng nhìn của nó), vẽ xong trả lại như cũ.
+  const _sf3 = new THREE.Vector3();
+  function skyTheoCamera(cam) {
+    const saved = [];
+    cam.getWorldDirection(_sf3); const yaw = Math.atan2(_sf3.x, _sf3.z);
+    for (const o of scene.children) {
+      if (!o.visible || !(o.name === 'sky' || o.name === 'stormsky' || o.name?.startsWith('skybox_'))) continue;
+      const u = o.material?.uniforms?.uCamYaw; saved.push([o, o.position.clone(), u, u?.value]);
+      o.position.copy(cam.position); if (u) u.value = yaw;
+    }
+    return () => { for (const [o, p, u, v] of saved) { o.position.copy(p); if (u) u.value = v; } };
+  }
+
+  // ---------- Trời / Vòng bao / Nền: ghi đè lúc xem (globalThis.__vien.override, đọc trong envs.js use()) — Phim song song đổi theo ----------
+  const VS = vienState(), VK = { troi: 'troi', vb: 'vongBao', nen: 'nen' };
+  const VLIST = { troi: Object.entries(SKIES).map(([k, d]) => [k, `${k} — ${String(d.label || '').replace(/\s*\(.*$/, '').slice(0, 34)}`]), vb: Object.entries(VONG_BAO), nen: Object.entries(NEN) };
+  const VNAME = { troi: '🌤 Trời', vb: '🌲 Vòng bao', nen: '🟩 Nền' };
+  let vienSig = '';
+  function syncVien(force) {
+    const B = built; if (!B) return;
+    const cur = { troi: VS.cur?.troi, vb: VS.cur?.vongBao, nen: VS.cur?.nen };
+    const sig = JSON.stringify([cur, VS.override]); if (!force && sig === vienSig) return; vienSig = sig;
+    for (const k of ['troi', 'vb', 'nen']) {
+      const sel = B.bar.querySelector(`select[data-o=${k}]`); if (!sel) continue;
+      const ov = VS.override[VK[k]], tapV = VS.cur?.tap?.[VK[k]], dang = ov === undefined ? cur[k] : tapV, ten = (x) => (x ? VONG_BAO[x] || NEN[x] || x : 'không'), theo = ov === undefined ? `${VNAME[k]}: ${ten(cur[k])} (theo tập)` : `${VNAME[k]}: theo tập = ${ten(tapV)}`;
+      if (!sel.options.length) sel.innerHTML = `<option value=""></option><option value="tat">${VNAME[k]}: Tắt</option>` + VLIST[k].map(([v, l]) => `<option value="${v}">${VNAME[k]}: ${l}</option>`).join('');
+      sel.options[0].textContent = theo;
+      sel.value = ov === undefined ? '' : ov === null ? 'tat' : ov; sel.classList.toggle('on', ov !== undefined);
+      sel.title = `${VNAME[k]} đang dùng: ${cur[k] || 'không có'}${ov !== undefined ? ' (ghi đè lúc xem — chưa ghi vào tập)' : ''}`;
+    }
+  }
+  function setVien(k, v) {
+    if (v === '') delete VS.override[VK[k]]; else VS.override[VK[k]] = v === 'tat' ? null : v;
+    const again = () => { try { const p = stage.renderAt(curT); if (p?.then) p.then(() => syncVien()); else syncVien(); } catch (e) {} };
+    again(); setTimeout(again, 700); setTimeout(again, 2200);   // ảnh trời mới tải xong thì vẽ lại
+  }
+  function ghiVaoTap() {
+    const o = VS.override, L = [];
+    const val = (v) => (v === null ? 'null' : `'${v}'`);
+    if (o.vongBao !== undefined) L.push(`  vongBao: ${val(o.vongBao)},`);
+    if (o.nen !== undefined) L.push(`  nen: ${val(o.nen)},`);
+    const T = o.troi !== undefined ? `\n// Trời (khai trong engine/envs/<env>.js của bối cảnh cần đổi):\n//   e.skybox = ${val(o.troi)};  // ban ngày;  đêm: e.skyboxNight = …` : '';
+    const text = (L.length ? `// dán vào EPISODE trong episodes/<tập>/episode.js:\n${L.join('\n')}` : '// (chưa chọn Vòng bao / Nền — chưa có gì để ghi)') + T;
+    let box = built.el.querySelector('.c3d-ghi'); box?.remove();
+    box = document.createElement('div'); box.className = 'c3d-ghi';
+    box.innerHTML = '<b>Ghi vào tập</b> — chép đoạn dưới vào file (đã tự chép vào clipboard nếu trình duyệt cho phép) <button style="float:right" data-x>Đóng</button><textarea readonly></textarea>';
+    const ta = box.querySelector('textarea'); ta.value = text; box.querySelector('[data-x]').onclick = () => box.remove();
+    box.addEventListener('pointerdown', (e) => e.stopPropagation()); built.el.appendChild(box); ta.select();
+    try { navigator.clipboard?.writeText(text); } catch (e) {}
+    console.log('[che3d] ghi vào tập:\n' + text);
   }
   function drawSS(t) {   // song song: Phim (hậu kỳ như thường) → filmCv, rồi phần 3D
     if (!sampling) { origDraw(t); filmCtx.drawImage(canvas, 0, 0); }
@@ -319,7 +380,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     if (bam) applyBam();
     else if (changed && !giuGoc && built.ready) flyToShot();   // 🔒 Giữ góc (mặc định bật): camera bay chỉ đổi khi người dùng tự bấm/kéo
     built.ready = true;
-    updateFrustum(); redraw();
+    updateFrustum(); redraw(); syncVien();
     if (changed && !paths.has(shotCam.id)) setTimeout(() => samplePath(shotCam.id), 0);
   }
 
@@ -447,7 +508,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     const p = stage.renderAt(curT = lastT());   // đọc camera shot ở t hiện tại
     const first = () => { if (!B.started) { B.started = true; goc('truoc'); } else { if (bam) applyBam(); else if (!giuGoc) flyToShot(); updateFrustum(); redraw(); } };
     if (p && p.then) p.then(first); else first();
-    fillEnvSelect();
+    fillEnvSelect(); syncVien(true);
     for (const f of listeners) f(true, ss);
     return api;
   }

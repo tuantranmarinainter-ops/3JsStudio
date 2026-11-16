@@ -18,8 +18,9 @@ import { createCliff, naturalRock, coralRock } from './cliff.js';
 import { createCrabs, createBeachGrass } from './crabs.js';
 import { createCamp } from './castaway.js';
 import { smoothFlash } from './flash.js';
-import { createSkybox } from './skybox.js';
+import { createSkybox, SKIES } from './skybox.js';
 import { createStormSky } from './stormsky.js';
+import { createVien, vienState } from './vong-bao.js';
 import TOWN_ENV from './envs/town.js';
 import FOREST_ENV from './envs/forest.js';
 import OPENSEA_ENV from './envs/openSea.js';import HAWAII_ENV from './envs/hawaii.js';
@@ -139,13 +140,15 @@ export function createEnvs(THREE, stage, K0, A = null) {
   const mat = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.95, ...o });
   const place = (g, obj, x, y, z, ry = 0, s = 1) => { obj.position.set(x, y, z); obj.rotation.y = ry; obj.scale.setScalar(s); g.add(obj); return obj; };
   const skyboxes = {};
+  const skyBox = (n) => (n ? skyboxes[n] ||= (() => { const m = createSkybox(THREE, n); m.visible = false; scene.add(m); return m; })() : null);
+  const vien = createVien(THREE), VS = vienState();   // vòng bao chân trời + nền (engine/vong-bao.js): chỉ dựng khi env/tập/URL khai báo
   const SKY_DAY = 'sky-7', SKY_NIGHT = 'sky-9';   // trời anime ban ngày (có mặt trời + trăng) / đêm xanh có sao (engine/skies.js)
   const NO_SKY = new Set(['kitchen', 'bedroom', 'shop-in', 'reef', 'storm', 'shipStorm']);   // nội thất, dưới nước, bão (trời bão riêng)
   const def = (name, light, build) => { const g = new THREE.Group(); g.name = `env_${name}`; g.visible = false; scene.add(g); const e = { name, light, group: g, update: null }; Object.assign(e, build(g, e) || {}); 
     // bầu trời 6 ảnh (engine/skybox.js): mọi env NGOÀI TRỜI mặc định trời ngày SKY_DAY + trời đêm SKY_NIGHT;
     //   env ghi đè: e.skybox = '<tên>' | null (tắt), e.skyboxNight = '<tên>' | null, e.skyFog / e.skyFogNight (màu sương chân trời).
     //   Chỉ tải ảnh của trời có env dùng; 1 mesh/trời.
-    const sb = (n) => (n ? skyboxes[n] ||= (() => { const m = createSkybox(THREE, n); m.visible = false; scene.add(m); return m; })() : null);
+    const sb = skyBox;
     const outdoor = !NO_SKY.has(name);
     e.skyMesh = sb(e.skybox !== undefined ? e.skybox : outdoor ? SKY_DAY : null);
     e.skyMeshNight = sb(e.skyboxNight !== undefined ? e.skyboxNight : outdoor ? SKY_NIGHT : null);
@@ -351,7 +354,10 @@ export function createEnvs(THREE, stage, K0, A = null) {
         if (m && (w === 'any' || (w === 'night') === night)) { box = m; break; }
       }
     }
-    const sto = !indoor && storm && e.stormMesh && (AFX.stormSky ?? true) ? e.stormMesh : null; // ô 'stormSky'
+    // ghi đè của studio/URL (engine/vong-bao.js vienState): troi undefined = theo tập · null = tắt (về trời gradient) · tên = ép dùng bộ trời đó
+    const troiTap = box ? box.name.slice(7) : null, ovT = VS.override.troi;
+    if (!indoor && ovT !== undefined) box = ovT && SKIES[ovT] ? skyBox(ovT) : null;
+    const sto = !indoor && storm && e.stormMesh && ovT === undefined && (AFX.stormSky ?? true) ? e.stormMesh : null; // ô 'stormSky'
     for (const m of Object.values(skyboxes)) m.visible = m === box;
     for (const en of Object.values(envs)) if (en.stormMesh) en.stormMesh.visible = en.stormMesh === sto;
     if (box) {
@@ -377,6 +383,15 @@ export function createEnvs(THREE, stage, K0, A = null) {
     if (sto) { sto.position.copy(stage.camera.position); sto.userData.update(t, ctx.flash || 0, ctx.stormK ?? 1, stage.camera.position); }
     skyDome.visible = !indoor && !box && !sto;
     skyDome.position.copy(stage.camera.position);
+    // vòng bao + nền: ưu tiên ghi đè studio/URL > shot > env > tập; ô FX 'vongBao' / 'nen'; env nội thất (không trời) không có
+    {
+      const pick = (k, bo) => (!bo && VS.override[k] !== undefined ? VS.override[k] : ctx[k] !== undefined ? ctx[k] : e[k] !== undefined ? e[k] : ctx[k + 'Ep'] ?? null);   // bo = bỏ ghi đè (giá trị THEO TẬP)
+      const nm = (v) => (v ? v.preset || v : null);
+      const out = !indoor && name !== 'reef' && (e.skyMesh || e.skyMeshNight || e.vongBao || e.nen || VS.override.vongBao || VS.override.nen);
+      const vb = out && (AFX.vongBao ?? true) ? pick('vongBao') : null, nn = out && (AFX.nen ?? true) ? pick('nen') : null;
+      if (vb || nn || vien.group.visible) vien.update(scene, { vongBao: vb, nen: nn }, night);
+      VS.cur = { troi: box ? box.name.slice(7) : sto ? 'bão' : null, vongBao: nm(vb), nen: nm(nn), tap: { troi: troiTap, vongBao: out ? nm(pick('vongBao', 1)) : null, nen: out ? nm(pick('nen', 1)) : null } };
+    }
     return { env: e, light: L };
   }
   // NẠP ENV THEO TÊN lúc chạy (env mới chưa có trong danh sách import tĩnh ở trên): index.html `import('/engine/envs/<tên>.js')` rồi

@@ -6,6 +6,8 @@ export const EPISODE = {
   credits: true,                            // ảnh ghi công 3 giây cuối (tools/ghi-cong.mjs → ghi-cong.png); có file ảnh thì mặc định bật, người xem tắt được
   seed: 7,                                  // thị trấn + dân giống hệt mỗi lần render
   facePack: 'altiwyre',                     // bộ mặt nhân vật R6: 'altiwyre' | 'emote37' (engine/face-pack.js)
+  vongBao: 'rung-thong',                    // vòng cây/đồi/núi bao kín chân trời: 'rung-thong' | 'cay-tron' | 'doi-xa' | 'nui-xa' | 'dai-anh' | null (engine/vong-bao.js; tập CŨ không khai = tắt)
+  nen: 'co',                                // nền vân lặp: 'co' | 'dat' | 'cat' | 'da' | null
   rule: 'Ai đi bộ cũng phải nhảy',
   weakness: '',
   twist: '',

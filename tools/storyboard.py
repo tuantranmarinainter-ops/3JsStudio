@@ -465,6 +465,8 @@ def write_episode(ep, meta, shots, lines, total, src, board_file, frames, force,
         'env': meta.get('env', 'kenneyTown'), 'light': meta.get('light', 'day'), 'town': meta.get('town', {'blocks': 3}),
         'actors': actors, 'places': places, 'props': props or {},
         'facePack': meta.get('facePack', 'altiwyre'),   # bộ mặt nhân vật R6 (engine/face-pack.js): tập mới mặc định AltiWyre
+        'vongBao': meta.get('vongBao', 'rung-thong'),   # vòng cây bao kín chân trời (engine/vong-bao.js): rung-thong|cay-tron|doi-xa|nui-xa|dai-anh|null — tập mới BẬT sẵn, tập cũ không khai = tắt
+        'nen': meta.get('nen', 'co'),                    # nền đất: co|dat|cat|da|null
     }
     body = ',\n'.join(f'  {k}: {js(v)}' for k, v in E.items())
     (out / 'episode.js').write_text(
