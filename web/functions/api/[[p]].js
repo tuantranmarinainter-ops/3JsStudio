@@ -12,7 +12,7 @@ export async function onRequest({ request, env, waitUntil }) {
   const kv = env.HANG_DOI;
   if (!kv) return json({ loi: 'chưa gắn KV HANG_DOI' }, 500);
 
-  if (request.method === 'GET' && p === '/ping') return json({ ung: 'duyet', ep: u.searchParams.get('ep'), web: true });
+  if (request.method === 'GET' && p === '/ping') return json({ ung: 'duyet', ep: u.searchParams.get('ep'), web: true, cauHinh: { khoa: !!env.WEB_KHOA, may: !!env.MAY_URL } });
 
   if (request.method === 'POST' && p === '/gui') {
     const txt = await request.text();
@@ -26,7 +26,7 @@ export async function onRequest({ request, env, waitUntil }) {
 
   if (p.startsWith('/may/')) {
     if (!khoaDung(request.headers.get('x-khoa'), env.WEB_KHOA)) return json({ loi: 'sai khoá' }, 401);
-    if (request.method === 'GET' && p === '/may/lay') return json({ hang: await lay(kv), con: await dem(kv) });
+    if (request.method === 'GET' && p === '/may/lay') { const hang = await lay(kv); return json({ hang, con: hang.length }); }
     if (request.method === 'POST' && p === '/may/xoa') {
       let b; try { b = await request.json(); } catch { return json({ loi: 'JSON sai' }, 400); }
       const ids = [].concat(b?.id ?? []).filter((x) => typeof x === 'string' && /^[0-9a-z-]{10,40}$/.test(x));

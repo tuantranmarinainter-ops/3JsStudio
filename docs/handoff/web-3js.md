@@ -3,10 +3,10 @@
 <!-- ĐIỂM DỪNG -->
 - **Cập nhật:** 2026-11-16
 - **Nhánh:** `ep1-v2`
-- **Đang làm:** Viết kế hoạch, chờ người dùng duyệt. Chưa code.
-- **Bước kế tiếp:** Người dùng chạy `npm i -g wrangler` rồi `wrangler login` (xem "Đang chờ"); gửi email cho Access; trả lời "ok" kế hoạch.
-- **Đang chờ:** (1) cài + đăng nhập wrangler/cloudflared, (2) email được phép vào, (3) duyệt kế hoạch, (4) đồng ý bật Cloudflare Zero Trust gói Free (có thể đòi thêm thẻ — việc của người dùng).
-- **File đang dở (chưa commit):** docs/handoff/web-3js.md
+- **Đang làm:** Đã xong code + đăng `https://3js-tuanchau.pages.dev` (Pages + Function + KV HANG_DOI). Test KV thật OK (gửi khi máy tắt → bật kéo đủ). CHƯA có Access → trang đang mở công khai (URL khó đoán).
+- **Bước kế tiếp:** người dùng bật Access (dash.cloudflare.com → Zero Trust → Access → Applications → Self-hosted, domain `3js-tuanchau.pages.dev` và sau là `3js.tuanchau.io.vn`, policy Allow email; thêm app thứ 2 path `/api/may/*` policy Bypass). Rồi gắn domain (Pages → Custom domains) khi zone Active; cài `cloudflared` cho đẩy tức thì (đặt MAY_URL + chạy `node tools/web-nhan.mjs`).
+- **Đang chờ:** email Access (người dùng chưa gõ email; gợi ý tuantran.marinainter@gmail.com chưa xác nhận), zone Active, cài cloudflared.
+- **File đang dở (chưa commit):** không (docs/handoff/web-3js.md vừa sửa)
 - **Đang chạy nền:** không
 - **Đạt khi:** mở được trên điện thoại sau Access; bấm duyệt ep003 → máy nhận; tắt máy nhận, bấm, bật lại vẫn đủ; có test hàng đợi.
 - **Câu hỏi còn mở:** email Access là gì? Tên miền đã Active chưa (kiểm ở dash.cloudflare.com)?
