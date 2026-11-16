@@ -16,7 +16,7 @@
 //                               khung ngoài khoảng bị đánh dấu ⚠. Repo tham khảo đo 12 short đẹp ≈ 112; phong cách khối sáng của ta ~110–160
 //   --det                       kiểm tất định: chụp lại mỗi t sau khi tua tới t khác; báo sai khác lớn nhất + số điểm ảnh lệch > 16/255; thoát mã 1 nếu vùng lệch > 0,005% khung (lưu *_det-lai.png)
 //   --full                      chụp + lưu PNG 1080×1920 (mặc định chụp 540×960: nhanh ~4×, đủ để xem/so)
-//   --jobs N                    chụp song song N tab (mặc định: 1 nếu ≤ 8 thời điểm, 4 nếu nhiều hơn)
+//   --jobs N                    chụp song song N tab (mặc định: 1 nếu ≤ 8 thời điểm, 2 nếu nhiều hơn)
 //
 // KIỂM BẰNG SỐ TRƯỚC, XEM ẢNH SAU (tiết kiệm token: chỉ mở ảnh khi số vượt ngưỡng)
 //   --pose                      lưu tư thế mọi xương (vị trí + quaternion thế giới) tại mỗi t vào <out>/pose.json.
@@ -242,7 +242,7 @@ async function save(buf, file) { return writeFile(file, buf); }   // đã chụp
 
 const rows = new Array(times.length), tilesA = new Array(times.length), tilesB = new Array(times.length);
 let detFail = false, done = 0;
-const JOBS = B ? 1 : Math.max(1, Math.min(times.length, +(opt.jobs || (times.length > 8 ? 4 : 1))));
+const JOBS = B ? 1 : Math.max(1, Math.min(times.length, +(opt.jobs || (times.length > 8 ? 2 : 1))));
 const pagesA = [A]; for (let k = 1; k < JOBS; k++) pagesA.push(await openPage(pageArg));   // mỗi tab tự tua → kiểm tất định vẫn đúng
 async function one(PA, idx) {
   const t = times[idx], id = shotAt(t);

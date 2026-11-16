@@ -56,7 +56,7 @@ function taoGoc({ credits = true, sky = false, deep = false } = {}) {
   }
   return r;
 }
-const chay = (goc, ...more) => spawnSync(process.execPath, [TOOL, 't18', '--goc', goc, ...more], { encoding: 'utf8', timeout: 120000 });
+const chay = (goc, ...more) => spawnSync(process.execPath, [TOOL, 't18', '--goc', goc, ...more], { encoding: 'utf8', timeout: 600000 });
 const rong = (png) => { const b = fs.readFileSync(png); assert.equal(b.toString('latin1', 1, 4), 'PNG'); return [b.readUInt32BE(16), b.readUInt32BE(20)]; };
 
 test('ghi-cong: CC BY của asset được dùng có mặt, asset không dùng vắng, ảnh 1080x1920, chữ >= 28px', () => {

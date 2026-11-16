@@ -12,8 +12,8 @@ const tool = path.join(root, 'tools', 'mau-duyet.mjs');
 const kb1 = path.join(root, 'tools', 'tests', 'data', 'mau-duyet-kb.md');
 const kb2 = path.join(root, 'tools', 'tests', 'data', 'mau-duyet-kb-chuaco.md');
 const EP1 = '_test_mauduyet1', EP2 = '_test_mauduyet2', EP3 = '_test_mauduyet3';
-const T = { timeout: 300000 };
-const chay = (ep, kb, extra = []) => spawnSync(process.execPath, [tool, ep, '--kich-ban', kb, ...extra], { cwd: root, encoding: 'utf8', timeout: 280000 });
+const T = { timeout: 900000 };
+const chay = (ep, kb, extra = []) => spawnSync(process.execPath, [tool, ep, '--kich-ban', kb, ...extra], { cwd: root, encoding: 'utf8', timeout: 850000 });
 const dirMau = (ep) => path.join(root, 'output', ep, 'duyet', 'mau');
 const jpgs = (ep) => fs.readdirSync(dirMau(ep)).filter((f) => f.endsWith('.jpg') && !f.startsWith('00_')).sort();
 const mtimes = (ep) => Object.fromEntries(jpgs(ep).map((f) => [f, fs.statSync(path.join(dirMau(ep), f)).mtimeMs]));
@@ -126,7 +126,7 @@ test('vòng 1 / I1: mat:* giữ nguyên khi chạy lại (không chụp lại, g
 
 test('vòng 1 / I2: trình duyệt không mở được -> mã 2, KHÔNG ghi mau.json, bước mau-duyet không xong', T, () => {
   fs.rmSync(path.join(root, 'output', EP3), { recursive: true, force: true });
-  const r = spawnSync(process.execPath, [tool, EP3, '--kich-ban', kb1], { cwd: root, encoding: 'utf8', timeout: 120000, env: { ...process.env, BROWSER: 'khong-co-trinh-duyet-nay' } });
+  const r = spawnSync(process.execPath, [tool, EP3, '--kich-ban', kb1], { cwd: root, encoding: 'utf8', timeout: 600000, env: { ...process.env, BROWSER: 'khong-co-trinh-duyet-nay' } });
   assert.equal(r.status, 2, r.stdout + r.stderr);
   assert.equal(fs.existsSync(path.join(root, 'output', EP3, 'kiem', 'mau.json')), false);
   const f = path.join(root, 'output', EP3, 'kiem', 'trang-thai.json');

@@ -103,3 +103,10 @@ M1 (nhỏ, hiệu quả ngay) → M4 (an toàn, độc lập) → M2 (lớn nh�
 ## Ghi chép
 - Dò ngày 2026-11-15: không có `puppeteer` trong repo; mọi Chrome qua `playwright-core` (`browser.mjs:12`).
 - Chưa kiểm: `lam-phim-kit.test.mjs`/`mau-duyet.test.mjs` có mở Chrome thật không (mau-duyet.mjs:246 có `launchBrowser`).
+
+## Kết quả triển khai (2026-11-16)
+- Đã làm: M1 (`tools/chay-test.mjs`, `tools/tests/chrome.list`, `package.json`), M2 (`tools/chrome-sem.mjs` nối vào `tools/browser.mjs`, N=3, ô hồ sơ PROFILE=1 còn 4, `--jobs` mặc định 4→2 ở `kiem-luat.mjs`/`look.mjs`), M4 (`tools/don-chrome.mjs`, `doctor.mjs` mục 7). Có test: `chrome-list`, `don-chrome`, `chrome-sem`.
+- Lệch kế hoạch: bỏ nhịp tim (spawnSync ở cha chặn nó; chỉ dựa pid còn sống); khoá ở `%LOCALAPPDATA%\3jsstudio\chrome-sem`; nới thời hạn spawn ở test ghi-cong/kiem-luat/mau-duyet/shottypes (chờ ô tính vào thời hạn).
+- Chưa làm: gom `fbx2glb.js:32` về `launchBrowser`; M3 (luật agent vào `CLAUDE.md` — chờ người dùng nói thẳng, đoạn chữ ở mục M3).
+- Số đo (9 file Chrome, `test:chrome`): trước 274 s, Chrome gốc tối đa 4 (gồm phiên khác); sau, 1 lượt 313 s, tối đa 3; 3 lượt song song 565 s, tối đa 3 trong 188 mẫu (0 mẫu = 4). Chạy 3 lượt song song vẫn lỗi vài test vì dùng chung thư mục giả `_test_mauduyet*` (không do khoá). Lỗi mốc: `HOUSE…` (có từ trước); `__maskAnh` xuất hiện từ lúc đo "sau" (nghi `engine/post.js` đang sửa dở).
+- Một lượt treo ở `measure.test.mjs` 19 giờ giữ ô Chrome (đã dừng tay; chưa rõ nguyên nhân treo).

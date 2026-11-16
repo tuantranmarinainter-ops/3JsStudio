@@ -13,9 +13,10 @@ import { chromium } from 'playwright-core';
 import { mkdirSync, openSync, writeSync, closeSync, readFileSync, rmSync } from 'fs';
 import { resolve, dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import { giuO } from './chrome-sem.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const SLOTS = 8;
+const SLOTS = 4;
 
 function alive(pid) { try { process.kill(pid, 0); return true; } catch (e) { return e.code === 'EPERM'; } }
 
@@ -73,7 +74,18 @@ function lazyProfileBrowser(channel, headless, args) {
   };
 }
 
-export async function launchBrowser({ headless = true } = {}) {
+// Khoá toàn máy: tối đa CHROME_TOI_DA (mặc định 3) Chrome ẩn cùng lúc, chờ ô nếu đầy (tools/chrome-sem.mjs, CHROME_KHOA=0 để tắt).
+export async function launchBrowser(opts = {}) {
+  const o = await giuO();
+  try {
+    const b = await moChrome(opts);
+    const close = b.close.bind(b);
+    b.close = async (...a) => { try { return await close(...a); } finally { o.tha(); } };
+    return b;
+  } catch (e) { o.tha(); throw e; }
+}
+
+async function moChrome({ headless = true } = {}) {
   const sw = process.env.GL === 'swiftshader';
   const gl = sw
     ? ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader']

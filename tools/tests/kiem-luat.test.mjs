@@ -13,7 +13,7 @@ const toiThieu = path.join(root, 'tools', 'tests', 'data', 'trang-toi-thieu.html
 const loiShot = path.join(root, 'tools', 'tests', 'data', 'trang-loi-shot.html');
 const khongVai = path.join(root, 'tools', 'tests', 'data', 'trang-khong-vai.html');
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'kiem-luat-test-'));
-const chay = (args, timeout = 120000) => spawnSync(process.execPath, [tool, ...args], { cwd: root, encoding: 'utf8', timeout });
+const chay = (args, timeout = 600000) => spawnSync(process.execPath, [tool, ...args], { cwd: root, encoding: 'utf8', timeout });
 const chayTrang = (d, extra = []) => {
   const out = path.join(d, 'kiem'), duyet = path.join(d, 'duyet');
   const r = chay([toiThieu, '--shots', 'all', '--jobs', '1', '--out', out, '--duyet', duyet, ...extra]);
@@ -21,7 +21,7 @@ const chayTrang = (d, extra = []) => {
 };
 const doc = (f) => JSON.parse(fs.readFileSync(f, 'utf8'));
 const bo = (j) => { const c = JSON.parse(JSON.stringify(j)); delete c.luc; return c; };
-const T = { timeout: 180000 };
+const T = { timeout: 600000 };
 
 test('trang treo -> mã 2, stderr có __ready', T, () => {
   const d = tmp();

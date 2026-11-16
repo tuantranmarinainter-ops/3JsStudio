@@ -1,0 +1,11 @@
+# File test mở Chrome (trực tiếp hoặc qua công cụ con). tools/chay-test.mjs chạy nhóm này riêng, ít luồng.
+# Thêm file test mới có launchBrowser / spawn công cụ-Chrome vào đây (test chrome-list.test.mjs sẽ nhắc nếu quên).
+boi-canh.test.mjs
+mat-song.test.mjs
+measure.test.mjs
+props-kb-e2e.test.mjs
+shottypes.test.mjs
+vat-lieu.test.mjs
+kiem-luat.test.mjs
+ghi-cong.test.mjs
+mau-duyet.test.mjs

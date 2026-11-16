@@ -14,7 +14,10 @@
     "export-test": "node tools/export-test.mjs dist/ep001.html",
     "voices:sample": "python tools/voices_build.py ep001 sample",
     "kiem-luat": "node tools/kiem-luat.mjs",
-    "test": "python -m unittest discover -s tools/kb/tests && node --test tools/tests/*.test.mjs",
+    "test": "node tools/chay-test.mjs",
+    "test:nhanh": "node tools/chay-test.mjs nhanh",
+    "test:chrome": "node tools/chay-test.mjs chrome",
+    "don-chrome": "node tools/don-chrome.mjs",
     "bundle:ep002": "node tools/bundle.mjs ep002",
     "don": "node tools/don.mjs"
   },

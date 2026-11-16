@@ -1,6 +1,6 @@
 // Đo 12 luật kiểm khung hình bằng SỐ trên một trang tập phim; ghi luat.json + thư mục ảnh duyệt có nhãn.
 //   node tools/kiem-luat.mjs <trang> [--ep ep001] [--shots s001,s002|all] [--out output/<ep>/kiem]
-//        [--duyet output/<ep>/duyet] [--jobs 4] [--cho 120] [--khong-anh]
+//        [--duyet output/<ep>/duyet] [--jobs 2] [--cho 120] [--khong-anh]
 //   Mỗi shot đo 3 khung: đầu (start+1/30), giữa, cuối (end-1/30). Mã thoát: 0 không lỗi, 1 có lỗi, 2 môi trường.
 //   KHÔNG chạy 2 tiến trình cùng --out/--duyet (luat.json ghi nguyên tử nhưng ảnh duyệt thì không có khoá).
 //   Trang thiếu __measure nhưng có __stage + THREE: tiêm engine/measure.js. Vẫn không có -> m = null (luật skip).
@@ -32,7 +32,7 @@ const opt = {}; const pos = [];
 }
 const root = process.cwd();
 const loiMoi = (msg) => { console.error(msg); process.exit(2); };
-if (!pos[0]) loiMoi('Dùng: node tools/kiem-luat.mjs <trang> [--ep ep001] [--shots s001,s002|all] [--out dir] [--duyet dir] [--jobs 4] [--cho 120] [--khong-anh]');
+if (!pos[0]) loiMoi('Dùng: node tools/kiem-luat.mjs <trang> [--ep ep001] [--shots s001,s002|all] [--out dir] [--duyet dir] [--jobs 2] [--cho 120] [--khong-anh]');
 const pageArg = pos[0];
 const suyEp = () => {
   const rel = path.relative(root, path.resolve(pageArg.split('?')[0])).replace(/\\/g, '/');
@@ -42,7 +42,7 @@ const suyEp = () => {
 const ep = opt.ep || suyEp();
 const outDir = path.resolve(opt.out || path.join('output', ep || 'khong-ep', 'kiem'));
 const duyetDir = path.resolve(opt.duyet || path.join('output', ep || 'khong-ep', 'duyet'));
-const jobs = Math.max(1, parseInt(opt.jobs || '4', 10) || 4);
+const jobs = Math.max(1, parseInt(opt.jobs || '2', 10) || 2);
 const cho = Math.max(1, Number(opt.cho || 120)) * 1000;
 const coAnh = !opt['khong-anh'];
 

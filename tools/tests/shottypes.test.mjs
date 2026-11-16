@@ -16,7 +16,7 @@ const root = path.resolve(import.meta.dirname, '..', '..');
 const MOI = ['insertRead', 'houseFull', 'hug', 'fall', 'sinkTilt'];
 const places = { square: { pos: [0, 0, 0], ry: 0 }, home: { pos: [20, 0, -8], ry: 0.5 } };
 const ctx = { places, crowd: ['crowd1', 'crowd2'], env: 'kenneyTown', light: 'day', fps: 30 };
-const T = { timeout: 240000 };
+const T = { timeout: 600000 };
 
 // mọi số trong cam (kể cả mảng lồng) đều hữu hạn
 const soHuuHan = (v) => (typeof v === 'number' ? Number.isFinite(v) : Array.isArray(v) ? v.every(soHuuHan) : v && typeof v === 'object' ? Object.values(v).every(soHuuHan) : true);
@@ -146,7 +146,7 @@ function chayLab(type) {
   const luuCtx = path.join(d, 'ctx.json'), out = path.join(d, 'kiem');
   const r = spawnSync(process.execPath, ['tools/kiem-luat.mjs', `engine/shot-lab.html?type=${type}`, '--shots', 'all', '--jobs', '1',
     '--khong-anh', '--out', out, '--duyet', path.join(d, 'duyet'), '--luu-ctx', luuCtx, '--cho', '180'],
-  { cwd: root, encoding: 'utf8', timeout: 230000 });
+  { cwd: root, encoding: 'utf8', timeout: 590000 });
   assert.ok(r.status === 0 || r.status === 1, `kiem-luat mã ${r.status}\n${r.stdout}\n${r.stderr}`);
   return { luat: JSON.parse(fs.readFileSync(path.join(out, 'luat.json'), 'utf8')), ctx: JSON.parse(fs.readFileSync(luuCtx, 'utf8')) };
 }
