@@ -144,7 +144,7 @@ export function gopMon(daoCu) {
     m.xuatHien.push({ video: o.video, dia_diem: o.dia_diem, diaDiemTen: o.dia_diem_ten, ten: o.ten, shot: o.shot });
     m.soLuong++;
     const ds = dienTich(o.khung);
-    if (ds > m._ds) { m._ds = ds; m.anh = { video: o.video, shot: o.shot, khung: o.khung }; if (!l) m.ten = o.ten || m.ten; }
+    if (ds > m._ds) { m._ds = ds; m.anh = { video: o.video, shot: o.shot, khung: o.khung, diaDiem: o.dia_diem }; if (!l) m.ten = o.ten || m.ten; }
   }
   const sapMuc = Object.fromEntries(MUC.map((x, i) => [x.id, i]));
   return [...map.values()].sort((a, b) => sapMuc[a.muc] - sapMuc[b.muc] || a.ten.localeCompare(b.ten, 'vi')).map(({ _ds, ...r }) => r);
@@ -224,6 +224,8 @@ job = json.load(sys.stdin); ra = {'cat': {}, 'thumb': 0}
 for k, a in job['cat'].items():
     try:
         im = T.shot_img(Path(a['dir']), a['shot']); c = T.crop(im, a['khung'])
+        if im is None and a.get('thay'):   # tập test (ep005t): không có khung video → ảnh Codex vẽ (hình shot, rồi ảnh bối cảnh)
+            im = Image.open(a['thay']['path']).convert('RGB'); c = T.crop(im, a['khung']) if a['thay']['crop'] else None
         if c is None and im is not None: c = im
         if c is not None: ra['cat'][k] = T.b64(c, 260)
     except Exception as e: pass
@@ -238,9 +240,21 @@ for id_, src in job['thumb'].items():
 sys.stdout.write(json.dumps(ra))
 `;
 
+/** Không có khung video thì lấy ảnh Codex vẽ trong kich-ban/<tập>/: hình shot (cắt theo khung), rồi ảnh bối cảnh (cả ảnh). */
+export function anhCodexThay(a, goc = path.join(ROOT, 'kich-ban')) {
+  if (!a?.video) return null;
+  const dir = path.join(goc, a.video), sid = String(a.shot || '');
+  const ds = [];
+  for (const vi of ['dau', 'giua', 'cuoi']) ds.push([path.join(dir, 'hinh', `shot_${sid}_${vi}.png`), true]);
+  const bc = String(a.diaDiem || '').replace(new RegExp('^' + a.video + '-'), '');
+  if (bc) for (const h of ['thang-mat', 'truoc', 'tren-xuong']) ds.push([path.join(dir, 'tham-chieu', `bc_${bc}_${h}.png`), false]);
+  const t = ds.find(([f]) => fs.existsSync(f));
+  return t ? { path: t[0], crop: t[1] } : null;
+}
+
 function taoAnh(mon, thumbs) {
   const job = { cat: {}, thumb: thumbs, thumbDir: path.join(DIST, 'thu-vien-asset-anh') };
-  for (const m of mon) if (m.anh) job.cat[m.khoa] = { dir: path.join(GOC_MAP, m.anh.video), shot: m.anh.shot, khung: m.anh.khung };
+  for (const m of mon) if (m.anh) job.cat[m.khoa] = { dir: path.join(GOC_MAP, m.anh.video), shot: m.anh.shot, khung: m.anh.khung, thay: anhCodexThay(m.anh) };
   const r = spawnSync('python', ['-I', '-c', PY_ANH, path.join(ROOT, 'tools')], { input: JSON.stringify(job), encoding: 'utf8', maxBuffer: 1 << 28, env: { ...process.env, PYTHONIOENCODING: 'utf-8' } });
   // -I bỏ sys.path[0] nhưng ta chèn tools/ tường minh (mã của dự án, không phải dữ liệu tải về)
   if (r.status !== 0) throw new Error('python lỗi: ' + (r.stderr || '').slice(-400));

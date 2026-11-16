@@ -391,6 +391,8 @@ const TRANG = String.raw`<!doctype html>
   .doi { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
   .doi figure { margin:0; } .doi figcaption { font-size:12px; color:var(--mute); text-align:center; }
   .luoi { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(220px,100%),1fr)); gap:12px; margin-top:12px; }
+  .hang-nguon { display:flex; gap:12px; overflow-x:auto; padding:2px 2px 8px; margin-top:12px; align-items:stretch; }
+  .hang-nguon > .the { flex:0 0 clamp(200px,19vw,260px); } .hang-nguon > .nhan-hang { flex:0 0 auto; align-self:center; writing-mode:vertical-rl; transform:rotate(180deg); color:var(--mute); font-size:12px; font-weight:600; }
   .luoi .rong { grid-column:span 2; } @media (max-width:520px) { .luoi .rong { grid-column:span 1; } }
   .the { position:relative; background:var(--card); border:2px solid var(--line); border-radius:12px; padding:8px; display:flex; flex-direction:column; gap:6px; }
   .the[data-tt="duyet"] { border-color:var(--ok); background:var(--okbg); }
@@ -552,8 +554,7 @@ function khungNhan(m, nhan) { const k = veKhung(m.anh, m.ten); const w = el('div
 function veKhe(d, nhom, khe) {
   const khoaDong = dongKhoa(d), TT = d.tt, id = khe.id;
   const w = el('div', { class: 'khe loc', 'data-id': id });
-  const luoi = el('div', { class: 'luoi' });
-  luoi.append(el('div', { class: 'the tc' }, khungNhan(khe, 'Hiện tại')));
+  const theHienTai = el('div', { class: 'the tc' }, khungNhan(khe, 'Hiện tại'));
   const bKhong = el('button', { class: 'b-khong' });
   const cac = [], nhieu = !!khe.chonNhieu;   // khe.chonNhieu: chọn NHIỀU ứng viên (cây, đá…) → chon = mảng id
   const dangChon = (c, uid) => (Array.isArray(c) ? c.includes(uid) : c === uid);
@@ -575,10 +576,18 @@ function veKhe(d, nhom, khe) {
   khe.ungVien.forEach(u => {
     const b = el('button', { class: 'b-duyet', text: 'Chọn' }); b.onclick = () => dat(u.id); if (khoaDong) b.disabled = true;
     const card = el('div', { class: 'the uv', 'data-id': id + '/' + u.id }, el('div', { class: 'dau', text: '✓' }), veKhung(u.anh, u.ten), ...veChu(u), el('div', { class: 'nut' }, b));
-    cac.push([u, card, b]); luoi.append(card);
+    cac.push([u, card, b]); card._nguon = (u.nguon || '').toLowerCase();
   });
+  // xếp ứng viên theo HÀNG NGANG theo nguồn: [Roblox + Sketchfab] / [Poly Pizza + Polyfork (+ Poly Haven)] / [Kenney] / còn lại
+  const NHOM = [[/roblox|sketchfab/], [/poly ?pizza|polyfork|poly ?fork|poly ?haven/], [/kenney/]];
+  const hangs = [...NHOM.map(() => []), []];
+  for (const [, card] of cac) { let k = NHOM.findIndex(g => g.some(r => r.test(card._nguon))); if (k < 0) k = NHOM.length; hangs[k].push(card); }
+  hangs[0].sort((a, b) => /roblox/.test(b._nguon) - /roblox/.test(a._nguon)); hangs[1].sort((a, b) => /poly ?pizza/.test(b._nguon) - /poly ?pizza/.test(a._nguon));
+  const hangDom = hangs.filter(h => h.length).map(h => el('div', { class: 'hang-nguon' }, ...h));
+  if (!hangDom.length) hangDom.push(el('div', { class: 'hang-nguon' }));
+  hangDom[0].prepend(theHienTai);
   bKhong.onclick = () => dat('khong'); if (khoaDong) bKhong.disabled = true;
-  w.append(el('h3', { text: khe.ten + (nhieu ? ' — chọn được NHIỀU mẫu' : '') }), veTrung(khe) || el('span'), khe.phu ? el('div', { class: 'phu mota', text: khe.phu }) : el('div'), luoi, el('div', { class: 'cuoi' }, ...(bHet ? [bHet] : []), bKhong, ghiChu(d, id)));
+  w.append(el('h3', { text: khe.ten + (nhieu ? ' — chọn được NHIỀU mẫu' : '') }), veTrung(khe) || el('span'), khe.phu ? el('div', { class: 'phu mota', text: khe.phu }) : el('div'), ...hangDom, el('div', { class: 'cuoi' }, ...(bHet ? [bHet] : []), bKhong, ghiChu(d, id)));
   hien2(); return w;
 }
 function veToken(d) {
