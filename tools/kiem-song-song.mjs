@@ -1,7 +1,7 @@
 // Kiểm chế độ SONG SONG Phim | 3D (engine/che-do-3d.js + nút ◧ Song song của tools/export-ui.js) bằng số, trong studio:
 //   node tools/kiem-song-song.mjs [ep004] [--t 10] [--anh]      (--anh: lưu ảnh khung trình phát vào output/tach-studio/song-song.png)
-// Đạt khi: khung Phim trong song song GIỐNG khung Phim thường (cùng t) · khung 3D có hình · đổi góc 3D không đổi khung Phim ·
-// rê thời gian thì cả hai đổi · tắt song song → khung Phim như trước khi bật.
+// Đạt khi: khung Phim trong song song GIỐNG khung Phim thường (cùng t) · khung 3D có hình · đổi góc 3D không đổi khung Phim
+// rê thời gian thì cả hai đổi · tắt song song → khung Phim như trước khi bật · ⚡ Nhẹ: dừng phát thì khung 3D vẽ bù đúng t cuối.
 import { launchBrowser } from './browser.mjs';
 import { pathToFileURL } from 'url';
 import { resolve, dirname } from 'path';
@@ -42,6 +42,14 @@ const r = await p.evaluate(async (T) => {
   out.bocuc = { phimTrai: xw.right <= c3.left + 1, rong3d: Math.round(c3.width), rongPhim: Math.round(xw.width), trongKhung: c3.right <= xv.right + 1 };
   await window.renderAt(T);
   out.filmVe = diff(grab(film), ref);
+  // ⚡ Nhẹ: phát đều (bước 1/30 s) → khung 3D vẽ cách khung; dừng ở khung bị bỏ → sau 120 ms vẽ bù đúng t cuối
+  const ch = window.__che3d; out.coNhe = ch.nhe === true;
+  for (let i = 1; i <= 4; i++) await window.renderAt(T + i * 0.2);   // bước 0,2 s (< 0,25 = coi là đang phát) để 3D thấy rõ đổi
+  await window.renderAt(T + 1); const boQua = grab(view);
+  await new Promise((r) => setTimeout(r, 400)); const bu = grab(view);
+  ch.setNhe(false); await window.renderAt(T + 1); const du = grab(view); ch.setNhe(true);
+  out.nheBu = diff(bu, du); out.nheBoQua = diff(boQua, du);
+  await window.renderAt(T);
   const tp = window.__che3d.tat(); if (tp && tp.then) await tp;
   out.sauTat = diff(await phim(T), ref);
   out.conCanvasPhu = !!document.querySelector('canvas.c3d-film');
@@ -61,5 +69,6 @@ ok(`đổi góc 3D: 3D đổi (${r.viewDoiGoc?.toFixed(1)}), Phim giữ nguyên 
 ok(`rê thời gian: Phim đổi (${r.filmRe?.toFixed(1)}), quay lại t cũ khớp (${r.filmVe?.toFixed(2)})`, r.filmRe > 1 && r.filmVe < 1);
 ok(`bố cục: Phim trái ${r.bocuc?.rongPhim}px | 3D phải ${r.bocuc?.rong3d}px`, r.bocuc?.phimTrai && r.bocuc?.trongKhung && r.bocuc?.rong3d > r.bocuc?.rongPhim);
 ok(`tắt → Phim như trước (lệch ${r.sauTat?.toFixed(2)}), dọn canvas phụ`, r.sauTat < 1 && !r.conCanvasPhu);
+ok(`⚡ Nhẹ: dừng phát → 3D vẽ bù đúng t cuối (lệch ${r.nheBu?.toFixed(2)}; trước khi bù ${r.nheBoQua?.toFixed(2)})`, r.coNhe && r.nheBu < 0.5);
 ok('không có lỗi trang', !errs.length);
 console.log(kq.join('\n')); if (errs.length) console.log('lỗi trang:\n  ' + errs.slice(0, 5).join('\n  '));

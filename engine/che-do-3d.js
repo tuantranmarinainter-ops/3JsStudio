@@ -72,7 +72,8 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
   // SONG SONG (Phim trái | 3D phải): renderer giữ nguyên cỡ phim W0×H0 (không dịch shader lại, không đổi cỡ bộ đệm mỗi khung).
   // Mỗi khung: vẽ Phim như thường (có hậu kỳ) → chép sang filmCv (canvas 2D đè đúng lên canvas WebGL, dưới phụ đề DOM);
   // rồi vẽ camera tự do vào một ô góc dưới-trái của bộ đệm (≤ W0×H0) → chép sang ssCv trong khung 3D. Kéo/bay chỉ vẽ lại phần 3D.
-  let ss = false, ssCv = null, ssCtx = null, filmCv = null, filmCtx = null, vw = 4, vh = 4;
+  let ss = false, ssCv = null, ssCtx = null, filmCv = null, filmCtx = null, vw = 4, vh = 4, nhe = true;   // nhe: chế độ song song nhẹ (dùng lại bóng đổ, xem redraw; lúc phát vẽ 3D cách khung, xem drawSS)
+  let ss3dT = -1, boKhung = false, boKhungHen = 0;
 
   // ---------- dựng lười: chỉ khi bật 3D lần đầu ----------
   function build() {
@@ -98,6 +99,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     bar.innerHTML = `<button data-g="tren" title="Nhìn từ trên xuống (bản đồ)">⬇ Trên xuống</button><button data-g="truoc" title="Nhìn từ phía trước chỗ shot diễn">◉ Trước</button>`
       + `<button data-g="shot" title="Bám camera shot: camera 3D đi, quay, đổi fov theo đúng camera của shot mỗi khung (khung vàng = phần phim thấy). Kéo chuột / WASD để thoát bám.">🎥 Bám camera shot</button>`
       + `<label title="Bật: tua/phát qua shot khác camera bay vẫn đứng yên (chỉ chóp camera, nhân vật, bối cảnh đổi theo t). Tắt: camera bay tới chỗ shot mới diễn."><input type="checkbox" data-o="giuGoc" checked> 🔒 Giữ góc</label>`
+      + `<label title="Song song nhẹ: khung 3D dùng lại bóng đổ của khung Phim và lúc đang phát chỉ vẽ cách 1 khung (dừng/tua vẫn vẽ ngay). Tắt: vẽ đủ mọi khung."><input type="checkbox" data-o="nhe" checked> ⚡ Nhẹ</label>`
       + `<select data-o="env" title="Xem riêng một bối cảnh (env) để sửa / bổ sung — chỉ đổi khung 3D, phim không đổi. 'Theo shot' = bối cảnh của shot đang xem."><option value="">🏞 Bối cảnh: theo shot</option></select>`
       + `<label title="Lưới sàn y = 0 (bị nhà/đất che đúng chỗ)"><input type="checkbox" data-o="luoi" checked> Lưới</label><label><input type="checkbox" data-o="cam" checked> Camera</label><label><input type="checkbox" data-o="nv" checked> Nhân vật</label>`
       + `<label><input type="checkbox" data-o="dc" checked> Đạo cụ</label><label><input type="checkbox" data-o="dd" checked> Địa điểm</label>`;
@@ -109,7 +111,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     bar.addEventListener('change', (e) => {
       const k = e.target.dataset.o; if (!k) return;
       if (k === 'env') { setEnv(e.target.value); e.target.blur(); return; }
-      if (k === 'giuGoc') giuGoc = e.target.checked; else show[k] = e.target.checked;
+      if (k === 'giuGoc') giuGoc = e.target.checked; else if (k === 'nhe') nhe = e.target.checked; else show[k] = e.target.checked;
       e.target.blur();   // trả phím Space / ← → / [ ] cho trình phát
       redraw();
     });
@@ -281,8 +283,10 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
   }
   function redraw() {
     if (!on || sampling) return;
-    const B = built, fog = scene.fog, ac = renderer.autoClear;
+    const B = built, fog = scene.fog, ac = renderer.autoClear, sau = renderer.shadowMap.autoUpdate;
     scene.fog = null;   // sương của phim chỉnh theo khoảng cách camera shot → tắt TẠM khi nhìn xa (trả lại ngay sau khi vẽ)
+    // song song: khung Phim vừa vẽ cùng t đã tính bóng đổ → khung 3D dùng lại, không vẽ lại shadow map (ô "nhẹ" tắt được: __che3d.setNhe(false))
+    if (ss && nhe && !envChon) renderer.shadowMap.autoUpdate = false;
     const rt = renderer.getRenderTarget();
     try {
       if (ss) { renderer.setRenderTarget(null); renderer.setViewport(0, 0, vw, vh); renderer.setScissor(0, 0, vw, vh); renderer.setScissorTest(true); }
@@ -292,13 +296,20 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
       renderer.autoClear = false; renderer.render(B.helpers, B.free);   // KHÔNG xoá depth: lưới bị nhà/đất che đúng chỗ; chóp/đường đi depthTest:false nên vẫn nổi
       if (ss) ssCtx.drawImage(canvas, 0, H0 - vh, vw, vh, 0, 0, vw, vh);   // chép ngay trong cùng tác vụ (không cần preserveDrawingBuffer)
     } finally {
-      renderer.autoClear = ac; scene.fog = fog;
+      renderer.autoClear = ac; scene.fog = fog; renderer.shadowMap.autoUpdate = sau;
       if (ss) { renderer.setScissorTest(false); renderer.setViewport(0, 0, W0, H0); renderer.setScissor(0, 0, W0, H0); renderer.setRenderTarget(rt); }
     }
     updateLabels();
   }
   function drawSS(t) {   // song song: Phim (hậu kỳ như thường) → filmCv, rồi phần 3D
     if (!sampling) { origDraw(t); filmCtx.drawImage(canvas, 0, 0); }
+    // nhẹ: lúc ĐANG PHÁT (t tiến đều, bước nhỏ) khung 3D chỉ vẽ cách 1 khung; tua/dừng/nhảy thì vẽ ngay.
+    // Bỏ khung nào thì hẹn vẽ bù sau 120 ms nếu không có khung mới (dừng phát → 3D đúng t cuối).
+    clearTimeout(boKhungHen);
+    const deu = t > ss3dT && t - ss3dT < 0.25;
+    if (nhe && !sampling && deu && !boKhung) { boKhung = true; curT = t;   // vẫn ghi t (samplePath trả cảnh về curT)
+      boKhungHen = setTimeout(() => { if (on && ss && !sampling) { boKhung = false; draw3d(curT = t); ss3dT = t; } }, 120); return; }
+    boKhung = false; ss3dT = t;
     draw3d(t);
   }
   function draw3d(t) {
@@ -477,6 +488,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     get env() { return envChon; }, setEnv, envList,
     get bam() { return on && bam; },
     setBam: (v) => { if (v) goc('shot'); else stopBam(); },
+    get nhe() { return nhe; }, setNhe: (v) => { nhe = !!v; const c = built?.bar.querySelector('input[data-o=nhe]'); if (c) c.checked = nhe; redraw(); },
     setGiuGoc: (v) => { giuGoc = !!v; const c = built?.bar.querySelector('input[data-o=giuGoc]'); if (c) c.checked = giuGoc; },
     paths,
     _stage: stage,
