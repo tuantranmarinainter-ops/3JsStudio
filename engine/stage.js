@@ -54,6 +54,22 @@ export function createStage(THREE, opts = {}) {
   renderer.toneMappingExposure = o.exposure;
   renderer.shadowMap.enabled = !!o.shadows;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  // 🐞 mốc cho chế độ Debug của trình phát (window.__dbg; không có thì bỏ qua): thời gian dịch shader + tải file qua LoadingManager
+  if (typeof window !== 'undefined' && window.__dbg && !renderer.__dbgBoc) {
+    const D = window.__dbg; renderer.__dbgBoc = true;
+    D.mark('dựng sân khấu (WebGLRenderer)');
+    const comp = renderer.compile.bind(renderer);
+    renderer.compile = function (...a) { const t0 = performance.now(), n0 = renderer.info.programs?.length || 0, r = comp(...a); D.mark('renderer.compile (dịch shader)', `${((performance.now() - t0) / 1000).toFixed(2)} s · +${(renderer.info.programs?.length || 0) - n0} program`); return r; };
+    const M = THREE.DefaultLoadingManager;
+    if (!M.__dbgBoc) {
+      M.__dbgBoc = true; let dang = 0, tong = 0, t0 = 0, mk = null;
+      const s0 = M.itemStart.bind(M), e0 = M.itemEnd.bind(M), x0 = M.itemError.bind(M);
+      const xong = () => { if (--dang > 0) return; const info = `${tong} file trong ${((performance.now() - t0) / 1000).toFixed(2)} s (bắt đầu ${(t0 / 1000).toFixed(2)} s)`; if (mk) { mk.info = info; mk.at = performance.now(); } else { D.mark('tải model/ảnh (LoadingManager) xong', info); mk = D.marks[D.marks.length - 1]; } };
+      M.itemStart = (u) => { if (!dang && !mk) t0 = performance.now(); dang++; tong++; return s0(u); };
+      M.itemEnd = (u) => { xong(); return e0(u); };
+      M.itemError = (u) => { xong(); return x0(u); };
+    }
+  }
   renderer.shadowMap.autoUpdate = true;
 
   const scene = new THREE.Scene();
@@ -152,7 +168,7 @@ export function createStage(THREE, opts = {}) {
       const p = renderAt(e.detail?.time);
       if (p && e.detail?.waitUntil) e.detail.waitUntil(p);
     });
-    renderAt(0);
+    { const t0 = performance.now(), p = renderAt(0), m = () => window.__dbg?.mark('vẽ khung đầu (t=0, gồm dịch shader còn thiếu)', `${((performance.now() - t0) / 1000).toFixed(2)} s`); if (p && p.then) p.then(m, () => {}); else m(); }
     // CHẾ ĐỘ 3D của trình phát (engine/che-do-3d.js) — dùng chung cho mọi tập; chưa bật thì không tạo gì, khung Phim không đổi.
     // Nạp động (trang thiếu "three/addons/" trong importmap vẫn chạy bình thường, chỉ không có 3D). Tắt hẳn: ?che3d=0.
     if (typeof window !== 'undefined' && new URLSearchParams(location.search).get('che3d') !== '0')

@@ -5,9 +5,9 @@
 ## ĐIỂM DỪNG
 - **Cập nhật:** 2026-11-16
 - **Nhánh:** `ep1-v2`
-- **Đang làm:** xong mục 6 (Song song nhẹ: ô ⚡ Nhẹ, `engine/che-do-3d.js` redraw/drawSS). Còn lại mục 2–5 + chế độ Debug (người dùng yêu cầu 16/11).
-- **Bước kế tiếp:** chế độ 🐞 Debug trong trình phát (ghi mốc thời gian mở tập/vẽ khung/xuất, nút Chép) — lập kế hoạch, người dùng duyệt rồi mới code.
-- **Đang chờ:** người dùng duyệt kế hoạch Debug; phiên troi-vong-nen cũng đang sửa `engine/che-do-3d.js` (đã nhắn: chỉ Edit từng đoạn, giữ phần `nhe`).
+- **Đang làm:** xong mục 6 (Song song nhẹ) + 🐞 Debug (bánh răng ⚙ → Gỡ lỗi; mốc mở tập, tải file, ms/khung, xuất MP4, nút 📋 Chép). Còn mục 2–5.
+- **Bước kế tiếp:** mục 3 — vẽ khung đầu t=0 mất 16,5 s ở ep003 (dịch ~70 shader còn thiếu + đưa ảnh lên GPU): dịch trước bằng compileAsync có tiến độ, rồi mục 4 giảm program.
+- **Đang chờ:** người dùng bật Debug trên máy thật, bấm 📋 Chép gửi số; phiên troi-vong-nen còn phần chưa commit trong `engine/che-do-3d.js`.
 - **File đang dở (chưa commit):** không (phần Trời/Vòng bao/Nền trong che-do-3d.js là của phiên troi-vong-nen)
 - **Đang chạy nền:** không
 - **Đạt khi:** (a) nút "📂 Tập khác" đổi tập không tải lại trang, ≤ 1/3 thời gian mở lần đầu; (b) mở lần đầu giảm rõ (có số trước/sau);
@@ -42,6 +42,14 @@
   Vẽ 3D cách khung lúc phát: ep001 song song 30,7 → 25,1 ms/khung (Phim 17); ep003 ~56 → ~49 (Phim ~34, máy đang tải nặng).
 - Kiểm: `node tools/kiem-song-song.mjs ep001|ep003|ep004` 9/9 ĐẠT (thêm kiểm "dừng phát → 3D vẽ bù đúng t cuối"; bắt được lỗi curT, đã sửa);
   `kiem-che-do-3d.mjs episodes/ep003/index.html` ĐẠT. Script đo tạm: scratchpad do-fps.mjs / do-mo.mjs (không vào repo).
+
+## 🐞 Debug — kết quả (16/11)
+- Bật: ⚙ → Gỡ lỗi → 🐞 Chế độ Debug (nhớ trong cài đặt). Mốc luôn ghi nhẹ (`window.__dbg`: `tools/studio-loader.js`, `engine/stage.js`,
+  `engine/prewarm.js`); đo ms/khung chỉ khi bật (bọc `window.renderAt`, tắt thì trả hàm gốc). `window.__debug.text()` = khối chép.
+- Kiểm: `node tools/kiem-debug.mjs ep003|ep001 [--in]` 7/7 ĐẠT (Phim bật/tắt Debug lệch 0,00); kiem-song-song ep004 9/9.
+- **Phát hiện (ep003, studio, máy đang tải):** engine nạp xong 0,74 s · renderer.compile 1,6 s (+117 program) · **vẽ khung đầu t=0 16,5 s**
+  (shader còn thiếu + đẩy 200 texture lên GPU) · tải 686 file qua LoadingManager xong ở 25 s · __ready 25,2 s. Gói ep003 (15/11) chưa gọi prewarm.
+- npm test: 6 test lỗi (kịch bản/ep001 shot/__maskAnh/HOUSE/vat-lieu) — không dính phần này (mốc chỉ chạy khi có `__dbg`, trang dev không có); chưa xét.
 
 ## Tra cứu cách làm (16/11)
 - `compileAsync` + KHR_parallel_shader_compile (three.js PR #19752): dịch song song, KHÔNG rút tổng thời gian, chỉ hết đứng hình → hiện màn chờ có tiến độ.

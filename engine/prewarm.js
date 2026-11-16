@@ -44,7 +44,9 @@ export function createPrewarm({ stage, director, post, envs, tl, q = new URLSear
     // trước __ready: GIỮ hành vi cũ (compile một lần, không làm nóng env nào) → __ready nhanh như cũ; làm nóng env nằm ở background()/ensure()
     async start() {
       for (const e of Object.values(envs.envs)) e.group.visible = true;
+      const t0 = performance.now();
       stage.renderer.compile(stage.scene, stage.camera);
+      window.__dbg?.mark('dịch shader trước __ready (compile)', `${((performance.now() - t0) / 1000).toFixed(2)} s · ${stage.renderer.info.programs?.length ?? '?'} program`);
       for (const e of Object.values(envs.envs)) e.group.visible = false;
     },
     // sau __ready: dịch nền các env còn lại, từng env một; xong thì vẽ lại khung đang xem

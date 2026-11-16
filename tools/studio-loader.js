@@ -6,13 +6,16 @@
 //     bản mới chạy thử ở lần mở tập kế tiếp: lỗi hoặc không tới window.__ready trong 180 s → tự quay về bản trước.
 (function () {
   'use strict';
+  // 🐞 bộ ghi mốc thời gian (luôn ghi nhẹ; trình phát tools/export-ui.js hiện bảng Debug + nút Chép). window giữ nguyên qua document.write.
+  var D = window.__dbg || (window.__dbg = { marks: [], loads: [], mark: function (name, info) { this.marks.push({ name: name, at: performance.now(), info: info || '' }); } });
+  D.mark('studio.html chạy trình khởi động');
   var EMB = JSON.parse(document.getElementById('coremeta').textContent);
   var EMB_JS = document.getElementById('core').textContent;
   var Q = new URLSearchParams(location.search);
   var NGUON = Q.get('nguon');
   var API = NGUON ? NGUON + 'latest.json' : EMB.api, RAW = NGUON || EMB.raw;
   var ACTIVE = { version: EMB.version, mods: EMB.mods, js: EMB_JS, goc: true };   // lõi sẽ dùng
-  var PACK = null, urls = new Map(), refUrls = {}, pending = null, DIR = null;
+  var PACK = null, urls = new Map(), rev = {}, refUrls = {}, pending = null, DIR = null;
   var $ = function (id) { return document.getElementById(id); };
   function mb(n) { return (n / 1048576).toFixed(1) + ' MB'; }
   function msg(t, bad) { var m = $('smsg'); if (m) { m.textContent = t; m.className = bad ? 'bad' : ''; } else if (bad) alert(t); }
@@ -21,7 +24,7 @@
     if (!PACK) return null; var k = norm(u), F = PACK.files;
     if (!(k in F) && !(k in refUrls)) { var s = PACK.keys.find(function (x) { return k.endsWith(x); }); if (!s) return null; k = s; }
     if (k in refUrls) return refUrls[k];
-    if (!urls.has(k)) { var e = F[k]; urls.set(k, URL.createObjectURL(new Blob([new Uint8Array(PACK.buf, PACK.base + e[1], e[2])], { type: e[0] }))); }
+    if (!urls.has(k)) { var e = F[k]; urls.set(k, URL.createObjectURL(new Blob([new Uint8Array(PACK.buf, PACK.base + e[1], e[2])], { type: e[0] }))); rev[urls.get(k)] = k; }
     return urls.get(k);
   }
   function parse(buf) {
@@ -117,7 +120,7 @@
   function resolveRefs(h) {   // điền refUrls; trả về đường dẫn còn thiếu
     var paths = Object.keys(h.refs);
     return run('blob', 'readonly', function (t) { var s = t.objectStore('blob'); return paths.map(function (p) { return s.get(h.refs[p][1]); }); }).then(function (blobs) {
-      var miss = paths.filter(function (p, i) { if (blobs[i]) { refUrls[p] = URL.createObjectURL(blobs[i].slice(0, blobs[i].size, h.refs[p][0])); return false; } return true; });
+      var miss = paths.filter(function (p, i) { if (blobs[i]) { refUrls[p] = URL.createObjectURL(blobs[i].slice(0, blobs[i].size, h.refs[p][0])); rev[refUrls[p]] = p; return false; } return true; });
       if (!miss.length) return miss;
       // sha lệch (kho dựng sau khi asset đổi) → bản mới nhất theo đường dẫn
       return run('path', 'readonly', function (t) { var s = t.objectStore('path'); return miss.map(function (p) { return s.get(p); }); }).then(function (shas) {
@@ -262,6 +265,7 @@
   }
   async function handle(buf, name) {
     var h; try { h = parse(buf); } catch (e) { return msg(name + ': ' + e.message, true); }
+    window.__dbg.mark('đọc gói ' + name, (buf.byteLength / 1048576).toFixed(1) + ' MB');
     if (h.kind === 'kho') { await importKho(h); if (pending) { var p = pending; pending = null; return handle(p.buf, p.name); } return; }
     if (ACTIVE.version.slice(0, 10) < h.coreMin) return msg('Gói ' + h.ep + ' cần studio ≥ ' + h.coreMin + ' (đang ' + ACTIVE.version + ') — bấm “Cập nhật mới nhất”.', true);
     var thieu = h.mods.filter(function (k) { return ACTIVE.mods.indexOf(k) < 0; });
@@ -271,6 +275,7 @@
       var lau = setTimeout(function () { msg('Lấy asset từ kho lâu bất thường — nếu còn tab studio / tập .html khác đang mở, hãy đóng chúng rồi tải lại trang (F5).', true); }, 10000);
       var miss = await resolveRefs(h).catch(function () { return Object.keys(h.refs); });
       clearTimeout(lau);
+      window.__dbg.mark('lấy asset dùng chung từ kho (IndexedDB)', Object.keys(h.refs).length + ' file, thiếu ' + miss.length);
       if (miss.length) {   // tự nạp kho: kho-chung.3js trong thư mục studio đã chọn, hoặc cạnh studio (http / công cụ tự động)
         try {
           if (DIR && DIR.kho) await importKho(parse(await DIR.kho.file.arrayBuffer()));
@@ -291,7 +296,12 @@
     var A = ACTIVE;
     window.__embedURL = lookup; window.__pack = { ep: h.ep, title: h.title, built: h.built, core: A.version, coreGoc: !!A.goc };
     var _fetch = window.fetch.bind(window);
-    window.fetch = function (input, init) { var u = typeof input === 'string' ? input : input.url; var b = lookup(u); return _fetch(b || input, init); };
+    window.fetch = function (input, init) {
+      var u = typeof input === 'string' ? input : input.url; var b = lookup(u), t0 = performance.now();
+      var p = _fetch(b || input, init);
+      p.then(function (r) { window.__dbg.loads.push({ url: (rev[u] || rev[b] || norm(u)).split('/').slice(-3).join('/'), at: t0, ms: performance.now() - t0, len: +(r.headers.get('content-length') || 0) }); }, function () {});
+      return p;
+    };
     var thu = !A.goc && A.dangThu;
     window.__studioRun = async function () {
       var hong = function (lyDo) {
@@ -301,8 +311,11 @@
       var cho = thu && setTimeout(function () { if (!window.__ready) hong('không mở được tập trong 180 s'); }, 180000);
       try {
         if (thu) await put('meta', 'dangMo', A.version);
+        window.__dbg.mark('trang tập đã ghi, bắt đầu nạp engine');
         await import(URL.createObjectURL(new Blob([A.js], { type: 'text/javascript' })));
+        window.__dbg.mark('nạp engine xong (lõi ' + A.version + ')');
         await import(lookup(h.js));
+        window.__dbg.mark('module tập chạy xong' + (window.__ready ? ' (đã __ready)' : ''));
         if (thu) {   // tới đây là module tập đã chạy xong (đã đặt __ready) → bản thử đạt
           clearTimeout(cho);
           A.dangThu = false; await put('core', 'hienTai', A); await put('meta', 'dangThu', undefined); await put('meta', 'dangMo', undefined);

@@ -192,6 +192,8 @@ async function init() {
         </div>
         <h4>Bố cục</h4>
         <div class="row"><button id="xreset">Đặt lại kích thước khung</button></div>
+        <h4>Gỡ lỗi</h4>
+        <div class="sw"><label title="Bảng đo thời gian: mở tập theo từng chặng, dịch shader, tải file, ms mỗi khung (Phim / 3D / Song song), xuất MP4. Nút 📋 Chép để gửi Claude."><input type="checkbox" id="xdbgchk"> 🐞 Chế độ Debug</label></div>
       </div>
     </header>
 
@@ -867,6 +869,72 @@ async function init() {
   $('xbadgechk').onchange = (e) => { U.badge = e.target.checked; $('xbadge').classList.toggle('off', !e.target.checked); uiSave(); };
   $('xreset').onclick = () => { for (const k of ['wl', 'wr', 'ht']) { app.style.removeProperty('--' + k); delete U[k]; } uiSave(); fit(); };
 
+  // -- 🐞 CHẾ ĐỘ DEBUG: mốc thời gian (window.__dbg do trình khởi động studio + engine/prewarm.js ghi) + đo khung + nút Chép.
+  //    Mốc mở tập & xuất luôn ghi (rẻ); đo ms mỗi khung chỉ khi bật. Chỉ đọc số, không đổi gì trong cảnh → khung Phim giống hệt.
+  const D = window.__dbg || (window.__dbg = { marks: [], loads: [], mark(name, info) { this.marks.push({ name, at: performance.now(), info: info || '' }); } });
+  D.mark('trình phát sẵn sàng' + (window.__ready ? ' (sau __ready)' : ''));
+  D.frames = D.frames || {}; D.exports = D.exports || []; D.loads = D.loads || [];
+  const dbgMode = () => (window.__che3d?.on ? (window.__che3d.songSong ? 'Song song' : '3D') : 'Phim');
+  const dbgFrame = (mode, ms) => { const f = D.frames[mode] || (D.frames[mode] = { n: 0, sum: 0, max: 0, last: [] }); f.n++; f.sum += ms; if (ms > f.max) f.max = ms; f.last.push(ms); if (f.last.length > 120) f.last.shift(); };
+  let dbgOn = false, dbgTimer = 0, dbgRA = null;
+  function dbgGpu() { try { const gl = window.__stage?.renderer.getContext(), x = gl.getExtension('WEBGL_debug_renderer_info'); return x ? gl.getParameter(x.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER); } catch { return '?'; } }
+  function dbgText() {
+    const r = window.__stage?.renderer, pk = window.__pack || {}, s1 = (ms) => (ms / 1000).toFixed(2).padStart(6);
+    const L = [`3JS Studio · debug · ${new Date().toLocaleString('vi-VN')}`,
+      `studio ${pk.core || '(trang dev)'}${pk.coreGoc === false ? ' (bản tải)' : ''} · tập ${pk.ep || title}${pk.built ? ' (gói ' + pk.built + ')' : ''}`,
+      `máy: ${dbgGpu()} · ${navigator.hardwareConcurrency || '?'} luồng CPU · màn ${screen.width}x${screen.height} DPR ${devicePixelRatio} · ${(navigator.userAgent.match(/(Chrome|Edg|Firefox)\/[\d.]+/g) || []).join(' ')}`,
+      '', 'MỞ TẬP (giây tính từ lúc mở trang):'];
+    for (const m of [...D.marks].sort((a, b) => a.at - b.at)) L.push(`${s1(m.at)}  ${m.name}${m.info ? ' — ' + m.info : ''}`);
+    if (r) L.push('', `SHADER/CẢNH: ${r.info.programs?.length ?? '?'} program · ${r.info.memory.geometries} geometry · ${r.info.memory.textures} texture`);
+    if (D.loads.length) {
+      const tot = D.loads.reduce((a, x) => a + x.ms, 0);
+      L.push('', `TẢI FILE: ${D.loads.length} file · cộng dồn ${(tot / 1000).toFixed(1)} s · chậm nhất:`);
+      for (const x of [...D.loads].sort((a, b) => b.ms - a.ms).slice(0, 8)) L.push(`  ${String(Math.round(x.ms)).padStart(6)} ms  ${x.url}${x.len ? ' (' + (x.len / 1048576).toFixed(1) + ' MB)' : ''}`);
+    }
+    const fk = Object.keys(D.frames);
+    L.push('', 'KHUNG (ms mỗi lần vẽ, CPU tới khi trả về; chỉ đo khi bật Debug):');
+    if (!fk.length) L.push('  (chưa có — phát/tua ở chế độ Phim, 3D, Song song)');
+    for (const k of fk) { const f = D.frames[k], l = [...f.last].sort((a, b) => a - b), p95 = l[Math.floor(l.length * 0.95)] || 0; L.push(`  ${k.padEnd(9)} tb ${(f.sum / f.n).toFixed(1)} · 95% ${p95.toFixed(1)} · max ${f.max.toFixed(1)} · ${f.n} khung${k === 'Song song' ? ` · ⚡ Nhẹ ${window.__che3d?.nhe ? 'bật' : 'tắt'}` : ''}`); }
+    if (D.exports.length) { L.push('', 'XUẤT MP4:'); for (const e of D.exports) L.push(`  ${e}`); }
+    return L.join('\n');
+  }
+  function dbgPanel() {
+    let el = $('xdbg');
+    if (!el) {
+      el = document.createElement('div'); el.id = 'xdbg';
+      el.style.cssText = 'position:fixed;right:10px;bottom:10px;z-index:2147483000;width:min(560px,calc(100vw - 20px));max-height:55vh;display:flex;flex-direction:column;background:rgba(10,12,18,.94);color:#cfd6e6;border:1px solid #3a4152;border-radius:8px;font:11px/1.45 ui-monospace,Consolas,monospace;box-shadow:0 6px 24px rgba(0,0,0,.5)';
+      el.innerHTML = '<div style="display:flex;gap:6px;align-items:center;padding:6px 8px;border-bottom:1px solid #3a4152"><b style="flex:1">🐞 Debug</b><button data-d="chep">📋 Chép</button><button data-d="xoa" title="Xoá số đo khung (giữ mốc mở tập)">Xoá đo khung</button><button data-d="dong" title="Tắt Debug">✕</button></div><pre style="margin:0;padding:8px;overflow:auto;white-space:pre-wrap"></pre>';
+      el.addEventListener('click', async (e) => {
+        const b = e.target.closest('button'); if (!b) return; b.blur();
+        if (b.dataset.d === 'dong') return dbgSet(false);
+        if (b.dataset.d === 'xoa') { D.frames = {}; return dbgPaint(); }
+        const txt = dbgText(); let ok = false;
+        try { await navigator.clipboard.writeText(txt); ok = true; } catch {}
+        if (!ok) { const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select(); try { ok = document.execCommand('copy'); } catch {} ta.remove(); }
+        b.textContent = ok ? '✓ Đã chép' : '✗ Không chép được'; setTimeout(() => { b.textContent = '📋 Chép'; }, 1500);
+      });
+      document.body.appendChild(el);
+    }
+    return el;
+  }
+  function dbgPaint() { if (dbgOn) dbgPanel().querySelector('pre').textContent = dbgText(); }
+  function dbgSet(v) {
+    dbgOn = !!v; $('xdbgchk').checked = dbgOn; U.dbg = dbgOn; uiSave();
+    if (dbgOn) {
+      if (!dbgRA) { const orig = window.renderAt; dbgRA = orig; window.renderAt = function (t) {   // bọc chỉ để đo, trả kết quả y nguyên
+        const t0 = performance.now(), mode = dbgMode(), p = orig.apply(this, arguments);
+        if (p && p.then) p.then(() => dbgFrame(mode, performance.now() - t0), () => {}); else dbgFrame(mode, performance.now() - t0);
+        return p; }; }
+      dbgPanel().style.display = 'flex'; clearInterval(dbgTimer); dbgTimer = setInterval(dbgPaint, 700); dbgPaint();
+    } else {
+      if (dbgRA) { window.renderAt = dbgRA; dbgRA = null; }
+      clearInterval(dbgTimer); const el = $('xdbg'); if (el) el.style.display = 'none';
+    }
+  }
+  window.__debug = { text: dbgText, set: dbgSet, get on() { return dbgOn; } };
+  $('xdbgchk').onchange = (e) => { dbgSet(e.target.checked); e.target.blur(); };
+  if (U.dbg) dbgSet(true);
+
   applyRows(); themeBtns(); syncNotesUi(); syncUi(+$('xseek').value); fit();
   pingClaude();
   setTimeout(() => { refreshVoiceRow(); refreshSfxRow(); }, 400);
@@ -989,10 +1057,12 @@ async function init() {
       if (stream) { await stream.close(); stream = null; }
       else download(new Blob([target.buffer], { type: 'video/mp4' }), name);
       const el = (performance.now() - tStart) / 1000;
+      window.__dbg?.exports?.push(`${name} · ${N} frame trong ${el.toFixed(1)} s (${(N / el).toFixed(1)} khung/s) · ${vcfg.mux}`);
       setStat(`Xong: ${name}\n${N} frame trong ${fmtS(el)} · video ${vcfg.mux.toUpperCase()}${acfg ? ' + ' + acfg.mux.toUpperCase() : ''}${loudInfo ? '\n' + loudInfo : ''}`);
       bar.style.width = '100%';
     } catch (e) {
       console.error(e);
+      window.__dbg?.exports?.push(`${name} · LỖI: ${e && e.message || e}`);
       setStat('Lỗi: ' + (e && e.message || e));
       if (stream) { try { await stream.abort(); } catch {} }
     } finally {
