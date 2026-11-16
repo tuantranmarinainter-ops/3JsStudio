@@ -125,6 +125,9 @@ a.open:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .sent b{color:var(--done)}
 .saved{font-size:14px;color:var(--run);font-weight:600}
 .empty{background:var(--surface);border:2px dashed var(--line);border-radius:var(--r);padding:28px;text-align:center;color:var(--muted);font-size:18px}
+.help li.chi-may{display:none}
+body.tren-may .help li.chi-may{display:flex}
+body.tren-may .help li.chi-web{display:none}
 </style>
 
 <div class="wrap">
@@ -159,7 +162,8 @@ a.open:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
       <li><span class="dot done"></span><span class="txt"><b>Xanh dương – Đã xong:</b> việc đã hoàn thành.</span></li>
       <li><span class="dot" style="color:var(--muted)"></span><span class="txt"><b>Lưu trữ:</b> việc đã cất đi. Chỉ hiện khi bạn bấm ô “Lưu trữ”.</span></li>
       <li><span class="txt">Bấm vào ô màu ở trên để chỉ xem một loại. Bấm lần nữa để xem lại tất cả.</span></li>
-      <li><span class="txt">Dưới mỗi thẻ có ô <b>Ghi chú</b> và các nút <b>Tạm dừng</b>, <b>Làm tiếp</b>, <b>Lưu trữ</b>. Bấm nút là gửi yêu cầu. Claude sẽ làm khi bạn nhắn <code>cập nhật trung tâm</code>. Với “Làm tiếp”, ghi chú của bạn sẽ được gửi cho phiên đó.</span></li>
+      <li class="chi-may"><span class="txt">Đây là <b>bản trên máy</b>: bấm <b>Xem phiên</b> là mở thẳng Claude Code (lần đầu Chrome hỏi, bạn tích “Luôn cho phép” rồi bấm Mở). Muốn ghi chú hoặc bấm Tạm dừng / Lưu trữ thì dùng trang trên claude.ai.</span></li>
+      <li class="chi-web"><span class="txt">Dưới mỗi thẻ có ô <b>Ghi chú</b> và các nút <b>Tạm dừng</b>, <b>Làm tiếp</b>, <b>Lưu trữ</b>. Bấm nút là gửi yêu cầu. Claude sẽ làm khi bạn nhắn <code>cập nhật trung tâm</code>. Với “Làm tiếp”, ghi chú của bạn sẽ được gửi cho phiên đó.</span></li>
       <li><span class="txt"><b>Xem phiên</b> mở phiên đó trong ứng dụng Claude Code trên máy tính. Nếu bấm không thấy gì: bấm <b>Chép link</b>, nhấn phím <b>Windows + R</b>, dán link vào rồi nhấn <b>Enter</b>.</span></li>
       <li><span class="txt">Trang này không tự làm mới. Muốn có tin mới nhất, nhắn Claude ở phiên Trung tâm điều hành: <code>cập nhật trung tâm</code>.</span></li>
     </ul>
@@ -307,7 +311,16 @@ $("#board").addEventListener("click",async e=>{
 });
 const busy=()=>document.activeElement?.tagName==="TEXTAREA";
 
+// Bản trên máy (dist/trung-tam.html): tools/trung-tam.mjs dong-goi gắn sẵn dữ liệu vào đây, không cần claude.ai.
+const BANG_NHUNG=null/*__BANG__*/;
 (async()=>{
+  if(BANG_NHUNG){
+    document.body.classList.add("tren-may");
+    rows=Array.isArray(BANG_NHUNG.rows)?BANG_NHUNG.rows:[]; meta={capNhat:BANG_NHUNG.capNhat}; render();
+    // mỗi phút tự mở lại file: dong-goi ghi đè file này nên trang tự có tin mới (giữ ô lọc nhờ localStorage)
+    setInterval(()=>{ if(!busy()&&!q) location.reload() },60000);
+    return;
+  }
   const timer=setTimeout(()=>{ if(!rows.length) $("#board").innerHTML=`<div class="empty">Chưa đọc được danh sách. Hãy đăng nhập claude.ai rồi mở lại trang, hoặc nhắn Claude: <b>“cập nhật trung tâm”</b>.</div>` },10000);
   const db=await (window.claude?.use?.("db") ?? null);
   if(!db){ clearTimeout(timer); $("#board").innerHTML=`<div class="empty">Trang cần đăng nhập claude.ai để đọc danh sách công việc.</div>`; return }

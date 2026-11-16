@@ -61,6 +61,15 @@ export function kiem(du) {
   return loi;
 }
 
+/** Trang nguồn (tools/trung-tam.html) + bảng → file HTML độc lập chạy trên máy, dữ liệu gắn sẵn. */
+export function dungTrangMay(nguon, bang) {
+  if (!nguon.includes('null/*__BANG__*/')) throw new Error('trang nguồn thiếu chỗ gắn null/*__BANG__*/');
+  const json = JSON.stringify(bang).replace(/</g, '\\u003c');
+  const than = nguon.replace('null/*__BANG__*/', () => json);
+  return '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+    + '</head><body>\n' + than + '\n</body></html>\n';
+}
+
 /** Dữ liệu → bản ghi trang đọc (mảng, có id, đủ trường). */
 export function dongGoi(du, bayGio = new Date()) {
   const rows = Object.entries(du.phien).map(([id, r]) => {
@@ -127,9 +136,13 @@ function main(argv) {
     const out = path.join(ROOT, 'output/trung-tam/bang.json');
     fs.mkdirSync(path.dirname(out), { recursive: true });
     fs.writeFileSync(out, JSON.stringify(bang));
+    const fMay = path.join(ROOT, 'dist/trung-tam.html');
+    fs.mkdirSync(path.dirname(fMay), { recursive: true });
+    fs.writeFileSync(fMay, dungTrangMay(fs.readFileSync(path.join(ROOT, 'tools/trung-tam.html'), 'utf8'), bang));
     const d = bang.dem;
     console.log(`OK ${bang.rows.length} phiên · đang làm ${d['dang-lam']} · chờ bạn ${d['cho-ban']} · tạm nghỉ ${d['tam-nghi']} · xong ${d.xong}`);
-    console.log(`Ghi lên trang: ArtifactData set url=${URL_TRANG} collection=bang doc_id=hientai file_path=${out} (+ if_version)`);
+    console.log(`Bản trên máy: file:///${fMay.replace(/\\/g, '/').replace(/ /g, '%20')}`);
+    console.log(`Ghi lên trang:ArtifactData set url=${URL_TRANG} collection=bang doc_id=hientai file_path=${out} (+ if_version)`);
     return 0;
   }
   console.log('Dùng: node tools/trung-tam.mjs diem-dung [--ngay 2] | dong-goi | tao-tu <thư mục>');

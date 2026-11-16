@@ -8,6 +8,7 @@ description: Cập nhật trang artifact "Trung tâm điều hành" — bảng m
 Trang: https://claude.ai/artifact/JUGQ8iJHoj5AiD2boeppbT (nguồn trang: `tools/trung-tam.html`; bản đăng: `output/artifact/trung-tam/trung-tam.html`).
 Dữ liệu gốc: `docs/trung-tam.json` (trong git). Trang đọc MỘT bản ghi db: `bang/hientai`.
 Cập nhật dữ liệu KHÔNG cần đăng lại trang. Chỉ đăng lại khi sửa giao diện.
+**Bản trên máy** `dist/trung-tam.html` (nút Xem phiên mở thẳng Claude Code, tự tải lại mỗi phút) do bước `dong-goi` dựng lại mỗi lần — luôn kèm link `file:///S:/3JS%20Studio/dist/trung-tam.html` khi báo người dùng.
 
 ## Các bước (khoảng 6 lệnh)
 0. **Yêu cầu từ nút bấm trên trang** (mỗi thẻ có ô Ghi chú + nút Tạm dừng / Làm tiếp / Lưu trữ, ghi vào db `yeucau/<id>`):

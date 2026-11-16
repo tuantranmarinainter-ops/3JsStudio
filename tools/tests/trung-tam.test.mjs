@@ -1,6 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { rutDiemDung, kiem, dongGoi, docYeuCau } from '../trung-tam.mjs';
+import { rutDiemDung, kiem, dongGoi, docYeuCau, dungTrangMay } from '../trung-tam.mjs';
+
+test('dungTrangMay gắn dữ liệu, chống </script> trong chữ', () => {
+  const html = dungTrangMay('<script>const BANG_NHUNG=null/*__BANG__*/;</script>', { rows: [{ ten: 'a</script>b' }] });
+  assert.ok(html.startsWith('<!doctype html>'));
+  assert.ok(html.includes('const BANG_NHUNG={"rows"'));
+  assert.ok(!html.includes('a</script>'));
+  assert.throws(() => dungTrangMay('<p>x</p>', {}));
+});
 
 test('docYeuCau lấy id phiên từ link, bỏ yêu cầu rỗng', () => {
   const phien = { a: { ten: 'A', link: 'claude://claude.ai/epitaxy/local_12ab-cd' }, b: { ten: 'B' } };
