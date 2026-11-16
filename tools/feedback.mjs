@@ -29,5 +29,24 @@ notes.forEach((n, i) => {
   console.log(`    ${n.text ? n.text.replace(/\n/g, '\n    ') : '(chỉ có nét vẽ, xem ảnh)'}`);
   if (file) console.log(`    ảnh: ${file}`);
 });
+// góp ý trong khung 3D (engine/che-do-3d-sua.js): ghim mô tả + vật đã thử dời/xoay/cỡ (số trước → sau, chưa ghi vào tập)
+const g3 = data.ghiChu3d, anh3 = (img, ten) => { const m = /^data:image\/(jpeg|png);base64,(.+)$/.exec(img || ''); if (!m) return ''; const f = path.join(out, `${ten}.${m[1] === 'png' ? 'png' : 'jpg'}`); fs.writeFileSync(f, Buffer.from(m[2], 'base64')); return f; };
+if (g3 && (g3.ghim?.length || g3.vat?.length)) {
+  console.log(`
+— 3D: ${g3.ghim?.length || 0} ghim · ${g3.vat?.length || 0} vật đã sửa thử —`);
+  for (const g of g3.ghim || []) {
+    const f = anh3(g.img, `3d_ghim${g.so}`);
+    console.log(`📍${g.so}. shot ${g.shotId || '?'} · ${g.t != null ? Number(g.t).toFixed(2) + 's' : ''}${g.frame != null ? ' · frame ' + g.frame : ''} · điểm (${g.pos.join(', ')})${g.vat ? ' trên ' + g.vat : ''}`);
+    console.log(`    ${g.text || '(chưa mô tả)'}`); if (f) console.log(`    ảnh 3D: ${f}`);
+  }
+  (g3.vat || []).forEach((v, i) => {
+    const f = anh3(v.img, `3d_vat${i + 1}`);
+    console.log(`✥${i + 1}. ${v.path}${v.shotId ? ' · shot ' + v.shotId : ''}${v.frame != null ? ' · frame ' + v.frame : ''}`);
+    console.log(`    vị trí ${v.truoc.pos.join(', ')} → ${v.sau.pos.join(', ')} (dời ${v.lech.pos.join(', ')}) · thế giới → ${v.theGioi.sau.join(', ')}`);
+    console.log(`    xoay° ${v.truoc.rotDeg.join(', ')} → ${v.sau.rotDeg.join(', ')} · cỡ ${v.truoc.scale.join(', ')} → ${v.sau.scale.join(', ')} (×${v.lech.scaleNhan.join(', ')})`);
+    if (v.text) console.log(`    ${v.text}`); if (f) console.log(`    ảnh 3D: ${f}`);
+  });
+  console.log('    (số là toạ độ cục bộ của vật trong nhóm cha; tìm vật theo đường dẫn tên — sửa ở builder/env tương ứng)');
+}
 // chỉ chụp lại phân cảnh liên quan (shot chứa từng frame: frame đó + đầu/giữa/cuối shot), không chụp cả phim
 if (notes.length) console.log(`\nChụp lại đúng các phân cảnh bị góp ý:\n  node tools/look.mjs episodes/${data.episode || 'ep001'}/index.html --frames ${notes.map((n) => n.frame).join(',')} --out feedback/${path.basename(out)}/chup`);

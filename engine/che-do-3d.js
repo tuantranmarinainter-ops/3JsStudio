@@ -13,6 +13,7 @@
 //   lăn = zoom theo con trỏ (OrbitControls của three.js). Điện thoại: 1 ngón xoay, 2 ngón chụm/kéo.
 // Vòng rAF CHỈ chạy khi đang giữ phím di chuyển — chỉ vẽ lại camera tự do, không chạy lại onFrame, không đụng thời gian phim.
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { ganSua } from './che-do-3d-sua.js';
 import { SKIES } from './skies.js';
 import { VONG_BAO, NEN, vienState } from './vong-bao.js';
 
@@ -179,7 +180,15 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     addEventListener('keydown', kd, true); addEventListener('keyup', ku, true);
     addEventListener('blur', () => keys.clear());
 
-    return { free, helpers, grid, frus, path, dots, look, el, lab, bar, controls, labels: new Map(), heights: new Map() };
+    const B0 = { free, helpers, grid, frus, path, dots, look, el, lab, bar, controls, labels: new Map(), heights: new Map() };
+    // góp ý trong 3D: sửa vật (dời/xoay/cỡ — chỉ thử) + ghim mô tả → đi kèm file góp ý (engine/che-do-3d-sua.js)
+    try {
+      B0.sua = ganSua({ THREE, stage, B: B0, redraw: () => redraw(), isOn: () => on,
+        withView: (f) => { const ov = envOverride(); try { return f(); } finally { ov(); } },
+        shot: () => ({ id: shotCam.id, t: +curT.toFixed(3) }), viewCanvas: () => (ss ? ssCv : canvas) });
+      B0.sua.onChange(() => { for (const f of listeners) f(on, ss); });
+    } catch (e) { console.warn('[che-do-3d] sửa/ghim', e); }
+    return B0;
   }
 
   // ---------- camera shot: đọc sau khi director đặt stage.camera ----------
@@ -308,7 +317,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
       renderer.autoClear = ac; scene.fog = fog; renderer.shadowMap.autoUpdate = sau;
       if (ss) { renderer.setScissorTest(false); renderer.setViewport(0, 0, W0, H0); renderer.setScissor(0, 0, W0, H0); renderer.setRenderTarget(rt); }
     }
-    updateLabels();
+    updateLabels(); B.sua?.capNhatGhim();
   }
   // TRỜI bám camera ĐANG VẼ: envs.js đặt hộp trời/vòm trời/trời bão theo camera PHIM (stage.camera); camera bay đi xa thì trời ở lại chỗ cũ → mất trời.
   // Mỗi lần vẽ bằng camera tự do: dời trời tới camera đó (và hướng thu nhỏ trời theo hướng nhìn của nó), vẽ xong trả lại như cũ.
@@ -363,7 +372,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     console.log('[che3d] ghi vào tập:\n' + text);
   }
   function drawSS(t) {   // song song: Phim (hậu kỳ như thường) → filmCv, rồi phần 3D
-    if (!sampling) { origDraw(t); filmCtx.drawImage(canvas, 0, 0); }
+    if (!sampling) { built.sua?.apDung(); origDraw(t); filmCtx.drawImage(canvas, 0, 0); }
     // nhẹ: lúc ĐANG PHÁT (t tiến đều, bước nhỏ) khung 3D chỉ vẽ cách 1 khung; tua/dừng/nhảy thì vẽ ngay.
     // Bỏ khung nào thì hẹn vẽ bù sau 120 ms nếu không có khung mới (dừng phát → 3D đúng t cuối).
     clearTimeout(boKhungHen);
@@ -376,6 +385,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
   function draw3d(t) {
     if (sampling) { if (t !== sampleT) curT = t; return; }
     curT = t;
+    built.sua?.apDung();
     const changed = captureShot(t);
     if (bam) applyBam();
     else if (changed && !giuGoc && built.ready) flyToShot();   // 🔒 Giữ góc (mặc định bật): camera bay chỉ đổi khi người dùng tự bấm/kéo
@@ -520,6 +530,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     on = false;
     try { sizeObs?.disconnect(); } catch (e) {}
     stage.draw = origDraw; origDraw = null;
+    B.sua?.traLai();
     if (ss) {
       ssCv.remove(); filmCv.remove(); ssCv = ssCtx = filmCv = filmCtx = null; ss = false;
       B.el.classList.remove('c3d-ss', 'c3d-col');
@@ -548,6 +559,8 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     get shotCam() { return { pos: shotCam.pos.toArray(), target: shotCam.target.toArray(), quat: shotCam.quat.toArray(), fov: shotCam.fov, id: shotCam.id }; },
     get camera() { return built?.free; },
     get giuGoc() { return giuGoc; },
+    get sua() { return built?.sua || null; },
+    ghiChu3d: () => built?.sua?.xuat() || null,
     get env() { return envChon; }, setEnv, envList,
     get bam() { return on && bam; },
     setBam: (v) => { if (v) goc('shot'); else stopBam(); },

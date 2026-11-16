@@ -466,7 +466,7 @@ async function init() {
       $('xbadge').style.zIndex = on3 && !ss ? '5' : '';
       $('xview').classList.toggle('xss', !!ss); fit();
     };
-    c3d.onChange(mode);
+    c3d.onChange(mode); c3d.onChange(() => { try { renderNotes(); } catch (e) {} });
     $('xmphim').onclick = () => { c3d.tat(); $('xmphim').blur(); };
     $('xm3d').onclick = () => { if (busy) return; if (annotating) setAnnotate(false); c3d.bat($('xview')); $('xm3d').blur(); };
     if (c3d.songSong === undefined) $('xmss').style.display = 'none';   // lõi 3D cũ chưa có chế độ song song
@@ -645,7 +645,8 @@ async function init() {
     $('xnotes').innerHTML = notes.map((n, i) => `<div class="nt" data-i="${i}">${n.img ? `<img src="${n.img}" alt="">` : '<img alt="">'}` +
       `<div class="tx">${n.shotId ? `<b>${escapeHtml(n.shotId)}</b> · ${n.scope === 'shot' ? 'cả shot' : 'đúng khung'}${n.frameInShot ? ` ${n.frameInShot}/${n.shotFrames}` : ''} · f${n.frame}` : `<b>f${n.frame}</b>`} · ${n.t.toFixed(2)}s<span>${escapeHtml(n.text || '(chỉ có nét vẽ)')}</span></div>` +
       `<button class="del" data-del="${i}" title="Xoá ghi chú">✕</button></div>`).join('') || '<div class="muted">Chưa có marker nào. Bấm <kbd>M</kbd> hoặc nút ⚑ Marker để thêm.</div>';
-    $('xncnt').textContent = notes.length; $('xsend').disabled = $('xsendc').disabled = !notes.length || busy;
+    const k3 = n3d();
+    $('xncnt').textContent = notes.length + (k3 ? ` + ${k3} 3D` : ''); $('xsend').disabled = $('xsendc').disabled = !(notes.length || k3) || busy;
     const c0 = $('xncnt0'); c0.textContent = notes.length || ''; c0.style.display = notes.length ? '' : 'none';
     try { syncNotesUi(); } catch (e) { console.warn('studio ui', e); }
   }
@@ -657,11 +658,18 @@ async function init() {
   renderNotes();
 
   // dữ liệu góp ý: 1 file json (ảnh dạng data URL) — dùng chung cho "Xuất file" và "Gửi tới Claude"
-  const feedbackData = () => ({ app: 'gop-y', version: 1, episode: epId, title, fps: FPS, duration: DUR, created: new Date().toISOString(), notes });
+  // ghiChu3d: ghim + vật đã sửa trong khung 3D (engine/che-do-3d-sua.js), thêm frame theo FPS của trình phát
+  const ghi3d = () => {
+    const g = window.__che3d?.ghiChu3d?.(); if (!g || (!g.ghim.length && !g.vat.length)) return null;
+    const fr = (x) => (x.t == null ? x : { ...x, frame: Math.min(NF - 1, Math.floor(x.t * FPS + 1e-6)) });
+    return { ghim: g.ghim.map(fr), vat: g.vat.map(fr) };
+  };
+  const n3d = () => { const g = ghi3d(); return g ? g.ghim.length + g.vat.length : 0; };
+  const feedbackData = () => ({ app: 'gop-y', version: 2, episode: epId, title, fps: FPS, duration: DUR, created: new Date().toISOString(), notes, ghiChu3d: ghi3d() });
   const stFile = (s) => { $('xsendst').textContent = s; };
   // Xuất file: lưu .json (hộp lưu của Chrome/Edge, hoặc tải xuống) để bỏ vào feedback\ cho tools/feedback.mjs
   $('xsend').onclick = async () => {
-    if (!notes.length) return;
+    if (!notes.length && !n3d()) return;
     const d = new Date(), z = (n) => String(n).padStart(2, '0');
     const name = `gop-y_${epId}_${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}_${z(d.getHours())}-${z(d.getMinutes())}.json`;
     const blob = new Blob([JSON.stringify(feedbackData())], { type: 'application/json' });
@@ -692,13 +700,13 @@ async function init() {
   }
   window.__pingClaude = pingClaude;
   $('xsendc').onclick = async () => {
-    if (!notes.length || busy) return;
+    if ((!notes.length && !n3d()) || busy) return;
     stFile('Đang gửi…');
     try {
       const r = await fetch(CLAUDE + '/gop-y', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(feedbackData()) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok) throw new Error(j.loi || ('máy nhận trả mã ' + r.status));
-      stFile(`Đã gửi ${notes.length} ghi chú tới Claude lúc ${new Date().toLocaleTimeString('vi')}.\n${j.file || ''}`);
+      stFile(`Đã gửi ${notes.length} ghi chú${n3d() ? ` + ${n3d()} mục 3D` : ""} tới Claude lúc ${new Date().toLocaleTimeString('vi')}.\n${j.file || ''}`);
     } catch (e) {
       stFile('Không gửi được (' + (e && e.message || e) + ') → bấm "Xuất file" rồi nhắn Claude "đọc góp ý".');
     }

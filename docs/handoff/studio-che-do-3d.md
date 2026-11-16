@@ -2,7 +2,7 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-15 (🏞 ô chọn bối cảnh trong 3D; trước đó 🎥 Bám camera shot)
+- **Cập nhật:** 2026-11-16 (góp ý trong 3D: ✥ Sửa vật dời/xoay/cỡ + 📍 Ghim → đi kèm file góp ý)
 - **Nhánh:** `ep1-v2`
 - **Đang làm:** xong: 3D giai đoạn 1 + 🔒 Giữ góc + 🎥 Bám camera shot (mỗi khung camera bay = camera shot: vị trí/hướng/fov;
   kéo chuột/lăn/WASD → thoát bám; `__che3d.bam`, `setBam`) + 🏞 ô Bối cảnh (chỉ khung 3D vẽ env được chọn, trả visible ngay sau khi vẽ; `setEnv`, `envList`) + có trên ep001–ep004 (dùng chung qua `engine/stage.js`). Giai đoạn 2 chờ người dùng.
@@ -17,6 +17,8 @@
 - **Biết trước:** ep001 gần như không có nhãn (trang không công khai actors/props/places). Cần thêm sau `window.__stage = stage;`
   (episodes/ep001/index.html:213): `window.__actors = actors; window.__props = props;` — chưa sửa vì phiên ep001-sky-storm giữ file.
   ep001 nặng: trong bản gộp lần bay đầu chậm (dt giới hạn 0.1 s/khung).
+- **Góp ý 3D:** `engine/che-do-3d-sua.js` (TransformControls chép từ three 0.187.0). Chỉ THỬ: tắt 3D trả vật về chỗ cũ; lưu tạm localStorage.
+  `tools/export-ui.js` feedbackData v2 thêm `ghiChu3d {ghim, vat}`; `tools/feedback.mjs` in phần 3D + ảnh. Kiểm: `node tools/kiem-gop-y-3d.mjs` 13/13.
 - **Câu hỏi còn mở:** không
 <!-- /ĐIỂM DỪNG -->
 
