@@ -300,7 +300,7 @@ export function tomTatParts(parts) {
     for (const d of p.decals || []) if (d.texture) { anh.add(d.texture); decal++; }
   }
   const csg = new Set(parts.map((p) => p.csg?.Content?.id).filter(Boolean));
-  return { part: parts.length, loai, mesh: mesh.size, anh: anh.size, decal, union, request: 1 + mesh.size + anh.size + csg.size };
+  return { part: parts.length, loai, mesh: mesh.size, anh: anh.size, anhIds: [...anh], decal, union, request: 1 + mesh.size + anh.size + csg.size };
 }
 async function cmdXem(a) {
   const id = layId(a._[0]); if (!id) loi('cách dùng: xem <id|link>');
