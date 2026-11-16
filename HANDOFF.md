@@ -2,18 +2,18 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng, GHI ĐÈ cả khối mỗi lần cập nhật (mẫu: docs/handoff/_mau.md). Phần dưới khối là ghi chép, chỉ đọc khi cần. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-14 (phiên điều phối đã xác nhận)
-- **Nhánh:** `ep1-v2`; người dùng cho push 1 lần ngày 14/11 (tới `dc161c0`, lên `origin/claude/ep1-v2`). Các lần sau vẫn KHÔNG push khi chưa được bảo; `main` chưa đụng
-- **Đang làm:** điều phối, KHÔNG code tại đây (việc code/dựng mở phiên con). Tập 2 (ep002) tạm gác: `docs/handoff/ep002-tam-gac.md`
-- **Phiên con đang mở:** ep003 (Tập 4, duyệt lại asset theo Roblox + gắn NPC) · ep003-roblox đợt 4 (nhà) · npc-roblox · face-pack-altiwyre ·
-  roblox (công cụ tải) · engine-diem-giua (xong) · nghien-cuu-game-studios (cải tiến 1–3 xong)
-- **Quy trình mới** (kịch bản chữ → video): sơ đồ `docs/quy-trinh-so-do.html`, đặc tả `docs/quy-trinh-dau-vao.md`, đề bài Codex `docs/de-bai-codex-mau.md`.
-  Đợt 1–3 công cụ đã code + test; CHƯA chạy trọn trên một kịch bản thật
-- **Bước kế tiếp:** (1) người dùng duyệt các trang đang chờ; (2) cải tiến 5 rồi 4 trong `docs/nghien-cuu-game-studios.md` nếu người dùng đồng ý;
-  (3) chạy thử trọn quy trình mới trên một kịch bản ngắn 20–30 shot
-- **Đang chờ người dùng:** duyệt `dist/ep003_duyet.html` (asset, nhà), `dist/face-pack_mau.html` (bộ mặt); gấu Tập 4 chưa chốt nguồn
-- **File đang dở (chưa commit):** của phiên khác, có file đã `git add` sẵn → luôn `git commit <file…> -m …`; nhiều phiên chung một checkout
-- **Đang chạy nền:** không có ở phiên điều phối. Máy nhận bật khi cần: tiến độ 8793, góp ý 8792, duyệt 8791, duyệt bảng shot 8794
+- **Cập nhật:** 2026-11-16 (trước /compact)
+- **Nhánh:** `ep1-v2`, upstream thật là `origin/claude/ep1-v2` (đang đi trước nhiều commit). KHÔNG push khi chưa được bảo; `main` chưa đụng
+- **Đang làm:** điều phối, KHÔNG code tại đây (việc code/dựng mở phiên con). Tập 2 tạm gác: `docs/handoff/ep002-tam-gac.md`
+- **Xong gần đây:** 3D giữ góc + mọi tập (`docs/handoff/studio-che-do-3d.md`) · ánh sáng 2.5D lightCues (f767740) · dọn repo, ep004/ep005
+  ra `.gitignore` (6ac8107, `docs/handoff/don-repo.md`) · kế thừa tập 1 B0–7 + luật CLAUDE.md (`docs/handoff/ke-thua-ep001.md`)
+- **Phiên con đang chạy:** giam-tai-cpu (local_ca009255-2525-4090-8754-abb7aed8122a, `docs/handoff/giam-tai-cpu.md`): Chrome tối đa 3
+  (`tools/chrome-sem.mjs`), đang đo lại sau khi nới thời hạn test. Đạt khi 3 `npm test` song song → Chrome ≤ 3; dừng khi commit + báo số trước/sau
+- **Khi giam-tai-cpu báo:** kiểm `git show --stat`, số đo Chrome ≤ 3, luật agent đã vào CLAUDE.md → báo người dùng 1–2 dòng + link tiến độ
+- **Đang chờ người dùng:** (1) chuyển 23 file chết/bị thay vào `archive/` (`output/code-thua/bao-cao.md`); (2) xử lý `engine/nv-*`
+  và ogg ep001 chưa commit; (3) duyệt kế hoạch tach-studio (câu hỏi GitHub Release); (4) tên miền tuanchau.io.vn (eKYC Mắt Bão → NS Cloudflare);
+  (5) trang chủ `tools/cong.mjs`; (6) idle khối vuông mặc định; (7) ep003 còn: nhà thị trưởng, cửa sổ sáng, biển tiệm bánh
+- **Ràng buộc:** không đụng `engine/r15.js`, `episodes/ep001/*` (phiên ep001-sky-storm giữ); ep004/ep005 không vào repo; commit ghi rõ đường dẫn
 - **Mỗi lần phiên con báo:** `node tools/tien-do.mjs` rồi đăng lại `output/artifact/tien-do.html` lên artifact tiến độ
 <!-- /ĐIỂM DỪNG -->
 
