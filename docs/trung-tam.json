@@ -1,5 +1,5 @@
 {
-  "capNhat": "2026-11-16T02:14:00Z",
+  "capNhat": "2026-11-16T03:56:22Z",
   "phien": {
     "anh-sang": {
       "banCan": "",
@@ -159,7 +159,7 @@
       "nhom": "Nghiên cứu",
       "ten": "Tìm hiểu cách các studio game dùng Claude",
       "tiepTheo": "",
-      "trangThai": "xong"
+      "trangThai": "luu-tru"
     },
     "giam-tai-cpu": {
       "banCan": "",
@@ -169,7 +169,7 @@
       "nhom": "Bảo trì",
       "ten": "Giảm tải máy (CPU) khi chạy nhiều việc",
       "tiepTheo": "",
-      "trangThai": "xong"
+      "trangThai": "luu-tru"
     },
     "ke-thua-ep001": {
       "banCan": "",
@@ -239,7 +239,7 @@
       "nhom": "Studio",
       "ten": "Tách Studio khỏi từng tập + nút Cập nhật",
       "tiepTheo": "",
-      "trangThai": "xong"
+      "trangThai": "luu-tru"
     },
     "thu-vien-asset": {
       "banCan": "",
