@@ -159,7 +159,13 @@ const moi = full.join(' ');
 const khop = goc.replace(/\s+/g, ' ') === moi.replace(/\s+/g, ' ');
 const tong = rows.reduce((a, r) => a + r.dur, 0);
 const bc = `# Báo cáo nhập ${path.basename(file)} → ${ten}\n\n| | file gốc | ${ten} |\n|---|---|---|\n| số shot | ${raw.length} | ${rows.length} |\n| thời lượng | ${END} s | ${tong.toFixed(2)} s |\n| lời kể (chữ) | ${goc.length} ký tự | ${moi.length} ký tự — ${khop ? 'KHỚP' : 'LỆCH'} |\n| số câu | — | ${soLoi} |\n\n## Không ánh xạ được\n` +
-  `- GIỮ NGUYÊN từ file gốc (episodes/${ten}/goc/): nhân vật characters.js + 140 mặt, bối cảnh sets.js, camera + động tác + đạo cụ từng shot (story.js, hàm thuần của t). Shot thô trong shots.js chỉ gọi số shot gốc; bản theo loại shot của studio để ở shots-storyboard.js.${NL}- KHÔNG nhập (vẽ 2D lên khung của file gốc): bụi bông/tóe sao, nhoè whip, sepia, kính, màn đen, phụ đề gốc (studio có phụ đề riêng). Ánh sáng/hậu kỳ do studio vẽ nên hơi khác (sáng/tối).${NL}- Giọng, tiếng động, nhạc: file gốc không có.${NL}- Khác biệt đã thấy khi so A/B 6 khung: bố cục, nhân vật, bối cảnh khớp; mặt/bóng hơi khác do hậu kỳ studio.${NL}${NL}## Chi tiết từng shot (bản theo loại shot, chỉ để tham khảo)${NL}` +
+  `- GIỮ NGUYÊN từ file gốc (episodes/${ten}/goc/): nhân vật characters.js + 140 mặt, bối cảnh sets.js, camera + động tác + đạo cụ từng shot (story.js, hàm thuần của t). Shot thô trong shots.js chỉ gọi số shot gốc; bản theo loại shot của studio để ở shots-storyboard.js.
+- KHÔNG nhập (vẽ 2D lên khung của file gốc): bụi bông/tóe sao, nhoè whip, sepia, kính, màn đen, phụ đề gốc (studio có phụ đề riêng). Ánh sáng/hậu kỳ do studio vẽ nên hơi khác (sáng/tối).
+- Giọng, tiếng động, nhạc: file gốc không có.
+- Khác biệt đã thấy khi so A/B 6 khung: bố cục, nhân vật, bối cảnh khớp; mặt/bóng hơi khác do hậu kỳ studio.
+
+## Chi tiết từng shot (bản theo loại shot, chỉ để tham khảo)
+` +
   [...baoCao.khong, ...baoCao.canh].map((x) => `- ${x}`).join('\n') + '\n';
 fs.writeFileSync(path.join(rep, 'bao-cao.md'), bc, 'utf8');
 console.log(`shot ${raw.length}/${rows.length} · ${END}s/${tong.toFixed(1)}s · ${soLoi} câu · lời kể ${khop ? 'KHỚP' : 'LỆCH'} → ${path.relative(ROOT, rep)}/bao-cao.md`);
