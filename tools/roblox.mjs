@@ -344,7 +344,7 @@ function ghepBlender(dir, tenJson, parts, tn, ra, a, id, canhBao) {
   const exe = ENV.BLENDER || process.env.BLENDER;
   if (!exe || !fs.existsSync(exe)) loi('không thấy Blender: đặt BLENDER trong .env.local');
   const manifest = path.join(dir, tenJson);
-  fs.writeFileSync(manifest, JSON.stringify({ parts, meshes: tn.meshes, images: tn.anh, csg: tn.csg, out: ra, ten: `roblox-${id}`, anhMax: Number(a['anh-max']) || 512, boManhLon: !!a['bo-manh-lon'] }));
+  fs.writeFileSync(manifest, JSON.stringify({ parts, meshes: tn.meshes, images: tn.anh, csg: tn.csg, out: ra, ten: `roblox-${id}`, anhMax: Number(a['anh-max']) || 512, boManhLon: !!a['bo-manh-lon'], khongVan: !!a['khong-van'] }));
   const r = chay(exe, ['-b', '--factory-startup', '-P', path.join(ROOT, 'tools', 'blender', 'roblox_ghep.py'), '--', manifest]);
   const out = (r.stdout || '') + (r.stderr || '');
   const m = out.match(/^GHEP_JSON (.*)$/m);
@@ -548,7 +548,7 @@ export function phanTich(argv) {
     const t = argv[i];
     if (t.startsWith('--')) {
       const k = t.slice(2), n = argv[i + 1];
-      if (n !== undefined && !n.startsWith('--') && !['co-script', 'json', 'tach', 'liet-ke', 'bo-manh-lon'].includes(k)) { a[k] = n; i++; } else a[k] = true;
+      if (n !== undefined && !n.startsWith('--') && !['co-script', 'json', 'tach', 'liet-ke', 'bo-manh-lon', 'khong-van'].includes(k)) { a[k] = n; i++; } else a[k] = true;
     } else a._.push(t);
   }
   return a;

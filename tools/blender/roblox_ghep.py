@@ -109,11 +109,25 @@ def dau(seg=20, buoc=4, bo=0.25):
 _mat = {}
 CUR_MAT = None   # Enum.Material của mảnh đang dựng (đặt trong vòng lặp bên dưới)
 MAT_NEON, MAT_GLASS = 288, 1568
+# Enum.Material → (vân Poly Haven CC0 tileable trong assets/polyhaven/vat-lieu/, số stud mỗi ô lặp, độ mạnh chi tiết 0..1).
+# Chất liệu không có ở đây (Plastic, SmoothPlastic, Neon, Glass…) giữ màu phẳng như Roblox. Giá trị enum tra từ Studio (Enum.Material).
+VAN_PH = {
+    512: ('fine_grained_wood', 4, 0.7), 528: ('brown_planks_03', 4, 0.7), 784: ('marble_01', 6, 0.5), 800: ('slate_floor', 6, 0.7),
+    816: ('concrete_floor_01', 8, 0.6), 848: ('brick_wall_001', 4, 0.8), 1088: ('metal_plate', 4, 0.5), 1280: ('leafy_grass', 6, 0.7),
+    1296: ('coast_sand_01', 8, 0.5), 1312: ('fabric_pattern_07', 2, 0.5), 1328: ('snow_02', 8, 0.4), 2306: ('floor_tiles_04', 4, 0.7),
+    2308: ('grey_roof_tiles', 6, 0.8), 2310: ('grey_plaster_02', 8, 0.5)}
+KHONG_VAN = bool(D.get('khongVan'))
+PH_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'assets', 'polyhaven', 'vat-lieu')
+def l2s(c): return 12.92 * c if c <= 0.0031308 else 1.055 * c ** (1 / 2.4) - 0.055
 def vat_lieu(rgb, anh=None, alpha=1.0):
     if CUR_MAT == MAT_GLASS: alpha = min(alpha, 0.4)      # Glass: trong suốt (Roblox vẽ kính qua ~60%)
+    stud = None
+    if anh is None and alpha >= 1 and CUR_MAT in VAN_PH and not KHONG_VAN:
+        anh = ghep_van(tuple(l2s(c) for c in rgb), CUR_MAT); rgb = (1, 1, 1); stud = VAN_PH[CUR_MAT][1]
     key = (tuple(round(c, 3) for c in rgb), anh, round(alpha, 2), CUR_MAT if CUR_MAT in (MAT_NEON, MAT_GLASS) else None)
     if key in _mat: return _mat[key]
     m = bpy.data.materials.new('mau_%d' % len(_mat)); m.use_nodes = True
+    if stud: m['stud'] = float(stud)
     bsdf = m.node_tree.nodes['Principled BSDF']
     bsdf.inputs['Roughness'].default_value = 0.9
     if anh:
@@ -173,6 +187,25 @@ def ghep_anh(nen, lop):
     bpy.data.images.remove(out)
     _anh[key] = f; return f
 
+_van = {}
+def ghep_van(nen, mat):
+    """Vân Poly Haven × màu mảnh (sRGB): giữ độ sáng/tối của vân (xám, chuẩn hoá về trung bình 1), nhân với màu mảnh như Roblox nhân vân với Color."""
+    key = (tuple(round(c, 3) for c in nen), mat)
+    if key in _van: return _van[key]
+    ten, _, k = VAN_PH[mat]
+    a = doc_anh(os.path.join(PH_DIR, ten + '_diff_1k.jpg'))
+    L = 0.2126 * a[..., 0] + 0.7152 * a[..., 1] + 0.0722 * a[..., 2]
+    ct = 1 + k * (L / max(float(L.mean()), 1e-4) - 1)        # chi tiết quanh 1
+    base = np.clip(np.array(nen, dtype=np.float32)[None, None, :] * ct[..., None], 0, 1)
+    h, w = base.shape[:2]
+    out = bpy.data.images.new('van_%d' % len(_van), w, h, alpha=False)
+    out.pixels.foreach_set(np.concatenate([base, np.ones((h, w, 1), dtype=np.float32)], axis=2).ravel())
+    os.makedirs(THU_ANH, exist_ok=True)
+    f = os.path.join(THU_ANH, '_van_%d.jpg' % len(_van))
+    out.filepath_raw = f; out.file_format = 'JPEG'; out.save(quality=88)
+    bpy.data.images.remove(out)
+    _van[key] = f; return f
+
 # ---------- lưới CSG (UnionOperation…): MeshData "CSGMDL" ----------
 KHOA_CSG = bytes([86, 46, 110, 88, 49, 32, 48, 4, 52, 105, 12, 119, 12, 1, 94, 0, 26, 96, 55, 105, 29, 82, 43, 7, 79, 36, 89, 101, 83, 4, 122])
 def doc_csg(path):
@@ -228,6 +261,25 @@ so_union = so_decal = 0
 tong_tam_giac = 0
 lo = [1e30] * 3; hi = [-1e30] * 3
 
+def _uv_van(me, V, mat, mats, mat_mat):
+    """Vân lặp theo stud: mỗi mặt chiếu phẳng theo trục pháp tuyến trội (toạ độ cục bộ của mảnh, 1 đơn vị = 1 stud) ÷ số stud mỗi ô."""
+    uvl = me.uv_layers.new(name='UV')
+    for p in me.polygons:
+        m = (mats[mat_mat[p.index]] if mats else mat)
+        st = m.get('stud') if m is not None else None
+        vs = [V[i] for i in p.vertices]
+        if not st:
+            for li in p.loop_indices: uvl.data[li].uv = (0.0, 0.0)
+            continue
+        n = [0.0, 0.0, 0.0]
+        for i in range(len(vs)):
+            a, b = vs[i], vs[(i + 1) % len(vs)]
+            n[0] += (a[1] - b[1]) * (a[2] + b[2]); n[1] += (a[2] - b[2]) * (a[0] + b[0]); n[2] += (a[0] - b[0]) * (a[1] + b[1])
+        ax = max(range(3), key=lambda k: abs(n[k]))
+        iu, iv = ((2, 1), (0, 2), (0, 1))[ax]
+        for li in p.loop_indices:
+            q = V[me.loops[li].vertex_index]; uvl.data[li].uv = (q[iu] / st, q[iv] / st)
+
 def them(ten, V, F, UV, M, mat, min_=False, mats=None, mat_mat=None, N=None):
     """V: đỉnh trong không gian Roblox (cục bộ mảnh); M: ma trận mảnh trong không gian Roblox (4x4 mathutils)."""
     global tong_tam_giac
@@ -241,6 +293,8 @@ def them(ten, V, F, UV, M, mat, min_=False, mats=None, mat_mat=None, N=None):
         for p in me.polygons:
             for li in p.loop_indices:
                 u, v = UV[me.loops[li].vertex_index]; uvl.data[li].uv = (u, 1.0 - v)
+    if not UV and any(m_ is not None and m_.get('stud') for m_ in ([mat] if mat else []) + list(mats or [])):
+        _uv_van(me, V, mat, mats, mat_mat)
     # M có thể phản chiếu (size âm / det<0) → lật mặt
     if M.to_3x3().determinant() < 0:
         for p in me.polygons: p.flip()
