@@ -514,7 +514,7 @@ button.chinh{background:var(--acc);color:#fff;border-color:var(--acc)}button.on{
 </div>
 <div class="foot"><div class="in">
 <span id="dem" class="mut" style="flex:1"></span>
-<button id="luu">Lưu file JSON</button><button id="gui" class="chinh">Gửi tới Claude</button><span id="ghi" class="mut"></span>
+<button id="luu">Lưu file JSON</button><button id="chep" title="Chép nội dung JSON vào bộ nhớ tạm, không cần lưu file">Copy nội dung JSON</button><button id="gui" class="chinh">Gửi tới Claude</button><span id="ghi" class="mut"></span>
 </div></div>
 <script>
 const D=/*__DATA__*/null;
@@ -678,6 +678,9 @@ const tb=document.getElementById('tb'),ghi=document.getElementById('ghi'),bGui=d
 const bao=(t,mau)=>{tb.style.display='block';tb.style.background=mau||'';tb.textContent=t};
 function luuFile(){const a=E('a',{href:URL.createObjectURL(new Blob([ketQua()],{type:'application/json'})),download:'thu-vien-asset_ket-qua.json'});document.body.append(a);a.click();a.remove()}
 document.getElementById('luu').onclick=()=>{luuFile();bao('Đã tải file JSON kết quả.')};
+document.getElementById('chep').onclick=async()=>{const t=ketQua();let ok=false;
+  try{await navigator.clipboard.writeText(t);ok=true}catch(e){try{const a=E('textarea',{style:'position:fixed;opacity:0'});a.value=t;document.body.append(a);a.select();ok=document.execCommand('copy');a.remove()}catch(e2){}}
+  bao(ok?'Đã copy nội dung JSON ('+t.length+' ký tự) — dán thẳng cho Claude.':'Không copy được (trình duyệt chặn). Dùng nút Lưu file JSON.',ok?'var(--okbg)':'var(--warnbg)')};
 const CONG=Array.from({length:11},(_,i)=>'http://127.0.0.1:'+(8791+i));
 async function hoi(g){const ac=new AbortController(),t=setTimeout(()=>ac.abort(),800);try{const r=await fetch(g+'/ping',{signal:ac.signal,cache:'no-store'});if(!r.ok)return false;const j=await r.json();return j&&j.ung==='thu-vien-asset'}catch(e){return false}finally{clearTimeout(t)}}
 async function tim(){for(const g of CONG)if(await hoi(g))return g;return null}
