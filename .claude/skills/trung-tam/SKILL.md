@@ -9,7 +9,16 @@ Trang: https://claude.ai/artifact/JUGQ8iJHoj5AiD2boeppbT (nguồn trang: `tools/
 Dữ liệu gốc: `docs/trung-tam.json` (trong git). Trang đọc MỘT bản ghi db: `bang/hientai`.
 Cập nhật dữ liệu KHÔNG cần đăng lại trang. Chỉ đăng lại khi sửa giao diện.
 
-## Các bước (khoảng 5 lệnh)
+## Các bước (khoảng 6 lệnh)
+0. **Yêu cầu từ nút bấm trên trang** (mỗi thẻ có ô Ghi chú + nút Tạm dừng / Làm tiếp / Lưu trữ, ghi vào db `yeucau/<id>`):
+   `ArtifactData list collection=yeucau out_dir=S:\3JS Studio\output\_tmp\trung-tam-yc`, rồi
+   `node tools/trung-tam.mjs yeu-cau output/_tmp/trung-tam-yc`. Làm từng yêu cầu theo id phiên `local_…`:
+   - `tam-dung` → `mcp__ccd_session_mgmt__stop_session`.
+   - `lam-tiep` → `mcp__ccd_session_mgmt__send_message`, nội dung = ghi chú của người dùng (thiếu ghi chú thì gửi "Làm tiếp việc còn dở theo ĐIỂM DỪNG").
+   - `luu-tru` → `mcp__ccd_session_mgmt__archive_session`, rồi đặt `trangThai: "luu-tru"` trong docs/trung-tam.json.
+     KHÔNG BAO GIỜ lưu trữ phiên nhóm "Điều phối" (phiên điều phối không được bỏ); gặp thì báo lại người dùng.
+   Làm xong thì ghi lại `yeucau/<id>` với `hanhDong: ""`, giữ nguyên `ghiChu` (dùng batch, có `if_version`).
+   Ghi chú không kèm nút chỉ để người dùng nhớ: đọc, có việc rõ ràng thì báo người dùng, không tự làm.
 1. `mcp__ccd_session_mgmt__list_sessions` với `limit: 40`. Chỉ giữ phiên có `cwd` bắt đầu bằng `S:\3JS Studio`.
 2. `node tools/trung-tam.mjs diem-dung --ngay 2` in khối ĐIỂM DỪNG của các handoff mới sửa (gọn, ≤ 4 dòng/file).
    Không đọc transcript từng phiên, trừ khi một thẻ thật sự không rõ.
@@ -26,6 +35,7 @@ Cập nhật dữ liệu KHÔNG cần đăng lại trang. Chỉ đăng lại khi
 - `cho-ban`: ĐIỂM DỪNG ghi "Đang chờ: người dùng …" (duyệt, chọn, quyết, bấm thử). BẮT BUỘC có `banCan`.
 - `xong`: ĐIỂM DỪNG ghi xong và không còn chờ gì.
 - `tam-nghi`: còn lại (làm dở, chờ phiên khác, nhánh riêng chưa gộp).
+- `luu-tru`: phiên đã archive (sau nút Lưu trữ). Trang ẩn cột này cho tới khi người dùng bấm ô "Lưu trữ".
 
 ## Lời lẽ (quan trọng nhất)
 Người đọc có thể là người già hoặc học sinh lớp 5.

@@ -1,6 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { rutDiemDung, kiem, dongGoi } from '../trung-tam.mjs';
+import { rutDiemDung, kiem, dongGoi, docYeuCau } from '../trung-tam.mjs';
+
+test('docYeuCau lấy id phiên từ link, bỏ yêu cầu rỗng', () => {
+  const phien = { a: { ten: 'A', link: 'claude://claude.ai/epitaxy/local_12ab-cd' }, b: { ten: 'B' } };
+  const v = docYeuCau({ a: { hanhDong: 'luu-tru', ghiChu: 'cất' }, b: { hanhDong: '', ghiChu: '' }, c: { ghiChu: 'nhắc' } }, phien);
+  assert.equal(v.length, 2);
+  assert.deepEqual([v[0].sid, v[0].hanhDong], ['local_12ab-cd', 'luu-tru']);
+  assert.equal(v[1].hanhDong, '');
+});
 
 test('rutDiemDung lấy dòng chính trong khối ĐIỂM DỪNG', () => {
   const md = '# X\n<!-- ĐIỂM DỪNG: ... -->\n- **Đang làm:** dựng nhà\n- **Bước kế tiếp:** chụp lại\n- Ghi chú khác\n- **Đang chờ:** người dùng duyệt\n';

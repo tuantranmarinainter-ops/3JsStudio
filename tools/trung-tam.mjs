@@ -13,7 +13,20 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const URL_TRANG = 'https://claude.ai/artifact/JUGQ8iJHoj5AiD2boeppbT';
-export const TRANG_THAI = ['dang-lam', 'cho-ban', 'tam-nghi', 'xong'];
+export const TRANG_THAI = ['dang-lam', 'cho-ban', 'tam-nghi', 'xong', 'luu-tru'];
+export const HANH_DONG = { 'tam-dung': 'Tạm dừng', 'lam-tiep': 'Làm tiếp', 'luu-tru': 'Lưu trữ' };
+
+/** Yêu cầu người dùng bấm trên trang (db "yeucau") → việc Claude cần làm. phien = du.phien. */
+export function docYeuCau(yeucau, phien) {
+  const viec = [];
+  for (const [id, y] of Object.entries(yeucau)) {
+    const r = phien[id] || {};
+    const sid = (r.link || '').match(/local_[0-9a-f-]+/)?.[0] || '';
+    if (y.hanhDong) viec.push({ id, sid, ten: r.ten || id, hanhDong: y.hanhDong, ghiChu: y.ghiChu || '', luc: y.luc || '' });
+    else if (y.ghiChu) viec.push({ id, sid, ten: r.ten || id, hanhDong: '', ghiChu: y.ghiChu, luc: y.luc || '' });
+  }
+  return viec;
+}
 const TRUONG = ['ten', 'trangThai', 'nhom', 'dangLam', 'tiepTheo', 'banCan', 'lanCuoi', 'link'];
 // không dùng \b: "chờ"/"làm" kết thúc bằng chữ có dấu, \b không nhận ra ranh giới
 const KHOA_DD = /^(Đang làm|Đã xong|Bước kế tiếp|Đang chờ|Xong|Tiếp theo)(?=[:\s(])/i;
@@ -85,6 +98,23 @@ function main(argv) {
     }
     fs.writeFileSync(fData, JSON.stringify({ capNhat: new Date().toISOString(), phien }, null, 2) + '\n');
     console.log(`Đã ghi ${fData} (${Object.keys(phien).length} phiên)`);
+    return 0;
+  }
+  if (lenh === 'yeu-cau') {
+    // thư mục do ArtifactData list collection=yeucau out_dir=<dir> tạo (có thư mục con yeucau/)
+    let dir = rest[0];
+    if (fs.existsSync(path.join(dir, 'yeucau'))) dir = path.join(dir, 'yeucau');
+    const yeucau = {};
+    if (fs.existsSync(dir)) for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.json'))) {
+      yeucau[f.replace(/\.json$/, '')] = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+    }
+    const du = JSON.parse(fs.readFileSync(fData, 'utf8'));
+    const viec = docYeuCau(yeucau, du.phien);
+    if (!viec.length) console.log('Không có yêu cầu nào.');
+    for (const v of viec) {
+      const hd = v.hanhDong ? HANH_DONG[v.hanhDong] || v.hanhDong : 'chỉ ghi chú';
+      console.log(`- [${hd}] ${v.id} (${v.sid || 'không có id phiên'}) "${v.ten}"${v.ghiChu ? ` · ghi chú: ${v.ghiChu}` : ''}`);
+    }
     return 0;
   }
   if (lenh === 'dong-goi') {

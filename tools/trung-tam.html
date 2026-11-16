@@ -104,6 +104,26 @@ a.open:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .help li span.txt{color:var(--ink)}
 .help code{font-family:inherit;font-weight:700;background:var(--pause-bg);padding:1px 8px;border-radius:6px}
 
+.tiles{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media (max-width:980px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:560px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile.arch{color:var(--muted)}
+.pill.arch{background:var(--pause-bg);color:var(--muted)}
+.acts{display:grid;gap:8px;border-top:1px dashed var(--line);padding-top:12px}
+.acts label{font-size:14px;font-weight:600;color:var(--muted)}
+.acts textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);resize:vertical;min-height:56px}
+.acts textarea:focus{outline:none;border-color:var(--accent)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{font:inherit;font-size:16px;font-weight:700;padding:8px 14px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn.save{border-color:var(--accent);color:var(--accent)}
+.btn.warn{border-color:var(--wait);color:var(--wait)}
+.btn.armed{background:var(--wait);color:var(--surface);border-color:var(--wait)}
+.btn:disabled{opacity:.5;cursor:default}
+.sent{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;background:var(--done-bg);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:15px}
+.sent b{color:var(--done)}
+.saved{font-size:14px;color:var(--run);font-weight:600}
 .empty{background:var(--surface);border:2px dashed var(--line);border-radius:var(--r);padding:28px;text-align:center;color:var(--muted);font-size:18px}
 </style>
 
@@ -120,6 +140,7 @@ a.open:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
     <button class="tile wait" data-f="cho-ban" aria-pressed="false" id="t-wait"><span class="n">–</span><span class="t"><span class="dot"></span>Chờ bạn</span><span class="d">Cần bạn xem hoặc chọn</span></button>
     <button class="tile pause" data-f="tam-nghi" aria-pressed="false" id="t-pause"><span class="n">–</span><span class="t"><span class="dot"></span>Tạm nghỉ</span><span class="d">Làm dở, đang đợi việc khác</span></button>
     <button class="tile done" data-f="xong" aria-pressed="false" id="t-done"><span class="n">–</span><span class="t"><span class="dot"></span>Đã xong</span><span class="d">Làm xong, không cần làm gì</span></button>
+    <button class="tile arch" data-f="luu-tru" aria-pressed="false" id="t-arch"><span class="n">–</span><span class="t"><span class="dot"></span>Lưu trữ</span><span class="d">Cất đi, không hiện nữa</span></button>
   </div>
 
   <div class="tools">
@@ -136,19 +157,24 @@ a.open:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
       <li><span class="dot wait"></span><span class="txt"><b>Vàng – Chờ bạn:</b> việc đang dừng để đợi bạn. Đọc ô vàng “Bạn cần làm” trên thẻ.</span></li>
       <li><span class="dot pause"></span><span class="txt"><b>Xám – Tạm nghỉ:</b> làm dở, đang đợi một việc khác xong trước.</span></li>
       <li><span class="dot done"></span><span class="txt"><b>Xanh dương – Đã xong:</b> việc đã hoàn thành.</span></li>
+      <li><span class="dot" style="color:var(--muted)"></span><span class="txt"><b>Lưu trữ:</b> việc đã cất đi. Chỉ hiện khi bạn bấm ô “Lưu trữ”.</span></li>
       <li><span class="txt">Bấm vào ô màu ở trên để chỉ xem một loại. Bấm lần nữa để xem lại tất cả.</span></li>
+      <li><span class="txt">Dưới mỗi thẻ có ô <b>Ghi chú</b> và các nút <b>Tạm dừng</b>, <b>Làm tiếp</b>, <b>Lưu trữ</b>. Bấm nút là gửi yêu cầu. Claude sẽ làm khi bạn nhắn <code>cập nhật trung tâm</code>. Với “Làm tiếp”, ghi chú của bạn sẽ được gửi cho phiên đó.</span></li>
       <li><span class="txt">Trang này không tự làm mới. Muốn có tin mới nhất, nhắn Claude ở phiên Trung tâm điều hành: <code>cập nhật trung tâm</code>.</span></li>
     </ul>
   </div>
 </div>
 
 <script>
-const ORDER=["dang-lam","cho-ban","tam-nghi","xong"];
+const ORDER=["dang-lam","cho-ban","tam-nghi","xong","luu-tru"];
+const TEN_HD={"tam-dung":"Tạm dừng","lam-tiep":"Làm tiếp","luu-tru":"Lưu trữ"};
+let yc={}, drafts={}, savedFlash={}, armed=null, dbRef=null, canWrite=false;
 const INFO={
   "dang-lam":{cls:"run",ten:"Đang làm",tieuDe:"Claude đang làm",goiY:"Những việc này đang chạy. Bạn cứ để yên."},
   "cho-ban":{cls:"wait",ten:"Chờ bạn",tieuDe:"Đang chờ bạn",goiY:"Mỗi thẻ có ô vàng nói rõ bạn cần làm gì."},
   "tam-nghi":{cls:"pause",ten:"Tạm nghỉ",tieuDe:"Tạm nghỉ",goiY:"Làm dở, sẽ làm tiếp khi việc trước xong."},
-  "xong":{cls:"done",ten:"Đã xong",tieuDe:"Đã xong",goiY:"Không cần làm gì thêm."}
+  "xong":{cls:"done",ten:"Đã xong",tieuDe:"Đã xong",goiY:"Không cần làm gì thêm."},
+  "luu-tru":{cls:"arch",ten:"Lưu trữ",tieuDe:"Đã cất đi",goiY:"Những việc bạn đã cất đi."}
 };
 let rows=[], meta=null, filt=null, nhom=null, q="";
 try{ filt=localStorage.getItem("tt-filt")||null; nhom=localStorage.getItem("tt-nhom")||null }catch(e){}
@@ -185,12 +211,38 @@ function card(r){
       <div class="tags">${r.nhom?`<span class="tag">${esc(r.nhom)}</span>`:""}<span class="when">${r.lanCuoi?"Hoạt động "+ago(r.lanCuoi):""}</span></div>
       ${r.link?`<a class="open" href="${esc(r.link)}" title="Mở trong ứng dụng Claude trên máy tính">Mở phiên</a>`:""}
     </div>
+    ${acts(r)}
   </article>`;
+}
+
+function acts(r){
+  if(!canWrite||!r.link) return "";
+  const y=yc[r.id]||{}, id=esc(r.id), st=r.trangThai;
+  const note=drafts[r.id]??y.ghiChu??"";
+  const b=[];
+  b.push(`<button class="btn save" data-a="ghi-chu" data-id="${id}">Lưu ghi chú</button>`);
+  if(st==="dang-lam") b.push(`<button class="btn" data-a="tam-dung" data-id="${id}">Tạm dừng</button>`);
+  if(st==="tam-nghi"||st==="cho-ban") b.push(`<button class="btn" data-a="lam-tiep" data-id="${id}">Làm tiếp</button>`);
+  if(st!=="luu-tru"&&r.nhom!=="Điều phối") b.push(`<button class="btn warn${armed===r.id?" armed":""}" data-a="luu-tru" data-id="${id}">${armed===r.id?"Bấm lần nữa để lưu trữ":"Lưu trữ"}</button>`);
+  const sent=y.hanhDong?`<div class="sent"><span>Đã gửi yêu cầu: <b>${TEN_HD[y.hanhDong]||esc(y.hanhDong)}</b>. Claude sẽ làm khi bạn nhắn “cập nhật trung tâm”.</span><button class="btn" data-a="huy" data-id="${id}">Huỷ yêu cầu</button></div>`:"";
+  return `<div class="acts">
+    <label for="note-${id}">Ghi chú của bạn ${savedFlash[r.id]?'<span class="saved">· Đã lưu</span>':""}</label>
+    <textarea id="note-${id}" data-id="${id}" rows="2" placeholder="Viết điều bạn muốn nhắc cho việc này…">${esc(note)}</textarea>
+    <div class="btns">${b.join("")}</div>${sent}
+  </div>`;
+}
+
+async function guiYeuCau(id, patch){
+  if(!dbRef) return;
+  const cu=yc[id]||{};
+  const moi={ghiChu:cu.ghiChu||"",hanhDong:cu.hanhDong||"",...patch,luc:new Date().toISOString()};
+  try{ await dbRef.collection("yeucau").doc(id).set(moi); yc[id]=moi; return true }
+  catch(e){ const el=document.getElementById("note-"+id); if(el) el.insertAdjacentHTML("afterend",`<span class="saved" style="color:var(--wait)">Chưa lưu được. Bạn cần là chủ trang và đã đăng nhập.</span>`); return false }
 }
 
 function render(){
   const cnt={}; ORDER.forEach(k=>cnt[k]=rows.filter(r=>r.trangThai===k).length);
-  [["dang-lam","#t-run"],["cho-ban","#t-wait"],["tam-nghi","#t-pause"],["xong","#t-done"]].forEach(([k,id])=>{
+  [["dang-lam","#t-run"],["cho-ban","#t-wait"],["tam-nghi","#t-pause"],["xong","#t-done"],["luu-tru","#t-arch"]].forEach(([k,id])=>{
     const el=$(id); el.querySelector(".n").textContent=rows.length?cnt[k]:"–"; el.setAttribute("aria-pressed",String(filt===k));
   });
   // câu tóm tắt
@@ -210,7 +262,7 @@ function render(){
     .concat(groups.map(g=>`<button class="chip" data-g="${esc(g)}" aria-pressed="${nhom===g}">${esc(g)}</button>`)).join("");
 
   const ql=q.trim().toLowerCase();
-  const shown=rows.filter(r=>(!filt||r.trangThai===filt)&&(!nhom||r.nhom===nhom)&&
+  const shown=rows.filter(r=>(filt?r.trangThai===filt:r.trangThai!=="luu-tru")&&(!nhom||r.nhom===nhom)&&
     (!ql||[r.ten,r.dangLam,r.tiepTheo,r.banCan,r.nhom].join(" ").toLowerCase().includes(ql)));
   if(!rows.length){ $("#board").innerHTML=`<div class="empty">Chưa có công việc nào. Nhắn Claude: <b>“cập nhật trung tâm”</b> để điền danh sách.</div>`; return }
   if(!shown.length){ $("#board").innerHTML=`<div class="empty">Không có việc nào khớp. Bấm “Tất cả” hoặc xoá chữ trong ô tìm.</div>`; return }
@@ -237,15 +289,32 @@ $("#chips").addEventListener("click",e=>{
   render();
 });
 $("#q").addEventListener("input",e=>{q=e.target.value;render()});
+$("#board").addEventListener("input",e=>{ const t=e.target; if(t.tagName==="TEXTAREA"&&t.dataset.id) drafts[t.dataset.id]=t.value });
+$("#board").addEventListener("click",async e=>{
+  const b=e.target.closest("button[data-a]"); if(!b) return;
+  const id=b.dataset.id, a=b.dataset.a;
+  const note=(document.getElementById("note-"+id)?.value??"").trim();
+  if(a==="luu-tru"&&armed!==id){ armed=id; render(); setTimeout(()=>{ if(armed===id){armed=null;render()} },5000); return }
+  armed=null; b.disabled=true;
+  let ok;
+  if(a==="ghi-chu") ok=await guiYeuCau(id,{ghiChu:note});
+  else if(a==="huy") ok=await guiYeuCau(id,{ghiChu:note,hanhDong:""});
+  else ok=await guiYeuCau(id,{ghiChu:note,hanhDong:a});
+  if(ok){ delete drafts[id]; savedFlash[id]=true; setTimeout(()=>{delete savedFlash[id];if(!busy())render()},2500); render() } else b.disabled=false;
+});
+const busy=()=>document.activeElement?.tagName==="TEXTAREA";
 
 (async()=>{
   const timer=setTimeout(()=>{ if(!rows.length) $("#board").innerHTML=`<div class="empty">Chưa đọc được danh sách. Hãy đăng nhập claude.ai rồi mở lại trang, hoặc nhắn Claude: <b>“cập nhật trung tâm”</b>.</div>` },10000);
   const db=await (window.claude?.use?.("db") ?? null);
   if(!db){ clearTimeout(timer); $("#board").innerHTML=`<div class="empty">Trang cần đăng nhập claude.ai để đọc danh sách công việc.</div>`; return }
+  dbRef=db;
+  try{ const user=await (window.claude?.use?.("user") ?? null); canWrite=!!(user&&(user.isOwner()||user.canEdit())) }catch(_){ canWrite=false }
+  db.collection("yeucau").onSnapshot(s=>{ yc={}; s.docs.forEach(d=>{ if(d.exists) yc[d.id]=d.data() }); if(!busy()) render() },()=>{});
   // một bản ghi duy nhất do tools/trung-tam.mjs dong-goi tạo: {capNhat, dem, rows:[...]}
   db.doc("bang/hientai").onSnapshot(s=>{ clearTimeout(timer); const d=s.exists?s.data():null;
       rows=Array.isArray(d?.rows)?d.rows:[]; meta=d?{capNhat:d.capNhat}:null; render() },
     ()=>{ clearTimeout(timer); $("#board").innerHTML=`<div class="empty">Không đọc được danh sách. Mở lại trang sau ít phút.</div>` });
 })();
-setInterval(()=>{ if(rows.length) render() },60000); // chỉ làm mới chữ "x phút trước"
+setInterval(()=>{ if(rows.length&&!busy()) render() },60000); // chỉ làm mới chữ "x phút trước"
 </script>
