@@ -69,7 +69,7 @@ export function dungWeb({ goc = ROOT, out = path.join(ROOT, 'dist/web'), taps, l
 export function dang({ du_an, chiDung = false, log = console.log } = {}) {
   const env = docEnv(), r = dungWeb({ log });
   if (chiDung) return r;
-  const ten = du_an || env.WEB_PROJECT || '3js-tuanchau';
+  const ten = du_an || env.WEB_PROJECT || '3js-studio';
   const wr = path.join(ROOT, 'node_modules/wrangler/bin/wrangler.js');
   const p = spawnSync(process.execPath, [wr, 'pages', 'deploy', r.out, '--project-name', ten, '--branch', 'main', '--commit-dirty=true'], { cwd: path.join(ROOT, 'web'), stdio: 'inherit', env: { ...process.env, ...(env.CLOUDFLARE_API_TOKEN ? { CLOUDFLARE_API_TOKEN: env.CLOUDFLARE_API_TOKEN } : {}) } });
   if (p.status !== 0) throw new Error('wrangler pages deploy lỗi (đã đăng nhập chưa? npx wrangler login)');
