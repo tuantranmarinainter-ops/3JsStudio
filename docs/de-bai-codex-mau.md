@@ -19,7 +19,7 @@ Người dùng **chỉ đưa kịch bản chữ**: mô tả bối cảnh, mô t�
   Chất lượng ô nhỏ là CHẤP NHẬN (người dùng: "không cần ảnh quá chất lượng cao").
   - Bố cục: lưới tối đa 8–10 ô bằng nhau, viền trắng 8 px giữa ô, KHÔNG chữ/nhãn/số trong ảnh; đề bài liệt kê thứ tự ô (trái→phải, trên→dưới).
   - Gộp theo nhóm cần khớp nhau: 8 hướng của một bối cảnh; các hình (1/2/3) của các shot cùng bối cảnh; tờ mẫu nhân vật.
-  - Đề bài phải dặn cách lưu: chép file PNG MỚI NHẤT trong `%USERPROFILE%\.codex\generated_images\` (tạo sau lúc gọi) sang đường dẫn đích.
+  - Đề bài phải dặn cách lưu: dùng đúng đường dẫn công cụ trả về / thư mục con của chính phiên; KHÔNG "file mới nhất" (16/11: 4 lưới song song → 3 cặp chép nhầm nhau). Sau khi nhận, Claude kiểm md5 trùng giữa các lưới.
   - Claude cắt lưới theo khe trắng (gần vị trí chia đều) rồi đặt tên từng ô; mẫu đề bài: `docs/mau-de-bai/luoi-8-huong.md`.
   - Chạy 4 lưới cùng lúc là an toàn; 7 tiến trình cùng lúc từng gặp 502 liên tục (16/11).
   - Lùi về vẽ từng ảnh chỉ khi một hình cần độ nét cao (người dùng yêu cầu) hoặc lưới vẽ sai thứ tự ô 2 lần.

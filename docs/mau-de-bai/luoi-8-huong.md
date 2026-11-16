@@ -2,7 +2,7 @@
 
 Dùng công cụ tạo hình, tạo ĐÚNG MỘT ảnh PNG: `slide/tiem-banh_8huong.png` (tạo thư mục `slide/` nếu chưa có).
 Vẽ ảnh MỚI hoàn toàn theo chữ; KHÔNG chép, cắt, lọc màu hay chỉnh ảnh có sẵn bằng script.
-**Lưu file:** công cụ tạo hình ghi ảnh vào `%USERPROFILE%\.codex\generated_images\` (thư mục con theo phiên). Ngay sau khi gọi công cụ, tìm file PNG MỚI NHẤT được tạo SAU thời điểm bạn gọi (so thời gian tạo), rồi chép nguyên file đó sang `slide/tiem-banh_8huong.png`. Không lấy ảnh của phiên khác.
+**Lưu file:** dùng ĐÚNG đường dẫn ảnh mà công cụ tạo hình trả về cho lần gọi của bạn. Nếu không có đường dẫn: chỉ tìm trong thư mục con của CHÍNH phiên này trong `%USERPROFILE%\.codex\generated_images\` (thư mục có tên trùng mã phiên của bạn), KHÔNG lấy file mới nhất của cả thư mục — nhiều phiên chạy song song, lấy nhầm ảnh phiên khác. Chép nguyên file sang đường dẫn đích; ghi đường dẫn nguồn vào file tiến độ.
 
 ## Bố cục ảnh
 - Khổ ảnh dọc (2:3 hoặc 9:16). Lưới **2 cột × 4 hàng = 8 ô bằng nhau**, viền trắng mảnh 8 px giữa các ô, KHÔNG chữ, KHÔNG nhãn, KHÔNG số.
