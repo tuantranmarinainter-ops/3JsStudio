@@ -94,7 +94,8 @@ refs/          ảnh chuẩn so khung               .cache/  giọng, tiếng đ
 - CẤM dùng giờ thực, `requestAnimationFrame`/`setAnimationLoop` cho chuyển động, `Math.random()` không seed.
 - Tải xong mọi GLB/texture trước khi tua (`window.__ready`); không fetch trong lúc tua. Gán `window.THREE = THREE`.
 - Đặt tên rõ cho object, bộ phận, clip — đó là "tay cầm" để Claude điều khiển.
-- Nhân vật: **R15** (`engine/r15.js`, `createR15`) và Gà (`engine/ga-rig.js`), khai báo trong `episode.actors` qua `cast.js`.
+- Nhân vật: **LUẬT (2026-11-16): MỌI nhân vật của MỌI tập đều là R6** (`engine/r6.js`), kể cả Gà (Anh Gà MC dựng thân R6, giữ màu vàng nhận diện).
+  R15 (`engine/r15.js`) và `engine/ga-rig.js` tạm không dùng cho tập mới (không xoá). Khai báo trong `episode.actors` qua `cast.js`.
   Mặt nhìn +Z; 1 đơn vị = 1 stud. Animation mới = thêm 1 hàm `(t) => pose`.
 - Chụp và render mặc định bằng GPU; chỉ đặt `GL=swiftshader` khi so khung tất định (`docs/core.md`).
 - Sau mỗi thay đổi: kiểm vài khung (đầu, giữa, cuối shot) trước khi gộp.

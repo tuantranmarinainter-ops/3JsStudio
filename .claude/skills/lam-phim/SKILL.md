@@ -101,6 +101,6 @@ Chưa vào tập mẫu (riêng ep001, làm tay khi cần): phụ đề từng ch
 Sau MỖI lần sửa xong (kể cả nhỏ) luôn gộp lại và đưa link ở cuối câu trả lời: đường dẫn `S:\3JS Studio\dist\<ep>_xem-thu.html` (bản nháp / chưa chốt) hoặc `S:\3JS Studio\dist\<ep>.html` (bản cuối), kèm `file:///S:/3JS%20Studio/dist/<ep>.html`. Mọi tính năng mới bật/tắt được trong trình phát. Render MP4 chạy trên máy người dùng (nút ⬇ Xuất MP4), không cloud.
 
 ## Ghi chú
-- Nhân vật chính có thể là **Gà** (`engine/ga-rig.js`, xem `HANDOFF-ga.md`) — CHƯA nối vào `engine/cast.js`; nối là việc của lúc chạy tập (mau-duyet hiện chụp `ga` bằng R15 mặc định).
+- **LUẬT 2026-11-16: mọi nhân vật đều R6, kể cả Gà** — không dùng `engine/ga-rig.js` cho tập mới (Gà = thân R6 màu vàng).
 - Tập làm tay (ep001): các bước ghi vào `episodes/<ep>/` (`shot`, `ra-loi`, `am-thanh`) TỪ CHỐI (mã 1) khi `shots.js`/`episode.js` đã có mà lam-phim chưa từng sinh (dấu `shotSinh` trong `output/<ep>/kiem/lam-phim.json`). Vẫn đừng chạy `tiep` trên chúng; `trang-thai` là đọc an toàn. Chạy lại `shot` sau khi giọng xong chỉ co giãn `dur` (`shot-gen --chi-khop-giong`); chỉ khi kịch bản đổi mới sinh lại, có sao lưu vào `output/<ep>/kiem/sao-luu/<ISO>/`.
 - Test tool: `LAM_PHIM_GIA=1 node tools/lam-phim.mjs _test_lamphimX tiep` (lệnh con giả, log ở `output/<ep>/kiem/gia.log`); `node --test tools/tests/lam-phim.test.mjs`.
