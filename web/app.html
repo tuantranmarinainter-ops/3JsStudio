@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>3JS Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#fafafa;--pn:#fff;--tx:#1a1a1a;--mu:#6b6b6b;--ln:#e8e8e8;--ac:#4f46e5;--ac2:#eef0ff;--ok:#16a34a;--wa:#d97706;--r:12px}
+:root[data-t=dark]{--bg:#111113;--pn:#18181b;--tx:#ececec;--mu:#9a9a9f;--ln:#2a2a2e;--ac:#8b86ff;--ac2:#25244a;--ok:#4ade80;--wa:#fbbf24}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}body{background:var(--bg);color:var(--tx);font:17px/1.5 'Be Vietnam Pro',system-ui,sans-serif;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+h1{font-size:26px;margin:0 0 4px;font-weight:700}h2{font-size:18px;margin:24px 0 10px;font-weight:600}
+.mu{color:var(--mu);font-size:15px}
+main{max-width:760px;margin:0 auto;padding:20px 16px}
+.tab{display:none}.tab.on{display:block}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.card.cho{border-color:var(--ac);background:var(--ac2)}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;min-height:52px;padding:0 22px;font-weight:600;width:100%}
+.btn.nho{width:auto;min-height:44px;padding:0 16px}.btn[disabled]{opacity:.4}
+.ghost{background:transparent;color:var(--tx);border:1px solid var(--ln);border-radius:10px;min-height:44px;padding:0 14px}
+.chip{border:1px solid var(--ln);background:var(--pn);color:var(--tx);border-radius:999px;min-height:40px;padding:0 14px;margin:0 6px 6px 0}
+.chip.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.row{display:flex;align-items:center;gap:12px}.row .g{flex:1;min-width:0}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--ok);flex:none}.dot.w{background:var(--wa)}
+.tram{display:flex;gap:6px;margin-top:10px}.tram i{flex:1;height:6px;border-radius:3px;background:var(--ln)}.tram i.d{background:var(--ac)}.tram i.n{background:var(--ac);opacity:.45}
+.tn{display:flex;justify-content:space-between;font-size:12px;color:var(--mu);margin-top:4px}
+.seg{display:flex;gap:6px;overflow-x:auto;margin:10px 0;padding-bottom:2px}.seg .chip{white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.cv{border:2px solid var(--ln);border-radius:var(--r);overflow:hidden;background:var(--pn);padding:0;text-align:left;position:relative}
+.cv.on{border-color:var(--ac)}.cv .im{aspect-ratio:4/3;display:block}.cv .nm{display:block;padding:8px 10px;font-size:14px}
+.cv .tk{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:var(--ac);color:#fff;display:none;align-items:center;justify-content:center;font-weight:700}.cv.on .tk{display:flex}
+textarea{width:100%;font:inherit;background:var(--pn);color:var(--tx);border:1px solid var(--ln);border-radius:10px;padding:12px;min-height:84px;resize:vertical}
+.player{aspect-ratio:9/16;max-height:60vh;margin:0 auto 12px;border-radius:var(--r);background:linear-gradient(160deg,#2b2d42,#0d0d12);display:flex;align-items:center;justify-content:center;color:#cbd;font-size:15px;text-align:center;padding:20px}
+.sheet{position:fixed;inset:auto 0 0 0;background:var(--pn);border-top:1px solid var(--ln);border-radius:18px 18px 0 0;padding:20px 16px calc(24px + env(safe-area-inset-bottom));transform:translateY(110%);transition:transform .2s;z-index:30;max-width:760px;margin:0 auto}
+.sheet.on{transform:none}.veil{position:fixed;inset:0;background:#0006;display:none;z-index:20}.veil.on{display:block}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--pn);border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom);z-index:10}
+nav button{flex:1;background:none;border:0;color:var(--mu);min-height:64px;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+nav button svg{width:24px;height:24px}nav button.on{color:var(--ac);font-weight:600}
+.top{display:flex;justify-content:space-between;align-items:center}
+.toast{position:fixed;left:16px;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));background:var(--tx);color:var(--bg);padding:14px 16px;border-radius:12px;display:none;z-index:40;max-width:520px;margin:0 auto}
+.bar{background:var(--ac2);color:var(--ac);border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:14px}
+.brand,.bd{display:block}.brand{display:none}
+.box{background:var(--pn);border:1px solid var(--ln);border-radius:var(--r);margin-bottom:14px;overflow:hidden}.box h2{margin:0;padding:12px 16px;font-size:16px;border-bottom:1px solid var(--ln)}.box .bd{padding:12px 12px 2px}
+@media(min-width:783px){
+ main{max-width:1100px;padding:28px 32px}.wgs{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;align-items:start}.wgs .wide{grid-column:1/-1}
+ body{padding:0 0 0 200px}
+ nav{top:0;right:auto;bottom:0;width:200px;flex-direction:column;border:0;background:#1d2327;padding:0;gap:0}
+ .brand{display:block;color:#fff;font-weight:700;font-size:18px;padding:20px 18px;border-bottom:1px solid #ffffff1a;margin-bottom:8px}
+ nav button{flex:none;flex-direction:row;justify-content:flex-start;gap:12px;min-height:46px;padding:0 18px;border-radius:0;font-size:15px;color:#c3c4c7;border-left:4px solid transparent}
+ nav button:hover{color:#72aee6;background:#2c3338}nav button.on{background:var(--ac);color:#fff;border-left-color:#fff}
+ .grid{grid-template-columns:repeat(3,1fr)}.toast{left:220px}
+}
+</style>
+</head>
+<body>
+<main>
+ <div class="top"><div><h1 id="tt">Hôm nay</h1><div class="mu" id="ph"><span id="cn"></span></div></div><button class="ghost" id="sw" aria-label="Sáng/tối">🌓</button></div>
+
+ <!-- 1. HÔM NAY -->
+ <section class="tab on" id="t1"><div class="wgs">
+  <div class="box"><h2>Chờ bạn</h2><div class="bd" id="h-cho"></div></div>
+  <div class="box"><h2>Đang chạy</h2><div class="bd" id="h-dang"></div></div>
+  <div class="box wide"><h2>Mỗi tập đang ở đâu</h2><div class="bd" id="h-tap"></div></div>
+ </div></section>
+
+ <!-- 2. ĐẦU VIỆC -->
+ <section class="tab" id="t2">
+  <div class="seg" id="lt"></div>
+  <div class="seg" id="lc"></div>
+  <div id="kb"></div>
+ </section>
+
+ <!-- 3. DUYỆT -->
+ <section class="tab" id="t3">
+  <div class="seg" id="hang"></div>
+  <iframe id="fd" title="Duyệt tài nguyên" style="width:100%;height:calc(100vh - 210px);min-height:480px;border:1px solid var(--ln);border-radius:var(--r);background:var(--pn)"></iframe>
+ </section>
+
+ <!-- 4. TẬP PHIM -->
+ <section class="tab" id="t4">
+  <div class="seg" id="lp"></div>
+  <div class="player" id="pl"></div>
+  <button class="btn" id="mo">Mở trình phát</button>
+  <div class="mu" style="margin-top:10px">Nút “Xuất MP4” dùng card đồ hoạ của máy bạn, không tốn gì trên mạng.</div>
+ </section>
+</main>
+
+<div class="veil" id="vl"></div>
+<div class="sheet" id="sh"><div class="top"><h2 id="sht" style="margin:0"></h2><button class="ghost" id="shx">Đóng</button></div><p class="mu" id="shb"></p></div>
+<div class="toast" id="ts"></div>
+
+<nav>
+ <div class="brand">3JS Studio</div>
+ <button data-t="1" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v9H4z"/></svg>Hôm nay</button>
+ <button data-t="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="6" height="16" rx="1"/><rect x="14" y="4" width="6" height="10" rx="1"/></svg>Đầu việc</button>
+ <button data-t="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12l4 4 10-10"/></svg>Duyệt</button>
+ <button data-t="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg>Tập phim</button>
+</nav>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const TEN={1:'Hôm nay',2:'Đầu việc',3:'Duyệt',4:'Tập phim'};
+const ls=(k,v)=>{try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch{}};
+const ts=m=>{const t=$('#ts');t.textContent=m;t.style.display='block';clearTimeout(ts.h);ts.h=setTimeout(()=>t.style.display='none',3200)};
+function tab(n){$$('.tab').forEach(e=>e.classList.toggle('on',e.id==='t'+n));$$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t==n));$('#tt').textContent=TEN[n];scrollTo(0,0);ls('tab',n)}
+$$('nav button').forEach(b=>b.onclick=()=>tab(b.dataset.t));$$('[data-go]').forEach(b=>b.onclick=()=>tab(b.dataset.go));
+// sáng/tối
+const dk=()=>matchMedia('(prefers-color-scheme:dark)').matches;
+const ap=t=>document.documentElement.dataset.t=t;ap(ls('theme')||(dk()?'dark':'light'));
+$('#sw').onclick=()=>{const t=document.documentElement.dataset.t==='dark'?'light':'dark';ap(t);ls('theme',t)};
+const D=/*DATA*/null;
+const E=x=>String(x??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+$('#cn').textContent='Cập nhật '+D.capNhat;
+const VIEC=D.viec,COT=[['dang','Đang làm'],['cho','Chờ bạn'],['chua','Chưa làm'],['xong','Xong']];let lc='dang',lt='Tất cả';
+const TAPS=['Tất cả',...D.taps,'Chung'];
+function kb(){$('#lt').innerHTML=TAPS.map(t=>`<button class="chip ${t===lt?'on':''}" data-t="${E(t)}">${E(t)}</button>`).join('');
+ $('#lc').innerHTML=COT.map(([k,n])=>`<button class="chip ${k===lc?'on':''}" data-c="${k}">${n} ${VIEC.filter(v=>v.tt===k&&(lt==='Tất cả'||v.tap===lt)).length}</button>`).join('');
+ $('#kb').innerHTML=VIEC.map((v,i)=>[v,i]).filter(([v])=>v.tt===lc&&(lt==='Tất cả'||v.tap===lt)).map(([v,i])=>`<button class="card" style="width:100%;text-align:left;color:inherit" data-i="${i}"><b>${E(v.ten)}</b><div class="mu">${E(v.tap)}${v.pt!=null&&v.tt!=='xong'?' · ~'+v.pt+'%':''}</div></button>`).join('')||'<div class="mu">Chưa có việc nào.</div>';
+ $$('#lt .chip').forEach(b=>b.onclick=()=>{lt=b.dataset.t;kb()});$$('#lc .chip').forEach(b=>b.onclick=()=>{lc=b.dataset.c;kb()});
+ $$('#kb [data-i]').forEach(b=>b.onclick=()=>{const v=VIEC[b.dataset.i];$('#sht').textContent=v.ten;$('#shb').textContent=v.tap+(v.ghiChu?' · '+v.ghiChu:'');$('#sh').classList.add('on');$('#vl').classList.add('on')})}
+const dong=()=>{$('#sh').classList.remove('on');$('#vl').classList.remove('on')};$('#shx').onclick=dong;$('#vl').onclick=dong;kb();
+const the=(v,c)=>`<div class="card ${c||''}"><b>${E(v.ten)}</b><div class="mu">${E(v.tap)}${v.ghiChu?' · '+E(v.ghiChu):''}</div></div>`;
+$('#h-cho').innerHTML=D.canBan.map(s=>the({ten:s,tap:'Cần bạn quyết'},'cho')).join('')+VIEC.filter(v=>v.tt==='cho').slice(0,6).map(v=>the(v)).join('')||'<div class="mu" style="padding-bottom:12px">Không có gì chờ bạn.</div>';
+$('#h-dang').innerHTML=VIEC.filter(v=>v.tt==='dang').slice(0,6).map(v=>`<div class="card row"><span class="dot"></span><div class="g"><b>${E(v.ten)}</b><div class="mu">${E(v.tap)}${v.pt!=null?' · ~'+v.pt+'%':''}</div></div></div>`).join('')||'<div class="mu" style="padding-bottom:12px">Chưa có việc đang chạy.</div>';
+const BUOC=['Kịch bản','Duyệt','Dựng','Giọng','Xuất'];
+$('#h-tap').innerHTML=D.tap.map(t=>`<div class="card"><b>${E(t.ten)}</b> <span class="mu">· ${E(t.buoc)}</span><div class="tram">${BUOC.map((_,i)=>`<i class="${i<t.xong?'d':i===t.xong?'n':''}"></i>`).join('')}</div><div class="tn">${BUOC.map(b=>`<span>${b}</span>`).join('')}</div></div>`).join('');
+const DT=D.duyet;let dt=DT[0]||null;
+function dy(){$('#hang').innerHTML=DT.map(t=>`<button class="chip ${t===dt?'on':''}" data-t="${E(t)}">${E(t)}</button>`).join('');
+ $$('#hang .chip').forEach(b=>b.onclick=()=>{dt=b.dataset.t;dy()});const f=$('#fd');if(dt&&f.dataset.src!==dt){f.dataset.src=dt;f.src='/duyet/'+dt+'.html'}}
+dy();
+let tp=D.tap[0]?D.tap[0].ep:null;
+function ph(){$('#lp').innerHTML=D.tap.map(t=>`<button class="chip ${t.ep===tp?'on':''}" data-e="${t.ep}">${E(t.ten)}</button>`).join('');
+ $$('#lp .chip').forEach(b=>b.onclick=()=>{tp=b.dataset.e;ph()});
+ const t=D.tap.find(x=>x.ep===tp)||{};$('#pl').innerHTML=E(t.ten||'')+'<br>'+(D.studio?'Sẵn sàng mở':'Trình phát chưa đưa lên web')}
+$('#mo').onclick=()=>D.studio&&tp?location.href='/phim/'+tp:ts('Trình phát chưa đưa lên web — chờ bạn đồng ý.');ph();
+tab(ls('tab')||1);
+</script>
+</body>
+</html>

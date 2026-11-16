@@ -56,11 +56,28 @@ G.onchange=C.onchange=ap;ap();
 </script></body></html>`;
 }
 
+// Dữ liệu cho web/app.html (4 tab). Không có ep004/ep005.
+export function duLieuApp(d, tapDuyet, studio = false) {
+  const lab = (n) => { const m = /Tập\s*(\d)/i.exec(`${n.tap || ''} ${n.ten || ''}`) || /\bep00(\d)\b/i.exec(`${n.tap || ''}`); return m ? `Tập ${m[1]}` : 'Chung'; };
+  const nhom = d.nhom.filter((n) => !CAM.test(String(n.tap || '')) && !CAM.test(String(n.ten || '')));
+  const viec = [];
+  for (const n of nhom) for (const v of n.viec) if (!/ep00[45]/i.test(`${v.ten} ${v.ghiChu || ''}`)) viec.push({ ten: v.ten, ghiChu: v.ghiChu || '', tap: lab(n), tt: ['xong', 'cho', 'chua'].includes(v.tt) ? v.tt : 'dang', pt: v.tt === 'xong' ? 100 : v.pt ?? null });
+  const tap = [1, 2, 3].map((i) => {
+    const vs = viec.filter((v) => v.tap === `Tập ${i}`), x = vs.filter((v) => v.tt === 'xong').length, c = vs.filter((v) => v.tt === 'cho').length;
+    return { ep: `ep00${i}`, ten: `Tập ${i}`, xong: vs.length ? Math.min(4, Math.round((x / vs.length) * 5)) : 0, buoc: c ? 'Chờ bạn duyệt' : vs.length ? `${x}/${vs.length} việc xong` : 'Chưa có việc' };
+  });
+  return { capNhat: d.capNhat, viec, taps: ['Tập 1', 'Tập 2', 'Tập 3'], tap, canBan: (d.canBan || []).filter((s) => !/ep00[45]/i.test(s)), duyet: tapDuyet, studio };
+}
+export function trangApp(d, tapDuyet, studio = false) {
+  const html = fs.readFileSync(path.join(ROOT, 'web/app.html'), 'utf8');
+  return html.replace('/*DATA*/null', () => JSON.stringify(duLieuApp(d, tapDuyet, studio)).replace(/</g, '\\u003c'));
+}
+
 export function dungWeb({ goc = ROOT, out = path.join(ROOT, 'dist/web'), taps, log = console.log } = {}) {
   const env = docEnv(), ok = (taps || String(env.TAP_OK || 'ep003').split(',').map((s) => s.trim()).filter(Boolean)).filter((t) => !CAM.test(t));
   fs.rmSync(out, { recursive: true, force: true }); fs.mkdirSync(path.join(out, 'duyet'), { recursive: true });
   const d = JSON.parse(fs.readFileSync(path.join(goc, 'docs/tien-do.json'), 'utf8'));
-  fs.writeFileSync(path.join(out, 'index.html'), trangDashboard(d, ok));
+  fs.writeFileSync(path.join(out, 'index.html'), trangApp(d, ok, String(env.WEB_STUDIO || '') === '1'));
   for (const t of ok) { const r = dung(t, { goc, log: () => {} }); fs.copyFileSync(r.out, path.join(out, 'duyet', `${t}.html`)); log(`trang duyệt ${t}: ${(r.bytes / 2 ** 20).toFixed(1)} MB, ${r.anhNhung} ảnh`); }
   const phac = path.join(ROOT, 'web/phac');   // bản phác giao diện (dữ liệu mẫu, không có dữ liệu thật)
   if (fs.existsSync(phac)) fs.cpSync(phac, path.join(out, 'phac'), { recursive: true });
