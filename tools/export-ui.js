@@ -232,6 +232,7 @@ async function init() {
       <div class="rail">
         <div class="tab on" data-p="xp1"><i>👁</i>Xem</div>
         <div class="tab" data-p="xp2" id="xtab2"><i>🔊</i>Âm thanh</div>
+        <div class="tab" data-p="xp6" id="xtabA" style="display:none" title="Asset của bối cảnh đang xem (chế độ 3D → ✥ Sửa vật)"><i>📦</i>Asset</div>
         <div class="tab" data-p="xp3" id="xtab3"><i>✨</i>Hiệu ứng</div>
         <div class="tab" data-p="xp4"><i>⚑</i>Ghi chú<span class="cnt" id="xncnt0" style="display:none"></span></div>
         <div class="tab" data-p="xp5"><i>⬇</i>Xuất</div>
@@ -278,6 +279,7 @@ async function init() {
           <div class="muted">Render bằng card đồ hoạ của máy bạn, không cần mạng. Giữ tab này mở trong lúc xuất.
             Chrome/Edge sẽ hỏi chỗ lưu file trước khi bắt đầu.</div>
         </div>
+        <div class="pane" id="xp6"><h4>📦 Asset của bối cảnh</h4><div id="xasset"><div class="muted">Bật 🧊 3D hoặc ◧ Song song rồi bấm ✥ Sửa vật.</div></div></div>
       </div>
     </aside>
 
@@ -467,6 +469,13 @@ async function init() {
       $('xview').classList.toggle('xss', !!ss); fit();
     };
     c3d.onChange(mode); c3d.onChange(() => { try { renderNotes(); } catch (e) {} });
+    // thẻ 📦 Asset (engine/che-do-3d-sua.js): hiện khi có chế độ 3D; bấm ✥ Sửa vật → tự mở thẻ
+    $('xtabA').style.display = '';
+    const ganA = () => { const S = c3d.sua; if (S && !S._ganUi) { S._ganUi = 1; S.ganAsset($('xasset')); } else S?.veAsset(); };
+    c3d.onChange(ganA);
+    let suaTruoc = 'xem';
+    addEventListener('che3d-sua', (e) => { ganA(); const m = e.detail?.mode; if (m === 'sua' && suaTruoc !== 'sua' && !$('xtabA').classList.contains('on')) $('xtabA').click(); suaTruoc = m; });
+    $('xtabA').addEventListener('click', ganA);
     $('xmphim').onclick = () => { c3d.tat(); $('xmphim').blur(); };
     $('xm3d').onclick = () => { if (busy) return; if (annotating) setAnnotate(false); c3d.bat($('xview')); $('xm3d').blur(); };
     if (c3d.songSong === undefined) $('xmss').style.display = 'none';   // lõi 3D cũ chưa có chế độ song song
@@ -659,12 +668,13 @@ async function init() {
 
   // dữ liệu góp ý: 1 file json (ảnh dạng data URL) — dùng chung cho "Xuất file" và "Gửi tới Claude"
   // ghiChu3d: ghim + vật đã sửa trong khung 3D (engine/che-do-3d-sua.js), thêm frame theo FPS của trình phát
-  const ghi3d = () => {
+  // (khai báo hàm — renderNotes() ở trên gọi n3d() trước dòng này)
+  function ghi3d() {
     const g = window.__che3d?.ghiChu3d?.(); if (!g || (!g.ghim.length && !g.vat.length)) return null;
     const fr = (x) => (x.t == null ? x : { ...x, frame: Math.min(NF - 1, Math.floor(x.t * FPS + 1e-6)) });
     return { ghim: g.ghim.map(fr), vat: g.vat.map(fr) };
-  };
-  const n3d = () => { const g = ghi3d(); return g ? g.ghim.length + g.vat.length : 0; };
+  }
+  function n3d() { const g = ghi3d(); return g ? g.ghim.length + g.vat.length : 0; }
   const feedbackData = () => ({ app: 'gop-y', version: 2, episode: epId, title, fps: FPS, duration: DUR, created: new Date().toISOString(), notes, ghiChu3d: ghi3d() });
   const stFile = (s) => { $('xsendst').textContent = s; };
   // Xuất file: lưu .json (hộp lưu của Chrome/Edge, hoặc tải xuống) để bỏ vào feedback\ cho tools/feedback.mjs
