@@ -82,10 +82,10 @@ h1{font-size:22px}h2{font-size:17px;margin:0 0 8px}h2 small{display:block;font-w
 .bad li{color:var(--bad);font-size:13px}.bad li.ag{color:var(--fg)}.sc{font-size:13px;margin:4px 0}code{background:var(--bg);padding:1px 4px;border-radius:4px}
 @media(max-width:640px){.pair{grid-template-columns:1fr}}</style></head><body>
 <h1>So sánh asset Roblox: Studio và 3JS</h1>
-<p style="color:var(--mut)">10 mẫu miễn phí Creator Store, cùng vị trí, hướng và góc máy 3/4 phía trước (fov 70). Dựng ngày ${new Date().toISOString().slice(0, 10)} bằng <code>tools/model-test-trang.mjs</code>.</p>
+<p style="color:var(--mut)">10 mẫu miễn phí Creator Store, cùng vị trí, hướng và góc máy 3/4 phía trước, cận cảnh (fov 70). Dựng ngày ${new Date().toISOString().slice(0, 10)} bằng <code>tools/model-test-trang.mjs</code>.</p>
 <div class="box"><b>Điều kiện</b><ul>
-<li>Studio: ClockTime ${L.ClockTime}, Ambient ${L.Ambient.join(',')}, Brightness ${L.Brightness}, có Sky (bầu trời đêm tuỳ biến của dự án Sky) + Atmosphere, Technology: ${e(L.Technology)}. Giữ nguyên.</li>
-<li>3JS: nền xanh đen phẳng, mặt đất xám phẳng, 1 mặt trời đổ bóng + hemi + ambient, không tone mapping. <b>Ánh sáng và nền chưa khớp Studio</b>; so ở mức vật liệu, vân, hình.</li>
+<li>Studio: ClockTime ${L.ClockTime}, Ambient ${L.Ambient.join(',')}, Brightness ${L.Brightness}, Sky anime (Creator Store 82390108122526 = engine sky-6, đã đối chiếu ảnh giống nhau) + Atmosphere, Technology: ${e(L.Technology)}.</li>
+<li>3JS: skybox sky-6 (cùng Sky), mặt đất xám phẳng, 1 mặt trời đổ bóng + hemi + ambient, không tone mapping. Ảnh <b>cận cảnh</b> (camera ≈ 0,6 × đường chéo model, trước đó 1,5×) để xem vật liệu. Ánh sáng 3JS chưa khớp hẳn Studio.</li>
 <li>Studio không cho đọc số tam giác/draw call qua MCP. 3JS đo bằng renderer.info + duyệt GLB. Số shader program toàn trang: <b>${info.programs}</b> (<code>node tools/shaders.mjs</code>: trong ngưỡng).</li></ul></div>
 <div class="box"><b>Toàn hàng</b><div class="pair"><figure><img src="data:image/jpeg;base64,${img['row|a']}" alt="Studio"><figcaption>Studio</figcaption></figure><figure><img src="data:image/jpeg;base64,${img['row|b']}" alt="3JS"><figcaption>3JS</figcaption></figure></div><p class="sc">${e(rowx.dong || '')}</p></div>
 <div class="box"><b>3 sai khác lớn nhất</b><ol>${rec.top3.map((t) => `<li>${e(t)}</li>`).join('')}</ol></div>
