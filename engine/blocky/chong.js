@@ -30,6 +30,7 @@ export function chongLop(a, list, local, dur = Infinity) {
       const v = q[k], p = a.parts[part]; if (!v || !p) continue;
       for (let i = 0; i < 3; i++) if (v[i] != null) p.rotation['xyz'[i]] = lerp(p.rotation['xyz'[i]], v[i], w);
     }
+    if (q.hipDY && a.root) a.root.position.y += q.hipDY * w * (it.nay ?? .5);   // nảy người (jump/cheer/laugh), nay = hệ số (blocky gốc 1; R6 nặng hơn → .5)
     for (const [k, part] of [['lL', 'leftLeg'], ['lR', 'rightLeg']]) {
       const p = a.parts[part]; if (q[k] != null && p) p.rotation.x = lerp(p.rotation.x, q[k], w);
     }
