@@ -6,10 +6,11 @@
 //          amount, ease: inout|in|out|linear,  look: [dx,dy,dz] chỉnh tâm nhìn,  offset: [dx,dy,dz] chỉnh máy,  fov (50), roll (độ, nghiêng Hà Lan),
 //          whip: { to, at, dur (.26), co, from, goc, move },  crash: { at, dur (.36), co ('close'), on } }
 //   fx của shot (shot.bfx): [{ punch: .2, t }, { shake: .12, t, dur: .28 }] — t = giây từ đầu shot.
-// Cỡ cảnh dùng bảng HIỆU CHỈNH cho R6 (engine/blocky/co-canh.js): S = chiều cao khung (stud), y = độ cao tâm nhìn tính từ chân.
+// CO = BẢNG CỠ CẢNH DUY NHẤT của engine (hiệu chỉnh cho R6: chân 0–2, thân 2–4, đầu 4–5.2): S = chiều cao khung (stud), y = độ cao tâm nhìn tính từ chân.
+//   Cả `cam.bk.co` lẫn trường `co:` của loại shot cũ (engine/blocky/co-canh.js → apCoCanh) đều đọc bảng này qua frameShot. Tên Việt = bí danh (VN).
 // Hàm thuần của (bk, vị trí chủ thể, local): tua tới/lui ra cùng hình. Không import three → chạy được trong node test.
-const CO = { extreme: { S: 1.8, y: 4.6 }, close: { S: 3.8, y: 4.3 }, medium: { S: 4.6, y: 3.9 }, cowboy: { S: 6, y: 3.4 }, full: { S: 8, y: 2.9 }, wide: { S: 14, y: 4.5 }, establishing: { S: 28, y: 7 } };
-const VN = { cucCan: 'extreme', can: 'close', trung: 'medium', ngangDui: 'cowboy', toanThan: 'full', rong: 'wide', toanCanh: 'establishing' };
+export const CO = { extreme: { S: 1.8, y: 4.6 }, close: { S: 3.8, y: 4.3 }, medium: { S: 4.6, y: 3.9 }, cowboy: { S: 6, y: 3.4 }, full: { S: 8, y: 2.9 }, wide: { S: 14, y: 4.5 }, establishing: { S: 28, y: 7 } };
+export const VN = { cucCan: 'extreme', can: 'close', trung: 'medium', ngangDui: 'cowboy', toanThan: 'full', rong: 'wide', toanCanh: 'establishing' };
 const FROM = { front: 0, 'front-left': -35, 'front-right': 35, left: -80, right: 80, behind: 180, back: 180, 'behind-left': -150, 'behind-right': 150 };
 const AMT = { push: .22, pull: .22, static: 0, 'zoom-in': .2, 'zoom-out': .2, 'crane-up': .5, 'crane-down': .5, 'track-left': .5, 'track-right': .5, 'orbit-left': .5, 'orbit-right': .5, handheld: 1 };
 const ASPECT = 9 / 16;
@@ -27,7 +28,7 @@ const mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
 const mix = (a, b, k) => [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(a[2], b[2], k)];
 export const CO_BK = [...Object.keys(CO), ...Object.keys(VN)];
 
-/** Khung tĩnh: neo(ref) → { feet:[x,y,z], yaw: rad } | null. Trả { pos, look, fov, S }. */
+/** Khung tĩnh (hàm khung DUY NHẤT cho cỡ cảnh): neo(ref) → { feet:[x,y,z], yaw: rad } | null. Trả { pos, look, fov, S }. */
 export function frameShot(spec, neo) {
   const list = Array.isArray(spec.on) && typeof spec.on[0] !== 'number' ? spec.on : [spec.on];
   const tg = [];
@@ -41,6 +42,7 @@ export function frameShot(spec, neo) {
   let spread = 0; for (const a of tg) for (const b of tg) spread = Math.max(spread, Math.hypot(a.feet[0] - b.feet[0], a.feet[2] - b.feet[2]));
   const size = CO[VN[spec.co] || spec.co] || CO.full;
   let S = size.S; if (tg.length > 1) S = Math.max(S, (spread + 4.6) / ASPECT);
+  if (spec.spread) S = Math.max(S, (spec.spread + 4.6) / ASPECT);   // khoảng cách người cho sẵn (loại shot cũ: apCoCanh) — chỉ nới khung, không hạ tâm nhìn
   if (spec.S) S = spec.S;   // ghi đè chiều cao khung (stud) khi cỡ cảnh tự tính quá rộng / quá chật
   const fov = spec.fov ?? 50;
   const d = (S / 2) / Math.tan(rad(fov / 2));
@@ -112,5 +114,6 @@ export function mayBlocky(bk, { neo, local = 0, dur = 1, fx = [], move = true, p
   if (settle) pos[1] += settle;
   if (shake) { pos[0] += Math.sin(local * 97.3) * shake + Math.sin(local * 41.1) * shake * .6; pos[1] += Math.sin(local * 83.7 + 1) * shake; }
   const roll = (bk.roll || 0) * Math.PI / 180 + (shake ? Math.sin(local * 61.7) * shake * .04 : 0);
-  return { pos, look: F.look, fov, roll, shake };
+  const tam = bk.look ? sub(F.look, bk.look) : F.look;   // chủ thể (tâm nhìn trước khi lệch `look`) — né tường chiếu tia tới đây
+  return { pos, look: F.look, fov, roll, shake, tam };
 }

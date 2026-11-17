@@ -46,7 +46,8 @@ import { FACE_PRESETS } from './r15.js';
 import { createDatMay } from './dat-may.js';
 import { chongLop } from './blocky/chong.js';   // động tác chồng lớp `do:` (ô FX chongLop)
 import { themSong } from './blocky/song.js';
-import { mayBlocky } from './blocky/may.js';   // máy quay kiểu blocky `cam.bk` (ô FX mayBlocky = chuyển động, punchRung = punch + rung)   // idle sống (ô FX idleSong), mã chép từ blocky-shorts
+import { mayBlocky } from './blocky/may.js';
+import { taoNeTuong, tiLeNe } from './blocky/ne-tuong.js';   // máy blocky né tường (ô FX neTuong)   // máy quay kiểu blocky `cam.bk` (ô FX mayBlocky = chuyển động, punchRung = punch + rung)   // idle sống (ô FX idleSong), mã chép từ blocky-shorts
 import { moc, qua1, qua3, mayTuyetDoi, viTri, huongThan } from './diem-giua.js';
 const lerp3 = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
 // tiến độ cục bộ trong một đoạn con của shot: win = [k0,k1]
@@ -57,6 +58,8 @@ const easeFnOf = (name) => (x) => ease(name || 'smooth', x);
 export function createDirector({ THREE, stage, envs, K, actors, houses, props = {}, fx = {}, resolveType = null, episode = {} }) {   // episode = EPISODE: time/weather mặc định cho mọi shot không ghi riêng
   const { scene, camera } = stage;
   const datMay = createDatMay(THREE);   // cam.khung → máy (đặt theo khung hình)
+  const neTuong = taoNeTuong(THREE);   // cam.bk: kéo máy vào trước tường/vật bối cảnh che tâm nhìn (engine/blocky/ne-tuong.js)
+  let bkNow = null;                    // máy blocky của khung hiện tại (đặt lại mỗi khung) → né tường sau envs.use
   const _v = new THREE.Vector3();
   const tmpObj = new THREE.Object3D();
   // --- hiệu ứng tự động (bụi/tuyết ở chân nhà, dấu chân, hơi thở, gió): tất định theo pha bước; bật/tắt qua globalThis.__autoFx ---
@@ -190,11 +193,21 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     const o = props[nm]; if (o) { o.getWorldPosition(_np); return { feet: [_np.x, _np.y - 2.9, _np.z], yaw: o.rotation.y }; }
     return null;
   }
+  // neo ở mốc tiến độ ki của shot (né tường lấy mẫu cả shot): người đi bộ at→to (tuyến tính trong win) lấy đúng chỗ ở mốc đó, còn lại = neo hiện tại
+  function neoMau(shot, ki) {
+    return (ref) => {
+      const N = neoBk(ref), sp = shot.cast?.[ref];
+      if (!N || !sp?.to || !sp.at || sp.parent) return N;
+      const w = sp.win || [0, 1], kk = clamp01((ki - w[0]) / ((w[1] - w[0]) || 1));
+      return { ...N, feet: [sp.at[0] + (sp.to[0] - sp.at[0]) * kk, (sp.at[1] ?? 0) + ((sp.to[1] ?? 0) - (sp.at[1] ?? 0)) * kk, sp.at[2] + (sp.to[2] - sp.at[2]) * kk] };
+    };
+  }
   function placeCamera(c, k, t, shot = null, local = 0) {
     if (c.bk) {   // máy kiểu blocky (engine/blocky/may.js): cỡ cảnh + góc + chuyển động + whip/crash + punch/rung theo shot.bfx
-      const B = mayBlocky(c.bk, { neo: neoBk, local, dur: shot?.dur ?? 1, fx: shot?.bfx, move: AUTO.mayBlocky !== false, punch: AUTO.punchRung !== false });
+      const arg = { neo: neoBk, local, dur: shot?.dur ?? 1, fx: shot?.bfx, move: AUTO.mayBlocky !== false, punch: AUTO.punchRung !== false };
+      const B = mayBlocky(c.bk, arg); B.arg = arg;
       stage.setCamera(B.pos, B.look, { fov: B.fov, roll: B.roll, focusShadow: true });
-      globalThis.__mayBk = B;
+      globalThis.__mayBk = B; bkNow = B;
       return;
     }
     const ke = ease(c.ease || 'smooth', c.win ? sub(k, c.win) : k);   // win = [a, b]: camera chỉ chạy trong đoạn a..b của shot (studio 🎥 Sửa camera)
@@ -414,9 +427,24 @@ export function createDirector({ THREE, stage, envs, K, actors, houses, props = 
     if (shot.fx?.dust && fx.dust) { fx.dust.obj.visible = true; fx.dust.update(t, shot.fx.dust.map((b) => ({ ...b, t0: shot.t0 + b.t0 }))); }
     globalThis.__breathK = 1; globalThis.__snowStorm = null;   // biến theo shot (s045 bão tuyết, s046 hơi thở dày) — đặt lại mỗi khung để không sót sang shot khác khi tua
     shot.fn?.(fxCtx);
+    bkNow = null;
     placeCamera(shot.cam || { at: 'house', dist: 90, h: 10 }, k, t, shot, local);
     ctx.focus = [camera.position.x, Math.max(0, camera.position.y - 20), camera.position.z];
     envs.use(shot.env, t, ctx);
+    // máy blocky né tường: SAU envs.use (bối cảnh đã ở đúng trạng thái của t → tất định khi tua); bóng theo tâm nhìn nên không đổi
+    if (bkNow && AUTO.neTuong !== false && shot.cam.bk.neTuong !== false) {
+      const bo = new Set([...Object.values(actors).map((a) => a.root), ...Object.values(props)]);
+      const opt = { camera, ...(shot.cam.bk.neBan != null ? { ban: shot.cam.bk.neBan } : {}) };   // bk.neBan = bán kính vật sát chủ thể không né (2.5)
+      // 9 mốc CỐ ĐỊNH dọc shot → tỉ lệ kéo nội suy mượt theo k (máy không nhảy khi vật che vào/ra giữa shot)
+      const mau = []; for (let i = 0; i <= 8; i++) mau.push(mayBlocky(shot.cam.bk, { ...bkNow.arg, neo: neoMau(shot, i / 8), local: (bkNow.arg.dur * i) / 8 }));
+      const { r, vat } = tiLeNe(neTuong, mau, envObj.group, bo, opt, k);
+      if (r < 1) {
+        const T = bkNow.tam || bkNow.look, P = bkNow.pos.map((x, i) => T[i] + (x - T[i]) * r);
+        stage.setCamera(P, bkNow.look, { fov: bkNow.fov, roll: bkNow.roll, focusShadow: true });
+        const N2 = neTuong(P, T, envObj.group, bo, opt);
+        globalThis.__mayBk = { ...bkNow, pos: P, ne: { r, vat, che: N2 ? N2.che + 1 : 0 } };
+      }
+    }
     applyAutoFx(shot, envObj, k, t, night);
     if (FACE_LIVE()) liveFacePass(shot, prev, local, t, night);
   }

@@ -2,6 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { apCoCanh, CO_NAMES } from '../../engine/blocky/co-canh.js';
+import { CO, frameShot } from '../../engine/blocky/may.js';
 import { expandShot } from '../../engine/shottypes.js';
 
 const ctx = { places: { a: { pos: [0, 0, 0], ry: 0 } }, hero: 'hero' };
@@ -11,10 +12,11 @@ test('co: cỡ càng rộng thì máy càng xa; cận nhìn ngang đầu, toàn 
   const d = ['cucCan', 'can', 'trung', 'ngangDui', 'toanThan', 'rong', 'toanCanh'].map((c) => apCoCanh(cam, c).dist);
   for (let i = 1; i < d.length; i++) assert.ok(d[i] > d[i - 1], `dist tăng dần: ${d}`);
   assert.ok(apCoCanh(cam, 'can').look[1] > apCoCanh(cam, 'toanThan').look[1]);
-  // chiều cao khung nhìn thấy = 2·khoảng xiên·tan(fov/2) = S của bảng (gốc blocky 'close' = 4.0; Việt 'can' = 3.8)
+  // chiều cao khung nhìn thấy = 2·khoảng xiên·tan(fov/2) = S của bảng CO duy nhất (engine/blocky/may.js); tên Anh = bí danh tên Việt
   const S = (c) => 2 * Math.hypot(c.dist, c.h) * Math.tan((40 / 2) * Math.PI / 180);
-  assert.ok(Math.abs(S(apCoCanh(cam, 'close')) - 4.0) < 0.01);
+  assert.ok(Math.abs(S(apCoCanh(cam, 'close')) - 3.8) < 0.01);
   assert.ok(Math.abs(S(apCoCanh(cam, 'can')) - 3.8) < 0.01);
+  assert.deepEqual(apCoCanh(cam, 'trung'), { ...apCoCanh(cam, 'medium'), co: 'trung' });
   assert.throws(() => apCoCanh(cam, 'khongCo'), /không có/);
   assert.ok(CO_NAMES.includes('close') && CO_NAMES.includes('toanThan'));
 });
@@ -42,4 +44,14 @@ test('expandShot: hai người cách xa → cỡ tự nới (máy lùi xa hơn m
   const one = expandShot({ id: 'x', type: 'dialogue', at: 'a', co: 'trung', with: 'mom' }, ctx);
   const solo = expandShot({ id: 'x', type: 'closeup', at: 'a', co: 'trung' }, ctx);
   assert.ok(one.cam.dist >= solo.cam.dist);
+});
+
+test('một bảng cỡ cảnh: co: (loại shot cũ) và cam.bk.co ra cùng khoảng cách / độ cao / tâm nhìn', () => {
+  const neo = () => ({ feet: [0, 0, 0], yaw: 0 });
+  for (const c of Object.keys(CO)) for (const goc of ['eye', 'high', 'top']) {
+    const a = apCoCanh({ fov: 50 }, c, { goc });
+    const F = frameShot({ on: 'x', co: c, fov: 50, goc, yaw: 0, from: 0, side: 0 }, neo);
+    assert.ok(Math.abs(a.dist - (F.pos[2] - F.look[2])) < 1e-3 && Math.abs(a.h - (F.pos[1] - F.look[1])) < 1e-3, c + ' ' + goc);
+    assert.ok(Math.abs(a.look[1] + 4.2 - F.look[1]) < 1e-3);
+  }
 });
