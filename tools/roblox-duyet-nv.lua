@@ -20,7 +20,13 @@ return function(URL)
       local g = workspace.PhimEp6B.Gau:FindFirstChild(m.vai)
       if g then for _, d in ipairs(g:GetDescendants()) do if d:IsA("BasePart") and d.Name ~= "RootPart" then d.Transparency = 0; d.LocalTransparencyModifier = 0 end end; local s0 = g:GetAttribute("S0") or g:GetScale(); local cao = g:GetAttribute("Cao") or m.H; g:ScaleTo(s0 * m.H / cao); g:PivotTo(root * CFrame.Angles(0, math.pi, 0)) end
     else
-      local mdl = workspace:FindFirstChild(m.vai)
+      local rb = P.RB and P.RB[m.vai]
+      if rb then   -- vai đã thay bằng model Roblox (bộ phát NhanVatRoblox): đặt rig theo tư thế nghỉ phim, ẩn bản .glb
+        local ft = m.face and m.face.id and FACES[tostring(m.face.id)] and ("rbxassetid://" .. FACES[tostring(m.face.id)])
+        P.rbPose(rb, function(key) local v2 = NV[key]; if not v2 then return nil end; local q = v2.q; return root * CFrame.new(v2.t[1], v2.t[2], v2.t[3]) * CFrame.new(0, 0, 0, q[1], q[2], q[3], q[4]) end, ft)
+        local g0 = workspace:FindFirstChild(m.vai); if g0 then for _, d in ipairs(g0:GetDescendants()) do if d:IsA("BasePart") then d.Transparency = 1 end end end
+      end
+      local mdl = (not rb) and workspace:FindFirstChild(m.vai)
       -- cỡ gốc phim: lưới .glb chưa nhân cỡ c.root (gấu ×~0,62) → sc = cao phim (duyet.json H) / cao lưới (hộp các node hiện, lúc nghỉ)
       local lo, hi = 1e9, -1e9; for k2, v2 in pairs(NV) do if k2:sub(1, #m.vai + 2) == m.vai .. "__" and not v2.an then lo = math.min(lo, v2.t[2] - v2.s[2] / 2); hi = math.max(hi, v2.t[2] + v2.s[2] / 2) end end
       local sc = (GAU[m.vai] and hi > lo) and m.H / (hi - lo) or 1
@@ -33,7 +39,7 @@ return function(URL)
             local q4 = v.q; local tgt = root * CFrame.new(v.t[1] * sc, v.t[2] * sc, v.t[3] * sc) * CFrame.new(0, 0, 0, q4[1], q4[2], q4[3], q4[4])
             for _, q in ipairs(parts) do local off = P.subOff(v, q, key); if off then q.Size = q.MeshSize * sc; off = CFrame.new(off.Position * sc) * off.Rotation else off = F:Inverse() * q.CFrame; q.Size = q.Size / kk end; q.CFrame = tgt * CFrame.new(off.Position / kk) * off.Rotation; q.Transparency = v.an and 1 or 0; q.Anchored = true end   -- v.an: phim ẩn mảnh này lúc nghỉ
           end end end end
-      if m.face and m.face.id and FACES[tostring(m.face.id)] then
+      if not rb and m.face and m.face.id and FACES[tostring(m.face.id)] then
         local f = m.face; local p = blk(Vector3.new(f.s[1], f.s[2], f.s[3] + 0.02),   -- dày bằng hộp mặt phim: mặt Back (+Z) nằm đúng mặt trước đầu
            root * CFrame.new(f.p[1], f.p[2], f.p[3]) * CFrame.new(0, 0, 0, f.q[1], f.q[2], f.q[3], f.q[4]), Color3.new(1, 1, 1))
         p.Transparency = 1; p.CanCollide = false; local d = Instance.new("Decal"); d.Face = Enum.NormalId.Back; d.Texture = "rbxassetid://" .. FACES[tostring(f.id)]; d.Parent = p

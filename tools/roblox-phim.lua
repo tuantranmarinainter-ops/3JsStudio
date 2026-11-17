@@ -1,7 +1,7 @@
 -- tools/roblox-phim.lua — BỘ PHÁT phim trong Roblox Studio (ModuleScript ReplicatedStorage.PhimEp6B.PhatPhim).
 -- Dữ liệu: ModuleScript "phim" (mục lục, bảng mảnh, phụ đề, mặt) + một ModuleScript mỗi shot (khung 30 fps), do tools/roblox-phim-nap.lua nạp
 -- từ `node tools/roblox-phim.mjs xuat …`. Mỗi khung là HÀM THUẦN của t (giây phim): apply(t) đặt CFrame/cỡ mọi mảnh + camera + mặt + phụ đề.
--- Công tắc (thuộc tính của workspace.PhimEp6B): NhanVatGoc, MauGoc, XoayNhap, GauMau, TuongMotMat, Chay, BatDau (giây phim), Lap, PhuDe, ChuNoi, Mat, GuongAo, AnhSang. Xem docs/handoff/roblox-phim-ep6b.md.
+-- Công tắc (thuộc tính của workspace.PhimEp6B): NhanVatGoc, NhanVatRoblox, MatPhim, MauGoc, XoayNhap, GauMau, TuongMotMat, Chay, BatDau (giây phim), Lap, PhuDe, ChuNoi, Mat, GuongAo, AnhSang. Xem docs/handoff/roblox-phim-ep6b.md.
 local HttpService = game:GetService("HttpService")
 local RS = game:GetService("ReplicatedStorage")
 local M = {}
@@ -31,7 +31,7 @@ end
 function M.config()
   cfg = workspace:FindFirstChild("PhimEp6B")
   if not cfg then cfg = Instance.new("Configuration"); cfg.Name = "PhimEp6B"; cfg.Parent = workspace end
-  local D = { NhanVatGoc = true, TuongMotMat = true, Chay = true, BatDau = MAN.shots[1].t0, Lap = true, PhuDe = true, ChuNoi = true, Mat = true, GuongAo = true, AnhSang = true, MauGoc = true, XoayNhap = true, GauMau = false }
+  local D = { NhanVatGoc = true, TuongMotMat = true, Chay = true, BatDau = MAN.shots[1].t0, Lap = true, PhuDe = true, ChuNoi = true, Mat = true, GuongAo = true, AnhSang = true, MauGoc = true, XoayNhap = true, GauMau = false, NhanVatRoblox = true, MatPhim = true }
   for k, v in pairs(D) do if cfg:GetAttribute(k) == nil then cfg:SetAttribute(k, v) end end
   return cfg
 end
@@ -70,6 +70,10 @@ end
 -- GẤU KẺ CẮP (nv01 Bắp, nv14 nơ đỏ, nv15 nơ vàng): nhân bản model có xương Tap3_NhomA.NhomB.bap, đặt nguyên khối theo mảnh thân (tâm + hướng), cỡ theo chiều cao gấu phim.
 -- Công tắc NhanVatGoc tắt → về khối Part.
 local MESH, BEAR, NV = {}, {}, nil
+local RB = {}
+local RBMAP = { nv02_bach = "bach", nv09_bachF = "bach", nv03_kid2 = "be_vang", nv04_baker = "banh", nv05_tailor = "may",
+  nv06_folk1 = "dan_01", nv07_folk2 = "dan_14", nv08_folk3 = "dan_15", nv11_mayorD = "mayor", nv12_guardA = "linh", nv13_guardB = "linh" }
+local LIMB = { Torso = "0_0_0_0", Head = "0_0_0_1_0", ["Left Arm"] = "0_0_0_2_0", ["Right Arm"] = "0_0_0_3_0", ["Left Leg"] = "0_0_1_0", ["Right Leg"] = "0_0_2_0" }
 local GAU = { nv01_bap = "#2a3fb0", nv14_bearR = "#c0302a", nv15_bearY = "#e8b830" }
 -- 3D Importer (đo 17/11 trên 13 vai): NƯỚNG xoay nghỉ Q của node vào lưới (MeshSize = hộp lưới đã xoay) và đặt MeshPart thẳng trục model, quay 180° quanh trục đứng
 -- (mặt ±X/±Z của 77 hộp đều lật). → khung node = khung MeshPart · Rπ · Q; cỡ đúng = MeshSize (tỉ lệ 1, lần dựng trước có thể đã kéo méo). Công tắc XoayNhap.
@@ -121,7 +125,7 @@ function M.goc()
   local n = 0
   for _, m in ipairs(workspace:GetChildren()) do
     local vai = m:IsA("Model") and m.Name:match("^(nv%d%d_%w+)$")
-    if vai and not (GAU[vai] and attr("GauMau", false)) then   -- gấu: mặc định dùng .glb xuất từ phim như mọi vai (người dùng chốt 17/11); GauMau = bản nhân bản model gấu có sẵn
+    if vai and not (GAU[vai] and attr("GauMau", false)) and not (RBMAP[vai] and attr("NhanVatRoblox", true)) then   -- gấu: mặc định dùng .glb xuất từ phim như mọi vai (người dùng chốt 17/11); GauMau = bản nhân bản model gấu có sẵn
       for _, nd in ipairs(m:GetDescendants()) do
         local key = nd:IsA("Model") and nd.Name:match("^(.+)_Node$")
         local id = key and idOf[key]; local info = key and NV[key]
@@ -164,7 +168,64 @@ function M.goc()
     end
   end
   M.soMesh = n
+  M.rbBuild(idOf)
   return n
+end
+
+-- ===== NHÂN VẬT ROBLOX (17/11, người dùng chốt): vai phim → model R6 trong workspace.Tap3_NhomA.NhanVat =====
+-- Mỗi khung: Torso/Head/tay/chân đặt theo node bộ phận tương ứng của phim (L = N_phim · D, D tính lúc nghỉ sao cho thân trùng thân,
+-- các khớp giữ đúng tư thế nghỉ của rig Roblox); phụ kiện (tóc, mũ, kính…) đi theo bộ phận gần nhất. Mặt: decal mặt phim (MatPhim).
+-- Gà, thị trưởng ngủ, 3 gấu: giữ .glb (chờ model). Công tắc NhanVatRoblox (tắt = quay về .glb).
+local RPI = CFrame.Angles(0, math.pi, 0)
+local R6STD = { Torso = CFrame.identity, Head = CFrame.new(0, 1.5, 0), ["Left Arm"] = CFrame.new(-1.5, 0, 0), ["Right Arm"] = CFrame.new(1.5, 0, 0), ["Left Leg"] = CFrame.new(-0.5, -2, 0), ["Right Leg"] = CFrame.new(0.5, -2, 0) }
+M.RB = RB; M.RBMAP = RBMAP
+local function nodeRest(v) local q = v.q; return CFrame.new(v.t[1], v.t[2], v.t[3]) * CFrame.new(0, 0, 0, q[1], q[2], q[3], q[4]) end
+function M.rbBuild(idOf)
+  RB = {}; M.RB = RB
+  if not attr("NhanVatRoblox", true) then return end
+  local src = workspace:FindFirstChild("Tap3_NhomA"); src = src and src:FindFirstChild("NhanVat"); if not src then return end
+  local fold = cfg:FindFirstChild("RB") or Instance.new("Folder"); fold.Name = "RB"; fold.Parent = cfg
+  for vai, ten in pairs(RBMAP) do
+    local cl = fold:FindFirstChild(vai)
+    if not cl then
+      local m; for _, c in ipairs(src:GetChildren()) do if c.Name:match("^" .. ten .. "_%d+$") then m = c end end
+      if m and not m:FindFirstChildOfClass("Humanoid") then for _, d in ipairs(m:GetDescendants()) do if d:IsA("Model") and d:FindFirstChildOfClass("Humanoid") then m = d; break end end end   -- gói nhiều rig (dan_01 = Civilians): lấy rig đầu
+      if m then cl = m:Clone(); cl.Name = vai
+        for _, d in ipairs(cl:GetDescendants()) do
+          if d:IsA("Script") or d:IsA("LocalScript") then d:Destroy()
+          elseif d:IsA("Humanoid") then d.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None; d.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOff   -- không hiện nhãn tên/máu
+          elseif d:IsA("BasePart") then d.Anchored = true; d.CanCollide = false; d.CanQuery = false; d.CanTouch = false; d:SetAttribute("T0", d.Transparency) end end
+        cl.Parent = fold end
+    end
+    local hum = cl and cl:FindFirstChildWhichIsA("Humanoid", true); if hum then hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None; hum.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOff end
+    local torso = cl and cl:FindFirstChild("Torso", true)
+    local tv = NV[vai .. "__" .. LIMB.Torso]
+    if torso and tv then
+      local Tr = torso.CFrame; local Nt = nodeRest(tv)
+      local r = { m = cl, limbs = {}, extra = {}, byName = {} }
+      for name, sub in pairs(LIMB) do local p = torso.Parent:FindFirstChild(name); local key = vai .. "__" .. sub; local v = NV[key]
+        if p and v then local want = Nt * RPI * (attr("TuTheRig", false) and (Tr:Inverse() * p.CFrame) or R6STD[name])   -- nghỉ: khớp R6 chuẩn (rig mẫu có thể đang giơ tay chào…); TuTheRig = giữ tư thế mẫu
+          local L = { p = p, key = key, id = idOf[key], D = nodeRest(v):Inverse() * want }
+          table.insert(r.limbs, L); r.byName[name] = L end end
+      for _, d in ipairs(cl:GetDescendants()) do if d:IsA("BasePart") and not LIMB[d.Name] or (d:IsA("BasePart") and d.Parent ~= torso.Parent) then
+        if d.Name == "HumanoidRootPart" then d.Transparency = 1 else
+          local best, bd = nil, 1e9
+          for _, L in pairs(r.byName) do local dist = (L.p.Position - d.Position).Magnitude; if d:IsDescendantOf(L.p) then dist = -1 end; if dist < bd then best, bd = L, dist end end
+          if best then table.insert(r.extra, { p = d, L = best, rel = best.p.CFrame:Inverse() * d.CFrame }) end end end end
+      local hd = r.byName.Head; r.face = hd and hd.p:FindFirstChildOfClass("Decal"); r.face0 = r.face and r.face.Texture
+      for i, pp in ipairs(MAN.parts) do if pp.k == "F" and pp.n:sub(1, #vai + 2) == vai .. "__" then r.faceId = i - 1 end end
+      RB[vai] = r
+    end
+  end
+end
+-- đặt rig theo hàm khung bộ phận: frameOf(key) → CFrame node phim (đã cộng gốc) hoặc nil; trả true nếu hiện
+function M.rbPose(r, frameOf, faceTex)
+  local show = false
+  for _, L in ipairs(r.limbs) do local N = frameOf(L.key); if N then L.p.CFrame = N * L.D; show = true end end
+  for _, d in ipairs(r.m:GetDescendants()) do if d:IsA("BasePart") and d.Name ~= "HumanoidRootPart" then d.Transparency = show and (d:GetAttribute("T0") or 0) or 1 end end
+  for _, e in ipairs(r.extra) do e.p.CFrame = e.L.p.CFrame * e.rel end
+  if r.face then if faceTex and attr("MatPhim", true) then r.face.Texture = faceTex else r.face.Texture = r.face0 end; r.face.Transparency = show and 0 or 1 end
+  return show
 end
 
 local function ui()
@@ -288,6 +349,16 @@ function M.apply(t)
     if row then M.setK(b, row[10] / b.body.s[2]); b.m:PivotTo(ORIGIN * CFrame.new(row[2], row[3], row[4], row[5], row[6], row[7], row[8]) * b.restInv * CFrame.Angles(0, math.pi, 0)) end
     for id, p in pairs(PARTS) do local nm = MAN.parts[id + 1].n; if nm:sub(1, #vai + 2) == vai .. "__" then p.Transparency = 1; local dc = p:FindFirstChild("Mat"); if dc then dc.Transparency = 1 end end end
   end
+  -- nhân vật Roblox: lái rig theo node phim; ẩn khối Part + tấm mặt của vai đó
+  if next(RB) then
+    local rows = {}; for _, r in ipairs(fr.parts) do rows[r[1]] = r end
+    for vai, rb in pairs(RB) do
+      local face; local fr2 = rb.faceId and rows[rb.faceId]; if fr2 and fr2[12] and MAN.faces[tostring(fr2[12])] then face = "rbxassetid://" .. MAN.faces[tostring(fr2[12])] end
+      local byKey = {}; for _, L in ipairs(rb.limbs) do byKey[L.key] = L.id end
+      M.rbPose(rb, function(key) local r = byKey[key] and rows[byKey[key]]; return r and ORIGIN * CFrame.new(r[2], r[3], r[4], r[5], r[6], r[7], r[8]) end, face)
+      for id, p in pairs(PARTS) do local nm = MAN.parts[id + 1].n; if nm:sub(1, #vai + 2) == vai .. "__" then p.Transparency = 1; seen[id] = nil; local dc = p:FindFirstChild("Mat"); if dc then dc.Transparency = 1 end end end
+    end
+  end
   for id, p in pairs(PARTS) do if not seen[id] then p.Transparency = 1; p.CastShadow = false; local dc = p:FindFirstChild("Mat"); if dc then dc.Transparency = 1 end end end
   -- camera (thuần theo khung); shot gương: camera ảo phản chiếu qua mặt gương (Roblox không có gương thật)
   local cam = workspace.CurrentCamera; cam.CameraType = Enum.CameraType.Scriptable
@@ -337,7 +408,9 @@ function M.kiem(list)
     for _, nm in ipairs(it.names) do local p = cfg.Manh:FindFirstChild(nm)
       local bv = nm:match("^(nv%d%d_%w+)__0_0_0_0$"); local bb = bv and BEAR[bv]
       local gp; for id, g in pairs(MESH) do if MAN.parts[id + 1].n == nm then gp = g end end
-      if bb then local root = bb.m:GetPivot() * CFrame.Angles(0, -math.pi, 0); local c = root * bb.restInv:Inverse(); local v = inv * c.Position; parts[nm] = { v.X, v.Y, v.Z }
+      local rl; for _, rb in pairs(RB) do for _, L in ipairs(rb.limbs) do if L.key == nm then rl = L end end end
+      if rl and rl.p.Transparency < 1 then local c = rl.p.CFrame * rl.D:Inverse(); local v = inv * c.Position; parts[nm] = { v.X, v.Y, v.Z }
+      elseif bb then local root = bb.m:GetPivot() * CFrame.Angles(0, -math.pi, 0); local c = root * bb.restInv:Inverse(); local v = inv * c.Position; parts[nm] = { v.X, v.Y, v.Z }
       elseif gp and gp.subs[1].p.Transparency < 1 then local sb = gp.subs[1]; local k = axisK(sb.rot, sb.p.Size / sb.size, true)
         local c = sb.p.CFrame * (CFrame.new(sb.pos * k) * sb.rot):Inverse(); local v = inv * c.Position; parts[nm] = { v.X, v.Y, v.Z }
       elseif p and p.Transparency < 1 then local v = inv * p.Position; parts[nm] = { v.X, v.Y, v.Z } end end

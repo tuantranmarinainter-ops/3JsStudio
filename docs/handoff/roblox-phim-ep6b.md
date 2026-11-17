@@ -1,11 +1,10 @@
 # ep6B → phim chạy trong Roblox Studio — handoff
 
 ## ĐIỂM DỪNG
-- **ĐANG CHỜ NGƯỜI DÙNG (17/11, vòng 3):** duyệt bảng 13 vai người `output/roblox-phim/duyet-nhan-vat/bang-1.jpg`, `bang-2.jpg` (phim | Roblox, chính diện + 3/4). Gấu (nv01/nv14/nv15) làm lượt sau: người dùng chọn dùng .glb gấu xuất từ phim (bỏ phương án clone `Tap3_NhomA.NhomB.bap` — code clone vẫn còn trong `M.goc`, cần đổi khi làm gấu).
-- **Lỗi 3D Importer đã đo + bù (bộ phát `tools/roblox-phim.lua`, công tắc `XoayNhap`, `MauGoc`):** (1) nướng xoay nghỉ Q của node vào lưới + đặt MeshPart quay 180° quanh trục đứng → khung node = MeshPart·Rπ·Q; vị trí từng MeshPart con lấy từ đỉnh .glb (`pc` trong nhan-vat.json), cỡ = MeshSize. (2) bỏ màu phẳng của chất liệu không vân → tô lại từ `col`. (3) `.glb` chứa cả mảnh phim ẩn (tóc dưới mũ…) → cờ `an` (`node tools/roblox-nhan-vat.mjs --an`).
-- **Bằng số (đạt):** sân duyệt 257 mảnh/13 vai: tâm lệch 0,0000 stud, góc ≤ 0,0007 rad, không méo/lật/thiếu (`tools/roblox-kiem-nv.lua`). Bộ phát phim: 180 điểm Gà ngoài shot gương lệch ≤ 0,0008 stud.
-- **Dữ liệu:** `node tools/roblox-nhan-vat-node.mjs` → `output/roblox-phim/data/nhan-vat.json` (t,q,s,col,pc,an). Sân duyệt: `tools/roblox-duyet-nv.mjs` (ảnh phim) + `roblox-duyet-nv.lua` (Studio, `_G.ChupDuyet(i, "truoc"|"34")`).
-- **Sau duyệt:** gấu từ .glb phim → vật liệu bối cảnh → gương/ánh sáng → quay lại so-sanh.mp4.
+- **ĐANG CHỜ NGƯỜI DÙNG (17/11, vòng 4):** (1) duyệt bảng `output/roblox-phim/duyet-nhan-vat/bang-rb-1.jpg`, `bang-rb-2.jpg` — 11 vai thay bằng model Roblox `Tap3_NhomA.NhanVat` (công tắc `NhanVatRoblox`, `MatPhim`, `TuTheRig`); (2) thu bảng dock dưới khung nhìn Studio (khung nhìn đang 1569×546) để quay roblox.mp4 + so-sanh.mp4.
+- **Bảng vai → model (người dùng chốt):** bach, bachF→bach; kid2→be_vang; baker→banh; tailor→may; folk1/2/3→dan_01 (rig đầu trong gói Civilians)/dan_14/dan_15; mayorD→mayor; guardA/B→linh. Gà = .glb cũ (người dùng chốt); thị trưởng ngủ = .glb chờ model (phiên điều phối: dựng được từ mayor + pyjama asset 123126413388497, chưa làm); 3 gấu = .glb phim (bảng bang-3.jpg).
+- **Cách lái rig Roblox (`M.rbBuild`/`M.rbPose` trong `tools/roblox-phim.lua`):** bộ phận R6 = node phim · D (D = khớp R6 chuẩn, |D| ≤ 0,14 stud); phụ kiện theo bộ phận gần nhất; mặt = decal mặt phim. Model Tap3 + nvNN_* đặt ModelStreamingMode Persistent (Play có StreamingEnabled).
+- **Bằng số (đạt):** 66 bộ phận rig + 119 node .glb khớp node phim (tâm 0,0000 stud); đoạn thử 354 điểm × 45 khung lệch ≤ 0,0014 stud.
 - **Đang chạy nền:** `node tools/roblox-phim.mjs phuc-vu` (cổng 8766).
 <!-- /ĐIỂM DỪNG -->
 

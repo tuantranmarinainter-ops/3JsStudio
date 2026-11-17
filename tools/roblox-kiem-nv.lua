@@ -5,7 +5,17 @@ return function(URL, boQua)
   local NV = H:JSONDecode(H:GetAsync(URL .. "nhan-vat.json")); local META = H:JSONDecode(H:GetAsync(URL .. "duyet.json"))
   local AX = { Vector3.xAxis, -Vector3.xAxis, Vector3.yAxis, -Vector3.yAxis, Vector3.zAxis, -Vector3.zAxis }
   local T = { n = 0, dc = 0, ds = 0, meo = 1, flip = 0, thieu = 0 }; local rows = {}
-  for i, m in ipairs(META) do if not (boQua and boQua[m.vai]) then
+  local P = require(game.ReplicatedStorage.PhimEp6B.PhatPhim); local RB = P.RB or {}
+  local R = { n = 0, dc = 0, ang = 0, thieu = 0 }
+  for i, m in ipairs(META) do local rb = RB[m.vai]; if rb then   -- vai model Roblox: mỗi bộ phận R6 (bỏ D) phải trùng node phim lúc nghỉ
+    local root = CFrame.new(Vector3.new(3000, 400, 3000) + Vector3.new((i - 1) * 60, 0, 0))
+    if #rb.limbs < 6 then R.thieu += 6 - #rb.limbs; table.insert(rows, { e = 99, s = m.vai .. " rig thiếu bộ phận: " .. #rb.limbs .. "/6" }) end
+    for _, L in ipairs(rb.limbs) do local v = NV[L.key]; local q4 = v.q
+      local tgt = root * CFrame.new(v.t[1], v.t[2], v.t[3]) * CFrame.new(0, 0, 0, q4[1], q4[2], q4[3], q4[4]); local c = L.p.CFrame * L.D:Inverse()
+      local dc = (c.Position - tgt.Position).Magnitude; local _, a = (tgt.Rotation:Inverse() * c.Rotation):ToAxisAngle(); R.n += 1; R.dc = math.max(R.dc, dc); R.ang = math.max(R.ang, math.abs(a))
+      if dc > 0.01 or math.abs(a) > 0.01 then table.insert(rows, { e = math.max(dc, math.abs(a)), s = string.format("%s tâm %.3f góc %.3f", L.key, dc, a) }) end end
+  end end
+  for i, m in ipairs(META) do if not (boQua and boQua[m.vai]) and not RB[m.vai] then
     local root = CFrame.new(Vector3.new(3000, 400, 3000) + Vector3.new((i - 1) * 60, 0, 0)); local mdl = workspace:FindFirstChild(m.vai); local seen = {}
     local lo, hi = 1e9, -1e9; for k2, v2 in pairs(NV) do if k2:sub(1, #m.vai + 2) == m.vai .. "__" and not v2.an then lo = math.min(lo, v2.t[2] - v2.s[2] / 2); hi = math.max(hi, v2.t[2] + v2.s[2] / 2) end end
     local sc = (m.vai:match("bap$") or m.vai:match("bear")) and hi > lo and m.H / (hi - lo) or 1   -- như roblox-duyet-nv.lua (gấu thu nhỏ ở gốc phim)
@@ -33,6 +43,7 @@ return function(URL, boQua)
   end end
   table.sort(rows, function(a, b) return a.e > b.e end)
   local out = { string.format("node %d thiếu %d | tâm max %.4f | cỡ(tỉ lệ−1) max %.4f | góc max %.4f rad | méo max %.4f | mặt hộp lật %d | mảnh vượt 0,01: %d", T.n, T.thieu, T.dc, T.ds, T.ang or 0, T.meo, T.flip, #rows) }
+  table.insert(out, string.format("rig Roblox: %d bộ phận | tâm max %.4f | góc max %.4f rad | thiếu %d", R.n, R.dc, R.ang, R.thieu))
   for i = 1, math.min(10, #rows) do table.insert(out, rows[i].s) end
   return table.concat(out, "\n")
 end
