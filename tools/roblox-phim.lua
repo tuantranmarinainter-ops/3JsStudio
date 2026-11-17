@@ -1,7 +1,7 @@
 -- tools/roblox-phim.lua — BỘ PHÁT phim trong Roblox Studio (ModuleScript ReplicatedStorage.PhimEp6B.PhatPhim).
 -- Dữ liệu: ModuleScript "phim" (mục lục, bảng mảnh, phụ đề, mặt) + một ModuleScript mỗi shot (khung 30 fps), do tools/roblox-phim-nap.lua nạp
 -- từ `node tools/roblox-phim.mjs xuat …`. Mỗi khung là HÀM THUẦN của t (giây phim): apply(t) đặt CFrame/cỡ mọi mảnh + camera + mặt + phụ đề.
--- Công tắc (thuộc tính của workspace.PhimEp6B): NhanVatGoc, MauGoc, XoayNhap, TuongMotMat, Chay, BatDau (giây phim), Lap, PhuDe, ChuNoi, Mat, GuongAo, AnhSang. Xem docs/handoff/roblox-phim-ep6b.md.
+-- Công tắc (thuộc tính của workspace.PhimEp6B): NhanVatGoc, MauGoc, XoayNhap, GauMau, TuongMotMat, Chay, BatDau (giây phim), Lap, PhuDe, ChuNoi, Mat, GuongAo, AnhSang. Xem docs/handoff/roblox-phim-ep6b.md.
 local HttpService = game:GetService("HttpService")
 local RS = game:GetService("ReplicatedStorage")
 local M = {}
@@ -31,7 +31,7 @@ end
 function M.config()
   cfg = workspace:FindFirstChild("PhimEp6B")
   if not cfg then cfg = Instance.new("Configuration"); cfg.Name = "PhimEp6B"; cfg.Parent = workspace end
-  local D = { NhanVatGoc = true, TuongMotMat = true, Chay = true, BatDau = MAN.shots[1].t0, Lap = true, PhuDe = true, ChuNoi = true, Mat = true, GuongAo = true, AnhSang = true, MauGoc = true, XoayNhap = true }
+  local D = { NhanVatGoc = true, TuongMotMat = true, Chay = true, BatDau = MAN.shots[1].t0, Lap = true, PhuDe = true, ChuNoi = true, Mat = true, GuongAo = true, AnhSang = true, MauGoc = true, XoayNhap = true, GauMau = false }
   for k, v in pairs(D) do if cfg:GetAttribute(k) == nil then cfg:SetAttribute(k, v) end end
   return cfg
 end
@@ -121,7 +121,7 @@ function M.goc()
   local n = 0
   for _, m in ipairs(workspace:GetChildren()) do
     local vai = m:IsA("Model") and m.Name:match("^(nv%d%d_%w+)$")
-    if vai and not GAU[vai] then
+    if vai and not (GAU[vai] and attr("GauMau", false)) then   -- gấu: mặc định dùng .glb xuất từ phim như mọi vai (người dùng chốt 17/11); GauMau = bản nhân bản model gấu có sẵn
       for _, nd in ipairs(m:GetDescendants()) do
         local key = nd:IsA("Model") and nd.Name:match("^(.+)_Node$")
         local id = key and idOf[key]; local info = key and NV[key]
@@ -147,7 +147,7 @@ function M.goc()
   -- gấu: nhân bản model có xương
   local src = workspace:FindFirstChild("Tap3_NhomA"); src = src and src:FindFirstChild("NhomB"); src = src and src:FindFirstChild("bap")
   local fold = cfg:FindFirstChild("Gau") or Instance.new("Folder"); fold.Name = "Gau"; fold.Parent = cfg
-  for vai, bow in pairs(GAU) do
+  for vai, bow in pairs(attr("GauMau", false) and GAU or {}) do
     local body = NV[vai .. "__0_0_0_0"]; local id = idOf[vai .. "__0_0_0_0"]
     if src and body then
       local cl = fold:FindFirstChild(vai)
