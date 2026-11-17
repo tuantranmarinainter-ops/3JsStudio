@@ -161,3 +161,13 @@ test('ghiManifest giữ kiểu xuống dòng CRLF: thêm, thay, và nhánh đị
   ghiManifest({ id: 'nhap/t', src: 'x.glb', license: 'CC0', credit: 'c', source: 's' }, f);
   assert.ok(!fs.readFileSync(f, 'utf8').includes('\r'));
 });
+
+test('soDo: bbox lệch manifest, đáy khác 0, tâm lệch → cảnh báo; khớp → không', async () => {
+  const { soDo, doBbox } = await import('../nhap-model.mjs');
+  assert.deepEqual(soDo('x', { bbox: [4, 3, 2], min: [-2, 0, -1], max: [2, 3, 1], tam: [0, 0] }, [4, 3, 2]), []);
+  const w = soDo('x', { bbox: [4, 3, 2], min: [-1, 0.5, -1], max: [3, 3.5, 1], tam: [1, 0] }, [5, 3, 2]);
+  assert.equal(w.length, 3); assert.ok(w.some((l) => /đáy/.test(l)) && w.some((l) => /tâm/.test(l)) && w.some((l) => /bbox manifest/.test(l)));
+  assert.ok(soDo('y', { bbox: [1, 1, 1], min: [0, 0, 0], max: [1, 1, 1], tam: [0, 0] }, null)[0].includes('thiếu bbox'));
+  const d = await doBbox(path.join(process.cwd(), 'assets', 'nhap', 'ep5t-cua-so-go.glb')).catch(() => null);
+  if (d) d.bbox.forEach((v, i) => assert.ok(Math.abs(v - [1, 9.4, 6][i]) < 0.01));
+});

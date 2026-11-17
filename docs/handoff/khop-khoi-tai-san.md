@@ -2,15 +2,15 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-16
+- **Cập nhật:** 2026-11-17
 - **Nhánh:** `ep1-v2` (không push/merge)
-- **Đang làm:** KẾ HOẠCH đã viết, CHƯA code. Chờ người dùng duyệt qua phiên điều phối.
-- **Bước kế tiếp:** sau khi duyệt → Bước 1 (`engine/khop-tai-san.js` + test). Đề bài mẫu: "Đọc docs/handoff/khop-khoi-tai-san.md rồi làm Bước 1. Đạt khi … Dừng khi …".
-- **Đang chờ:** người dùng duyệt kế hoạch + trả lời 3 câu hỏi mở (cuối file).
-- **File đang dở (chưa commit):** không (chỉ file này).
-- **Đang chạy nền:** không.
-- **Đạt khi (cả việc):** ở ep005t, thay khối bằng tài sản thì vị trí/chân đế/hướng/góc camera không đổi; mỗi món báo % lệch từng chiều; lệch > 20% được cảnh báo ngay ở trang duyệt và sau khi thay; `?rb=0` vẫn về khối.
-- **Câu hỏi còn mở:** 3 câu ở mục 9.
+- **Đang làm:** XONG Bước 1–3 cho nhóm NHÀ (15 mốc, 9 model). Chưa làm Bước 4 (trang duyệt), 5 (cổng kiểm), 6 (hoãn: điểm chạm chỉ khi có shot cần).
+- **Bước kế tiếp:** Bước 4 — `tools/nhap-model.mjs` (`fileUngVien` nhận `--khoi`) + `tools/duyet.mjs` (`veMeta`: dòng "Lệch so với khối"). Dùng `khop()` + `doBbox()` có sẵn.
+- **Đã có:** `engine/khop-tai-san.js` (+ test 10 ca), `nhap-model.mjs do` (đo bbox GLB → `output/khop/do.json`), `engine/envs/ep5t-loai.js` (loại từng mốc), hook trong `ep5t-chung.js` (`?khop=0` về cách cũ, `e.khop` = lệch từng mốc), `tools/khop-bao-cao.mjs` → `output/khop/nha-lech.md`.
+- **Đang chờ:** người dùng xem `output/khop/nha-lech.md` (7 mốc lệch > 20% hoặc cảnh báo) và quyết đổi mẫu hay chấp nhận.
+- **File đang dở (chưa commit):** không (phần của việc này đã commit; `ep5t-chung.js` còn hunk của phiên khác).
+- **Đạt khi (cả việc):** như trước; Bước 3 đạt: vị trí/đáy/tâm/hướng 15/15 mốc giống hệt bản cũ, `?rb=0`/`?khop=0` về cách cũ.
+- **Câu hỏi còn mở:** không (đã chốt 17/11, mục 9).
 <!-- /ĐIỂM DỪNG -->
 
 ## Việc còn lại (theo thứ tự)
@@ -114,11 +114,10 @@ Sửa: `engine/envs/ep5t-chung.js` (nhân bản mẫu, dùng `InstancedMesh` khi
 - `kich-ban/ep005t` không vào git: dữ liệu khối bổ sung phải nằm ở nơi tool đọc được và có trong git (đề xuất `docs/` hoặc file `tools/…json`), không đè file của người dùng.
 
 ## 9. Câu hỏi còn mở
-1. **Nhà**: ưu tiên vừa CHÂN (footprint, như đề xuất: không tràn chân, có thể thấp hơn khối vài %) hay vừa CAO (mái đúng độ cao khối, chân có thể tràn)? Kế hoạch mặc định "vừa chân".
-2. **Ngưỡng**: giữ ±15% kéo `hop` và cảnh báo > 20% như đề xuất, hay muốn chặt hơn (ví dụ 10%) cho nhà/cây?
-3. **Điểm chạm** cho ghế/giường/cửa (Bước 6): chỉ làm khi có việc thật, hay ghi tay `cham` cho một số món chính ngay từ đầu?
+Không. Đã chốt 2026-11-17 (người dùng trả "mặc định"): (1) nhà VỪA CHÂN; (2) `hop` kéo ±15%, cảnh báo > 20%; (3) điểm chạm chỉ làm khi có shot thật cần (Bước 6 hoãn).
 
 ## Ghi chép
+- Đã xong 17/11: Bước 1, 2, 3 (nhóm NHÀ). Bước 3 chạy trong node với tài sản giả = hộp đúng bbox đo (chưa mở trình duyệt thật). Ghi chú: `ep5t-tiem-banh-studio.js` (phiên khác) không nằm trong báo cáo.
 - Đã xong: đọc `docs/roblox.md`, `docs/de-bai-codex-mau.md`, `docs/nhap-model.md`, `docs/handoff/ep005t-nha-de-bai.md`, `tools/ep5t-boi-canh.mjs`, `engine/envs/ep5t-chung.js`, `engine/envs.js:81`, `tools/blender/chuan_hoa.py`, `tools/nhap-model.mjs:268-280`, `tools/duyet.mjs:513`, `tools/gates.mjs`.
 - Quyết định đã chốt (2026-11-16, người dùng chọn a): KHỐI THẮNG — vị trí, chân đế, hướng, góc camera giữ theo khối; tài sản tự khớp.
 - Khác với đề xuất ban đầu: bước "chuẩn hoá tài sản" gần như xong (đã có gốc tâm đáy, `--xoay`, `bbox` trong manifest) → chỉ thêm lệnh đo/kiểm; "dữ liệu khối thêm" là trường tuỳ chọn, không phá file cũ.

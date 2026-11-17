@@ -7,6 +7,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { NodeIO, getBounds } from '@gltf-transform/core';
+import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -485,12 +487,47 @@ function cmdKiem() {
   process.exit(r.loi.length ? 1 : 0);
 }
 
+// ---- ĐO KÍCH THƯỚC TÀI SẢN (kế hoạch docs/handoff/khop-khoi-tai-san.md, Bước 2) — không cần Blender ----
+/** Hộp bao thật của GLB: { bbox:[rộng,cao,sâu], min, max, tam:[x,z] } (stud, Y lên). `tam` = tâm x/z; đáy = min[1]. */
+export async function doBbox(file) {
+  const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
+  const doc = await io.read(file);
+  const sc = doc.getRoot().getDefaultScene() || doc.getRoot().listScenes()[0];
+  const b = getBounds(sc), r = (x) => +x.toFixed(3);
+  return { bbox: [r(b.max[0] - b.min[0]), r(b.max[1] - b.min[1]), r(b.max[2] - b.min[2])], min: b.min.map(r), max: b.max.map(r), tam: [r((b.min[0] + b.max[0]) / 2), r((b.min[2] + b.max[2]) / 2)] };
+}
+/** So kích thước đo với manifest: lệch bbox > tol, đáy y ≠ 0, tâm x/z lệch > 5% cạnh. Trả về dòng cảnh báo. */
+export function soDo(id, dm, manifestBbox, tol = 0.02) {
+  const w = []; const [bx, by, bz] = dm.bbox;
+  if (!manifestBbox) w.push('manifest thiếu bbox');
+  else if (manifestBbox.some((m, i) => Math.abs(m - dm.bbox[i]) > tol * Math.max(1, m))) w.push(`bbox manifest [${manifestBbox.join(', ')}] ≠ đo [${dm.bbox.join(', ')}]`);
+  if (Math.abs(dm.min[1]) > 0.02 * Math.max(1, by)) w.push(`đáy y=${dm.min[1]} (gốc phải ở đáy)`);
+  if (Math.abs(dm.tam[0]) > 0.05 * Math.max(1, bx) || Math.abs(dm.tam[1]) > 0.05 * Math.max(1, bz)) w.push(`tâm x/z (${dm.tam.join(', ')}) lệch gốc > 5%`);
+  return w.map((x) => `${id}: ${x}`);
+}
+/** `do [id…]`: đo bbox từng tài sản (mặc định: nhap/ep5t-* + polyfork), in lệch so với manifest, ghi output/khop/do.json (không sửa manifest). */
+async function cmdDo(a) {
+  const arr = JSON.parse(fs.readFileSync(MANIFEST, 'utf8'));
+  const ids = a._.length ? a._ : arr.filter((e) => /^nhap\/ep5t-|^polyfork\//.test(e.id) && e.src).map((e) => e.id);
+  const kq = {}, ls = [];
+  for (const id of ids) {
+    const e = arr.find((x) => x.id === id); if (!e || !e.src) { ls.push(`${id}: không có trong manifest`); continue; }
+    const f = path.join(ROOT, e.src); if (!fs.existsSync(f)) { ls.push(`${id}: thiếu file ${e.src}`); continue; }
+    try { const d = await doBbox(f); kq[id] = d; ls.push(...soDo(id, d, e.bbox)); } catch (x) { ls.push(`${id}: không đo được (${x.message})`); }
+  }
+  const out = path.join(ROOT, 'output', 'khop'); fs.mkdirSync(out, { recursive: true });
+  fs.writeFileSync(path.join(out, 'do.json'), JSON.stringify(kq, null, 1), 'utf8');
+  for (const l of ls) console.log(l);
+  console.log(`đã đo ${Object.keys(kq).length}/${ids.length} tài sản → output/khop/do.json`);
+}
+
 if (import.meta.url === pathToFileURL(process.argv[1] || '').href) {
   const [cmd, ...rest] = process.argv.slice(2); const a = args(rest);
   try {
     if (cmd === 'tim') await cmdTim(a);
     else if (cmd === 'nhap') await cmdNhap(a);
     else if (cmd === 'kiem') cmdKiem();
+    else if (cmd === 'do') await cmdDo(a);
     else if (cmd === 'tai') await cmdTai(a);
     else console.log('Dùng: tim <từ khoá> [--loai L] [--ca-nang] [--nguon sketchfab|polyhaven|polypizza|roblox] [--toi-da N] [--ung-vien file.json [--khe id]] | nhap <nguon>:<id> --ten <ten> [--loai L] [--cho-phep-nang "lý do"] [--cao stud] [--tam-giac-toi-da N] [--ao] [--mau-dinh] [--sang 0..1] [--xam 0..1] [--xoay độ] [--khong-nen] | tai <nguon>:<id> (chỉ tải glTF gốc vào .cache, giữ xương/animation, in info) | kiem');
   } catch (e) { loi(e.message); }

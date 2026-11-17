@@ -3,6 +3,8 @@
 // BỐ CỤC TRƯỚC, shot/camera sau. Mốc có model đã chốt (`MODELS[mocId]`) thì thay hộp bằng model nhóm NHÀ (nhap/ep5t-* hoặc polyfork/*),
 // co theo vùng của mốc; ?rb=0 trên URL (hoặc thiếu model) → về bản khối. Tất định (không Math.random, không giờ thực).
 // Quy ước trục: gốc = tâm sàn bối cảnh, y=0 mặt đất, +X sang phải nhìn từ camera chính, +Z về phía camera chính.
+import { khop } from '../khop-tai-san.js';
+import { LOAI_MOC } from './ep5t-loai.js';
 export const LIGHT = 'day';
 
 const lay = (vung) => {   // "x -8..8, y 0..12, z -6..-2" → { x:[a,b], y:[a,b], z:[a,b] }
@@ -18,6 +20,8 @@ export default function build(g, e, H, DATA) {
   const R = e.room = new THREE.Group(); R.name = 'ep5t_' + DATA.id; g.add(R);
   const nhom = (ten, tang) => { const o = new THREE.Group(); o.name = ten; R.add(tang ? ganTang(o, tang) : o); return o; };
   const mid = nhom('ep5t_boi_canh', 'mid');
+  const KHOP = !/[?&]khop=0(&|$)/.test(globalThis.location?.search || '');   // ô FX khopTaiSan: ?khop=0 → cách co cũ
+  e.khop = {};   // { mốc: {loai, lech, tong, canhBao, lap} } — đọc bằng tools/khop-bao-cao.mjs / cổng kiểm
   const BOX = new THREE.BoxGeometry(1, 1, 1);
   const mat = (c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.9 });
   const _bx = new THREE.Box3(), _sz = new THREE.Vector3();
@@ -34,6 +38,21 @@ export default function build(g, e, H, DATA) {
     const dx = v.x[1] - v.x[0], dy = v.y[1] - v.y[0], dz = v.z[1] - v.z[0];
     const o = fit(md.id, dy); if (!o) return null;
     _bx.setFromObject(o); _bx.getSize(_sz);
+    const loaiK = KHOP && (md.loai || LOAI_MOC[DATA.id + '/' + moc.id]);
+    if (loaiK) {   // KHỐI THẮNG: vùng giữ nguyên (đáy, tâm, hướng); tài sản co/lặp theo luật loại (engine/khop-tai-san.js)
+      const k = khop({ bbox: [_sz.x, _sz.y, _sz.z], vung: v, loai: loaiK, ry: md.ry || 0, opt: { he: md.he } });
+      e.khop[moc.id] = { loai: k.loai, lech: k.lech, tong: k.tong, canhBao: k.canhBao, lap: k.lap, model: md.id };
+      const grpK = new THREE.Group(); grpK.name = 'ep5t_rb_' + moc.id;
+      const n = k.lap ? k.lap.n : 1;
+      for (let i = 0; i < n; i++) {
+        const oi = i ? o.clone(true) : o; oi.scale.set(k.scale[0], k.scale[1], k.scale[2]);
+        if (k.lap) oi.position[k.lap.truc] = (i - (n - 1) / 2) * k.lap.buoc;
+        oi.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; khungDau(m); } });
+        grpK.add(oi);
+      }
+      grpK.position.set((v.x[0] + v.x[1]) / 2, v.y[0], (v.z[0] + v.z[1]) / 2); grpK.rotation.y = md.ry || 0;
+      mid.add(grpK); return grpK;
+    }
     const q = Math.abs(Math.sin(md.ry || 0)) > 0.9;   // xoay ±90°: trục x/z của model đổi chỗ so với vùng
     const sx = (q ? dz : dx) / Math.max(1e-4, _sz.x), sz = (q ? dx : dz) / Math.max(1e-4, _sz.z);
     const mong = md.mong || Math.min(dz, dx) < 1;   // tấm mỏng (vách, cửa, bạt)   // mốc dạng tấm: giữ độ dày theo tỉ lệ model
