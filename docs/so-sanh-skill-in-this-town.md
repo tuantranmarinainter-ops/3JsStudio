@@ -80,6 +80,28 @@ Trọng số = mức quan trọng với mục tiêu của xưởng (phim 2–3 p
 Đọc bảng: repo hơn ở 9/15 mục, thua ở 5 mục (1, 2, 4, 7, 9) — cả 5 đều là chuyện **tổ chức và ngôn ngữ khai báo**, không phải năng lực engine.
 Đề xuất 6 (tách `CLAUDE.md` + sơ đồ 1 dòng) và 5 (mốc theo chữ) là hai việc kéo được mục 1, 2, 4 lên ngang bộ kia.
 
+## 2c. Chấm lại sau khi làm 4 việc ★ (17/11 tối)
+
+| Việc | Kết quả thật | Commit |
+|---|---|---|
+| 1. Commit mã blocky | ✅ Xong. Sửa luôn lỗi HEAD vỡ: `engine/shots.js` đã import `blocky/may.js` mà file chưa vào git | 66f2983 |
+| 2. Gộp 2 hệ camera | ✅ Xong. Một bảng `CO`/`VN` (`engine/blocky/may.js:12-13`), một hàm `frameShot`; `co-canh.js` gọi lại nó. ep001, ep003, ep003b ảnh giống hệt bản chuẩn | b36d2f3 |
+| 3. Danh mục tên + lệnh kiểm | ✅ Xong. `tools/danh-muc.mjs` → `docs/danh-muc.md` 19 nhóm; `kiem` sạch trên ep001/ep003/ep003b; doctor mục 13. Nhóm cỡ cảnh đang được sửa lại sau việc 2 | ceddf1b |
+| 4. Máy blocky né tường | 🟡 Có mã (`engine/blocky/ne-tuong.js`, ô `neTuong`) nhưng **mặc định tắt**: bật lên đổi 9 shot đã duyệt của ep003b, 7 shot tệ hơn (đen, máy chui vào người). 8 shot cần cứu chưa chuyển vì người dùng dặn không sửa tập | b36d2f3 |
+| Thêm: dọn nhánh | 9 nhánh + 6 worktree đã gộp được xoá (chỉ trên máy); `main` đang được gộp trong phiên con | — |
+
+| # | Khía cạnh | Trước | Bây giờ | Lý do đổi |
+|---|---|:-:|:-:|---|
+| 2 | Điểm vào / dễ hiểu | 5 | **6** | Có danh mục tên sinh tự động; nhánh gọn hơn |
+| 7 | Camera | 7 | **8** | Một bảng cỡ cảnh, một hàm khung. Chưa lên 9 vì né tường còn tắt |
+| 15 | Bảo trì / an toàn | 6 | **7** | Không còn mã móc vào file ngoài git; danh mục bắt tên sai |
+| | Các mục khác | | không đổi | |
+| | **Tổng (/150)** | 115 | **118** | Blocky vẫn 93 |
+| | **Có trọng số (/10)** | 8,0 | **8,2** | Dự kiến 8,3 thì thiếu 0,1 do việc 4 |
+
+Repo vẫn thua bộ kia ở 4 mục: 1 (cách viết skill), 2 (điểm vào), 4 (lời ↔ hình), 9 (đồ hoạ, nay ngang điểm nhưng chỉ ep003b dùng).
+Để kéo lên: tách `CLAUDE.md` (đề xuất 6) và mốc theo chữ (đề xuất 5). Để việc 4 đạt: né tường phải bỏ qua vật nhỏ/che một phần và có ngưỡng "chỉ kéo khi bị che > X% mặt", rồi mới bật cho tập mới.
+
 ## 3. Ưu và nhược — skill blocky-shorts
 
 **Ưu**
