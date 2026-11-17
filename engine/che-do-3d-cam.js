@@ -24,7 +24,7 @@ const r = (a) => (Array.isArray(a) ? a.map((v) => +(+v).toFixed(3)) : +(+a).toFi
 const sao = (o) => JSON.parse(JSON.stringify(o));
 const giong = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
-export function ganCam({ THREE, stage, B, isOn, getTl, curT, mauCam, rerender, chup, stopBam }) {
+export function ganCam({ THREE, stage, B, isOn, getTl, curT, mauCam, rerender, chup, stopBam, chep }) {
   if (!document.getElementById('c3c-css')) { const st = document.createElement('style'); st.id = 'c3c-css'; st.textContent = CSS; document.head.appendChild(st); }
   const LS = 'c3d-cam:' + location.pathname + ':' + document.title;
   const ed = new Map();        // shotId → { goc, moi:{p,l,fov,p2,l2,fov2,ease,win}, text, dur, t, img }
@@ -151,6 +151,7 @@ export function ganCam({ THREE, stage, B, isOn, getTl, curT, mauCam, rerender, c
     <div class="so"></div>
     <textarea placeholder="Ghi chú camera shot này (vd: zoom chậm hơn, thấy cả 4 chân nhà…)"></textarea>
     <button class="main" data-a="luu">Lưu ghi chú</button>
+    <button class="main" data-a="chep" title="Chép mọi điều chỉnh thành chữ — dán thẳng cho Claude">📋 Copy điều chỉnh</button>
     <div class="muted nho" style="margin-top:8px">Mốc <span class="dau">xanh</span> = điểm đầu, <span class="cuoi">cam</span> = điểm cuối. Chỉ là thử: tắt 3D thì về camera gốc; số + ghi chú đi kèm file góp ý (dòng <code>cam:</code> dán thẳng vào shots.js).</div>
     </div>`;
   col.addEventListener('pointerdown', (e) => e.stopPropagation());
@@ -176,6 +177,7 @@ export function ganCam({ THREE, stage, B, isOn, getTl, curT, mauCam, rerender, c
     else if (a === 'trala' && ed.has(id)) { const e0 = ed.get(id); lich.push({ id, a: sao({ moi: e0.moi, dur: e0.dur }), b: sao({ moi: { ...sao(goc), ease: 'smooth', win: [0, 1] }, dur: null }), tao: false }); ed.delete(id); lich[lich.length - 1].xoa = true; changed(); rerender(); }
     else if (a === 'undo') hoanTac();
     else if (a === 'redo') lamLai();
+    else if (a === 'chep') chep?.(b);
     else if (a === 'luu' && id && goc) {
       const e = lay(); e.text = $('textarea').value.trim(); e.img = chup?.() || ''; e.t = +curT().toFixed(3); changed();
       b.textContent = 'Đã lưu ✓'; setTimeout(() => { b.textContent = 'Lưu ghi chú'; }, 1200);

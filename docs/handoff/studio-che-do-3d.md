@@ -23,6 +23,9 @@
 - **🎥 Sửa camera:** `engine/che-do-3d-cam.js` (nút 🎥 Camera trong nhóm chế độ). Mỗi shot 1 chuyển động p,l,fov → p2,l2,fov2 + ease + `win` (đoạn chạy).
   Gốc lấy mẫu đầu/cuối shot (`mauCam` trong che-do-3d.js, cờ sampling). Đè camera bằng `stage.setCamera` trong drawSS/draw3d (chỉ khi bật 3D).
   `engine/shots.js` placeCamera hiểu `cam.win` (không có win = như cũ). Góp ý `ghiChu3d.cam[]` có `dong` dán thẳng shots.js. Kiểm: `node tools/kiem-cam-3d.mjs` 15/15.
+- **Sửa vật 17/11:** sửa = PHẦN LỆCH d (vị trí cộng, góc nhân, cỡ nhân) trên gốc base; vật có animation: thành phần director đặt lại → base mới
+  (vẫn chạy theo shot). Thẻ Asset có nhóm Nhân vật; ô số Vị trí/Xoay/Cỡ/Thế giới gõ được; 📋 Copy điều chỉnh (`engine/chep-gop-y.js`, cột + trình phát `#xchep`).
+  Bám camera chỉ thoát khi kéo/xoay/lăn thật. Kiểm: `node tools/kiem-sua-them.mjs` 8/8.
 - **Câu hỏi còn mở:** không
 <!-- /ĐIỂM DỪNG -->
 

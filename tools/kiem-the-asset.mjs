@@ -26,6 +26,8 @@ await p.evaluate(() => { const S = window.__che3d.sua, o = S.sel, tc = S.tc; tc.
 await p.waitForTimeout(200);
 const r3 = await p.evaluate(() => ({ cnt: document.getElementById('xncnt').textContent, send: !document.getElementById('xsend').disabled }));
 ok(/\+ 1 3D/.test(r3.cnt) && r3.send, `dời vật → ghi chú "${r3.cnt}", nút Gửi ${r3.send ? 'bật' : 'tắt'}`);
+const ch = await p.evaluate(async () => { const t = await window.__che3d.chepDieuChinh(document.getElementById('xchep')); return { t: t || '', nut: document.getElementById('xchep').textContent }; });
+ok(/✥ SỬA/.test(ch.t), `📋 Copy điều chỉnh trong trình phát: ${ch.nut}, ${ch.t.split(String.fromCharCode(10)).length} dòng`);
 await p.screenshot({ path: `${out}/3_trinh-phat.png` });
 await p.click('#xmss'); await p.waitForTimeout(800);
 const r4 = await p.evaluate(() => { const c = document.querySelector('.c3s-col'); return { col: !!c && c.classList.contains('c3s-ssflex'), mode: window.__che3d.sua.mode }; });

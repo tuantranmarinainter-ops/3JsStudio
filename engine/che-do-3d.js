@@ -15,6 +15,7 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { ganSua } from './che-do-3d-sua.js';
 import { ganCam } from './che-do-3d-cam.js';
+import { vanBanGopY, chepChu } from './chep-gop-y.js';
 import { SKIES } from './skies.js';
 import { VONG_BAO, NEN, vienState } from './vong-bao.js';
 
@@ -191,14 +192,14 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     try {
       B0.sua = ganSua({ THREE, stage, B: B0, redraw: () => redraw(), isOn: () => on,
         withView: (f) => { const ov = envOverride(); try { return f(); } finally { ov(); } },
-        shot: () => ({ id: shotCam.id, t: +curT.toFixed(3) }), viewCanvas: () => (ss ? ssCv : canvas), getProps,
+        shot: () => ({ id: shotCam.id, t: +curT.toFixed(3) }), viewCanvas: () => (ss ? ssCv : canvas), getProps, getActors, chep: (b) => chepDieuChinh(b),
         stopBam: () => stopBam(), camMode: (v) => B0.cam?.setBat(v), camKey: (e) => !!B0.cam?.phim(e) });
       B0.sua.onChange(() => { for (const f of listeners) f(on, ss); });
     } catch (e) { console.warn('[che-do-3d] sửa/ghim', e); }
     // 🎥 sửa camera của shot (thử): điểm đầu / cuối, zoom, trượt, đoạn chạy — engine/che-do-3d-cam.js
     try {
       B0.cam = ganCam({ THREE, stage, B: B0, isOn: () => on, getTl, curT: () => curT, mauCam, stopBam: () => stopBam(),
-        rerender: () => { const p = stage.renderAt(curT); return p; }, chup: () => B0.sua?.chup?.() || '' });
+        rerender: () => { const p = stage.renderAt(curT); return p; }, chup: () => B0.sua?.chup?.() || '', chep: (b) => chepDieuChinh(b) });
       B0.cam.onChange(() => { for (const f of listeners) f(on, ss); });
     } catch (e) { console.warn('[che-do-3d] sửa camera', e); }
     return B0;
@@ -569,6 +570,13 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     for (const f of listeners) f(false, false);
     return p || api;
   }
+  // 📋 Copy điều chỉnh: chép chữ (ghi chú Phim + 3D) để dán thẳng cho Claude
+  async function chepDieuChinh(nut) {
+    const txt = vanBanGopY({ g3: api.ghiChu3d(), notes: window.__gopY2d?.() || [], tieuDe: document.title, duongDan: location.pathname, fps: getTl()?.fps || 30 });
+    const ok = await chepChu(txt);
+    if (nut) { const t0 = nut.textContent; nut.textContent = ok ? 'Đã chép ✓' : 'Không chép được'; setTimeout(() => { nut.textContent = t0; }, 1400); }
+    return ok ? txt : null;
+  }
   // t hiện tại: lấy từ lần renderAt gần nhất (stage giữ lastT bên trong) — đọc qua lần vẽ kế tiếp; mặc định 0
   let _lastT = 0;
   const lastT = () => _lastT;
@@ -585,6 +593,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     get giuGoc() { return giuGoc; },
     get sua() { return built?.sua || null; },
     get cam() { return built?.cam || null; },
+    vanBan3d: () => vanBanGopY({ g3: api.ghiChu3d(), notes: window.__gopY2d?.() || [], tieuDe: document.title, duongDan: location.pathname, fps: getTl()?.fps || 30 }), chepDieuChinh,
     ghiChu3d: () => { const g = built?.sua?.xuat() || null, c = built?.cam?.xuat() || []; return g || c.length ? { ghim: [], vat: [], ...(g || {}), cam: c } : null; },
     get env() { return envChon; }, setEnv, envList,
     get bam() { return on && bam; },

@@ -27,6 +27,8 @@ const CSS = `
 .c3s-col button, .c3s-pin button { background: #1d2430; color: #e8ecf2; border: 1px solid #2a3342; border-radius: 6px; padding: 4px 8px; cursor: pointer; font: inherit; }
 .c3s-col button.on { border-color: #4da3ff; color: #4da3ff; } .c3s-col button.main, .c3s-pin button.main { background: #1f6fd1; border-color: #4da3ff; margin-top: 4px; }
 .c3s-col button:disabled { opacity: .45; cursor: default; }
+.c3s-col .o-so { width: 100%; border-collapse: collapse; margin: 6px 0 0; font-size: 11px; } .c3s-col .o-so th { color: #8b96a8; font-weight: 400; } .c3s-col .o-so td:first-child { color: #b8c2d0; padding-right: 4px; white-space: nowrap; }
+.c3s-col .o-so input { width: 100%; box-sizing: border-box; background: #0b0d12; color: #e8ecf2; border: 1px solid #2a3342; border-radius: 4px; padding: 2px 3px; font: 11px ui-monospace, Consolas, monospace; }
 .c3s-col textarea, .c3s-pin textarea { width: 100%; height: 64px; box-sizing: border-box; background: #0b0d12; color: #e8ecf2; border: 1px solid #2a3342; border-radius: 6px; font: 12px/1.4 system-ui, sans-serif; resize: vertical; }
 .c3s-pin { position: absolute; z-index: 6; width: 260px; background: rgba(14,17,22,.96); border: 1px solid #ff5a5a; border-radius: 8px; padding: 8px; color: #e8ecf2; font: 12px/1.4 system-ui, sans-serif; }
 .c3s-pin button { margin: 4px 4px 0 0; }
@@ -48,7 +50,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<
 const TANG_TEN = { back: 'Lớp sau (tường, sàn, cửa…)', mid: 'Lớp giữa (đồ gỗ…)', front: 'Lớp trước' };
 
 export function ganSua(ctx) {
-  const { THREE, stage, B, redraw, withView, shot, viewCanvas, isOn, getProps } = ctx;
+  const { THREE, stage, B, redraw, withView, shot, viewCanvas, isOn, getProps, getActors } = ctx;
   const { scene } = stage;
   const style = document.createElement('style'); style.textContent = CSS; document.head.appendChild(style);
   const LS = 'c3d-gop-y:' + location.pathname + ':' + (document.title || '');
@@ -74,11 +76,17 @@ export function ganSua(ctx) {
     <div class="hang"><label title="Dời theo bước 1 stud, xoay bước 15°, cỡ bước 0.1"><input type="checkbox" data-snap> Bám lưới</label></div>
     <div class="hang"><button data-a="len" title="Chọn lại cả asset (khi đang chọn một bộ phận)">⬆ Cả vật</button><button data-a="nhin" title="Đưa camera tới nhìn vật này">🎯 Nhìn</button><button data-a="trala" title="Trả vật về như cũ">↺ Trả lại</button><button data-a="bo" title="Bỏ chọn (Esc)">✕</button></div>
     <div class="hang"><button data-a="nhan" title="Nhân bản (Shift+D) — bản sao lệch 1 stud">⧉ Nhân bản</button><button data-a="xoa" title="Xoá vật (X / Delete)">🗑 Xoá</button><button data-a="an" title="Ẩn tạm để nhìn ra sau (H) — không ghi vào góp ý; Alt+H hiện lại">🙈 Ẩn</button></div>
+    <table class="o-so"><tr><th></th><th>x</th><th>y</th><th>z</th></tr>
+      <tr data-r="p"><td title="Vị trí cục bộ (trong nhóm cha)">Vị trí</td><td><input type="number" step="0.1"></td><td><input type="number" step="0.1"></td><td><input type="number" step="0.1"></td></tr>
+      <tr data-r="r"><td title="Góc xoay (độ)">Xoay°</td><td><input type="number" step="5"></td><td><input type="number" step="5"></td><td><input type="number" step="5"></td></tr>
+      <tr data-r="s"><td>Cỡ</td><td><input type="number" step="0.05"></td><td><input type="number" step="0.05"></td><td><input type="number" step="0.05"></td></tr>
+      <tr data-r="w"><td title="Vị trí trong thế giới">Thế giới</td><td><input type="number" step="0.1"></td><td><input type="number" step="0.1"></td><td><input type="number" step="0.1"></td></tr></table>
     <div class="so"></div>
     <textarea placeholder="Ghi chú cho vật này (vd: dời sát tường, to quá…)"></textarea>
     <button class="main" data-a="luu">Lưu ghi chú</button>
     <div class="muted" style="margin-top:8px">Bấm lại vào vật đang chọn = chọn một bộ phận của nó. Chỉ là thử: tắt 3D thì vật về chỗ cũ; số + ghi chú đi kèm file góp ý.</div></div>
     <div class="hang" style="margin-top:8px"><button data-a="undo" title="Hoàn tác (Ctrl+Z)" disabled>↶ Hoàn tác</button><button data-a="redo" title="Làm lại (Ctrl+Y)" disabled>↷ Làm lại</button></div>
+    <button class="main" data-a="chep" title="Chép mọi điều chỉnh (ghi chú, vật, ghim, camera) thành chữ — dán thẳng cho Claude, không cần xuất file">📋 Copy điều chỉnh</button>
     <div class="phim muted" style="font-size:11px;line-height:1.6"><b>Phím (như Blender)</b><br>G dời · R xoay · S cỡ<br>Ctrl+Z hoàn tác · Ctrl+Y làm lại<br>Ctrl+C chép · Ctrl+V dán · Shift+D nhân bản<br>X / Delete xoá · H ẩn · Alt+H hiện lại<br>Alt+G / Alt+R / Alt+S về vị trí / góc / cỡ cũ<br>F nhìn vật · Esc bỏ chọn<br>Bay khi đang chọn: <b>giữ chuột phải</b> + WASD</div>`;
   col.addEventListener('pointerdown', (e) => e.stopPropagation());
   const $c = (s) => col.querySelector(s);
@@ -102,13 +110,28 @@ export function ganSua(ctx) {
     else if (a === 'an' && sel) anVat(sel);
     else if (a === 'undo') hoanTac();
     else if (a === 'redo') lamLai();
+    else if (a === 'chep') ctx.chep?.(b);
     else if (a === 'luu' && sel) {
       const ed = ghiSua(sel); ed.text = $c('textarea').value.trim(); ed.img = chup(); ed.shotId = shot().id; ed.t = shot().t; changed();
       b.textContent = 'Đã lưu ✓'; setTimeout(() => { b.textContent = 'Lưu ghi chú'; }, 1200);
     }
   });
   col.addEventListener('change', (e) => { if (e.target.dataset.snap !== undefined) { snap = e.target.checked; applySnap(); e.target.blur(); } });
-  col.addEventListener('keydown', (e) => { if (e.target.tagName === 'TEXTAREA') e.stopPropagation(); });
+  col.addEventListener('keydown', (e) => { if (/TEXTAREA|INPUT/.test(e.target.tagName) && e.target.type !== 'checkbox') { e.stopPropagation(); if (e.key === 'Enter' && e.target.tagName === 'INPUT') e.target.blur(); } });
+  // gõ số vị trí / xoay / cỡ / thế giới → đổi vật (có Ctrl+Z, đúng cả vật có animation vì lưu phần lệch)
+  col.addEventListener('change', (e) => {
+    const tr = e.target.closest('.o-so tr[data-r]'); if (!tr || !sel) return;
+    const v = [...tr.querySelectorAll('input')].map((x) => +x.value); if (v.some((x) => !Number.isFinite(x))) return showInfo();
+    const ed = moiSua(sel), a = cloneT(ed.d), r = tr.dataset.r;
+    if (r === 'p') sel.position.set(...v);
+    else if (r === 'r') sel.quaternion.setFromEuler(new THREE.Euler(...v.map((d) => d * Math.PI / 180)));
+    else if (r === 's') sel.scale.set(...v.map((x) => (Math.abs(x) < 1e-4 ? 1e-4 : x)));
+    else if (r === 'w') { sel.parent.updateMatrixWorld(true); sel.position.copy(sel.parent.worldToLocal(new THREE.Vector3(...v))); }
+    sel.updateMatrixWorld(true);
+    const b = cloneT(dongBo(sel).d);
+    if (!giong(a, b)) { ghiLich({ k: 'tf', o: sel, a, b }); ed.shotId = shot().id; ed.t = shot().t; }
+    showInfo(); changed(); if (isOn()) redraw();
+  });
 
   // ---- tay kéo ----
   const tc = new TransformControls(B.free, B.el);
@@ -117,11 +140,11 @@ export function ganSua(ctx) {
   tc.addEventListener('dragging-changed', (e) => { B.controls.enabled = !e.value; });
   tc.addEventListener('change', () => { if (isOn()) redraw(); });
   let keoA = null;
-  tc.addEventListener('mouseDown', () => { if (!sel) return; if (!edits.has(sel)) edits.set(sel, { path: pathOf(sel), ten: tenOf(sel), orig: tf(sel), text: '' }); keoA = tf(sel); });
+  tc.addEventListener('mouseDown', () => { if (!sel) return; keoA = cloneT(moiSua(sel).d); });
   tc.addEventListener('objectChange', () => { if (sel) { ghiSua(sel); showInfo(); } });
   tc.addEventListener('mouseUp', () => {
     if (!sel || !edits.has(sel)) return;
-    const e = edits.get(sel), b = tf(sel);
+    const e = dongBo(sel), b = cloneT(e.d);
     if (keoA && !giong(keoA, b)) ghiLich({ k: 'tf', o: sel, a: keoA, b }); keoA = null;
     e.img = chup(); e.shotId = shot().id; e.t = shot().t; changed();
   });
@@ -148,7 +171,8 @@ export function ganSua(ctx) {
   let assetCache = { env: null, list: [], set: new Set() };
   function assets() {
     const env = curEnv();
-    if (assetCache.env === env && assetCache.list.length) return assetCache;
+    const sid = shot().id;   // đạo cụ / nhân vật hiện theo shot → làm lại danh sách khi đổi shot
+    if (assetCache.env === env && assetCache.sid === sid && assetCache.list.length) return assetCache;
     const list = [], set = new Set();
     const visit = (o, lop) => {
       for (const c of o.children) {
@@ -165,7 +189,13 @@ export function ganSua(ctx) {
       let vis = true; for (let x = p; x; x = x.parent) if (!x.visible) { vis = false; break; }
       if (vis && meshCount(p)) { list.push({ obj: p, ten, lop: 'Đạo cụ của tập', n: meshCount(p) }); set.add(p); }
     }
-    assetCache = { env, list, set };
+    for (const [ten, a] of Object.entries(getActors?.() || {})) {   // nhân vật (đồ cầm tay nằm trong nhân vật: bấm lại = đi sâu từng bộ phận)
+      const r = a?.root?.isObject3D ? a.root : a?.isObject3D ? a : null;
+      if (!r || set.has(r)) continue;
+      let vis = true; for (let x = r; x; x = x.parent) if (!x.visible) { vis = false; break; }
+      if (vis && meshCount(r)) { list.push({ obj: r, ten, lop: 'Nhân vật', n: meshCount(r) }); set.add(r); }
+    }
+    assetCache = { env, sid, list, set };
     return assetCache;
   }
   const tenOf = (o) => { if (o.name) return o.name; let n = ''; o.traverse((x) => { if (!n && x.name) n = x.name; }); return n || '(không tên)'; };
@@ -197,8 +227,9 @@ export function ganSua(ctx) {
   // bấm → asset chứa chỗ bấm; bấm lại trong asset đang chọn → đi sâu một tầng về phía mesh trúng
   function chonTu(mesh) {
     const A = assetOf(mesh);
-    if (!A) { let x = mesh; while (x.parent && x.parent !== scene && !x.parent.name?.startsWith('env_')) x = x.parent; return chon(x); }
-    if (sel && (sel === A || A === selAsset) && sel !== mesh) {
+    if (!A) { let x = mesh; while (x.parent && x.parent !== scene && !x.parent.name?.startsWith('env_')) x = x.parent; return chon(x); }   // (sau nhánh đi sâu ở trên)
+    const trong = (o, m) => { for (let x = m; x; x = x.parent) if (x === o) return true; return false; };
+    if (sel && sel !== mesh && (sel === A || A === selAsset || trong(sel, mesh))) {
       const chain = []; for (let x = mesh; x && x !== sel; x = x.parent) chain.unshift(x);
       if (chain.length && chain[0].parent === sel) return chon(chain[0], A);
     }
@@ -221,18 +252,30 @@ export function ganSua(ctx) {
   }
   const pathOf = (o) => { const a = []; for (let x = o; x && x !== scene; x = x.parent) a.unshift(x.name || `#${x.parent ? x.parent.children.indexOf(x) : 0}`); return a.join('/'); };
   const tf = (o) => ({ p: o.position.clone(), q: o.quaternion.clone(), s: o.scale.clone() });
-  function ghiSua(o) {
+  // SỬA = PHẦN LỆCH so với tư thế gốc của khung (d): vị trí cộng thêm, góc nhân thêm (cục bộ), cỡ nhân thêm.
+  // Vật có animation (diễn viên, đạo cụ director đặt mỗi khung): mỗi lần vẽ lấy tư thế director vừa đặt làm gốc (base) rồi áp d
+  // → vẫn chạy theo các shot trước / sau, chỉ lệch thêm đúng phần đã sửa. Vật tĩnh: base = lúc chưa sửa.
+  const cloneT = (t) => ({ p: t.p.clone(), q: t.q.clone(), s: t.s.clone() });
+  const ID = () => ({ p: new THREE.Vector3(), q: new THREE.Quaternion(), s: new THREE.Vector3(1, 1, 1) });
+  const lechOf = (a, b) => ({ p: b.p.clone().sub(a.p), q: a.q.clone().invert().multiply(b.q), s: b.s.clone().divide(new THREE.Vector3(a.s.x || 1, a.s.y || 1, a.s.z || 1)) });
+  const hop = (b, d) => ({ p: b.p.clone().add(d.p), q: b.q.clone().multiply(d.q), s: b.s.clone().multiply(d.s) });
+  const datO = (o, t) => { o.position.copy(t.p); o.quaternion.copy(t.q); o.scale.copy(t.s); o.updateMatrixWorld(true); };
+  function moiSua(o) {
     let ed = edits.get(o);
-    if (!ed) { ed = { path: pathOf(o), ten: tenOf(o), orig: tf(o), text: '' }; edits.set(o, ed); }
-    ed.now = tf(o); return ed;
+    if (!ed) { const t = tf(o); ed = { path: pathOf(o), ten: tenOf(o), orig: t, base: cloneT(t), last: cloneT(t), d: ID(), now: cloneT(t), text: '' }; edits.set(o, ed); }
+    if (!ed.base) ed.base = cloneT(ed.orig || tf(o));
+    if (!ed.d) ed.d = ID();
+    return ed;
   }
+  function dongBo(o) { const ed = moiSua(o); ed.now = tf(o); ed.d = lechOf(ed.base, ed.now); ed.last = cloneT(ed.now); return ed; }   // sau khi người dùng đổi vật
+  function ghiSua(o) { return dongBo(o); }
   function traVat(o) {
     const ed = o && edits.get(o); if (!ed || ed.banSao) return;
-    const a = tf(o);
-    if (ed.orig) { o.position.copy(ed.orig.p); o.quaternion.copy(ed.orig.q); o.scale.copy(ed.orig.s); }
-    if (!giong(a, tf(o))) ghiLich({ k: 'tf', o, a, b: tf(o) });
+    moiSua(o); const a = cloneT(ed.d);
+    datO(o, ed.base); dongBo(o);
+    if (!giong(a, ed.d)) ghiLich({ k: 'tf', o, a, b: cloneT(ed.d) });
     if (ed.xoa) { ed.xoa = false; o.visible = ed.vis0 ?? true; }
-    ed.now = tf(o); if (o === sel) showInfo(); changed(); if (isOn()) redraw();
+    if (o === sel) showInfo(); changed(); if (isOn()) redraw();
   }
 
   // ---- LỊCH SỬ (Ctrl+Z / Ctrl+Y): tf = đổi vị trí/góc/cỡ, xoa, them (bản sao), an, hien, ghim+ / ghim- ----
@@ -240,7 +283,7 @@ export function ganSua(ctx) {
   const lich = [], lai = [];
   function ghiLich(x) { lich.push(x); if (lich.length > 200) lich.shift(); lai.length = 0; nutLich(); }
   function nutLich() { const u = $c('button[data-a=undo]'), r = $c('button[data-a=redo]'); if (u) u.disabled = !lich.length; if (r) r.disabled = !lai.length; }
-  function datTf(o, t) { o.position.copy(t.p); o.quaternion.copy(t.q); o.scale.copy(t.s); o.updateMatrixWorld(true); const ed = edits.get(o) || ghiSua(o); ed.now = tf(o); }
+  function datTf(o, d) { const ed = moiSua(o); datO(o, hop(ed.base, d)); dongBo(o); }   // lịch sử tf lưu PHẦN LỆCH d (đúng cả với vật có animation)
   function chay(x, nguoc) {
     if (x.k === 'tf') datTf(x.o, nguoc ? x.a : x.b);
     else if (x.k === 'xoa') { const ed = edits.get(x.o); if (ed) { ed.xoa = nguoc ? !x.v : x.v; x.o.visible = ed.xoa ? false : (ed.vis0 ?? true); } if (ed?.xoa && sel === x.o) chon(null); }
@@ -263,7 +306,7 @@ export function ganSua(ctx) {
     par.add(o);
     if (lech) o.position.x += 1;   // lệch 1 stud cho thấy rõ bản sao
     o.updateMatrixWorld(true);
-    edits.set(o, { path: pathOf(o), ten: o.name, orig: tf(o), now: tf(o), banSao: pathOf(src), text: '', shotId: shot().id, t: shot().t });
+    edits.set(o, { path: pathOf(o), ten: o.name, orig: tf(o), base: tf(o), last: tf(o), d: ID(), now: tf(o), banSao: pathOf(src), text: '', shotId: shot().id, t: shot().t });
     assetCache.list = [];
     ghiLich({ k: 'them', o, par });
     chon(o, o); edits.get(o).img = chup(); changed();
@@ -279,10 +322,10 @@ export function ganSua(ctx) {
   function hienHet() { if (!anTam.size) return; const ds = [...anTam]; for (const [o, v] of ds) o.visible = v; anTam.clear(); ghiLich({ k: 'hien', ds }); if (isOn()) redraw(); }
   function veCu(o, phan) {   // Alt+G / Alt+R / Alt+S: về vị trí / góc / cỡ lúc chưa sửa
     const ed = edits.get(o); if (!ed?.orig) return;
-    const a = tf(o);
-    if (phan === 'p') o.position.copy(ed.orig.p); else if (phan === 'q') o.quaternion.copy(ed.orig.q); else o.scale.copy(ed.orig.s);
-    const b = tf(o); if (giong(a, b)) return;
-    ghiLich({ k: 'tf', o, a, b }); ed.now = b; showInfo(); changed(); if (isOn()) redraw();
+    moiSua(o); const a = cloneT(ed.d);
+    if (phan === 'p') o.position.copy(ed.base.p); else if (phan === 'q') o.quaternion.copy(ed.base.q); else o.scale.copy(ed.base.s);
+    dongBo(o); const b = cloneT(ed.d); if (giong(a, b)) return;
+    ghiLich({ k: 'tf', o, a, b }); showInfo(); changed(); if (isOn()) redraw();
   }
   function showInfo() {
     if (!sel) return;
@@ -291,8 +334,10 @@ export function ganSua(ctx) {
     $c('.ten').textContent = tenOf(sel) + (sel !== selAsset ? '  (bộ phận)' : '');
     $c('.duong').textContent = pathOf(sel);
     $c('button[data-a=len]').disabled = sel === selAsset;
-    let s = `vị trí   ${fmt(sel.position.toArray()).join(', ')}\nxoay°    ${deg(e).join(', ')}\ncỡ       ${fmt(sel.scale.toArray(), 3).join(', ')}\nthế giới ${fmt(w.toArray()).join(', ')}`;
-    if (ed?.orig) { const d = sel.position.clone().sub(ed.orig.p); s += `\nđã dời   ${fmt(d.toArray()).join(', ')}`; }
+    const ae = document.activeElement, dien = (r, a) => { const ip = col.querySelectorAll(`.o-so tr[data-r=${r}] input`); a.forEach((x, i) => { if (ip[i] && ip[i] !== ae) ip[i].value = x; }); };
+    dien('p', fmt(sel.position.toArray())); dien('r', deg(e)); dien('s', fmt(sel.scale.toArray(), 3)); dien('w', fmt(w.toArray()));
+    let s = '';
+    if (ed?.d) { const de = new THREE.Euler().setFromQuaternion(ed.d.q); s = `đã dời   ${fmt(ed.d.p.toArray()).join(', ')}\nđã xoay° ${deg(de).join(', ')}\ncỡ ×     ${fmt(ed.d.s.toArray(), 3).join(', ')}`; if (ed.hoatHinh) s += '\n(vật có animation: lệch thêm, vẫn chạy theo shot)'; }
     $c('.so').textContent = s;
   }
 
@@ -412,6 +457,7 @@ export function ganSua(ctx) {
   function luu() {
     try { localStorage.setItem(LS, JSON.stringify(xuat(true))); } catch (e) { try { localStorage.setItem(LS, JSON.stringify(xuat(false))); } catch (e2) {} }
   }
+  let sidVe = null;
   let choApDung = [];   // vật sửa từ lần mở trước: tìm lại theo đường dẫn khi cảnh đã có
   try {
     const d = JSON.parse(localStorage.getItem(LS) || 'null');
@@ -427,14 +473,15 @@ export function ganSua(ctx) {
     for (const [o, ed] of edits) {
       if (!ed.orig || ed.bo) continue;
       if (!ed.now && !ed.xoa) continue;
-      if (!ed.xoa && !ed.banSao && !ed.text && giong(ed.orig, ed.now)) continue;   // đã trả lại / chưa đổi gì
-      const now = ed.now || ed.orig, eo = new THREE.Euler().setFromQuaternion(ed.orig.q), en = new THREE.Euler().setFromQuaternion(now.q);
+      const now = ed.d ? hop(ed.orig, ed.d) : ed.now || ed.orig;   // "sau" = tư thế lúc sửa + phần lệch (không trôi theo khung đang xem)
+      if (!ed.xoa && !ed.banSao && !ed.text && giong(ed.orig, now)) continue;   // đã trả lại / chưa đổi gì
+      const eo = new THREE.Euler().setFromQuaternion(ed.orig.q), en = new THREE.Euler().setFromQuaternion(now.q);
       const wo = new THREE.Vector3(), wn = new THREE.Vector3(), keep = tf(o);
       o.position.copy(now.p); o.quaternion.copy(now.q); o.scale.copy(now.s); o.updateMatrixWorld(true); o.getWorldPosition(wn);
       o.position.copy(ed.orig.p); o.updateMatrixWorld(true); o.getWorldPosition(wo);
       o.position.copy(keep.p); o.quaternion.copy(keep.q); o.scale.copy(keep.s); o.updateMatrixWorld(true);
       const A = assetOf(o);
-      vat.push({ loai: ed.banSao ? 'banSao' : ed.xoa ? 'xoa' : 'sua', nguon: ed.banSao || null, path: ed.path, ten: ed.ten, asset: A && A !== o ? pathOf(A) : null, text: ed.text || '', shotId: ed.shotId || null, t: ed.t ?? null,
+      vat.push({ hoatHinh: !!ed.hoatHinh, loai: ed.banSao ? 'banSao' : ed.xoa ? 'xoa' : 'sua', nguon: ed.banSao || null, path: ed.path, ten: ed.ten, asset: A && A !== o ? pathOf(A) : null, text: ed.text || '', shotId: ed.shotId || null, t: ed.t ?? null,
         truoc: { pos: fmt(arr(ed.orig.p), 3), rotDeg: deg(eo), scale: fmt(arr(ed.orig.s), 3) },
         sau: { pos: fmt(arr(now.p), 3), rotDeg: deg(en), scale: fmt(arr(now.s), 3) },
         lech: { pos: fmt(arr(now.p.clone().sub(ed.orig.p)), 3), rotDeg: deg(en).map((v, i) => +(v - deg(eo)[i]).toFixed(1)), scaleNhan: fmt(arr(now.s.clone().divide(ed.orig.s)), 3) },
@@ -453,23 +500,36 @@ export function ganSua(ctx) {
             o = src.clone(true); o.name = v.path.split('/').pop(); src.parent.add(o); assetCache.list = [];
           }
           if (!o) return true;
-          edits.set(o, { path: v.path, ten: v.ten, text: v.text, shotId: v.shotId, t: v.t, img: v.img, orig: fromRec(v.truoc), now: fromRec(v.sau), banSao: v.loai === 'banSao' ? v.nguon : undefined, xoa: v.loai === 'xoa', vis0: true });
+          edits.set(o, { path: v.path, ten: v.ten, text: v.text, shotId: v.shotId, t: v.t, img: v.img, orig: fromRec(v.truoc), now: fromRec(v.sau), d: lechOf(fromRec(v.truoc), fromRec(v.sau)), last: null, banSao: v.loai === 'banSao' ? v.nguon : undefined, xoa: v.loai === 'xoa', vis0: true });
           return false;
         });
       }
       for (const [o, ed] of edits) {
         if (ed.bo) continue;
         if (ed.banSao && !o.parent && ed.par) ed.par.add(o);
-        if (ed.now && !(tc.dragging && o === sel)) { o.position.copy(ed.now.p); o.quaternion.copy(ed.now.q); o.scale.copy(ed.now.s); }
+        if (!ed.d && ed.orig && ed.now) ed.d = lechOf(ed.orig, ed.now);
+        if (ed.d && !(tc.dragging && o === sel)) {
+          const cur = tf(o), L = ed.last;
+          if (!ed.base) ed.base = cloneT(cur);
+          if (!L) ed.base = cloneT(cur);   // khôi phục từ lần mở trước: gốc = tư thế hiện tại
+          else {   // thành phần nào director vừa đặt lại (khác lần áp trước) → lấy làm gốc mới
+            if (cur.p.distanceToSquared(L.p) > 1e-10) { ed.base.p.copy(cur.p); ed.hoatHinh = true; }
+            if (Math.abs(cur.q.dot(L.q)) < 1 - 1e-10) { ed.base.q.copy(cur.q); ed.hoatHinh = true; }
+            if (cur.s.distanceToSquared(L.s) > 1e-10) { ed.base.s.copy(cur.s); ed.hoatHinh = true; }
+          }
+          const n = hop(ed.base, ed.d); datO(o, n); ed.last = cloneT(n); ed.now = cloneT(n);
+        }
         if (ed.xoa) o.visible = false;
       }
       for (const o of anTam.keys()) o.visible = false;
+      const sid = shot().id; if (sid !== sidVe) { sidVe = sid; setTimeout(veAsset, 0); }   // đổi shot → danh sách asset (nhân vật / đạo cụ hiện) làm lại
+      if (sel && mode === 'sua') showInfo();
     },
     traLai() {   // tắt 3D: mọi vật về như cũ (khung Phim / Xuất MP4 không dính phần thử); cột sửa vật đóng
       panel?.remove(); panel = null;
       for (const [o, ed] of edits) {
         if (ed.banSao) { if (o.parent) { ed.par = o.parent; o.removeFromParent(); } continue; }   // bản sao rời cảnh; bật 3D lại thì thêm lại
-        if (ed.orig) { o.position.copy(ed.orig.p); o.quaternion.copy(ed.orig.q); o.scale.copy(ed.orig.s); }
+        if (ed.base || ed.orig) datO(o, ed.base || ed.orig);   // vật có animation: về tư thế director của khung này
         if (ed.xoa) o.visible = ed.vis0 ?? true;
       }
       for (const [o, v] of anTam) o.visible = v;

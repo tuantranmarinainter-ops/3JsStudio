@@ -262,6 +262,7 @@ async function init() {
         </div>
         <div class="pane" id="xp4">
           <div class="row"><button class="main" id="xsendc" style="flex:2">➤ Gửi tới Claude</button><button id="xsend" style="flex:1" title="Tải file góp ý .json về máy">⬇ Xuất file</button></div>
+          <div class="row"><button id="xchep" style="flex:1" title="Chép mọi điều chỉnh (ghi chú + 3D: vật, ghim, camera) thành chữ — dán thẳng cho Claude, không cần xuất file">📋 Copy điều chỉnh</button></div>
           <div class="muted" id="xclst" style="margin:-3px 0 4px">Đang dò máy nhận…</div>
           <div class="muted" id="xsendst" style="margin-bottom:10px;white-space:pre-line"></div>
           <h4>Marker và ghi chú (<span id="xncnt">0</span>) — bấm <kbd>M</kbd> để thêm</h4>
@@ -677,6 +678,15 @@ async function init() {
     return { ghim: g.ghim.map(fr), vat: g.vat.map(fr), cam: (g.cam || []).map(fr) };
   }
   function n3d() { const g = ghi3d(); return g ? g.ghim.length + g.vat.length + g.cam.length : 0; }
+  // 📋 Copy điều chỉnh: ghi chú Phim + góp ý 3D thành chữ (engine/chep-gop-y.js qua __che3d); không có 3D thì chép ghi chú
+  window.__gopY2d = () => notes.map((n) => ({ shotId: n.shotId, t: n.t, frame: n.frame, scope: n.scope, text: n.text, img: !!n.img }));
+  $('xchep').onclick = async () => {
+    const b = $('xchep');
+    if (window.__che3d?.chepDieuChinh) return window.__che3d.chepDieuChinh(b);
+    const txt = [`GÓP Ý — ${title}`, ...notes.map((n, i) => `${i + 1}. shot ${n.shotId || '?'} · frame ${n.frame}: ${n.text || '(chưa ghi chữ)'}`)].join(String.fromCharCode(10));
+    try { await navigator.clipboard.writeText(txt); b.textContent = 'Đã chép ✓'; } catch (e) { b.textContent = 'Không chép được'; }
+    setTimeout(() => { b.textContent = '📋 Copy điều chỉnh'; }, 1400);
+  };
   const feedbackData = () => ({ app: 'gop-y', version: 2, episode: epId, title, fps: FPS, duration: DUR, created: new Date().toISOString(), notes, ghiChu3d: ghi3d() });
   const stFile = (s) => { $('xsendst').textContent = s; };
   // Xuất file: lưu .json (hộp lưu của Chrome/Edge, hoặc tải xuống) để bỏ vào feedback\ cho tools/feedback.mjs
