@@ -1,6 +1,7 @@
 # ep6B → phim chạy trong Roblox Studio — handoff
 
 ## ĐIỂM DỪNG
+- **ĐANG CHỜ NGƯỜI DÙNG (17/11, vòng 2):** kéo 16 file `output/roblox-phim/nhan-vat/nvNN_<vai>.glb` vào Studio (Import 3D, Rig: không rig, giữ tên model nvNN_<vai>, đặt trong workspace). Xong → bật Play/chụp: bộ phát tự lái MeshPart (công tắc `NhanVatGoc`). Sau đó: BẢNG DUYỆT NHÂN VẬT (`output/roblox-phim/duyet-nhan-vat/`) → chờ duyệt → mới tới vật liệu/gương/quay lại. Đã sửa: tên mảnh trùng giữa các vai (nguyên nhân đầu Gà xanh ở bản quay trước). Commit 56796b4.
 - **Cập nhật:** 2026-11-17 (phiên con "roblox-phim làm thử") — DỪNG theo luật 3 lần, chờ người dùng duyệt / quyết hướng
 - **Đã xong:** đoạn thử 19,9 s = 15 shot phòng Gà s017–s022 + s024–s032 (bỏ s023, không thuộc phòng) phát được trong Studio (Play): R6 Gà + gấu Bắp + 33 đạo cụ dựng bằng Part, camera Scriptable, mặt AltiWyre (decal), phụ đề + chữ nổi (ScreenGui), ánh sáng ngày/đêm. Place đã lưu.
 - **Bằng số (đạt):** 45 khung (đầu/giữa/cuối × 15 shot), 504 điểm (camera vị trí + điểm nhìn + fov, tâm đầu/thân/2 tay/2 chân Gà và Bắp) → lệch lớn nhất **0,0014 stud**. Shot gương s027/s029/s030 (camera ảo phản chiếu): phản chiếu ngược ↔ camera phim lệch 0,0009 stud.
