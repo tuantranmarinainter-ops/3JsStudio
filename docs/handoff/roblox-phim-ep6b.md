@@ -1,8 +1,9 @@
 # ep6B → phim chạy trong Roblox Studio — handoff
 
 ## ĐIỂM DỪNG
-- **ĐANG CHỜ NGƯỜI DÙNG (17/11, vòng 4):** (1) duyệt bảng `output/roblox-phim/duyet-nhan-vat/bang-rb-1.jpg`, `bang-rb-2.jpg` — 11 vai thay bằng model Roblox `Tap3_NhomA.NhanVat` (công tắc `NhanVatRoblox`, `MatPhim`, `TuTheRig`); (2) thu bảng dock dưới khung nhìn Studio (khung nhìn đang 1569×546) để quay roblox.mp4 + so-sanh.mp4.
-- **Bảng vai → model (người dùng chốt):** bach, bachF→bach; kid2→be_vang; baker→banh; tailor→may; folk1/2/3→dan_01 (rig đầu trong gói Civilians)/dan_14/dan_15; mayorD→mayor; guardA/B→linh. Gà = .glb cũ (người dùng chốt); thị trưởng ngủ = .glb chờ model (phiên điều phối: dựng được từ mayor + pyjama asset 123126413388497, chưa làm); 3 gấu = .glb phim (bảng bang-3.jpg).
+- **ĐANG CHỜ NGƯỜI DÙNG (17/11, vòng 5):** (1) duyệt `output/roblox-phim/duyet-nhan-vat/bang-rb-3.jpg` (Gà R6 Roblox + thị trưởng ngủ; cột Phim | .glb cũ | Roblox) và `bang-rb-1/2.jpg` (11 vai); (2) thu bảng dock dưới khung nhìn Studio (đang 1569×546) để quay roblox.mp4 + so-sanh.mp4.
+- **Bảng vai → model (người dùng chốt):** bach, bachF→bach; kid2→be_vang; baker→banh; tailor→may; folk1/2/3→dan_01 (rig đầu trong gói Civilians)/dan_14/dan_15; mayorD→mayor; guardA/B→linh; mayorN→`mayor_ngu_rb_1` (bản sao mayor + Shirt/Pants pyjama của asset 123126413388497, công tắc `ThiTruongNguRoblox` bật); Gà→`ga_rb_1` (bản sao bach bỏ áo/tóc, màu `ga:` r6-looks, băng đỏ + mào là Part, KHÔNG tải ảnh lên; công tắc `GaRoblox` TẮT = .glb cũ cho tới khi duyệt); 3 gấu = .glb phim (bang-3.jpg).
+- **Không dùng ShowWindow khi đưa Studio lên trước** (bỏ phóng to → khung nhìn 296×321); dùng keybd_event Alt + SetForegroundWindow.
 - **Cách lái rig Roblox (`M.rbBuild`/`M.rbPose` trong `tools/roblox-phim.lua`):** bộ phận R6 = node phim · D (D = khớp R6 chuẩn, |D| ≤ 0,14 stud); phụ kiện theo bộ phận gần nhất; mặt = decal mặt phim. Model Tap3 + nvNN_* đặt ModelStreamingMode Persistent (Play có StreamingEnabled).
 - **Bằng số (đạt):** 66 bộ phận rig + 119 node .glb khớp node phim (tâm 0,0000 stud); đoạn thử 354 điểm × 45 khung lệch ≤ 0,0014 stud.
 - **Đang chạy nền:** `node tools/roblox-phim.mjs phuc-vu` (cổng 8766).

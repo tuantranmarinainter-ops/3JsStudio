@@ -1,7 +1,7 @@
 -- tools/roblox-phim.lua — BỘ PHÁT phim trong Roblox Studio (ModuleScript ReplicatedStorage.PhimEp6B.PhatPhim).
 -- Dữ liệu: ModuleScript "phim" (mục lục, bảng mảnh, phụ đề, mặt) + một ModuleScript mỗi shot (khung 30 fps), do tools/roblox-phim-nap.lua nạp
 -- từ `node tools/roblox-phim.mjs xuat …`. Mỗi khung là HÀM THUẦN của t (giây phim): apply(t) đặt CFrame/cỡ mọi mảnh + camera + mặt + phụ đề.
--- Công tắc (thuộc tính của workspace.PhimEp6B): NhanVatGoc, NhanVatRoblox, MatPhim, MauGoc, XoayNhap, GauMau, TuongMotMat, Chay, BatDau (giây phim), Lap, PhuDe, ChuNoi, Mat, GuongAo, AnhSang. Xem docs/handoff/roblox-phim-ep6b.md.
+-- Công tắc (thuộc tính của workspace.PhimEp6B): NhanVatGoc, NhanVatRoblox, ThiTruongNguRoblox, GaRoblox, MatPhim, MauGoc, XoayNhap, GauMau, TuongMotMat, Chay, BatDau (giây phim), Lap, PhuDe, ChuNoi, Mat, GuongAo, AnhSang. Xem docs/handoff/roblox-phim-ep6b.md.
 local HttpService = game:GetService("HttpService")
 local RS = game:GetService("ReplicatedStorage")
 local M = {}
@@ -31,7 +31,7 @@ end
 function M.config()
   cfg = workspace:FindFirstChild("PhimEp6B")
   if not cfg then cfg = Instance.new("Configuration"); cfg.Name = "PhimEp6B"; cfg.Parent = workspace end
-  local D = { NhanVatGoc = true, TuongMotMat = true, Chay = true, BatDau = MAN.shots[1].t0, Lap = true, PhuDe = true, ChuNoi = true, Mat = true, GuongAo = true, AnhSang = true, MauGoc = true, XoayNhap = true, GauMau = false, NhanVatRoblox = true, MatPhim = true }
+  local D = { NhanVatGoc = true, TuongMotMat = true, Chay = true, BatDau = MAN.shots[1].t0, Lap = true, PhuDe = true, ChuNoi = true, Mat = true, GuongAo = true, AnhSang = true, MauGoc = true, XoayNhap = true, GauMau = false, NhanVatRoblox = true, MatPhim = true, ThiTruongNguRoblox = true, GaRoblox = false }
   for k, v in pairs(D) do if cfg:GetAttribute(k) == nil then cfg:SetAttribute(k, v) end end
   return cfg
 end
@@ -72,7 +72,11 @@ end
 local MESH, BEAR, NV = {}, {}, nil
 local RB = {}
 local RBMAP = { nv02_bach = "bach", nv09_bachF = "bach", nv03_kid2 = "be_vang", nv04_baker = "banh", nv05_tailor = "may",
-  nv06_folk1 = "dan_01", nv07_folk2 = "dan_14", nv08_folk3 = "dan_15", nv11_mayorD = "mayor", nv12_guardA = "linh", nv13_guardB = "linh" }
+  nv06_folk1 = "dan_01", nv07_folk2 = "dan_14", nv08_folk3 = "dan_15", nv11_mayorD = "mayor", nv12_guardA = "linh", nv13_guardB = "linh",
+  nv10_mayorN = "mayor_ngu_rb", nv00_ga = "ga_rb" }
+-- vai có công tắc riêng (tắt = dùng .glb xuất từ phim): thị trưởng ngủ = mayor + pyjama (mặc định bật); Gà R6 vàng tự dựng (mặc định TẮT, chờ duyệt)
+local RBTAT = { nv10_mayorN = { "ThiTruongNguRoblox", true }, nv00_ga = { "GaRoblox", false } }
+local function rbOn(vai) local t = RBTAT[vai]; return RBMAP[vai] ~= nil and attr("NhanVatRoblox", true) and (not t or attr(t[1], t[2])) end
 local LIMB = { Torso = "0_0_0_0", Head = "0_0_0_1_0", ["Left Arm"] = "0_0_0_2_0", ["Right Arm"] = "0_0_0_3_0", ["Left Leg"] = "0_0_1_0", ["Right Leg"] = "0_0_2_0" }
 local GAU = { nv01_bap = "#2a3fb0", nv14_bearR = "#c0302a", nv15_bearY = "#e8b830" }
 -- 3D Importer (đo 17/11 trên 13 vai): NƯỚNG xoay nghỉ Q của node vào lưới (MeshSize = hộp lưới đã xoay) và đặt MeshPart thẳng trục model, quay 180° quanh trục đứng
@@ -125,7 +129,7 @@ function M.goc()
   local n = 0
   for _, m in ipairs(workspace:GetChildren()) do
     local vai = m:IsA("Model") and m.Name:match("^(nv%d%d_%w+)$")
-    if vai and not (GAU[vai] and attr("GauMau", false)) and not (RBMAP[vai] and attr("NhanVatRoblox", true)) then   -- gấu: mặc định dùng .glb xuất từ phim như mọi vai (người dùng chốt 17/11); GauMau = bản nhân bản model gấu có sẵn
+    if vai and not (GAU[vai] and attr("GauMau", false)) and not rbOn(vai) then   -- gấu: mặc định dùng .glb xuất từ phim như mọi vai (người dùng chốt 17/11); GauMau = bản nhân bản model gấu có sẵn
       for _, nd in ipairs(m:GetDescendants()) do
         local key = nd:IsA("Model") and nd.Name:match("^(.+)_Node$")
         local id = key and idOf[key]; local info = key and NV[key]
@@ -175,17 +179,18 @@ end
 -- ===== NHÂN VẬT ROBLOX (17/11, người dùng chốt): vai phim → model R6 trong workspace.Tap3_NhomA.NhanVat =====
 -- Mỗi khung: Torso/Head/tay/chân đặt theo node bộ phận tương ứng của phim (L = N_phim · D, D tính lúc nghỉ sao cho thân trùng thân,
 -- các khớp giữ đúng tư thế nghỉ của rig Roblox); phụ kiện (tóc, mũ, kính…) đi theo bộ phận gần nhất. Mặt: decal mặt phim (MatPhim).
--- Gà, thị trưởng ngủ, 3 gấu: giữ .glb (chờ model). Công tắc NhanVatRoblox (tắt = quay về .glb).
+-- 3 gấu: giữ .glb. Thị trưởng ngủ (ThiTruongNguRoblox, bật) và Gà (GaRoblox, tắt) có công tắc riêng. Công tắc NhanVatRoblox (tắt = mọi vai quay về .glb).
 local RPI = CFrame.Angles(0, math.pi, 0)
 local R6STD = { Torso = CFrame.identity, Head = CFrame.new(0, 1.5, 0), ["Left Arm"] = CFrame.new(-1.5, 0, 0), ["Right Arm"] = CFrame.new(1.5, 0, 0), ["Left Leg"] = CFrame.new(-0.5, -2, 0), ["Right Leg"] = CFrame.new(0.5, -2, 0) }
 M.RB = RB; M.RBMAP = RBMAP
 local function nodeRest(v) local q = v.q; return CFrame.new(v.t[1], v.t[2], v.t[3]) * CFrame.new(0, 0, 0, q[1], q[2], q[3], q[4]) end
 function M.rbBuild(idOf)
   RB = {}; M.RB = RB
+  local fold = cfg:FindFirstChild("RB") or Instance.new("Folder"); fold.Name = "RB"; fold.Parent = cfg
+  for _, c in ipairs(fold:GetChildren()) do if not rbOn(c.Name) then c:Destroy() end end   -- công tắc tắt → bỏ bản rig, vai về .glb
   if not attr("NhanVatRoblox", true) then return end
   local src = workspace:FindFirstChild("Tap3_NhomA"); src = src and src:FindFirstChild("NhanVat"); if not src then return end
-  local fold = cfg:FindFirstChild("RB") or Instance.new("Folder"); fold.Name = "RB"; fold.Parent = cfg
-  for vai, ten in pairs(RBMAP) do
+  for vai, ten in pairs(RBMAP) do if rbOn(vai) then
     local cl = fold:FindFirstChild(vai)
     if not cl then
       local m; for _, c in ipairs(src:GetChildren()) do if c.Name:match("^" .. ten .. "_%d+$") then m = c end end
@@ -216,7 +221,7 @@ function M.rbBuild(idOf)
       for i, pp in ipairs(MAN.parts) do if pp.k == "F" and pp.n:sub(1, #vai + 2) == vai .. "__" then r.faceId = i - 1 end end
       RB[vai] = r
     end
-  end
+  end end
 end
 -- đặt rig theo hàm khung bộ phận: frameOf(key) → CFrame node phim (đã cộng gốc) hoặc nil; trả true nếu hiện
 function M.rbPose(r, frameOf, faceTex)
