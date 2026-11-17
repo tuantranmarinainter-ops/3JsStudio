@@ -425,5 +425,18 @@ section('12. Kế thừa (env không vá builder dùng chung)');
   else info('món đẹp phải nằm trong builder (engine/props.js, cloth.js, realwindow.js, nen-xa.js…) kèm ô FX mặc định bật — docs/handoff/ke-thua-ep001.md; cố ý thì ghi miễn trừ ở tools/ke-thua.json');
 }
 
+// ---------------------------------------------------------------- 13. Tên hợp lệ (danh mục sinh từ mã; chỉ cảnh báo)
+section('13. Tên hợp lệ (loại shot, clip, mặt, env, bfx, cam.bk, ô FX)');
+{
+  const { kiemTap, inCanhBao } = await import('./danh-muc.mjs');
+  try {
+    const { files, ketQua } = await kiemTap(EP);
+    ketQua.slice(0, 40).forEach((x) => warn(inCanhBao(x)));
+    if (ketQua.length > 40) warn(`… và ${ketQua.length - 40} cảnh báo nữa — chạy: node tools/danh-muc.mjs kiem ${EP}`);
+    if (!ketQua.length) ok(`${files.length} file shot/episode: mọi tên đều có trong danh mục (docs/danh-muc.md)`);
+    else info('engine rơi về mặc định khi gặp tên lạ; tên đúng ở docs/danh-muc.md (sinh lại: node tools/danh-muc.mjs)');
+  } catch (e) { warn('không kiểm được tên: ' + e.message); }
+}
+
 console.log(`\nKết quả: ${nBad} ✘ · ${nWarn} ⚠`);
 process.exit(nBad ? 1 : 0);

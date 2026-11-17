@@ -45,6 +45,7 @@ Cảnh 3D dựng bằng three.js + engine tự viết (`engine/`). Sản phẩm 
 | `node tools/build.mjs <ep> <lớp>` / `npm run bundle:ep001` | dựng lại một lớp / gộp `dist/<ep>.html` |
 | `node tools/export-test.mjs dist/<ep>.html --range a:b --matrix "…"` | bấm Xuất MP4 tự động mọi tổ hợp + báo cáo |
 | `node tools/doctor.mjs <ep> [--fix-procs] [--shaders]` | khám cả repo: asset, phông, shot, giọng, bản gộp cũ, tiến trình treo, git |
+| `node tools/danh-muc.mjs` / `… kiem <ep> [--strict]` | sinh `docs/danh-muc.md` (mọi tên hợp lệ: loại shot, clip, mặt, env, bfx, cam.bk, ô FX — **đọc trước khi viết shot**) / báo tên lạ `file:dòng` trong shot (engine lặng lẽ rơi về mặc định); cũng là doctor mục 13 |
 | `node tools/shaders.mjs <trang>` | đo số shader + thời gian mở trang (⚠ khi > 80 program hoặc > 10 s) |
 | `node tools/lam-phim.mjs <ep>` | điều phối dây chuyền "một câu luật → phim" (skill `lam-phim`) |
 | `python tools/storyboard.py …` / `python tools/video2kb.py …` | kịch bản → tập mới / video → kịch bản (skill `nhap-kich-ban`, `video-sang-kich-ban`) |
