@@ -121,3 +121,16 @@ Không. Đã chốt 2026-11-17 (người dùng trả "mặc định"): (1) nhà 
 - Đã xong: đọc `docs/roblox.md`, `docs/de-bai-codex-mau.md`, `docs/nhap-model.md`, `docs/handoff/ep005t-nha-de-bai.md`, `tools/ep5t-boi-canh.mjs`, `engine/envs/ep5t-chung.js`, `engine/envs.js:81`, `tools/blender/chuan_hoa.py`, `tools/nhap-model.mjs:268-280`, `tools/duyet.mjs:513`, `tools/gates.mjs`.
 - Quyết định đã chốt (2026-11-16, người dùng chọn a): KHỐI THẮNG — vị trí, chân đế, hướng, góc camera giữ theo khối; tài sản tự khớp.
 - Khác với đề xuất ban đầu: bước "chuẩn hoá tài sản" gần như xong (đã có gốc tâm đáy, `--xoay`, `bbox` trong manifest) → chỉ thêm lệnh đo/kiểm; "dữ liệu khối thêm" là trường tuỳ chọn, không phá file cũ.
+
+## Phụ lục — ep003 (17/11): đo, CHƯA đổi cách đặt
+Quyết định 17/11: giữ `engine/khop-tai-san.js`, `tools/khop-bao-cao.mjs`, phần `nhap-model.mjs do` + test; **gỡ phần ep5t** khỏi `engine/envs/ep5t-chung.js` và xoá `engine/envs/ep5t-loai.js` (chờ người dùng quyết). `khop-bao-cao.mjs` nay nhận tập qua `--tien-to`, `--build`, `--loai <file.json>`.
+**Bảng lệch ep003:** `output/khop/ep003-lech.md` (`node tools/khop-bao-cao-ep003.mjs [--buoc 3]`, mở trang thật, tua, đọc hệ số co thực từng trục). Kết quả: 44 model đã thay · méo > 20%: 13 · lệch > 20% nếu khớp đều: 10 (nhà tiệm gấu 28%/38%, tiệm bánh 30%/38%, nhà nền 2/4/5, nhà thị trưởng 24%, quầy bánh 35%, …). Nhà chỉ phủ phần mặt tiền (n/s/y) nên "đang đặt" của nhà là bbox đầy đủ — lệch chỉ tham khảo.
+**Chỗ ep003 đặt/co model vào vùng khối:**
+- `engine/envs/e3-tiem.js:54-69` helper `rb(id,parent,name,{p,ry,kich|cao})`: `cao` = co đều theo chiều cao; `kich:[w,h,d]` = co chiều cao rồi kéo `x=w/_sz.x`, `z=d/_sz.z` (méo không trần). Gọi: `:144` cửa, `:165` đèn treo, `:191` kệ bánh, `:201` quầy (kich), `:227` giỏ, `:231` bàn bày, `:237` thùng, `:251` bàn may, `:256` cuộn chỉ.
+- `engine/envs/e3-pho.js:333-350` `nhaGlb(f,id,name,{w,H|cao,D,kep,lui,y0,lat})`: đặt theo bảng `NHA` (`:312-327`, phần mặt tiền n/s/y), `ky` theo cao, `kw` theo bề ngang (kẹp `kep` ±35%), `kd = D/…` hoặc `kw`. Gọi `:352` (nhà nền), `:358` nhà Gà, `:388` tiệm gấu, `:435` tiệm bánh, `:459` tiệm may, `:484` thị trưởng, `:589` nhà máy. Còn `fit` thẳng: `:605` tháp chuông, `:634` cây, `:644` trụ cứu hoả.
+- `engine/envs/e3-nha-may.js:316` két, `:339` máy may, `:493` đồ trong kho (`fit(id, sz*K19)`): co đều theo cao/xz → méo 0, không cần khop.
+**Đề xuất bật khop cho ep003 (mặc định TẮT):**
+1. Ô FX `khop3` (mặc định `false`) trong `engine/post.js` + URL `?khop3=1` — cùng kiểu `?rb=0`, `?vanTiem=0`; tắt = hình y hệt bản đã duyệt.
+2. `rb()` (`e3-tiem.js:57`): khi bật, `kich` → `khop({loai:'hop'|'do-vat'|'tam' theo bảng loại khai cạnh lời gọi})` thay `o.scale.set(w/_sz.x,1,d/_sz.z)`; chỉ 1 chỗ sửa cho 9 lời gọi. Cho khai `loai` tuỳ chọn trong tham số thứ 4.
+3. `nhaGlb()` (`e3-pho.js:341-344`): khi bật, thay `kw/kd` bằng `khop({loai:'nha'})` trên kích thước mặt tiền (`n × _sz`, `s × _sz`) vs lô (`w,D`) — thay `kep`; giữ nguyên neo `f.W(du,-lui)` và `ry`.
+4. Kiểm trước khi duyệt: `look.mjs episodes/ep003/index.html --ab episodes/ep003/index.html?khop3=1 --shots <các shot có nhà/quầy>` (so bằng số PSNR trước) + `--gates`; chỉ đổi khi người dùng duyệt A/B.
