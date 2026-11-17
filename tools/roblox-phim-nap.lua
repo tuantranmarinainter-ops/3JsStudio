@@ -14,6 +14,8 @@ return function(URL)
   end
   local man = H:GetAsync(URL .. "phim.json")
   data("phim", man)
+  local okNV, nv = pcall(function() return H:GetAsync(URL .. "nhan-vat.json") end)   -- cỡ/tư thế nghỉ từng node .glb nhân vật (tools/roblox-nhan-vat-node.mjs)
+  if okNV then data("nhanvat", nv) end
   local n = 0
   for _, s in ipairs(H:JSONDecode(man).shots) do data(s.id, H:GetAsync(URL .. s.id .. ".json")); n += 1; task.wait() end
   mod("PhatPhim", H:GetAsync(URL .. "phat.lua"))

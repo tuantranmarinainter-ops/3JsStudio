@@ -1,7 +1,7 @@
 -- tools/roblox-phim.lua — BỘ PHÁT phim trong Roblox Studio (ModuleScript ReplicatedStorage.PhimEp6B.PhatPhim).
 -- Dữ liệu: ModuleScript "phim" (mục lục, bảng mảnh, phụ đề, mặt) + một ModuleScript mỗi shot (khung 30 fps), do tools/roblox-phim-nap.lua nạp
 -- từ `node tools/roblox-phim.mjs xuat …`. Mỗi khung là HÀM THUẦN của t (giây phim): apply(t) đặt CFrame/cỡ mọi mảnh + camera + mặt + phụ đề.
--- Công tắc (thuộc tính của workspace.PhimEp6B): NhanVatGoc, TuongMotMat, Chay, BatDau (giây phim), Lap, PhuDe, ChuNoi, Mat, GuongAo, AnhSang. Xem docs/handoff/roblox-phim-ep6b.md.
+-- Công tắc (thuộc tính của workspace.PhimEp6B): NhanVatGoc, MauGoc, XoayNhap, TuongMotMat, Chay, BatDau (giây phim), Lap, PhuDe, ChuNoi, Mat, GuongAo, AnhSang. Xem docs/handoff/roblox-phim-ep6b.md.
 local HttpService = game:GetService("HttpService")
 local RS = game:GetService("ReplicatedStorage")
 local M = {}
@@ -31,7 +31,7 @@ end
 function M.config()
   cfg = workspace:FindFirstChild("PhimEp6B")
   if not cfg then cfg = Instance.new("Configuration"); cfg.Name = "PhimEp6B"; cfg.Parent = workspace end
-  local D = { NhanVatGoc = true, TuongMotMat = true, Chay = true, BatDau = MAN.shots[1].t0, Lap = true, PhuDe = true, ChuNoi = true, Mat = true, GuongAo = true, AnhSang = true }
+  local D = { NhanVatGoc = true, TuongMotMat = true, Chay = true, BatDau = MAN.shots[1].t0, Lap = true, PhuDe = true, ChuNoi = true, Mat = true, GuongAo = true, AnhSang = true, MauGoc = true, XoayNhap = true }
   for k, v in pairs(D) do if cfg:GetAttribute(k) == nil then cfg:SetAttribute(k, v) end end
   return cfg
 end
@@ -64,18 +64,105 @@ function M.build()
   return F
 end
 
--- NHÂN VẬT GỐC: MeshPart nhập từ .glb (tools/roblox-nhan-vat.mjs → 3D Importer, model nvNN_<vai> ở bất kỳ đâu trong workspace).
--- Có MeshPart cùng tên mảnh và công tắc NhanVatGoc bật → bộ phát lái MeshPart (gốc = tâm mảnh, cỡ đặt theo khung), khối Part dự phòng bị ẩn.
-local MESH = {}
+-- NHÂN VẬT GỐC: MeshPart nhập từ .glb (tools/roblox-nhan-vat.mjs → 3D Importer: model nvNN_<vai> chứa model <mảnh>_Node chứa MeshPart <mảnh>, <mảnh>2…
+-- vì Studio tách một mảnh nhiều chất liệu thành nhiều MeshPart). Hiệu chỉnh: khung mảnh = xoay của MeshPart con + tâm hộp hợp của chúng;
+-- mỗi MeshPart con giữ độ lệch + cỡ so với khung mảnh (quy về cỡ nghỉ trong nhan-vat.json) → bộ phát đặt theo khung + tỉ lệ cỡ.
+-- GẤU KẺ CẮP (nv01 Bắp, nv14 nơ đỏ, nv15 nơ vàng): nhân bản model có xương Tap3_NhomA.NhomB.bap, đặt nguyên khối theo mảnh thân (tâm + hướng), cỡ theo chiều cao gấu phim.
+-- Công tắc NhanVatGoc tắt → về khối Part.
+local MESH, BEAR, NV = {}, {}, nil
+local GAU = { nv01_bap = "#2a3fb0", nv14_bearR = "#c0302a", nv15_bearY = "#e8b830" }
+-- 3D Importer (đo 17/11 trên 13 vai): NƯỚNG xoay nghỉ Q của node vào lưới (MeshSize = hộp lưới đã xoay) và đặt MeshPart thẳng trục model, quay 180° quanh trục đứng
+-- (mặt ±X/±Z của 77 hộp đều lật). → khung node = khung MeshPart · Rπ · Q; cỡ đúng = MeshSize (tỉ lệ 1, lần dựng trước có thể đã kéo méo). Công tắc XoayNhap.
+local function nodeFrame(parts, rest, q4)
+  for _, q in ipairs(parts) do local ms = q.MeshSize; if ms.Magnitude > 1e-4 then q.Size = ms end end
+  local R0 = parts[1].CFrame.Rotation; local inv = R0:Inverse()
+  local mn, mx = Vector3.new(1e9, 1e9, 1e9), Vector3.new(-1e9, -1e9, -1e9)
+  for _, q in ipairs(parts) do local h = q.Size / 2
+    for i = 0, 7 do local c = q.CFrame * Vector3.new((i % 2 == 0) and -h.X or h.X, (i % 4 < 2) and -h.Y or h.Y, (i < 4) and -h.Z or h.Z)
+      local l = inv * c; mn = mn:Min(l); mx = mx:Max(l) end end
+  local C = CFrame.identity
+  if attr("XoayNhap", true) then C = CFrame.Angles(0, math.pi, 0); if q4 then C = C * CFrame.new(0, 0, 0, q4[1], q4[2], q4[3], q4[4]) end end
+  return CFrame.new(R0 * ((mn + mx) / 2)) * (R0 * C), rest or (mx - mn)   -- tâm = tâm hộp lưới (lưới xuất đã đặt tâm hộp ở gốc node; hộp đối xứng nên xoay không dời tâm)
+end
+M.nodeFrame = nodeFrame
+-- hệ số co giãn theo trục node (k) → theo trục mảnh, với rot = xoay mảnh trong khung node: kp_i = Σ_j R_ji²·k_j (k đều → giữ nguyên; trục vuông → hoán vị)
+local function axisK(rot, k, nguoc)
+  local c = { rot.RightVector, rot.UpVector, -rot.LookVector }   -- cột R (trục mảnh viết trong khung node)
+  local kv = { k.X, k.Y, k.Z }; local o = { 0, 0, 0 }
+  for i = 1, 3 do local v = { c[i].X, c[i].Y, c[i].Z } for j = 1, 3 do if nguoc then o[j] += v[j] ^ 2 * kv[i] else o[i] += v[j] ^ 2 * kv[j] end end end
+  return Vector3.new(o[1], o[2], o[3])
+end
+M.axisK = axisK
+-- vị trí/hướng CHÍNH XÁC của MeshPart con so với khung node, tính từ đỉnh lưới .glb (nhan-vat.json pc = tâm hộp primitive sau khi xoay Q):
+-- MeshPart nằm ở tâm hộp lưới đã nướng Rπ·Q → off = (Q⁻¹·c, Q⁻¹·Rπ⁻¹). Không phụ thuộc trạng thái hiện tại của mảnh (tránh lệch dồn).
+local RPI_INV = CFrame.Angles(0, math.pi, 0):Inverse()
+function M.subOff(info, q, key)
+  if not (info and info.pc and attr("XoayNhap", true)) then return nil end
+  local idx = tonumber(q.Name:sub(#key + 1)) or 1; local c = info.pc[idx]; if not c then return nil end
+  local q4 = info.q; local Qi = CFrame.new(0, 0, 0, q4[1], q4[2], q4[3], q4[4]):Inverse()
+  return CFrame.new(Qi * Vector3.new(c[1], c[2], c[3])) * Qi * RPI_INV
+end
+function M.aabb(m)   -- hộp thế giới của các mảnh nhìn thấy (bỏ RootPart)
+  local mn, mx = Vector3.new(1e9, 1e9, 1e9), Vector3.new(-1e9, -1e9, -1e9)
+  for _, q in ipairs(m:GetDescendants()) do if q:IsA("BasePart") and q.Name ~= "RootPart" then local h = q.Size / 2
+    for k = 0, 7 do local c = q.CFrame * Vector3.new((k % 2 == 0) and -h.X or h.X, (k % 4 < 2) and -h.Y or h.Y, (k < 4) and -h.Z or h.Z); mn = mn:Min(c); mx = mx:Max(c) end end end
+  return mn, mx
+end
+function M.setK(b, k)   -- đổi cỡ gấu nhân bản theo hệ số k so với lưới nghỉ; restInv = nghịch (vị trí*k, xoay) của mảnh thân lúc nghỉ
+  if b.k and math.abs(b.k - k) < 1e-4 then return end
+  b.m:ScaleTo(b.s0 * k)   -- co giãn quanh gốc (đáy giữa) nên gốc giữ nguyên
+  local t, q = b.body.t, b.body.q; b.restInv = (CFrame.new(t[1] * k, t[2] * k, t[3] * k) * CFrame.new(0, 0, 0, q[1], q[2], q[3], q[4])):Inverse(); b.k = k
+end
 function M.goc()
-  MESH = {}
+  MESH, BEAR = {}, {}; M.soMesh = 0
   if not attr("NhanVatGoc", true) then return 0 end
-  local by = {}
-  for _, m in ipairs(workspace:GetChildren()) do
-    if m:IsA("Model") and m.Name:match("^nv%d%d_") then
-      for _, d in ipairs(m:GetDescendants()) do if d:IsA("MeshPart") then by[d.Name] = d; d.Anchored = true; d.CanCollide = false; d.CanQuery = false; d.CanTouch = false end end end end
+  if not NV then local ok, v = pcall(decode, "nhanvat"); NV = ok and v or {} end
+  local idOf = {}; for i, p in ipairs(MAN.parts) do idOf[p.n] = i - 1 end
   local n = 0
-  for i, p in ipairs(MAN.parts) do local mp = by[p.n]; if mp and p.k ~= "F" then MESH[i - 1] = mp; n += 1 end end
+  for _, m in ipairs(workspace:GetChildren()) do
+    local vai = m:IsA("Model") and m.Name:match("^(nv%d%d_%w+)$")
+    if vai and not GAU[vai] then
+      for _, nd in ipairs(m:GetDescendants()) do
+        local key = nd:IsA("Model") and nd.Name:match("^(.+)_Node$")
+        local id = key and idOf[key]; local info = key and NV[key]
+        if info and info.col and attr("MauGoc", true) then   -- 3D Importer bỏ màu phẳng (mảnh không vân thành xám) → tô lại theo chất liệu phim; MeshPart <key>, <key>2… = primitive 1, 2…
+          for _, q in ipairs(nd:GetChildren()) do if q:IsA("MeshPart") and q.Name:sub(1, #key) == key then
+            local c = info.col[tonumber(q.Name:sub(#key + 1)) or 1]; if type(c) == "string" and q.TextureID == "" then q.Color = Color3.fromHex(c) end end end
+        end
+        if id and info then
+          local parts = {}; for _, q in ipairs(nd:GetChildren()) do if q:IsA("MeshPart") then table.insert(parts, q); q.Anchored = true; q.CanCollide = false; q.CanQuery = false; q.CanTouch = false end end
+          if #parts > 0 then
+            local rest = Vector3.new(info.s[1], info.s[2], info.s[3]); local F, sz = nodeFrame(parts, rest, info.q)
+            local k = Vector3.new(sz.X / math.max(rest.X, 1e-4), sz.Y / math.max(rest.Y, 1e-4), sz.Z / math.max(rest.Z, 1e-4))   -- cỡ hiện tại / cỡ nghỉ
+            local g = { rest = rest, subs = {} }
+            for _, q in ipairs(parts) do local off = M.subOff(info, q, key); if off then q.Size = q.MeshSize; k = Vector3.one else off = F:Inverse() * q.CFrame end
+              local kp = axisK(off.Rotation, k)
+              table.insert(g.subs, { p = q, pos = off.Position / k, rot = off.Rotation, size = q.Size / kp }) end
+            MESH[id] = g; n += 1
+          end
+        end
+      end
+    end
+  end
+  -- gấu: nhân bản model có xương
+  local src = workspace:FindFirstChild("Tap3_NhomA"); src = src and src:FindFirstChild("NhomB"); src = src and src:FindFirstChild("bap")
+  local fold = cfg:FindFirstChild("Gau") or Instance.new("Folder"); fold.Name = "Gau"; fold.Parent = cfg
+  for vai, bow in pairs(GAU) do
+    local body = NV[vai .. "__0_0_0_0"]; local id = idOf[vai .. "__0_0_0_0"]
+    if src and body then
+      local cl = fold:FindFirstChild(vai)
+      if not cl then cl = src:Clone(); cl.Name = vai; for _, d in ipairs(cl:GetDescendants()) do if d:IsA("BasePart") then d.Anchored = true; d.CanCollide = false; d.CanQuery = false end; if d:IsA("Script") or d:IsA("LocalScript") then d:Destroy() end end
+        local no = cl:FindFirstChild("no-gau-2.001"); if no then no.Color = Color3.fromHex(bow); no.TextureID = "" end
+        -- cao như gấu phim: hộp hợp các node gấu lúc nghỉ
+        local lo, hi = 1e9, -1e9; for k2, v in pairs(NV) do if k2:sub(1, #vai + 2) == vai .. "__" then lo = math.min(lo, v.t[2] - v.s[2] / 2); hi = math.max(hi, v.t[2] + v.s[2] / 2) end end
+        local mn0, mx0 = M.aabb(cl); cl:ScaleTo(cl:GetScale() * (hi - lo) / (mx0.Y - mn0.Y))   -- đo phần NHÌN THẤY (bỏ RootPart vô hình)
+        local mn1, mx1 = M.aabb(cl); cl.WorldPivot = CFrame.new((mn1.X + mx1.X) / 2, mn1.Y, (mn1.Z + mx1.Z) / 2)   -- gốc = đáy giữa, trục thế giới (ScaleTo giữ gốc)
+        cl:SetAttribute("Cao", hi - lo); cl:SetAttribute("S0", cl:GetScale()); cl.Parent = fold end
+      -- lưới .glb chưa nhân cỡ gốc (phim thu gấu ×~0,62 ở c.root) → cỡ thật lấy từng khung theo mảnh thân: k = cỡ khung / cỡ lưới (setK)
+      BEAR[vai] = { m = cl, body = body, id = id, s0 = cl:GetAttribute("S0") or cl:GetScale(), k = nil }
+      M.setK(BEAR[vai], 1)
+    end
+  end
   M.soMesh = n
   return n
 end
@@ -171,11 +258,13 @@ function M.apply(t)
   local seen = {}
   for _, r in ipairs(fr.parts) do
     local id = r[1]; local p = PARTS[id]; local info = MAN.parts[id + 1]
-    local mp = MESH[id]
-    if mp then   -- nhân vật gốc: MeshPart thay khối Part
+    local g = MESH[id]
+    if g then   -- nhân vật gốc: nhóm MeshPart thay khối Part
       seen[id] = true
-      mp.Size = Vector3.new(math.max(r[9], 0.01), math.max(r[10], 0.01), math.max(r[11], 0.01))
-      mp.CFrame = ORIGIN * CFrame.new(r[2], r[3], r[4], r[5], r[6], r[7], r[8]); mp.Transparency = info.tr or 0
+      local cf = ORIGIN * CFrame.new(r[2], r[3], r[4], r[5], r[6], r[7], r[8])
+      local k = Vector3.new(r[9] / g.rest.X, r[10] / g.rest.Y, r[11] / g.rest.Z)
+      for _, sb in ipairs(g.subs) do sb.p.Size = sb.size * axisK(sb.rot, k);   -- k theo trục node → trục mảnh
+        sb.p.CFrame = cf * CFrame.new(sb.pos * k) * sb.rot; sb.p.Transparency = info.tr or 0 end
       if p then p.Transparency = 1; p.CastShadow = false end
     elseif p then
       seen[id] = true
@@ -190,7 +279,15 @@ function M.apply(t)
       else p.Transparency = info.tr or 0; p.CastShadow = true end
     end
   end
-  for id, mp in pairs(MESH) do if not seen[id] then mp.Transparency = 1 end end
+  for id, g in pairs(MESH) do if not seen[id] then for _, sb in ipairs(g.subs) do sb.p.Transparency = 1 end end end
+  -- gấu: đặt nguyên khối theo mảnh thân; ẩn các khối Part của vai gấu
+  for vai, b in pairs(BEAR) do
+    local row; for _, r in ipairs(fr.parts) do if r[1] == b.id then row = r; break end end
+    local show = row ~= nil
+    for _, d in ipairs(b.m:GetDescendants()) do if d:IsA("BasePart") and d.Name ~= "RootPart" then d.LocalTransparencyModifier = show and 0 or 1; d.Transparency = show and 0 or 1 end end
+    if row then M.setK(b, row[10] / b.body.s[2]); b.m:PivotTo(ORIGIN * CFrame.new(row[2], row[3], row[4], row[5], row[6], row[7], row[8]) * b.restInv * CFrame.Angles(0, math.pi, 0)) end
+    for id, p in pairs(PARTS) do local nm = MAN.parts[id + 1].n; if nm:sub(1, #vai + 2) == vai .. "__" then p.Transparency = 1; local dc = p:FindFirstChild("Mat"); if dc then dc.Transparency = 1 end end end
+  end
   for id, p in pairs(PARTS) do if not seen[id] then p.Transparency = 1; p.CastShadow = false; local dc = p:FindFirstChild("Mat"); if dc then dc.Transparency = 1 end end end
   -- camera (thuần theo khung); shot gương: camera ảo phản chiếu qua mặt gương (Roblox không có gương thật)
   local cam = workspace.CurrentCamera; cam.CameraType = Enum.CameraType.Scriptable
@@ -238,8 +335,12 @@ function M.kiem(list)
     local cp = inv * cam.CFrame.Position; local cf = inv * (cam.CFrame.Position + cam.CFrame.LookVector * 10)
     local parts = {}
     for _, nm in ipairs(it.names) do local p = cfg.Manh:FindFirstChild(nm)
-      for id, mp in pairs(MESH) do if mp.Name == nm then p = mp end end
-      if p and p.Transparency < 1 then local v = inv * p.Position; parts[nm] = { v.X, v.Y, v.Z } end end
+      local bv = nm:match("^(nv%d%d_%w+)__0_0_0_0$"); local bb = bv and BEAR[bv]
+      local gp; for id, g in pairs(MESH) do if MAN.parts[id + 1].n == nm then gp = g end end
+      if bb then local root = bb.m:GetPivot() * CFrame.Angles(0, -math.pi, 0); local c = root * bb.restInv:Inverse(); local v = inv * c.Position; parts[nm] = { v.X, v.Y, v.Z }
+      elseif gp and gp.subs[1].p.Transparency < 1 then local sb = gp.subs[1]; local k = axisK(sb.rot, sb.p.Size / sb.size, true)
+        local c = sb.p.CFrame * (CFrame.new(sb.pos * k) * sb.rot):Inverse(); local v = inv * c.Position; parts[nm] = { v.X, v.Y, v.Z }
+      elseif p and p.Transparency < 1 then local v = inv * p.Position; parts[nm] = { v.X, v.Y, v.Z } end end
     out[key] = { cam = { p = { cp.X, cp.Y, cp.Z }, f = { cf.X, cf.Y, cf.Z }, fov = cam.FieldOfView }, parts = parts }
   end
   return HttpService:JSONEncode(out)

@@ -1,17 +1,12 @@
 # ep6B → phim chạy trong Roblox Studio — handoff
 
 ## ĐIỂM DỪNG
-- **ĐANG CHỜ NGƯỜI DÙNG (17/11, vòng 2):** kéo 16 file `output/roblox-phim/nhan-vat/nvNN_<vai>.glb` vào Studio (Import 3D, Rig: không rig, giữ tên model nvNN_<vai>, đặt trong workspace). Xong → bật Play/chụp: bộ phát tự lái MeshPart (công tắc `NhanVatGoc`). Sau đó: BẢNG DUYỆT NHÂN VẬT (`output/roblox-phim/duyet-nhan-vat/`) → chờ duyệt → mới tới vật liệu/gương/quay lại. Đã sửa: tên mảnh trùng giữa các vai (nguyên nhân đầu Gà xanh ở bản quay trước). Commit 56796b4.
-- **Cập nhật:** 2026-11-17 (phiên con "roblox-phim làm thử") — DỪNG theo luật 3 lần, chờ người dùng duyệt / quyết hướng
-- **Đã xong:** đoạn thử 19,9 s = 15 shot phòng Gà s017–s022 + s024–s032 (bỏ s023, không thuộc phòng) phát được trong Studio (Play): R6 Gà + gấu Bắp + 33 đạo cụ dựng bằng Part, camera Scriptable, mặt AltiWyre (decal), phụ đề + chữ nổi (ScreenGui), ánh sáng ngày/đêm. Place đã lưu.
-- **Bằng số (đạt):** 45 khung (đầu/giữa/cuối × 15 shot), 504 điểm (camera vị trí + điểm nhìn + fov, tâm đầu/thân/2 tay/2 chân Gà và Bắp) → lệch lớn nhất **0,0014 stud**. Shot gương s027/s029/s030 (camera ảo phản chiếu): phản chiếu ngược ↔ camera phim lệch 0,0009 stud.
-- **Chưa đạt (bằng mắt, 3 lần chụp agent Haiku, `output/roblox-phim/bao-cao-mat.md`):** hình Studio vẫn khác phim ở 4/6 mốc — thấy trời/nhà ngoài phòng, thiếu cờ/tranh/rèm, vật lệch trái-phải ở s032, shot gương thấy khối gỗ thay vì Bắp.
-- **Nghi nguyên nhân (chưa xác minh):** (1) luật "tường một mặt" của bộ phát ẩn quá tay (mảnh tường quanh cửa sổ/đồ treo tường bị ẩn theo); (2) `screen_capture` ở chế độ Edit có thể không dùng đúng camera/khung dọc; (3) bối cảnh Roblox còn thiếu vật (cờ, rèm…). Đã đo: phim cũng bị khung giấy khen che đầu Gà ở s017 (1,17 vs 1,21 stud) → chỗ đó đúng.
-- **Bước kế tiếp đề xuất:** người dùng bấm Play xem trực tiếp; nếu sai thì tắt công tắc `TuongMotMat` để so; kiểm bằng số tầm nhìn (raycast camera→vật) cho cả đạo cụ, không chỉ nhân vật; chụp ở chế độ Play.
-- **Đã sửa bối cảnh:** `e3-phong.phong_goi` (gối) từ khối 2×2×2 → elip 2,70×0,79×1,70 như phim (thuộc tính `SuaTay`). Lỗi gốc ở `tools/roblox-boi-canh.lua`: cầu co giãn không đều bị dựng thành khối mặc định — chưa sửa công cụ.
-- **File:** `tools/roblox-phim.mjs` (xuat/kiem/so/phuc-vu), `tools/roblox-phim.lua` (bộ phát), `tools/roblox-phim-nap.lua` (nạp vào place); dữ liệu `output/roblox-phim/data/`.
-- **Đang chạy nền:** `node tools/roblox-phim.mjs phuc-vu` (cổng 8766) — chỉ cần khi nạp lại dữ liệu.
-- **Câu hỏi còn mở:** shot gương: Roblox không có gương thật → camera ảo sau gương (hình lật trái-phải). Chấp nhận, hay muốn cách khác?
+- **ĐANG CHỜ NGƯỜI DÙNG (17/11, vòng 3):** duyệt bảng 13 vai người `output/roblox-phim/duyet-nhan-vat/bang-1.jpg`, `bang-2.jpg` (phim | Roblox, chính diện + 3/4). Gấu (nv01/nv14/nv15) làm lượt sau: người dùng chọn dùng .glb gấu xuất từ phim (bỏ phương án clone `Tap3_NhomA.NhomB.bap` — code clone vẫn còn trong `M.goc`, cần đổi khi làm gấu).
+- **Lỗi 3D Importer đã đo + bù (bộ phát `tools/roblox-phim.lua`, công tắc `XoayNhap`, `MauGoc`):** (1) nướng xoay nghỉ Q của node vào lưới + đặt MeshPart quay 180° quanh trục đứng → khung node = MeshPart·Rπ·Q; vị trí từng MeshPart con lấy từ đỉnh .glb (`pc` trong nhan-vat.json), cỡ = MeshSize. (2) bỏ màu phẳng của chất liệu không vân → tô lại từ `col`. (3) `.glb` chứa cả mảnh phim ẩn (tóc dưới mũ…) → cờ `an` (`node tools/roblox-nhan-vat.mjs --an`).
+- **Bằng số (đạt):** sân duyệt 257 mảnh/13 vai: tâm lệch 0,0000 stud, góc ≤ 0,0007 rad, không méo/lật/thiếu (`tools/roblox-kiem-nv.lua`). Bộ phát phim: 180 điểm Gà ngoài shot gương lệch ≤ 0,0008 stud.
+- **Dữ liệu:** `node tools/roblox-nhan-vat-node.mjs` → `output/roblox-phim/data/nhan-vat.json` (t,q,s,col,pc,an). Sân duyệt: `tools/roblox-duyet-nv.mjs` (ảnh phim) + `roblox-duyet-nv.lua` (Studio, `_G.ChupDuyet(i, "truoc"|"34")`).
+- **Sau duyệt:** gấu từ .glb phim → vật liệu bối cảnh → gương/ánh sáng → quay lại so-sanh.mp4.
+- **Đang chạy nền:** `node tools/roblox-phim.mjs phuc-vu` (cổng 8766).
 <!-- /ĐIỂM DỪNG -->
 
 ## Việc còn lại (theo thứ tự)
