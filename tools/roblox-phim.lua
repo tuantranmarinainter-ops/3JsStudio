@@ -1,7 +1,7 @@
 -- tools/roblox-phim.lua — BỘ PHÁT phim trong Roblox Studio (ModuleScript ReplicatedStorage.PhimEp6B.PhatPhim).
 -- Dữ liệu: ModuleScript "phim" (mục lục, bảng mảnh, phụ đề, mặt) + một ModuleScript mỗi shot (khung 30 fps), do tools/roblox-phim-nap.lua nạp
 -- từ `node tools/roblox-phim.mjs xuat …`. Mỗi khung là HÀM THUẦN của t (giây phim): apply(t) đặt CFrame/cỡ mọi mảnh + camera + mặt + phụ đề.
--- Công tắc (thuộc tính của workspace.PhimEp6B): TuongMotMat, Chay, BatDau (giây phim), Lap, PhuDe, ChuNoi, Mat, GuongAo, AnhSang. Xem docs/handoff/roblox-phim-ep6b.md.
+-- Công tắc (thuộc tính của workspace.PhimEp6B): NhanVatGoc, TuongMotMat, Chay, BatDau (giây phim), Lap, PhuDe, ChuNoi, Mat, GuongAo, AnhSang. Xem docs/handoff/roblox-phim-ep6b.md.
 local HttpService = game:GetService("HttpService")
 local RS = game:GetService("ReplicatedStorage")
 local M = {}
@@ -31,7 +31,7 @@ end
 function M.config()
   cfg = workspace:FindFirstChild("PhimEp6B")
   if not cfg then cfg = Instance.new("Configuration"); cfg.Name = "PhimEp6B"; cfg.Parent = workspace end
-  local D = { TuongMotMat = true, Chay = true, BatDau = MAN.shots[1].t0, Lap = true, PhuDe = true, ChuNoi = true, Mat = true, GuongAo = true, AnhSang = true }
+  local D = { NhanVatGoc = true, TuongMotMat = true, Chay = true, BatDau = MAN.shots[1].t0, Lap = true, PhuDe = true, ChuNoi = true, Mat = true, GuongAo = true, AnhSang = true }
   for k, v in pairs(D) do if cfg:GetAttribute(k) == nil then cfg:SetAttribute(k, v) end end
   return cfg
 end
@@ -40,9 +40,11 @@ end
 function M.build()
   M.load(); M.config()
   local F = cfg:FindFirstChild("Manh")
-  if F and #F:GetChildren() == #MAN.parts then
+  local ok = F and #F:GetChildren() == #MAN.parts
+  if ok then for _, p in ipairs(MAN.parts) do if not F:FindFirstChild(p.n) then ok = false; break end end end
+  if ok then
     for i, p in ipairs(MAN.parts) do PARTS[i - 1] = F:FindFirstChild(p.n) end
-    return F
+    M.goc(); return F
   end
   if F then F:Destroy() end
   F = Instance.new("Folder"); F.Name = "Manh"
@@ -58,7 +60,24 @@ function M.build()
     PARTS[i - 1] = part
   end
   F.Parent = cfg
+  M.goc()
   return F
+end
+
+-- NHÂN VẬT GỐC: MeshPart nhập từ .glb (tools/roblox-nhan-vat.mjs → 3D Importer, model nvNN_<vai> ở bất kỳ đâu trong workspace).
+-- Có MeshPart cùng tên mảnh và công tắc NhanVatGoc bật → bộ phát lái MeshPart (gốc = tâm mảnh, cỡ đặt theo khung), khối Part dự phòng bị ẩn.
+local MESH = {}
+function M.goc()
+  MESH = {}
+  if not attr("NhanVatGoc", true) then return 0 end
+  local by = {}
+  for _, m in ipairs(workspace:GetChildren()) do
+    if m:IsA("Model") and m.Name:match("^nv%d%d_") then
+      for _, d in ipairs(m:GetDescendants()) do if d:IsA("MeshPart") then by[d.Name] = d; d.Anchored = true; d.CanCollide = false; d.CanQuery = false; d.CanTouch = false end end end end
+  local n = 0
+  for i, p in ipairs(MAN.parts) do local mp = by[p.n]; if mp and p.k ~= "F" then MESH[i - 1] = mp; n += 1 end end
+  M.soMesh = n
+  return n
 end
 
 local function ui()
@@ -152,7 +171,13 @@ function M.apply(t)
   local seen = {}
   for _, r in ipairs(fr.parts) do
     local id = r[1]; local p = PARTS[id]; local info = MAN.parts[id + 1]
-    if p then
+    local mp = MESH[id]
+    if mp then   -- nhân vật gốc: MeshPart thay khối Part
+      seen[id] = true
+      mp.Size = Vector3.new(math.max(r[9], 0.01), math.max(r[10], 0.01), math.max(r[11], 0.01))
+      mp.CFrame = ORIGIN * CFrame.new(r[2], r[3], r[4], r[5], r[6], r[7], r[8]); mp.Transparency = info.tr or 0
+      if p then p.Transparency = 1; p.CastShadow = false end
+    elseif p then
       seen[id] = true
       local cf = ORIGIN * CFrame.new(r[2], r[3], r[4], r[5], r[6], r[7], r[8])
       local sx, sy, sz = math.max(r[9], 0.05), math.max(r[10], 0.05), math.max(r[11], 0.02)
@@ -165,6 +190,7 @@ function M.apply(t)
       else p.Transparency = info.tr or 0; p.CastShadow = true end
     end
   end
+  for id, mp in pairs(MESH) do if not seen[id] then mp.Transparency = 1 end end
   for id, p in pairs(PARTS) do if not seen[id] then p.Transparency = 1; p.CastShadow = false; local dc = p:FindFirstChild("Mat"); if dc then dc.Transparency = 1 end end end
   -- camera (thuần theo khung); shot gương: camera ảo phản chiếu qua mặt gương (Roblox không có gương thật)
   local cam = workspace.CurrentCamera; cam.CameraType = Enum.CameraType.Scriptable
@@ -211,7 +237,9 @@ function M.kiem(list)
     local cam = workspace.CurrentCamera
     local cp = inv * cam.CFrame.Position; local cf = inv * (cam.CFrame.Position + cam.CFrame.LookVector * 10)
     local parts = {}
-    for _, nm in ipairs(it.names) do local p = cfg.Manh:FindFirstChild(nm); if p and p.Transparency < 1 then local v = inv * p.Position; parts[nm] = { v.X, v.Y, v.Z } end end
+    for _, nm in ipairs(it.names) do local p = cfg.Manh:FindFirstChild(nm)
+      for id, mp in pairs(MESH) do if mp.Name == nm then p = mp end end
+      if p and p.Transparency < 1 then local v = inv * p.Position; parts[nm] = { v.X, v.Y, v.Z } end end
     out[key] = { cam = { p = { cp.X, cp.Y, cp.Z }, f = { cf.X, cf.Y, cf.Z }, fov = cam.FieldOfView }, parts = parts }
   end
   return HttpService:JSONEncode(out)

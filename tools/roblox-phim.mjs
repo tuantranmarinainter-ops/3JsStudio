@@ -64,9 +64,12 @@ await pg.evaluate(() => {
   // mặt dán của nhân vật gốc (goc/characters.js): c.face (R6, Bắp)
   H.faces = new Map(); for (const c of window.__goc.CAST) if (c.face) H.faces.set(c.face, c);
   H.faceId = (m) => { const t = m.material?.map; const src = t?.image?.src || t?.source?.data?.src || ''; const k = src.match(/face_(\d{3})\.png/); return k ? +k[1] : null; };
-  H.path = (m) => { const ix = []; let x = m, top = null; for (; x && x.parent; x = x.parent) { const c = window.__goc.CAST.find((c) => c.root === x); if (c) { top = c.name; break; } ix.unshift(x.parent.children.indexOf(x)); if (x.name && /^[A-Za-z]/.test(x.name) && !top && x.parent === window.__stage.scene) { top = x.name; break; } }
-    return (top || 'canh') + '/' + ix.join('.'); };
-  H.charOf = (o) => { for (const c of window.__goc.CAST) { for (let x = o; x; x = x.parent) if (x === c.root) return c.name; } return null; };
+  // tên mảnh DUY NHẤT, chỉ gồm [A-Za-z0-9_] (khớp tên node trong .glb của tools/roblox-nhan-vat.mjs): nv<chỉ số CAST>_<vai>__<chỉ số con…>
+  H.VAI = ['ga', 'bap', 'bach', 'kid2', 'baker', 'tailor', 'folk1', 'folk2', 'folk3', 'bachF', 'mayorN', 'mayorD', 'guardA', 'guardB', 'bearR', 'bearY'];
+  H.path = (m) => { const ix = []; let top = null; const CA = window.__goc.CAST;
+    for (let x = m; x && x.parent; x = x.parent) { const ci = CA.findIndex((c) => c.root === x); if (ci >= 0) { top = 'nv' + String(ci).padStart(2, '0') + '_' + (H.VAI[ci] || CA[ci].name); break; } ix.unshift(x.parent.children.indexOf(x)); }
+    return (top || 'canh') + '__' + ix.join('_'); };
+  H.charOf = (o) => { const CA = window.__goc.CAST; for (let i = 0; i < CA.length; i++) { for (let x = o; x; x = x.parent) if (x === CA[i].root) return H.VAI[i] || CA[i].name; } return null; };
   // dạng Part: B = khối, E = cầu/elip (SpecialMesh Sphere), C = trụ (trục Y của three → trục X của Roblox), F = tấm mặt (decal)
   H.shape = (m) => {
     const g = m.geometry, t = g.type, pa = g.parameters || {};

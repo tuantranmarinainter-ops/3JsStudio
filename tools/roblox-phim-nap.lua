@@ -4,7 +4,8 @@
 return function(URL)
   local H = game:GetService("HttpService"); local RS = game:GetService("ReplicatedStorage")
   local F = RS:FindFirstChild("PhimEp6B") or Instance.new("Folder"); F.Name = "PhimEp6B"; F.Parent = RS
-  local function mod(name, src) local m = F:FindFirstChild(name) or Instance.new("ModuleScript"); m.Name = name; m.Source = src; m.Parent = F; return m end
+  -- luôn tạo ModuleScript MỚI (require lưu đệm theo instance: sửa Source của module cũ vẫn trả dữ liệu cũ)
+  local function mod(name, src) local o = F:FindFirstChild(name); if o then o:Destroy() end; local m = Instance.new("ModuleScript"); m.Name = name; m.Source = src; m.Parent = F; return m end
   -- Source tối đa 200 000 ký tự → chia chuỗi JSON thành nhiều ModuleScript: <tên>, <tên>_2, <tên>_3… (PhatPhim ghép lại)
   local function data(name, str)
     local i, k = 1, 1
