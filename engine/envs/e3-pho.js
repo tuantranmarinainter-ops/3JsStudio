@@ -29,6 +29,7 @@
 //   hien_doi_dien = mặt trên mái hiên xanh lam [11.8,9.9,34,−π/2]. Đạo cụ nhỏ (gấu, giấy, đồng hồ, nhẫn, ví) do hệ đạo cụ đặt — env không dựng.
 // ĐÊM / NGÀY: env tự đọc ctx.light (shot time:'dem' → 'night'; còn lại → 'day'); shot cũng có thể gọi e.setNight(0..1). Cửa thị trưởng: ctx.cuaThiTruong 0..1 (mặc định 0 = đóng) hoặc e.setDoor(k).
 export const LIGHT = 'day';
+import { khop } from '../khop-tai-san.js';
 import { gauKeOn, gauKeStatic } from '../gau-ke.js';   // gấu kệ nhà máy (Roblox 104566604295071) đứng sau kính tiệm gấu; ?gauKe=0 / ?rb=0 → về ảnh phẳng
 export const ASSETS = ['pho-nha-ga', 'pho-tiem-gau', 'pho-tiem-banh', 'pho-tiem-may', 'pho-nha-thi-truong', 'pho-nha-nga-ba', 'pho-nha-may', 'pho-thap-chuong', 'pho-nha-nen-1', 'pho-nha-nen-2', 'pho-nha-nen-3', 'pho-nha-nen-4', 'pho-nha-nen-5', 'pho-nha-nen-6', 'pho-nha-nen-7', 'pho-cay', 'pho-tru-cuu-hoa'].map((n) => 'nhap/' + n);   // nhà Roblox Creator Store (đợt nhà 14/11); thiếu model hoặc ?rb=0 → bản khối
 export const DIEM = {
@@ -282,6 +283,7 @@ export default function build(g, e, H) {
   // NHA = số đo từng model (bản vẽ output/ep003/roblox/do-nha, phần 0..1 của hộp bao): truoc = mặt tiền của MODEL; n = phạm vi mặt tiền theo trục ngang;
   // s = [mặt tường trước, mặt sau] theo trục sâu; y = [đáy dùng (mặt trên tấm nền kèm theo), đỉnh]; xoay = độ quanh Y để nắn model nằm chéo trong hộp bao.
   const RB = !/[?&]rb=0(&|$)/.test(globalThis.location?.search || '');
+  const KHOP = /[?&]khop=1(&|$)/.test(globalThis.location?.search || '');   // khớp tài sản vào khối (mặc định TẮT = hình đã duyệt)
   // màu ô cửa sổ ĐỤC của từng model (đã dò bằng tia trên mặt tiền; kính trong suốt thì tự nhận). KHÔNG gộp chung: #04afec là MÁI của nhà nền 4, #1b2a35 là chân tường nhà nền 4
   const RB_KINH = { 'pho-tiem-may': ['80bbdb'], 'pho-nha-nga-ba': ['1b2a35'], 'pho-nha-nen-1': ['ffff00'], 'pho-nha-nen-4': ['ffff00', 'ffb000'] };
   // LUẬT VÂN (16/11): model Roblox màu phẳng (Plastic/SmoothPlastic) → khai báo chất liệu theo MÀU GỐC từng vật liệu (agent soi bản vẽ GLB, output/ep003/roblox/van/)
@@ -335,9 +337,13 @@ export default function build(g, e, H) {
     const N = m.truoc[1] === 'Z' ? 'x' : 'z', S = N === 'x' ? 'z' : 'x', tai = (ax, fr) => _bx.min[ax] + _sz[ax] * fr;
     pre.position[N] -= tai(N, (m.n[0] + m.n[1]) / 2); pre.position[S] -= tai(S, m.s[0]); pre.position.y -= tai('y', m.y[0]);
     const quay = new THREE.Group(); quay.add(pre); quay.rotation.y = RY0[m.truoc];   // mặt tiền của model → +Z cục bộ
-    const ky = cao ? (cao[1] - y0) / ((cao[0] - m.y[0]) * _sz.y) : cao0 / ((m.y[1] - m.y[0]) * _sz.y);
+    let ky = cao ? (cao[1] - y0) / ((cao[0] - m.y[0]) * _sz.y) : cao0 / ((m.y[1] - m.y[0]) * _sz.y);
     let kw = w / ((m.n[1] - m.n[0]) * _sz[N]); if (kep) kw = Math.min(Math.max(kw, ky * kep[0]), ky * kep[1]);
-    const kd = D ? D / (Math.abs(m.s[1] - m.s[0]) * _sz[S]) : kw;
+    let kd = D ? D / (Math.abs(m.s[1] - m.s[0]) * _sz[S]) : kw;
+    if (KHOP) {   // ?khop=1 (mặc định tắt): khớp ĐỀU kiểu 'nha' (vừa chân) trên phần mặt tiền của model vào lô w × cao × D — docs/handoff/khop-khoi-tai-san.md
+      const bm = [(m.n[1] - m.n[0]) * _sz[N], (m.y[1] - m.y[0]) * _sz.y, Math.abs(m.s[1] - m.s[0]) * _sz[S]], Dc = D || kw * bm[2], Hc = ky * bm[1];
+      const kk = khop({ bbox: bm, vung: { x: [-w / 2, w / 2], y: [0, Hc], z: [-Dc / 2, Dc / 2] }, loai: 'nha' }).scale[0]; kw = ky = kd = kk;
+    }
     const co = new THREE.Group(); co.add(quay); co.scale.set(lat ? -kw : kw, ky, kd);
     const g0 = new THREE.Group(); g0.name = name; g0.add(co); const [x, z] = f.W(du, -lui); g0.position.set(x, y0, z); g0.rotation.y = f.ry;
     gomRb(o, id); tang.add(g0);

@@ -18,6 +18,7 @@
 //   Đèn điểm dùng chung bám theo gian mà camera đang đứng (camera x < 50 → tiệm bánh, ngược lại → tiệm may).
 // ASSET ROBLOX (duyệt đợt 1, 14/11 — duyet/ep003/dot-01.ketqua.json; nguồn/tác giả trong assets/manifest.json): quầy, kệ bánh, tủ bày, giỏ bánh, thùng bánh dài, cửa kính,
 //   bàn may, kệ hộp, giá cuộn, ma-nơ-canh, cuộn chỉ, đèn treo, cửa gỗ. ?rb=0 trên URL (hoặc thiếu model) → về bản dựng bằng khối cũ.
+import { khop } from '../khop-tai-san.js';
 export const LIGHT = 'interior';
 export const ASSETS = ['tiem-banh-quay', 'tiem-banh-ke', 'tiem-banh-ban-bay', 'tiem-gio-banh', 'tiem-banh-dai', 'tiem-banh-cua', 'tiem-may-ban', 'tiem-may-ke', 'tiem-may-ke-vai', 'tiem-ma-no-canh', 'tiem-cuon-chi', 'tiem-den-treo', 'tiem-cua-may'].map((n) => 'nhap/' + n);
 export const TIEM_DIEM = { banh_quay: [-1, 0, -8.2], banh_giua: [0, 0, 2], may_ban: [102, 0, -9.9], may_giua: [100, 0, 2] };
@@ -30,6 +31,7 @@ export const PROP_SLOTS = {
 export default function build(g, e, H) {
   const { ganTang, THREE, K, hash, LIGHTS, scene, stage, fit } = H;
   const RB = !/[?&]rb=0(&|$)/.test(globalThis.location?.search || '');
+  const KHOP = /[?&]khop=1(&|$)/.test(globalThis.location?.search || '');   // khớp tài sản vào khối (mặc định TẮT)
   const _bx = new THREE.Box3(), _sz = new THREE.Vector3();
   // đặt GLB Roblox: kich = [rộng x, cao, sâu z] đích theo trục của model (trước khi xoay ry; co giãn không đều) | cao = chỉ cao (giữ tỉ lệ). Trả null khi tắt/thiếu → dùng bản khối.
   // khai loại vật liệu cho mesh (không nhân bản vật liệu); GLB Roblox/mặt sáng/ảnh vẽ/kính → 'none'
@@ -43,7 +45,13 @@ export default function build(g, e, H) {
   };
   const rb = (id, parent, name, { p, ry = 0, kich, cao }) => {
     if (!RB || !fit) return null; const o = fit('nhap/' + id, kich ? kich[1] : cao); if (!o) return null;
-    if (kich) { _bx.setFromObject(o); _bx.getSize(_sz); o.scale.set(kich[0] / _sz.x, 1, kich[2] / _sz.z); }
+    if (kich) {
+      _bx.setFromObject(o); _bx.getSize(_sz);
+      if (KHOP) {   // ?khop=1 (mặc định TẮT): khớp theo luật loại (cửa = tấm, còn lại = hộp ±15%) thay vì kéo méo X/Z không trần — docs/handoff/khop-khoi-tai-san.md
+        const k = khop({ bbox: [_sz.x, _sz.y, _sz.z], vung: { x: [-kich[0] / 2, kich[0] / 2], y: [0, kich[1]], z: [-kich[2] / 2, kich[2] / 2] }, loai: /cua/.test(id) ? 'tam' : 'hop' });
+        o.scale.set(k.scale[0], k.scale[1], k.scale[2]);
+      } else o.scale.set(kich[0] / _sz.x, 1, kich[2] / _sz.z);
+    }
     const g0 = new THREE.Group(); g0.name = name; g0.add(o); g0.position.set(...p); g0.rotation.y = ry;
     const vt = VAN_TIEM && VAN_TIEM[id];
     o.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; khongVan(m);
