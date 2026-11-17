@@ -46,6 +46,16 @@ const gan = (a, b, e = 1e-3) => a && b && a.every((v, i) => Math.abs(v - b[i]) <
 const tA = SH.t0 + 0.02, tB = SH.t0 + SH.dur - 0.02, tM = SH.t0 + SH.dur * 0.6;
 const goc0 = { A: await camAt(tA), B: await camAt(tB), M: await camAt(tM) };
 
+// bám camera shot: bấm chuột (đặt ghim, lưu ghi chú) KHÔNG tắt bám; kéo xoay camera thì tắt
+{ const W = await page.evaluate(() => { window.__che3d.setBam(true); const r = document.querySelector('.c3d-wrap canvas, .c3d-wrap').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+  await page.click('.c3s-mode button[data-m=ghim]'); await page.mouse.click(W.x, W.y); await page.waitForTimeout(200);
+  const pn = await page.$('.c3s-pin textarea'); if (pn) { await pn.fill('thử bám'); await page.click('.c3s-pin [data-p=luu]').catch(() => {}); }
+  await page.click('.c3s-mode button[data-m=xem]'); await page.mouse.click(W.x, W.y); await page.waitForTimeout(150);
+  const b1 = await page.evaluate(() => window.__che3d.bam);
+  await page.mouse.move(W.x, W.y); await page.mouse.down(); await page.mouse.move(W.x + 80, W.y + 10, { steps: 5 }); await page.mouse.up();
+  const b2 = await page.evaluate(() => window.__che3d.bam);
+  ok(b1 === true && b2 === false, `bám camera: bấm / đặt ghim / lưu vẫn bám (${b1}), kéo xoay thì thoát (${!b2})`);
+  await page.evaluate(() => { window.__che3d.sua.xoaHet(); window.__che3d.setBam(false); }); }
 await page.click('.c3s-mode button[data-m=cam]');
 await page.waitForFunction(() => !!window.__che3d.cam?.goc, null, { timeout: 60000 });
 const c1 = await page.evaluate(() => { const col = document.querySelector('.c3c-col'), w = document.querySelector('.c3d-wrap'); return { col: !!col && col.getBoundingClientRect().width > 100, wr: Math.round(w.getBoundingClientRect().right), cl: col ? Math.round(col.getBoundingClientRect().left) : 0, id: window.__che3d.cam.id, moc: window.__che3d.cam.mocHien }; });

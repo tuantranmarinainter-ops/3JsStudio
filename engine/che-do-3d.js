@@ -132,7 +132,11 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
     controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.PAN, RIGHT: null };   // chuột phải = chế độ bay (bên dưới)
     controls.maxDistance = 3000;
     controls.addEventListener('change', () => redraw());
-    controls.addEventListener('start', () => stopBam());   // kéo chuột trái/giữa, lăn → thoát bám camera shot
+    // thoát bám camera shot CHỈ khi camera thật sự bị kéo / xoay / lăn — bấm chuột (chọn vật, đặt ghim, bấm chỗ trống) không tắt bám
+    let keoBam = null;
+    controls.addEventListener('start', () => { keoBam = bam ? { p: free.position.clone(), q: free.quaternion.clone() } : null; });
+    controls.addEventListener('change', () => { if (keoBam && (free.position.distanceTo(keoBam.p) > 1e-4 || 1 - Math.abs(free.quaternion.dot(keoBam.q)) > 1e-7)) { keoBam = null; stopBam(); } });
+    controls.addEventListener('end', () => { keoBam = null; });
 
     // ---- chế độ bay kiểu Unreal ----
     const keys = new Set(); let rmb = false, speed = 20, raf = 0, last = 0, lookDist = 15;
