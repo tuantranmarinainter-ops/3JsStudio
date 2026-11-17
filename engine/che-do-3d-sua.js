@@ -213,6 +213,7 @@ export function ganSua(ctx) {
     if (isOn()) redraw();
   }
   function nhin(o) {
+    ctx.stopBam?.();   // 🎯 Nhìn / F: camera bay tới vật → thôi bám camera shot
     const box = new THREE.Box3().setFromObject(o); if (box.isEmpty()) return;
     const c = box.getCenter(new THREE.Vector3()), r = Math.max(1.5, box.getSize(new THREE.Vector3()).length() * 0.9);
     const dir = B.free.position.clone().sub(B.controls.target); if (dir.lengthSq() < 1e-6) dir.set(0, 0.5, 1);

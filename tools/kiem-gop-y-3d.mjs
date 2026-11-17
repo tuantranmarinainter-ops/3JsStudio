@@ -58,7 +58,10 @@ ok(bc.col && bc.hep && bc.wr <= bc.cl, `cột Sửa vật bên phải khung 3D (
 ok(bc.n > 5 && bc.guong >= 0, `danh sách asset: ${bc.n} asset, lớp ${bc.lop.join(' / ')}, có phong_guong: ${bc.guong >= 0}`);
 // chọn cái GƯƠNG bằng cú bấm: nhìn tới gương, bấm vào giữa mặt kính
 if (bc.guong >= 0) {
-  const xy = await page.evaluate((i) => { const S = window.__che3d.sua, g = S.assetObj(i); S.nhin(g); S.chon(null);
+  const xy = await page.evaluate((i) => { const S = window.__che3d.sua, g = S.assetObj(i), T = window.THREE, kk = g.getObjectByName('phong_guong_kinh') || g, C = window.__che3d;
+    // lớp chi tiết phòng (giá treo áo, dce8a7e) đứng chắn trước gương → ẩn tạm trong lúc thử bấm gương
+    window.__chiTiet = window.__stage.scene.getObjectByName('phong_chi_tiet'); if (window.__chiTiet) window.__chiTiet.visible = false;
+    C.setBam(false); S.nhin(g); S.chon(null);
     const k = g.getObjectByName('phong_guong_kinh') || g, b = new window.THREE.Box3().setFromObject(k), c = b.getCenter(new window.THREE.Vector3()).project(window.__che3d.camera);
     const r = document.querySelector('.c3d-wrap').getBoundingClientRect(); return [r.left + (c.x + 1) / 2 * r.width, r.top + (1 - c.y) / 2 * r.height]; }, bc.guong);
   await page.mouse.click(xy[0], xy[1]);
@@ -68,6 +71,7 @@ if (bc.guong >= 0) {
   const g2 = await page.evaluate(() => ({ s: window.__che3d.sua.sel?.name, a: window.__che3d.sua.selAsset?.name }));
   ok(g2.a === 'phong_guong' && g2.s !== 'phong_guong', `bấm lại → bộ phận "${g2.s || '(không tên)'}" của ${g2.a}`);
   await page.screenshot({ path: join(out, '1b_guong.png') });
+  await page.evaluate(() => { if (window.__chiTiet) window.__chiTiet.visible = true; });
   await page.evaluate(() => window.__che3d.sua.chon(null));
   await page.mouse.click(800, 520);
   await page.evaluate(() => { const S = window.__che3d.sua; if (!S.sel) S.chon(S.assetObj(0)); });

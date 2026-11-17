@@ -192,7 +192,7 @@ export function installChe3D({ THREE, stage, tl, actors, props, places, q } = {}
       B0.sua = ganSua({ THREE, stage, B: B0, redraw: () => redraw(), isOn: () => on,
         withView: (f) => { const ov = envOverride(); try { return f(); } finally { ov(); } },
         shot: () => ({ id: shotCam.id, t: +curT.toFixed(3) }), viewCanvas: () => (ss ? ssCv : canvas), getProps,
-        camMode: (v) => B0.cam?.setBat(v), camKey: (e) => !!B0.cam?.phim(e) });
+        stopBam: () => stopBam(), camMode: (v) => B0.cam?.setBat(v), camKey: (e) => !!B0.cam?.phim(e) });
       B0.sua.onChange(() => { for (const f of listeners) f(on, ss); });
     } catch (e) { console.warn('[che-do-3d] sửa/ghim', e); }
     // 🎥 sửa camera của shot (thử): điểm đầu / cuối, zoom, trượt, đoạn chạy — engine/che-do-3d-cam.js
