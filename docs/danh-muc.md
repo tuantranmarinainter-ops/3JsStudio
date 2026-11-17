@@ -230,3 +230,4 @@ Nguồn: engine/post.js · FX_DEFAULTS + FX_LABELS
 | `punchRung` | bật | Punch + rung máy kiểu blocky ở chữ chốt (shot.bfx punch/shake) |
 | `lopPhu` | bật | Đồ hoạ bật kiểu blocky: biển cấm, dấu đóng, biểu tượng trên đầu, lấp lánh, tiêu đề, chớp trắng |
 | `phuDeBlocky` | bật | Phụ đề kiểu blocky: chữ trắng viền đen, bật từng chữ, chữ nhấn tô vàng (tắt = phụ đề cũ) |
+| `neTuong` | tắt | Máy blocky né tường: tường/vật bối cảnh che giữa máy và chủ thể → kéo máy vào trước vật che (mặc định TẮT để không đổi hình tập đã duyệt; tắt = máy đặt như cũ) |
