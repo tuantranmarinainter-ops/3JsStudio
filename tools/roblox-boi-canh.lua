@@ -2,10 +2,20 @@
 return function(ENV, ORIGIN, URL, FOLDER)
 local H = game:GetService("HttpService")
 local d = H:JSONDecode(H:GetAsync(URL .. ENV .. ".json"))
-local MAT = { wood = Enum.Material.WoodPlanks, woodpaint = Enum.Material.SmoothPlastic, plaster = Enum.Material.Plaster, fabric = Enum.Material.Fabric,
-  knit = Enum.Material.Fabric, chrome = Enum.Material.Metal, enamel = Enum.Material.SmoothPlastic, tile = Enum.Material.CeramicTiles, paper = Enum.Material.SmoothPlastic,
-  metalpaint = Enum.Material.Metal, concrete = Enum.Material.Concrete, brick = Enum.Material.Brick, asphalt = Enum.Material.Asphalt, grass = Enum.Material.Grass,
-  stone = Enum.Material.Slate, roof = Enum.Material.Slate, metal = Enum.Material.Metal, glass = Enum.Material.Glass }
+-- loại vân của phim (userData.matKind) → vật liệu sẵn có của Roblox. Mỗi part ghi thuộc tính Van (loại) + VatLieuVan (tên vật liệu);
+-- tắt vân: đặt Material = SmoothPlastic cho part có VatLieuVan; bật lại: Enum.Material[part:GetAttribute('VatLieuVan')] (docs/roblox.md mục 8).
+local MAT = { wood = Enum.Material.WoodPlanks, woodpaint = Enum.Material.Wood, plaster = Enum.Material.Plaster, fabric = Enum.Material.Fabric,
+  knit = Enum.Material.Fabric, fur = Enum.Material.Fabric, chrome = Enum.Material.Metal, enamel = Enum.Material.SmoothPlastic, tile = Enum.Material.CeramicTiles,
+  paper = Enum.Material.SmoothPlastic, metalpaint = Enum.Material.Metal, iron = Enum.Material.Metal, concrete = Enum.Material.Concrete, brick = Enum.Material.Brick,
+  asphalt = Enum.Material.Asphalt, grass = Enum.Material.Grass, grassground = Enum.Material.Grass, foliage = Enum.Material.LeafyGrass, soil = Enum.Material.Ground,
+  shingle = Enum.Material.RoofShingles, roof = Enum.Material.ClayRoofTiles, stone = Enum.Material.Slate, metal = Enum.Material.Metal, glass = Enum.Material.Glass,
+  rubber = Enum.Material.Rubber, cardboard = Enum.Material.Cardboard, matte = Enum.Material.Plastic, roadpaint = Enum.Material.SmoothPlastic }
+-- part không khai loại vân: đoán theo tên
+local TEN = { {'brick', 'brick'}, {'gach', 'brick'}, {'roof', 'roof'}, {'mai_', 'roof'}, {'ngoi', 'roof'}, {'shingle', 'shingle'}, {'wood', 'wood'}, {'_go', 'wood'},
+  {'concrete', 'concrete'}, {'vha_he', 'concrete'}, {'thung', 'cardboard'}, {'sidewalk', 'concrete'}, {'curb', 'concrete'}, {'via_he', 'concrete'}, {'road', 'asphalt'}, {'duong', 'asphalt'},
+  {'grass', 'grass'}, {'_co_', 'grass'}, {'tuong', 'plaster'}, {'wall', 'plaster'}, {'steel', 'metal'}, {'iron', 'iron'}, {'metal', 'metal'}, {'fence', 'metalpaint'} }
+local function kindOf(p) if p.kind and MAT[p.kind] then return p.kind end
+  local n = string.lower(p.n or '') for _, t in ipairs(TEN) do if n:find(t[1], 1, true) then return t[2] end end return nil end
 local root = workspace:FindFirstChild((FOLDER or "BoiCanh")) or Instance.new("Folder", workspace); root.Name = (FOLDER or "BoiCanh")
 local old = root:FindFirstChild(ENV); if old then old:Destroy() end
 local F = Instance.new("Folder"); F.Name = ENV
@@ -16,7 +26,8 @@ local function style(part, p)
   if p.map and p.avg and p.c and p.c ~= "#ffffff" then local a, b = Color3.fromHex(p.c), Color3.fromHex(p.avg); part.Color = Color3.new(a.R * b.R, a.G * b.G, a.B * b.B)
   else part.Color = hex and Color3.fromHex(hex) or Color3.fromRGB(200, 200, 200) end
   part.Anchored = true; part.TopSurface = Enum.SurfaceType.Smooth; part.BottomSurface = Enum.SurfaceType.Smooth
-  part.Material = MAT[p.kind or ""] or Enum.Material.SmoothPlastic
+  local kd = kindOf(p); part.Material = (kd and MAT[kd]) or Enum.Material.SmoothPlastic
+  if kd then part:SetAttribute("Van", kd); part:SetAttribute("VatLieuVan", part.Material.Name) end
   if p.kind == "chrome" then part.Reflectance = 0.3 end
   if p.op and p.op < 1 then part.Transparency = 1 - p.op; if p.op < 0.5 then part.Material = Enum.Material.Glass end end
   local ln = string.lower(p.n or "")
