@@ -2,13 +2,17 @@
 
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-16 tối
+- **Cập nhật:** 2026-11-17
 - **Nhánh:** `ep1-v2`
-- **Đang làm:** không — đợt 5 nhóm A (PHỐ) đã chốt (`duyet/ep003/dot-04.ketqua.json`) và đã thay vào `engine/envs/e3-pho.js`.
+- **Đang làm:** không — nhóm A (phố) + góp ý 3D 16/11 + nhóm B (tiệm) + nhóm C (phòng Gà) + nhóm D (kho nhà máy) đã xong: hết danh sách góp ý "lấy thêm asset tập 3".
 - **Đã thay:** cây Roblox 3287226226 (`nhap/pho-cay`) thay mọi cây khối; 6 trụ cứu hoả 8220444536 (`nhap/pho-tru-cuu-hoa`); 6 gấu kệ nhà máy trên 2 tầng kệ sau kính tiệm gấu (dựng lười ở update); trời ngày anime-day (`?troiPho=sky-7` về cũ), đêm sky-9; vòng bao rừng thông. `?rb=0` về bản khối.
 - **Góp ý 3D 16/11 19:32 (đã làm):** tủ gấu 2 tầng × 3 gấu to theo vị trí người dùng kéo (`?gauKinhCu=1` về cũ), nền kệ kéo ra trước tấm kính đen của model (hết đen); rừng thông đêm bỏ sương (`suongDem:false` trong `engine/vong-bao.js`, `?suongRungDem=1` về cũ) — hết dải xanh phẳng; s015 `skyScale 3.5` (mới thấy chút mây góc phải); tiệm: 2 giá bánh dời (`?keBanhCu=1`), +2 ma-nơ-canh (`?themManoCanh=0`); phòng Gà: gương dời/xoay (GUONG), chăn phủ nâng 0,57 (`?chanPhuCu=1`), vết dây ẩn khi tập đặt `globalThis.__vetDay=false` (ep003b); ep003b BAP_G y 2,86.
 - **Chưa kiểm được bằng ảnh:** ma-nơ-canh/giá bánh (h05, h08 không lọt khung), vị trí gương h31.
-- **Bước kế tiếp:** nhóm B (tiệm s004–s006: áo ma-nơ-canh, đồ bị mất), C (phòng Gà: cửa sổ nhìn phố, ảnh treo), D (nhà máy: đống đồ ăn cắp).
+- **Nhóm B 17/11 (b3488d4):** s004 vân gỗ thư viện cho quầy (mesh `tiem_quay_mat_go`), tủ quầy GLB mau_1/mau_3, khung kệ mau_1 bỏ ảnh → nâu; tường be `#f7e4c6` (`?vanTiem=0`). s005 máy hạ ngang hốc (kit-pho.json S005; `?camCu=1` máy cũ), bột = ảnh canvas có ô sạch khoét + vệt kéo (`?botCu=1`), vách sau hốc (`?hocSau=0`), bỏ tay giơ của chú bánh. s006 ma-nơ-canh vải lanh có đường may `tiem_ma_no_canh_vai` sau-trái thợ may (`?manoS006=0`).
+- **Còn lại (chưa làm):** s004 dải vàng đáy quầy + tường hơi ô-liu; s005 mép dưới tấm bột loang hơi giả, ô sạch chưa có bóng hõm; s006 bàn may chưa vân, hộp nhẫn khối thô, đầu thợ may bị cắt 25% (cổng kiểm, có từ trước).
+- **Nhóm C 17/11:** cửa sổ + kính ban công = ẢNH chụp phố e3-pho thật (`assets/textures/env/e3-phong-cua-so-{ngay,dem}.jpg`, chụp bằng `output/_tmp/chup-cua-so.mjs` máy (−8,5; 11,5; 22)→(3; 8,5; −40) fov 90; `?anhPho=0` về tranh vẽ). Lớp chi tiết `phong_chi_tiet` (`?chiTietPhong=0`): khung ảnh thị trấn + tranh sáp + giấy khen + dây cờ (tường tây), ảnh gia đình + bảng ghim + rèm thắt eo (tường bắc), áp phích "BAY LÊN!" (đông), chậu cây + giá áo Kenney.
+- **Nhóm D 17/11:** `kho_dong_do_an_cap` (`?dongDo=0`): thùng carton đầu gấu đổ miệng về cửa ở (43,2; −2,9), bao vải 2 lớp, 15 món GLB ×1,9 (đồng hồ, sách, ví, túi tiền, dép, chuông, khung ảnh, hộp nhẫn, dây chuyền, đèn bàn) + cuộn thảm, bóng; vệt rơi vãi z −0,8…0,8 ra cửa (hành lang thấy giữa người ở s083). Ngoài vòng quét cánh cửa và lối đi ông Bách s090.
+- **Bước kế tiếp:** người dùng xem bản xem thử; còn lại các mục nhỏ ở dòng "Còn lại". s094: đống đồ bị nhân vật che (chỉ cột z 3 trống) — muốn thấy rõ phải đổi máy s094.
 - **Đang chờ:** đợt 2 (biển tiệm bánh) vẫn chờ duyệt.
 - **File đang dở (chưa commit):** không.
 - **Đang chạy nền:** không

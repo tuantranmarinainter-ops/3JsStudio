@@ -18,7 +18,7 @@
 // VẬT LIỆU: mọi khối khai loại ở userData.matKind (docs/vat-lieu.md) → engine/materials.js vá vân thật; lớp bụi (grunge) tắt cho nội thất.
 // ĐÊM / SÁNG: đọc ánh sáng của shot (time:'dem' → bedNight; còn lại → interior): đêm = đèn bàn hổ phách + trăng lam qua cửa sổ; sáng = nắng qua cửa sổ.
 export const LIGHT = 'bedNight';
-export const ASSETS = [];
+export const ASSETS = ['furniture-kit/pottedPlant', 'furniture-kit/coatRack'];   // lớp chi tiết 17/11 (?chiTietPhong=0 tắt)
 const G = 5.2, W = 14.56, D = 17.68, HH = 9.36, HX = W / 2, HZ = D / 2;
 const BX = -4.81, BED_Z0 = -7.07, BED_Z1 = 0.63, BED_W = 4.1, BED_TOP = 2.24;          // giường
 const KX = 3.3, KZ = -8.14, KW = 5.15, KD = 1.4, KH = 3.22;                            // kệ gỗ thấp
@@ -105,8 +105,20 @@ export default function build(g, e, H) {
     for (let i = 0; i < 6; i++) { const tx = 20 + i * 90 + hash(i, 41) * 30, th = 50 + hash(i, 42) * 40; c.fillStyle = night ? '#0a1a2a' : '#4E7A32'; c.fillRect(tx, h - th - 10, 46, th + 10); }
     c.fillStyle = night ? '#141a30' : '#8f8d96'; c.fillRect(0, h - 22, w, 22);
   });
-  const viewNight = viewTexOf(true), viewDay = viewTexOf(false), viewMats = [];
-  const viewMat = () => { const m = new THREE.MeshBasicMaterial({ map: viewNight, fog: false }); viewMats.push(m); return m; };
+  let viewNight = viewTexOf(true), viewDay = viewTexOf(false);
+  // 17/11 (góp ý "nhìn cửa sổ thấy ẢNH thị trấn"): ảnh chụp phố e3-pho thật từ trước nhà Gà, tầng 2 (assets/textures/env/e3-phong-cua-so-*.jpg, 1080×906).
+  // ?anhPho=0 → về tranh vẽ canvas cũ. Mặt phẳng ban công (70×34) cắt dải giữa ảnh để không méo.
+  const ANH_PHO = !/[?&]anhPho=0(&|$)/.test(globalThis.location?.search || '');
+  const anhPho = {};
+  if (ANH_PHO) {
+    const TL = new THREE.TextureLoader(), ld = (f) => { const t = TL.load('/assets/textures/env/' + f); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
+    anhPho.ngay = ld('e3-phong-cua-so-ngay.jpg'); anhPho.dem = ld('e3-phong-cua-so-dem.jpg');
+    viewDay = anhPho.ngay; viewNight = anhPho.dem;
+  }
+  const viewMats = [];   // [vật liệu, kiểu]: kiểu 'bc' = mặt ban công (cắt dải giữa)
+  const viewMat = (bc) => { const m = new THREE.MeshBasicMaterial({ map: viewNight, fog: false, toneMapped: !ANH_PHO }); m.userData.bc = !!bc; viewMats.push(m); return m; };
+  const bcTex = ANH_PHO ? { ngay: anhPho.ngay.clone(), dem: anhPho.dem.clone() } : null;
+  if (bcTex) for (const t of Object.values(bcTex)) { t.repeat.set(1, 1.19 / (70 / 34)); t.offset.set(0, (1 - t.repeat.y) * 0.45); t.needsUpdate = true; }
   const glassMat = new THREE.MeshBasicMaterial({ color: '#dff0ff', transparent: true, opacity: 0.1, depthWrite: false });
 
   // ---- VỎ PHÒNG: tường = tấm phẳng có lỗ, mặt nhìn VÀO trong → máy đứng ngoài tường vẫn nhìn xuyên vào được. Cục bộ: x ngang, y cao, +z vào phòng ----
@@ -168,7 +180,7 @@ export default function build(g, e, H) {
     const RC = '#39466a';   // lan can xanh lam sẫm, trụ dày
     box(gw, 'phong_lan_can_tay_vin', 7.2, 0.36, 0.4, c + 0.6, 3.07, -4.0, RC, 'woodpaint');
     for (let i = 0; i <= 8; i++) box(gw, 'phong_lan_can_song', i % 4 === 0 ? 0.42 : 0.2, 3.07, i % 4 === 0 ? 0.42 : 0.2, c + 0.6 - 3.5 + i * 0.875, 0, -4.0, RC, 'woodpaint').castShadow = false;
-    const out = none(new THREE.Mesh(new THREE.PlaneGeometry(70, 34), viewMat())); out.position.set(c, 10, -20); out.name = 'phong_canh_ngoai_ban_cong'; gw.add(out);
+    const out = none(new THREE.Mesh(new THREE.PlaneGeometry(70, 34), viewMat(true))); out.position.set(c, 10, -20); out.name = 'phong_canh_ngoai_ban_cong'; gw.add(out);
   }
   // ---- CỬA PHÒNG (tường nam): cánh gỗ treo bản lề phía TÂY, mở vào trong; chốt đồng nằm ngang gài vào ngàm trên nẹp phía đông; hành lang tối sau cửa ----
   const doorPivot = new THREE.Group(); doorPivot.name = 'phong_cua_phong';
@@ -295,6 +307,95 @@ export default function build(g, e, H) {
       mirror.visible = true; busy = false;
     };
   }
+  // ---- LỚP CHI TIẾT (góp ý 17/11 "đắp thêm 1 lớp chi tiết treo ảnh v.v"): khung ảnh treo tường, bảng ghim, rèm cửa sổ, dây cờ, chậu cây, giá treo áo.
+  //      ?chiTietPhong=0 → tắt cả lớp (về phòng cũ). Mọi món tránh mặt kệ (đồ manh mối), gương, két, cửa.
+  if (!/[?&]chiTietPhong=0(&|$)/.test(globalThis.location?.search || '')) {
+    const CT = new THREE.Group(); CT.name = 'phong_chi_tiet'; mid.add(CT);
+    const RY = { bac: 0, tay: Math.PI / 2, dong: -Math.PI / 2, nam: Math.PI };   // mặt tranh quay VÀO phòng
+    const khung = (name, w, h, pos, huong, map, { vien = WOOD_D, rz = 0, day = 0.16, le = 0.14 } = {}) => {   // khung gỗ + tranh (tâm ở pos)
+      const k = new THREE.Group(); k.name = name; k.position.set(...pos); k.rotation.set(0, RY[huong], rz, 'YXZ'); CT.add(k);
+      box(k, name + '_vien', w, le, day, 0, h / 2 - le, 0, vien, 'wood'); box(k, name + '_vien', w, le, day, 0, -h / 2, 0, vien, 'wood');
+      for (const sx of [-1, 1]) box(k, name + '_vien', le, h, day, sx * (w / 2 - le / 2), -h / 2, 0, vien, 'wood');
+      const p = new THREE.Mesh(new THREE.PlaneGeometry(w - le * 2 + 0.02, h - le * 2 + 0.02), new THREE.MeshStandardMaterial({ map, roughness: 0.75 }));
+      none(p); p.receiveShadow = true; p.position.z = 0.02; p.name = name + '_tranh'; k.add(p); return k;
+    };
+    const ve = (w, h, f) => canvasTex(w, h, f);
+    // 1) ẢNH CHỤP THỊ TRẤN (cắt giữa ảnh phố) — treo trên đầu giường, tường tây
+    let anhTT = viewTexOf(false); if (ANH_PHO) { anhTT = anhPho.ngay.clone(); anhTT.repeat.set(0.55, 0.62); anhTT.offset.set(0.24, 0.2); anhTT.needsUpdate = true; }
+    khung('phong_anh_thi_tran', 2.5, 1.9, [-HX + 0.1, 6.1, -4.5], 'tay', anhTT, { vien: '#f1e6d2' });
+    // 2) TRANH BÚT SÁP của Gà: Gà vàng + gấu Bắp nâu dưới mặt trời
+    const tranhSap = ve(256, 320, (c, w, h) => {
+      c.fillStyle = '#fbf6ea'; c.fillRect(0, 0, w, h); c.fillStyle = '#8fd16a'; c.fillRect(0, h * 0.78, w, h * 0.22);
+      c.fillStyle = '#ffcf33'; c.beginPath(); c.arc(w * 0.82, h * 0.14, 26, 0, 7); c.fill(); c.strokeStyle = '#ffb000'; c.lineWidth = 5;
+      for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2; c.beginPath(); c.moveTo(w * 0.82 + Math.cos(a) * 34, h * 0.14 + Math.sin(a) * 34); c.lineTo(w * 0.82 + Math.cos(a) * 48, h * 0.14 + Math.sin(a) * 48); c.stroke(); }
+      const nguoi = (x, y, s, mau, dau) => { c.fillStyle = mau; c.fillRect(x - 22 * s, y - 60 * s, 44 * s, 60 * s); c.fillStyle = dau; c.fillRect(x - 18 * s, y - 100 * s, 36 * s, 36 * s);
+        c.fillStyle = '#222'; c.fillRect(x - 9 * s, y - 88 * s, 5 * s, 5 * s); c.fillRect(x + 4 * s, y - 88 * s, 5 * s, 5 * s); c.fillRect(x - 20 * s, y, 14 * s, 30 * s); c.fillRect(x + 6 * s, y, 14 * s, 30 * s); };
+      nguoi(w * 0.33, h * 0.68, 1.15, '#3d7bd9', '#ffd84a');   // Gà: đầu vàng, áo xanh
+      c.fillStyle = '#a9713a'; c.beginPath(); c.arc(w * 0.68, h * 0.6, 34, 0, 7); c.fill(); c.beginPath(); c.arc(w * 0.68, h * 0.42, 26, 0, 7); c.fill();   // Bắp
+      c.beginPath(); c.arc(w * 0.68 - 20, h * 0.36, 9, 0, 7); c.fill(); c.beginPath(); c.arc(w * 0.68 + 20, h * 0.36, 9, 0, 7); c.fill();
+      c.fillStyle = '#222'; c.fillRect(w * 0.68 - 10, h * 0.41, 5, 5); c.fillRect(w * 0.68 + 5, h * 0.41, 5, 5);
+      c.strokeStyle = '#e8473f'; c.lineWidth = 4; c.beginPath(); c.moveTo(w * 0.46, h * 0.52); c.bezierCurveTo(w * 0.5, h * 0.44, w * 0.56, h * 0.48, w * 0.5, h * 0.56); c.bezierCurveTo(w * 0.44, h * 0.48, w * 0.5, h * 0.44, w * 0.46, h * 0.52); c.stroke();   // tim
+    });
+    khung('phong_tranh_sap', 1.55, 1.95, [-HX + 0.1, 5.75, -1.9], 'tay', tranhSap, { vien: '#c0392b', rz: 0.05, le: 0.1 });
+    // 3) GIẤY KHEN
+    const giayKhen = ve(256, 320, (c, w, h) => {
+      c.fillStyle = '#fff4d6'; c.fillRect(0, 0, w, h); c.strokeStyle = '#c8962e'; c.lineWidth = 10; c.strokeRect(12, 12, w - 24, h - 24); c.lineWidth = 3; c.strokeRect(26, 26, w - 52, h - 52);
+      c.fillStyle = '#b3261e'; c.font = 'bold 34px "Be Vietnam Pro", sans-serif'; c.textAlign = 'center'; c.fillText('GIẤY KHEN', w / 2, 82);
+      c.fillStyle = '#6b5a3a'; for (let i = 0; i < 5; i++) c.fillRect(52, 118 + i * 26, w - 104, 5);
+      c.fillStyle = '#d63b2f'; c.beginPath(); c.arc(w * 0.72, h * 0.82, 26, 0, 7); c.fill(); c.fillStyle = '#ffd86b'; c.beginPath(); c.arc(w * 0.72, h * 0.82, 14, 0, 7); c.fill();
+    });
+    khung('phong_giay_khen', 1.3, 1.65, [-HX + 0.1, 6.0, 0.2], 'tay', giayKhen, { vien: '#b8873b', le: 0.1 });
+    // 4) ẢNH GIA ĐÌNH (mẹ + Gà) — tường bắc, bên trái cửa sổ, trên tủ đèn
+    const anhNha = ve(256, 320, (c, w, h) => {
+      const gr = c.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#9ed2f2'); gr.addColorStop(1, '#e8f4fb'); c.fillStyle = gr; c.fillRect(0, 0, w, h);
+      c.fillStyle = '#7cc26a'; c.fillRect(0, h * 0.8, w, h * 0.2);
+      const r6 = (x, y, s, ao, dau) => { c.fillStyle = ao; c.fillRect(x - 26 * s, y - 70 * s, 52 * s, 70 * s); c.fillStyle = dau; c.fillRect(x - 20 * s, y - 112 * s, 40 * s, 40 * s); c.fillStyle = '#2b2b2b'; c.fillRect(x - 10 * s, y - 98 * s, 6 * s, 6 * s); c.fillRect(x + 4 * s, y - 98 * s, 6 * s, 6 * s); c.fillStyle = '#4a3a2a'; c.fillRect(x - 24 * s, y, 20 * s, 34 * s); c.fillRect(x + 4 * s, y, 20 * s, 34 * s); };
+      r6(w * 0.36, h * 0.66, 1.25, '#d0637a', '#f2c9a0'); r6(w * 0.68, h * 0.74, 0.95, '#3d7bd9', '#ffd84a');
+    });
+    khung('phong_anh_gia_dinh', 1.3, 1.6, [-5.45, 6.95, -HZ + 0.1], 'bac', anhNha, { vien: '#f1e6d2', le: 0.12 });
+    // 5) BẢNG GHIM BẦN trên kệ (tường bắc): giấy nhớ, ảnh nhỏ, đinh ghim — cao hơn đồ trên kệ
+    const bangGhim = ve(384, 256, (c, w, h) => {
+      c.fillStyle = '#c6955a'; c.fillRect(0, 0, w, h); for (let i = 0; i < 900; i++) { c.fillStyle = `rgba(${hash(i, 61) > 0.5 ? '90,56,24' : '236,200,150'},${0.15 + hash(i, 62) * 0.25})`; c.fillRect(hash(i, 63) * w, hash(i, 64) * h, 2, 2); }
+      const giay = (x, y, gw, gh, mau, rz) => { c.save(); c.translate(x, y); c.rotate(rz); c.fillStyle = 'rgba(0,0,0,0.18)'; c.fillRect(-gw / 2 + 3, -gh / 2 + 4, gw, gh); c.fillStyle = mau; c.fillRect(-gw / 2, -gh / 2, gw, gh);
+        c.fillStyle = 'rgba(60,60,80,0.55)'; for (let k = 0; k < 3; k++) c.fillRect(-gw / 2 + 8, -gh / 2 + 16 + k * 12, gw - 16 - (k === 2 ? 14 : 0), 3); c.fillStyle = '#e53935'; c.beginPath(); c.arc(0, -gh / 2 + 6, 5, 0, 7); c.fill(); c.restore(); };
+      giay(64, 70, 76, 70, '#fff176', -0.12); giay(170, 60, 70, 66, '#80deea', 0.08); giay(300, 76, 90, 76, '#ffffff', -0.05); giay(96, 182, 80, 72, '#f48fb1', 0.1); giay(214, 176, 74, 70, '#a5d6a7', -0.08);
+      c.save(); c.translate(312, 180); c.rotate(0.12); c.fillStyle = '#fff'; c.fillRect(-42, -38, 84, 76); const g2 = c.createLinearGradient(0, -30, 0, 26); g2.addColorStop(0, '#76bdf0'); g2.addColorStop(1, '#d7c3a6'); c.fillStyle = g2; c.fillRect(-36, -32, 72, 56); c.fillStyle = '#e53935'; c.beginPath(); c.arc(0, -34, 5, 0, 7); c.fill(); c.restore();
+    });
+    khung('phong_bang_ghim', 2.7, 1.8, [2.3, 6.15, -HZ + 0.1], 'bac', bangGhim, { vien: '#7a4e2c', le: 0.12, day: 0.2 });
+    // 6) ÁP PHÍCH tên lửa — tường đông, giữa cửa ban công và gương
+    const apPhich = ve(256, 360, (c, w, h) => {
+      const gr = c.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#1b2a5c'); gr.addColorStop(1, '#3b4fa0'); c.fillStyle = gr; c.fillRect(0, 0, w, h);
+      c.fillStyle = '#fff'; for (let i = 0; i < 40; i++) c.fillRect(hash(i, 71) * w, hash(i, 72) * h * 0.8, 2 + (i % 4 === 0) * 2, 2 + (i % 4 === 0) * 2);
+      c.fillStyle = '#f5f5f5'; c.beginPath(); c.moveTo(w / 2, 70); c.bezierCurveTo(w / 2 + 40, 110, w / 2 + 34, 210, w / 2 + 30, 250); c.lineTo(w / 2 - 30, 250); c.bezierCurveTo(w / 2 - 34, 210, w / 2 - 40, 110, w / 2, 70); c.fill();
+      c.fillStyle = '#e53935'; c.beginPath(); c.moveTo(w / 2, 70); c.bezierCurveTo(w / 2 + 22, 86, w / 2 + 30, 104, w / 2 + 32, 116); c.lineTo(w / 2 - 32, 116); c.bezierCurveTo(w / 2 - 30, 104, w / 2 - 22, 86, w / 2, 70); c.fill();
+      c.beginPath(); c.moveTo(w / 2 - 30, 210); c.lineTo(w / 2 - 58, 262); c.lineTo(w / 2 - 30, 250); c.fill(); c.beginPath(); c.moveTo(w / 2 + 30, 210); c.lineTo(w / 2 + 58, 262); c.lineTo(w / 2 + 30, 250); c.fill();
+      c.fillStyle = '#4fc3f7'; c.beginPath(); c.arc(w / 2, 160, 15, 0, 7); c.fill(); c.fillStyle = '#ffb300'; c.beginPath(); c.moveTo(w / 2 - 22, 252); c.lineTo(w / 2, 318); c.lineTo(w / 2 + 22, 252); c.fill();
+      c.fillStyle = '#ffd54f'; c.font = 'bold 30px "Be Vietnam Pro", sans-serif'; c.textAlign = 'center'; c.fillText('BAY LÊN!', w / 2, 46);
+    });
+    khung('phong_ap_phich', 2.0, 2.8, [HX - 0.1, 5.9, -1.4], 'dong', apPhich, { vien: '#2b2b33', le: 0.08, day: 0.08 });
+    // 7) RÈM CỬA SỔ vàng kem hai bên + thanh treo gỗ (không che khung kính; bên phải hẹp để không che đầu tây của kệ)
+    { const zR = -HZ + 0.62, yT = WIN.y1 + 0.55, rem = (name, x0, x1, nep) => {
+        const w = x1 - x0, h = yT - 3.55, gm = new THREE.PlaneGeometry(w, h, 28, 6), P = gm.attributes.position;
+        const yB = 4.9 - 3.55 - h / 2;   // độ cao dây buộc (cục bộ): rèm thắt eo ở đây (bó 60%), dải buộc vừa đúng chỗ thắt
+        for (let i = 0; i < P.count; i++) { const x = P.getX(i), y = P.getY(i), dn = (y + h / 2) / h, b = 1 - 0.4 * Math.exp(-(((y - yB) / 1.1) ** 2)); P.setX(i, x * b); P.setZ(i, Math.sin((x / w) * Math.PI * nep * 2) * 0.13 * (0.55 + 0.45 * dn)); }
+        gm.computeVertexNormals();
+        const m = tag(new THREE.Mesh(gm, mat('#e7c873', 'fabric', { side: THREE.DoubleSide, roughness: 0.95 })), 'fabric'); m.name = name; m.position.set((x0 + x1) / 2, 3.55 + h / 2, zR); CT.add(m);
+        box(CT, name + '_day_buoc', w * 0.62, 0.16, 0.34, (x0 + x1) / 2, 4.82, zR, '#b5552f', 'fabric'); };
+      rem('phong_rem_trai', WIN.c - WIN.hw - 1.35, WIN.c - WIN.hw - 0.26, 3); rem('phong_rem_phai', WIN.c + WIN.hw + 0.26, WIN.c + WIN.hw + 0.9, 2);
+      const tt = cyl(CT, 'phong_thanh_rem', 0.07, 0.07, WIN.hw * 2 + 3.1, WIN.c, yT, zR, WOOD_D, 'wood', {}, 10); tt.rotation.z = Math.PI / 2; tt.position.y = yT;
+      for (const sx of [-1, 1]) { const q = tag(new THREE.Mesh(new THREE.SphereGeometry(0.15, 10, 8), mat(WOOD_D, 'wood')), 'wood'); q.position.set(WIN.c + sx * (WIN.hw + 1.6), yT, zR); q.name = 'phong_thanh_rem_nuom'; CT.add(q); } }
+    // 8) DÂY CỜ ĐUÔI NHEO trên đầu giường (tường tây), võng xuống giữa
+    { const n = 11, z0 = -6.7, z1 = 0.9, mauCo = ['#e53935', '#fdd835', '#43a047', '#1e88e5', '#fb8c00', '#8e24aa'], ys = (u) => 8.45 - Math.sin(u * Math.PI) * 0.55;
+      const pts = []; for (let i = 0; i <= 20; i++) { const u = i / 20; pts.push(new THREE.Vector3(-HX + 0.14, ys(u), z0 + (z1 - z0) * u)); }
+      const day = tag(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 40, 0.025, 5), mat('#f5ecd8', 'fabric')), 'fabric', false); day.name = 'phong_day_co'; CT.add(day);
+      for (let i = 0; i < n; i++) { const u = (i + 0.5) / n, zc = z0 + (z1 - z0) * u, s = new THREE.Shape(); s.moveTo(-0.27, 0); s.lineTo(0.27, 0); s.lineTo(0, -0.62); s.closePath();
+        const co = tag(new THREE.Mesh(new THREE.ShapeGeometry(s), mat(mauCo[i % mauCo.length], 'fabric', { side: THREE.DoubleSide })), 'fabric', false); co.name = 'phong_co'; co.position.set(-HX + 0.16, ys(u), zc); co.rotation.set(0, Math.PI / 2, (hash(i, 81) - 0.5) * 0.12); CT.add(co); } }
+    // 9) CHẬU CÂY (góc đông, dưới áp phích) + GIÁ TREO ÁO cạnh cửa phòng (model Kenney furniture-kit, CC0) — thiếu model thì bỏ qua
+    if (H.fit) {
+      const cay = H.fit('furniture-kit/pottedPlant', 3.0); if (cay) { cay.position.set(HX - 0.9, 0, 1.6); cay.name = 'phong_chau_cay'; CT.add(cay); }
+      const gia = H.fit('furniture-kit/coatRack', 5.6); if (gia) { gia.position.set(2.5, 0, HZ - 0.9); gia.name = 'phong_gia_treo_ao'; CT.add(gia); }
+    }
+  }
   // ---- vệt sáng trăng / nắng trên sàn (cộng sáng) ----
   const patchMat = new THREE.MeshBasicMaterial({ map: softTex('255,255,255'), color: '#9fb8ff', transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthWrite: false, fog: false });
   for (const [i, [x, z, w, d]] of [[-1.2, -4.6, 4.6, 5.2], [4.6, -6.4, 4.4, 4.2]].entries()) { const m = none(new THREE.Mesh(new THREE.PlaneGeometry(w, d), patchMat)); m.rotation.x = -Math.PI / 2; m.position.set(x, 0.06, z); m.name = 'phong_vet_sang_' + i; front.add(m); }
@@ -306,7 +407,7 @@ export default function build(g, e, H) {
   let nightNow = null;
   const setNight = (night) => {
     if (nightNow === night) return; nightNow = night;
-    for (const m of viewMats) m.map = night ? viewNight : viewDay;
+    for (const m of viewMats) m.map = m.userData.bc && bcTex ? (night ? bcTex.dem : bcTex.ngay) : (night ? viewNight : viewDay);
     shadeMat.emissiveIntensity = night ? 0.5 : 0.1; shadeMat.color.set(night ? '#ffb347' : '#d9a050'); e.bulb.material.color.set(night ? '#e8c890' : '#d8c8a0');   // đèn dịu: không cháy sáng khi vào khung glow.visible = night;
     wallMat.color.set(night ? '#8b90a2' : '#a9b0bb'); patchMat.color.set(night ? '#9fb8ff' : '#fff0c0'); patchMat.opacity = night ? 0.22 : 0.4;
     e.pointSpec = night ? DEM : SANG;

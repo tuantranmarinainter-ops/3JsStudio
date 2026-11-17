@@ -15921,5 +15921,23 @@
   "loai": "vua",
   "tris": 1308,
   "tris_goc": 1308
+ },
+ {
+  "id": "textures/e3-phong-cua-so-ngay",
+  "src": "assets/textures/env/e3-phong-cua-so-ngay.jpg",
+  "source": "ảnh chụp bối cảnh e3-pho của dự án (ngày, t=3,5 s)",
+  "license": "nội bộ dự án (ảnh dựng từ model đã ghi công: nhap/pho-*, assets/sky)",
+  "credit": "3JS Studio — dựng từ các model Roblox Creator Store đã ghi ở nhap/pho-*",
+  "title": "Cảnh phố ngoài cửa sổ phòng Gà (ngày, t=3,5 s)",
+  "loai": "anh"
+ },
+ {
+  "id": "textures/e3-phong-cua-so-dem",
+  "src": "assets/textures/env/e3-phong-cua-so-dem.jpg",
+  "source": "ảnh chụp bối cảnh e3-pho của dự án (đêm, t=52,4 s)",
+  "license": "nội bộ dự án (ảnh dựng từ model đã ghi công: nhap/pho-*, assets/sky)",
+  "credit": "3JS Studio — dựng từ các model Roblox Creator Store đã ghi ở nhap/pho-*",
+  "title": "Cảnh phố ngoài cửa sổ phòng Gà (đêm, t=52,4 s)",
+  "loai": "anh"
  }
 ]

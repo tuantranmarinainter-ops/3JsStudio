@@ -24,7 +24,9 @@ import { gauKeOn, gauKeTach } from '../gau-ke.js';   // gấu kệ mẫu Roblox 
 // Mở cửa kho: e.setDoor(k) (k 0 đóng … 1 mở ~100°); shot truyền ctx.cuaKho (mặc định 1 = mở). Cổng rào: e.setGate(k) / ctx.congRao (mặc định 0 = đóng).
 // Đêm/ngày: theo ctx.light của shot ('night' | 'day'): đèn trong, lớp phát sáng, kính mái đổi theo — hàm thuần của (t, ctx).
 export const LIGHT = 'night';
-export const ASSETS = ['nhap/ket-sat-xam', 'nhap/may-khau'];
+export const ASSETS = ['nhap/ket-sat-xam', 'nhap/may-khau',
+  // đống đồ ăn cắp trong kho (17/11, ?dongDo=0 tắt)
+  'nhap/dong-ho-bao-thuc', 'nhap/dong-ho-qua-quyt', 'nhap/cuon-sach', 'nhap/vi-da', 'nhap/tui-tien', 'nhap/dep-xo-ngon', 'nhap/chuong-tay', 'nhap/khung-anh', 'nhap/hop-nhan-sang', 'nhap/day-chuyen-vang', 'furniture-kit/lampRoundTable'];
 export const DIEM = {
   cong: [-14, 0, 36], rao_ngoai: [-49, 0, 2], thung_ngoai: [-33, 2.0, 2.5], ngoai_kinh: [-33, 0, -7.5],
   bang_tay: [-23.2, 0, -8], bang_dong: [4.8, 0, -8], truoc_ke: [-1.5, 0, -15], truoc_ban_do: [21, 0, -14.8],
@@ -456,6 +458,43 @@ export default function build(g, e, H) {
   { const items = [], put = (x, y, z, sx, sy, sz, ry = 0) => items.push({ p: [x, y + sy / 2, z], s: [sx, sy, sz], r: [0, ry, 0] });
     put(49.4, 0, -9.5, 4.6, 4.2, 4.6, 0.05); put(44.6, 0, -11, 4.2, 3.6, 4.2, -0.08); put(49.0, 4.2, -9.8, 4.0, 3.6, 4.0, 0.2); put(43.5, 0, -6.3, 3.2, 3.0, 3.2, 0.18); put(47.2, 0, -5.2, 3.0, 2.8, 3.0, -0.1);
     inst(storeF, 'crate_wood_stack', BOX, woodInt, items, true); }
+  // ---- ĐỐNG ĐỒ ĂN CẮP tràn ra (góp ý 17/11 "nhà máy thiếu 1 đống đồ chàn ra do ăn cắp"): thùng carton in đầu gấu đổ nghiêng, miệng quay về cửa kho,
+  //      đồ của dân (đồng hồ, sách, ví, túi tiền, dép, chuông, khung ảnh, hộp nhẫn, dây chuyền, đèn bàn, cuộn thảm, bóng) tràn ra sàn trên mấy bao vải.
+  //      Đặt ở x 36,5–42, z −2,5…−7,8: giữa khung nhìn qua cửa kho (s083/s084/s094), ngoài vòng quét cánh cửa (bán kính 6 quanh bản lề), ngoài lối đi của ông Bách (s090).
+  //      ?dongDo=0 → tắt. Model GLB đã có trong kho (nhap/*, furniture-kit CC0); thiếu model thì bỏ món đó.
+  if (!/[?&]dongDo=0(&|$)/.test(globalThis.location?.search || '')) {
+    const DD = new THREE.Group(); DD.name = 'kho_dong_do_an_cap'; storeF.add(DD);
+    // 17/11 lần 2: dời sang khoảng sàn trống giữa khung s083/s084 (trước 2 thùng gỗ, z −1…−5), đồ phóng ×1,9 + chất 2 lớp bao để vượt đầu người đứng trước
+    const vai = (name, c, x, z, r, sy, sx = 1, y0 = 0) => { const m = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 10), std(c, { roughness: 0.95 })); m.scale.set(sx, sy, 1); m.position.set(x, y0 + r * sy * 0.55, z); m.name = name; m.castShadow = m.receiveShadow = true; m.userData.matKind = 'fabric'; m.userData.grungeKind = 'none'; DD.add(m); return m; };
+    vai('dong_do_bao', '#b08a5a', 40.6, -3.3, 1.6, 0.55, 1.3); vai('dong_do_bao', '#a07a4c', 38.9, -2.6, 1.25, 0.5); vai('dong_do_vai', '#7e57c2', 41.9, -1.9, 1.0, 0.45, 1.3);
+    vai('dong_do_vai', '#3f7fbf', 38.0, -3.9, 0.95, 0.45); vai('dong_do_bao', '#c29a62', 40.4, -3.6, 1.1, 0.55, 1.1, 1.0);   // bao chồng lớp 2
+    // thùng carton đổ nghiêng (miệng quay −X về cửa kho): 5 tấm, mặt ngoài in đầu gấu, mặt trong tối; tựa vào 2 thùng gỗ phía sau
+    { const S = 3.4, t = 0.12, T = new THREE.Group(); T.name = 'dong_do_thung_do'; T.position.set(43.2, S / 2 + 0.02, -2.9); T.rotation.set(0.05, 0.25, 0, 'YXZ'); DD.add(T);
+      const ngoai = mkCarton(cartonSide), trong = std('#6b4a2a', { roughness: 1 }), mt = [ngoai, ngoai, ngoai, ngoai, ngoai, ngoai];
+      const tam = (w, h, d, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mt); m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; m.name = 'dong_do_thung_tam'; khongVan(m); T.add(m); };
+      tam(S, t, S, 0, -S / 2 + t / 2, 0); tam(S, t, S, 0, S / 2 - t / 2, 0); tam(t, S, S, S / 2 - t / 2, 0, 0); tam(S, S, t, 0, 0, -S / 2 + t / 2); tam(S, S, t, 0, 0, S / 2 - t / 2);
+      const l = new THREE.Mesh(new THREE.BoxGeometry(S - 0.3, S - 0.3, S - 0.3), trong); l.material.side = THREE.BackSide; l.name = 'dong_do_thung_long'; khongVan(l); T.add(l);
+      for (const [sz, rz] of [[1, 0.5], [-1, -0.35]]) { const n = new THREE.Mesh(new THREE.BoxGeometry(t, S * 0.5, S), ngoai); n.geometry.translate(0, S * 0.25, 0); n.position.set(-S / 2, sz * (S / 2 - 0.05), 0); n.rotation.z = Math.PI / 2 + rz * sz; n.name = 'dong_do_thung_nap'; khongVan(n); T.add(n); } }
+    // đồ GLB: [id, cỡ THẬT (stud) theo trục, x, y, z, ry, rx, rz, trục ('xz' = cạnh ngang lớn nhất; mặc định = chiều cao)] — đo bbox model ở manifest:
+    //   sách/ví/dép NẰM DẸT → đo theo 'xz' (lần 1 đo theo chiều cao làm sách to 7,6 stud = "bao hồng khổng lồ"); đồng hồ quả quýt dựng đứng → đặt nằm (rx −π/2)
+    const K19 = 1, H2 = -Math.PI / 2, DO = [
+      ['nhap/dong-ho-bao-thuc', 1.9, 39.3, 0.95, -2.6, 0.6, 0, 0], ['nhap/dong-ho-bao-thuc', 1.7, 41.0, 1.6, -3.9, -0.4, 0, 0.45],
+      ['nhap/dong-ho-qua-quyt', 1.6, 37.1, 0.12, -2.4, 0.9, H2, 0], ['nhap/dong-ho-qua-quyt', 1.4, 40.2, 1.45, -3.1, -0.5, H2, 0.15],
+      ['nhap/cuon-sach', 2.0, 40.8, 1.25, -2.4, 0.3, 0, 0.12, 'xz'], ['nhap/cuon-sach', 1.9, 36.9, 0.02, -3.3, -0.8, 0, 0, 'xz'], ['nhap/cuon-sach', 1.8, 42.0, 0.02, -1.2, 0.4, 0, 0, 'xz'],
+      ['nhap/vi-da', 1.6, 38.5, 0.75, -2.0, 0.5, 0, 0.1, 'xz'], ['nhap/tui-tien', 2.0, 39.6, 0.8, -3.9, 0.2, 0, 0], ['nhap/dep-xo-ngon', 2.0, 36.3, 0.02, -2.0, 1.1, 0, 0, 'xz'],
+      ['nhap/chuong-tay', 1.7, 41.4, 2.0, -3.2, 0, 0.4, 0], ['nhap/khung-anh', 2.2, 42.1, 0.02, -4.9, 0.9, -0.3, 0], ['nhap/hop-nhan-sang', 1.0, 38.2, 0.7, -3.2, 0.7, 0, 0],
+      ['nhap/day-chuyen-vang', 1.3, 39.6, 1.1, -1.8, 0.3, 0, 0], ['furniture-kit/lampRoundTable', 2.6, 38.3, 0.02, -4.6, 0.4, 0, 1.45],
+      // vệt đồ rơi vãi ra phía cửa (hành lang z −0,8…+0,8 nhìn thấy giữa người ở s083; x ≤ 36,4: ngoài vòng quét cánh cửa và lối đi của ông Bách ở s090)
+      ['nhap/dong-ho-bao-thuc', 1.6, 35.6, 0.02, 0.3, 2.2, 0, 1.4], ['nhap/cuon-sach', 1.8, 34.4, 0.02, -0.3, 0.6, 0, 0, 'xz'], ['nhap/vi-da', 1.4, 36.1, 0.02, 0.7, -0.4, 0, 0, 'xz'],
+      ['nhap/dong-ho-qua-quyt', 1.4, 33.6, 0.1, 0.4, 0.3, H2, 0], ['nhap/chuong-tay', 1.5, 35.2, 0.02, -0.7, 0.9, 0, 1.5],
+    ];
+    DO.forEach(([id, sz, x, y, z, ry, rx, rz, ax], i) => { const o = fit(id, sz * K19, ax ? { axis: ax } : {}); if (!o) return; o.position.set(x, y, z); o.rotation.set(rx, ry, rz, 'YXZ'); o.name = 'dong_do_' + id.split('/')[1] + '_' + i;
+      o.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } }); noPatch(o); DD.add(o); });
+    // cuộn thảm đỏ dựa vào thùng + 2 quả bóng đồ chơi lăn ra phía cửa
+    { const thTex = cvTex(256, 64, (c) => { c.fillStyle = '#a3262a'; c.fillRect(0, 0, 256, 64); c.fillStyle = '#e9c46a'; for (let i = 0; i < 16; i++) c.fillRect(i * 16 + 4, 0, 4, 64); c.fillStyle = '#2a4d69'; c.fillRect(0, 26, 256, 12); });
+      const th = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 5.2, 14), std('#ffffff', { map: thTex, roughness: 0.95 })); th.position.set(41.3, 2.0, -1.2); th.rotation.set(0, -0.5, -0.75, 'YXZ'); th.name = 'dong_do_cuon_tham'; th.castShadow = th.receiveShadow = true; khongVan(th); DD.add(th);
+      for (const [c, x, z, r] of [['#e53935', 35.6, -2.0, 0.6], ['#fdd835', 36.6, -4.6, 0.5]]) { const b = new THREE.Mesh(new THREE.SphereGeometry(r, 14, 10), std(c, { roughness: 0.5 })); b.position.set(x, r, z); b.name = 'dong_do_bong'; b.castShadow = b.receiveShadow = true; khongVan(b); DD.add(b); } }
+  }
 
   // ---------- tổng hợp ----------
   [shell, facade, lamps, yardF, mid, front, north, store, storeF].forEach((o) => khaiBaoCay(o));
