@@ -514,7 +514,7 @@ async function init() {
   const AW = 540, AH = Math.round(540 * H0 / W0), CW = 450, CH = Math.round(450 * H0 / W0);
   annCv.width = AW; annCv.height = AH;
   const ag = annCv.getContext('2d');
-  const epId = ((document.body.dataset && document.body.dataset.ep) || (title.match(/ep\d+/i) || [])[0] || (location.pathname.match(/ep\d+/i) || [])[0] || 'ep001').toLowerCase();
+  const epId = ((document.body.dataset && document.body.dataset.ep) || (location.pathname.match(/ep\d+[a-z]?(?![a-z])/i) || [])[0] || (title.match(/ep\d+[a-z]?(?![a-z])/i) || [])[0] || 'ep001').toLowerCase();   // đường dẫn trước tiêu đề: ep003b còn <title>ep003</title>
   const LSKEY = 'gopy:' + epId;
   let tool = 'pen', strokes = [], cur = null, notes = [];
   try { notes = JSON.parse(localStorage.getItem(LSKEY) || '[]') || []; } catch { notes = []; }
