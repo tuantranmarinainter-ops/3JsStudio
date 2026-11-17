@@ -1,11 +1,15 @@
 -- tools/roblox-phim.lua — BỘ PHÁT phim trong Roblox Studio (ModuleScript ReplicatedStorage.PhimEp6B.PhatPhim).
 -- Dữ liệu: ModuleScript "phim" (mục lục, bảng mảnh, phụ đề, mặt) + một ModuleScript mỗi shot (khung 30 fps), do tools/roblox-phim-nap.lua nạp
 -- từ `node tools/roblox-phim.mjs xuat …`. Mỗi khung là HÀM THUẦN của t (giây phim): apply(t) đặt CFrame/cỡ mọi mảnh + camera + mặt + phụ đề.
--- Công tắc (thuộc tính của workspace.PhimEp6B): NhanVatGoc, NhanVatRoblox, ThiTruongNguRoblox, GaRoblox, MatPhim, MauGoc, XoayNhap, GauMau, TuongMotMat, Chay, BatDau (giây phim), Lap, PhuDe, ChuNoi, Mat, GuongAo, AnhSang. Xem docs/handoff/roblox-phim-ep6b.md.
+-- Công tắc (thuộc tính của workspace.PhimEp6B): NhanVatGoc, NhanVatRoblox, ThiTruongNguRoblox, GaRoblox, MatPhim, MauGoc, XoayNhap, GauMau, TuongMotMat, Chay, BatDau (giây phim), TocDo, Lap, PhuDe, ChuNoi, Mat, GuongAo, AnhSang. Xem docs/handoff/roblox-phim-ep6b.md.
 local HttpService = game:GetService("HttpService")
 local RS = game:GetService("ReplicatedStorage")
 local M = {}
-local ORIGIN = CFrame.new(-400, 0, 0)          -- gốc bối cảnh e3-phong trong workspace.BoiCanh_ep6B
+-- gốc bối cảnh trong workspace.BoiCanh_ep6B (trục X, docs/roblox.md mục 8); goc-trong = cảnh dựng từ bộ cảnh gốc của tập (ghi trong dữ liệu khung như vật), đặt ở chỗ trống X −3000 (X −2000 còn dính nền xa của nhà máy)
+local ENV_X = { ["e3-phong"] = -400, ["e3-pho"] = -800, ["e3-tiem"] = -1100, ["e3-nha-may"] = -1300, ["goc-trong"] = -3000 }
+local ORIGIN = CFrame.new(-400, 0, 0)          -- gốc env của shot đang phát (đổi theo shot trong apply)
+local function envOrigin(s) return CFrame.new(ENV_X[s.env or "e3-phong"] or -400, 0, 0) end
+local function envFolder(s) local bc = workspace:FindFirstChild("BoiCanh_ep6B"); return bc and bc:FindFirstChild(s.env or "e3-phong") end
 local FOLDER = RS:WaitForChild("PhimEp6B")
 local MAN, SHOT, PARTS, PLAN = nil, {}, {}, {}
 local cfg, gui, cap, title, capScale, titleScale
@@ -31,7 +35,7 @@ end
 function M.config()
   cfg = workspace:FindFirstChild("PhimEp6B")
   if not cfg then cfg = Instance.new("Configuration"); cfg.Name = "PhimEp6B"; cfg.Parent = workspace end
-  local D = { NhanVatGoc = true, TuongMotMat = true, Chay = true, BatDau = MAN.shots[1].t0, Lap = true, PhuDe = true, ChuNoi = true, Mat = true, GuongAo = true, AnhSang = true, MauGoc = true, XoayNhap = true, GauMau = false, NhanVatRoblox = true, MatPhim = true, ThiTruongNguRoblox = true, GaRoblox = false }
+  local D = { NhanVatGoc = true, TuongMotMat = true, Chay = true, BatDau = MAN.shots[1].t0, Lap = true, PhuDe = true, ChuNoi = true, Mat = true, GuongAo = true, AnhSang = true, MauGoc = true, XoayNhap = true, GauMau = false, NhanVatRoblox = true, MatPhim = true, ThiTruongNguRoblox = true, GaRoblox = false, TocDo = 1 }
   for k, v in pairs(D) do if cfg:GetAttribute(k) == nil then cfg:SetAttribute(k, v) end end
   return cfg
 end
@@ -252,8 +256,8 @@ local function pop(k) k = math.clamp(k, 0, 1); return 0.82 + 0.18 * (1 - (1 - k)
 local function clearOccluders()
   local old = hidden; hidden = {}; for p in pairs(old) do if p.Parent then ltm(p) end end
 end
-local function hideOccluders(pos, tam)
-  local bc = workspace:FindFirstChild("BoiCanh_ep6B"); bc = bc and bc:FindFirstChild("e3-phong"); if not bc then return end
+local function hideOccluders(pos, tam, s)
+  local bc = envFolder(s); if not bc then return end
   local target = ORIGIN * Vector3.new(tam[1], tam[2], tam[3])
   local dir = target - pos
   local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Include
@@ -290,7 +294,9 @@ local Lighting = game:GetService("Lighting")
 -- Part Roblox đặc → ẩn cục bộ (LocalTransparencyModifier) mọi mảnh tường/trần mỏng khi camera ở phía ngoài mặt phẳng của nó (so với tâm phòng).
 local ROOM_C = Vector3.new(1.0, 3.0, 1.2)          -- PHONG_DIEM.phong_giua (+y 3), toạ độ gốc env
 local walls = nil
-local function cullWalls(camPos)
+local function cullWalls(camPos, s)
+  if (s.env or "e3-phong") ~= "e3-phong" then   -- tường một mặt chỉ đo cho phòng Gà; shot bối cảnh khác: bỏ ẩn
+    for p in pairs(culled) do culled[p] = nil; if p.Parent then ltm(p) end end; return end
   if not walls then
     walls = {}
     local bc = workspace:FindFirstChild("BoiCanh_ep6B"); bc = bc and bc:FindFirstChild("e3-phong"); if not bc then return end
@@ -320,6 +326,7 @@ end
 function M.apply(t)
   if not PARTS[0] then M.build() end
   local s, f, tt = M.locate(t)
+  ORIGIN = envOrigin(s)
   local d = SHOT[s.id]; local fr = d.fr[f + 1]
   local seen = {}
   for _, r in ipairs(fr.parts) do
@@ -371,7 +378,7 @@ function M.apply(t)
   if s.guong and fr.camG and attr("GuongAo", true) and s.goc ~= 26 then
     local g = fr.camG; local pos = ORIGIN * Vector3.new(g[1], g[2], g[3])
     cam.CFrame = CFrame.lookAt(pos, pos + Vector3.new(g[4], g[5], g[6]), Vector3.new(g[7], g[8], g[9]))
-    if lastShot ~= s.id then clearOccluders(); hideOccluders(pos, d.guongMat.tam) end
+    if lastShot ~= s.id then clearOccluders(); hideOccluders(pos, d.guongMat.tam, s) end
   else
     if lastShot ~= s.id then clearOccluders() end
     cam.CFrame = ORIGIN * CFrame.new(c[1], c[2], c[3], c[4], c[5], c[6], c[7])
@@ -381,12 +388,12 @@ function M.apply(t)
   if attr("AnhSang", true) and lastShot ~= s.id then light(s.dem) end
   if lastShot ~= s.id then   -- vật bối cảnh phim ẩn trong shot này (thay bằng đồ cốt truyện)
     local old = envHid; envHid = {}
-    local bc = workspace:FindFirstChild("BoiCanh_ep6B"); bc = bc and bc:FindFirstChild("e3-phong")
+    local bc = envFolder(s)
     if bc and d.an then local S = {}; for _, x in ipairs(d.an) do S[x] = true end
       for _, q in ipairs(bc:GetDescendants()) do if q:IsA("BasePart") and (S[q.Name] or (q.Parent and S[q.Parent.Name])) then envHid[q] = true end end end
     for q in pairs(old) do ltm(q) end; for q in pairs(envHid) do ltm(q) end
   end
-  cullWalls(cam.CFrame.Position)
+  cullWalls(cam.CFrame.Position, s)
   lastShot = s.id
   -- phụ đề + chữ nổi (giống overlay của trang phim: cụm đầu tiên chứa t, nảy 0,12 s)
   ui()
@@ -404,9 +411,9 @@ end
 -- đo để so với phim (tools/roblox-phim.mjs so): mỗi mục {t, cam{p,f,fov}, parts{tên: tâm}} — toạ độ gốc env
 function M.kiem(list)
   local out = {}
-  local inv = ORIGIN:Inverse()
   for key, it in pairs(list) do
     M.apply(it.t)
+    local inv = ORIGIN:Inverse()   -- gốc env của shot vừa đặt
     local cam = workspace.CurrentCamera
     local cp = inv * cam.CFrame.Position; local cf = inv * (cam.CFrame.Position + cam.CFrame.LookVector * 10)
     local parts = {}
@@ -430,15 +437,17 @@ function M.run()
   local RunService = game:GetService("RunService")
   local x0, c0, b0 = M.toClip(attr("BatDau", 0)), os.clock(), attr("BatDau", 0)
   local paused = nil
+  local sp = attr("TocDo", 1)   -- TocDo: tốc độ phát (0,25 = chậm 4 lần, để quay màn hình đủ khung rồi tăng tốc lại)
   RunService:BindToRenderStep("PhimEp6B", Enum.RenderPriority.Camera.Value + 1, function()
     local b = attr("BatDau", 0)
     if b ~= b0 then b0 = b; x0 = M.toClip(b); c0 = os.clock(); paused = nil end
+    local sp2 = attr("TocDo", 1); if sp2 ~= sp then x0 = x0 + (os.clock() - c0) * sp; c0 = os.clock(); sp = sp2 end
     local x
     if attr("Chay", true) then
       if paused then x0 = paused; c0 = os.clock(); paused = nil end
-      x = x0 + (os.clock() - c0)
+      x = x0 + (os.clock() - c0) * sp
       if x >= M.length then if attr("Lap", true) then x0 = 0; c0 = os.clock(); x = 0 else x = M.length - 1e-3 end end
-    else paused = paused or (x0 + (os.clock() - c0)); x = paused end
+    else paused = paused or (x0 + (os.clock() - c0) * sp); x = paused end
     M.apply(M.toFilm(x))
   end)
 end

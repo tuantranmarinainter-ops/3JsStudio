@@ -35,7 +35,7 @@ if (cmd === 'phuc-vu') {
   console.log(lines.join('\n') || '(không có phần lệch)');
   console.log(`So ${n} điểm ở ${Object.keys(A).length} khung — lệch lớn nhất ${worst.toFixed(4)} stud — ${bad ? bad + ' mục LỆCH/THIẾU' : 'ĐẠT (< 0,1 stud)'}`);
   process.exit(bad ? 1 : 0);
-} else if ((cmd !== 'xuat' && cmd !== 'kiem') || !args[0]) {
+} else if ((cmd !== 'xuat' && cmd !== 'kiem' && cmd !== 'liet-ke') || !args[0]) {
   console.log(['Dùng:', '  node tools/roblox-phim.mjs xuat <trang tập> --shots s017:s032 [--bo s023] [--env e3-phong] [--out dir]',
     '  node tools/roblox-phim.mjs kiem <trang tập> [--out dir]', '  node tools/roblox-phim.mjs so <kiem-phim.json> <kiem-roblox.json>',
     '  node tools/roblox-phim.mjs phuc-vu [--port 8766] [--out dir]', 'Xem docs/handoff/roblox-phim-ep6b.md.'].join('\n'));
@@ -104,7 +104,7 @@ await pg.evaluate(() => {
       bb.getCenter(C); bb.getSize(SZ);
       M.multiplyMatrices(inv, m.matrixWorld); M.decompose(P, Q, S);
       const w = C.clone().applyMatrix4(M);
-      if (!box.containsPoint(w)) return;
+      if (!box.containsPoint(w) && !H.charOf(m)) return;   // mảnh nhân vật luôn ghi (đứng sát mép hộp bối cảnh vẫn đủ người)
       let id = ids.get(m); if (id == null) { id = ids.size; ids.set(m, id); }
       const sz = [SZ.x * Math.abs(S.x), SZ.y * Math.abs(S.y), SZ.z * Math.abs(S.z)];
       // gương lật (scale âm) → đổi dấu một trục trong quaternion không cần: Part đối xứng, giữ cỡ dương
@@ -116,73 +116,82 @@ await pg.evaluate(() => {
   };
 });
 
-if (cmd === 'xuat') {
-  const [a, b] = flag('--shots', 's017:s032').split(':'); const bo = new Set((flag('--bo', '') || '').split(',').filter(Boolean));
-  const envName = flag('--env', 'e3-phong');
-  const res = await pg.evaluate(async ({ a, b, bo, envName }) => {
-    const THREE = window.THREE, H = window.__RP, L = window.__shots.list;
-    const i0 = L.findIndex((s) => s.id === a), i1 = L.findIndex((s) => s.id === b);
-    const sel = L.slice(i0, i1 + 1).filter((s) => !bo.includes(s.id) && s.env === envName);
-    window.renderAt(sel[0].t0 + 1e-4);
-    const g = H.envOf(envName); g.updateMatrixWorld(true);
-    // hộp bối cảnh (toạ độ gốc env) nới 1 stud
-    const box = new THREE.Box3(), inv = g.matrixWorld.clone().invert(); g.traverse((o) => { if (o.isMesh && o.geometry && H.vis(o) && !o.isInstancedMesh) { o.geometry.computeBoundingBox(); const bb = o.geometry.boundingBox.clone().applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, o.matrixWorld)); if (bb.getSize(new THREE.Vector3()).length() < 80) box.union(bb); } });
-    box.expandByScalar(1);
-    const ids = new Map(), shots = [];
-    for (const s of sel) {
-      const n = Math.round(s.dur * 30), fr = [];
-      // vật của bối cảnh mà phim ẩn trong shot (chăn/két env thay bằng đồ cốt truyện…): tên mesh trong cây bị ẩn, trừ tên còn dùng ở mesh đang hiện
-      window.renderAt(s.t0 + 1e-4); const hidN = new Set(), visN = new Set();
-      const walkE = (o, hid) => { hid = hid || !o.visible; if (o.isMesh && o.name) (hid ? hidN : visN).add(o.name); if (hid && o.name) hidN.add(o.name); o.children.forEach((c) => walkE(c, hid)); };
-      walkE(g, false); const an = [...hidN].filter((x) => !visN.has(x));
-      for (let f = 0; f < n; f++) { fr.push(H.frame(s.t0 + f / 30 + 1e-4, envName, box, ids)); if (f % 10 === 9) await new Promise((r) => setTimeout(r, 0)); }
-      shots.push({ id: s.id, goc: s.goc, t0: +s.t0.toFixed(4), t1: +s.t1.toFixed(4), n, dem: s.time === 'dem' || s.light === 'night', guong: [26, 27, 29, 30].includes(s.goc), an, fr });
-    }
-    // bảng mảnh
-    const parts = []; for (const [m, id] of ids) {
-      const ch = H.charOf(m), k = H.shape(m);
-      parts[id] = { n: H.path(m), ch, k, ...H.style(m) };
-    }
-    // gương e3-phong (cho camera ảo nhìn qua gương): tâm + pháp tuyến theo xoay gương của shot
-    return { env: envName, box: [...box.min.toArray(), ...box.max.toArray()].map((v) => +v.toFixed(2)), parts, shots };
-  }, { a, b, bo: [...bo], envName });
-  // camera ảo qua gương: phản chiếu camera qua mặt gương (gương e3-phong, xoay theo envArg.guongRy của shot)
+if (cmd === 'liet-ke') {
+  // liet-ke <trang>: mỗi shot 1 dòng id env dur ngày/đêm (để biết shot nào thuộc bối cảnh nào)
+  const L = await pg.evaluate(() => { const envs = []; window.__stage.scene.traverse((o) => { if (o.name?.startsWith('env_')) envs.push(o.name); });
+    return { envs, shots: window.__shots.list.map((s) => [s.id, s.env || '-', +s.dur.toFixed(3), +s.t0.toFixed(3), s.time || s.light || '', s.type || '']) }; });
+  console.log('env trong cảnh:', L.envs.join(' '));
+  for (const r of L.shots) console.log(r.join('\t'));
+} else if (cmd === 'xuat') {
+  // --env e3-phong (một bối cảnh) | --env all (mỗi shot theo bối cảnh của nó; toạ độ gốc env của shot, bộ phát cộng gốc Roblox theo env)
+  const [a, b] = flag('--shots', 's001:s999').split(':'); const bo = new Set((flag('--bo', '') || '').split(',').filter(Boolean));
+  const envArg = flag('--env', 'e3-phong');
+  const sel = await pg.evaluate(({ a, b, bo, envArg }) => { const L = window.__shots.list;
+    const i0 = Math.max(0, L.findIndex((s) => s.id === a)), i1x = L.findIndex((s) => s.id === b), i1 = i1x < 0 ? L.length - 1 : i1x;
+    window.__RP.ids = new Map(); window.__RP.boxes = {};
+    return L.slice(i0, i1 + 1).filter((s) => !bo.includes(s.id) && (envArg === 'all' || s.env === envArg)).map((s) => s.id); }, { a, b, bo: [...bo], envArg });
   const E3 = await import('../engine/envs/e3-phong.js').catch(() => null);
-  const shotsSrc = await pg.evaluate(() => window.__shots.list.map((s) => ({ id: s.id, ry: s.envArg?.guongRy })));
-  const qmul = (a, b) => [a[3] * b[0] + a[0] * b[3] + a[1] * b[2] - a[2] * b[1], a[3] * b[1] - a[0] * b[2] + a[1] * b[3] + a[2] * b[0], a[3] * b[2] + a[0] * b[1] - a[1] * b[0] + a[2] * b[3], a[3] * b[3] - a[0] * b[0] - a[1] * b[1] - a[2] * b[2]];
   const rot = (q, v) => { const [x, y, z, w] = q, ix = w * v[0] + y * v[2] - z * v[1], iy = w * v[1] + z * v[0] - x * v[2], iz = w * v[2] + x * v[1] - y * v[0], iw = -x * v[0] - y * v[1] - z * v[2];
     return [ix * w + iw * -x + iy * -z - iz * -y, iy * w + iw * -y + iz * -x - ix * -z, iz * w + iw * -z + ix * -y - iy * -x]; };
-  void qmul;
-  const manifest = { env: res.env, box: res.box, parts: res.parts, shots: [] };
-  for (const s of res.shots) {
+  const manifest = { env: null, envs: {}, shots: [] }; const used = new Set(); let nFr = 0;
+  for (const id of sel) {
+    const s = await pg.evaluate(async (id) => {
+      const THREE = window.THREE, H = window.__RP, s = window.__shots.list.find((x) => x.id === id), envName = s.env;
+      window.renderAt(s.t0 + 1e-4);
+      const g = H.envOf(envName); g.updateMatrixWorld(true);
+      if (!H.boxes[envName]) {
+        // hộp bối cảnh (toạ độ gốc env) nới 1 stud; env rỗng (goc-trong: cảnh vẽ bằng bộ cảnh gốc ngoài env_*) → hộp rộng ±150 quanh gốc
+        const box = new THREE.Box3(), inv = g.matrixWorld.clone().invert(); g.traverse((o) => { if (o.isMesh && o.geometry && H.vis(o) && !o.isInstancedMesh) { o.geometry.computeBoundingBox(); const bb = o.geometry.boundingBox.clone().applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, o.matrixWorld)); if (bb.getSize(new THREE.Vector3()).length() < 80) box.union(bb); } });
+        if (box.isEmpty()) box.userData = { rong: true }; else box.expandByScalar(1);
+        H.boxes[envName] = box;
+      }
+      // env rỗng (goc-trong: cảnh vẽ bằng bộ cảnh gốc ngoài env_*) → hộp = quanh camera của từng shot (±60 ngang, −10…+40 đứng), gộp dần
+      if (H.boxes[envName].userData?.rong) { const c = window.__stage.camera.getWorldPosition(new THREE.Vector3()).applyMatrix4(g.matrixWorld.clone().invert());
+        H.boxes[envName].union(new THREE.Box3(c.clone().add(new THREE.Vector3(-60, -10, -60)), c.clone().add(new THREE.Vector3(60, 40, 60)))); }
+      const box = H.boxes[envName];
+      const n = Math.round(s.dur * 30), fr = [];
+      // vật của bối cảnh mà phim ẩn trong shot (chăn/két env thay bằng đồ cốt truyện…): tên mesh trong cây bị ẩn, trừ tên còn dùng ở mesh đang hiện
+      const hidN = new Set(), visN = new Set();
+      const walkE = (o, hid) => { hid = hid || !o.visible; if (o.isMesh && o.name) (hid ? hidN : visN).add(o.name); if (hid && o.name) hidN.add(o.name); o.children.forEach((c) => walkE(c, hid)); };
+      walkE(g, false); const an = [...hidN].filter((x) => !visN.has(x));
+      for (let f = 0; f < n; f++) { fr.push(H.frame(s.t0 + f / 30 + 1e-4, envName, box, H.ids)); if (f % 10 === 9) await new Promise((r) => setTimeout(r, 0)); }
+      return { id: s.id, env: envName, goc: s.goc, t0: +s.t0.toFixed(4), t1: +s.t1.toFixed(4), n, dem: s.time === 'dem' || s.light === 'night', guong: envName === 'e3-phong' && [26, 27, 29, 30].includes(s.goc), ry: s.envArg?.guongRy, an, fr };
+    }, id);
+    // camera ảo qua gương: phản chiếu camera qua mặt gương (gương e3-phong, xoay theo envArg.guongRy của shot)
     if (s.guong && E3?.phongGuong) {
-      const ry = shotsSrc.find((x) => x.id === s.id)?.ry; const G = E3.phongGuong(ry ?? undefined), n = G.n, c = G.tam;
+      const G = E3.phongGuong(s.ry ?? undefined), n = G.n, c = G.tam;
       const refl = (p) => { const d = (p[0] - c[0]) * n[0] + (p[1] - c[1]) * n[1] + (p[2] - c[2]) * n[2]; return [p[0] - 2 * d * n[0], p[1] - 2 * d * n[1], p[2] - 2 * d * n[2]]; };
       const reflV = (v) => { const d = v[0] * n[0] + v[1] * n[1] + v[2] * n[2]; return [v[0] - 2 * d * n[0], v[1] - 2 * d * n[1], v[2] - 2 * d * n[2]]; };
       s.guongMat = { tam: c, n };
       for (const f of s.fr) { const p = f.cam.slice(0, 3), q = f.cam.slice(3, 7); const fw = reflV(rot(q, [0, 0, -1])), up = reflV(rot(q, [0, 1, 0]));
         f.camG = [...refl(p), ...fw, ...up].map((v) => +v.toFixed(4)); }
     }
-    await writeFile(`${OUT}/${s.id}.json`, JSON.stringify(s));
-    manifest.shots.push({ id: s.id, goc: s.goc, t0: s.t0, t1: s.t1, n: s.n, guong: s.guong, dem: s.dem });
+    delete s.ry;
+    for (const f of s.fr) for (const r of f.parts) if (r.length > 11 && r[11]) used.add(r[11]);
+    await writeFile(`${OUT}/${s.id}.json`, JSON.stringify(s)); nFr += s.n;
+    manifest.env = manifest.env || s.env;
+    manifest.shots.push({ id: s.id, env: s.env, goc: s.goc, t0: s.t0, t1: s.t1, n: s.n, guong: s.guong, dem: s.dem });
+    process.stdout.write(`${s.id}(${s.env},${s.n}) `);
   }
+  const res = await pg.evaluate(() => { const H = window.__RP, parts = []; for (const [m, id] of H.ids) parts[id] = { n: H.path(m), ch: H.charOf(m), k: H.shape(m), ...H.style(m) };
+    const boxes = {}; for (const [k, b] of Object.entries(H.boxes)) boxes[k] = [...b.min.toArray(), ...b.max.toArray()].map((v) => +v.toFixed(2)); return { parts, boxes }; });
+  manifest.parts = res.parts; manifest.envs = res.boxes; manifest.box = res.boxes[manifest.env];
   const capSrc = await readFile('episodes/ep6B/captions.js', 'utf8').catch(() => '');
   const m = capSrc.match(/CAPTIONS\s*=\s*(\[[\s\S]*?\]);/); manifest.captions = m ? JSON.parse(m[1]).map((c) => c.slice(0, 3)) : [];
   manifest.texts = await pg.evaluate(() => window.__shots.list.filter((s) => s.text).map((s) => [s.t0, s.t1, s.text]));
   // mặt: face_NNN.png của goc/ = ảnh fNN của gói AltiWyre 6557969904 (đã so điểm ảnh: 140/140 khớp) → id ảnh Roblox
-  const used = new Set(); for (const s of res.shots) for (const f of s.fr) for (const r of f.parts) if (r.length > 11 && r[11]) used.add(r[11]);
   const bp = JSON.parse(await readFile('.cache/roblox/6557969904/bo-phan.json', 'utf8').catch(() => '[]'));
   manifest.faces = {}; for (const n of used) { const e = bp.find((x) => x.ma === 'f' + String(n).padStart(2, '0')); if (e) manifest.faces[n] = e.id; }
   await writeFile(`${OUT}/phim.json`, JSON.stringify(manifest));
   const cnt = {}; res.parts.forEach((p) => { cnt[p.ch || 'đạo cụ'] = (cnt[p.ch || 'đạo cụ'] || 0) + 1; });
-  console.log(`Đã ghi ${res.shots.length} shot (${res.shots.reduce((s, x) => s + x.n, 0)} khung) + phim.json vào ${OUT}. Mảnh: ${JSON.stringify(cnt)}`);
+  console.log(`\nĐã ghi ${manifest.shots.length} shot (${nFr} khung) + phim.json vào ${OUT}. Mảnh: ${JSON.stringify(cnt)}`);
 } else {
   // kiem: đo lại ở khung đầu/giữa/cuối mỗi shot trong phim.json — tâm 6 bộ phận (Box3.setFromObject) + camera vị trí/điểm nhìn
   const man = JSON.parse(await readFile(`${OUT}/phim.json`, 'utf8'));
   const res = await pg.evaluate(({ man }) => {
     const THREE = window.THREE, st = window.__stage, out = {};
-    const g = window.__RP.envOf(man.env);
     for (const s of man.shots) for (const [lab, f] of [['dau', 0], ['giua', Math.floor(s.n / 2)], ['cuoi', s.n - 1]]) {
+      const g = window.__RP.envOf(s.env || man.env);   // mỗi shot quy về gốc bối cảnh của nó
       window.renderAt(s.t0 + f / 30 + 1e-4); st.scene.updateMatrixWorld(true);
       const inv = g.matrixWorld.clone().invert(), toL = (v) => v.applyMatrix4(inv).toArray().map((x) => +x.toFixed(4));
       const cam = st.camera, p = cam.getWorldPosition(new THREE.Vector3()), fw = new THREE.Vector3(0, 0, -10).applyQuaternion(cam.getWorldQuaternion(new THREE.Quaternion())).add(p);

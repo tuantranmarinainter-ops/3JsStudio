@@ -1,12 +1,12 @@
 # ep6B → phim chạy trong Roblox Studio — handoff
 
 ## ĐIỂM DỪNG
-- **ĐANG CHỜ NGƯỜI DÙNG (17/11, vòng 5):** (1) duyệt `output/roblox-phim/duyet-nhan-vat/bang-rb-3.jpg` (Gà R6 Roblox + thị trưởng ngủ; cột Phim | .glb cũ | Roblox) và `bang-rb-1/2.jpg` (11 vai); (2) thu bảng dock dưới khung nhìn Studio (đang 1569×546) để quay roblox.mp4 + so-sanh.mp4.
-- **Bảng vai → model (người dùng chốt):** bach, bachF→bach; kid2→be_vang; baker→banh; tailor→may; folk1/2/3→dan_01 (rig đầu trong gói Civilians)/dan_14/dan_15; mayorD→mayor; guardA/B→linh; mayorN→`mayor_ngu_rb_1` (bản sao mayor + Shirt/Pants pyjama của asset 123126413388497, công tắc `ThiTruongNguRoblox` bật); Gà→`ga_rb_1` (bản sao bach bỏ áo/tóc, màu `ga:` r6-looks, băng đỏ + mào là Part, KHÔNG tải ảnh lên; công tắc `GaRoblox` TẮT = .glb cũ cho tới khi duyệt); 3 gấu = .glb phim (bang-3.jpg).
-- **Không dùng ShowWindow khi đưa Studio lên trước** (bỏ phóng to → khung nhìn 296×321); dùng keybd_event Alt + SetForegroundWindow.
-- **Cách lái rig Roblox (`M.rbBuild`/`M.rbPose` trong `tools/roblox-phim.lua`):** bộ phận R6 = node phim · D (D = khớp R6 chuẩn, |D| ≤ 0,14 stud); phụ kiện theo bộ phận gần nhất; mặt = decal mặt phim. Model Tap3 + nvNN_* đặt ModelStreamingMode Persistent (Play có StreamingEnabled).
-- **Bằng số (đạt):** 66 bộ phận rig + 119 node .glb khớp node phim (tâm 0,0000 stud); đoạn thử 354 điểm × 45 khung lệch ≤ 0,0014 stud.
-- **Đang chạy nền:** `node tools/roblox-phim.mjs phuc-vu` (cổng 8766).
+- **ĐANG LÀM / CHỜ (17/11, vòng 6 — phim đầy đủ):** cả tập ep6B 96 shot (4218 khung, 140,6 s) chạy trong Studio; quay `output/roblox-phim/quay/roblox-full.mp4` + `so-sanh-full.mp4` (trái phim | phải Roblox, có tiếng phim `quay/tieng-full.m4a` = giọng + 3 lớp tiếng động). Gửi xong → chờ người dùng đánh giá.
+- **Nhân vật đã duyệt:** 11 vai rig Roblox + thị trưởng ngủ `mayor_ngu_rb` (ThiTruongNguRoblox bật); Gà = .glb cũ áo sọc (người dùng chọn, GaRoblox tắt); 3 gấu .glb.
+- **Dữ liệu cả tập:** `node tools/roblox-phim.mjs xuat episodes/ep6B/index.html --env all --out output/roblox-phim/data-full` (mỗi shot theo env của nó; mảnh nhân vật luôn ghi; env rỗng goc-trong → hộp quanh camera từng shot). Máy chủ: `phuc-vu --out output/roblox-phim/data-full` (cổng 8766). `liet-ke <trang>` = bảng shot/env.
+- **Gốc bối cảnh Roblox (bộ phát ENV_X):** phòng −400, phố −800, tiệm −1100, nhà máy −1300, goc-trong −3000 (6 shot s073 s074 s083 s084 s086 s087: cảnh gốc của tập ghi như vật theo khung, không có Part bối cảnh riêng).
+- **Bằng số (đạt):** 2544 điểm / 288 khung (đầu-giữa-cuối 96 shot) lệch ≤ 0,0016 stud. Ngoại lệ có lý do: 14 mục mũ phim của baker (s004) và mayorN (s067–071) — vai dùng rig Roblox, mũ phim thay bằng phụ kiện Roblox.
+- **Quay:** Play, `TocDo` 0,25 (chậm 4 lần), gdigrab 652×1160 tại (1035,167) (khung nhìn 1569×1161 ở x 577–2145, y 167–1327), chớp tím = mốc 0, rồi tăng tốc ×4 → 30 fps. Đưa Studio lên trước: keybd_event Alt + SetForegroundWindow (KHÔNG ShowWindow).
 <!-- /ĐIỂM DỪNG -->
 
 ## Việc còn lại (theo thứ tự)
