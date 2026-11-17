@@ -1,7 +1,8 @@
 # ep6B → phim chạy trong Roblox Studio — handoff
 
 ## ĐIỂM DỪNG
-- **ĐANG LÀM / CHỜ (17/11, vòng 6 — phim đầy đủ):** cả tập ep6B 96 shot (4218 khung, 140,6 s) chạy trong Studio; quay `output/roblox-phim/quay/roblox-full.mp4` + `so-sanh-full.mp4` (trái phim | phải Roblox, có tiếng phim `quay/tieng-full.m4a` = giọng + 3 lớp tiếng động). Gửi xong → chờ người dùng đánh giá.
+- **ĐANG CHỜ NGƯỜI DÙNG (17/11, vòng 6):** đã gửi `output/roblox-phim/quay/roblox-full.mp4` + `so-sanh-full.mp4` (140,6 s, 96 shot, tiếng phim). Chờ đánh giá.
+- **Lỗi hình còn biết (Haiku, khung rải đều):** đen 100,9–101,5 s (s069–s070, camera Roblox không thấy cảnh); 15 s và 90 s nền khác phim (thiếu kệ gấu / tường khác); 115 s (s077) thiếu người sau quầy; 125 s (s085) mặt nhân vật khác phim. Place: đã TẮT workspace.StreamingEnabled (cũ lưu ở PhimEp6B.StreamingCu) — bật thì rig ở xa mất bộ phận.
 - **Nhân vật đã duyệt:** 11 vai rig Roblox + thị trưởng ngủ `mayor_ngu_rb` (ThiTruongNguRoblox bật); Gà = .glb cũ áo sọc (người dùng chọn, GaRoblox tắt); 3 gấu .glb.
 - **Dữ liệu cả tập:** `node tools/roblox-phim.mjs xuat episodes/ep6B/index.html --env all --out output/roblox-phim/data-full` (mỗi shot theo env của nó; mảnh nhân vật luôn ghi; env rỗng goc-trong → hộp quanh camera từng shot). Máy chủ: `phuc-vu --out output/roblox-phim/data-full` (cổng 8766). `liet-ke <trang>` = bảng shot/env.
 - **Gốc bối cảnh Roblox (bộ phát ENV_X):** phòng −400, phố −800, tiệm −1100, nhà máy −1300, goc-trong −3000 (6 shot s073 s074 s083 s084 s086 s087: cảnh gốc của tập ghi như vật theo khung, không có Part bối cảnh riêng).
