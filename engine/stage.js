@@ -1,4 +1,4 @@
-// stage.js — Sân khấu three.js cho HyperFrames: renderer 1080×1920, camera, ánh sáng, mặt đất,
+// stage.js — Sân khấu three.js (xuất MP4 bằng WebCodecs ở tools/export-ui.js; không dùng HyperFrames): renderer 1080×1920, camera, ánh sáng, mặt đất,
 // và vòng render điều khiển hoàn toàn bằng sự kiện `hf-seek` (không giờ thực, không rAF).
 //
 // Dùng:

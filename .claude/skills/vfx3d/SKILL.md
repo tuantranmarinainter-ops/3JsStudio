@@ -1,6 +1,6 @@
 ---
 name: vfx3d
-description: Hiệu ứng (bụi, tuyết, mưa, sóng, tia chớp, bưu thiếp rơi, hơi lạnh, nước bắn…) cho three.js + HyperFrames, tất định theo t, theo phương pháp VFX của fwjelaa (lớp hiệu ứng, timing, mức cường độ). Dùng khi thêm/sửa engine/fx.js hoặc hiệu ứng trong shot.
+description: Hiệu ứng (bụi, tuyết, mưa, sóng, tia chớp, bưu thiếp rơi, hơi lạnh, nước bắn…) cho three.js (xuất MP4 bằng WebCodecs, không dùng HyperFrames), tất định theo t, theo phương pháp VFX của fwjelaa (lớp hiệu ứng, timing, mức cường độ). Dùng khi thêm/sửa engine/fx.js hoặc hiệu ứng trong shot.
 ---
 
 # VFX tất định (three.js) — phương pháp fwjelaa

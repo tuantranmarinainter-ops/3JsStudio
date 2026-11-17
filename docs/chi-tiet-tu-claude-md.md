@@ -3,7 +3,9 @@
 Các mục dưới đây từng nằm trong `CLAUDE.md`. Chuyển sang đây để `CLAUDE.md` ngắn lại; nội dung giữ nguyên văn.
 Mục nào ghi **(luồng cũ)** thì không còn là cách làm chính — xem `CLAUDE.md` mục "Quy tắc người dùng".
 
-## (luồng cũ) Stack và cài đặt HyperFrames
+## (LỖI THỜI — ĐÃ BỎ, KHÔNG LÀM THEO) Stack và cài đặt HyperFrames
+
+> Render hiện hành: three.js WebGL + nút Xuất MP4 (WebCodecs + mp4-muxer, `tools/export-ui.js`, `node tools/xuat.mjs <ep>`). Mọi lệnh `npx hyperframes …` dưới đây chỉ để tham khảo lịch sử.
 | Lớp | Công cụ | Vai trò |
 |---|---|---|
 | Render video | **Bản gộp 1 file + WebCodecs** trên máy người dùng (tools/bundle.mjs, tools/export-ui.js); HyperFrames chỉ còn dự phòng | HTML → MP4 tất định; phụ đề, giọng, hiệu ứng bật/tắt |

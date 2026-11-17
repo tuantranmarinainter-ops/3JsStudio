@@ -13,6 +13,7 @@ Cảnh 3D dựng bằng three.js + engine tự viết (`engine/`). Sản phẩm 
 - Chỉ dùng ý tưởng TỰ NGHĨ; không chép cốt truyện của kênh khác.
 
 ## Quy tắc người dùng (ưu tiên cao nhất)
+- **Cách render (hiện hành):** three.js vẽ bằng WebGL trên GPU máy người dùng → nút Xuất MP4 nén H.264 bằng **WebCodecs `VideoEncoder` + `mp4-muxer`** (`tools/export-ui.js`); lệnh: `node tools/xuat.mjs <ep>`. **KHÔNG dùng HyperFrames** (đã bỏ; `hyperframes.json`, `tools/render-local.mjs`, chú thích "HyperFrames" trong code và mục "luồng cũ" ở docs chỉ là di tích, đừng làm theo).
 - **Render trên máy người dùng, KHÔNG qua cloud/Actions.** Sản phẩm = `dist/<ep>.html` một file (nút ⬇ Xuất MP4 2K/1080p/4K
   bằng GPU máy họ). Skill: `xuat-phim`.
 - **Sau MỖI lần sửa xong (dù nhỏ) luôn gộp lại và đưa link file HTML** ở cuối câu trả lời: `S:\3JS Studio\dist\<file>.html` +
@@ -134,5 +135,5 @@ refs/          ảnh chuẩn so khung               .cache/  giọng, tiếng đ
 ## Đọc thêm khi cần (không nạp sẵn)
 - `docs/core.md` — lõi engine: biển, thời tiết, vật liệu, hậu kỳ, look.mjs. `docs/shaders.md`, `docs/vat-lieu.md`, `docs/nhap-model.md`, `docs/kich-ban-vao.md`.
 - `docs/chi-tiet-tu-claude-md.md` — ví dụ shot đầy đủ, quy trình viết tập, `tools/ref.py` (nghiên cứu video tham khảo), cú pháp
-  `narration.txt` và giọng, R6, luồng HyperFrames cũ (chỉ còn dự phòng: `tools/render-local.mjs`).
+  `narration.txt` và giọng, R6, luồng HyperFrames cũ (ĐÃ BỎ, không dùng: `tools/render-local.mjs`).
 - `skills/fwjelaa/` — phương pháp gốc của fwjelaa (FWJ STUDIOS) cho skill `r6-anim`, `ref-model`, `scene-env`, `vfx3d`; ghi công khi chia sẻ.
