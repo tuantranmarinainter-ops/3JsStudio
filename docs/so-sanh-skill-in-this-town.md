@@ -52,6 +52,34 @@ Ký hiệu: **K** = skill kia hơn · **M** = repo mình hơn · **=** = ngang /
 | 14 | **Vòng góp ý** | Bảng lời người dùng → tham số; hỏi số shot khi mơ hồ; trả lời kèm "2–3 điều bạn có thể yêu cầu tiếp" | Góp ý vẽ trên khung (`gop-y`), sửa theo lớp, trang duyệt asset, trang tiến độ, trung tâm điều hành | **M** về công cụ; **K** về câu chữ hướng dẫn người dùng |
 | 15 | **Bảo trì / an toàn** | Engine không giấy phép; `setup.sh` gọi `sudo apt`, `npx -y`; `render.mjs` máy chủ tệp không chặn `..`; "skill tự sửa engine rồi đóng zip" | git, nhánh, phiên con, test, luật kế thừa builder; nhưng nợ kỹ thuật lớn: di tích, 2 hệ camera, nhiều tập thử (ep003b, ep3B_1, ep005t…) | **M**, có nợ cần dọn |
 
+## 2b. Bảng chấm điểm (thang 10)
+
+Trọng số = mức quan trọng với mục tiêu của xưởng (phim 2–3 phút, ~140 shot, HTML xuất MP4): 3 = sống còn, 2 = quan trọng, 1 = phụ.
+"Sau 1–4" = điểm repo dự kiến nếu làm 4 đề xuất ★ đầu ở mục 5 (ước lượng, chưa đo).
+
+| # | Khía cạnh | Trọng số | Blocky | 3JS Studio | Sau 1–4 | Lý do chấm ngắn |
+|---|---|:-:|:-:|:-:|:-:|---|
+| 1 | Cách viết skill | 1 | **9** | 6 | 6 | Kia 94 dòng nạp dần; mình `CLAUDE.md` 17 KB mỗi lượt |
+| 2 | Điểm vào / dễ hiểu | 1 | **9** | 5 | 6 | Kia có sơ đồ 1 dòng; mình nhiều di tích, phải đọc nhiều file |
+| 3 | Viết truyện | 3 | 6 | **8** | 8 | Mình có twist, 4 phần, chấm điểm; kia chỉ công thức hài |
+| 4 | Dữ liệu phân cảnh | 1 | **8** | 7 | 8 | Kia 1 file lời ↔ hình; mình chia lớp tốt nhưng lời và hình rời |
+| 5 | Animation thân | 2 | 6 | **7** | 7 | Mình có cả bảng nghề lẫn chồng lớp, nhưng chồng lớp đang tắt |
+| 6 | Mặt | 1 | 5 | **9** | 9 | Mình nhép theo giọng thật, trộn mềm |
+| 7 | Camera | 2 | **8** | 7 | 9 | Kia ngôn ngữ gọn; mình 2 hệ song song; gộp + né tường thì vượt |
+| 8 | Bối cảnh | 2 | 4 | **9** | 9 | 39 env, asset thật, biển, thời tiết vs 9 set hộp |
+| 9 | Đồ hoạ / phụ đề | 1 | **8** | 7 | 8 | Đã chép nhưng chưa commit, chỉ ep003b dùng |
+| 10 | Âm thanh | 1 | 7 | 7 | 7 | Kia tự sinh; mình tiếng thật có giấy phép |
+| 11 | Giọng | 2 | 5 | **9** | 9 | 22 Việt + 47 Anh chạy trên máy vs ElevenLabs trả phí |
+| 12 | Render / sản phẩm | 3 | 4 | **10** | 10 | HTML, GPU, 4K, bật/tắt lớp vs CPU 1 khung/s 720p |
+| 13 | Kiểm tra (QA) | 2 | 4 | **10** | 10 | So bằng số, tất định, L1–L12 vs AI tự nhìn ảnh |
+| 14 | Vòng góp ý | 1 | 7 | **8** | 8 | Mình có công cụ; kia có câu chữ hướng dẫn tốt hơn |
+| 15 | Bảo trì / an toàn | 1 | 3 | **6** | 8 | Kia không giấy phép, `sudo`; mình có git/test nhưng nợ kỹ thuật |
+| | **Tổng (không trọng số, /150)** | | 93 | **115** | 122 | |
+| | **Điểm có trọng số (/10)** | 24 | 5,8 | **8,0** | 8,3 | |
+
+Đọc bảng: repo hơn ở 9/15 mục, thua ở 5 mục (1, 2, 4, 7, 9) — cả 5 đều là chuyện **tổ chức và ngôn ngữ khai báo**, không phải năng lực engine.
+Đề xuất 6 (tách `CLAUDE.md` + sơ đồ 1 dòng) và 5 (mốc theo chữ) là hai việc kéo được mục 1, 2, 4 lên ngang bộ kia.
+
 ## 3. Ưu và nhược — skill blocky-shorts
 
 **Ưu**
