@@ -3,6 +3,7 @@
 <!-- ĐIỂM DỪNG -->
 - **Cập nhật:** 2026-11-16
 - **Nhánh:** `ep1-v2`
+- **18/11 — Tab "Tập phim":** ▶ xem MP4 + 🎬 mở bản 3D (.3js). `node tools/xuat.mjs <ep>` TỰ đăng bản nhẹ 720×1280 lên R2 `mp4/<ep>/<ngày-giờ>.mp4`, giữ 5 bản/tập (`--khong-dang`, `--giu N`; lỗi mạng chỉ cảnh báo). Studio + gói: `node tools/dang-r2.mjs studio [--thu]` (kho chung lọc chỉ asset của ep001–003). Function `web/functions/r2/[[f]].js`: `/r2/ds`, `/r2/studio?goi=…&kho=…`, `/r2/g/<ep>.3js`, `/r2/mp4/<ep>/<file>` (Range). Allow-list ep001–003 ở cả tool và Function. Đã đăng ep003 MP4 09:27 18/11. Chưa xem bằng mắt trên điện thoại.
 - **Đã xong:** web 4 tab thật; domain `https://3js.tuanchau.io.vn` (Pages `3js-studio`) có Access (app `3js`: chỉ email tuantran.marinainter@gmail.com; app `3js-may-nhan` path `api/may/*` Bypass, bảo vệ bằng x-khoa). `*.pages.dev` bị chặn 404 bởi `web/functions/_middleware.js` (trừ /api/may/*). Studio ep001–003 ở R2 `3js-studio-phim` (binding PHIM), mở qua `/phim/<ep>` (`WEB_STUDIO=1` trong .env.local). `WEB_URL` đã đổi sang domain mới.
 - **Chưa kiểm:** mở thật sau đăng nhập Access trên điện thoại (trình phát 3D, tua, Xuất MP4 từ R2); gửi duyệt ep003 qua domain mới tới máy.
 - **Bước kế tiếp:** người dùng đăng nhập thử; cài `cloudflared` + MAY_URL cho đẩy tức thì (không bắt buộc, máy đang kéo mỗi 10 s: `node tools/web-nhan.mjs`).

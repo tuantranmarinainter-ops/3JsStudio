@@ -84,8 +84,11 @@ nav button svg{width:24px;height:24px}nav button.on{color:var(--ac);font-weight:
  <section class="tab" id="t4">
   <div class="seg" id="lp"></div>
   <div class="player" id="pl"></div>
-  <button class="btn" id="mo">Mở trình phát</button>
-  <div class="mu" style="margin-top:10px">Nút “Xuất MP4” dùng card đồ hoạ của máy bạn, không tốn gì trên mạng.</div>
+  <video id="vd" controls playsinline preload="metadata" style="display:none;width:100%;max-height:68vh;background:#000;border-radius:var(--r);margin-bottom:12px"></video>
+  <div class="row" style="gap:10px"><button class="btn" id="bx">▶ Xem MP4</button><button class="btn" id="bs">🎬 Mở bản 3D</button></div>
+  <div id="vs" class="mu" style="margin-top:12px"></div>
+  <button class="btn" id="mo" style="margin-top:12px;background:transparent;color:var(--tx);border:1px solid var(--ln)">Mở trình phát (trang gộp)</button>
+  <div class="mu" style="margin-top:10px">Nút “Xuất MP4” dùng card đồ hoạ của máy bạn, không tốn gì trên mạng. MP4 tự lên đây mỗi lần xuất (giữ 5 bản gần nhất).</div>
  </section>
 </main>
 
@@ -133,9 +136,18 @@ function dy(){$('#hang').innerHTML=DT.map(t=>`<button class="chip ${t===dt?'on':
  $$('#hang .chip').forEach(b=>b.onclick=()=>{dt=b.dataset.t;dy()});const f=$('#fd');if(dt&&f.dataset.src!==dt){f.dataset.src=dt;f.src='/duyet/'+dt+'.html'}}
 dy();
 let tp=D.tap[0]?D.tap[0].ep:null;
+let DS=null;const mb=n=>(n/1048576).toFixed(n>1e7?0:1)+' MB',gio=t=>{const m=/^(\d{4})-(\d\d)-(\d\d)_(\d\d)-(\d\d)/.exec(t);return m?`${m[3]}/${m[2]} ${m[4]}:${m[5]}`:t};
+const stu=e=>'/r2/studio?goi='+encodeURIComponent('/r2/g/'+e+'.3js')+'&kho='+encodeURIComponent('/r2/g/kho-chung.3js');
 function ph(){$('#lp').innerHTML=D.tap.map(t=>`<button class="chip ${t.ep===tp?'on':''}" data-e="${t.ep}">${E(t.ten)}</button>`).join('');
- $$('#lp .chip').forEach(b=>b.onclick=()=>{tp=b.dataset.e;ph()});
- const t=D.tap.find(x=>x.ep===tp)||{};$('#pl').innerHTML=E(t.ten||'')+'<br>'+(D.studio?'Sẵn sàng mở':'Trình phát chưa đưa lên web')}
+ $$('#lp .chip').forEach(b=>b.onclick=()=>{tp=b.dataset.e;$('#vd').pause();$('#vd').style.display='none';ph()});
+ const t=D.tap.find(x=>x.ep===tp)||{};$('#pl').innerHTML=E(t.ten||'')+'<br>'+(D.studio?'Sẵn sàng mở':'Trình phát chưa đưa lên web');
+ const m=(DS&&DS.mp4[tp])||[],g=DS&&DS.goi.some(x=>x.ten===tp+'.3js')&&DS.studio;
+ $('#bx').disabled=!m.length;$('#bs').disabled=!g;
+ $('#bx').onclick=()=>pm(m[0].ten);$('#bs').onclick=()=>{location.href=stu(tp)};
+ $('#vs').innerHTML=DS?(m.length?m.map(x=>`<button class="chip" data-v="${E(x.ten)}">▶ ${E(gio(x.ten))} · ${mb(x.size)}</button>`).join(''):'Tập này chưa có MP4 trên web — xuất bằng <code>node tools/xuat.mjs '+E(tp)+'</code>.')+(g?'':'<div>Chưa có gói .3js của tập này trên web.</div>'):'Đang tải danh sách…';
+ $$('#vs [data-v]').forEach(b=>b.onclick=()=>pm(b.dataset.v))}
+function pm(ten){const v=$('#vd');v.style.display='block';v.src='/r2/mp4/'+tp+'/'+ten;v.play().catch(()=>{});v.scrollIntoView({block:'center',behavior:'smooth'})}
+fetch('/r2/ds',{credentials:'same-origin'}).then(r=>r.ok?r.json():null).then(j=>{DS=j;ph()}).catch(()=>{});
 $('#mo').onclick=()=>D.studio&&tp?location.href='/phim/'+tp:ts('Trình phát chưa đưa lên web — chờ bạn đồng ý.');ph();
 tab(ls('tab')||1);
 </script>

@@ -9,12 +9,22 @@ import { existsSync, readdirSync, statSync, mkdirSync, renameSync } from 'fs';
 import { resolve, join, basename, dirname } from 'path';
 import { pathToFileURL } from 'url';
 
+//   --khong-dang   không tự đăng bản nhẹ lên web (R2). Mặc định: tự đăng ep001–003 (tools/dang-r2.mjs), giữ --giu N bản gần nhất (5); lỗi/thiếu mạng chỉ cảnh báo.
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const first = args.find((a, i) => !a.startsWith('--') && !(i > 0 && args[i - 1].startsWith('--')));
 const mb = (f) => (statSync(f).size / 1048576).toFixed(1) + ' MB';
 const show = (label, f) => console.log(`${label}: ${f}  (${mb(f)})\n  ${pathToFileURL(f).href}`);
 
+async function dangLenWeb(nhe) {
+  if (args.includes('--khong-dang') || process.env.XUAT_KHONG_DANG === '1') return console.log('(không đăng web: --khong-dang)');
+  if (opt('range')) return console.log('(không đăng web: bản xuất một đoạn --range)');
+  try {
+    const { dangMp4 } = await import('./dang-r2.mjs'), r = dangMp4({ file: nhe, ep, giu: opt('giu', 5) });
+    if (r.ok) console.log(`Đã đăng web: ${r.key} → xem ở tab "Tập phim" https://3js.tuanchau.io.vn`);
+    else console.warn((r.boQua ? '(không đăng web) ' : '⚠ Chưa đăng được lên web: ') + r.ly_do + ' — video vẫn xuất bình thường.');
+  } catch (x) { console.warn('⚠ Chưa đăng được lên web: ' + x.message + ' — video vẫn xuất bình thường.'); }
+}
 function nen(src) {
   const h = Number(opt('nhe', 1280)), crf = String(opt('crf', 30));
   const dst = src.replace(/\.mp4$/i, '') + '_nhe.mp4';
@@ -49,5 +59,6 @@ if (r.status !== 0) console.warn('⚠ export-test báo lỗi kiểm tra — xem 
 const src = join(out, ep + '.mp4');
 if (mp4s[0] !== src) renameSync(mp4s[0], src);
 show('Bản gốc', src);
-show('Bản nhẹ', nen(src));
+const nhe = nen(src); show('Bản nhẹ', nhe);
+await dangLenWeb(nhe);
 console.log('Thư mục: ' + pathToFileURL(dirname(src)).href);
