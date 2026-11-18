@@ -92,28 +92,62 @@ const res = await pg.evaluate(async ({ ACTOR, KHONG_MAT, KHONG_PK }) => {
 }, { ACTOR, KHONG_MAT, KHONG_PK });
 await br.close(); srv.close();
 if (res.err) { console.error(res.err); process.exit(1); }
+// --xuong-mc: gập như Minecraft — tay/chân/thân chia 2 đoạn ở khuỷu/gối/eo (low_*), trộn trọng số trong dải ±BAND quanh khớp.
+// Cắt tam giác bằng mặt phẳng ngang quanh khớp để chỗ gập có đủ đỉnh (RoundedBox chỉ có 1 ô dọc giữa thân).
+const BAND = 0.05;
+const JOINT = { left_arm: [1.2, 'low_left_arm'], right_arm: [1.2, 'low_right_arm'], left_leg: [0.4, 'low_left_leg'], right_leg: [0.4, 'low_leg_right'], low_body: [1.2, 'body', true] };
+function sliceTri(tri, ys) {   // tri: [{p,n,u}×3] → mảng tam giác đã cắt theo các mặt y
+  let polys = [tri];
+  for (const y0 of ys) {
+    const next = [];
+    for (const poly of polys) {
+      const below = [], above = [];
+      for (let i = 0; i < poly.length; i++) {
+        const a = poly[i], b = poly[(i + 1) % poly.length], da = a.p[1] - y0, db = b.p[1] - y0;
+        (da <= 0 ? below : above).push(a);
+        if ((da < 0 && db > 0) || (da > 0 && db < 0)) { const t = da / (da - db), L = (x, z) => x.map((v, k) => v + (z[k] - v) * t); const m = { p: L(a.p, b.p), n: L(a.n, b.n), u: L(a.u, b.u) }; below.push(m); above.push(m); }
+      }
+      for (const q of [below, above]) if (q.length >= 3) next.push(q);
+    }
+    polys = next;
+  }
+  const out = []; for (const q of polys) for (let i = 1; i + 1 < q.length; i++) out.push([q[0], q[i], q[i + 1]]); return out;
+}
+function weights(bone, y) {
+  if (!MC || !JOINT[bone]) return [[bone, 1]];
+  const [jy, low, inv] = JOINT[bone];   // inv: thân — đoạn dưới eo là 'body', trên là 'low_body'
+  let t = Math.min(1, Math.max(0, (jy + BAND - y) / (2 * BAND)));   // 1 = dưới khớp
+  const w = inv ? [[bone, 1 - t], [low, t]] : [[bone, 1 - t], [low, t]];
+  return w.filter(([, x]) => x > 1e-4);
+}
+const MC = args.includes('--xuong-mc');
 // Ghi BOBJ: đầu file + xương lấy từ r6-armature.bobj, gộp đỉnh/uv/normal trùng
 const arm = readFileSync('assets/r6-bobj/r6-armature.bobj', 'utf8').split(/\r?\n/).filter((l) => l.startsWith('arm_'));
 const V = [], VT = [], VN = [], F = [], kv = new Map(), kt = new Map(), kn = new Map();
 const idx = (map, arr, key, line) => { let i = map.get(key); if (i === undefined) { i = arr.length + 1; map.set(key, i); arr.push(line); } return i; };
 const f6 = (n) => n.toFixed(6), f4 = (n) => n.toFixed(5);
 for (const p of res.parts) {
-  const n = p.pos.length / 3;
+  const n = p.pos.length / 3, j = MC && JOINT[p.bone];
+  const ys = j ? [j[0] - BAND, j[0] - BAND / 2, j[0], j[0] + BAND / 2, j[0] + BAND] : [];
   for (let t = 0; t + 2 < n; t += 3) {
-    const tri = p.flip ? [t, t + 2, t + 1] : [t, t + 1, t + 2];
-    F.push('f ' + tri.map((i) => {
-      const vs = `${f6(p.pos[i * 3])} ${f6(p.pos[i * 3 + 1])} ${f6(p.pos[i * 3 + 2])}`;
-      const vi = idx(kv, V, vs + '|' + p.bone, `v ${vs}\nvw ${p.bone} 1.000000`);
-      const ts = `${f4(p.uv[i][0])} ${f4(p.uv[i][1])}`, ti = idx(kt, VT, ts, `vt ${ts}`);
-      const ns = `${f4(p.nor[i * 3])} ${f4(p.nor[i * 3 + 1])} ${f4(p.nor[i * 3 + 2])}`, ni = idx(kn, VN, ns, `vn ${ns}`);
-      return `${vi}/${ti}/${ni}`;
-    }).join(' '));
+    const ord = p.flip ? [t, t + 2, t + 1] : [t, t + 1, t + 2];
+    const tri = ord.map((i) => ({ p: p.pos.slice(i * 3, i * 3 + 3), n: p.nor.slice(i * 3, i * 3 + 3), u: p.uv[i] }));
+    for (const tr of ys.length ? sliceTri(tri, ys) : [tri]) {
+      F.push('f ' + tr.map((c) => {
+        const vs = `${f6(c.p[0])} ${f6(c.p[1])} ${f6(c.p[2])}`, w = weights(p.bone, c.p[1]);
+        const vi = idx(kv, V, vs + '|' + w.map(([b, x]) => b + x.toFixed(4)).join(','), `v ${vs}\n` + w.map(([b, x]) => `vw ${b} ${x.toFixed(6)}`).join('\n'));
+        const ts = `${f4(c.u[0])} ${f4(c.u[1])}`, ti = idx(kt, VT, ts, `vt ${ts}`);
+        const nl = Math.hypot(...c.n) || 1, ns = c.n.map((x) => f4(x / nl)).join(' '), ni = idx(kn, VN, ns, `vn ${ns}`);
+        return `${vi}/${ti}/${ni}`;
+      }).join(' '));
+    }
   }
 }
-const txt = ['# Anh Ga R6 (tap 3: engine/r6-rig.js + R6_LOOKS.ga) — BOBJ cho BBS 2.7, 1 stud = 0.4 block. Sinh boi tools/r6-bobj-ga.mjs', '# Armature data', 'arm_name Armature', ...arm.filter((l) => !l.startsWith('arm_name')),
+const NAME = MC ? 'ga-r6-mc.bobj' : 'ga-r6.bobj';
+const txt = [`# Anh Ga R6${MC ? ' xuong Minecraft (gap khuyu/goi/eo)' : ''} (tap 3: engine/r6-rig.js + R6_LOOKS.ga) — BOBJ cho BBS 2.7, 1 stud = 0.4 block. Sinh boi tools/r6-bobj-ga.mjs`, '# Armature data', 'arm_name Armature', ...arm.filter((l) => !l.startsWith('arm_name')),
   '# Mesh data', 'o body', 'o_arm Armature', ...V, ...VT, ...VN, ...F, '# Animation data', ''].join('\n');
 await mkdir(OUT, { recursive: true });
-await writeFile(join(OUT, 'ga-r6.bobj'), txt);
+await writeFile(join(OUT, NAME), txt);
 await writeFile(join(OUT, 'ga.png'), Buffer.from(res.png.split(',')[1], 'base64'));
 console.log(res.log.join('\n'));
-console.log(`→ ${OUT}/ga-r6.bobj: ${V.length} đỉnh, ${F.length} tam giác · ga.png ${res.size.join('x')}`);
+console.log(`→ ${OUT}/${NAME}: ${V.length} đỉnh, ${F.length} tam giác · ga.png ${res.size.join('x')}`);
