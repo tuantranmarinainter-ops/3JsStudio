@@ -43,3 +43,29 @@ test('Function R2: Range → 206 + content-range; ETag → 304; ep004 → 404', 
   const ds = await (await go('/r2/ds')).json(); assert.equal(ds.mp4.ep003.length, 1); assert.deepEqual(ds.mp4.ep004, undefined); assert.deepEqual(ds.goi.map((x) => x.ten), ['ep003.3js']); assert.equal(ds.studio, true);
   assert.equal((await onRequest({ request: req('/r2/ds', {}, 'POST'), env, params: { f: ['ds'] } })).status, 405);
 });
+
+test('dongKhoMap: kho riêng chỉ gồm asset map dùng, sha khớp; asset đổi → báo lỗi', async () => {
+  const { dongKhoMap, docGoi } = await import('../dang-r2.mjs');
+  const fs = await import('node:fs'), os = await import('node:os'), path = await import('node:path'), crypto = await import('node:crypto');
+  const goc = fs.mkdtempSync(path.join(os.tmpdir(), 'map-')); fs.mkdirSync(path.join(goc, 'assets'), { recursive: true });
+  const a = Buffer.from('glb-A'); fs.writeFileSync(path.join(goc, 'assets/a.glb'), a); fs.writeFileSync(path.join(goc, 'assets/b.glb'), 'khong-dung');
+  const sh = crypto.createHash('sha256').update(a).digest('hex');
+  const goi = (refs) => { const hd = Buffer.from(JSON.stringify({ kind: 'boi-canh', built: 'x', files: {}, refs })), p = Buffer.alloc(8); p.write('3JS1', 0, 'latin1'); p.writeUInt32LE(hd.length, 4); return Buffer.concat([p, hd]); };
+  const k = docGoi(dongKhoMap(goi({ '/assets/a.glb': ['model/gltf-binary', sh, a.length] }), goc));
+  assert.equal(k.h.kind, 'kho'); assert.deepEqual(Object.keys(k.h.files), ['/assets/a.glb']); assert.equal(k.h.files['/assets/a.glb'][3], sh);
+  assert.equal(k.body.subarray(0, a.length).toString(), 'glb-A');
+  assert.throws(() => dongKhoMap(goi({ '/assets/a.glb': ['model/gltf-binary', 'sai', a.length] }), goc), /sha khác/);
+});
+
+test('Function /r2/m/*: phục vụ studio + gói map, liệt kê map, chặn ep004/tên lạ', async () => {
+  const O = { 'goi/map/studio.html': 'S', 'goi/map/city-moi-5x5.3js': 'G', 'goi/map/city-moi-5x5.kho.3js': 'K', 'goi/map/ep004-x.3js': 'X' };
+  const obj = (k) => ({ key: k, size: O[k].length, httpEtag: '"e"', uploaded: 'u', body: O[k] });
+  const PHIM = { get: async (k) => (k in O ? obj(k) : null), head: async (k) => (k in O ? obj(k) : null), list: async ({ prefix }) => ({ objects: Object.keys(O).filter((k) => k.startsWith(prefix)).map(obj) }) };
+  const go = (f) => onRequest({ request: new Request('https://x/r2/' + f), env: { PHIM }, params: { f: f.split('/') } });
+  assert.equal(await (await go('m/studio')).text(), 'S');
+  assert.equal(await (await go('m/city-moi-5x5.3js')).text(), 'G');
+  assert.equal(await (await go('m/city-moi-5x5.kho.3js')).text(), 'K');
+  assert.equal((await go('m/ep004-x.3js')).status, 404);
+  assert.equal((await go('m/..%2Fstudio.html')).status, 404);
+  assert.deepEqual((await (await go('ds')).json()).map, ['city-moi-5x5']);
+});

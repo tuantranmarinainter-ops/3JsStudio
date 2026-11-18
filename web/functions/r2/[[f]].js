@@ -2,9 +2,11 @@
 //   /r2/ds                       → JSON { mp4: { ep001: [{ten,size,luc}…], … }, goi: [{ten,size,luc}…] }
 //   /r2/studio                   → studio.html (mở gói: /r2/studio?goi=/r2/g/ep003.3js&kho=/r2/g/kho-chung.3js)
 //   /r2/g/<ep00N|kho-chung>.3js  → gói tập / kho chung (Range + Cache-Control)
+//   /r2/m/<map>[.kho].3js         → gói bản đồ (bối cảnh) + kho riêng của nó; /r2/m/studio = studio có module bối cảnh
 //   /r2/mp4/<ep>/<ngày-giờ>.mp4  → MP4 xem trên điện thoại (Range để tua)
 // Chỉ ep001–003; ep004/ep005 không bao giờ (allow-list ở đây và ở tools/dang-r2.mjs).
 export const OK = ['ep001', 'ep002', 'ep003'];
+const RE_MAPF = /^[a-z0-9][a-z0-9-]{0,60}(?:\.kho)?\.3js$/;
 const RE_GOI = /^(?:ep00[123]|kho-chung)\.3js$/, RE_MP4 = /^(ep00[123])\/[0-9_-]{8,24}\.mp4$/;
 const AN = { 'x-robots-tag': 'noindex', 'accept-ranges': 'bytes' };
 const loi = (c, m) => new Response(m, { status: c, headers: { 'x-robots-tag': 'noindex' } });
@@ -33,7 +35,8 @@ export async function danhSach(kho) {
   }
   const g = await kho.list({ prefix: 'goi/', limit: 200 });
   for (const o of g.objects) { const t = o.key.slice(4); if (RE_GOI.test(t)) goi.push({ ten: t, size: o.size, luc: o.uploaded }); }
-  return { mp4, goi, studio: !!(await kho.head('studio.html')) };
+  const mp = await kho.list({ prefix: 'goi/map/', limit: 200 }), map = mp.objects.map((o) => o.key.slice(8)).filter((t) => RE_MAPF.test(t) && !t.endsWith('.kho.3js') && !/^ep00[45]/.test(t)).map((t) => t.slice(0, -4));
+  return { mp4, goi, map, studio: !!(await kho.head('studio.html')) };
 }
 
 export async function onRequest({ request, env, params }) {
@@ -43,6 +46,8 @@ export async function onRequest({ request, env, params }) {
   if (p === 'ds') return new Response(JSON.stringify(await danhSach(env.PHIM)), { headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' } });
   if (p === 'studio') return phucVu(env.PHIM, 'studio.html', request, { type: 'text/html; charset=utf-8', cache: 'private, no-cache' });
   if (p.startsWith('g/') && RE_GOI.test(p.slice(2))) return phucVu(env.PHIM, 'goi/' + p.slice(2), request, { type: 'application/octet-stream' });
+  if (p === 'm/studio') return phucVu(env.PHIM, 'goi/map/studio.html', request, { type: 'text/html; charset=utf-8', cache: 'private, no-cache' });
+  if (p.startsWith('m/') && RE_MAPF.test(p.slice(2)) && !/^ep00[45]/.test(p.slice(2))) return phucVu(env.PHIM, 'goi/map/' + p.slice(2), request, { type: 'application/octet-stream', cache: 'private, no-cache' });
   if (p.startsWith('mp4/') && RE_MP4.test(p.slice(4))) return phucVu(env.PHIM, p, request, { type: 'video/mp4', cache: 'private, max-age=604800, immutable' });
   return loi(404, 'Not found');
 }

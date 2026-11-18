@@ -1,5 +1,6 @@
 // Đưa studio, gói .3js và MP4 lên R2 (3js-studio-phim) cho web https://3js.tuanchau.io.vn (xem /r2/ds).
 //   node tools/dang-r2.mjs studio [--thu]                 → studio.html + dist/STUDIO RIENG/ep00{1,2,3}.3js + kho-chung (đã lọc, bỏ ep004/ep005)
+//   node tools/dang-r2.mjs map <goi.3js> [--thu]         → goi/map/<tên>.3js + kho riêng <tên>.kho.3js (chỉ asset map dùng)
 //   node tools/dang-r2.mjs mp4 <file.mp4> <ep> [--giu 5]  → mp4/<ep>/<ngày-giờ>.mp4 + xoá bản cũ, giữ N bản gần nhất mỗi tập
 // Chỉ ep001–003. Khoá: `wrangler login` (hoặc CLOUDFLARE_API_TOKEN trong .env.local). Không in khoá. Lỗi/thiếu mạng → chỉ cảnh báo khi gọi từ xuat.mjs.
 import fs from 'node:fs'; import path from 'node:path'; import crypto from 'node:crypto'; import { spawnSync } from 'node:child_process'; import { fileURLToPath } from 'node:url';
@@ -49,6 +50,34 @@ export function dangMp4({ file, ep, giu = GIU_MAC_DINH, thu = false, log = conso
   return { ok: true, key, url: `${host}/#tap-phim`, daXoa };
 }
 
+// Map (gói kind 'boi-canh', vd city-moi-5x5.3js) → kho riêng chỉ chứa asset map dùng, đóng từ file gốc trong repo (kiểm sha256).
+export const RE_MAP = /^[a-z0-9][a-z0-9-]{0,60}$/;
+export function dongKhoMap(goiBuf, goc = ROOT) {
+  const { h } = docGoi(goiBuf), files = {}, parts = []; let off = 0;
+  for (const [p, [kieu, sh, dai]] of Object.entries(h.refs || {})) {
+    const f = path.join(goc, p.replace(/^\/+/, '')); if (!fs.existsSync(f)) throw new Error('thiếu asset ' + p);
+    const b = fs.readFileSync(f); if (sha(b) !== sh || b.length !== dai) throw new Error('asset đã đổi so với gói (sha khác): ' + p + ' — dựng lại gói map');
+    files[p] = [kieu, off, dai, sh]; parts.push(b); off += dai;
+  }
+  const hd = Buffer.from(JSON.stringify({ v: 2, kind: 'kho', built: h.built || new Date().toISOString(), files }), 'utf8'), pre = Buffer.alloc(8); pre.write('3JS1', 0, 'latin1'); pre.writeUInt32LE(hd.length, 4);
+  return Buffer.concat([pre, hd, ...parts]);
+}
+export function dangMap({ file, studio = null, thu = false, log = console.log, goc = ROOT } = {}) {
+  const ten = path.basename(String(file || ''), '.3js'); if (!RE_MAP.test(ten) || /^ep00[45]/i.test(ten)) throw new Error('tên map không hợp lệ: ' + ten);
+  const buf = fs.readFileSync(file), { h } = docGoi(buf); if (h.kind !== 'boi-canh') throw new Error(ten + ': không phải gói bối cảnh (kind=' + h.kind + ')');
+  const tmp = path.join(goc, 'output/_tmp'); fs.mkdirSync(tmp, { recursive: true });
+  const kf = path.join(tmp, ten + '.kho.3js'); fs.writeFileSync(kf, dongKhoMap(buf, goc));
+  const dir = path.join(goc, 'dist/STUDIO RIENG'), bc = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => /^studio-boi-canh.*\.html$/.test(f)).sort().pop() : null;
+  const stu = studio || (bc ? path.join(dir, bc) : path.join(dir, 'studio.html'));   // studio có module xem bối cảnh (engine/boi-canh-xem.js)
+  const env = docEnv(), muc = [{ key: `goi/map/${ten}.3js`, file }, { key: `goi/map/${ten}.kho.3js`, file: kf }, { key: 'goi/map/studio.html', file: stu, type: 'text/html; charset=utf-8' }];
+  log('studio cho map: ' + path.relative(goc, stu));
+  for (const m of muc) { const mb = (fs.statSync(m.file).size / 2 ** 20).toFixed(1);
+    if (thu) { log(`${m.key}: sẽ đẩy ${mb} MB (thử)`); continue; }
+    const r = put(m.key, m.file, m.type || 'application/octet-stream', env); if (r.status !== 0) throw new Error(m.key + ': ' + loiCuoi(r)); log(`${m.key}: đã đẩy ${mb} MB`); }
+  const host = String(env.WEB_URL || 'https://3js.tuanchau.io.vn').replace(/\/$/, '');
+  return `${host}/r2/m/studio?goi=${encodeURIComponent('/r2/m/' + ten + '.3js')}&kho=${encodeURIComponent('/r2/m/' + ten + '.kho.3js')}`;
+}
+
 // Studio + gói + kho → R2. Bỏ qua file không đổi (sha256 trong .cache/dang-r2.json).
 export function dangStudio({ goc = ROOT, thu = false, log = console.log } = {}) {
   const env = docEnv(), dir = path.join(goc, 'dist/STUDIO RIENG'), tmp = path.join(goc, 'output/_tmp'); fs.mkdirSync(tmp, { recursive: true });
@@ -74,7 +103,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const a = process.argv.slice(2), gt = (k, d) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : d; };
   try {
     if (a[0] === 'studio') { if (dangStudio({ thu: a.includes('--thu') }).some((k) => k.tt === 'loi')) process.exit(1); }
+    else if (a[0] === 'map') { const u = dangMap({ file: a[1], thu: a.includes('--thu') }); console.log('Mở map: ' + u); }
     else if (a[0] === 'mp4') { const r = dangMp4({ file: a[1], ep: a[2], giu: gt('--giu', GIU_MAC_DINH), thu: a.includes('--thu') }); console.log(r.ok ? (r.thu ? `(thử, chưa đăng) ${r.key}` : `đã đăng ${r.key}`) : 'KHÔNG đăng: ' + r.ly_do); process.exit(r.ok ? 0 : 1); }
-    else { console.error('Dùng: dang-r2.mjs studio [--thu] | mp4 <file.mp4> <ep> [--giu 5]'); process.exit(1); }
+    else { console.error('Dùng: dang-r2.mjs studio [--thu] | map <goi.3js> [--thu] | mp4 <file.mp4> <ep> [--giu 5]'); process.exit(1); }
   } catch (x) { console.error(x.message); process.exit(1); }
 }
