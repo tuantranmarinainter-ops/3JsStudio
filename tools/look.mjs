@@ -19,6 +19,7 @@
 //   --jobs N                    chụp song song N tab (mặc định: 1 nếu ≤ 8 thời điểm, 2 nếu nhiều hơn)
 //
 // KIỂM BẰNG SỐ TRƯỚC, XEM ẢNH SAU (tiết kiệm token: chỉ mở ảnh khi số vượt ngưỡng)
+//   --anim [--anim-cfg f.json]  KIỂM ANIMATION bằng số (tools/anim-kiem.mjs) — không chụp ảnh; cfg mặc định episodes/<ep>/anim-kiem.json
 //   --pose                      lưu tư thế mọi xương (vị trí + quaternion thế giới) tại mỗi t vào <out>/pose.json.
 //                               Lấy từ window.dumpPose(t) nếu trang có, không thì tự duyệt window.__stage.scene.
 //   --pose-ref <pose.json>      so với tư thế chuẩn (một pose.json đã lưu, vd refs/ep001/pose.json); chỉ in xương lệch quá ngưỡng
@@ -41,7 +42,7 @@ import { launchBrowser } from './browser.mjs';
 import { probe as gateProbe, judge as gateJudge, loadCfg as gateCfg, formatShot as gateFormat } from './gates.mjs';
 
 const args = process.argv.slice(2);
-const FLAGS = new Set(['det', 'full', 'pose', 'gates']);
+const FLAGS = new Set(['det', 'full', 'pose', 'gates', 'anim']);
 const opt = {}; const pos = [];
 for (let i = 0; i < args.length; i++) {
   const a = args[i];
@@ -51,6 +52,12 @@ const pageArg = pos[0];
 if (!pageArg) {
   console.error('Dùng: node tools/look.mjs <trang> [--t a,b | --range a:b:bước | --shots s054,s056|all] [--query q] [--opts json] [--out dir] [--sheet f.jpg] [--cols 6] [--tile 270] [--ab trang2] [--det] [--full]');
   process.exit(1);
+}
+// --anim: kiểm animation nhân vật bằng số (tools/anim-kiem.mjs: trượt chân, lơ lửng/lún, giật, đơ, máy móc, khớp số bước, tay cầm vật)
+if (opt.anim) {
+  const { spawnSync } = await import('child_process');
+  const a = ['tools/anim-kiem.mjs', pageArg, ...(opt.shots ? ['--shots', opt.shots] : []), ...(opt.out ? ['--out', opt.out] : []), ...(opt['anim-cfg'] ? ['--cfg', opt['anim-cfg']] : [])];
+  process.exit(spawnSync(process.execPath, a, { stdio: 'inherit' }).status ?? 1);
 }
 const root = process.cwd();
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.glb': 'model/gltf-binary', '.mp3': 'audio/mpeg', '.ogg': 'audio/ogg', '.wav': 'audio/wav', '.ttf': 'font/ttf', '.otf': 'font/otf', '.woff': 'font/woff', '.woff2': 'font/woff2', '.css': 'text/css', '.svg': 'image/svg+xml', '.srt': 'text/plain; charset=utf-8', '.mp4': 'video/mp4', '.wasm': 'application/wasm' };

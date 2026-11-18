@@ -42,6 +42,7 @@ Cảnh 3D dựng bằng three.js + engine tự viết (`engine/`). Sản phẩm 
 |---|---|
 | `node tools/look.mjs <trang> --shots … / --t … / --frames … [--ab trang2] [--det] [--pose]` | **công cụ chụp duy nhất**: bảng khung có nhãn, so A/B, kiểm tất định, so bằng số (skill `kiem-tra-khung`) |
 | `node tools/look.mjs <trang> --shots all --gates` / `doctor.mjs <ep> --gates` | **cổng kiểm** (chỉ cảnh báo): chân lơ lửng/lún, đầu bị cắt, mặt ngoài vùng an toàn, xuyên nhau + dòng LOOK luật camera; ngưỡng `tools/gates.json` |
+| `node tools/anim-kiem.mjs <trang>` / `look.mjs <trang> --anim` / `anim-kiem.mjs do a.json --ab b.json` | **kiểm animation bằng số**: trượt chân, lơ lửng/lún, giật, đơ / đứng im sai, máy móc (sin thuần), số bước khớp chân, tay cầm vật; cfg `episodes/<ep>/anim-kiem.json`; dữ liệu ngoài (Roblox Studio) theo định dạng anim-pose v1 đầu file |
 | `node tools/build.mjs <ep> <lớp>` / `npm run bundle:ep001` | dựng lại một lớp / gộp `dist/<ep>.html` |
 | `node tools/export-test.mjs dist/<ep>.html --range a:b --matrix "…"` | bấm Xuất MP4 tự động mọi tổ hợp + báo cáo |
 | `node tools/doctor.mjs <ep> [--fix-procs] [--shaders]` | khám cả repo: asset, phông, shot, giọng, bản gộp cũ, tiến trình treo, git |

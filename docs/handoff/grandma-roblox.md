@@ -3,18 +3,17 @@
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. Phiên mới chỉ cần đọc khối này là làm tiếp được.
      Chi tiết, lịch sử, số đo để ở phần "Ghi chép" bên dưới. Mục nào không có thì ghi "không". -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-19 04:05
+- **Cập nhật:** 2026-11-19 04:45
 - **Nhánh:** `ep1-v2`
-- **Đang làm:** XONG. Người dùng chốt **B hơn**; đã lồng tiếng cả hai
-- **Kết quả:** `output/thu-grandma/a/A_giong.mp4`, `b/B_giong.mp4` (30 s, có giọng) · bản B xuất từ trình phát: `output/xuat/thu-grandma_2026-11-19_04-00/` · so sánh `output/thu-grandma/so-sanh.md` + `luoi-AB.jpg`
-- **Giọng:** CapCut `BV075_streaming`, `episodes/thu-grandma/narration.txt` (14 câu @at theo phụ đề) → narration.mp3/.json; câu 1 và 7 tăng tốc ×1,4 (sát trần)
-- **Kết luận:** B thắng mọi trục kỹ thuật; A chỉ hơn ở ánh sáng/Atmosphere → học vào B (preset sáng hơn)
-- **Bước kế tiếp:** không (chờ người dùng)
-- **Đang chờ:** không
-- **Đang chạy nền:** không
-- **File đang dở (chưa commit):** `.gitignore` dòng `episodes/thu-grandma/` (lẫn thay đổi phiên khác). Ngoài git: `episodes/thu-grandma/*`, `dist/thu-grandma.html`; Studio TuantestMapKITBao còn folder `Workspace.ThuGrandma` (chưa save)
-- **Đạt khi:** đã đạt
-- **Câu hỏi còn mở:** không
+- **Đang làm:** kiểm animation A|B bằng số — bước 1–3 XONG, dừng trước bước 4 (sửa B) chờ người dùng
+- **Công cụ mới:** `tools/anim-kiem.mjs` (+ `look.mjs --anim`, test `tools/tests/anim-kiem.test.mjs`); A xuất bằng `output/thu-grandma/a/06-anim.lua` + POST về `serve.mjs`
+- **Kết quả:** `output/anim-kiem/AB/bao-cao.md` (bảng 7 chỉ số + kết luận) · `loi-nang.jpg` · cfg `episodes/thu-grandma/anim-kiem.json`
+- **Lỗi thật tìm được:** B: FREEZE không đứng im (s001/s002 bước tại chỗ), trượt chân 46%, đơ 40%; A: lún sân 0,3–0,8 (80% khung). Cả hai: đi bộ = sin thuần
+- **Bước kế tiếp:** bước 4 — sửa B (r6-anim: khoá chân đỡ, lấy đà, FREEZE thật, idle thở, tay bám vật), đo lại; đạt khi B tốt hơn ≥ 3 chỉ số, không chỉ số nào xấu đi
+- **Đang chờ:** người dùng duyệt sang bước 4
+- **Đang chạy nền:** `node output/thu-grandma/a/serve.mjs` (cổng 8793, tắt được)
+- **File đang dở (chưa commit):** `.gitignore` dòng `episodes/thu-grandma/` (lẫn phiên khác); ngoài git: `episodes/thu-grandma/*`, Studio `Workspace.ThuGrandma` (chưa save)
+- **Ghi chú:** `npm test` có 6 test đỏ không liên quan (pipeline asset, __maskAnh, HOUSE — file phiên khác đang sửa)
 <!-- /ĐIỂM DỪNG -->
 
 ## Đã chốt (2026-11-18)
