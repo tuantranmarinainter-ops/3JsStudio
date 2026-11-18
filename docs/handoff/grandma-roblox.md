@@ -3,15 +3,17 @@
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. Phiên mới chỉ cần đọc khối này là làm tiếp được.
      Chi tiết, lịch sử, số đo để ở phần "Ghi chép" bên dưới. Mục nào không có thì ghi "không". -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-18
+- **Cập nhật:** 2026-11-18 23:30
 - **Nhánh:** `ep1-v2`
-- **Đang làm:** Việc 1 XONG — kit ở `output/thu-grandma/kit/` (SCRIPT, REALISM_BIBLE, CAMERA_BIBLE, SHOTLIST 25 shot/30 s, đã kiểm nhịp bằng script)
-- **Bước kế tiếp:** Việc 2 theo 4 nhóm, mỗi lần 1 nhóm: (1) PHỐ (nhà cửa xanh, trường + tháp đồng hồ, sạp, cột đèn, hàng rào — xem kit City trước) · (2) NỘI THẤT (bếp/hành lang, kho gỗ) · (3) ĐẠO CỤ (xe kéo bánh đỏ, mũ chóp cao, balo, dây nhảy, túi, chim sẻ) · (4) NHÂN VẬT R6 (dùng lại kho `rb` trước). Trang duyệt: `duyet.mjs thu-grandma …` → `dist/thu-grandma_duyet.html`
-- **Đang chờ:** không (kit đã duyệt; người dùng giao Claude tự duyệt tới cuối). Việc 2 XONG: `kit/ASSETS.md` + `kit/do-dung.json` (kit City + khối, không tải Creator Store)
-- **Đang chạy nền:** 2 agent phụ Sonnet — A (Studio, folder `Workspace.ThuGrandma` trong TuantestMapKITBao, không save) → `output/thu-grandma/a/`; B (3JS) → `output/thu-grandma/b/` (+ có thể `episodes/thu-grandma/`, không commit). Mỗi bên ra MP4 + luoi.jpg + bao-cao.md
-- **File đang dở (chưa commit):** không
-- **Đạt khi:** có 2 video 30 s (A và B) cùng kịch bản + bảng so `output/thu-grandma/so-sanh.md` (giờ, ưu/nhược, điểm B/C)
-- **Câu hỏi còn mở:** A ghi hình bằng cách nào (chụp từng khung qua MCP hay quay màn hình) — chốt ở Việc 3 sau khi đo thử 10 khung
+- **Đang làm:** Việc 1–5 XONG (Claude tự duyệt theo lệnh người dùng). Kit + asset: `output/thu-grandma/kit/` (kit City + khối `do-dung.json`)
+- **Kết quả:** `output/thu-grandma/a/A.mp4` và `b/B.mp4` (cả hai 30 s, 900 khung, 1080×1920; A nguồn thật 652×1160) · so sánh `output/thu-grandma/so-sanh.md` + `luoi-AB.jpg` · sổ `so-gio.md`
+- **Kết luận Claude:** B thắng mọi trục kỹ thuật (nét, tất định, cổng kiểm, phụ đề, bật/tắt, token ~1/3); A chỉ hơn ở ánh sáng/Atmosphere có sẵn
+- **Bước kế tiếp:** không (chờ người dùng)
+- **Đang chờ:** người dùng chấm C1–C4 cho A và B
+- **Đang chạy nền:** không
+- **File đang dở (chưa commit):** `.gitignore` có thêm dòng `episodes/thu-grandma/` (chưa commit, lẫn thay đổi phiên khác). Ngoài repo-git: `episodes/thu-grandma/*`, `dist/thu-grandma.html`; Studio TuantestMapKITBao còn folder `Workspace.ThuGrandma` (X+3000, Z+5000, chưa save)
+- **Đạt khi:** đã đạt (2 video + so-sanh.md); còn điểm C
+- **Câu hỏi còn mở:** không (A chọn quay màn hình ffmpeg — screen_capture không lưu ra file được)
 <!-- /ĐIỂM DỪNG -->
 
 ## Đã chốt (2026-11-18)
