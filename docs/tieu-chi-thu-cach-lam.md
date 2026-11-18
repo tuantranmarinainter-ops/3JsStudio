@@ -62,7 +62,7 @@ Người dùng xem MỘT ảnh lưới trước/sau (≈800 px), cho điểm:
 ## D. Sổ thử (mỗi lần một dòng, mới nhất ở dưới)
 | Lần | Ngày | Đổi điều gì (1 điều) | B trượt | C1 | C2 | C3 | C4 | Giữ? | Ghi chú |
 |---|---|---|---|---|---|---|---|---|---|
-| 0 | | điểm chuẩn | | | | | | — | |
+| 0 | 2026-11-18 | điểm chuẩn | CHUẨN (không phải lỗi phải sửa): B1 cổng kiểm 4 PASS/1 FAIL — s003/s016/s020/s051 0 cảnh báo; s013 FAIL = xuyên 1 + chân lơ 5 + đầu cắt 2, LOOK "5 người mà không zoom out". B2 tất định OK (maxdiff ≤ 6). B4 0 tên lạ. B6 ⚠ 190 program (>80), __ready 16.7 s (>10 s). Độ sáng s003/s013/s051 dưới 100 | | | | | — | Ảnh lưới: output/thu-cach-lam/lan0-luoi.jpg (hàng = shot, cột = đầu/giữa/cuối). refs/ bị .gitignore nên chuẩn chỉ nằm trên đĩa |
 
 ## E. Phân biệt "sai thật" với "lần chạy xui" (khi có bước Claude tự viết code)
 - Chạy cùng thay đổi **2 lần**. Một đạt một trượt → đề bài còn mơ hồ ở chỗ trượt. Cả 2 trượt → sai thật.
