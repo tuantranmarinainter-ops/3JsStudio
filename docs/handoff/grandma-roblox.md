@@ -3,17 +3,18 @@
 <!-- ĐIỂM DỪNG: tối đa 25 dòng. GHI ĐÈ cả khối mỗi lần cập nhật, không nối thêm. Phiên mới chỉ cần đọc khối này là làm tiếp được.
      Chi tiết, lịch sử, số đo để ở phần "Ghi chép" bên dưới. Mục nào không có thì ghi "không". -->
 ## ĐIỂM DỪNG
-- **Cập nhật:** 2026-11-18 23:30
+- **Cập nhật:** 2026-11-19 04:05
 - **Nhánh:** `ep1-v2`
-- **Đang làm:** Việc 1–5 XONG (Claude tự duyệt theo lệnh người dùng). Kit + asset: `output/thu-grandma/kit/` (kit City + khối `do-dung.json`)
-- **Kết quả:** `output/thu-grandma/a/A.mp4` và `b/B.mp4` (cả hai 30 s, 900 khung, 1080×1920; A nguồn thật 652×1160) · so sánh `output/thu-grandma/so-sanh.md` + `luoi-AB.jpg` · sổ `so-gio.md`
-- **Kết luận Claude:** B thắng mọi trục kỹ thuật (nét, tất định, cổng kiểm, phụ đề, bật/tắt, token ~1/3); A chỉ hơn ở ánh sáng/Atmosphere có sẵn
+- **Đang làm:** XONG. Người dùng chốt **B hơn**; đã lồng tiếng cả hai
+- **Kết quả:** `output/thu-grandma/a/A_giong.mp4`, `b/B_giong.mp4` (30 s, có giọng) · bản B xuất từ trình phát: `output/xuat/thu-grandma_2026-11-19_04-00/` · so sánh `output/thu-grandma/so-sanh.md` + `luoi-AB.jpg`
+- **Giọng:** CapCut `BV075_streaming`, `episodes/thu-grandma/narration.txt` (14 câu @at theo phụ đề) → narration.mp3/.json; câu 1 và 7 tăng tốc ×1,4 (sát trần)
+- **Kết luận:** B thắng mọi trục kỹ thuật; A chỉ hơn ở ánh sáng/Atmosphere → học vào B (preset sáng hơn)
 - **Bước kế tiếp:** không (chờ người dùng)
-- **Đang chờ:** người dùng chấm C1–C4 cho A và B
+- **Đang chờ:** không
 - **Đang chạy nền:** không
-- **File đang dở (chưa commit):** `.gitignore` có thêm dòng `episodes/thu-grandma/` (chưa commit, lẫn thay đổi phiên khác). Ngoài repo-git: `episodes/thu-grandma/*`, `dist/thu-grandma.html`; Studio TuantestMapKITBao còn folder `Workspace.ThuGrandma` (X+3000, Z+5000, chưa save)
-- **Đạt khi:** đã đạt (2 video + so-sanh.md); còn điểm C
-- **Câu hỏi còn mở:** không (A chọn quay màn hình ffmpeg — screen_capture không lưu ra file được)
+- **File đang dở (chưa commit):** `.gitignore` dòng `episodes/thu-grandma/` (lẫn thay đổi phiên khác). Ngoài git: `episodes/thu-grandma/*`, `dist/thu-grandma.html`; Studio TuantestMapKITBao còn folder `Workspace.ThuGrandma` (chưa save)
+- **Đạt khi:** đã đạt
+- **Câu hỏi còn mở:** không
 <!-- /ĐIỂM DỪNG -->
 
 ## Đã chốt (2026-11-18)
