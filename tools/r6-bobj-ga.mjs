@@ -92,7 +92,7 @@ const res = await pg.evaluate(async ({ ACTOR, KHONG_MAT, KHONG_PK }) => {
 }, { ACTOR, KHONG_MAT, KHONG_PK });
 await br.close(); srv.close();
 if (res.err) { console.error(res.err); process.exit(1); }
-// --xuong-mc: gập như Minecraft — tay/chân/thân chia 2 đoạn ở khuỷu/gối/eo (low_*), trộn trọng số trong dải ±BAND quanh khớp.
+// --gap-eo: R6 cứng nhưng thân gập ở eo (dùng với bộ *-eo-actions). --xuong-mc: gập như Minecraft — tay/chân/thân chia 2 đoạn ở khuỷu/gối/eo (low_*), trộn trọng số trong dải ±BAND quanh khớp.
 // Cắt tam giác bằng mặt phẳng ngang quanh khớp để chỗ gập có đủ đỉnh (RoundedBox chỉ có 1 ô dọc giữa thân).
 const BAND = 0.05;
 const JOINT = { left_arm: [1.2, 'low_left_arm'], right_arm: [1.2, 'low_right_arm'], left_leg: [0.4, 'low_left_leg'], right_leg: [0.4, 'low_leg_right'], low_body: [1.2, 'body', true] };
@@ -114,20 +114,21 @@ function sliceTri(tri, ys) {   // tri: [{p,n,u}×3] → mảng tam giác đã c�
   const out = []; for (const q of polys) for (let i = 1; i + 1 < q.length; i++) out.push([q[0], q[i], q[i + 1]]); return out;
 }
 function weights(bone, y) {
-  if (!MC || !JOINT[bone]) return [[bone, 1]];
+  if (!useJ(bone)) return [[bone, 1]];
   const [jy, low, inv] = JOINT[bone];   // inv: thân — đoạn dưới eo là 'body', trên là 'low_body'
   let t = Math.min(1, Math.max(0, (jy + BAND - y) / (2 * BAND)));   // 1 = dưới khớp
   const w = inv ? [[bone, 1 - t], [low, t]] : [[bone, 1 - t], [low, t]];
   return w.filter(([, x]) => x > 1e-4);
 }
-const MC = args.includes('--xuong-mc');
+const MC = args.includes('--xuong-mc'), EO = args.includes('--gap-eo');   // --gap-eo: chỉ thân gập ở eo (body/low_body như Minecraft), tay/chân vẫn cứng
+const useJ = (b) => (MC && JOINT[b]) || (EO && b === 'low_body' && JOINT[b]);
 // Ghi BOBJ: đầu file + xương lấy từ r6-armature.bobj, gộp đỉnh/uv/normal trùng
 const arm = readFileSync('assets/r6-bobj/r6-armature.bobj', 'utf8').split(/\r?\n/).filter((l) => l.startsWith('arm_'));
 const V = [], VT = [], VN = [], F = [], kv = new Map(), kt = new Map(), kn = new Map();
 const idx = (map, arr, key, line) => { let i = map.get(key); if (i === undefined) { i = arr.length + 1; map.set(key, i); arr.push(line); } return i; };
 const f6 = (n) => n.toFixed(6), f4 = (n) => n.toFixed(5);
 for (const p of res.parts) {
-  const n = p.pos.length / 3, j = MC && JOINT[p.bone];
+  const n = p.pos.length / 3, j = useJ(p.bone);
   const ys = j ? [j[0] - BAND, j[0] - BAND / 2, j[0], j[0] + BAND / 2, j[0] + BAND] : [];
   for (let t = 0; t + 2 < n; t += 3) {
     const ord = p.flip ? [t, t + 2, t + 1] : [t, t + 1, t + 2];
@@ -143,8 +144,8 @@ for (const p of res.parts) {
     }
   }
 }
-const NAME = MC ? 'ga-r6-mc.bobj' : 'ga-r6.bobj';
-const txt = [`# Anh Ga R6${MC ? ' xuong Minecraft (gap khuyu/goi/eo)' : ''} (tap 3: engine/r6-rig.js + R6_LOOKS.ga) — BOBJ cho BBS 2.7, 1 stud = 0.4 block. Sinh boi tools/r6-bobj-ga.mjs`, '# Armature data', 'arm_name Armature', ...arm.filter((l) => !l.startsWith('arm_name')),
+const NAME = MC ? 'ga-r6-mc.bobj' : EO ? 'ga-r6-eo.bobj' : 'ga-r6.bobj';
+const txt = [`# Anh Ga R6${MC ? ' xuong Minecraft (gap khuyu/goi/eo)' : EO ? ' cung, than gap eo nhu Minecraft' : ''} (tap 3: engine/r6-rig.js + R6_LOOKS.ga) — BOBJ cho BBS 2.7, 1 stud = 0.4 block. Sinh boi tools/r6-bobj-ga.mjs`, '# Armature data', 'arm_name Armature', ...arm.filter((l) => !l.startsWith('arm_name')),
   '# Mesh data', 'o body', 'o_arm Armature', ...V, ...VT, ...VN, ...F, '# Animation data', ''].join('\n');
 await mkdir(OUT, { recursive: true });
 await writeFile(join(OUT, NAME), txt);
