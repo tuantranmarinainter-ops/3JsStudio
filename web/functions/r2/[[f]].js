@@ -16,7 +16,12 @@ export async function phucVu(kho, key, request, { type, cache = 'private, max-ag
   const rg = request.headers.get('range'), inm = request.headers.get('if-none-match');
   const head = (o) => ({ ...AN, 'content-type': type, 'cache-control': cache, etag: o.httpEtag });
   if (request.method === 'HEAD') { const o = await kho.head(key); return o ? new Response(null, { headers: { ...head(o), 'content-length': String(o.size) } }) : loi(404, 'Not found'); }
-  const o = await kho.get(key, rg ? { range: request.headers } : inm ? { onlyIf: { etagDoesNotMatch: inm } } : undefined);
+  // If-None-Match từ trình duyệt có ngoặc kép / tiền tố W/ (Cloudflare nén → ETag yếu); R2 chỉ nhận etag trần → làm sạch,
+  // và nếu R2 vẫn từ chối điều kiện thì tải thường (trước đây ném lỗi → HTTP 500 khi điện thoại mở lại gói đã có trong bộ đệm).
+  const tag = inm ? inm.split(',')[0].trim().replace(/^W\//i, '').replace(/"/g, '') : '';
+  let o;
+  try { o = await kho.get(key, rg ? { range: request.headers } : tag && tag !== '*' ? { onlyIf: { etagDoesNotMatch: tag } } : undefined); }
+  catch { o = await kho.get(key); }
   if (!o) return loi(404, 'Not found');
   if (!o.body) return new Response(null, { status: 304, headers: head(o) });
   const h = head(o);

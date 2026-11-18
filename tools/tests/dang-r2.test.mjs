@@ -27,7 +27,8 @@ test('locKho: bỏ file không ai dùng (ví dụ ep004), giữ nguyên nội du
 });
 const khoGia = (data) => ({ async get(k, opt) { const b = data[k]; if (!b) return null; const o = { httpEtag: '"e"', size: b.length };
     if (opt?.range) { const m = /bytes=(\d+)-(\d*)/.exec(opt.range.get('range')), off = +m[1], end = m[2] ? +m[2] : b.length - 1; return { ...o, range: { offset: off, length: end - off + 1 }, body: b.subarray(off, end + 1) }; }
-    if (opt?.onlyIf && opt.onlyIf.etagDoesNotMatch === '"e"') return { ...o, body: null }; return { ...o, body: b }; },
+    if (opt?.onlyIf) { const t = opt.onlyIf.etagDoesNotMatch; if (/["\/]/.test(t) || data.__nemDK) throw new TypeError('get: invalid etag'); if (t === 'e') return { ...o, body: null }; }
+    return { ...o, body: b }; },
   async head(k) { return data[k] ? { httpEtag: '"e"', size: data[k].length } : null; },
   async list({ prefix }) { return { objects: Object.keys(data).filter((k) => k.startsWith(prefix)).map((key) => ({ key, size: data[key].length, uploaded: 'T' })) }; } });
 const req = (u, h = {}, m = 'GET') => new Request('https://x.test' + u, { method: m, headers: h });
@@ -38,6 +39,11 @@ test('Function R2: Range → 206 + content-range; ETag → 304; ep004 → 404', 
   assert.equal(r.status, 206); assert.equal(r.headers.get('content-range'), 'bytes 2-5/10'); assert.equal(await r.text(), '2345');
   r = await go('/r2/mp4/ep003/2026-11-18_10-00-00.mp4'); assert.equal(r.status, 200); assert.equal(r.headers.get('accept-ranges'), 'bytes'); assert.match(r.headers.get('cache-control'), /max-age/);
   r = await go('/r2/mp4/ep003/2026-11-18_10-00-00.mp4', { 'if-none-match': '"e"' }); assert.equal(r.status, 304);
+  r = await go('/r2/mp4/ep003/2026-11-18_10-00-00.mp4', { 'if-none-match': 'W/"e"' }); assert.equal(r.status, 304);   // ETag yếu (Cloudflare nén) — trước đây ném lỗi → 500
+  r = await go('/r2/mp4/ep003/2026-11-18_10-00-00.mp4', { 'if-none-match': '"khac"' }); assert.equal(r.status, 200);
+  env.PHIM = khoGia({ 'goi/map/city-moi-5x5.3js': Buffer.from('M'), __nemDK: true });   // R2 từ chối điều kiện → vẫn tải thường, không 500
+  r = await onRequest({ request: req('/r2/m/city-moi-5x5.3js', { 'if-none-match': '"x"' }), env, params: { f: ['m', 'city-moi-5x5.3js'] } }); assert.equal(r.status, 200); assert.equal(await r.text(), 'M');
+  env.PHIM = khoGia({ 'mp4/ep003/2026-11-18_10-00-00.mp4': Buffer.from('0123456789'), 'mp4/ep004/2026-11-18_10-00-00.mp4': Buffer.from('x'), 'goi/ep003.3js': Buffer.from('G'), 'goi/ep004.3js': Buffer.from('G'), 'studio.html': Buffer.from('<html>') });
   for (const u of ['/r2/mp4/ep004/2026-11-18_10-00-00.mp4', '/r2/g/ep004.3js', '/r2/g/..%2Fx.3js', '/r2/mp4/ep003/../ep004/x.mp4']) assert.equal((await go(u)).status, 404, u);
   assert.equal((await go('/r2/g/ep003.3js')).status, 200); assert.equal((await go('/r2/studio')).status, 200);
   const ds = await (await go('/r2/ds')).json(); assert.equal(ds.mp4.ep003.length, 1); assert.deepEqual(ds.mp4.ep004, undefined); assert.deepEqual(ds.goi.map((x) => x.ten), ['ep003.3js']); assert.equal(ds.studio, true);
