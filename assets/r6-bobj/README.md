@@ -5,7 +5,7 @@ Mô hình R6 (6 khối Roblox, có khuỷu/gối) dạng BOBJ cho BBS FS 2.7. T�
 | File | Nội dung |
 |---|---|
 | `r6.bobj` + `config.json` | mô hình R6 (xương + lưới khối, UV skin Steve) — chép vào `config/bbs/assets/models/r6/` |
-| `ga/ga-r6.bobj` + `ga/ga.png` + `ga/config.json` | **Gà** (Anh Gà MC) trên thân R6: da 256×256 màu theo `engine/r6-looks.js` (đầu vàng, băng đô đỏ, hoodie ô-liu sọc, quần lửng nâu, giày đen), mặt Gà `assets/characters/ga/faces`, chỏm 3 múi. Sinh bằng `python tools/r6-bobj-ga.py [--mat <tên mặt>] [--khong-chom] [--khong-mat]`. Chép vào `config/bbs/assets/models/ga_r6/` |
+| `ga/ga-r6.bobj` + `ga/ga.png` + `ga/config.json` | **Gà đúng tập 3** (actor `hero` = `engine/r6-rig.js` + `R6_LOOKS.ga`): xuất nguyên lưới (đầu tròn, mặt, mào 3 múi, băng đô + đuôi, mũ hoodie, dây áo, túi) — R6 thật 6 khối, tay/chân mỗi bên 1 khối gắn `left_arm/right_arm/left_leg/right_leg`, không gập khuỷu/gối; màu + vân nướng vào atlas `ga.png` 2048×1024. Sinh bằng `node tools/r6-bobj-ga.mjs [--khong-mat] [--khong-phu-kien]`. Chép vào `config/bbs/assets/models/ga_r6/`. Lưu ý: BOBJ dùng uv kiểu OBJ (v từ đáy) — trình xem three.js phải đặt `texture.flipY=false` |
 | `r6-armature.bobj` | chỉ xương (đích retarget) |
 | `bbs/bbs-r6-actions.bobj` | 84 động tác chuẩn BBS 2.7 (`actions.bobj` của jar 1.20.4, bỏ "Action" rỗng) đã retarget sang R6 |
 | `quaternius/quaternius-r6-actions.bobj` | 42 động tác Quaternius UAL1 Standard (bỏ A_TPose) đã retarget sang R6 |
