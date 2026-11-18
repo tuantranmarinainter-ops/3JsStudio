@@ -1,0 +1,408 @@
+[
+ {
+  "part": [
+   "Crouch_Fwd_Loop",
+   "Crouch_Idle_Loop",
+   "Dance_Loop",
+   "Death01",
+   "Driving_Loop",
+   "Fixing_Kneeling"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.000001486041823554151,
+  "torso": {
+   "bendP95Degrees": 45.000000000000036,
+   "twistP95Degrees": 15.4901522423428,
+   "maxBendDegrees": 45.000000000000036,
+   "maxTwistDegrees": 16.46635276909541
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "Crouch_Fwd_Loop",
+    "glbName": "Crouch_Fwd_Loop",
+    "ticks": 40,
+    "channels": 34
+   },
+   {
+    "name": "Crouch_Idle_Loop",
+    "glbName": "Crouch_Idle_Loop",
+    "ticks": 59,
+    "channels": 34
+   },
+   {
+    "name": "Dance_Loop",
+    "glbName": "Dance_Loop",
+    "ticks": 20,
+    "channels": 34
+   },
+   {
+    "name": "Death01",
+    "glbName": "Death01",
+    "ticks": 48,
+    "channels": 34
+   },
+   {
+    "name": "Driving_Loop",
+    "glbName": "Driving_Loop",
+    "ticks": 33,
+    "channels": 32
+   },
+   {
+    "name": "Fixing_Kneeling",
+    "glbName": "Fixing_Kneeling",
+    "ticks": 104,
+    "channels": 34
+   }
+  ]
+ },
+ {
+  "part": [
+   "Hit_Chest",
+   "Hit_Head",
+   "Idle_Loop",
+   "Idle_Talking_Loop",
+   "Idle_Torch_Loop",
+   "Interact"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000013421114921095483,
+  "torso": {
+   "bendP95Degrees": 23.27350181500845,
+   "twistP95Degrees": 0.1896233601618136,
+   "maxBendDegrees": 23.27350576518853,
+   "maxTwistDegrees": 0.5543140974683207
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "Hit_Chest",
+    "glbName": "Hit_Chest",
+    "ticks": 7,
+    "channels": 34
+   },
+   {
+    "name": "Hit_Head",
+    "glbName": "Hit_Head",
+    "ticks": 9,
+    "channels": 33
+   },
+   {
+    "name": "Idle_Loop",
+    "glbName": "Idle_Loop",
+    "ticks": 50,
+    "channels": 33
+   },
+   {
+    "name": "Idle_Talking_Loop",
+    "glbName": "Idle_Talking_Loop",
+    "ticks": 59,
+    "channels": 33
+   },
+   {
+    "name": "Idle_Torch_Loop",
+    "glbName": "Idle_Torch_Loop",
+    "ticks": 25,
+    "channels": 33
+   },
+   {
+    "name": "Interact",
+    "glbName": "Interact",
+    "ticks": 40,
+    "channels": 33
+   }
+  ]
+ },
+ {
+  "part": [
+   "Jog_Fwd_Loop",
+   "Jump_Land",
+   "Jump_Loop",
+   "Jump_Start",
+   "PickUp_Table",
+   "Pistol_Aim_Down"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000018060790209975732,
+  "torso": {
+   "bendP95Degrees": 45.00000000000001,
+   "twistP95Degrees": 27.00000000000002,
+   "maxBendDegrees": 45.000000000000036,
+   "maxTwistDegrees": 27.000000000000075
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "Jog_Fwd_Loop",
+    "glbName": "Jog_Fwd_Loop",
+    "ticks": 19,
+    "channels": 34
+   },
+   {
+    "name": "Jump_Land",
+    "glbName": "Jump_Land",
+    "ticks": 25,
+    "channels": 34
+   },
+   {
+    "name": "Jump_Loop",
+    "glbName": "Jump_Loop",
+    "ticks": 50,
+    "channels": 34
+   },
+   {
+    "name": "Jump_Start",
+    "glbName": "Jump_Start",
+    "ticks": 27,
+    "channels": 34
+   },
+   {
+    "name": "PickUp_Table",
+    "glbName": "PickUp_Table",
+    "ticks": 17,
+    "channels": 34
+   },
+   {
+    "name": "Pistol_Aim_Down",
+    "glbName": "Pistol_Aim_Down",
+    "ticks": 3,
+    "channels": 33
+   }
+  ]
+ },
+ {
+  "part": [
+   "Pistol_Aim_Neutral",
+   "Pistol_Aim_Up",
+   "Pistol_Idle_Loop",
+   "Pistol_Reload",
+   "Pistol_Shoot",
+   "Punch_Cross"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000013227556092203203,
+  "torso": {
+   "bendP95Degrees": 45.00000000000001,
+   "twistP95Degrees": 27.000000000000075,
+   "maxBendDegrees": 45.000000000000036,
+   "maxTwistDegrees": 27.000000000000075
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "Pistol_Aim_Neutral",
+    "glbName": "Pistol_Aim_Neutral",
+    "ticks": 3,
+    "channels": 33
+   },
+   {
+    "name": "Pistol_Aim_Up",
+    "glbName": "Pistol_Aim_Up",
+    "ticks": 3,
+    "channels": 33
+   },
+   {
+    "name": "Pistol_Idle_Loop",
+    "glbName": "Pistol_Idle_Loop",
+    "ticks": 33,
+    "channels": 33
+   },
+   {
+    "name": "Pistol_Reload",
+    "glbName": "Pistol_Reload",
+    "ticks": 33,
+    "channels": 34
+   },
+   {
+    "name": "Pistol_Shoot",
+    "glbName": "Pistol_Shoot",
+    "ticks": 13,
+    "channels": 33
+   },
+   {
+    "name": "Punch_Cross",
+    "glbName": "Punch_Cross",
+    "ticks": 20,
+    "channels": 34
+   }
+  ]
+ },
+ {
+  "part": [
+   "Punch_Jab",
+   "Push_Loop",
+   "Roll",
+   "Sitting_Enter",
+   "Sitting_Exit",
+   "Sitting_Idle_Loop"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000016271374986502332,
+  "torso": {
+   "bendP95Degrees": 45.00000000000001,
+   "twistP95Degrees": 19.83508644387088,
+   "maxBendDegrees": 45.000000000000036,
+   "maxTwistDegrees": 27.000000000000075
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "Punch_Jab",
+    "glbName": "Punch_Jab",
+    "ticks": 17,
+    "channels": 34
+   },
+   {
+    "name": "Push_Loop",
+    "glbName": "Push_Loop",
+    "ticks": 53,
+    "channels": 34
+   },
+   {
+    "name": "Roll",
+    "glbName": "Roll",
+    "ticks": 29,
+    "channels": 34
+   },
+   {
+    "name": "Sitting_Enter",
+    "glbName": "Sitting_Enter",
+    "ticks": 26,
+    "channels": 34
+   },
+   {
+    "name": "Sitting_Exit",
+    "glbName": "Sitting_Exit",
+    "ticks": 21,
+    "channels": 34
+   },
+   {
+    "name": "Sitting_Idle_Loop",
+    "glbName": "Sitting_Idle_Loop",
+    "ticks": 33,
+    "channels": 31
+   }
+  ]
+ },
+ {
+  "part": [
+   "Sitting_Talking_Loop",
+   "Spell_Simple_Enter",
+   "Spell_Simple_Exit",
+   "Spell_Simple_Idle_Loop",
+   "Spell_Simple_Shoot",
+   "Sprint_Loop"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000013962271496228388,
+  "torso": {
+   "bendP95Degrees": 29.711620277083323,
+   "twistP95Degrees": 24.016026558846292,
+   "maxBendDegrees": 37.22608489533767,
+   "maxTwistDegrees": 27.000000000000075
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "Sitting_Talking_Loop",
+    "glbName": "Sitting_Talking_Loop",
+    "ticks": 59,
+    "channels": 31
+   },
+   {
+    "name": "Spell_Simple_Enter",
+    "glbName": "Spell_Simple_Enter",
+    "ticks": 11,
+    "channels": 34
+   },
+   {
+    "name": "Spell_Simple_Exit",
+    "glbName": "Spell_Simple_Exit",
+    "ticks": 9,
+    "channels": 34
+   },
+   {
+    "name": "Spell_Simple_Idle_Loop",
+    "glbName": "Spell_Simple_Idle_Loop",
+    "ticks": 42,
+    "channels": 34
+   },
+   {
+    "name": "Spell_Simple_Shoot",
+    "glbName": "Spell_Simple_Shoot",
+    "ticks": 10,
+    "channels": 34
+   },
+   {
+    "name": "Sprint_Loop",
+    "glbName": "Sprint_Loop",
+    "ticks": 13,
+    "channels": 34
+   }
+  ]
+ },
+ {
+  "part": [
+   "Swim_Fwd_Loop",
+   "Swim_Idle_Loop",
+   "Sword_Attack",
+   "Sword_Idle",
+   "Walk_Formal_Loop",
+   "Walk_Loop"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.000001508645246067885,
+  "torso": {
+   "bendP95Degrees": 45.00000000000001,
+   "twistP95Degrees": 27.00000000000002,
+   "maxBendDegrees": 45.000000000000036,
+   "maxTwistDegrees": 27.000000000000075
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "Swim_Fwd_Loop",
+    "glbName": "Swim_Fwd_Loop",
+    "ticks": 27,
+    "channels": 32
+   },
+   {
+    "name": "Swim_Idle_Loop",
+    "glbName": "Swim_Idle_Loop",
+    "ticks": 67,
+    "channels": 33
+   },
+   {
+    "name": "Sword_Attack",
+    "glbName": "Sword_Attack",
+    "ticks": 31,
+    "channels": 34
+   },
+   {
+    "name": "Sword_Idle",
+    "glbName": "Sword_Idle",
+    "ticks": 33,
+    "channels": 34
+   },
+   {
+    "name": "Walk_Formal_Loop",
+    "glbName": "Walk_Formal_Loop",
+    "ticks": 27,
+    "channels": 34
+   },
+   {
+    "name": "Walk_Loop",
+    "glbName": "Walk_Loop",
+    "ticks": 27,
+    "channels": 34
+   }
+  ]
+ }
+]

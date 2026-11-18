@@ -1,0 +1,380 @@
+[
+ {
+  "name": "Crouch_Fwd_Loop",
+  "ticks": 40,
+  "chanThapMin": -0.059,
+  "chanThapMax": -0.006,
+  "truot": 1.27,
+  "nghieng": 43.9,
+  "hongThap": 0.3
+ },
+ {
+  "name": "Crouch_Idle_Loop",
+  "ticks": 59,
+  "chanThapMin": -0.058,
+  "chanThapMax": -0.056,
+  "truot": 0.01,
+  "nghieng": 43.3,
+  "hongThap": 0.3
+ },
+ {
+  "name": "Dance_Loop",
+  "ticks": 20,
+  "chanThapMin": -0.027,
+  "chanThapMax": -0.005,
+  "truot": 0.4,
+  "nghieng": 13.2,
+  "hongThap": 0.72
+ },
+ {
+  "name": "Death01",
+  "ticks": 48,
+  "chanThapMin": -0.196,
+  "chanThapMax": 0.108,
+  "truot": 1.22,
+  "nghieng": 86.6,
+  "hongThap": -0.15
+ },
+ {
+  "name": "Driving_Loop",
+  "ticks": 33,
+  "chanThapMin": -0.046,
+  "chanThapMax": -0.046,
+  "truot": 0,
+  "nghieng": 5.9,
+  "hongThap": 0.39
+ },
+ {
+  "name": "Fixing_Kneeling",
+  "ticks": 104,
+  "chanThapMin": -0.09,
+  "chanThapMax": 0.048,
+  "truot": 0.53,
+  "nghieng": 45.7,
+  "hongThap": 0.27
+ },
+ {
+  "name": "Hit_Chest",
+  "ticks": 7,
+  "chanThapMin": -0.023,
+  "chanThapMax": -0.007,
+  "truot": 0.03,
+  "nghieng": 13.9,
+  "hongThap": 0.74
+ },
+ {
+  "name": "Hit_Head",
+  "ticks": 9,
+  "chanThapMin": -0.01,
+  "chanThapMax": -0.009,
+  "truot": 0.06,
+  "nghieng": 6.3,
+  "hongThap": 0.75
+ },
+ {
+  "name": "Idle_Loop",
+  "ticks": 50,
+  "chanThapMin": -0.01,
+  "chanThapMax": -0.009,
+  "truot": 0.02,
+  "nghieng": 7.6,
+  "hongThap": 0.75
+ },
+ {
+  "name": "Idle_Talking_Loop",
+  "ticks": 59,
+  "chanThapMin": -0.01,
+  "chanThapMax": -0.009,
+  "truot": 0.02,
+  "nghieng": 7.3,
+  "hongThap": 0.75
+ },
+ {
+  "name": "Idle_Torch_Loop",
+  "ticks": 25,
+  "chanThapMin": -0.01,
+  "chanThapMax": -0.009,
+  "truot": 0.01,
+  "nghieng": 7.5,
+  "hongThap": 0.75
+ },
+ {
+  "name": "Interact",
+  "ticks": 40,
+  "chanThapMin": -0.01,
+  "chanThapMax": -0.008,
+  "truot": 0.02,
+  "nghieng": 7.5,
+  "hongThap": 0.75
+ },
+ {
+  "name": "Jog_Fwd_Loop",
+  "ticks": 19,
+  "chanThapMin": 0.02,
+  "chanThapMax": 0.308,
+  "truot": 2.79,
+  "nghieng": 27.1,
+  "hongThap": 0.56
+ },
+ {
+  "name": "Jump_Land",
+  "ticks": 25,
+  "chanThapMin": -0.06,
+  "chanThapMax": 0.05,
+  "truot": 0.2,
+  "nghieng": 39.9,
+  "hongThap": 0.26
+ },
+ {
+  "name": "Jump_Loop",
+  "ticks": 50,
+  "chanThapMin": 0.102,
+  "chanThapMax": 0.148,
+  "truot": 0.08,
+  "nghieng": 8.3,
+  "hongThap": 0.87
+ },
+ {
+  "name": "Jump_Start",
+  "ticks": 27,
+  "chanThapMin": 0.073,
+  "chanThapMax": 0.544,
+  "truot": 0.76,
+  "nghieng": 28.3,
+  "hongThap": 0.5
+ },
+ {
+  "name": "PickUp_Table",
+  "ticks": 17,
+  "chanThapMin": -0.009,
+  "chanThapMax": -0.006,
+  "truot": 0.11,
+  "nghieng": 20.1,
+  "hongThap": 0.76
+ },
+ {
+  "name": "Pistol_Aim_Down",
+  "ticks": 3,
+  "chanThapMin": -0.009,
+  "chanThapMax": -0.009,
+  "truot": 0,
+  "nghieng": 17,
+  "hongThap": 0.76
+ },
+ {
+  "name": "Pistol_Aim_Neutral",
+  "ticks": 3,
+  "chanThapMin": -0.009,
+  "chanThapMax": -0.009,
+  "truot": 0,
+  "nghieng": 4,
+  "hongThap": 0.76
+ },
+ {
+  "name": "Pistol_Aim_Up",
+  "ticks": 3,
+  "chanThapMin": -0.009,
+  "chanThapMax": -0.009,
+  "truot": 0,
+  "nghieng": 20.7,
+  "hongThap": 0.76
+ },
+ {
+  "name": "Pistol_Idle_Loop",
+  "ticks": 33,
+  "chanThapMin": -0.009,
+  "chanThapMax": -0.009,
+  "truot": 0,
+  "nghieng": 6.2,
+  "hongThap": 0.76
+ },
+ {
+  "name": "Pistol_Reload",
+  "ticks": 33,
+  "chanThapMin": -0.01,
+  "chanThapMax": -0.009,
+  "truot": 0.01,
+  "nghieng": 4.1,
+  "hongThap": 0.76
+ },
+ {
+  "name": "Pistol_Shoot",
+  "ticks": 13,
+  "chanThapMin": -0.009,
+  "chanThapMax": -0.009,
+  "truot": 0,
+  "nghieng": 4,
+  "hongThap": 0.76
+ },
+ {
+  "name": "Punch_Cross",
+  "ticks": 20,
+  "chanThapMin": -0.025,
+  "chanThapMax": -0.01,
+  "truot": 0.14,
+  "nghieng": 7.4,
+  "hongThap": 0.71
+ },
+ {
+  "name": "Punch_Jab",
+  "ticks": 17,
+  "chanThapMin": -0.025,
+  "chanThapMax": -0.023,
+  "truot": 0.25,
+  "nghieng": 6.2,
+  "hongThap": 0.71
+ },
+ {
+  "name": "Push_Loop",
+  "ticks": 53,
+  "chanThapMin": -0.019,
+  "chanThapMax": 0.028,
+  "truot": 0.83,
+  "nghieng": 46.2,
+  "hongThap": 0.53
+ },
+ {
+  "name": "Roll",
+  "ticks": 29,
+  "chanThapMin": -0.084,
+  "chanThapMax": 0.975,
+  "truot": 3.67,
+  "nghieng": 170.1,
+  "hongThap": -0.14
+ },
+ {
+  "name": "Sitting_Enter",
+  "ticks": 26,
+  "chanThapMin": -0.043,
+  "chanThapMax": 0.007,
+  "truot": 0.35,
+  "nghieng": 31.8,
+  "hongThap": 0.38
+ },
+ {
+  "name": "Sitting_Exit",
+  "ticks": 21,
+  "chanThapMin": -0.042,
+  "chanThapMax": 0.007,
+  "truot": 0.38,
+  "nghieng": 44.6,
+  "hongThap": 0.38
+ },
+ {
+  "name": "Sitting_Idle_Loop",
+  "ticks": 33,
+  "chanThapMin": -0.042,
+  "chanThapMax": -0.042,
+  "truot": 0,
+  "nghieng": 12.2,
+  "hongThap": 0.38
+ },
+ {
+  "name": "Sitting_Talking_Loop",
+  "ticks": 59,
+  "chanThapMin": -0.042,
+  "chanThapMax": -0.041,
+  "truot": 0.01,
+  "nghieng": 11.6,
+  "hongThap": 0.38
+ },
+ {
+  "name": "Spell_Simple_Enter",
+  "ticks": 11,
+  "chanThapMin": -0.01,
+  "chanThapMax": -0.009,
+  "truot": 0.08,
+  "nghieng": 4.8,
+  "hongThap": 0.76
+ },
+ {
+  "name": "Spell_Simple_Exit",
+  "ticks": 9,
+  "chanThapMin": -0.01,
+  "chanThapMax": -0.009,
+  "truot": 0.07,
+  "nghieng": 4.8,
+  "hongThap": 0.76
+ },
+ {
+  "name": "Spell_Simple_Idle_Loop",
+  "ticks": 42,
+  "chanThapMin": -0.011,
+  "chanThapMax": -0.01,
+  "truot": 0.01,
+  "nghieng": 7.5,
+  "hongThap": 0.75
+ },
+ {
+  "name": "Spell_Simple_Shoot",
+  "ticks": 10,
+  "chanThapMin": -0.01,
+  "chanThapMax": -0.01,
+  "truot": 0.05,
+  "nghieng": 4.6,
+  "hongThap": 0.75
+ },
+ {
+  "name": "Sprint_Loop",
+  "ticks": 13,
+  "chanThapMin": 0.026,
+  "chanThapMax": 0.285,
+  "truot": 3,
+  "nghieng": 40.4,
+  "hongThap": 0.66
+ },
+ {
+  "name": "Swim_Fwd_Loop",
+  "ticks": 27,
+  "chanThapMin": -0.118,
+  "chanThapMax": -0.038,
+  "truot": 1.4,
+  "nghieng": 82.5,
+  "hongThap": -0.03
+ },
+ {
+  "name": "Swim_Idle_Loop",
+  "ticks": 67,
+  "chanThapMin": -1.444,
+  "chanThapMax": -1.348,
+  "truot": 1.36,
+  "nghieng": 6.5,
+  "hongThap": -0.7
+ },
+ {
+  "name": "Sword_Attack",
+  "ticks": 31,
+  "chanThapMin": -0.041,
+  "chanThapMax": -0.006,
+  "truot": 1.72,
+  "nghieng": 24.4,
+  "hongThap": 0.38
+ },
+ {
+  "name": "Sword_Idle",
+  "ticks": 33,
+  "chanThapMin": -0.031,
+  "chanThapMax": -0.026,
+  "truot": 0.14,
+  "nghieng": 6,
+  "hongThap": 0.6
+ },
+ {
+  "name": "Walk_Formal_Loop",
+  "ticks": 27,
+  "chanThapMin": -0.009,
+  "chanThapMax": 0.044,
+  "truot": 1.31,
+  "nghieng": 8,
+  "hongThap": 0.75
+ },
+ {
+  "name": "Walk_Loop",
+  "ticks": 27,
+  "chanThapMin": -0.009,
+  "chanThapMax": 0.046,
+  "truot": 1.33,
+  "nghieng": 10.1,
+  "hongThap": 0.74
+ }
+]

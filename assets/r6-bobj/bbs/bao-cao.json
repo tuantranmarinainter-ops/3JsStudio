@@ -1,0 +1,814 @@
+[
+ {
+  "part": [
+   "consume",
+   "crouching",
+   "crouching_idle",
+   "dying",
+   "emote_am_stuff",
+   "emote_best_mates"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000011062492097877404,
+  "torso": {
+   "bendP95Degrees": 28.140687446379708,
+   "twistP95Degrees": 4.371882432320092,
+   "maxBendDegrees": 33.18146893848092,
+   "maxTwistDegrees": 7.056649017378662
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "consume",
+    "glbName": "consume",
+    "ticks": 20,
+    "channels": 12
+   },
+   {
+    "name": "crouching",
+    "glbName": "crouching",
+    "ticks": 33,
+    "channels": 31
+   },
+   {
+    "name": "crouching_idle",
+    "glbName": "crouching_idle",
+    "ticks": 40,
+    "channels": 31
+   },
+   {
+    "name": "dying",
+    "glbName": "dying",
+    "ticks": 11,
+    "channels": 30
+   },
+   {
+    "name": "emote_am_stuff",
+    "glbName": "emote_am_stuff",
+    "ticks": 53,
+    "channels": 21
+   },
+   {
+    "name": "emote_best_mates",
+    "glbName": "emote_best_mates",
+    "ticks": 11,
+    "channels": 31
+   }
+  ]
+ },
+ {
+  "part": [
+   "emote_bitchslap",
+   "emote_boneless",
+   "emote_bongo_cat",
+   "emote_bow",
+   "emote_boy",
+   "emote_breathtaking"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000015253187914253271,
+  "torso": {
+   "bendP95Degrees": 44.04124797890249,
+   "twistP95Degrees": 26.999999999999968,
+   "maxBendDegrees": 44.999977874393885,
+   "maxTwistDegrees": 27.000000000000075
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "emote_bitchslap",
+    "glbName": "emote_bitchslap",
+    "ticks": 67,
+    "channels": 21
+   },
+   {
+    "name": "emote_boneless",
+    "glbName": "emote_boneless",
+    "ticks": 39,
+    "channels": 34
+   },
+   {
+    "name": "emote_bongo_cat",
+    "glbName": "emote_bongo_cat",
+    "ticks": 159,
+    "channels": 32
+   },
+   {
+    "name": "emote_bow",
+    "glbName": "emote_bow",
+    "ticks": 43,
+    "channels": 13
+   },
+   {
+    "name": "emote_boy",
+    "glbName": "emote_boy",
+    "ticks": 29,
+    "channels": 19
+   },
+   {
+    "name": "emote_breathtaking",
+    "glbName": "emote_breathtaking",
+    "ticks": 103,
+    "channels": 34
+   }
+  ]
+ },
+ {
+  "part": [
+   "emote_calculated",
+   "emote_chicken",
+   "emote_clapping",
+   "emote_club",
+   "emote_confused",
+   "emote_crying"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000014086535312011083,
+  "torso": {
+   "bendP95Degrees": 36.63824109100805,
+   "twistP95Degrees": 27.00000000000002,
+   "maxBendDegrees": 42.04713772630681,
+   "maxTwistDegrees": 27.000000000000075
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "emote_calculated",
+    "glbName": "emote_calculated",
+    "ticks": 33,
+    "channels": 21
+   },
+   {
+    "name": "emote_chicken",
+    "glbName": "emote_chicken",
+    "ticks": 19,
+    "channels": 34
+   },
+   {
+    "name": "emote_clapping",
+    "glbName": "emote_clapping",
+    "ticks": 15,
+    "channels": 19
+   },
+   {
+    "name": "emote_club",
+    "glbName": "emote_club",
+    "ticks": 21,
+    "channels": 18
+   },
+   {
+    "name": "emote_confused",
+    "glbName": "emote_confused",
+    "ticks": 140,
+    "channels": 34
+   },
+   {
+    "name": "emote_crying",
+    "glbName": "emote_crying",
+    "ticks": 27,
+    "channels": 25
+   }
+  ]
+ },
+ {
+  "part": [
+   "emote_dab",
+   "emote_default",
+   "emote_disco_fever",
+   "emote_disgusted",
+   "emote_electro_shuffle",
+   "emote_exhausted"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000018251102563150791,
+  "torso": {
+   "bendP95Degrees": 44.99999999999997,
+   "twistP95Degrees": 26.999999999999968,
+   "maxBendDegrees": 45.00000000000007,
+   "maxTwistDegrees": 27.000000000000135
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "emote_dab",
+    "glbName": "emote_dab",
+    "ticks": 23,
+    "channels": 34
+   },
+   {
+    "name": "emote_default",
+    "glbName": "emote_default",
+    "ticks": 139,
+    "channels": 34
+   },
+   {
+    "name": "emote_disco_fever",
+    "glbName": "emote_disco_fever",
+    "ticks": 175,
+    "channels": 34
+   },
+   {
+    "name": "emote_disgusted",
+    "glbName": "emote_disgusted",
+    "ticks": 133,
+    "channels": 29
+   },
+   {
+    "name": "emote_electro_shuffle",
+    "glbName": "emote_electro_shuffle",
+    "ticks": 169,
+    "channels": 34
+   },
+   {
+    "name": "emote_exhausted",
+    "glbName": "emote_exhausted",
+    "ticks": 220,
+    "channels": 19
+   }
+  ]
+ },
+ {
+  "part": [
+   "emote_facepalm",
+   "emote_fist",
+   "emote_floss",
+   "emote_free_flow",
+   "emote_fresh",
+   "emote_gangnam_style"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.000016840344067109335,
+  "torso": {
+   "bendP95Degrees": 36.44648336620985,
+   "twistP95Degrees": 12.042692159689363,
+   "maxBendDegrees": 45.00000000000001,
+   "maxTwistDegrees": 19.244644280250537
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "emote_facepalm",
+    "glbName": "emote_facepalm",
+    "ticks": 103,
+    "channels": 28
+   },
+   {
+    "name": "emote_fist",
+    "glbName": "emote_fist",
+    "ticks": 53,
+    "channels": 14
+   },
+   {
+    "name": "emote_floss",
+    "glbName": "emote_floss",
+    "ticks": 32,
+    "channels": 23
+   },
+   {
+    "name": "emote_free_flow",
+    "glbName": "emote_free_flow",
+    "ticks": 158,
+    "channels": 34
+   },
+   {
+    "name": "emote_fresh",
+    "glbName": "emote_fresh",
+    "ticks": 101,
+    "channels": 34
+   },
+   {
+    "name": "emote_gangnam_style",
+    "glbName": "emote_gangnam_style",
+    "ticks": 17,
+    "channels": 31
+   }
+  ]
+ },
+ {
+  "part": [
+   "emote_get_funky",
+   "emote_get_funky_IK",
+   "emote_hell_yeah",
+   "emote_hype",
+   "emote_infinite_dab",
+   "emote_laughing"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000015128453376165877,
+  "torso": {
+   "bendP95Degrees": 39.63057148882182,
+   "twistP95Degrees": 24.587949702366206,
+   "maxBendDegrees": 45.000000000000036,
+   "maxTwistDegrees": 27.000000000000075
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "emote_get_funky",
+    "glbName": "emote_get_funky",
+    "ticks": 172,
+    "channels": 34
+   },
+   {
+    "name": "emote_get_funky_IK",
+    "glbName": "emote_get_funky_IK",
+    "ticks": 172,
+    "channels": 30
+   },
+   {
+    "name": "emote_hell_yeah",
+    "glbName": "emote_hell_yeah",
+    "ticks": 47,
+    "channels": 34
+   },
+   {
+    "name": "emote_hype",
+    "glbName": "emote_hype",
+    "ticks": 68,
+    "channels": 34
+   },
+   {
+    "name": "emote_infinite_dab",
+    "glbName": "emote_infinite_dab",
+    "ticks": 19,
+    "channels": 34
+   },
+   {
+    "name": "emote_laughing",
+    "glbName": "emote_laughing",
+    "ticks": 15,
+    "channels": 16
+   }
+  ]
+ },
+ {
+  "part": [
+   "emote_no",
+   "emote_nope",
+   "emote_orange_justice",
+   "emote_paranoid",
+   "emote_pointing",
+   "emote_popcorn"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000015042901989669063,
+  "torso": {
+   "bendP95Degrees": 45.00000000000001,
+   "twistP95Degrees": 27.00000000000002,
+   "maxBendDegrees": 45.000000000000036,
+   "maxTwistDegrees": 27.000000000000135
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "emote_no",
+    "glbName": "emote_no",
+    "ticks": 30,
+    "channels": 19
+   },
+   {
+    "name": "emote_nope",
+    "glbName": "emote_nope",
+    "ticks": 67,
+    "channels": 19
+   },
+   {
+    "name": "emote_orange_justice",
+    "glbName": "emote_orange_justice",
+    "ticks": 129,
+    "channels": 34
+   },
+   {
+    "name": "emote_paranoid",
+    "glbName": "emote_paranoid",
+    "ticks": 210,
+    "channels": 21
+   },
+   {
+    "name": "emote_pointing",
+    "glbName": "emote_pointing",
+    "ticks": 33,
+    "channels": 19
+   },
+   {
+    "name": "emote_popcorn",
+    "glbName": "emote_popcorn",
+    "ticks": 102,
+    "channels": 21
+   }
+  ]
+ },
+ {
+  "part": [
+   "emote_punch",
+   "emote_pure_salt",
+   "emote_rock_paper_scissors",
+   "emote_salute",
+   "emote_scared",
+   "emote_shimmer"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.000001556585367333679,
+  "torso": {
+   "bendP95Degrees": 41.96538253488916,
+   "twistP95Degrees": 27.00000000000002,
+   "maxBendDegrees": 45.000000000000036,
+   "maxTwistDegrees": 27.000000000000135
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "emote_punch",
+    "glbName": "emote_punch",
+    "ticks": 39,
+    "channels": 34
+   },
+   {
+    "name": "emote_pure_salt",
+    "glbName": "emote_pure_salt",
+    "ticks": 103,
+    "channels": 34
+   },
+   {
+    "name": "emote_rock_paper_scissors",
+    "glbName": "emote_rock_paper_scissors",
+    "ticks": 60,
+    "channels": 16
+   },
+   {
+    "name": "emote_salute",
+    "glbName": "emote_salute",
+    "ticks": 50,
+    "channels": 19
+   },
+   {
+    "name": "emote_scared",
+    "glbName": "emote_scared",
+    "ticks": 33,
+    "channels": 21
+   },
+   {
+    "name": "emote_shimmer",
+    "glbName": "emote_shimmer",
+    "ticks": 155,
+    "channels": 34
+   }
+  ]
+ },
+ {
+  "part": [
+   "emote_shimmer_IK",
+   "emote_shrug",
+   "emote_skibidi",
+   "emote_slow_clap",
+   "emote_smug_dance_IK",
+   "emote_smug_dance"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000014229390674881187,
+  "torso": {
+   "bendP95Degrees": 43.857842469936415,
+   "twistP95Degrees": 14.714754348321563,
+   "maxBendDegrees": 45.000000000000036,
+   "maxTwistDegrees": 27.000000000000075
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "emote_shimmer_IK",
+    "glbName": "emote_shimmer_IK",
+    "ticks": 155,
+    "channels": 30
+   },
+   {
+    "name": "emote_shrug",
+    "glbName": "emote_shrug",
+    "ticks": 50,
+    "channels": 18
+   },
+   {
+    "name": "emote_skibidi",
+    "glbName": "emote_skibidi",
+    "ticks": 16,
+    "channels": 31
+   },
+   {
+    "name": "emote_slow_clap",
+    "glbName": "emote_slow_clap",
+    "ticks": 133,
+    "channels": 21
+   },
+   {
+    "name": "emote_smug_dance_IK",
+    "glbName": "emote_smug_dance_IK",
+    "ticks": 19,
+    "channels": 34
+   },
+   {
+    "name": "emote_smug_dance",
+    "glbName": "emote_smug_dance",
+    "ticks": 19,
+    "channels": 34
+   }
+  ]
+ },
+ {
+  "part": [
+   "emote_sneeze",
+   "emote_squat_kick",
+   "emote_star_power",
+   "emote_stick_bug",
+   "emote_t_pose",
+   "emote_tada"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000017900672543867781,
+  "torso": {
+   "bendP95Degrees": 26.215313258236954,
+   "twistP95Degrees": 18.0059739422283,
+   "maxBendDegrees": 45.00000000000001,
+   "maxTwistDegrees": 24.636548316678887
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "emote_sneeze",
+    "glbName": "emote_sneeze",
+    "ticks": 133,
+    "channels": 19
+   },
+   {
+    "name": "emote_squat_kick",
+    "glbName": "emote_squat_kick",
+    "ticks": 231,
+    "channels": 31
+   },
+   {
+    "name": "emote_star_power",
+    "glbName": "emote_star_power",
+    "ticks": 159,
+    "channels": 34
+   },
+   {
+    "name": "emote_stick_bug",
+    "glbName": "emote_stick_bug",
+    "ticks": 17,
+    "channels": 32
+   },
+   {
+    "name": "emote_t_pose",
+    "glbName": "emote_t_pose",
+    "ticks": 80,
+    "channels": 16
+   },
+   {
+    "name": "emote_tada",
+    "glbName": "emote_tada",
+    "ticks": 60,
+    "channels": 19
+   }
+  ]
+ },
+ {
+  "part": [
+   "emote_take_the_l",
+   "emote_thinking",
+   "emote_threatening",
+   "emote_tidy",
+   "emote_twerk",
+   "emote_wave"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.000001158822003831893,
+  "torso": {
+   "bendP95Degrees": 38.55279632831672,
+   "twistP95Degrees": 21.825094132217373,
+   "maxBendDegrees": 45.000000000000036,
+   "maxTwistDegrees": 27.000000000000075
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "emote_take_the_l",
+    "glbName": "emote_take_the_l",
+    "ticks": 16,
+    "channels": 31
+   },
+   {
+    "name": "emote_thinking",
+    "glbName": "emote_thinking",
+    "ticks": 100,
+    "channels": 18
+   },
+   {
+    "name": "emote_threatening",
+    "glbName": "emote_threatening",
+    "ticks": 47,
+    "channels": 31
+   },
+   {
+    "name": "emote_tidy",
+    "glbName": "emote_tidy",
+    "ticks": 103,
+    "channels": 34
+   },
+   {
+    "name": "emote_twerk",
+    "glbName": "emote_twerk",
+    "ticks": 13,
+    "channels": 32
+   },
+   {
+    "name": "emote_wave",
+    "glbName": "emote_wave",
+    "ticks": 38,
+    "channels": 18
+   }
+  ]
+ },
+ {
+  "part": [
+   "emote_woah",
+   "emote_yes",
+   "falling",
+   "flying",
+   "flying_idle",
+   "hurt"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000010488348976618685,
+  "torso": {
+   "bendP95Degrees": 32.500000106451324,
+   "twistP95Degrees": 0.14511316716944078,
+   "maxBendDegrees": 40.00001646060639,
+   "maxTwistDegrees": 0.6975198230583036
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "emote_woah",
+    "glbName": "emote_woah",
+    "ticks": 44,
+    "channels": 21
+   },
+   {
+    "name": "emote_yes",
+    "glbName": "emote_yes",
+    "ticks": 23,
+    "channels": 14
+   },
+   {
+    "name": "falling",
+    "glbName": "falling",
+    "ticks": 17,
+    "channels": 29
+   },
+   {
+    "name": "flying",
+    "glbName": "flying",
+    "ticks": 12,
+    "channels": 25
+   },
+   {
+    "name": "flying_idle",
+    "glbName": "flying_idle",
+    "ticks": 40,
+    "channels": 29
+   },
+   {
+    "name": "hurt",
+    "glbName": "hurt",
+    "ticks": 10,
+    "channels": 18
+   }
+  ]
+ },
+ {
+  "part": [
+   "idle",
+   "jump",
+   "land",
+   "riding",
+   "riding_idle",
+   "running"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000011261234631374554,
+  "torso": {
+   "bendP95Degrees": 20.29237474964091,
+   "twistP95Degrees": 12.80617771393054,
+   "maxBendDegrees": 30.000013101590024,
+   "maxTwistDegrees": 14.473915800243047
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "idle",
+    "glbName": "idle",
+    "ticks": 81,
+    "channels": 26
+   },
+   {
+    "name": "jump",
+    "glbName": "jump",
+    "ticks": 9,
+    "channels": 27
+   },
+   {
+    "name": "land",
+    "glbName": "land",
+    "ticks": 8,
+    "channels": 27
+   },
+   {
+    "name": "riding",
+    "glbName": "riding",
+    "ticks": 21,
+    "channels": 28
+   },
+   {
+    "name": "riding_idle",
+    "glbName": "riding_idle",
+    "ticks": 60,
+    "channels": 28
+   },
+   {
+    "name": "running",
+    "glbName": "running",
+    "ticks": 17,
+    "channels": 31
+   }
+  ]
+ },
+ {
+  "part": [
+   "shoot",
+   "sleeping",
+   "sprinting",
+   "swimming",
+   "swimming_idle",
+   "swipe"
+  ],
+  "normalize": "PASS",
+  "export": "PASS",
+  "roundtrip": 0.0000012835814923590055,
+  "torso": {
+   "bendP95Degrees": 44.49354680883757,
+   "twistP95Degrees": 11.8926832463293,
+   "maxBendDegrees": 45.000000000000036,
+   "maxTwistDegrees": 18.705123819293608
+  },
+  "twist": 0.0000017075472925031877,
+  "actions": [
+   {
+    "name": "shoot",
+    "glbName": "shoot",
+    "ticks": 13,
+    "channels": 10
+   },
+   {
+    "name": "sleeping",
+    "glbName": "sleeping",
+    "ticks": 60,
+    "channels": 30
+   },
+   {
+    "name": "sprinting",
+    "glbName": "sprinting",
+    "ticks": 13,
+    "channels": 31
+   },
+   {
+    "name": "swimming",
+    "glbName": "swimming",
+    "ticks": 22,
+    "channels": 27
+   },
+   {
+    "name": "swimming_idle",
+    "glbName": "swimming_idle",
+    "ticks": 60,
+    "channels": 28
+   },
+   {
+    "name": "swipe",
+    "glbName": "swipe",
+    "ticks": 13,
+    "channels": 14
+   }
+  ]
+ }
+]
