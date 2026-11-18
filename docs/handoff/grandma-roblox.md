@@ -5,9 +5,9 @@
 ## ĐIỂM DỪNG
 - **Cập nhật:** 2026-11-18
 - **Nhánh:** `ep1-v2`
-- **Đang làm:** đã chốt kế hoạch, chưa dựng gì
-- **Bước kế tiếp:** Việc 1 — viết kịch bản 30 s + REALISM_BIBLE + CAMERA_BIBLE + shotlist ~25 shot cho luật "Đếm bước chân", vào `output/thu-grandma/kit/`
-- **Đang chờ:** người dùng duyệt kit (STOP 1) trước khi dựng A
+- **Đang làm:** Việc 1 XONG — kit ở `output/thu-grandma/kit/` (SCRIPT, REALISM_BIBLE, CAMERA_BIBLE, SHOTLIST 25 shot/30 s, đã kiểm nhịp bằng script)
+- **Bước kế tiếp:** Việc 2 — chốt đồ dựng chung theo mục "Danh sách bối cảnh / đồ dựng" cuối SHOTLIST.md
+- **Đang chờ:** người dùng duyệt kit (STOP 1)
 - **File đang dở (chưa commit):** không
 - **Đang chạy nền:** không
 - **Đạt khi:** có 2 video 30 s (A và B) cùng kịch bản + bảng so `output/thu-grandma/so-sanh.md` (giờ, ưu/nhược, điểm B/C)
