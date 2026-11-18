@@ -14,6 +14,7 @@
 - **Đang chạy nền:** `node output/thu-grandma/a/serve.mjs` (cổng 8793, tắt được)
 - **File đang dở (chưa commit):** `.gitignore` dòng `episodes/thu-grandma/` (lẫn phiên khác); ngoài git: `episodes/thu-grandma/*`, Studio `Workspace.ThuGrandma` (chưa save)
 - **Ghi chú:** `npm test` có 6 test đỏ không liên quan (pipeline asset, __maskAnh, HOUSE — file phiên khác đang sửa)
+- **Nhánh phụ R6 BOBJ (xong, ef1d914):** `assets/r6-bobj/` = R6 BOBJ + 84 động tác BBS 2.7 + 42 Quaternius retarget bằng app 1 (`S:\3appclaude`, script `tools-local/`); đọc `assets/r6-bobj/README.md`. Chưa thử trong BBS/Minecraft; vỗ tay không chạm (vai R6 rộng). 3 dòng manifest chưa commit
 <!-- /ĐIỂM DỪNG -->
 
 ## Đã chốt (2026-11-18)
