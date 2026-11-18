@@ -1,6 +1,6 @@
 // Đưa studio, gói .3js và MP4 lên R2 (3js-studio-phim) cho web https://3js.tuanchau.io.vn (xem /r2/ds).
 //   node tools/dang-r2.mjs studio [--thu]                 → studio.html + dist/STUDIO RIENG/ep00{1,2,3}.3js + kho-chung (đã lọc, bỏ ep004/ep005)
-//   node tools/dang-r2.mjs map <goi.3js> [--thu]         → goi/map/<tên>.3js + kho riêng <tên>.kho.3js (chỉ asset map dùng)
+//   node tools/dang-r2.mjs map <goi.3js> [--goc <worktree>] [--studio f.html] [--thu] → goi/map/<tên>.3js + kho riêng <tên>.kho.3js (chỉ asset map dùng)
 //   node tools/dang-r2.mjs mp4 <file.mp4> <ep> [--giu 5]  → mp4/<ep>/<ngày-giờ>.mp4 + xoá bản cũ, giữ N bản gần nhất mỗi tập
 // Chỉ ep001–003. Khoá: `wrangler login` (hoặc CLOUDFLARE_API_TOKEN trong .env.local). Không in khoá. Lỗi/thiếu mạng → chỉ cảnh báo khi gọi từ xuat.mjs.
 import fs from 'node:fs'; import path from 'node:path'; import crypto from 'node:crypto'; import { spawnSync } from 'node:child_process'; import { fileURLToPath } from 'node:url';
@@ -103,7 +103,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const a = process.argv.slice(2), gt = (k, d) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : d; };
   try {
     if (a[0] === 'studio') { if (dangStudio({ thu: a.includes('--thu') }).some((k) => k.tt === 'loi')) process.exit(1); }
-    else if (a[0] === 'map') { const u = dangMap({ file: a[1], thu: a.includes('--thu') }); console.log('Mở map: ' + u); }
+    else if (a[0] === 'map') { const g = gt('--goc', null), u = dangMap({ file: a[1], thu: a.includes('--thu'), ...(g ? { goc: path.resolve(g) } : {}), ...(gt('--studio', null) ? { studio: path.resolve(gt('--studio')) } : {}) }); console.log('Mở map: ' + u); }
     else if (a[0] === 'mp4') { const r = dangMp4({ file: a[1], ep: a[2], giu: gt('--giu', GIU_MAC_DINH), thu: a.includes('--thu') }); console.log(r.ok ? (r.thu ? `(thử, chưa đăng) ${r.key}` : `đã đăng ${r.key}`) : 'KHÔNG đăng: ' + r.ly_do); process.exit(r.ok ? 0 : 1); }
     else { console.error('Dùng: dang-r2.mjs studio [--thu] | map <goi.3js> [--thu] | mp4 <file.mp4> <ep> [--giu 5]'); process.exit(1); }
   } catch (x) { console.error(x.message); process.exit(1); }
