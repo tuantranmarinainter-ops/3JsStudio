@@ -41,6 +41,9 @@ Chạy: `node --import <editor>/packages/builder/node_modules/tsx/dist/loader.mj
 gộp với kết luận mắt `mat-*.json` (nếu có) → `dist/r6-may-kiem.html` + nhãn "máy bắt" trên trang thử. Kết quả ở `output/r6-bobj/kiem/`.
 Đo thêm (19/11): **khối tay lún vào đầu / thân / hai tay chồng nhau** — lưới 3×3×7 điểm trong khối tay, thử trong hộp lõi của đầu/thân/tay kia
 (hộp lấy từ đỉnh lưới theo xương nặng nhất, bỏ mỏ/mào), trừ phần Steve cũng lún. Mắt riêng: `mat-tay.json` (key "sai" thì bỏ, mức tay nâng mức chung).
+**Sửa (19/11, `r6-cung.mts`):** khối tay lún vào đầu/thân > 0.04 block → dời ĐIỂM BÀN TAY ra trước (thân) / ra mặt gần nhất (đầu) rồi chĩa tay tới đó,
+tối đa 30°, giữ đỉnh ±2 tick + làm mượt ±3 tick; hai bàn tay gốc gần nhau (< 0.6) thì không dời — tay cứng R6 vai rộng KHÔNG thể vừa vỗ tay
+trước ngực vừa không lún, ưu tiên chạm. Biến: `DAY_SAU` `DAY_MAX` `DAY_CHAM`; tắt: `--khong-day`. Kết quả: lún vào đầu 17→8 động tác, vào thân 31→18 (đã lọc những ca chỉ chạm sát); 7 ca lún rõ còn 1 rõ (crying — hai tay che mặt, ưu tiên chạm).
 Lần đo 19/11: sâu ≥ 0.12 block gần như luôn là lún thật, < 0.10 thường chỉ chạm sát.
 Tuỳ chọn: `--chi a,b` · `--khong-anh` (chỉ số, vài giây) · `--chi-gop` (sau khi agent soi xong) · `--khong-dung` · `--out <thư mục>`.
 Bước soi mắt: giao 3 agent Sonnet theo `output/r6-bobj/kiem/de-bai-mat.md` (lệnh tự ghi). Lưu ý: Gà R6 cứng đo đầu mút theo XƯƠNG TRÊN (khối chỉ gắn xương trên), Steve theo xương mút.
