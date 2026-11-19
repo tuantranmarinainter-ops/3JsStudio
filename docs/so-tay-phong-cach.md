@@ -344,43 +344,49 @@ Hạn chế: 10 frame cách nhau 0,4–1,5 s nên sự kiện ngắn "không th�
 
 Nhãn mặt đọc được ở 331/846 shot (còn lại mặt quay đi/nhỏ/khuất): buon 69, vui 53, gian 51, ngac-nhien 35, so 31, tron 19, lo-lang 9, kho-chiu 7, hoảng 6, quyet-tam 5, gang-suc 3, tuc-gian 3
 
-| Cảm xúc thấy | Mặt `R6_FACES` tương ứng | Ghi chú |
+**Đối chiếu lại với engine (19/11/2026; bảng cũ "thiếu" đã lỗi thời).** `R6_FACES` (`engine/r6.js:38`) chỉ liệt kê 8 tên, nhưng mặt vẽ có hai kiểu (`faceStyle`, r6.js:24,130): `classic` (`drawFace` r6.js:169; tên lạ rơi về smile) và `cartoon` (`drawCartoonFace` r6.js:309) có thêm `worried`, `panic` (vẽ như scared), `cold`, `moved`, `sleep` (r6.js:331–346). Bí danh ở `engine/cast.js:43` (anxious/nervous → worried, serious → neutral, touched → moved…). Mặt tiếng Việt `quyet_tam`, `thac_mac`, `boi_roi`… chỉ thuộc mặt ảnh Gà/R15 (`docs/danh-muc.md`), không phải mặt vẽ R6.
+
+| Cảm xúc thấy | Mặt R6 | Trạng thái |
 |---|---|---|
-| buon (69) | sad | có sẵn |
-| vui (53) | smile/happy | có sẵn |
-| gian (51) | angry | có sẵn |
-| ngac-nhien (35) | surprised | có sẵn |
-| so (31) | scared | có sẵn |
-| tron (19) | **(thiếu)** | chưa có trong `R6_FACES` (smile, happy, neutral, sad, scared, surprised, angry, sleepy) |
-| lo-lang (9) | **(thiếu)** | chưa có trong `R6_FACES` (smile, happy, neutral, sad, scared, surprised, angry, sleepy) |
-| kho-chiu (7) | **(thiếu)** | chưa có trong `R6_FACES` (smile, happy, neutral, sad, scared, surprised, angry, sleepy) |
-| hoảng (6) | scared | có sẵn |
-| quyet-tam (5) | **(thiếu)** | chưa có trong `R6_FACES` (smile, happy, neutral, sad, scared, surprised, angry, sleepy) |
-| gang-suc (3) | **(thiếu)** | chưa có trong `R6_FACES` (smile, happy, neutral, sad, scared, surprised, angry, sleepy) |
-| tuc-gian (3) | angry | có sẵn |
+| buon (69) | `sad` r6.js:190 | ĐÃ CÓ |
+| vui (53) | `smile` r6.js:206 / `happy` r6.js:183 | ĐÃ CÓ |
+| gian (51) | `angry` r6.js:200 | ĐÃ CÓ |
+| ngac-nhien (35) | `surprised` r6.js:197 | ĐÃ CÓ |
+| so (31) | `scared` r6.js:192 | ĐÃ CÓ |
+| tron (19) | không có (`grin` chỉ là bí danh cast.js:46, r6.js không vẽ → rơi smile) | THIẾU; KHÔNG CHẮC nghĩa nhãn (bản không dấu, chưa giải nghĩa) |
+| lo-lang (9) | `worried` r6.js:336 (chỉ kiểu cartoon; classic rơi smile) | ĐÃ CÓ (cartoon) |
+| kho-chiu (7) | không có; gần `cold` r6.js:339 / `sad` | THIẾU (vẽ được) |
+| hoảng (6) | `panic` r6.js:333 (cartoon, cùng nét với scared; clip `panic` r6.js:502 dùng nó) | ĐÃ CÓ (cartoon) |
+| quyet-tam (5) | không có; gần `neutral`/`angry` (serious → neutral cast.js:47). `quyet_tam` chỉ là mặt Gà | THIẾU (vẽ được) |
+| gang-suc (3) | không có; gần `cold`/`angry` | THIẾU (vẽ được, dễ gộp với kho-chiu) |
+| tuc-gian (3) | `angry` | ĐÃ CÓ |
 
-**Clip hành động thấy → `R6_ANIMATIONS`:**
+Tổng 12 nhãn: ĐÃ CÓ 8, THIẾU 4 (tron, kho-chiu, quyet-tam, gang-suc). Ngoài danh sách còn có `cold` (r6.js:339) và `moved` (r6.js:344, alias touched/grateful/relieved). Mọi mặt mới: cần code, bật/tắt được, mặc định tắt.
 
-| Clip (số lần) | Có trong r6.js | Dài | Lặp |
-|---|---|---|---|
-| đứng-thở (32) | idle | vua | một lần |
-| đi (13) | walk | vua | một lần |
-| giật-mình (11) | scared | ngan | một lần |
-| vẫy (10) | wave | ngan | một lần |
-| ngã (8) | tumble/faint | ngan | một lần |
-| leo (6) | (thiếu) | vua | một lần |
-| giật mình (6) | scared | ngan | một lần |
-| nhảy (5) | jump | ngan | một lần |
-| chạy (5) | run | ngan | một lần |
-| ngồi (5) | sit | dai | một lần |
-| ôm (4) | hug | vua | một lần |
-| ngồi-viết (2) | write | dai | một lần |
-| bám (1) | (thiếu) | ngan | một lần |
-| đứng-dậy (1) | (thiếu) | ngan | một lần |
+**Clip hành động thấy → clip trong engine:**
+
+| Clip (số lần) | Tên trong engine | Dài | Lặp | Trạng thái |
+|---|---|---|---|---|
+| đứng-thở (32) | `idle` r6.js:371 | vừa | một lần | ĐÃ CÓ |
+| đi (13) | `walk` r6.js:378 | vừa | một lần | ĐÃ CÓ |
+| giật-mình (11) | `scared` r6.js:434 | ngắn | một lần | ĐÃ CÓ |
+| vẫy (10) | `wave` r6.js:416 | ngắn | một lần | ĐÃ CÓ |
+| ngã (8) | `tumble` r6.js:535 / `faint` r6.js:467 | ngắn | một lần | ĐÃ CÓ |
+| leo (6) | `climb` engine/anim-them.js:34 (+ `rbx_climb`) | vừa | một lần | ĐÃ CÓ (bảng cũ ghi thiếu) |
+| giật mình (6) | `scared` | ngắn | một lần | ĐÃ CÓ |
+| nhảy (5) | `jump` r6.js:400 | ngắn | một lần | ĐÃ CÓ |
+| chạy (5) | `run` r6.js:388 | ngắn | một lần | ĐÃ CÓ |
+| ngồi (5) | `sit` r6.js:428 | dài | một lần | ĐÃ CÓ |
+| ôm (4) | `hug` r6.js:510 | vừa | một lần | ĐÃ CÓ |
+| ngồi-viết (2) | `write` r6.js:525 | dài | một lần | ĐÃ CÓ |
+| bám (1) | không có (gần nhất `hold` r6.js:496) | ngắn | một lần | THIẾU |
+| đứng-dậy (1) | `nch_getUp` engine/anim-nch.js:264 (+ `sitUp` anim-them.js:21) | ngắn | một lần | ĐÃ CÓ (bảng cũ ghi thiếu) |
+
+Tổng 14 dòng: ĐÃ CÓ 13, THIẾU 1 (bám; "giật mình" xuất hiện hai dòng nên thật ra 12 clip khác nhau có sẵn + 1 thiếu).
 
 **Cảm xúc theo phần (agent tóm, 9 video):** Hook = tò mò/bình thản · Leo thang = bực, sợ, hoảng · Twist = buồn, đau, im lặng · Giải quyết = dịu, ấm, nhẹ nhõm.
 
-Chưa có bảng ảnh mặt cắt riêng (agent đọc từ dải 10 frame, mặt chỉ ~10 px): cần bước riêng nếu muốn mẫu mặt cho `r6-anim`.
+Chưa có bảng ảnh mặt cắt riêng (agent đọc từ dải 10 frame, mặt chỉ ~10 px): cần bước riêng nếu muốn mẫu mặt cho `r6-anim`. Chưa đo riêng độ trễ phản ứng sau câu then chốt và nhịp đứng khựng. Bản danh mục đầy đủ để dùng: `.claude/skills/r6-anim_RO/SKILL.md`.
 
 ## 14. H: mô típ truyện (37 video; agent Sonnet đọc tóm tắt .srt; mã không dấu)
 

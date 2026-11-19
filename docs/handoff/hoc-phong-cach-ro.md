@@ -1,0 +1,22 @@
+# ĐIỂM DỪNG (19/11/2026): bộ skill _RO và quét 28 video, chạy trong phiên điều phối
+- **Người dùng chốt:**
+  - Không đụng skill cũ. Tạo bộ skill độc lập có hậu tố `_RO` để thử rồi mới quyết.
+  - Bỏ phiên con "Sổ tay phong cách" (local_9323…). Phiên đó đang treo chờ người dùng trả lời, đừng trả lời nó. Việc chuyển về chạy trong phiên điều phối.
+- **Đã gỡ phần sổ tay khỏi skill gốc:** commit 4e59ed7 đưa `viet-kich-ban` và `lam-phim` về như trước bcc35bf.
+- **5 skill _RO và lint**, do 3 agent Sonnet viết, chưa commit:
+  - `lam-phim_RO`, `phu-de_RO`: xong.
+  - `viet-kich-ban_RO` và `tools/kb/lint_RO.py`: đang chạy.
+  - `vfx3d_RO`, `r6-anim_RO`, sửa mục 13 sổ tay: đang chạy.
+  - Engine chưa code: luật camera B `?cam=mau`, phụ đề cụm, VFX thiếu. Tất cả mặc định tắt.
+- **Quét 28 video:**
+  - Đã có tờ ảnh (`python tools/hoc_phong_cach.py lat --chi …`).
+  - Đề bài dùng chung: `output/hoc-phong-cach/de-bai-xem.md`.
+  - Agent Haiku, mỗi agent 3 video, tối đa 3 agent cùng lúc.
+  - Lô 1 (đang chạy): anh-em-sinh-doi, bien-thanh-noi-so, can-duoc-goi-ten.
+  - Còn lại: lấy danh sách video có `may.json` mà chưa có `xem.json`.
+- **Sau khi quét xong:**
+  - Chạy `hoc_phong_cach.py ghep` rồi `so-tay`. ⚠ `so-tay` ghi đè mục 15 đã đánh dấu và mục 13 vừa sửa, nên sao lưu `docs/so-tay-phong-cach.md` trước rồi ghép lại tay.
+  - Sửa các mốc trong 5 skill _RO theo số 37 video.
+  - Làm lại bản điện thoại `output/artifact/so-tay-phong-cach.html`, đăng lại https://claude.ai/artifact/JsXfFcDnFCj7DMCJUjNMtM.
+  - Cập nhật tien-do.
+- **Đối chiếu bỏ sót:** `output/hoc-phong-cach/kiem-bo-sot.md` (82 mục).
