@@ -8,13 +8,15 @@ const khongAnh = process.argv.includes('--khong-anh')
 const b = await launchBrowser(), p = await b.newPage({ viewport: { width: 800, height: 1455 } })
 p.on('pageerror', (e) => console.log('LỖI TRANG', e.message))
 await p.goto(process.env.PAGE || 'file:///S:/3JS%20Studio/dist/r6-bobj-test.html'); await p.waitForFunction(() => window.__ready && window.__dbg?.SRC, null, { timeout: 120000 })
+if (process.env.GA === 'mc') await p.evaluate(() => { const s = document.getElementById('gaKieu'); s.value = 'mc'; s.dispatchEvent(new Event('change')) })
 const names = await p.evaluate((chi) => { const d = window.__dbg; d.setT(0); return [...d.DST.keys()].filter((n) => !chi.length || chi.includes(n)) }, chi)
 const all = []
 for (const n of names) {
-  const r = await p.evaluate(({ n, khongAnh }) => {
-    const { THREE, A, B3, SRC, DSTE, ren, scene, cam, pose, evaluateBobjAction, grid } = window.__dbg
+  const r = await p.evaluate(({ n, khongAnh, MC, RAW }) => {
+    const { THREE, A, SRC, ren, scene, cam, pose, evaluateBobjAction, grid } = window.__dbg
     const M = (a) => new THREE.Matrix4().fromArray(a)
-    const ga = DSTE.get(n), st = SRC.get(n), T = Math.ceil(ga.durationTicks)
+    const B3 = MC ? window.__dbg.B2 : window.__dbg.B3, CG = !MC   // GA=mc: Gà xương Minecraft (có khuỷu/gối) chạy bộ r6 thường
+    const ga = (MC ? (window.__dbg.DSTM && !RAW ? window.__dbg.DSTM : window.__dbg.DST) : window.__dbg.DSTE).get(n), st = SRC.get(n), T = Math.ceil(ga.durationTicks)
     const rig = (C, act, tk, dims, cung) => {
       const arm = C.model.armature, R = new Map(arm.bones.map((b) => [b.name, b])), W = new Map(evaluateBobjAction(arm, act, Math.min(tk, act.durationTicks)).map((b) => [b.name, M(b.worldMatrix)]))
       const S = (bn) => W.get(bn).clone().multiply(M(R.get(bn).restWorld).invert())
@@ -46,7 +48,7 @@ for (const n of names) {
     const mau = (H, side, cung) => { const up = H[side + '_arm'], lo = H['low_' + side + '_arm'], mn = up.min.clone(), mx = up.max.clone(); if (!cung && lo) { mn.min(lo.min); mx.max(lo.max) }
       const pts = [], e = 0.02, yCut = up.min.y; for (let i = 0; i < 3; i++) for (let j = 0; j < 7; j++) for (let k = 0; k < 3; k++) { const q = new THREE.Vector3(mn.x + e + (mx.x - mn.x - 2 * e) * i / 2, mn.y + e + (mx.y - mn.y - 2 * e) * j / 6, mn.z + e + (mx.z - mn.z - 2 * e) * k / 2); pts.push([q, !cung && q.y < yCut ? 'low_' + side + '_arm' : side + '_arm']) }
       return pts }
-    const MG = { left: mau(HG, 'left', true), right: mau(HG, 'right', true) }, MS = { left: mau(HS, 'left'), right: mau(HS, 'right') }
+    const MG = { left: mau(HG, 'left', CG), right: mau(HG, 'right', CG) }, MS = { left: mau(HS, 'left'), right: mau(HS, 'right') }
     const sau = (q, b, m = 0.02) => Math.min(...['x', 'y', 'z'].map((a) => (b.max[a] - b.min[a]) / 2 - m - Math.abs(q[a] - (b.max[a] + b.min[a]) / 2)))
     const lun = (r, H, M) => { const o = { dau: 0, than: 0, chong: 0, dauAt: '', thanAt: '', chongAt: '' }, inv = {}; for (const bn of ['head', 'body', 'low_body', 'left_arm', 'right_arm']) inv[bn] = r.S(bn).clone().invert()
       for (const side of ['left', 'right']) for (const [q, bn] of M[side]) { const w = q.clone().applyMatrix4(r.S(bn))
@@ -57,7 +59,7 @@ for (const n of names) {
     const DG = { hx: 0.36, hz: 0.16, y0: 0.82, ym: 1.2, y1: 1.58 }, DS = { hx: 0.22, hz: 0.10, y0: 0.77, ym: 1.125, y1: 1.48 }, K = 0.6 / 0.375
     const rows = []; let prevG = null, prevS = null
     for (let tk = 0; tk <= T; tk++) {
-      const g = rig(B3, ga, tk, DG, true), s = st ? rig(A, st, tk, DS) : null
+      const g = rig(B3, ga, tk, DG, CG), s = st ? rig(A, st, tk, DS) : null
       pose(B3, ga, Math.min(tk, ga.durationTicks)); if (st) pose(A, st, Math.min(tk, st.durationTicks))
       const yg = minY(B3), ys = st ? minY(A) : yg
       const lg = lun(g, HG, MG), ls = s ? lun(s, HS, MS) : { dau: 0, than: 0, chong: 0 }
@@ -95,7 +97,7 @@ for (const n of names) {
     let img = null
     if (!khongAnh) {
       const c = document.createElement('canvas'); c.width = 800; c.height = 830; const x2 = c.getContext('2d'); x2.fillStyle = '#fff'; x2.fillRect(0, 0, 800, 830)
-      x2.fillStyle = '#111'; x2.font = 'bold 18px sans-serif'; x2.fillText(n + '  (' + (ga.durationTicks / 20).toFixed(1) + ' s)   trái: Steve gốc · phải: Gà R6 eo', 8, 21)
+      x2.fillStyle = '#111'; x2.font = 'bold 18px sans-serif'; x2.fillText(n + '  (' + (ga.durationTicks / 20).toFixed(1) + ' s)   trái: Steve gốc · phải: ' + (MC ? 'Gà xương Minecraft' : 'Gà R6 eo'), 8, 21)
       const saved = cam.position.clone(); cam.position.set(2.6, 1.7, 4.6); cam.lookAt(0, 0.9, 0); grid.visible = true
       pick.forEach((pk, i) => { pose(B3, ga, Math.min(pk.tk, ga.durationTicks)); if (st) pose(A, st, Math.min(pk.tk, st.durationTicks)); ren.render(scene, cam)
         const X = (i % 2) * 400, Y = 30 + Math.floor(i / 2) * 400; x2.drawImage(ren.domElement, X, Y, 400, 400); x2.strokeStyle = '#999'; x2.strokeRect(X, Y, 400, 400)
@@ -103,7 +105,7 @@ for (const n of names) {
       cam.position.copy(saved); cam.lookAt(0, 1, 0); window.__dbg.ctl.update(); img = c.toDataURL('image/jpeg', 0.82)
     }
     return { name: n, T, loi: L, score, khung: pick, img, coSteve: !!st }
-  }, { n, khongAnh })
+  }, { n, khongAnh, MC: process.env.GA === 'mc', RAW: !!process.env.RAW })
   if (r.img) writeFileSync(`${OUT}/${n}.jpg`, Buffer.from(r.img.split(',')[1], 'base64'))
   delete r.img; all.push(r); process.stdout.write(`${n} ${r.score} ${r.loi.map((x) => x.key).join(',')}\n`)
 }

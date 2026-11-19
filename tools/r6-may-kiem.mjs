@@ -14,10 +14,10 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const arg = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : undefined }
 const has = (k) => process.argv.includes(k)
 // --bo quaternius: bộ khác BBS (cần assets/r6-bobj/<bộ>/<bộ>-{r6,r6-cung,r6-eo,steve}-actions.bobj) → trang/thư mục riêng
-const BO = arg('--bo') || 'bbs', Q = BO !== 'bbs'
-const MAIN = join(ROOT, Q ? `output/r6-bobj/${BO}-kiem` : 'output/r6-bobj/kiem'), OUT = resolve(ROOT, arg('--out') || MAIN); mkdirSync(OUT, { recursive: true }); mkdirSync(MAIN, { recursive: true })
+const BO = arg('--bo') || 'bbs', Q = BO !== 'bbs', MC = arg('--ga') === 'mc'   // --ga mc: kiểm Gà xương Minecraft (có khuỷu) → thư mục/trang hậu tố r6_mc
+const MAIN = join(ROOT, (Q ? `output/r6-bobj/${BO}-kiem` : 'output/r6-bobj/kiem') + (MC ? '-r6_mc' : '')), OUT = resolve(ROOT, arg('--out') || MAIN); mkdirSync(OUT, { recursive: true }); mkdirSync(MAIN, { recursive: true })
 const BUILD = 'S:/3appclaude/tools-local/xem/build.mjs', DIST = join(ROOT, Q ? `dist/r6-${BO}-test.html` : 'dist/r6-bobj-test.html'), ART = join(ROOT, Q ? `output/r6-bobj/thu-${BO}-r6.html` : 'output/r6-bobj/thu-dong-tac-r6.html')
-const ENV = { BO, PAGE: 'file:///' + DIST.replace(/\\/g, '/').replace(/ /g, '%20'), TEN: Q ? BO : '' }
+const ENV = { BO, PAGE: 'file:///' + DIST.replace(/\\/g, '/').replace(/ /g, '%20'), TEN: (Q ? BO : '') + (MC ? (Q ? '-' : '') + 'r6_mc' : ''), GA: MC ? 'mc' : '' }
 const run = (file, args = [], env = {}) => execFileSync(process.execPath, [file, ...args], { stdio: 'inherit', env: { ...process.env, ...ENV, ...env } })
 const dung = () => { if (!existsSync(BUILD)) { console.log('⚠ không thấy', BUILD, '— bỏ qua dựng trang thử'); return } run(BUILD, [DIST, ART]) }
 
@@ -31,8 +31,8 @@ if (!has('--chi-gop')) {
 const so = join(OUT, 'so.json'), mats = [1, 2, 3].map((i) => join(OUT, `mat-${i}.json`)).filter(existsSync)
 if (mats.some((m) => statSync(m).mtimeMs < statSync(so).mtimeMs)) console.log('⚠ mat-*.json cũ hơn so.json — kết luận mắt là của lần đo trước; chạy lại bước soi mắt rồi --chi-gop')
 console.log('③ Gộp + trang tổng hợp'); run(join(ROOT, 'tools/r6-may-kiem/gop.mjs'), [], { K: OUT + '/' })
-if (OUT !== MAIN) copyFileSync(join(OUT, 'may-kiem.json'), join(MAIN, 'may-kiem.json'))   // build.mjs đọc nhãn máy từ đây
-if (!has('--khong-dung')) { console.log('④ Dựng lại trang thử kèm nhãn "máy bắt"'); dung() }
+if (OUT !== MAIN && !MC) copyFileSync(join(OUT, 'may-kiem.json'), join(MAIN, 'may-kiem.json'))   // build.mjs đọc nhãn máy từ đây
+if (!has('--khong-dung') && !MC) { console.log('④ Dựng lại trang thử kèm nhãn "máy bắt"'); dung() }
 // đề bài soi mắt cho 3 agent
 const names = JSON.parse(readFileSync(so, 'utf8')).map((x) => x.name), g = [[], [], []]; names.forEach((n, i) => g[i % 3].push(n))
 g.forEach((l, k) => writeFileSync(join(OUT, `nhom-${k + 1}.txt`), l.join('\n')))

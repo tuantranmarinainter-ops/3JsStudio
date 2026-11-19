@@ -86,3 +86,14 @@ Commit: `b23b725` (gối + chống xoắn) · `d0e387c` (gói lệnh) · `a7a10c
 - So số hai lần đo: `node tools/r6-may-kiem/so-sanh.mjs <thư-mục-A> <thư-mục-B>`.
 - Kết quả: 2 ổn · 33 khác nhẹ · 7 lỗi rõ (quỳ/ngồi xổm/lộn — chân cứng 0.8 không gập được; đấm/ngắm súng — tay đi trước mặt).
   Artifact: trang thử `Stt7kdhriQbjPcmFgTsuhV` · tổng hợp `BvoMHAKbQ4F7Bu9tvy6xMb`.
+
+## 9. Bộ r6_mc — Gà xương Minecraft (có khuỷu), sửa chạm tay (19/11)
+- Bộ chuyển: `S:/3appclaude/tools-local/r6-mc.mts <r6-actions> <steve-actions> <steve-armature> <bộ>-r6_mc-actions.bobj`.
+  Khi hai bàn tay Steve gần nhau (< `CHAM_XA` 0.3, kéo hẳn khi < `CHAM_GAN` 0.15) → kéo hai bàn tay Gà về điểm giữa (giữ khoảng Steve × K)
+  bằng IK 2 xương, giữ mặt phẳng khuỷu (tay gần thẳng thì dùng mặt phẳng tick trước). Độ kéo giữ đỉnh ±2 tick, mượt ±3 tick (`HOLD`, `MUOT`).
+  ⚠ KHÔNG làm mượt vectơ hai tay Steve (thử rồi: tách tay lúc vỗ, chạm 15→10).
+- Trang thử: ô "Xương MC: sửa chạm tay (r6_mc)" (bật mặc định; tắt = bản thô). Máy kiểm: `--ga mc` → `output/r6-bobj/kiem-r6_mc/`,
+  trang `dist/r6-may-kiem-r6_mc.html`; `RAW=1` đo bản thô.
+- Kết quả BBS (máy): hai tay không chạm 15→2 động tác, giật 13→14, lún đầu 9→15 (nhẹ 0.05–0.08). Mắt (17 động tác vỗ/che mặt):
+  chạm đúng 4 · gần 7 · không 4 (chicken, electro_shuffle, free_flow, popcorn); tay xuyên đầu khi kéo (star_power, crying).
+  Quaternius: không có động tác Steve chạm tay → r6_mc giống bản thô. Artifact tổng hợp: `1t6bcpFeR9erAsSJrmTumj`.
