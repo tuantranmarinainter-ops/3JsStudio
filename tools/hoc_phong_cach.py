@@ -21,6 +21,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import ref  # noqa: E402
 from nghien_cuu_map import slug  # noqa: E402
+from hoc_phong_cach_agent import phan_agent  # noqa: E402
 
 for _s in (sys.stdout, sys.stderr):
     try: _s.reconfigure(encoding='utf-8', errors='replace')
@@ -95,6 +96,7 @@ def may_mot(args):
             samp.setdefault(f, []).append((i, k))
     lum, sat, warm = np.zeros(nf), np.zeros(nf), np.zeros(nf)
     div, tx, ty = np.zeros(nf), np.zeros(nf), np.zeros(nf)
+    adf = np.zeros(nf)   # |khung − khung trước| trung bình (0..255)
     pics = defaultdict(dict)
     prev = None
     ys, xs = np.mgrid[0:142, 0:80]
@@ -110,6 +112,7 @@ def may_mot(args):
         hsv = cv2.cvtColor(sm, cv2.COLOR_BGR2HSV)
         lum[i] = g.mean(); sat[i] = hsv[:, :, 1].mean()
         warm[i] = (sm[:, :, 2].mean() - sm[:, :, 0].mean()) / 255.0
+        if prev is not None: adf[i] = float(np.abs(g.astype(np.int16) - prev.astype(np.int16)).mean())
         if prev is not None and i not in starts:
             fl = cv2.calcOpticalFlowFarneback(prev, g, None, 0.5, 2, 9, 2, 5, 1.1, 0)
             fx, fy = fl[:, :, 0], fl[:, :, 1]
@@ -146,20 +149,26 @@ def may_mot(args):
         sh['zoom'] = round(zoom, 3); sh['pan'] = round(pan, 3)
         sh['cd'] = 'zoom-in' if zoom > 0.10 else 'zoom-out' if zoom < -0.10 else 'pan' if pan > 0.06 else 'dung'
     # ---- sự kiện VFX máy dò
-    ev = {'chop': [], 'rung': [], 'doi-mau': [], 'zoom-giat': []}
+    # hiệu chỉnh 19/11 sau khi xem ảnh: loại cú cắt sót (adf>40), chớp phải là xung rồi trở lại, đổi màu/zoom giật phải
+    # xảy ra khi cấu trúc khung gần như giữ nguyên (vật tiền cảnh lướt qua làm adf lớn → không tính)
+    ev = {'chop': [], 'rung': [], 'doi-mau': [], 'zoom-giat': [], 'cat-sot': []}
+    sot = {f for f in range(1, nf) if adf[f] > 40 and f not in starts}
+    for f in sorted(sot): ev['cat-sot'].append({'t': round(f / fps, 2), 'shot': next((x['id'] for x in shots if x['f0'] <= f < x['f1']), '?'), 'adf': round(float(adf[f]), 1)})
+    gan_sot = lambda f: any(abs(f - q) <= 4 for q in sot)
     for si, sh in enumerate(shots):
         a, b = sh['f0'], min(sh['f1'], nf)
-        for f in range(a + 2, b):
-            dl = lum[f] - lum[f - 1]
-            if abs(dl) > 22: ev['chop'].append({'t': round(f / fps, 2), 'shot': sh['id'], 'dl': round(float(dl), 1)})
-            if abs(warm[f] - warm[f - 1]) > 0.06 or abs(sat[f] - sat[f - 1]) > 14:
+        for f in range(a + 6, b - 8):
+            if gan_sot(f): continue
+            base = float(np.median(lum[f - 6:f - 1]))
+            if lum[f] - base > 18 and float(np.min(lum[f + 1:f + 9])) < base + 9 and adf[f] < 40:
+                ev['chop'].append({'t': round(f / fps, 2), 'shot': sh['id'], 'dl': round(float(lum[f] - base), 1)})
+            if (abs(warm[f] - warm[f - 1]) > 0.06 or abs(sat[f] - sat[f - 1]) > 14) and adf[f] < 22:
                 ev['doi-mau'].append({'t': round(f / fps, 2), 'shot': sh['id']})
         dv = np.abs(div[a:b]); md = float(np.median(dv)) if len(dv) else 0
-        for j in np.where((dv > 0.03) & (dv > 4 * md + 0.01))[0]:
-            ev['zoom-giat'].append({'t': round((a + int(j)) / fps, 2), 'shot': sh['id'], 'd': round(float(div[a + j]), 3)})
-        # rung: tx/ty đổi dấu liên tục trong cửa sổ 12 khung
+        for j in np.where((dv > 0.04) & (dv > 6 * md + 0.01))[0]:
+            if not gan_sot(a + int(j)) and adf[a + int(j)] < 30:
+                ev['zoom-giat'].append({'t': round((a + int(j)) / fps, 2), 'shot': sh['id'], 'd': round(float(div[a + j]), 3)})
         for w in range(a, b - 12, 6):
-            seg = np.concatenate([tx[w:w + 12], ty[w:w + 12]]) if False else None
             for ax in (tx, ty):
                 v = ax[w:w + 12]; big = v[np.abs(v) > 0.5]
                 if len(big) >= 5 and (np.sign(big[1:]) != np.sign(big[:-1])).sum() >= 4:
@@ -412,10 +421,10 @@ def cmd_so_tay(a):
         xs = [x for x in xs if x is not None]
         if not xs: return '—'
         return f'{round(st.mean(xs), nd)} ({round(min(xs), nd)}–{round(max(xs), nd)})'
-    md = ['# Sổ tay phong cách (BẢN NHÁP — phần A + số liệu máy, 37 video)', '',
+    md = ['# Sổ tay phong cách (A–I, 37 video + 9 video mẫu)', '',
           f'Sinh bởi `tools/hoc_phong_cach.py so-tay` · dữ liệu `output/hoc-phong-cach/` · **{len(V)} video**. Ô số = trung bình (nhỏ nhất–lớn nhất).',
           'Số liệu máy là **heuristic**: luật/twist/móc tìm theo từ khoá; zoom/pan đo bằng optical flow toàn khung (nhân vật chuyển động có thể nhiễu).',
-          'Phần cần nhìn ảnh (cỡ cảnh, bố cục D, F, G, H, chữ nổi, VFX gọi tên) chưa làm — chờ duyệt Dừng lần 1.', '']
+          'Phần nhìn ảnh (mục 7–15) lấy từ 9 video mẫu, nhãn ước lượng bằng mắt.', '']
     md += ['## 1. Nhịp cắt (B máy)', '', '| Chỉ số | Trung bình (min–max) |', '|---|---|',
            f'| Thời lượng video (s) | {kh([r["dur"] for r in V])} |', f'| Số shot | {kh([r["shot"] for r in V], 0)} |',
            f'| Shot/phút | {kh([r["shot_phut"] for r in V])} |', f'| Độ dài shot trung bình (s) | {kh([r["shot_dai_tb"] for r in V], 2)} |',
@@ -434,7 +443,7 @@ def cmd_so_tay(a):
            f'| Độ dài câu (từ) | {kh([l["do_dai_cau"]["tb"] for l in Ls.values()])} |',
            f'| Giây nói ra luật | {kh([l["luat"]["giay"] for l in Ls.values()])} |',
            f'| Luật nằm ở câu số | {kh([l["luat"]["chi_so_cau"] + 1 for l in Ls.values()])} |',
-           f'| Twist (từ khoá) ở % video | {kh([l["twist"]["p"] * 100 for l in Ls.values() if l["twist"]], 0)} |',
+           f'| Twist (từ khoá, chỉ ~11/37 video bắt được — xem mục 14) ở % video | {kh([l["twist"]["p"] * 100 for l in Ls.values() if l["twist"]], 0)} |',
            f'| Khoảng gài bí mật → twist (s) | {kh([l["khoang_gai_mo_s"] for l in Ls.values()], 0)} |',
            f'| Móc giữ chân cách nhau (s) | {kh([l["moc"]["cach_nhau_s"] for l in Ls.values()])} |',
            f'| Ngôi thứ nhất / câu | {kh([l["ngoi_thu_nhat_moi_cau"] for l in Ls.values()], 2)} |',
@@ -448,12 +457,13 @@ def cmd_so_tay(a):
            '', '**Từ nối hay dùng:** ' + ', '.join(f'{k} {v}' for k, v in nc.most_common(10)), '',
            '**Cụm 4 từ lặp ở ≥ 4 video (câu cửa miệng của loạt):**', '']
     md += [f'- "{g}" — {nv} video, {n} lần' for g, nv, n in T['cum_tu_chung'][:15]] or ['- (không có)']
-    md += ['', '### Hook + luật từng video', '', '| # | Video | Luật @s | Câu mở (3 câu đầu rút gọn) | Câu chốt |', '|---|---|---|---|---|']
+    md += ['', '### Hook + luật từng video', '', '| # | Video | Luật @s | Câu mở (rút gọn) | Câu chốt |', '|---|---|---|---|---|']
     for i, r in enumerate(V, 1):
         l = Ls.get(r['slug'])
         if not l: continue
-        hk = ' / '.join(h['text'] for h in l['hook'])[:150].replace('|', '/')
-        md.append(f'| {i} | {r["ten"]} | {l["luat"]["giay"]} | {hk} | {l["ket"]["cau_chot"][:90].replace("|", "/")} |')
+        hk = ' '.join(' '.join(h['text'] for h in l['hook']).split()[:15]).replace('|', '/') + '…'
+        ck = ' '.join(l['ket']['cau_chot'].split()[:12]).replace('|', '/') + '…'
+        md.append(f'| {i} | {r["ten"]} | {l["luat"]["giay"]} | {hk} | {ck} |')
     # C
     md += ['', '## 3. Hình khớp lời (C máy)', '', '| Chỉ số | Trung bình (min–max) |', '|---|---|']
     H = [r['hinh_khop_loi'] for r in V if 'hinh_khop_loi' in r]
@@ -477,19 +487,26 @@ def cmd_so_tay(a):
     for k, nmv in nm_vfx.items():
         top = max(V, key=lambda r: r['vfx_phut'][k])
         md.append(f'| {nmv} | {kh([r["vfx_phut"][k] for r in V])} | {sum(r["vfx"][k] for r in V)} | {top["ten"]} ({top["vfx_phut"][k]}/ph) |')
-    md += ['', 'Sự kiện chi tiết (giây + shot): `output/hoc-phong-cach/<slug>/may.json` → `su-kien`. Agent gọi tên + dải 10 frame: chưa làm.', '']
+    md += ['', 'Sự kiện chi tiết (giây + shot): `output/hoc-phong-cach/<slug>/may.json` → `su-kien`. Agent gọi tên + đối chiếu engine: mục 10 (9 video mẫu).', '']
     md += ['## 6. Bảng từng video', '', '| # | Video | s | Shot | Shot/ph | Dài tb | Từ/ph | Zoom-in% | Lặp% | Chớp | Rung | Đổi màu | Zoom giật |', '|---|---|---|---|---|---|---|---|---|---|---|---|---|']
     for i, r in enumerate(V, 1):
         l = Ls.get(r['slug'], {'tu_phut': '—'})
         md.append(f'| {i} | {r["ten"]} | {r["dur"]:.0f} | {r["shot"]} | {r["shot_phut"]} | {r["shot_dai_tb"]} | {l["tu_phut"]} | '
                   f'{int(r["cd"].get("zoom-in", 0) * 100)} | {int(r["lap"]["ti_le"] * 100)} | {r["vfx"]["chop"]} | {r["vfx"]["rung"]} | {r["vfx"]["doi-mau"]} | {r["vfx"]["zoom-giat"]} |')
-    md += ['', '## Chưa làm (chờ duyệt Dừng lần 1)', '- B agent (cỡ cảnh, góc máy, chữ nổi) · D bố cục 3 lớp · F thẻ tổng · G cảm xúc mặt · H mô típ truyện · C/E/I phần cần nhìn ảnh.',
-           '- Ngưỡng nạp vào `viet-kich-ban` / `lam-phim` / `tools/gates.json` và mục "chữ ký riêng": viết sau khi đủ 9 phần.', '']
+    md += phan_agent(V)
     text = '\n'.join(md)
     (ROOT / 'docs' / 'so-tay-phong-cach.md').write_text(text, encoding='utf-8')
     (ROOT / 'dist').mkdir(exist_ok=True)
+    ph = []
+    for ln in text.split('\n'):
+        m = re.match(r'^(\| \d+ \| [^|]+ \| [^|]+ \|) [^|]*\| [^|]*\|$', ln)
+        if m and 'Luật @s' not in ln: ln = m.group(1)
+        ph.append(ln.replace('| Câu mở (rút gọn) | Câu chốt |', '|').replace('|---|---|---|---|---|', '|---|---|---|') if 'Luật @s' in ln or ln.startswith('|---|---|---|---|---|') and False else ln)
+    ph = [ln.replace('| Luật @s | Câu mở (rút gọn) | Câu chốt |', '| Luật @s |') for ln in ph]
+    (ROOT / 'output' / 'artifact').mkdir(parents=True, exist_ok=True)
+    (ROOT / 'output' / 'artifact' / 'so-tay-phong-cach.html').write_text(md_html('\n'.join(ph)), encoding='utf-8')
     (ROOT / 'dist' / 'so-tay-phong-cach.html').write_text(md_html(text), encoding='utf-8')
-    print('  ✓ docs/so-tay-phong-cach.md · dist/so-tay-phong-cach.html')
+    print('  ✓ docs/so-tay-phong-cach.md · dist/so-tay-phong-cach.html · output/artifact/so-tay-phong-cach.html')
 
 
 def md_html(text):
@@ -517,11 +534,53 @@ def md_html(text):
     return f'<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sổ tay phong cách</title><style>{css}</style>' + '\n'.join(out)
 
 
+
+# ================================================================ TỜ ẢNH CHO AGENT (bước 2)
+MAU = ['tang-da-ban-suc-manh', 'may-ban-hang', 'vat-ky-sinh', 'tieng-me-goi', 'muc-tang-hinh', 'chin-mang-song',
+       'cai-ho-tren-bau-troi', 'thi-tran-quen-sach-luc-nua-dem', 'ket-qua-tuong-xung']
+
+
+def cmd_lat(a):
+    """Ghép dải 10 frame của 8 shot/tờ (sheets/) + khung giữa kẻ lưới 10×10 (luoi/) + lời theo shot (shots-loi.txt)."""
+    from PIL import Image, ImageDraw
+    for s in (a.chi.split(',') if a.chi else MAU):
+        d = GOC / s
+        if not (d / 'may.json').exists(): print('  ✗', s); continue
+        sh = json.loads((d / 'may.json').read_text(encoding='utf-8'))['shots']
+        cs = json.loads((d / 'loi.json').read_text(encoding='utf-8'))['cau_list'] if (d / 'loi.json').exists() else []
+        for sub in ('sheets', 'luoi'): shutil.rmtree(d / sub, ignore_errors=True); (d / sub).mkdir()
+        for k in range(0, len(sh), 8):
+            grp = sh[k:k + 8]; ims = [Image.open(d / 'frames' / f"{x['id']}.jpg") for x in grp]
+            sheet = Image.new('RGB', (ims[0].width, sum(i.height for i in ims)), 'white'); y = 0
+            for i in ims: sheet.paste(i, (0, y)); y += i.height
+            sheet.save(d / 'sheets' / f'sheet_{k // 8 + 1:02d}.jpg', quality=82)
+        pick = sh[::4]
+        for k in range(0, len(pick), 12):
+            grp = pick[k:k + 12]; W, H = 216, 384
+            sheet = Image.new('RGB', (W * 6, (H + 14) * 2), 'white'); dr = ImageDraw.Draw(sheet)
+            for n, x in enumerate(grp):
+                im = Image.open(d / 'frames' / f"{x['id']}.jpg").crop((108 * 4, 0, 108 * 5, 192)).resize((W, H))
+                ox, oy = (n % 6) * W, (n // 6) * (H + 14); sheet.paste(im, (ox, oy))
+                for g in range(1, 10):
+                    dr.line([(ox + g * W / 10, oy), (ox + g * W / 10, oy + H)], fill=(255, 255, 0) if g == 5 else (255, 255, 255), width=1)
+                    dr.line([(ox, oy + g * H / 10), (ox + W, oy + g * H / 10)], fill=(255, 255, 0) if g == 5 else (255, 255, 255), width=1)
+                dr.text((ox + 2, oy + H + 1), f"{x['id']}", fill='black')
+            sheet.save(d / 'luoi' / f'luoi_{k // 12 + 1:02d}.jpg', quality=82)
+        lines = []
+        for x in sh:
+            m = (x['start'] + x['end']) / 2
+            c = next((c['text'] for c in cs if c['t0'] <= m <= c['t1'] + 0.05), '')
+            lines.append(f"{x['id']}	{x['start']:.1f}-{x['end']:.1f}	{x['cd']}	{c[:110]}")
+        (d / 'shots-loi.txt').write_text(chr(10).join(lines), encoding='utf-8')
+        print(f'  ✓ {s}: {len(sh)} shot → {len(list((d / "sheets").glob("*.jpg")))} tờ + {len(list((d / "luoi").glob("*.jpg")))} lưới')
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('lenh', choices=['may', 'loi', 'ghep', 'so-tay', 'tat-ca'])
+    ap.add_argument('lenh', choices=['may', 'loi', 'ghep', 'so-tay', 'tat-ca', 'lat'])
     ap.add_argument('--chi'); ap.add_argument('--force', action='store_true'); ap.add_argument('--jobs', type=int, default=3)
     a = ap.parse_args()
+    if a.lenh == 'lat': cmd_lat(a)
     if a.lenh in ('may', 'tat-ca'): cmd_may(a)
     if a.lenh in ('loi', 'tat-ca'): cmd_loi(a)
     if a.lenh in ('ghep', 'tat-ca'): cmd_ghep(a)
