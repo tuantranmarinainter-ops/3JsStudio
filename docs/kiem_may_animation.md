@@ -77,3 +77,12 @@ Commit: `b23b725` (gối + chống xoắn) · `d0e387c` (gói lệnh) · `a7a10c
 Ô ghi chú lỗi mỗi động tác (lưu artifact db `ghi-chu`, dự phòng localStorage, nút "Chép mọi ghi chú") · nhãn "máy bắt" ·
 "Tất cả dáng (xếp ngang)" Steve + 3 kiểu Gà · hàng thẻ động tác dính dưới khung 3D + nút ⏮ ⏭ (theo bộ lọc) · khung 3D cố định, phần dưới cuộn.
 Đọc ghi chú người dùng: ArtifactData `list` collection `ghi-chu` trên artifact trang thử.
+
+## 8. Bộ Quaternius UAL1 (42 động tác, 19/11)
+- Retarget: `ARM=steve $T retarget-r6.mts quaternius` → bản Steve để so (`quaternius-steve-actions.bobj`); 42/42 đạt.
+- Máy kiểm: `node tools/r6-may-kiem.mjs --bo quaternius --out output/r6-bobj/quaternius-kiem/vN` (trang `dist/r6-quaternius-test.html`).
+- Sửa thêm trong `r6-cung.mts`: **bám sàn** (`--khong-bam-san`, `SAN_XA=0.3`) — bàn chân nguồn chạm sàn thì đặt mũi chân cứng xuống sàn; ngồi/lái xe hết lơ lửng.
+  Đã thử "va đầu luôn đẩy" (`DAU_LUON=1`, mặc định tắt): làm tách hai tay che mặt (crying) → bỏ.
+- So số hai lần đo: `node tools/r6-may-kiem/so-sanh.mjs <thư-mục-A> <thư-mục-B>`.
+- Kết quả: 2 ổn · 33 khác nhẹ · 7 lỗi rõ (quỳ/ngồi xổm/lộn — chân cứng 0.8 không gập được; đấm/ngắm súng — tay đi trước mặt).
+  Artifact: trang thử `Stt7kdhriQbjPcmFgTsuhV` · tổng hợp `BvoMHAKbQ4F7Bu9tvy6xMb`.

@@ -13,9 +13,12 @@ import { fileURLToPath } from 'node:url'
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const arg = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : undefined }
 const has = (k) => process.argv.includes(k)
-const OUT = resolve(ROOT, arg('--out') || 'output/r6-bobj/kiem'), MAIN = join(ROOT, 'output/r6-bobj/kiem'); mkdirSync(OUT, { recursive: true })
-const BUILD = 'S:/3appclaude/tools-local/xem/build.mjs', DIST = join(ROOT, 'dist/r6-bobj-test.html'), ART = join(ROOT, 'output/r6-bobj/thu-dong-tac-r6.html')
-const run = (file, args = [], env = {}) => execFileSync(process.execPath, [file, ...args], { stdio: 'inherit', env: { ...process.env, ...env } })
+// --bo quaternius: bộ khác BBS (cần assets/r6-bobj/<bộ>/<bộ>-{r6,r6-cung,r6-eo,steve}-actions.bobj) → trang/thư mục riêng
+const BO = arg('--bo') || 'bbs', Q = BO !== 'bbs'
+const MAIN = join(ROOT, Q ? `output/r6-bobj/${BO}-kiem` : 'output/r6-bobj/kiem'), OUT = resolve(ROOT, arg('--out') || MAIN); mkdirSync(OUT, { recursive: true }); mkdirSync(MAIN, { recursive: true })
+const BUILD = 'S:/3appclaude/tools-local/xem/build.mjs', DIST = join(ROOT, Q ? `dist/r6-${BO}-test.html` : 'dist/r6-bobj-test.html'), ART = join(ROOT, Q ? `output/r6-bobj/thu-${BO}-r6.html` : 'output/r6-bobj/thu-dong-tac-r6.html')
+const ENV = { BO, PAGE: 'file:///' + DIST.replace(/\\/g, '/').replace(/ /g, '%20'), TEN: Q ? BO : '' }
+const run = (file, args = [], env = {}) => execFileSync(process.execPath, [file, ...args], { stdio: 'inherit', env: { ...process.env, ...ENV, ...env } })
 const dung = () => { if (!existsSync(BUILD)) { console.log('⚠ không thấy', BUILD, '— bỏ qua dựng trang thử'); return } run(BUILD, [DIST, ART]) }
 
 if (!has('--chi-gop')) {
@@ -45,7 +48,7 @@ Chỉ trả về: (1) đường dẫn đã ghi, (2) ≤ 5 gạch kết luận (�
 Xong cả 3 → \`node tools/r6-may-kiem.mjs --chi-gop${OUT !== MAIN ? ' --out ' + OUT : ''}\`
 `)
 console.log(`
-Xong. Trang tổng hợp: file:///${join(ROOT, 'dist/r6-may-kiem.html').replace(/\\/g, '/').replace(/ /g, '%20')}
+Xong. Trang tổng hợp: file:///${join(ROOT, Q ? `dist/r6-may-kiem-${BO}.html` : 'dist/r6-may-kiem.html').replace(/\\/g, '/').replace(/ /g, '%20')}
       Trang thử:      file:///${DIST.replace(/\\/g, '/').replace(/ /g, '%20')}
 Soi mắt: giao 3 agent theo ${join(OUT, 'de-bai-mat.md')} rồi chạy --chi-gop.
 Đăng artifact (Claude làm): output/r6-bobj/thu-dong-tac-r6.html → 17qceasXPUWM7pqJA1vQ3i · output/r6-bobj/may-kiem-r6.html → 7gdgkkCbwCo7b6a2skaCpH`)

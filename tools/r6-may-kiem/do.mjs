@@ -7,7 +7,7 @@ const chi = (process.argv.find((a) => a.startsWith('--chi=')) || '').slice(6).sp
 const khongAnh = process.argv.includes('--khong-anh')
 const b = await launchBrowser(), p = await b.newPage({ viewport: { width: 800, height: 1455 } })
 p.on('pageerror', (e) => console.log('LỖI TRANG', e.message))
-await p.goto('file:///S:/3JS%20Studio/dist/r6-bobj-test.html'); await p.waitForFunction(() => window.__ready && window.__dbg?.SRC, null, { timeout: 120000 })
+await p.goto(process.env.PAGE || 'file:///S:/3JS%20Studio/dist/r6-bobj-test.html'); await p.waitForFunction(() => window.__ready && window.__dbg?.SRC, null, { timeout: 120000 })
 const names = await p.evaluate((chi) => { const d = window.__dbg; d.setT(0); return [...d.DST.keys()].filter((n) => !chi.length || chi.includes(n)) }, chi)
 const all = []
 for (const n of names) {
