@@ -34,3 +34,10 @@ Chạy: `node --import <editor>/packages/builder/node_modules/tsx/dist/loader.mj
 - Động tác BBS: GPL-3.0-only — McHorse (Emoticons gốc), bay4lly (bản Minecraft 1.20); xem `bbs/LICENSE-GPL-3.0.txt`. Người dùng chốt chép vào repo (2026-11-19), tự chịu trách nhiệm.
 - Quaternius UAL1: CC0 1.0 (Quaternius).
 - Mô hình R6: suy từ `steve_simple.bobj` của BBS (GPL) theo tỉ lệ R6.
+
+## Máy kiểm động tác (19/11)
+`node tools/r6-may-kiem.mjs` — 1 lệnh: dựng lại trang thử (`S:/3appclaude/tools-local/xem/build.mjs`) → đo số từng tick Gà R6 eo so với Steve
+(lún/lơ lửng sàn, tay/chân xuyên thân, lệch hướng tay, thân lệch, giật, hai tay không chạm) → chụp 4 khung/động tác thành ảnh lưới 800 px →
+gộp với kết luận mắt `mat-*.json` (nếu có) → `dist/r6-may-kiem.html` + nhãn "máy bắt" trên trang thử. Kết quả ở `output/r6-bobj/kiem/`.
+Tuỳ chọn: `--chi a,b` · `--khong-anh` (chỉ số, vài giây) · `--chi-gop` (sau khi agent soi xong) · `--khong-dung` · `--out <thư mục>`.
+Bước soi mắt: giao 3 agent Sonnet theo `output/r6-bobj/kiem/de-bai-mat.md` (lệnh tự ghi). Lưu ý: Gà R6 cứng đo đầu mút theo XƯƠNG TRÊN (khối chỉ gắn xương trên), Steve theo xương mút.
