@@ -14,10 +14,10 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const arg = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : undefined }
 const has = (k) => process.argv.includes(k)
 // --bo quaternius: bộ khác BBS (cần assets/r6-bobj/<bộ>/<bộ>-{r6,r6-cung,r6-eo,steve}-actions.bobj) → trang/thư mục riêng
-const BO = arg('--bo') || 'bbs', Q = BO !== 'bbs', MC = arg('--ga') === 'mc'   // --ga mc: kiểm Gà xương Minecraft (có khuỷu) → thư mục/trang hậu tố r6_mc
-const MAIN = join(ROOT, (Q ? `output/r6-bobj/${BO}-kiem` : 'output/r6-bobj/kiem') + (MC ? '-r6_mc' : '')), OUT = resolve(ROOT, arg('--out') || MAIN); mkdirSync(OUT, { recursive: true }); mkdirSync(MAIN, { recursive: true })
+const BO = arg('--bo') || 'bbs', Q = BO !== 'bbs', GA = arg('--ga') || 'halfmc', MC = GA !== 'halfmc'   // --ga halfmc (mặc định, thân gập eo) | roblox (thân liền) | mc (xương Minecraft có khuỷu) → hậu tố r6_<ga>
+const MAIN = join(ROOT, (Q ? `output/r6-bobj/${BO}-kiem` : 'output/r6-bobj/kiem') + (MC ? '-r6_' + GA : '')), OUT = resolve(ROOT, arg('--out') || MAIN); mkdirSync(OUT, { recursive: true }); mkdirSync(MAIN, { recursive: true })
 const BUILD = 'S:/3appclaude/tools-local/xem/build.mjs', DIST = join(ROOT, Q ? `dist/r6-${BO}-test.html` : 'dist/r6-bobj-test.html'), ART = join(ROOT, Q ? `output/r6-bobj/thu-${BO}-r6.html` : 'output/r6-bobj/thu-dong-tac-r6.html')
-const ENV = { BO, PAGE: 'file:///' + DIST.replace(/\\/g, '/').replace(/ /g, '%20'), TEN: (Q ? BO : '') + (MC ? (Q ? '-' : '') + 'r6_mc' : ''), GA: MC ? 'mc' : '' }
+const ENV = { BO, PAGE: 'file:///' + DIST.replace(/\\/g, '/').replace(/ /g, '%20'), TEN: (Q ? BO : '') + (MC ? (Q ? '-' : '') + 'r6_' + GA : ''), GA: MC ? GA : '' }
 const run = (file, args = [], env = {}) => execFileSync(process.execPath, [file, ...args], { stdio: 'inherit', env: { ...process.env, ...ENV, ...env } })
 const dung = () => { if (!existsSync(BUILD)) { console.log('⚠ không thấy', BUILD, '— bỏ qua dựng trang thử'); return } run(BUILD, [DIST, ART]) }
 

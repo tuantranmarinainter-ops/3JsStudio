@@ -27,7 +27,7 @@ Chạy TS: `node --import file:///S:/3appclaude/three-workspace-app/editor/packa
 ## 2. Đổi sang bộ 65 động tác — danh sách việc
 1. **Nguồn**: có file actions `.bobj` của bộ mới + mô hình chuẩn để so (Steve hoặc nhân vật gốc có khuỷu/gối) + catalog tên Việt/nhóm (`{actions:[{name,vi,nhom}]}`).
 2. **Retarget** sang R6: `$T retarget-r6.mts <bộ>` → `assets/r6-bobj/<bộ>/<bộ>-r6-actions.bobj` (+ `kiem-so.json`).
-3. **R6 cứng**: `$T r6-cung.mts --eo <vào> <bộ>-r6-eo-actions.bobj` và không `--eo` cho bản thân liền (`-cung-`).
+3. **R6 cứng**: `$T r6-cung.mts --eo <vào> <bộ>-r6_halfmc-actions.bobj` và không `--eo` cho bản thân liền (`-cung-`).
    Dòng in cuối: lệch hướng tối đa, khối chi xoay nhanh nhất (°/tick), số tick đẩy tay, "còn lún".
 4. **Trang thử**: sửa `xem/build.mjs` dòng `data = {…}`: `src` (nguồn Steve), `dst`/`dstCung`/`dstEo` (3 bản R6), `catalog`, `kiem`.
    Đổi đường dẫn `may-kiem.json` nếu dùng thư mục kết quả khác. Trang tự lấy danh sách động tác từ file.

@@ -37,7 +37,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,san
 h1{font-size:18px;margin:0 0 6px}.f label{margin-right:10px;font-size:13px}main{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;padding:12px 16px}
 .c{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px}.c h3{margin:0 0 6px;font-size:15px}.c p{margin:4px 0;font-size:13px}.c .s{color:var(--mut)}.c img{width:100%;border-radius:6px;margin-top:6px}
 .b{color:#fff;border-radius:4px;padding:0 6px;font-size:12px}.b.m0{background:#2e7d32}.b.m1{background:#b8a000}.b.m2{background:#d96b00}.b.m3{background:#c62828}</style>
-<header><h1>Máy kiểm động tác Gà R6 (${process.env.GA === 'mc' ? 'xương Minecraft' : 'thân gập eo'})${process.env.TEN ? ' · bộ ' + process.env.TEN : ''} — ${rows.length} động tác</h1><div class="f">
+<header><h1>Máy kiểm động tác Gà R6 (${({ mc: 'r6_mc xương Minecraft', roblox: 'r6_roblox thân liền' })[process.env.GA] || 'r6_halfmc thân gập eo'})${process.env.TEN ? ' · bộ ' + process.env.TEN : ''} — ${rows.length} động tác</h1><div class="f">
 ${[3, 2, 1, 0].map((k) => `<label><input type="checkbox" value="${k}" checked> ${k ? 'mức ' + k : 'ổn'} (${cnt[k]})</label>`).join('')}</div>
 <small>Mỗi ảnh: 4 khung, trái Steve gốc, phải Gà. Mức 3 = hỏng động tác, 2 = lỗi rõ, 1 = nhẹ.</small></header><main>${cards}</main>
 <script>document.querySelectorAll('.f input').forEach(i=>i.onchange=()=>{const on=new Set([...document.querySelectorAll('.f input:checked')].map(x=>x.value));document.querySelectorAll('.c').forEach(c=>c.style.display=on.has(c.dataset.m)?'':'none')})</script>`
