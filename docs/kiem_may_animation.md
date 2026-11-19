@@ -97,3 +97,9 @@ Commit: `b23b725` (gối + chống xoắn) · `d0e387c` (gói lệnh) · `a7a10c
 - Kết quả BBS (máy): hai tay không chạm 15→2 động tác, giật 13→14, lún đầu 9→15 (nhẹ 0.05–0.08). Mắt (17 động tác vỗ/che mặt):
   chạm đúng 4 · gần 7 · không 4 (chicken, electro_shuffle, free_flow, popcorn); tay xuyên đầu khi kéo (star_power, crying).
   Quaternius: không có động tác Steve chạm tay → r6_mc giống bản thô. Artifact tổng hợp: `1t6bcpFeR9erAsSJrmTumj`.
+
+## 10. Làm mượt xoay giữa hai tick (19/11)
+- Lỗi: trang nội suy từng kênh Euler ZYX tuyến tính, nên giữa hai khoá tay vung lệch đường rồi về lại ("tay chào chớp lỗi" r6_mc emote_salute tick 4→5 lệch 28°; free_flow 177°, orange_justice 64°, bongo_cat 180° ở halfmc/roblox).
+- Máy đo: `S:/3appclaude/tools-local/duong.mts <bộ.bobj>` in độ lệch Euler-vs-slerp lớn nhất mỗi động tác.
+- Sửa: `S:/3appclaude/tools-local/bobj-muot.mts <vào> <ra>` chèn khoá slerp (≤ 6°/khoá) chỉ ở đoạn lệch > 2°, chọn nghiệm Euler gần khoá trước. Tick nguyên giữ y nguyên (lệch 0,0001°, `sotick.mts`), nên số máy kiểm không đổi. Đã chạy cho cả 6 bộ; file to thêm ~10%.
+- Bộ mới tạo ra (retarget lại, r6-mc.mts) → chạy bobj-muot.mts sau cùng.
