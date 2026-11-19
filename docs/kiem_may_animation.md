@@ -103,3 +103,14 @@ Commit: `b23b725` (gối + chống xoắn) · `d0e387c` (gói lệnh) · `a7a10c
 - Máy đo: `S:/3appclaude/tools-local/duong.mts <bộ.bobj>` in độ lệch Euler-vs-slerp lớn nhất mỗi động tác.
 - Sửa: `S:/3appclaude/tools-local/bobj-muot.mts <vào> <ra>` chèn khoá slerp (≤ 6°/khoá) chỉ ở đoạn lệch > 2°, chọn nghiệm Euler gần khoá trước. Tick nguyên giữ y nguyên (lệch 0,0001°, `sotick.mts`), nên số máy kiểm không đổi. Đã chạy cho cả 6 bộ; file to thêm ~10%.
 - Bộ mới tạo ra (retarget lại, r6-mc.mts) → chạy bobj-muot.mts sau cùng.
+
+## 11. Ba bộ xương, ba bộ động tác — kiểm 2 lần (19/11)
+- Tên bộ: `r6_halfmc` (gập eo, ngực như MC; trước là `-r6-eo-`) · `r6_roblox` (thân liền như Roblox; trước là `-r6-cung-`) · `r6_mc` (xương MC có khuỷu/gối).
+  File: `assets/r6-bobj/<bbs|quaternius>/<bộ>-<r6_halfmc|r6_roblox|r6_mc>-actions.bobj`.
+- Kiểm cả 6 tổ hợp 1 lệnh: `bash tools/r6-may-kiem/ba-xuong.sh <lần> [--khong-anh]`; so hai lần: `so-sanh.mjs`. Lần 2 ra y lần 1 (máy đo ổn định).
+- Kết quả (ổn / khác nhẹ / lỗi rõ / hỏng): BBS halfmc 20/63/1/0 · roblox 7/70/7/0 · mc 34/39/11/0 — Quaternius halfmc 2/33/7/0 · roblox 2/31/8/1 · mc 39/3/0/0.
+- Lỗi rõ còn lại: halfmc — chân cứng không gập (quỳ, lộn), tay đi trước mặt (đấm, ngắm súng); roblox — thân liền nghiêng cả khối
+  (Pistol_Aim_Up hỏng), nằm/bay, tay đè mặt; mc — 4 động tác hai tay chưa chạm, kéo chạm làm tay xuyên đầu (star_power, crying).
+- Agent soi ảnh: phần lớn cờ "chân lún/lơ", "tay lún" là máy báo nhầm → luôn soi mắt trước khi sửa theo cờ máy.
+- Báo cáo: `output/r6-bobj/bao-cao-ba-xuong.html` (artifact `9mpErDLooUHYn7Tv5hq2eN`). Commit `0e6fcec`; làm mượt `e4fd458`.
+- Thứ tự làm lại cho bộ mới: retarget → r6-cung (--eo / không) → r6-mc.mts → **bobj-muot.mts** → ba-xuong.sh 2 lần → soi mắt → báo cáo.
