@@ -42,9 +42,9 @@ Chuẩn kênh: `CLAUDE.md` (mục "Format Ở thị trấn này", "Cấu trúc p
 6. **Độ dài câu**: lời kể tiếng Việt mỗi câu ≤ ~35 ký tự (nhịp đọc ~14 ký tự/giây). Số "ký tự mỗi câu" trong `nhip-kich-ban.json` là của tiếng Anh, KHÔNG áp dụng.
 7. **Nhịp** — đọc `docs/nhip-kich-ban.json`, mục `chi_tieu` và `canh_bao`:
    - Số câu hook, leo thang, twist: trong p25–p75 của `cau_moi_phan.hook` / `leo_thang` / `twist`.
-   - Câu twist đầu tiên ở **65–72%** thời lượng (sổ tay phong cách mục 14, 37 video; trước đây 55–80% → thu hẹp; `vi_tri_twist_pct`; lint chỉ bắt buộc 40–85%). Đánh dấu bằng chữ `twist` trong cột `ghi chú` của shot ĐẦU của câu twist.
+   - Câu twist đầu tiên ở 55–80% thời lượng (`vi_tri_twist_pct`; lint chỉ bắt buộc 40–85%). Đánh dấu bằng chữ `twist` trong cột `ghi chú` của shot ĐẦU của câu twist.
    - Phần giải quyết KHÔNG theo số liệu: dùng khung dự án, ~25% phim, điểm yếu thành lời giải, cảnh cuối gợi lại cảnh đầu.
-   - Câu đầu phim bắt đầu bằng "Ở thị trấn này"; 3 giây đầu có hình minh hoạ luật; **nói ra luật trong ≤ 5 giây đầu, ưu tiên ngay câu 1** (sổ tay phong cách mục 2, 37 video).
+   - Câu đầu phim bắt đầu bằng "Ở thị trấn này"; 3 giây đầu có hình minh hoạ luật.
 8. **Giây** = max(tối thiểu theo loại, số ký tự câu / 14 / số shot của câu). Tối thiểu: insertRead **1,5**; closeup **0,8**; chase/fall/hug/walkBy/follow/sinkTilt **1,0**; establish **1,2**; còn lại 0,8.
 9. Camera theo `CLAUDE.md`: 1 người → đẩy vào; ≥ 2 người/vật lớn → kéo ra; nhà có chân → lùi/lia thấy 4 chân. Chữ trên thiếp/biển: `insertRead` + cột `vật cần đọc` (loại khác để trống).
 10. Điền `## Cần dựng` cuối file: mọi env/prop/anim chưa có sẵn, mỗi dòng một thứ.
@@ -57,15 +57,3 @@ Chuẩn kênh: `CLAUDE.md` (mục "Format Ở thị trấn này", "Cấu trúc p
 
 ## Biến thể format (tham khảo ở bước 1)
 Trước khi viết 5 mẫu, xem `docs/format-kich-ban.md`: 4 biến thể (luật chuẩn, theo giờ, hai nhà đối chiếu, lời thú nhận) và mốc từng phần. Lint thêm cảnh báo W03–W09 cho `kich-ban.md` và `python tools/kb/lint.py --loi-ke narration.txt` cho lời kể; cảnh báo không chặn nhưng đọc từng dòng.
-
-## Chuẩn nhịp lời từ sổ tay phong cách (người dùng duyệt 2026-11-19; nguồn: `docs/so-tay-phong-cach.md`)
-Học từ 37 video cùng thể loại — là hướng dẫn nhịp, KHÔNG chép cốt truyện. Không thay quy mô ở Bước 2 (60–80 câu, ~140 shot, 150–165 s) nếu hai bên lệch: nêu độ lệch cho người dùng.
-- Lời kể ~**290 từ/phút** (260–315); câu trung bình **14 từ**, câu hook ~**18 từ** (sổ tay phong cách mục 2, 37 video). Lưu ý: quy ước ~14 ký tự/giây ở Bước 2 chậm hơn mức này — ghi rõ khi lệch.
-- Luật nói ra trong **≤ 5 giây đầu** (ưu tiên câu 1) (mục 2, 37 video).
-- Móc giữ chân (**"nhưng" / "cho đến khi" / câu hỏi**) khoảng **25 giây một lần** (mục 2, 37 video).
-- Twist ở **65–72%** thời lượng (mục 14, 37 video).
-- **Không có lời kêu gọi đăng ký/theo dõi trong lời kể**; kết **ấm** hoặc **hài lật ngược** (mục 2 và 14, 37 video).
-
-## Chữ ký riêng (ý định cố ý làm khác; sổ tay phong cách mục 15)
-- Bố cục **3 lớp** (tiền – trung – hậu cảnh) với **tiền cảnh mờ có chủ ý** — hầu hết khung video tham khảo chỉ 2 lớp (mục 11, 9 video mẫu).
-- **Biểu tượng luật** (thanh, bộ đếm…) **cố định một vị trí trên khung suốt tập** để người xem "đọc" được luật (mục 15). Ghi vị trí đó vào `kich-ban.md` (mục `rule`).
