@@ -104,3 +104,9 @@ Sau MỖI lần sửa xong (kể cả nhỏ) luôn gộp lại và đưa link �
 - **LUẬT 2026-11-16: mọi nhân vật đều R6, kể cả Gà** — không dùng `engine/ga-rig.js` cho tập mới (Gà = thân R6 màu vàng).
 - Tập làm tay (ep001): các bước ghi vào `episodes/<ep>/` (`shot`, `ra-loi`, `am-thanh`) TỪ CHỐI (mã 1) khi `shots.js`/`episode.js` đã có mà lam-phim chưa từng sinh (dấu `shotSinh` trong `output/<ep>/kiem/lam-phim.json`). Vẫn đừng chạy `tiep` trên chúng; `trang-thai` là đọc an toàn. Chạy lại `shot` sau khi giọng xong chỉ co giãn `dur` (`shot-gen --chi-khop-giong`); chỉ khi kịch bản đổi mới sinh lại, có sao lưu vào `output/<ep>/kiem/sao-luu/<ISO>/`.
 - Test tool: `LAM_PHIM_GIA=1 node tools/lam-phim.mjs _test_lamphimX tiep` (lệnh con giả, log ở `output/<ep>/kiem/gia.log`); `node --test tools/tests/lam-phim.test.mjs`.
+
+## Nhịp hình và chữ ký riêng từ sổ tay phong cách (người dùng duyệt 2026-11-19; nguồn: `docs/so-tay-phong-cach.md`)
+Hướng dẫn mềm khi dựng/duyệt, không phải cổng chặn (không sửa `tools/gates.json`, luật camera "dồn dập" của CLAUDE.md giữ nguyên):
+- ~**36 shot/phút**, shot trung bình ~**1,7 s**; phần **Giải quyết** shot dài hơn (~**1,9 s**) (sổ tay phong cách mục 1, 37 video). Lưu ý: tập ~140 shot/150–165 s (~52 shot/phút) dày hơn mức này — lệch có chủ ý theo CLAUDE.md, đừng "sửa" bằng cách gộp shot nếu người dùng không yêu cầu.
+- Cú cắt rơi ở **cuối câu (±0,3 s)**, ~**2 shot/câu** (mục 3, 37 video).
+- Chữ ký riêng: bố cục **3 lớp có tiền cảnh mờ cố ý**; **biểu tượng luật** (thanh, đếm…) **cố định một vị trí trên khung suốt tập** (mục 15; 9 video mẫu).

@@ -434,7 +434,25 @@ Twist (agent đọc) rơi trung vị 68% video (khoảng 52–93%, n=37).
 
 → Dòng "Twist (từ khoá) ở % video" ở mục 2 chỉ để tham khảo (máy bắt được ~11/37 video, đúng 4): dùng số của agent ở trên. Luật máy đúng ~34/37.
 
-## 15. ĐỀ XUẤT (chưa sửa skill/gates)
+## 15. ĐỀ XUẤT → trạng thái áp (19/11/2026, người dùng duyệt)
+
+| Mã | Điểm | Trạng thái |
+|---|---|---|
+| A1 | lời ~290 từ/phút, câu 14 từ, hook ~18 | **ĐÃ ÁP** (viet-kich-ban) |
+| A2 | nói luật trong ≤ 5 giây đầu | **ĐÃ ÁP** (ghi 5 s, không lấy 10–20 s) |
+| A3 | móc giữ chân ~25 s/lần | **ĐÃ ÁP** |
+| A4 | twist 65–72% (thu hẹp từ 55–80%) | **ĐÃ ÁP** |
+| A5 | không CTA; kết ấm/hài lật ngược | **ĐÃ ÁP** |
+| B1 | ~36 shot/phút, shot ~1,7 s, giải quyết ~1,9 s | **ĐÃ ÁP** (lam-phim, ghi chú lệch ~52 shot/phút của CLAUDE.md) |
+| B2 | cắt cuối câu ±0,3 s, ~2 shot/câu | **ĐÃ ÁP** (lam-phim) |
+| B3 | phụ đề cụm 1–3 chữ, từ khoá đỏ | HOÃN |
+| C1 | cảnh báo shot đứng yên > 55% trong gates.json | **BỎ** (xung đột luật camera dồn dập) |
+| C2 | cỡ cảnh / vùng phụ đề trong gates | không sửa gates; chỉ hướng dẫn mềm nếu muốn |
+| D1 | hậu kỳ sơn/vẽ tay | HOÃN |
+| D2 | bố cục 3 lớp, tiền cảnh mờ cố ý | **ĐÃ ÁP** (mục "chữ ký riêng" skill) |
+| D3 | biểu tượng luật cố định một vị trí | **ĐÃ ÁP** (mục "chữ ký riêng" skill) |
+
+Nội dung đề xuất gốc (giữ để tham khảo):
 
 **Cho `viet-kich-ban` / `lam-phim`:** ~290 từ/phút lời (260–315); câu tb 14 từ (hook dài hơn, ~18); luật nói ra trong ~10–20 giây đầu, câu mở "Ở thị trấn này/thế giới này…"; móc giữ chân (câu hỏi, "nhưng", "cho đến khi") mỗi ~25 s; twist ở ~65–72% video; ngôi thứ nhất ~0,5 lần/câu; kết ấm/hài lật ngược phổ biến nhất; lời kể không có CTA.
 **Nhịp hình:** ~36 shot/phút (shot tb 1,7 s, khoảng 1,3–2,2); phần Giải quyết shot dài hơn (~1,9 s); ~87% câu có cú cắt trong ±0,3 s cuối câu; ~2 shot/câu; phụ đề trắng viền đen giữa-dưới, từng cụm 1–3 chữ, từ khoá luật tô đỏ.
