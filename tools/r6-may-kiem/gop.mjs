@@ -4,13 +4,17 @@ import sharp from 'sharp'
 const K = process.env.K || 'S:/3JS Studio/output/r6-bobj/kiem/'
 const so = JSON.parse(readFileSync(K + 'so.json', 'utf8'))
 const mat = new Map(); for (const i of [1, 2, 3]) if (existsSync(K + `mat-${i}.json`)) for (const x of JSON.parse(readFileSync(K + `mat-${i}.json`, 'utf8'))) mat.set(x.name, x)
+// lỗi tay lún (thêm 19/11): mắt riêng ở mat-tay.json — key "sai" thì bỏ, mức tay nâng mức chung
+const TAY = ['tayDau', 'tayThan', 'tayChong'], matTay = new Map(existsSync(K + 'mat-tay.json') ? JSON.parse(readFileSync(K + 'mat-tay.json', 'utf8')).map((x) => [x.name, x]) : [])
+for (const s of so) { const t = matTay.get(s.name); if (t) s.loi = s.loi.filter((l) => !TAY.includes(l.key) || t[l.key] !== 'sai') }
 const out = {}, rows = []
 for (const s of so) {
   const m = mat.get(s.name)
   const may = s.loi.filter((l) => !m || !(m.may_sai || []).includes(l.key)).map((l) => l.label + ' (' + l.note + ', tick ' + l.tk + ')')
-  const muc = m ? m.muc : Math.min(3, Math.ceil(s.score / 3))
-  out[s.name] = { muc, loi: m ? [...(m.loi || []), ...may.filter((x) => x.startsWith('giật')).map((x) => 'số: ' + x)] : may.map((x) => 'số: ' + x), score: s.score, mat: !!m }
-  rows.push({ s, m, muc, may })
+  const t = matTay.get(s.name), tayMay = may.filter((x) => /^(tay lún|hai tay chồng)/.test(x))
+  const muc = Math.max(m ? m.muc : Math.min(3, Math.ceil(s.score / 3)), t ? t.muc : 0)
+  out[s.name] = { muc, loi: m ? [...(m.loi || []), ...(t?.muc && t.ghi_chu ? ['tay: ' + t.ghi_chu] : []), ...may.filter((x) => x.startsWith('giật') || (!t && tayMay.includes(x))).map((x) => 'số: ' + x)] : may.map((x) => 'số: ' + x), score: s.score, mat: !!m }
+  rows.push({ s, m, muc, may, t })
 }
 writeFileSync(K + 'may-kiem.json', JSON.stringify(out))
 rows.sort((a, b) => b.muc - a.muc || b.s.score - a.s.score)
@@ -20,6 +24,7 @@ for (const r of rows) {
   const img = (await sharp(K + r.s.name + '.jpg').resize(560).jpeg({ quality: 68 }).toBuffer()).toString('base64')
   cards += `<article class="c m${r.muc}" data-m="${r.muc}"><h3><span class="b m${r.muc}">${r.muc ? 'mức ' + r.muc : 'ổn'}</span> ${esc(r.s.name)}</h3>`
     + (r.m?.loi?.length ? `<p><b>Mắt thấy:</b> ${r.m.loi.map(esc).join(' · ')}</p>` : '')
+    + (r.t?.muc && r.t.ghi_chu ? `<p><b>Tay lún (mắt):</b> mức ${r.t.muc} · ${esc(r.t.ghi_chu)}</p>` : '')
     + (r.may.length ? `<p class="s"><b>Máy đo:</b> ${r.may.map(esc).join(' · ')}</p>` : '')
     + `<img loading="lazy" src="data:image/jpeg;base64,${img}" alt="${esc(r.s.name)}"></article>`
 }

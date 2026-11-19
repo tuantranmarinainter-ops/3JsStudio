@@ -39,5 +39,8 @@ Chạy: `node --import <editor>/packages/builder/node_modules/tsx/dist/loader.mj
 `node tools/r6-may-kiem.mjs` — 1 lệnh: dựng lại trang thử (`S:/3appclaude/tools-local/xem/build.mjs`) → đo số từng tick Gà R6 eo so với Steve
 (lún/lơ lửng sàn, tay/chân xuyên thân, lệch hướng tay, thân lệch, giật, hai tay không chạm) → chụp 4 khung/động tác thành ảnh lưới 800 px →
 gộp với kết luận mắt `mat-*.json` (nếu có) → `dist/r6-may-kiem.html` + nhãn "máy bắt" trên trang thử. Kết quả ở `output/r6-bobj/kiem/`.
+Đo thêm (19/11): **khối tay lún vào đầu / thân / hai tay chồng nhau** — lưới 3×3×7 điểm trong khối tay, thử trong hộp lõi của đầu/thân/tay kia
+(hộp lấy từ đỉnh lưới theo xương nặng nhất, bỏ mỏ/mào), trừ phần Steve cũng lún. Mắt riêng: `mat-tay.json` (key "sai" thì bỏ, mức tay nâng mức chung).
+Lần đo 19/11: sâu ≥ 0.12 block gần như luôn là lún thật, < 0.10 thường chỉ chạm sát.
 Tuỳ chọn: `--chi a,b` · `--khong-anh` (chỉ số, vài giây) · `--chi-gop` (sau khi agent soi xong) · `--khong-dung` · `--out <thư mục>`.
 Bước soi mắt: giao 3 agent Sonnet theo `output/r6-bobj/kiem/de-bai-mat.md` (lệnh tự ghi). Lưu ý: Gà R6 cứng đo đầu mút theo XƯƠNG TRÊN (khối chỉ gắn xương trên), Steve theo xương mút.
